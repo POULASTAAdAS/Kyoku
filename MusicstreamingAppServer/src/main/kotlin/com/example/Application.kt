@@ -9,5 +9,7 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureSerialization()
+    configurePartialContent()
+    configureRangeRequest()
     configureRouting()
 }
