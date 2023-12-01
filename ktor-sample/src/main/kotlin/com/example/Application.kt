@@ -30,7 +30,6 @@ suspend fun HttpClient.download(url: String, outFile: File, chunkSize: Int = 10)
     }
 
     while (true) {
-        delay(3000)
         val end = min(start + chunkSize - 1, lastByte)
         val data = get(url) {
             header("Range", "bytes=${start}-${end}")
