@@ -39,4 +39,6 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktor_version")
     implementation("io.ktor:ktor-server-partial-content:$ktor_version")
     implementation("io.ktor:ktor-server-auto-head-response:$ktor_version")
+    implementation("io.ktor:ktor-server-html-builder:$ktor_version")
+    implementation("io.ktor:ktor-server-freemarker:$ktor_version")
 }

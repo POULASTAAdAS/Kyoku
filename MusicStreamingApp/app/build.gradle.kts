@@ -83,6 +83,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp-urlconnection:4.4.1")
+    implementation ("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     // navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
@@ -98,13 +99,38 @@ dependencies {
     // Google Auth
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
 
-    // save password at google
-    implementation("androidx.credentials:credentials:1.2.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.2.0")
-
     // Splash API
     implementation ("androidx.core:core-splashscreen:1.0.1")
 
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+
+    val media3_version = "1.2.0"
+
+    // For media playback using ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:$media3_version")
+    // For HLS playback support with ExoPlayer
+    implementation("androidx.media3:media3-exoplayer-hls:$media3_version")
+    // For loading data using the OkHttp network stack
+    implementation("androidx.media3:media3-datasource-okhttp:$media3_version")
+
+    // For exposing and controlling media sessions
+    implementation("androidx.media3:media3-session:$media3_version")
+    // For extracting data from media containers
+    implementation("androidx.media3:media3-extractor:$media3_version")
+    // For transforming media files
+    implementation("androidx.media3:media3-transformer:$media3_version")
+
+    // Common functionality for media database components
+    implementation("androidx.media3:media3-database:$media3_version")
+    // Common functionality for media decoders
+    implementation("androidx.media3:media3-decoder:$media3_version")
+    // Common functionality for loading data
+    implementation("androidx.media3:media3-datasource:$media3_version")
+    // Common functionality used across multiple media libraries
+    implementation("androidx.media3:media3-common:$media3_version")
+
+    // For building media playback UIs
+    implementation("androidx.media3:media3-ui:$media3_version")
 }

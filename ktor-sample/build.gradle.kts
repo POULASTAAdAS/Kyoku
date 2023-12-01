@@ -28,4 +28,6 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktor_version")
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
 //    testImplementation("junit:junit:$junit_version")
+
+    implementation ("javazoom:jlayer:1.0.1")
 }
