@@ -41,7 +41,7 @@ fun Route.getSong() {
 
         val playlistContent = StringBuilder()
 
-        val file = File("G://temp//Tum_Hi_Ho_Playlist.m3u8")
+        val file = File("G://temp_128K//Tum_Hi_Ho_Playlist.m3u8")
 
         file.forEachLine {
             if (it.endsWith(".m4a")) {
@@ -69,7 +69,7 @@ fun Route.getSong() {
         val index = call.parameters["index"]!!
         println(index)
 
-        val filePath = "G://temp////segment${index}ForTum_Hi_Ho.m4a" // segment26ForTum_Hi_Ho.m4a
+        val filePath = "G://temp_128K////segment${index}ForTum_Hi_Ho.m4a" // segment26ForTum_Hi_Ho.m4a
         respondAudioSegment(File(filePath))
 
         println()

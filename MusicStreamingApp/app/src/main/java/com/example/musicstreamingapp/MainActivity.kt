@@ -63,32 +63,8 @@ class MainActivity : ComponentActivity() {
                 player.prepare()
                 player.play()
 
-
                 player.addAnalyticsListener(EventLogger())
 
-
-//                val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
-//
-//                val player = ExoPlayer.Builder(context)
-//                    .build()
-//                    .apply {
-//                        setMediaSource(
-//                            HlsMediaSource.Factory(dataSourceFactory)
-//                                .createMediaSource(
-//                                    MediaItem.Builder()
-//                                        .setUri("http://192.168.0.105:8080/song.m3u8")
-//                                        .build()
-//                                )
-//                        )
-//                        prepare()
-//                    }
-
-
-//                val mediaItem = MediaItem.Builder()
-//                    .setUri("http://192.168.0.105:8080/song.m3u8")
-//                    .build()
-//
-//                player.prepare()
 
 
                 Surface(
