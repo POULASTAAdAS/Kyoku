@@ -22,6 +22,7 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.util.EventLogger
 import com.example.musicstreamingapp.ui.theme.MusicStreamingAppTheme
 
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
                 val hslMediaSource = HlsMediaSource
                     .Factory(dataSourceFactory)
-                    .setAllowChunklessPreparation(true)
+                    .setAllowChunklessPreparation(false)
                     .createMediaSource(
                         MediaItem.Builder()
                             .setMimeType(MimeTypes.APPLICATION_M3U8)
@@ -59,11 +60,13 @@ class MainActivity : ComponentActivity() {
                             .setLiveTargetOffsetMs(5000)
                     )
                     .build()
-                player.setMediaSource(hslMediaSource)
-                player.prepare()
-                player.play()
+                    .apply {
+                        addAnalyticsListener(EventLogger())
+                        setMediaSource(hslMediaSource)
+                        prepare()
+                        play()
+                    }
 
-                player.addAnalyticsListener(EventLogger())
 
 
 

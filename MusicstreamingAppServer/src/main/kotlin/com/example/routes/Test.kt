@@ -96,10 +96,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondAudioSegment(file: Fil
     call.response.header(HttpHeaders.ContentType, ContentType.Audio.MPEG.toString())
 
     // Stream the file content
-//    call.respondOutputStream {
-//        file.inputStream().copyTo(this)
-//    }
-    call.respondFile(file)
+    call.respondOutputStream {
+        file.inputStream().copyTo(this)
+    }
+//    call.respondFile(file)
 }
 
 
