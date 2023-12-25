@@ -1,6 +1,5 @@
 package com.example.musicstreamingapp
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,23 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
-import androidx.media3.exoplayer.upstream.CmcdConfiguration
-import androidx.media3.exoplayer.util.EventLogger
 import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
 import com.example.musicstreamingapp.ui.theme.MusicStreamingAppTheme
-import retrofit2.http.Url
 
 class MainActivity : ComponentActivity() {
     @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     .createMediaSource(
                         MediaItem.Builder()
                             .setMimeType(MimeTypes.APPLICATION_ID3)
-                            .setUri("http://192.168.0.105:8080/playlist.m3u8")
+                            .setUri("http://192.168.0.105:8080/master.m3u8")
                             .setLiveConfiguration(
                                 MediaItem
                                     .LiveConfiguration
