@@ -117,4 +117,7 @@ dependencies {
 
     // For building media playback UIs
     implementation("androidx.media3:media3-ui:$media3_version")
+
+    // For extracting data from media containers
+    implementation("androidx.media3:media3-extractor:$media3_version")
 }
