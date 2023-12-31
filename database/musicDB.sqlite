@@ -1,0 +1,22 @@
+create database musicDB;
+use musicDB;
+
+create table song(
+	id bigInt primary key auto_increment,
+    coverImage text not null,
+    songPath text not null,
+    totalTime text not null,
+    title text not null,
+	artist text not null,
+    album text not null,
+    genre text not null,
+    composer text not null,
+    publisher text not null,
+    album_artist text not null,
+	description text not null,
+	major_brand text not null,
+	track text not null,
+	compatible_brands text not null,
+	descrpition text not null,
+	publishYear text not null
+);

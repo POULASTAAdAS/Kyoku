@@ -31,8 +31,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MusicStreamingAppTheme {
-                val extractor = OggExtractor()
-
                 val context = LocalContext.current
 
                 val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
@@ -46,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     .createMediaSource(
                         MediaItem.Builder()
                             .setMimeType(MimeTypes.APPLICATION_ID3)
-                            .setUri("http://192.168.0.105:8080/playlist.m3u8")
+                            .setUri("http://192.168.0.105:8080/master.m3u8")
                             .setLiveConfiguration(
                                 MediaItem
                                     .LiveConfiguration

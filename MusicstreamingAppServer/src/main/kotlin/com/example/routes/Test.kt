@@ -11,7 +11,7 @@ fun Route.getMasterPlaylist() {
     get("/master.m3u8") {
         val masterPlaylist = StringBuilder()
 
-        val file = File("D://temp/musicDBScripts/Tum_Hi_Ho_master.m3u8")
+        val file = File("E:/songdb/master/Akela_Divine/Akela_Divine_master.m3u8")
 
         file.forEachLine {
             if (it.endsWith(".m3u8")) {
@@ -26,18 +26,14 @@ fun Route.getMasterPlaylist() {
 fun Route.getPlaylist() {
     get("/playlist{playlist}") {
         val playlist = call.parameters["playlist"]!!
+        val file = File(playlist)
 
-        call.application.log.debug("playlist:  $playlist")
-
-        val quality = playlist.split("/")[0]
+        val rootPath = getBasePath(playlist)
 
         val playlistContent = StringBuilder()
 
-        val file = File("D://temp/musicDBScripts/${playlist}")
-//        "D://temp/musicDBScripts/128/playlistTum_Hi_Ho.m3u8"
-
         file.forEachLine {
-            if (it.endsWith(".m4a")) playlistContent.appendLine("http://192.168.0.105:8080/audio?chunk=$quality/$it")
+            if (it.endsWith(".m4a")) playlistContent.appendLine("http://192.168.0.105:8080/audio?chunk=$rootPath$it")
             else playlistContent.appendLine(it)
         }
 
@@ -49,12 +45,8 @@ fun Route.getPlaylist() {
 fun Route.getAudio() {
     get("/audio{chunk}") {
         val chunk = call.parameters["chunk"]!!
-        // 128/segment0Tum_Hi_Ho.m4a
-        call.application.log.debug("playlist:  $chunk")
 
-        val filePath = "D://temp/musicDBScripts/$chunk"
-
-        respondAudioSegment(File(filePath))
+        respondAudioSegment(File(chunk))
     }
 }
 
@@ -68,3 +60,5 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondAudioSegment(file: Fil
         file.inputStream().copyTo(this)
     }
 }
+
+private fun getBasePath(fullPath: String): String = fullPath.replace(Regex("playlist.*") , "")
