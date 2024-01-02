@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.domain.repository.SongService
+import com.example.util.Constants.SEGMENT_ROOT_DIR
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -52,7 +53,9 @@ fun Route.getAudio() {
     get("/audio{chunk}") {
         val chunk = call.parameters["chunk"]!!
 
-        respondAudioSegment(File(chunk))
+        val filePath = SEGMENT_ROOT_DIR + chunk
+
+        respondAudioSegment(File(filePath))
     }
 }
 
@@ -67,4 +70,4 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondAudioSegment(file: Fil
     }
 }
 
-private fun getBasePath(fullPath: String): String = fullPath.replace(Regex("playlist.*"), "")
+private fun getBasePath(fullPath: String): String = fullPath.replace(Regex("playlist.*"), "").replace(SEGMENT_ROOT_DIR , "")

@@ -26,7 +26,8 @@ import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
 import com.example.musicstreamingapp.ui.theme.MusicStreamingAppTheme
 
 class MainActivity : ComponentActivity() {
-    @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
+    @OptIn(UnstableApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -38,9 +39,13 @@ class MainActivity : ComponentActivity() {
                 val hslMediaSource = HlsMediaSource
                     .Factory(dataSourceFactory)
                     .setExtractorFactory( // fuck this line of code
-                        DefaultHlsExtractorFactory(DefaultTsPayloadReaderFactory.FLAG_IGNORE_H264_STREAM , true)
+                        DefaultHlsExtractorFactory(
+                            DefaultTsPayloadReaderFactory.FLAG_IGNORE_H264_STREAM,
+                            true
+                        )
                     )
-                    .setAllowChunklessPreparation(false)
+
+                    .setAllowChunklessPreparation(true)
                     .createMediaSource(
                         MediaItem.Builder()
                             .setMimeType(MimeTypes.APPLICATION_M3U8)
