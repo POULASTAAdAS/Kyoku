@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.domain.repository.SongService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -7,11 +8,16 @@ import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import java.io.File
 
-fun Route.getMasterPlaylist() {
+fun Route.getMasterPlaylist(songService: SongService) {
     get("/master.m3u8") {
+
+        val masterPlaylistPath = songService.readSong()
+
+        println(masterPlaylistPath)
+
         val masterPlaylist = StringBuilder()
 
-        val file = File("E:/songdb/master/Akela_Divine/Akela_Divine_master.m3u8")
+        val file = File(masterPlaylistPath)
 
         file.forEachLine {
             if (it.endsWith(".m3u8")) {
@@ -61,4 +67,4 @@ suspend fun PipelineContext<Unit, ApplicationCall>.respondAudioSegment(file: Fil
     }
 }
 
-private fun getBasePath(fullPath: String): String = fullPath.replace(Regex("playlist.*") , "")
+private fun getBasePath(fullPath: String): String = fullPath.replace(Regex("playlist.*"), "")

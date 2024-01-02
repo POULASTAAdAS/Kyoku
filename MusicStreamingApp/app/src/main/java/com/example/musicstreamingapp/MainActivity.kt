@@ -43,8 +43,9 @@ class MainActivity : ComponentActivity() {
                     .setAllowChunklessPreparation(false)
                     .createMediaSource(
                         MediaItem.Builder()
+                            .setMimeType(MimeTypes.APPLICATION_M3U8)
                             .setMimeType(MimeTypes.APPLICATION_ID3)
-                            .setUri("http://192.168.0.105:8080/master.m3u8")
+                            .setUri("https://b857-103-44-172-243.ngrok-free.app/master.m3u8")
                             .setLiveConfiguration(
                                 MediaItem
                                     .LiveConfiguration
