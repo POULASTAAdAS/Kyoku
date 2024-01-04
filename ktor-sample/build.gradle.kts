@@ -7,6 +7,7 @@ val logback_version: String by project
 plugins {
     kotlin("jvm") version "1.9.21"
     id("io.ktor.plugin") version "2.3.6"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
 }
 
 group = "com.example"
@@ -30,4 +31,6 @@ dependencies {
 //    testImplementation("junit:junit:$junit_version")
 
     implementation ("javazoom:jlayer:1.0.1")
+
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 }

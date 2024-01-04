@@ -1,4 +1,3 @@
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -55,4 +54,8 @@ dependencies {
     implementation("mysql:mysql-connector-java:$mysql_version")
     //connection pooling
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
+
+    implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation("com.sun.mail:jakarta.mail:2.0.1")
 }

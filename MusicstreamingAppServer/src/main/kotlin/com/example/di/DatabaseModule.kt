@@ -1,11 +1,11 @@
 package com.example.di
 
-import com.example.data.repository.SongServiceImpl
-import com.example.domain.repository.SongService
+import com.example.data.repository.user.EmailAuthUserRepositoryImpl
+import com.example.domain.repository.user.EmailAuthUserRepository
 import org.koin.dsl.module
 
 val dbModule = module {
-    single<SongService> {
-        SongServiceImpl()
+    single<EmailAuthUserRepository> {
+        EmailAuthUserRepositoryImpl()
     }
 }

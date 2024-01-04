@@ -1,6 +1,7 @@
 package com.example.plugins
 
-import com.example.domain.model.SongTable
+import com.example.data.model.database.EmailAuthUserTable
+import com.example.data.model.database.SongTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -23,6 +24,7 @@ fun Application.configureDatabase() {
 
     transaction(db) {
         SchemaUtils.create(SongTable)
+        SchemaUtils.create(EmailAuthUserTable)
     }
 }
 
@@ -40,5 +42,12 @@ private fun provideDataSource(url: String, driverClass: String): HikariDataSourc
 
 
 suspend fun <T> dbQuery(block: suspend () -> T): T {
-    return newSuspendedTransaction(Dispatchers.IO) { block() }
+    return try {
+        newSuspendedTransaction(
+            Dispatchers.IO,
+            statement = { block() }
+        )
+    } catch (e: Exception) {
+        throw e
+    }
 }
