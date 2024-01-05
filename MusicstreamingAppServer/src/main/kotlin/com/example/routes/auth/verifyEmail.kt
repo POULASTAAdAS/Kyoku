@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.example.data.model.EndPoints
 import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.util.UpdateEmailVerificationStatus
+import com.example.routes.auth.common.UpdateEmailVerificationStatus
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -20,6 +20,15 @@ fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
         get {
             val token = call.parameters["token"]
 
+            if (token == null) {
+                call.respond(
+                    message = "invalid request",
+                    status = HttpStatusCode.Forbidden
+                )
+
+                return@get
+            }
+
             val issuer = call.application.environment.config.property("jwt.issuer").getString()
             val audience = call.application.environment.config.property("jwt.audience").getString()
 
@@ -29,7 +38,6 @@ fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
                 .build()
 
             val publicKey = jwkProvider.get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
-
             val algorithm = Algorithm.RSA256(publicKey as RSAPublicKey, null)
 
             val email = try {

@@ -1,4 +1,4 @@
-package com.example.util
+package com.example.routes.auth.common
 
 enum class UpdateEmailVerificationStatus {
     DONE,

@@ -33,4 +33,7 @@ dependencies {
     implementation ("javazoom:jlayer:1.0.1")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
+    implementation("io.ktor:ktor-client-serialization:$ktor_version")
+
+    implementation("commons-validator:commons-validator:1.8.0")
 }

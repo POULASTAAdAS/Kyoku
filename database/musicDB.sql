@@ -35,9 +35,6 @@ drop table emailAuthUser;
 select * from emailAuthUser;
 
 
-select emailVerified from emailAuthUser where email = "anshudas73@gmail.com";
-
-
 
 
 

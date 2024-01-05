@@ -1,8 +1,8 @@
 package com.example.domain.repository.user
 
-import com.example.util.EmailVerificationStatus
-import com.example.util.UpdateEmailVerificationStatus
-import com.example.util.UserCreationStatus
+import com.example.routes.auth.common.EmailVerificationStatus
+import com.example.routes.auth.common.UpdateEmailVerificationStatus
+import com.example.routes.auth.common.UserCreationStatus
 
 interface EmailAuthUserRepository {
     suspend fun createUser(

@@ -1,15 +1,18 @@
-package com.example.routes.auth
+package com.example.routes.auth.common
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.data.model.EmailSignUpReq
 import com.example.data.model.EndPoints
+import com.example.data.model.VerificationMailApiResponse
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.GOOGLE_SMTP_HOST
-import com.example.util.UserCreationStatus
 import com.sun.mail.util.MailConnectException
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -17,6 +20,7 @@ import io.ktor.util.pipeline.*
 import jakarta.mail.*
 import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
+import kotlinx.serialization.json.Json
 import java.security.KeyFactory
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
@@ -30,6 +34,19 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailSignup(
     emailSignUpReq: EmailSignUpReq,
     emailAuthUser: EmailAuthUserRepository,
 ) {
+    if (false) // reduce unnecessary api call while developing
+        verifyEmail(
+            email = emailSignUpReq.email,
+        ).let {
+            if (!it) {
+                call.respond(
+                    message = "not a valid email",
+                    status = HttpStatusCode.BadRequest
+                )
+                return
+            }
+        }
+
     when (
         createUser(
             emailSignUpReq.userName,
@@ -67,6 +84,26 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailSignup(
             message = "something went wrong sending authentication mail",
             status = HttpStatusCode.InternalServerError
         )
+    }
+}
+
+private suspend fun verifyEmail(
+    email: String,
+): Boolean {
+    val client = HttpClient()
+
+    val responseBody = client.get("https://email-checker.p.rapidapi.com/verify/v1?email=${email}") {
+        headers {
+            append("X-RapidAPI-Key", System.getenv("emailVerifierKey"))
+            append("X-RapidAPI-Host", "email-checker.p.rapidapi.com")
+        }
+    }.bodyAsText()
+
+    client.close()
+    return try {
+        Json.decodeFromString<VerificationMailApiResponse>(responseBody).status.lowercase() == "valid"
+    } catch (e: Exception) {
+        false
     }
 }
 
@@ -150,7 +187,6 @@ private fun generateVerificationMailToken(
     call: ApplicationCall,
     email: String
 ): String {
-
     val issuer = call.application.environment.config.property("jwt.issuer").getString()
 
     val privateKeyString = call.application.environment.config.property("jwt.privateKey").getString()

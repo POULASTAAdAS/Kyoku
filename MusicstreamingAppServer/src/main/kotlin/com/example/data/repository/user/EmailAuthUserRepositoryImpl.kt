@@ -4,9 +4,9 @@ import com.example.data.model.database.EmailAuthUserTable
 import com.example.domain.model.EmailAuthUser
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.plugins.dbQuery
-import com.example.util.EmailVerificationStatus
-import com.example.util.UpdateEmailVerificationStatus
-import com.example.util.UserCreationStatus
+import com.example.routes.auth.common.EmailVerificationStatus
+import com.example.routes.auth.common.UpdateEmailVerificationStatus
+import com.example.routes.auth.common.UserCreationStatus
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.update
@@ -65,7 +65,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                     EmailAuthUserTable.email eq email
                 }.first().emailVerified
             }.run {
-                if (this) return EmailVerificationStatus.VERIFIED
+                if (this) EmailVerificationStatus.VERIFIED
                 else EmailVerificationStatus.UN_VERIFIED
             }
         } catch (e: Exception) {

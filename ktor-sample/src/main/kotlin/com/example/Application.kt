@@ -3,49 +3,31 @@ package com.example
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.http.*
-import javazoom.jl.player.advanced.AdvancedPlayer
-import kotlinx.coroutines.Dispatchers
+import io.ktor.client.statement.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import kotlin.math.min
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import org.apache.commons.validator.routines.EmailValidator
 
 fun main() {
     runBlocking {
         val client = HttpClient()
-        client.download("http://0.0.0.0:8080/song", File("Tum Hi Ho.mp3"))
+        client.checkEmailVerificationStatus()
     }
 }
 
-suspend fun HttpClient.download(url: String, outFile: File, chunkSize: Int = 10) {
-    val length = head(url).headers[HttpHeaders.ContentLength]?.toLong() as Long
-    val range = head(url).headers[HttpHeaders.ContentRange]
-    val type = head(url).headers[HttpHeaders.ContentType]
-    val lastByte = length - 1
-
-    var start = outFile.length()
-    val output = withContext(Dispatchers.IO) {
-        FileOutputStream(outFile, true)
-    }
-
-    while (true) {
-        val end = min(start + chunkSize - 1, lastByte)
-        val data = get(url) {
-            header("Range", "bytes=${start}-${end}")
-        }.body<ByteArray>()
-
-        withContext(Dispatchers.IO) {
-            output.write(data)
-
-            val fis = FileInputStream(outFile)
-            val player = AdvancedPlayer(fis)
-            player.play()
+suspend fun HttpClient.checkEmailVerificationStatus() {
+    val response = get("https://email-checker.p.rapidapi.com/verify/v1?email=example@gmail.com") {
+        headers {
+            append("X-RapidAPI-Key", System.getenv("emailVerifierKey"))
+            append("X-RapidAPI-Host", "email-checker.p.rapidapi.com")
         }
-
-        if (end >= lastByte) break
-        start += chunkSize
     }
+
+    val responseBody = response.bodyAsText()
+
+    val apiResponse = Json.decodeFromString<ApiResponse>(responseBody)
+
+    println(apiResponse.status)
 }
