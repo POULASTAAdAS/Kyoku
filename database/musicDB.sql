@@ -34,7 +34,7 @@ drop table emailAuthUser;
 
 select * from emailAuthUser;
 
-
+select * from emailAuthUser where email = "anshudas73@gmail.com" and password = "examplePassword";
 
 
 

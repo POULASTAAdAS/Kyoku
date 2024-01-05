@@ -2,6 +2,7 @@ package com.example.routes.auth
 
 import com.example.data.model.*
 import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -30,13 +31,16 @@ fun Route.createAuthRoute(
 
             when (payload) {
                 is EmailLoginReq -> {
-                    call.respond(message = "EmailLoginReq")
+                    handleEmailLogin(
+                        emailLoginReq = payload,
+                        emailAuthUser = emailAuthUser
+                    )
                 }
 
                 is EmailSignUpReq -> {
                     handleEmailSignup(
                         emailSignUpReq = payload,
-                        emailAuthUser = emailAuthUser,
+                        emailAuthUser = emailAuthUser
                     )
                 }
 

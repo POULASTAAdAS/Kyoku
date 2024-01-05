@@ -22,27 +22,28 @@ fun Route.emailVerificationCheck(emailAuthUser: EmailAuthUserRepository) {
                 return@get
             }
 
+
             email.let {
-                when (
-                    val message = emailAuthUser.checkEmailVerification(it)
-                ) {
+                val result = emailAuthUser.checkEmailVerification(it)
+
+                when (result.status) {
                     EmailVerificationStatus.VERIFIED -> {
                         call.respond(
-                            message = message,
+                            message = result,
                             status = HttpStatusCode.OK
                         )
                     }
 
                     EmailVerificationStatus.UN_VERIFIED -> {
                         call.respond(
-                            message = message,
+                            message = result,
                             status = HttpStatusCode.OK
                         )
                     }
 
                     EmailVerificationStatus.SOMETHING_WENT_WRONG -> {
                         call.respond(
-                            message = message,
+                            message = result,
                             status = HttpStatusCode.InternalServerError
                         )
                     }
