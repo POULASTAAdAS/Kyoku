@@ -19,7 +19,7 @@ fun Route.createAuthRoute(
             val message = call.receiveText()
 
             val payload = try {
-                Json.decodeFromString<DefaultAuthModel>(message)
+                Json.decodeFromString<AuthReqBaseModel>(message)
             } catch (e: Exception) {
                 call.respond(
                     message = "invalid request",

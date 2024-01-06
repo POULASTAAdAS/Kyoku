@@ -4,6 +4,6 @@ import com.example.routes.auth.common.EmailVerificationStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class EmailSignUpResponse(
+data class EmailVerificationResponse(
     val status: EmailVerificationStatus
 )

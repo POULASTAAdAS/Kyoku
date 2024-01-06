@@ -7,4 +7,4 @@ data class EmailSignUpReq(
     val email:String,
     val password: String,
     val userName: String
-): DefaultAuthModel(authType = AUTH_TYPE_EMAIL_SIGN_UP)
+): AuthReqBaseModel(authType = AUTH_TYPE_EMAIL_SIGN_UP)

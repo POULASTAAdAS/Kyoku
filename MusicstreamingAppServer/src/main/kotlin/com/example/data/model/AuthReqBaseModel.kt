@@ -3,6 +3,6 @@ package com.example.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class DefaultAuthModel(
+sealed class AuthReqBaseModel(
     val authType: String
 )

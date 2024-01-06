@@ -1,4 +1,4 @@
-package com.example.routes.auth.common
+package com.example.util
 
 import com.example.data.model.VerificationMailApiResponse
 import io.ktor.client.*
@@ -6,7 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 
-suspend fun verifyEmail(
+suspend fun verifyEmailIdWithApi(
     email: String,
 ): Boolean {
     val client = HttpClient()

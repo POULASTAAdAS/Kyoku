@@ -2,7 +2,7 @@ package com.example.routes.auth
 
 import com.example.data.model.EndPoints
 import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.routes.auth.common.UpdateEmailVerificationStatus
+import com.example.routes.auth.common.PasswordResetStatus
 import com.example.routes.auth.common.verifyJWTTokenWithClaimMailId
 import com.example.util.Constants.USED_TOKEN
 import io.ktor.http.*
@@ -10,13 +10,16 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
-fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
-    route(EndPoints.VerifyEmail.route) {
+fun Route.resetPassword(
+    emailAuthUser: EmailAuthUserRepository
+) {
+    route(EndPoints.ResetPassword.route) {
         get {
             val token = call.parameters["token"]
+            val password = call.parameters["password"]
 
-            if (token == null) {
+
+            if (password == null || token == null) {
                 call.respond(
                     message = "invalid request",
                     status = HttpStatusCode.Forbidden
@@ -35,30 +38,38 @@ fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
                     return@get
                 }
 
-                when (emailAuthUser.updateVerificationStatus(result)) {
-                    UpdateEmailVerificationStatus.DONE -> {
+                when (
+                    emailAuthUser.passwordReset(
+                        email = result,
+                        password = password
+                    )
+                ) {
+                    PasswordResetStatus.SUCCESSFUL -> {
                         call.respond( // todo return proper html
-                            message = "email verified",
+                            message = "Password Reset successfully go back to app to log in again",
                             status = HttpStatusCode.OK
                         )
                     }
 
-                    UpdateEmailVerificationStatus.ALREADY_VERIFIED -> {
-                        call.respond(// todo return proper html
-                            message = "email already verified",
+                    PasswordResetStatus.SAME_AS_OLD_PASSWORD -> {
+                        call.respond( // todo return proper html
+                            message = "same as old password",
                             status = HttpStatusCode.OK
                         )
                     }
 
-                    UpdateEmailVerificationStatus.SOMETHING_WENT_WRONG -> {
-                        call.respond(// todo return proper html
-                            message = "something went wrong",
+                    PasswordResetStatus.SOMETHING_WENT_WRONG -> {
+                        call.respond( // todo return proper html
+                            message = "Something went wrong please try again",
                             status = HttpStatusCode.InternalServerError
                         )
                     }
                 }
+
                 return@get
             }
+
+
 
             call.respond(// todo return proper html
                 message = "This verification link is no more active",

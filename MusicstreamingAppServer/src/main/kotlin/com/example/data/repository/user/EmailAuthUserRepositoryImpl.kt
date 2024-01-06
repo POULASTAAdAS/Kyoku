@@ -1,9 +1,9 @@
 package com.example.data.repository.user
 
 import com.example.data.model.EmailLoginResponse
-import com.example.data.model.EmailSignUpResponse
-import com.example.data.model.SendVerificationMail
-import com.example.data.model.UserCreationResponse
+import com.example.data.model.EmailSignInResponse
+import com.example.data.model.EmailVerificationResponse
+import com.example.data.model.SendForgotPasswordMail
 import com.example.data.model.database.EmailAuthUserTable
 import com.example.domain.model.EmailAuthUser
 import com.example.domain.repository.user.EmailAuthUserRepository
@@ -11,31 +11,34 @@ import com.example.plugins.dbQuery
 import com.example.routes.auth.common.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.update
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
     override suspend fun createUser(
         userName: String,
         email: String,
-        password: String
-    ): UserCreationResponse = try {
+        password: String,
+        token: String
+    ): EmailSignInResponse = try {
         dbQuery {
             EmailAuthUser.new {
                 this.userName = userName
                 this.email = email
                 this.password = password
             }
+        }.let {
+            EmailSignInResponse(
+                userName = it.userName,
+                token = token,
+                status = UserCreationStatus.CREATED
+            )
         }
-        UserCreationResponse(
-            status = UserCreationStatus.CREATED
-        )
-    } catch (e: ExposedSQLException) {
-        UserCreationResponse(
+    } catch (e: ExposedSQLException) { //todo add data
+        EmailSignInResponse(
             status = UserCreationStatus.CONFLICT
         )
     } catch (e: Exception) {
-        UserCreationResponse(
+        EmailSignInResponse(
             status = UserCreationStatus.SOMETHING_WENT_WRONG
         )
     }
@@ -65,22 +68,22 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
 
     // this will be hit repeated time while signing up
-    override suspend fun checkEmailVerification(email: String): EmailSignUpResponse =
+    override suspend fun checkEmailVerification(email: String): EmailVerificationResponse =
         try {
             dbQuery {
                 EmailAuthUser.find {
                     EmailAuthUserTable.email eq email
                 }.first().emailVerified
-            }.run {
-                if (this) EmailSignUpResponse(
+            }.let {
+                if (it) EmailVerificationResponse(
                     status = EmailVerificationStatus.VERIFIED
                 )
-                else EmailSignUpResponse(
+                else EmailVerificationResponse(
                     status = EmailVerificationStatus.UN_VERIFIED
                 )
             }
         } catch (e: Exception) {
-            EmailSignUpResponse(
+            EmailVerificationResponse(
                 status = EmailVerificationStatus.SOMETHING_WENT_WRONG
             )
         }
@@ -88,7 +91,8 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
 
     override suspend fun loginUser(
         email: String,
-        password: String
+        password: String,
+        token: String
     ): EmailLoginResponse {
         return try {
             val user = dbQuery {
@@ -98,13 +102,17 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
             }
 
             if (user.password == password) {
-                if (!user.emailVerified)
+                if (user.emailVerified)
                     EmailLoginResponse(
-                        status = EmailLoginStatus.EMAIL_NOT_VERIFIED
+                        userName = user.userName,
+                        profilePhoto = null, // todo add
+                        status = EmailLoginStatus.USER_PASS_MATCHED,
+                        token = token,
+                        data = emptyList() // todo add data
                     )
                 else
                     EmailLoginResponse(
-                        status = EmailLoginStatus.USER_PASS_MATCHED //todo add other data to response
+                        status = EmailLoginStatus.EMAIL_NOT_VERIFIED
                     )
             } else
                 EmailLoginResponse(
@@ -122,21 +130,49 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
     }
 
-    override suspend fun checkIfUserExists(email: String, password: String): SendVerificationMail {
+    override suspend fun sendForgotPasswordMail(email: String): SendForgotPasswordMail {
         return try {
             dbQuery {
                 EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email and (EmailAuthUserTable.password eq password)
+                    EmailAuthUserTable.email eq email
                 }
             }
 
-            SendVerificationMail(
+            SendForgotPasswordMail(
                 status = SendVerificationMailStatus.USER_EXISTS
             )
+        } catch (e: NoSuchElementException) {
+            SendForgotPasswordMail(
+                status = SendVerificationMailStatus.USER_NOT_FOUND
+            )
         } catch (e: Exception) {
-            SendVerificationMail(
+            SendForgotPasswordMail(
                 status = SendVerificationMailStatus.SOMETHING_WENT_WRONG
             )
+        }
+    }
+
+    override suspend fun passwordReset(email: String, password: String): PasswordResetStatus {
+        return try {
+            var status = true
+            dbQuery {
+                val user = EmailAuthUser.find {
+                    EmailAuthUserTable.email eq email
+                }.first()
+
+                if (user.password == password) {
+                    status = false
+                    return@dbQuery
+                }
+
+                user.password = password
+            }
+
+            if (status) PasswordResetStatus.SUCCESSFUL
+            else PasswordResetStatus.SAME_AS_OLD_PASSWORD
+        } catch (e: Exception) {
+            println("error: $e")
+            PasswordResetStatus.SOMETHING_WENT_WRONG
         }
     }
 }

@@ -2,6 +2,8 @@ package com.example.routes.auth.common
 
 import com.example.data.model.EmailLoginReq
 import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
+import com.example.util.verifyEmailIdWithApi
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -12,7 +14,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
     emailAuthUser: EmailAuthUserRepository
 ) {
     if (false) // reduce unnecessary api call while developing
-        verifyEmail(
+        verifyEmailIdWithApi(
             email = emailLoginReq.email,
         ).let {
             if (!it) {
@@ -26,7 +28,11 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
 
     val result = emailAuthUser.loginUser(
         email = emailLoginReq.email.trim(),
-        password = emailLoginReq.password.trim()
+        password = emailLoginReq.password.trim(),
+        token = emailLoginReq.email.trim().generateJWTTokenWithClaimMailId(
+            env = call.application.environment,
+            time = JWT_TOKEN_DEFAULT_TIME
+        )
     )
 
     when (result.status) {
