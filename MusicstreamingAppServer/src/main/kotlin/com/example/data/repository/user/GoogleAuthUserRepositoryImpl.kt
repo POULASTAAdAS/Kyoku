@@ -1,10 +1,10 @@
 package com.example.data.repository.user
 
-import com.example.data.model.UserCreationResponse
+import com.example.data.model.auth.UserCreationResponse
 import com.example.domain.model.GoogleAuthUser
 import com.example.domain.repository.user.GoogleAuthUserRepository
 import com.example.plugins.dbQuery
-import com.example.routes.auth.common.UserCreationStatus
+import com.example.data.model.auth.UserCreationStatus
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {

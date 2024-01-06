@@ -1,11 +1,13 @@
 package com.example.routes.auth.common
 
-import com.example.data.model.EmailSignInResponse
-import com.example.data.model.EmailSignUpReq
+import com.example.data.model.auth.EmailSignInResponse
+import com.example.data.model.auth.EmailSignUpReq
 import com.example.data.model.EndPoints
+import com.example.data.model.auth.UserCreationStatus
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants
 import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
+import com.example.util.generateJWTTokenWithClaimMailId
 import com.example.util.sendMail
 import com.example.util.verifyEmailIdWithApi
 import io.ktor.http.*

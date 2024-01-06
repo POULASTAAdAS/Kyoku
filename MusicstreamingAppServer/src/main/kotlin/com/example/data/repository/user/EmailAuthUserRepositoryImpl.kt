@@ -1,14 +1,10 @@
 package com.example.data.repository.user
 
-import com.example.data.model.EmailLoginResponse
-import com.example.data.model.EmailSignInResponse
-import com.example.data.model.EmailVerificationResponse
-import com.example.data.model.SendForgotPasswordMail
+import com.example.data.model.auth.*
 import com.example.data.model.database.EmailAuthUserTable
 import com.example.domain.model.EmailAuthUser
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.plugins.dbQuery
-import com.example.routes.auth.common.*
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.update
@@ -33,7 +29,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 status = UserCreationStatus.CREATED
             )
         }
-    } catch (e: ExposedSQLException) { //todo add data
+    } catch (e: ExposedSQLException) {
         EmailSignInResponse(
             status = UserCreationStatus.CONFLICT
         )

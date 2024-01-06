@@ -1,4 +1,4 @@
-package com.example.routes.auth.common
+package com.example.data.model.auth
 
 enum class EmailLoginStatus {
     USER_PASS_MATCHED,

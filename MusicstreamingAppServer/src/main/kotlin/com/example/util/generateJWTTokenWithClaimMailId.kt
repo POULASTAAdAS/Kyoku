@@ -1,4 +1,4 @@
-package com.example.routes.auth.common
+package com.example.util
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT

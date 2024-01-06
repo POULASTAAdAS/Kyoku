@@ -1,6 +1,5 @@
-package com.example.data.model
+package com.example.data.model.auth
 
-import com.example.routes.auth.common.EmailVerificationStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

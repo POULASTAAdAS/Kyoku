@@ -1,11 +1,11 @@
 package com.example.domain.repository.user
 
-import com.example.data.model.EmailLoginResponse
-import com.example.data.model.EmailSignInResponse
-import com.example.data.model.EmailVerificationResponse
-import com.example.data.model.SendForgotPasswordMail
-import com.example.routes.auth.common.PasswordResetStatus
-import com.example.routes.auth.common.UpdateEmailVerificationStatus
+import com.example.data.model.auth.EmailLoginResponse
+import com.example.data.model.auth.EmailSignInResponse
+import com.example.data.model.auth.EmailVerificationResponse
+import com.example.data.model.auth.SendForgotPasswordMail
+import com.example.data.model.auth.PasswordResetStatus
+import com.example.data.model.auth.UpdateEmailVerificationStatus
 
 interface EmailAuthUserRepository {
     suspend fun createUser(

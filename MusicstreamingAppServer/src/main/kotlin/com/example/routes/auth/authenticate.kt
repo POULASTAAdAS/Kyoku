@@ -1,6 +1,10 @@
 package com.example.routes.auth
 
 import com.example.data.model.*
+import com.example.data.model.auth.AuthReqBaseModel
+import com.example.data.model.auth.EmailLoginReq
+import com.example.data.model.auth.EmailSignUpReq
+import com.example.data.model.auth.GoogleAuthReq
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup

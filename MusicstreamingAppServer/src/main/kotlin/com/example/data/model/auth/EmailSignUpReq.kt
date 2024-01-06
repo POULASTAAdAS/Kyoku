@@ -1,5 +1,6 @@
-package com.example.data.model
+package com.example.data.model.auth
 
+import com.example.data.model.auth.AuthReqBaseModel
 import com.example.util.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import kotlinx.serialization.Serializable
 @Serializable

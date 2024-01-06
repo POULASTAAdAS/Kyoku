@@ -1,11 +1,11 @@
 package com.example.routes.auth
 
 import com.example.data.model.EndPoints
-import com.example.data.model.SendForgotPasswordMail
+import com.example.data.model.auth.SendForgotPasswordMail
+import com.example.data.model.auth.SendVerificationMailStatus
 import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.routes.auth.common.SendVerificationMailStatus
-import com.example.routes.auth.common.generateJWTTokenWithClaimMailId
 import com.example.util.Constants.BASE_URL
+import com.example.util.generateJWTTokenWithClaimMailId
 import com.example.util.sendMail
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -55,8 +55,7 @@ fun Route.forgotPassword(
                         message = result,
                         status = HttpStatusCode.OK
                     ) else call.respond(
-                        message =
-                        SendForgotPasswordMail(
+                        message = SendForgotPasswordMail(
                             status = SendVerificationMailStatus.SOMETHING_WENT_WRONG
                         ),
                         status = HttpStatusCode.Forbidden

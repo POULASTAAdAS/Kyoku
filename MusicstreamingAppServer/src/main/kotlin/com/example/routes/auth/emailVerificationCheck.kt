@@ -2,7 +2,7 @@ package com.example.routes.auth
 
 import com.example.data.model.EndPoints
 import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.routes.auth.common.EmailVerificationStatus
+import com.example.data.model.auth.EmailVerificationStatus
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
