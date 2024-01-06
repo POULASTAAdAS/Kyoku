@@ -1,19 +1,21 @@
 package com.example.util
 
+import com.example.util.Constants.SMS_EMAIL_GOOGLE_SMTP_HOST
+import com.example.util.Constants.SMS_EMAIL_PORT
 import com.sun.mail.util.MailConnectException
 import jakarta.mail.*
 import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
 import java.util.*
 
-fun sendMail(
+fun sendEmail(
     to: String,
     subject: String,
     content: String
 ): Boolean {
     val props = Properties().apply {
-        this["mail.smtp.host"] = Constants.GOOGLE_SMTP_HOST
-        this["mail.smtp.port"] = "587"
+        this["mail.smtp.host"] = SMS_EMAIL_GOOGLE_SMTP_HOST
+        this["mail.smtp.port"] = SMS_EMAIL_PORT
         this["mail.smtp.auth"] = "true"
         this["mail.smtp.starttls.enable"] = "true"
     }
@@ -34,10 +36,7 @@ fun sendMail(
     return try {
         val message = MimeMessage(session)
         message.setFrom(InternetAddress(System.getenv("email")))
-        message.setRecipients(
-            Message.RecipientType.TO,
-            to
-        )
+        message.setRecipients(Message.RecipientType.TO, to)
 
         message.subject = subject
         message.sentDate = Date()

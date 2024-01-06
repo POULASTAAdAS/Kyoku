@@ -8,7 +8,7 @@ import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants
 import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
 import com.example.util.generateJWTTokenWithClaimMailId
-import com.example.util.sendMail
+import com.example.util.sendEmail
 import com.example.util.verifyEmailIdWithApi
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -66,7 +66,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailSignup(
         }
     }
 
-    sendMail( // conform email
+    sendEmail( // conform email
         emailSignUpReq.email.trim(),
         subject = "Authentication Mail",
         content = (

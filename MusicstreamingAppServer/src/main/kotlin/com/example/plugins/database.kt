@@ -1,6 +1,7 @@
 package com.example.plugins
 
 import com.example.data.model.database.EmailAuthUserTable
+import com.example.data.model.database.GoogleAuthUserTable
 import com.example.data.model.database.SongTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -25,6 +26,7 @@ fun Application.configureDatabase() {
     transaction(db) {
         SchemaUtils.create(SongTable)
         SchemaUtils.create(EmailAuthUserTable)
+        SchemaUtils.create(GoogleAuthUserTable)
     }
 }
 

@@ -1,7 +1,7 @@
 package com.example.routes.auth.common
 
-import com.example.data.model.auth.GoogleAuthReq
 import com.example.data.model.GoogleUserSession
+import com.example.data.model.auth.GoogleAuthReq
 import com.example.data.model.auth.UserCreationStatus
 import com.example.domain.repository.user.GoogleAuthUserRepository
 import com.example.util.Constants.ISSUER
@@ -60,7 +60,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
                 }
 
                 UserCreationStatus.CONFLICT -> {
-                    // todo add
+                    call.respond(
+                        message = result,
+                        status = HttpStatusCode.OK
+                    )
                 }
 
                 UserCreationStatus.SOMETHING_WENT_WRONG -> {

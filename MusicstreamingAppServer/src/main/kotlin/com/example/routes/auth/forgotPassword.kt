@@ -6,7 +6,7 @@ import com.example.data.model.auth.SendVerificationMailStatus
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants.BASE_URL
 import com.example.util.generateJWTTokenWithClaimMailId
-import com.example.util.sendMail
+import com.example.util.sendEmail
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -46,7 +46,7 @@ fun Route.forgotPassword(
                             )
 
                     if (
-                        sendMail(
+                        sendEmail(
                             to = email,
                             subject = "Reset password mail",
                             content = content

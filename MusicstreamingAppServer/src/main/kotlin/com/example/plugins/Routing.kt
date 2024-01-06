@@ -1,6 +1,7 @@
 package com.example.plugins
 
 import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.domain.repository.user.GoogleAuthUserRepository
 import com.example.routes.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -10,9 +11,13 @@ import java.io.File
 
 fun Application.configureRouting() {
     val emailAuthUser: EmailAuthUserRepository = get()
+    val googleAuthUser: GoogleAuthUserRepository = get()
 
     routing {
-        createAuthRoute(emailAuthUser = emailAuthUser)
+        createAuthRoute(
+            emailAuthUser = emailAuthUser,
+            googleAuthUser = googleAuthUser
+        )
         verifyEmail(emailAuthUser = emailAuthUser)
         emailVerificationCheck(emailAuthUser = emailAuthUser)
         forgotPassword(emailAuthUser = emailAuthUser)

@@ -5,6 +5,7 @@ import com.example.data.model.database.EmailAuthUserTable
 import com.example.domain.model.EmailAuthUser
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.plugins.dbQuery
+import com.example.util.Constants.BASE_URL
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.update
@@ -26,7 +27,8 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
             EmailSignInResponse(
                 userName = it.userName,
                 token = token,
-                status = UserCreationStatus.CREATED
+                status = UserCreationStatus.CREATED,
+                profilePic = "$BASE_URL/${it.profilePic}"
             )
         }
     } catch (e: ExposedSQLException) {
@@ -101,7 +103,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 if (user.emailVerified)
                     EmailLoginResponse(
                         userName = user.userName,
-                        profilePhoto = null, // todo add
+                        profilePic = "$BASE_URL/${user.profilePic}",
                         status = EmailLoginStatus.USER_PASS_MATCHED,
                         token = token,
                         data = emptyList() // todo add data
@@ -119,7 +121,6 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 status = EmailLoginStatus.USER_DOES_NOT_EXISTS
             )
         } catch (e: Exception) {
-            println("error finding user: $e")
             EmailLoginResponse(
                 status = EmailLoginStatus.SOMETHING_WENT_WRONG
             )

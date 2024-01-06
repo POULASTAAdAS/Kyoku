@@ -12,4 +12,5 @@ class EmailAuthUser(id: EntityID<Int>) : IntEntity(id) {
     var email by EmailAuthUserTable.email
     var password by EmailAuthUserTable.password
     var emailVerified by EmailAuthUserTable.emailVerified
+    var profilePic by EmailAuthUserTable.profilePic
 }

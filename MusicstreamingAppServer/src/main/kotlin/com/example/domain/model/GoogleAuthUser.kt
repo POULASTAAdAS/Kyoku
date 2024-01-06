@@ -11,5 +11,5 @@ class GoogleAuthUser(id: EntityID<Int>) : IntEntity(id) {
     var userName by GoogleAuthUserTable.userName
     var email by GoogleAuthUserTable.email
     var sub by GoogleAuthUserTable.sub
-    var pictureUrl by GoogleAuthUserTable.pictureUrl
+    var profilePicUrl by GoogleAuthUserTable.profilePic
 }

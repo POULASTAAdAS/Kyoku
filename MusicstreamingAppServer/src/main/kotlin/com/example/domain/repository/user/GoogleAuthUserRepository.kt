@@ -1,6 +1,6 @@
 package com.example.domain.repository.user
 
-import com.example.data.model.auth.UserCreationResponse
+import com.example.data.model.auth.GoogleSignInResponse
 
 interface GoogleAuthUserRepository {
     suspend fun createUser(
@@ -8,5 +8,5 @@ interface GoogleAuthUserRepository {
         email: String,
         sub: String,
         pictureUrl: String
-    ): UserCreationResponse
+    ): GoogleSignInResponse
 }
