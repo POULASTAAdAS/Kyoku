@@ -1,10 +1,10 @@
-package com.example.data.repository.user
+package com.example.data.repository.user_db
 
 import com.example.data.model.auth.GoogleSignInResponse
 import com.example.data.model.auth.UserCreationStatus
 import com.example.data.model.database.GoogleAuthUserTable
-import com.example.domain.model.GoogleAuthUser
-import com.example.domain.repository.user.GoogleAuthUserRepository
+import com.example.domain.dao.GoogleAuthUser
+import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.plugins.dbQuery
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 

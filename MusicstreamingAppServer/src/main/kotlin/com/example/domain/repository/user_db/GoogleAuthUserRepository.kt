@@ -1,4 +1,4 @@
-package com.example.domain.repository.user
+package com.example.domain.repository.user_db
 
 import com.example.data.model.auth.GoogleSignInResponse
 

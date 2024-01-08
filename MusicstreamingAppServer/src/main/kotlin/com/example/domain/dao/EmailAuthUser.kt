@@ -1,12 +1,12 @@
-package com.example.domain.model
+package com.example.domain.dao
 
 import com.example.data.model.database.EmailAuthUserTable
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class EmailAuthUser(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<EmailAuthUser>(EmailAuthUserTable)
+class EmailAuthUser(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<EmailAuthUser>(EmailAuthUserTable)
 
     var userName by EmailAuthUserTable.userName
     var email by EmailAuthUserTable.email

@@ -1,12 +1,12 @@
-package com.example.domain.model
+package com.example.domain.dao
 
 import com.example.data.model.database.GoogleAuthUserTable
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.LongEntity
+import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class GoogleAuthUser(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<GoogleAuthUser>(GoogleAuthUserTable)
+class GoogleAuthUser(id: EntityID<Long>) : LongEntity(id) {
+    companion object : LongEntityClass<GoogleAuthUser>(GoogleAuthUserTable)
 
     var userName by GoogleAuthUserTable.userName
     var email by GoogleAuthUserTable.email

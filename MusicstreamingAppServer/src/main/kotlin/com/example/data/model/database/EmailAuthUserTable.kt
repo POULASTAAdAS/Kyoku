@@ -1,10 +1,10 @@
 package com.example.data.model.database
 
 import com.example.util.Constants.DATABASE_ROOT_DIR
-import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column
 
-object EmailAuthUserTable : IntIdTable() {
+object EmailAuthUserTable : LongIdTable()  {
     val userName: Column<String> = text("username")
     val email: Column<String> = varchar("email", 320).uniqueIndex()
     val password: Column<String> = varchar("password", 20)

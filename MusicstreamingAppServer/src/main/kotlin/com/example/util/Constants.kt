@@ -3,7 +3,7 @@ package com.example.util
 object Constants {
     const val DATABASE_ROOT_DIR = "E:/songdb"
 
-    const val BASE_URL = "https://6030-103-192-116-166.ngrok-free.app"
+    const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
     const val ISSUER = "https://accounts.google.com"
 
     const val AUTH_TYPE_GOOGLE = "AUTH_TYPE_GOOGLE"

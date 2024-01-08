@@ -4,7 +4,7 @@ import com.example.data.model.EndPoints
 import com.example.data.model.GoogleUserSession
 import com.example.data.model.auth.GoogleAuthReq
 import com.example.data.model.auth.UserCreationStatus
-import com.example.domain.repository.user.GoogleAuthUserRepository
+import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.util.Constants.ISSUER
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier

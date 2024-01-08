@@ -4,7 +4,7 @@ import com.example.data.model.EndPoints
 import com.example.data.model.auth.EmailSignInResponse
 import com.example.data.model.auth.EmailSignUpReq
 import com.example.data.model.auth.UserCreationStatus
-import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.util.Constants
 import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
 import com.example.util.generateJWTTokenWithClaimMailId

@@ -1,7 +1,8 @@
 package com.example.routes
 
 import com.example.data.model.EndPoints
-import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.domain.repository.user_db.EmailAuthUserRepository
+import com.example.util.Constants.BASE_URL
 import com.example.util.getClaimFromPayload
 import com.example.util.respondFile
 import io.ktor.http.*
@@ -45,3 +46,4 @@ fun Route.getUserProfilePic(
         }
     }
 }
+

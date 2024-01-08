@@ -3,7 +3,7 @@ package com.example.routes.auth
 import com.example.data.model.EndPoints
 import com.example.data.model.auth.SendForgotPasswordMail
 import com.example.data.model.auth.SendVerificationMailStatus
-import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.util.Constants.BASE_URL
 import com.example.util.generateJWTTokenWithClaimMailId
 import com.example.util.sendEmail

@@ -5,8 +5,8 @@ import com.example.data.model.auth.AuthReqBaseModel
 import com.example.data.model.auth.EmailLoginReq
 import com.example.data.model.auth.EmailSignUpReq
 import com.example.data.model.auth.GoogleAuthReq
-import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.domain.repository.user.GoogleAuthUserRepository
+import com.example.domain.repository.user_db.EmailAuthUserRepository
+import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup
 import com.example.routes.auth.common.handleGoogleLogin

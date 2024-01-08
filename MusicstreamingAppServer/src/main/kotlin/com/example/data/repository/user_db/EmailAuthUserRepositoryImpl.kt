@@ -1,12 +1,11 @@
-package com.example.data.repository.user
+package com.example.data.repository.user_db
 
-import com.example.data.model.EndPoints
 import com.example.data.model.auth.*
 import com.example.data.model.database.EmailAuthUserTable
-import com.example.domain.model.EmailAuthUser
-import com.example.domain.repository.user.EmailAuthUserRepository
+import com.example.domain.dao.EmailAuthUser
+import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.plugins.dbQuery
-import com.example.util.Constants.BASE_URL
+import com.example.util.constructProfileUrl
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.update
@@ -30,7 +29,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 userName = it.userName,
                 token = token,
                 status = UserCreationStatus.CREATED,
-                profilePic = "$BASE_URL${EndPoints.ProfilePic.route}"
+                profilePic = constructProfileUrl()
             )
         }
     } catch (e: ExposedSQLException) {
@@ -107,7 +106,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                         userName = user.userName,
                         status = EmailLoginStatus.USER_PASS_MATCHED,
                         token = token,
-                        profilePic = "$BASE_URL${EndPoints.ProfilePic.route}",
+                        profilePic = constructProfileUrl(),
                         data = emptyList() // todo add data
                     )
                 else

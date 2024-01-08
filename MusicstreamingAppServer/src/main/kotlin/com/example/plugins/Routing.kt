@@ -1,7 +1,8 @@
 package com.example.plugins
 
-import com.example.domain.repository.user.EmailAuthUserRepository
-import com.example.domain.repository.user.GoogleAuthUserRepository
+import com.example.domain.repository.song_db.SongRepository
+import com.example.domain.repository.user_db.EmailAuthUserRepository
+import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.*
 import com.example.routes.getSpotifyPlaylist
 import com.example.routes.getUserProfilePic
@@ -15,6 +16,7 @@ import java.io.File
 fun Application.configureRouting() {
     val emailAuthUser: EmailAuthUserRepository = get()
     val googleAuthUser: GoogleAuthUserRepository = get()
+    val songs: SongRepository = get()
 
     routing {
         createAuthRoute(
@@ -28,7 +30,7 @@ fun Application.configureRouting() {
 
         getUserProfilePic(emailAuthUser = emailAuthUser)
 
-        getSpotifyPlaylist()
+        getSpotifyPlaylist(songRepository = songs)
 
         unauthorised()
         static(".well-known") {

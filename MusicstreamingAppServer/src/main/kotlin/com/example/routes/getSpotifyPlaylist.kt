@@ -1,6 +1,13 @@
 package com.example.routes
 
 import com.example.data.model.EndPoints
+import com.example.data.model.HandleSpotifyPlaylistStatus
+import com.example.data.model.SpotifyPlaylistResponse
+import com.example.data.model.SpotifySong
+import com.example.domain.repository.song_db.SongRepository
+import com.example.util.getAlbum
+import com.example.util.removeAlbum
+import com.example.util.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -11,50 +18,109 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.*
+
 
 fun Route.getSpotifyPlaylist(
-    clientId: String = System.getenv("spotifyClientId"),
-    clientSecret: String = System.getenv("spotifyClientSecret"),
+    songRepository: SongRepository,
 ) {
     authenticate("jwt-auth") {
         route(EndPoints.GetSpotifyPlaylist.route) {
-            get { // todo it's a mess
-                // todo get playlistID form url
-                // todo val spotifyUrl = call.parameters["url"]
+            post {
+                val playlistId = call.parameters["playlistId"]
 
-                val playlistId = "4k9rnYaAavL1Q0sTsgvUA4"
-                val accessToken = runBlocking {
-                    getAccessToken(clientId, clientSecret)
+                if (playlistId == null) {
+                    call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                    return@post
                 }
 
+                val playlist = getPlaylist(playlistId)
 
-                val client = HttpClient()
-
-                val result = runBlocking {
-                    client.get("https://api.spotify.com/v1/playlists/$playlistId/tracks") {
-                        header("Authorization", "Bearer $accessToken")
-                    }.bodyAsText()
+                getSongNameAndAlbum(playlist, songRepository) {
+                    call.respond(
+                        message = it,
+                        status = HttpStatusCode.OK
+                    )
                 }
-
-                client.close()
-
-                call.respond(
-                    message = result,
-                    status = HttpStatusCode.OK
-                )
             }
         }
     }
 }
 
+suspend fun getSongNameAndAlbum(
+    jsonObject: String,
+    songRepository: SongRepository,
+    postResponse: suspend (song: SpotifyPlaylistResponse) -> Unit
+) {
+    val list = ArrayList<SpotifySong>()
+
+    try {
+        val jsonElement = Json.parseToJsonElement(jsonObject)
+
+        val itemsArray = jsonElement.jsonObject["items"]?.jsonArray
+
+        itemsArray?.forEach { item ->
+            val trackJson = item?.jsonObject?.get("track") // some items don't exist this check is important
+
+            if (trackJson != null && trackJson is JsonObject) {
+
+                val spotifySong = SpotifySong()
+
+                item.jsonObject["track"]?.jsonObject?.get("name")
+                    ?.jsonPrimitive?.contentOrNull?.let { name ->
+                        if (name.isNotBlank())
+                            spotifySong.title = name.removeAlbum()
+                    }
+
+                item.jsonObject["track"]?.jsonObject?.get("album")
+                    ?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull?.let {
+                        if (it.isNotBlank())
+                            spotifySong.album = it.getAlbum()
+                    }
+
+                if (spotifySong.album != null || spotifySong.title != null)
+                    list.add(spotifySong)
+            }
+        }
+    } catch (e: Exception) {
+        println("error: $e")
+    }
+
+    val result = songRepository.handleSpotifyPlaylist(list)
+
+    when (result.status) {
+        HandleSpotifyPlaylistStatus.SUCCESS -> {
+            postResponse(
+                result.spotifyPlaylistResponse
+            )
+
+            result.spotifySongDownloaderApiReq.makeApiCallOnNotFoundSpotifySongs()
+        }
+
+        HandleSpotifyPlaylistStatus.FAILURE -> Unit
+    }
+}
+
+
+private suspend fun getPlaylist(playlistId: String): String {
+    val accessToken = getSpotifyPlaylistAccessToken()
+
+    val client = HttpClient()
+
+    val result = client.get("https://api.spotify.com/v1/playlists/$playlistId/tracks") {
+        header("Authorization", "Bearer $accessToken")
+    }.bodyAsText()
+
+    client.close()
+    return result
+}
+
+
 @OptIn(InternalAPI::class)
-suspend fun getAccessToken(
-    clientId: String,
-    clientSecret: String
+private suspend fun getSpotifyPlaylistAccessToken(
+    clientId: String = System.getenv("spotifyClientId"),
+    clientSecret: String = System.getenv("spotifyClientSecret"),
 ): String {
     val tokenEndpoint = "https://accounts.spotify.com/api/token"
     val formData = Parameters.build {

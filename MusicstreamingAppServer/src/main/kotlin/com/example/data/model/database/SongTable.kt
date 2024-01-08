@@ -1,10 +1,9 @@
 package com.example.data.model.database
 
+import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.Table
 
-object SongTable : Table() {
-    val id: Column<Long> = long("id")
+object SongTable : LongIdTable() {
     val coverImage: Column<String> = text("coverImage")
     val masterPlaylistPath: Column<String> = text("masterPlaylistPath")
     val totalTime: Column<String> = text("totalTime")
