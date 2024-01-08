@@ -1,8 +1,8 @@
 package com.example.plugins
 
-import com.example.data.model.database.EmailAuthUserTable
-import com.example.data.model.database.GoogleAuthUserTable
-import com.example.data.model.database.SongTable
+import com.example.data.model.database_table.EmailAuthUserTable
+import com.example.data.model.database_table.GoogleAuthUserTable
+import com.example.data.model.database_table.SongTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*

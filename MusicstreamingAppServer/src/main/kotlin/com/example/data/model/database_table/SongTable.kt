@@ -1,4 +1,4 @@
-package com.example.data.model.database
+package com.example.data.model.database_table
 
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column

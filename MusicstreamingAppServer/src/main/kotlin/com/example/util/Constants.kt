@@ -1,9 +1,12 @@
 package com.example.util
 
 object Constants {
-    const val DATABASE_ROOT_DIR = "E:/songdb"
+    const val MASTER_PLAYLIST_ROOT_DIR = "E:/songdb/master/"
+    const val COVER_IMAGE_ROOT_DIR = "E:/songdb/coverImage/"
+    const val PROFILE_PIC_ROOT_DIR = "E:/songdb/userProfilePic"
 
     const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
+
     const val ISSUER = "https://accounts.google.com"
 
     const val AUTH_TYPE_GOOGLE = "AUTH_TYPE_GOOGLE"

@@ -47,7 +47,7 @@ select * from song where album like '%Tiger 3%' and title like '%Ruaan%';
 
 select title from song where album like '%Whistle Baja 2.0 Heropanti 2%';
 
-select title from song where album like '%Tiger 3%';
+select * from song where album like '%Tiger 3%';
 
 SELECT * FROM song WHERE (song.title LIKE '%Mauka Parast%') AND (song.album LIKE '%Heropanti 2%');
 

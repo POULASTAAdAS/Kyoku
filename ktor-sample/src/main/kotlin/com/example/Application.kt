@@ -10,10 +10,16 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.apache.commons.validator.routines.EmailValidator
 
-fun main() {
-    val temp = "Whistle Baja 2.0 Heropanti 2";
+const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
 
-    println(temp.contains("Heropanti 2"))
+const val PATH = "E:/songdb/coverImage/Ruaan_Tiger_3.jpeg"
+
+fun main() {
+
+
+//    val temp = "Whistle Baja 2.0 Heropanti 2";
+//
+//    println(temp.contains("Heropanti 2"))
 
 //    val temp = "Bulleya (From \"Ae Dil Hai Mushkil\")"
 //

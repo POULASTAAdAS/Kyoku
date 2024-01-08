@@ -2,7 +2,7 @@ package com.example.data.repository.user_db
 
 import com.example.data.model.auth.GoogleSignInResponse
 import com.example.data.model.auth.UserCreationStatus
-import com.example.data.model.database.GoogleAuthUserTable
+import com.example.data.model.database_table.GoogleAuthUserTable
 import com.example.domain.dao.GoogleAuthUser
 import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.plugins.dbQuery

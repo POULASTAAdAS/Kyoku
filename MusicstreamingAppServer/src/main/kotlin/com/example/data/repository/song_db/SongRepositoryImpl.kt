@@ -1,13 +1,14 @@
 package com.example.data.repository.song_db
 
 import com.example.data.model.*
-import com.example.data.model.database.SongTable
+import com.example.data.model.database_table.SongTable
 import com.example.domain.dao.Song
 import com.example.domain.repository.song_db.SongRepository
 import com.example.plugins.dbQuery
 import com.example.util.toResponseSong
 import io.ktor.util.collections.*
 import org.jetbrains.exposed.sql.and
+import java.io.File
 
 class SongRepositoryImpl : SongRepository {
     override suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist {
@@ -56,5 +57,11 @@ class SongRepositoryImpl : SongRepository {
                 status = HandleSpotifyPlaylistStatus.FAILURE
             )
         }
+    }
+
+    override fun getCoverImage(path: String): File? = try {
+        File(path)
+    } catch (e: Exception) {
+        null
     }
 }

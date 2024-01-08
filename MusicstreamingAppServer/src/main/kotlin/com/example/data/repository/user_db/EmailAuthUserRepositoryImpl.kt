@@ -1,7 +1,7 @@
 package com.example.data.repository.user_db
 
 import com.example.data.model.auth.*
-import com.example.data.model.database.EmailAuthUserTable
+import com.example.data.model.database_table.EmailAuthUserTable
 import com.example.domain.dao.EmailAuthUser
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.plugins.dbQuery

@@ -1,6 +1,6 @@
 package com.example.domain.dao
 
-import com.example.data.model.database.SongTable
+import com.example.data.model.database_table.SongTable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

@@ -4,6 +4,7 @@ import com.example.domain.repository.song_db.SongRepository
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.*
+import com.example.routes.getCoverPhoto
 import com.example.routes.getSpotifyPlaylist
 import com.example.routes.getUserProfilePic
 import com.example.routes.unauthorised
@@ -31,6 +32,8 @@ fun Application.configureRouting() {
         getUserProfilePic(emailAuthUser = emailAuthUser)
 
         getSpotifyPlaylist(songRepository = songs)
+
+        getCoverPhoto(songRepository = songs)
 
         unauthorised()
         static(".well-known") {

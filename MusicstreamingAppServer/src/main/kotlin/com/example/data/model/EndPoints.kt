@@ -11,6 +11,9 @@ sealed class EndPoints(val route: String) {
     data object ProfilePic : EndPoints(route = "/api/authorised/user/profilePic")
     data object GetSpotifyPlaylist : EndPoints(route = "/api/authorised/spotifyPlaylist")
 
+    data object PlaySong : EndPoints(route = "/api/authorised/playSong")
+    data object CoverImage : EndPoints(route = "/api/authorised/coverImage")
+
     data object UnAuthorised : EndPoints(route = "/api/unauthorised")
 
 }

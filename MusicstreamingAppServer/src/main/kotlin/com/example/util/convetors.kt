@@ -3,6 +3,9 @@ package com.example.util
 import com.example.data.model.EndPoints
 import com.example.data.model.ResponseSong
 import com.example.domain.dao.Song
+import com.example.util.Constants.BASE_URL
+import com.example.util.Constants.COVER_IMAGE_ROOT_DIR
+import com.example.util.Constants.MASTER_PLAYLIST_ROOT_DIR
 
 fun Song.toResponseSong(): ResponseSong {
     return ResponseSong(
@@ -35,8 +38,13 @@ fun String.getAlbum(): String {
 fun String.removeAlbum(): String =
     this.replace(Regex("\\(.*"), "").trim()
 
-fun constructProfileUrl(): String = "${Constants.BASE_URL}${EndPoints.ProfilePic.route}"
+fun constructProfileUrl(): String = "$BASE_URL${EndPoints.ProfilePic.route}"
 
-fun String.constructCoverPhotoUrl(): String = this
+fun String.constructCoverPhotoUrl(): String = "$BASE_URL${EndPoints.CoverImage.route}?coverImage=${
+    this.replace(COVER_IMAGE_ROOT_DIR, "")
+}"
 
-fun String.constructMasterPlaylistUrl(): String = this
+fun String.constructMasterPlaylistUrl(): String =
+    "$BASE_URL${EndPoints.PlaySong.route}?playlist=${
+        this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
+    }"
