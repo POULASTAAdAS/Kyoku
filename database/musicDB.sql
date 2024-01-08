@@ -38,7 +38,7 @@ select * from GoogleAuthUser;
 
 
 
-
+select * from song where album like "%Aashiqui 2%";
 
 
 

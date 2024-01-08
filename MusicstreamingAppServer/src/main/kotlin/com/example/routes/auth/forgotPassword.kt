@@ -20,10 +20,7 @@ fun Route.forgotPassword(
             val email = call.parameters["email"]
 
             if (email == null) {
-                call.respond(
-                    message = "invalid request",
-                    status = HttpStatusCode.Forbidden
-                )
+                call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 return@get
             }
@@ -36,11 +33,11 @@ fun Route.forgotPassword(
                             (
                                     "<html>"
                                             + "<body>"
-                                            + "<h1>Do not share this mail</h1>"
+                                            + "<h1>Do not share this email</h1>"
                                             + "<p>Click the following link to reset your password:</p>"
                                             + "<a href=\"${BASE_URL + EndPoints.ResetPassword.route}?token=" +
                                             email.trim().generateJWTTokenWithClaimMailId(call.application.environment)
-                                    ) + "\">Reset Password</a>"
+                                    ) + "\">Reset Password</a>" // todo add js and textField
                                     + "</body>"
                                     + "</html>"
                             )

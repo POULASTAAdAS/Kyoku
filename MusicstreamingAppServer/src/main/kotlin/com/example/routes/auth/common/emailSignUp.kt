@@ -1,8 +1,8 @@
 package com.example.routes.auth.common
 
+import com.example.data.model.EndPoints
 import com.example.data.model.auth.EmailSignInResponse
 import com.example.data.model.auth.EmailSignUpReq
-import com.example.data.model.EndPoints
 import com.example.data.model.auth.UserCreationStatus
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants
@@ -26,7 +26,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailSignup(
         ).let {
             if (!it) {
                 call.respond(
-                    message = "not a valid email",
+                    message = EmailSignInResponse(
+                        status = UserCreationStatus.EMAIL_NOT_VALID
+                    ),
                     status = HttpStatusCode.BadRequest
                 )
                 return
@@ -64,6 +66,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailSignup(
             )
             return
         }
+
+        UserCreationStatus.EMAIL_NOT_VALID -> Unit // this will not occur
     }
 
     sendEmail( // conform email

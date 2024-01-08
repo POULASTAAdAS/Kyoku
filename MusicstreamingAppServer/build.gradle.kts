@@ -62,4 +62,7 @@ dependencies {
 
     // Google Client API Library
     implementation("com.google.api-client:google-api-client:2.2.0")
+
+    // spotify web api
+    implementation("se.michaelthelin.spotify:spotify-web-api-java:8.3.4")
 }

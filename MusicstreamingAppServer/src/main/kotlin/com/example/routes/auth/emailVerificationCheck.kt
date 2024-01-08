@@ -1,8 +1,8 @@
 package com.example.routes.auth
 
 import com.example.data.model.EndPoints
-import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.data.model.auth.EmailVerificationStatus
+import com.example.domain.repository.user.EmailAuthUserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -14,10 +14,7 @@ fun Route.emailVerificationCheck(emailAuthUser: EmailAuthUserRepository) {
             val email = call.parameters["email"]
 
             if (email == null) {
-                call.respond(
-                    message = "invalid request",
-                    status = HttpStatusCode.Forbidden
-                )
+                call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 return@get
             }

@@ -1,11 +1,7 @@
 package com.example.domain.repository.user
 
-import com.example.data.model.auth.EmailLoginResponse
-import com.example.data.model.auth.EmailSignInResponse
-import com.example.data.model.auth.EmailVerificationResponse
-import com.example.data.model.auth.SendForgotPasswordMail
-import com.example.data.model.auth.PasswordResetStatus
-import com.example.data.model.auth.UpdateEmailVerificationStatus
+import com.example.data.model.auth.*
+import java.io.File
 
 interface EmailAuthUserRepository {
     suspend fun createUser(
@@ -20,4 +16,6 @@ interface EmailAuthUserRepository {
     suspend fun loginUser(email: String, password: String, token: String): EmailLoginResponse
     suspend fun sendForgotPasswordMail(email: String): SendForgotPasswordMail
     suspend fun passwordReset(email: String, password: String): PasswordResetStatus
+
+    suspend fun getUserProfilePic(email: String): File?
 }

@@ -1,6 +1,7 @@
 package com.example.routes.auth.common
 
 import com.example.data.model.auth.EmailLoginReq
+import com.example.data.model.auth.EmailLoginResponse
 import com.example.data.model.auth.EmailLoginStatus
 import com.example.domain.repository.user.EmailAuthUserRepository
 import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
@@ -21,7 +22,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
         ).let {
             if (!it) {
                 call.respond(
-                    message = "not a valid email",
+                    message = EmailLoginResponse(
+                        status = EmailLoginStatus.EMAIL_NOT_VALID
+                    ),
                     status = HttpStatusCode.BadRequest
                 )
                 return
@@ -72,5 +75,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
                 status = HttpStatusCode.InternalServerError
             )
         }
+
+        EmailLoginStatus.EMAIL_NOT_VALID -> Unit
     }
 }

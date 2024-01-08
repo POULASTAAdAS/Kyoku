@@ -1,5 +1,6 @@
 package com.example.data.repository.user
 
+import com.example.data.model.EndPoints
 import com.example.data.model.auth.*
 import com.example.data.model.database.EmailAuthUserTable
 import com.example.domain.model.EmailAuthUser
@@ -9,6 +10,7 @@ import com.example.util.Constants.BASE_URL
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.update
+import java.io.File
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
     override suspend fun createUser(
@@ -28,7 +30,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 userName = it.userName,
                 token = token,
                 status = UserCreationStatus.CREATED,
-                profilePic = "$BASE_URL/${it.profilePic}"
+                profilePic = "$BASE_URL${EndPoints.ProfilePic.route}"
             )
         }
     } catch (e: ExposedSQLException) {
@@ -103,9 +105,9 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 if (user.emailVerified)
                     EmailLoginResponse(
                         userName = user.userName,
-                        profilePic = "$BASE_URL/${user.profilePic}",
                         status = EmailLoginStatus.USER_PASS_MATCHED,
                         token = token,
+                        profilePic = "$BASE_URL${EndPoints.ProfilePic.route}",
                         data = emptyList() // todo add data
                     )
                 else
@@ -168,8 +170,21 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
             if (status) PasswordResetStatus.SUCCESSFUL
             else PasswordResetStatus.SAME_AS_OLD_PASSWORD
         } catch (e: Exception) {
-            println("error: $e")
             PasswordResetStatus.SOMETHING_WENT_WRONG
+        }
+    }
+
+    override suspend fun getUserProfilePic(email: String): File? {
+        return try {
+            dbQuery {
+                val user = EmailAuthUser.find {
+                    EmailAuthUserTable.email eq email
+                }.first()
+
+                File(user.profilePic)
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }

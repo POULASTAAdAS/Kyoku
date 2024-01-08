@@ -12,8 +12,6 @@ object Constants {
 
     const val SMS_EMAIL_GOOGLE_SMTP_HOST = "smtp.gmail.com"
     const val SMS_EMAIL_PORT = "587"
-    const val KOLKATA_SMS_GATEWAY = "@sms.rcom.co.in"
-
 
     const val USED_TOKEN = "TOKEN_ALREADY_USED"
 

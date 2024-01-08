@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MusicStreamingApp</string>
+
+    <string name="facebook_app_id">1087288922691728</string>
 </resources>

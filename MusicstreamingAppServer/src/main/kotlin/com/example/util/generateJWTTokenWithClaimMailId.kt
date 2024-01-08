@@ -20,8 +20,8 @@ fun String.generateJWTTokenWithClaimMailId(
     val privateKeyString = env.config.property("jwt.privateKey").getString()
 
     val jwkProvider = JwkProviderBuilder(issuer)
-        .cached(1, 5, TimeUnit.MINUTES)
-        .rateLimited(3, 1, TimeUnit.MINUTES)
+        .cached(10, 24, TimeUnit.HOURS)
+        .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
 
     val publicKey = jwkProvider.get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
@@ -29,6 +29,7 @@ fun String.generateJWTTokenWithClaimMailId(
     val privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpecPKCS8)
 
     return JWT.create()
+        .withSubject("Authentication")
         .withAudience(audience)
         .withIssuer(issuer)
         .withClaim("email", this)

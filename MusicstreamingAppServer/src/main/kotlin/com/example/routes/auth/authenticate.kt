@@ -10,7 +10,6 @@ import com.example.domain.repository.user.GoogleAuthUserRepository
 import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup
 import com.example.routes.auth.common.handleGoogleLogin
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -28,10 +27,7 @@ fun Route.createAuthRoute(
             val payload = try {
                 Json.decodeFromString<AuthReqBaseModel>(message)
             } catch (e: Exception) {
-                call.respond(
-                    message = "invalid request",
-                    status = HttpStatusCode.Unauthorized
-                )
+                call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 return@post
             }

@@ -1,5 +1,6 @@
 package com.example.routes.auth.common
 
+import com.example.data.model.EndPoints
 import com.example.data.model.GoogleUserSession
 import com.example.data.model.auth.GoogleAuthReq
 import com.example.data.model.auth.UserCreationStatus
@@ -22,10 +23,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
     val result = googleAuthReq.tokenId.trim().verifyTokenId()
 
     if (result == null) {
-        call.respond(
-            message = "invalid request",
-            status = HttpStatusCode.Forbidden
-        )
+        call.respondRedirect(EndPoints.UnAuthorised.route)
 
         return
     }
@@ -72,12 +70,11 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
                         status = HttpStatusCode.InternalServerError
                     )
                 }
+
+                UserCreationStatus.EMAIL_NOT_VALID -> Unit // this will not occur
             }
         } catch (e: Exception) {
-            call.respond(
-                message = "invalid request",
-                status = HttpStatusCode.Forbidden
-            )
+            call.respondRedirect(EndPoints.UnAuthorised.route)
         }
     }
 }

@@ -21,7 +21,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.extractor.ogg.OggExtractor
 import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
 import com.example.musicstreamingapp.ui.theme.MusicStreamingAppTheme
 
@@ -29,6 +28,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(UnstableApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         setContent {
             MusicStreamingAppTheme {
@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -86,6 +85,7 @@ class MainActivity : ComponentActivity() {
                             player.play()
                             Log.d("clicked", "play clicked")
                         }
+
                     }) {
                         Text(text = "button")
                     }

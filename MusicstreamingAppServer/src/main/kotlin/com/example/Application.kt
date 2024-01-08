@@ -1,36 +1,36 @@
 package com.example
 
-import com.example.plugins.configureDatabase
-import com.example.plugins.configureKoin
-import com.example.plugins.configureRouting
-import com.example.plugins.configureSerialization
+import com.example.plugins.*
 import io.ktor.server.application.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 val invalidTokenList = ArrayList<String>()
 
+@OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
-    removeFirstTokenAfter10Minute()
+
+    GlobalScope.launch(Dispatchers.IO) {
+        removeFirstTokenAfter10Minute()
+    }
 }
 
 fun Application.module() {
     configureKoin()
     configureSerialization()
     configureDatabase()
+    configureSecurity()
     configureRouting()
+    configureSession()
 }
 
-private fun removeFirstTokenAfter10Minute() {
-    runBlocking {
-        while (true) {
-            delay(600000L)
-            try {
-                invalidTokenList.removeAt(0)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+private suspend fun removeFirstTokenAfter10Minute() {
+    while (true) {
+        delay(600000L)
+        try {
+            invalidTokenList.removeAt(0)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
