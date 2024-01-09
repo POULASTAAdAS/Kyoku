@@ -45,6 +45,6 @@ fun String.constructCoverPhotoUrl(): String = "$BASE_URL${EndPoints.CoverImage.r
 }"
 
 fun String.constructMasterPlaylistUrl(): String =
-    "$BASE_URL${EndPoints.PlaySong.route}?playlist=${
+    "$BASE_URL${EndPoints.PlaySongMaster.route}?playlist=${
         this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
     }"

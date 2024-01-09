@@ -28,7 +28,7 @@ fun Route.getCoverPhoto(
                     }
 
                     call.respond(
-                        message = "not cover photo found",
+                        message = "no cover photo found",
                         status = HttpStatusCode.OK
                     )
 

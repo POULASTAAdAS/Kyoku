@@ -25,7 +25,7 @@ fun Route.getSpotifyPlaylist(
     songRepository: SongRepository,
 ) {
     authenticate("jwt-auth") {
-        route(EndPoints.GetSpotifyPlaylist.route) {
+        route(EndPoints.GetSpotifyPlaylistSong.route) {
             post {
                 val playlistId = call.parameters["playlistId"]
 

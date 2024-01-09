@@ -39,7 +39,7 @@ select distinct album from song;
 
 select * from song where (album like '%Rozaana%') or (album like '%Tiger 3%') or ( album like '%Heropanti 2%') or (album like '%Animal%');
 
--- Rehnuma - PagalNew ,Ruaan - PagalNew , Satranga - PagalNew , Saari Duniya Jalaa Denge - PagalNew
+-- Rehnuma ,Ruaan, Satranga, Saari Duniya Jalaa Denge
 
 select * from song where title like '%Rozaana%' and album like "%Rozaana%";
 
@@ -47,17 +47,9 @@ select * from song where album like '%Tiger 3%' and title like '%Ruaan%';
 
 select title from song where album like '%Whistle Baja 2.0 Heropanti 2%';
 
-select * from song where album like '%Tiger 3%';
+select * from song where album like '%Rozaana%';
 
 SELECT * FROM song WHERE (song.title LIKE '%Mauka Parast%') AND (song.album LIKE '%Heropanti 2%');
-
-
-
-
-
-
-
-
 
 
 
