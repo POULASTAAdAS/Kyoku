@@ -1,7 +1,6 @@
 package com.example.routes.auth.common
 
 import com.example.data.model.EndPoints
-import com.example.data.model.GoogleUserSession
 import com.example.data.model.auth.GoogleAuthReq
 import com.example.data.model.auth.UserCreationStatus
 import com.example.domain.repository.user_db.GoogleAuthUserRepository
@@ -13,14 +12,13 @@ import com.google.api.client.json.gson.GsonFactory
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.server.sessions.*
 import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
     googleAuthReq: GoogleAuthReq,
     googleAuthUser: GoogleAuthUserRepository
 ) {
-    val result = googleAuthReq.tokenId.trim().verifyTokenId()
+    val result = googleAuthReq.tokenId.verifyTokenId()
 
     if (result == null) {
         call.respondRedirect(EndPoints.UnAuthorised.route)
@@ -28,60 +26,61 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
         return
     }
 
-    result.let {
-        val sub = result.payload["sub"].toString()
-        val name = result.payload["name"].toString()
-        val pictureUrl = result.payload["picture"].toString()
-        val email = result.payload["email"].toString()
 
-        try {
-            call.sessions.set(
-                GoogleUserSession(
-                    sub = sub,
-                    name = name
+    val sub = result.payload["sub"].toString()
+    val name = result.payload["name"].toString()
+    val pictureUrl = result.payload["picture"].toString()
+    val email = result.payload["email"].toString()
+
+    try {
+//            call.sessions.set(
+//                GoogleUserSession(
+//                    sub = sub,
+//                    name = name
+//                )
+//            )
+
+        val userCreationResponse = googleAuthUser.createUser(
+            userName = name,
+            sub = sub,
+            email = email,
+            pictureUrl = pictureUrl
+        )
+
+        when (userCreationResponse.status) {
+            UserCreationStatus.CREATED -> {
+                call.respond(
+                    message = userCreationResponse,
+                    status = HttpStatusCode.OK
                 )
-            )
-
-            val userCreationResponse = googleAuthUser.createUser(
-                userName = name,
-                sub = sub,
-                email = email,
-                pictureUrl = pictureUrl
-            )
-
-            when (userCreationResponse.status) {
-                UserCreationStatus.CREATED -> {
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.OK
-                    )
-                }
-
-                UserCreationStatus.CONFLICT -> {
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.OK
-                    )
-                }
-
-                UserCreationStatus.SOMETHING_WENT_WRONG -> {
-                    call.respond(
-                        message = result,
-                        status = HttpStatusCode.InternalServerError
-                    )
-                }
-
-                UserCreationStatus.EMAIL_NOT_VALID -> Unit // this will not occur
             }
-        } catch (e: Exception) {
-            call.respondRedirect(EndPoints.UnAuthorised.route)
+
+            UserCreationStatus.CONFLICT -> {
+                call.respond(
+                    message = userCreationResponse,
+                    status = HttpStatusCode.OK
+                )
+            }
+
+            UserCreationStatus.SOMETHING_WENT_WRONG -> {
+                call.respond(
+                    message = userCreationResponse,
+                    status = HttpStatusCode.InternalServerError
+                )
+            }
+
+            UserCreationStatus.EMAIL_NOT_VALID -> Unit // this will not occur
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        call.respondRedirect(EndPoints.UnAuthorised.route)
     }
 }
 
 private fun String.verifyTokenId(): GoogleIdToken? = try {
+    println(this)
     GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
-        .setAudience(listOf(System.getenv("audience")))
+        .setAudience(listOf(System.getenv("clientId")))
         .setIssuer(ISSUER)
         .build()
         .verify(this)

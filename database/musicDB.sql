@@ -35,6 +35,9 @@ drop table emailAuthUser;
 select * from emailAuthUser;
 select * from GoogleAuthUser;
 
+drop table GoogleAuthUser;
+drop table emailAuthUser;
+
 select distinct album from song;
 
 select * from song where (album like '%Rozaana%') or (album like '%Tiger 3%') or ( album like '%Heropanti 2%') or (album like '%Animal%');
@@ -47,7 +50,7 @@ select * from song where album like '%Tiger 3%' and title like '%Ruaan%';
 
 select title from song where album like '%Whistle Baja 2.0 Heropanti 2%';
 
-select * from song where album like '%Rozaana%';
+select * from song where album like '%Animal%';
 
 SELECT * FROM song WHERE (song.title LIKE '%Mauka Parast%') AND (song.album LIKE '%Heropanti 2%');
 

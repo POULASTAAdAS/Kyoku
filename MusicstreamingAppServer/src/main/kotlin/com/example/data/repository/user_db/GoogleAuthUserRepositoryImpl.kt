@@ -31,9 +31,11 @@ class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
                 token = ""
             )
         } catch (e: ExposedSQLException) {
-            val user = GoogleAuthUser.find {
-                GoogleAuthUserTable.sub eq sub
-            }.first()
+            val user = dbQuery {
+                GoogleAuthUser.find {
+                    GoogleAuthUserTable.sub eq sub
+                }.first()
+            }
 
             GoogleSignInResponse( // todo query other values
                 status = UserCreationStatus.CONFLICT,
