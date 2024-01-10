@@ -1,8 +1,8 @@
 package com.example.routes.auth.common
 
-import com.example.data.model.auth.EmailLoginReq
-import com.example.data.model.auth.EmailLoginResponse
-import com.example.data.model.auth.EmailLoginStatus
+import com.example.data.model.auth.req.EmailLoginReq
+import com.example.data.model.auth.res.EmailLoginResponse
+import com.example.data.model.auth.stat.EmailLoginStatus
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
 import com.example.util.generateJWTTokenWithClaimMailId

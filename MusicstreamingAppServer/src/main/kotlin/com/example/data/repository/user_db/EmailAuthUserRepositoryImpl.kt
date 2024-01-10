@@ -1,6 +1,9 @@
 package com.example.data.repository.user_db
 
-import com.example.data.model.auth.*
+import com.example.data.model.auth.res.EmailLoginResponse
+import com.example.data.model.auth.res.EmailSignInResponse
+import com.example.data.model.auth.res.EmailVerificationResponse
+import com.example.data.model.auth.stat.*
 import com.example.data.model.database_table.EmailAuthUserTable
 import com.example.domain.dao.EmailAuthUser
 import com.example.domain.repository.user_db.EmailAuthUserRepository

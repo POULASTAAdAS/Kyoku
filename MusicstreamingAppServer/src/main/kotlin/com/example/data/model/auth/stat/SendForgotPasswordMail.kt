@@ -1,4 +1,4 @@
-package com.example.data.model.auth
+package com.example.data.model.auth.stat
 
 import kotlinx.serialization.Serializable
 

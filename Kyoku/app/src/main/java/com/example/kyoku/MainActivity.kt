@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.Test
 import com.example.kyoku.ui.theme.KyokuTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -50,11 +51,7 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-                    Temp(
-                        click.value
-                    ) {
-                        click.value = false
-                    }
+                    Test()
                 }
             }
         }

@@ -1,6 +1,11 @@
 package com.example.domain.repository.user_db
 
-import com.example.data.model.auth.*
+import com.example.data.model.auth.res.EmailLoginResponse
+import com.example.data.model.auth.res.EmailSignInResponse
+import com.example.data.model.auth.res.EmailVerificationResponse
+import com.example.data.model.auth.stat.PasswordResetStatus
+import com.example.data.model.auth.stat.SendForgotPasswordMail
+import com.example.data.model.auth.stat.UpdateEmailVerificationStatus
 import java.io.File
 
 interface EmailAuthUserRepository {

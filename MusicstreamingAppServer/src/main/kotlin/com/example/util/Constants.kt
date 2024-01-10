@@ -18,5 +18,5 @@ object Constants {
 
     const val USED_TOKEN = "TOKEN_ALREADY_USED"
 
-    const val JWT_TOKEN_DEFAULT_TIME = 172800000L
+    const val JWT_TOKEN_DEFAULT_TIME = 240000L
 }

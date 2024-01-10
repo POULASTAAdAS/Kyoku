@@ -2,7 +2,7 @@ package com.example.routes.auth
 
 import com.example.data.model.EndPoints
 import com.example.domain.repository.user_db.EmailAuthUserRepository
-import com.example.data.model.auth.PasswordResetStatus
+import com.example.data.model.auth.stat.PasswordResetStatus
 import com.example.util.verifyJWTTokenWithClaimMailId
 import com.example.util.Constants.USED_TOKEN
 import io.ktor.http.*

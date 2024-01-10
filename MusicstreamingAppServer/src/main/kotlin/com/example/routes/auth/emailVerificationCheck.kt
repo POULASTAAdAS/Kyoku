@@ -1,7 +1,7 @@
 package com.example.routes.auth
 
 import com.example.data.model.EndPoints
-import com.example.data.model.auth.EmailVerificationStatus
+import com.example.data.model.auth.stat.EmailVerificationStatus
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import io.ktor.http.*
 import io.ktor.server.application.*

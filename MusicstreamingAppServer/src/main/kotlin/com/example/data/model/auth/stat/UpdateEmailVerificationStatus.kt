@@ -1,4 +1,4 @@
-package com.example.data.model.auth
+package com.example.data.model.auth.stat
 
 enum class UpdateEmailVerificationStatus {
     DONE,

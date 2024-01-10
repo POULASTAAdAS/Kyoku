@@ -4,11 +4,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import io.ktor.util.*
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import org.apache.commons.validator.routines.EmailValidator
+import org.apache.commons.codec.binary.Hex
 
 const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
 
@@ -32,6 +30,8 @@ fun main() {
 //        client.checkEmailVerificationStatus()
 //    }
 }
+
+
 
 fun removePart() {
     val url = "https://open.spotify.com/playlist/5BuXPc7nCIh91ClFzIM55O?si=lA3Pks3TQUiOp97MaJPXIg"

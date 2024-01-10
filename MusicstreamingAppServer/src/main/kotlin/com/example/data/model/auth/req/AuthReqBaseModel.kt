@@ -1,4 +1,4 @@
-package com.example.data.model.auth
+package com.example.data.model.auth.req
 
 import kotlinx.serialization.Serializable
 

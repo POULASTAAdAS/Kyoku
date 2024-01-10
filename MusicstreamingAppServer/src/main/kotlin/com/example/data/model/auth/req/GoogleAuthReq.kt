@@ -1,4 +1,4 @@
-package com.example.data.model.auth
+package com.example.data.model.auth.req
 
 import com.example.util.Constants.AUTH_TYPE_GOOGLE
 import kotlinx.serialization.Serializable

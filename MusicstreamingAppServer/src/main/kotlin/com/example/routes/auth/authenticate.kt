@@ -1,15 +1,14 @@
 package com.example.routes.auth
 
 import com.example.data.model.EndPoints
-import com.example.data.model.auth.AuthReqBaseModel
-import com.example.data.model.auth.EmailLoginReq
-import com.example.data.model.auth.EmailSignUpReq
-import com.example.data.model.auth.GoogleAuthReq
+import com.example.data.model.auth.req.AuthReqBaseModel
+import com.example.data.model.auth.req.EmailLoginReq
+import com.example.data.model.auth.req.EmailSignUpReq
+import com.example.data.model.auth.req.GoogleAuthReq
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup
-import com.example.routes.auth.common.handleGoogleLogin
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -48,10 +47,10 @@ fun Route.createAuthRoute(
                 }
 
                 is GoogleAuthReq -> {
-                    handleGoogleLogin(
-                        googleAuthReq = payload,
-                        googleAuthUser = googleAuthUser
-                    )
+//                    handleGoogleLogin(
+//                        googleAuthReq = payload,
+//                        googleAuthUser = googleAuthUser
+//                    )
                 }
             }
         }
