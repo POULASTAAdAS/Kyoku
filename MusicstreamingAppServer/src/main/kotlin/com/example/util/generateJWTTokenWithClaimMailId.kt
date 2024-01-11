@@ -9,7 +9,6 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 fun String.generateJWTTokenWithClaimMailId(
     env: ApplicationEnvironment,
@@ -20,8 +19,6 @@ fun String.generateJWTTokenWithClaimMailId(
     val privateKeyString = env.config.property("jwt.privateKey").getString()
 
     val jwkProvider = JwkProviderBuilder(issuer)
-        .cached(10, 24, TimeUnit.HOURS)
-        .rateLimited(10, 1, TimeUnit.MINUTES)
         .build()
 
     val publicKey = jwkProvider.get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
@@ -35,5 +32,4 @@ fun String.generateJWTTokenWithClaimMailId(
         .withClaim("email", this)
         .withExpiresAt(Date(System.currentTimeMillis() + time))
         .sign(Algorithm.RSA256(publicKey as RSAPublicKey, privateKey as RSAPrivateKey))
-        ?: throw Exception("unable to create jwt token")
 }

@@ -8,16 +8,12 @@ import com.example.invalidTokenList
 import com.example.util.Constants.USED_TOKEN
 import io.ktor.server.application.*
 import java.security.interfaces.RSAPublicKey
-import java.util.concurrent.TimeUnit
 
 fun String.verifyJWTTokenWithClaimMailId(env: ApplicationEnvironment): String? {
     val issuer = env.config.property("jwt.issuer").getString()
     val audience = env.config.property("jwt.audience").getString()
 
-    val jwkProvider = JwkProviderBuilder(issuer)
-        .cached(1, 5, TimeUnit.MINUTES)
-        .rateLimited(3, 1, TimeUnit.MINUTES)
-        .build()
+    val jwkProvider = JwkProviderBuilder(issuer).build()
 
     val publicKey = jwkProvider.get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
     val algorithm = Algorithm.RSA256(publicKey as RSAPublicKey, null)

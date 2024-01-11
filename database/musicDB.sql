@@ -30,8 +30,6 @@ create table emailAuthUser(
 );
 
 
-drop table emailAuthUser;
-
 select * from emailAuthUser;
 select * from GoogleAuthUser;
 

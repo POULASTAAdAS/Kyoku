@@ -3,9 +3,7 @@ package com.example.routes.auth.common
 import com.example.data.model.auth.req.EmailLoginReq
 import com.example.data.model.auth.res.EmailLoginResponse
 import com.example.data.model.auth.stat.EmailLoginStatus
-import com.example.domain.repository.user_db.EmailAuthUserRepository
-import com.example.util.Constants.JWT_TOKEN_DEFAULT_TIME
-import com.example.util.generateJWTTokenWithClaimMailId
+import com.example.domain.repository.UserServiceRepository
 import com.example.util.verifyEmailIdWithApi
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,7 +12,7 @@ import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
     emailLoginReq: EmailLoginReq,
-    emailAuthUser: EmailAuthUserRepository
+    userService: UserServiceRepository,
 ) {
     if (false) // reduce unnecessary api call while developing
         verifyEmailIdWithApi(
@@ -31,13 +29,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
             }
         }
 
-    val result = emailAuthUser.loginUser(
+    val result = userService.loginUser(
         email = emailLoginReq.email.trim(),
-        password = emailLoginReq.password.trim(),
-        token = emailLoginReq.email.trim().generateJWTTokenWithClaimMailId(
-            env = call.application.environment,
-            time = JWT_TOKEN_DEFAULT_TIME
-        )
+        password = emailLoginReq.password.trim()
     )
 
     when (result.status) {
@@ -51,21 +45,21 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
         EmailLoginStatus.PASSWORD_DOES_NOT_MATCH -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.OK
+                status = HttpStatusCode.BadRequest
             )
         }
 
         EmailLoginStatus.EMAIL_NOT_VERIFIED -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.OK
+                status = HttpStatusCode.BadRequest
             )
         }
 
         EmailLoginStatus.USER_DOES_NOT_EXISTS -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.OK
+                status = HttpStatusCode.Forbidden
             )
         }
 
@@ -76,6 +70,6 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
             )
         }
 
-        EmailLoginStatus.EMAIL_NOT_VALID -> Unit
+        else -> Unit
     }
 }

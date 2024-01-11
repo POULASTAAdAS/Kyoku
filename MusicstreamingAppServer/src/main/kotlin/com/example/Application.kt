@@ -16,11 +16,11 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureKoin()
+    configureKoin(this)
     configureSerialization()
-    configureDatabase()
     configureSecurity()
     configureRouting()
+    configureDatabase()
     configureSession()
 }
 

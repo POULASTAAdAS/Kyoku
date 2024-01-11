@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class EmailSignInResponse(
     val status: UserCreationStatus,
     val userName: String = "",
-    val token: String = "",
+    val accessToken: String = "",
+    val refreshToken:String = "",
     val profilePic: String = ""
 )

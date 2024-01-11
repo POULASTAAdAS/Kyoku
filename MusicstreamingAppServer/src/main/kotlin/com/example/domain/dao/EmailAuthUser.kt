@@ -13,4 +13,5 @@ class EmailAuthUser(id: EntityID<Long>) : LongEntity(id) {
     var password by EmailAuthUserTable.password
     var emailVerified by EmailAuthUserTable.emailVerified
     var profilePic by EmailAuthUserTable.profilePic
+    var refreshToken by EmailAuthUserTable.refreshToken
 }

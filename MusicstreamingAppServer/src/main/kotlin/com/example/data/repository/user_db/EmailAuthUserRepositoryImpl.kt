@@ -1,182 +1,144 @@
 package com.example.data.repository.user_db
 
 import com.example.data.model.auth.res.EmailLoginResponse
-import com.example.data.model.auth.res.EmailSignInResponse
-import com.example.data.model.auth.res.EmailVerificationResponse
 import com.example.data.model.auth.stat.*
 import com.example.data.model.database_table.EmailAuthUserTable
 import com.example.domain.dao.EmailAuthUser
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.plugins.dbQuery
 import com.example.util.constructProfileUrl
-import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.update
 import java.io.File
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
+    private suspend fun findUser(email: String) = dbQuery {
+        EmailAuthUser.find {
+            EmailAuthUserTable.email eq email
+        }.firstOrNull()
+    }
+
     override suspend fun createUser(
         userName: String,
         email: String,
         password: String,
-        token: String
-    ): EmailSignInResponse = try {
-        dbQuery {
-            EmailAuthUser.new {
-                this.userName = userName
-                this.email = email
-                this.password = password
+        refreshToken: String
+    ): UserCreationStatus = try {
+        val user = findUser(email)
+
+        if (user == null) {
+            dbQuery {
+                EmailAuthUser.new {
+                    this.userName = userName
+                    this.email = email
+                    this.password = password
+                    this.refreshToken = refreshToken
+                }
+            }.let {
+                UserCreationStatus.CREATED
             }
-        }.let {
-            EmailSignInResponse(
-                userName = it.userName,
-                token = token,
-                status = UserCreationStatus.CREATED,
-                profilePic = constructProfileUrl()
-            )
+        } else {
+            UserCreationStatus.CONFLICT
         }
-    } catch (e: ExposedSQLException) {
-        EmailSignInResponse(
-            status = UserCreationStatus.CONFLICT
-        )
     } catch (e: Exception) {
-        EmailSignInResponse(
-            status = UserCreationStatus.SOMETHING_WENT_WRONG
-        )
+        UserCreationStatus.SOMETHING_WENT_WRONG
     }
 
-    override suspend fun updateVerificationStatus(email: String): UpdateEmailVerificationStatus =
-        try {
-            if (
-                !dbQuery {
-                    EmailAuthUser.find {
-                        EmailAuthUserTable.email eq email
-                    }.first().emailVerified
-                }
-            ) {
+    override suspend fun updateVerificationStatus(
+        email: String
+    ): UpdateEmailVerificationStatus {
+        return try {
+            val user = findUser(email) ?: return UpdateEmailVerificationStatus.USER_NOT_FOUND
+
+            if (!user.emailVerified) {
                 dbQuery {
-                    EmailAuthUserTable.update {
-                        this.email eq email
-                        it[this.emailVerified] = true
-                    }
+                    user.emailVerified = true // update query
                 }
 
-                UpdateEmailVerificationStatus.DONE
-            } else
-                UpdateEmailVerificationStatus.ALREADY_VERIFIED
+                UpdateEmailVerificationStatus.VERIFIED
+            } else UpdateEmailVerificationStatus.VERIFIED
         } catch (e: Exception) {
-            println("error updating verification status: " + e.message)  // todo delete user
             UpdateEmailVerificationStatus.SOMETHING_WENT_WRONG
         }
+    }
 
     // this will be hit repeated time while signing up
-    override suspend fun checkEmailVerification(email: String): EmailVerificationResponse =
-        try {
-            dbQuery {
-                EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email
-                }.first().emailVerified
-            }.let {
-                if (it) EmailVerificationResponse(
-                    status = EmailVerificationStatus.VERIFIED
-                )
-                else EmailVerificationResponse(
-                    status = EmailVerificationStatus.UN_VERIFIED
-                )
-            }
+    override suspend fun checkEmailVerification(email: String): EmailVerificationStatus {
+        return try {
+            val user = findUser(email) ?: return EmailVerificationStatus.USER_NOT_FOUND
+
+            return if (user.emailVerified) EmailVerificationStatus.VERIFIED
+            else EmailVerificationStatus.UN_VERIFIED
         } catch (e: Exception) {
-            EmailVerificationResponse(
-                status = EmailVerificationStatus.SOMETHING_WENT_WRONG
-            )
+            EmailVerificationStatus.SOMETHING_WENT_WRONG
         }
+    }
 
 
     override suspend fun loginUser(
         email: String,
         password: String,
-        token: String
+        accessToken: String,
+        refreshToken: String
     ): EmailLoginResponse {
-        return try {
-            val user = dbQuery {
-                EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email
-                }.first()
-            }
+        try {
+            val user = findUser(email)
+                ?: return EmailLoginResponse(
+                    status = EmailLoginStatus.USER_DOES_NOT_EXISTS
+                )
 
-            if (user.password == password) {
-                if (user.emailVerified)
-                    EmailLoginResponse(
-                        userName = user.userName,
-                        status = EmailLoginStatus.USER_PASS_MATCHED,
-                        token = token,
-                        profilePic = constructProfileUrl(),
-                        data = emptyList() // todo add data
-                    )
-                else
-                    EmailLoginResponse(
-                        status = EmailLoginStatus.EMAIL_NOT_VERIFIED
-                    )
-            } else
-                EmailLoginResponse(
+            if (user.password != password) {
+                return EmailLoginResponse(
                     status = EmailLoginStatus.PASSWORD_DOES_NOT_MATCH
                 )
-        } catch (e: NoSuchElementException) {
-            EmailLoginResponse(
-                status = EmailLoginStatus.USER_DOES_NOT_EXISTS
+            }
+
+            if (!user.emailVerified) {
+                return EmailLoginResponse(
+                    status = EmailLoginStatus.EMAIL_NOT_VERIFIED
+                )
+            }
+
+            return EmailLoginResponse(
+                status = EmailLoginStatus.USER_PASS_MATCHED,
+                userName = user.userName,
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                profilePic = constructProfileUrl(),
+                data = emptyList()
             )
         } catch (e: Exception) {
-            EmailLoginResponse(
+            return EmailLoginResponse(
                 status = EmailLoginStatus.SOMETHING_WENT_WRONG
             )
         }
     }
 
-    override suspend fun sendForgotPasswordMail(email: String): SendForgotPasswordMail {
+    override suspend fun checkIfUSerExistsThenSendForgotPasswordMail(email: String): SendVerificationMailStatus {
         return try {
-            dbQuery {
-                EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email
-                }
-            }
-
-            SendForgotPasswordMail(
-                status = SendVerificationMailStatus.USER_EXISTS
-            )
-        } catch (e: NoSuchElementException) {
-            SendForgotPasswordMail(
-                status = SendVerificationMailStatus.USER_NOT_FOUND
-            )
+            findUser(email) ?: SendVerificationMailStatus.USER_NOT_FOUND
+            SendVerificationMailStatus.USER_EXISTS
         } catch (e: Exception) {
-            SendForgotPasswordMail(
-                status = SendVerificationMailStatus.SOMETHING_WENT_WRONG
-            )
+            SendVerificationMailStatus.SOMETHING_WENT_WRONG
         }
     }
 
-    override suspend fun passwordReset(email: String, password: String): PasswordResetStatus {
+    override suspend fun resetPassword(email: String, password: String): PasswordResetStatus {
         return try {
-            var status = true
+            val user = findUser(email) ?: return PasswordResetStatus.USER_NOT_FOUND
+
+            if (user.password == password) return PasswordResetStatus.SAME_AS_OLD_PASSWORD
+
             dbQuery {
-                val user = EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email
-                }.first()
-
-                if (user.password == password) {
-                    status = false
-                    return@dbQuery
-                }
-
-                user.password = password
+                user.password = password // update query
             }
 
-            if (status) PasswordResetStatus.SUCCESSFUL
-            else PasswordResetStatus.SAME_AS_OLD_PASSWORD
+            PasswordResetStatus.SUCCESSFUL
         } catch (e: Exception) {
             PasswordResetStatus.SOMETHING_WENT_WRONG
         }
     }
 
     override suspend fun getUserProfilePic(email: String): File? {
+        // todo check is email verified
         return try {
             dbQuery {
                 val user = EmailAuthUser.find {

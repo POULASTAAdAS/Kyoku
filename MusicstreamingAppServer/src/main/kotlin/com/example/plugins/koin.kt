@@ -1,11 +1,19 @@
 package com.example.plugins
 
-import com.example.di.dbModule
+import com.example.di.provideDatabaseRepo
+import com.example.di.provideJWTRepo
+import com.example.di.provideService
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
-fun Application.configureKoin() {
+fun Application.configureKoin(
+    application: Application
+) {
     install(Koin) {
-        modules(dbModule)
+        modules(
+            provideJWTRepo(application),
+            provideDatabaseRepo(),
+            provideService()
+        )
     }
 }

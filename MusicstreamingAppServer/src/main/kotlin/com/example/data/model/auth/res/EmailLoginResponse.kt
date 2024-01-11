@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 data class EmailLoginResponse(
     val status: EmailLoginStatus,
     val userName: String = "",
-    val data: List<String> = emptyList(), // todo change
-    val token: String = "",
+    val accessToken: String = "",
+    val refreshToken: String = "",
     val profilePic: String = "",
+    val data: List<String> = emptyList(), // todo add
 )

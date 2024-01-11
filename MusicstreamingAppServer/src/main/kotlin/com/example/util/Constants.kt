@@ -18,5 +18,13 @@ object Constants {
 
     const val USED_TOKEN = "TOKEN_ALREADY_USED"
 
-    const val JWT_TOKEN_DEFAULT_TIME = 240000L
+    const val ACCESS_TOKEN_CLAIM_KEY = "emailAccess"
+    const val REFRESH_TOKEN_CLAIM_KEY = "emailRefresh"
+    const val VERIFICATION_MAIL_TOKEN_CLAIM_KEY = "emailVerify"
+    const val FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY = "forgotPassword"
+
+    const val ACCESS_TOKEN_DEFAULT_TIME = 240000L // todo increase
+    const val REFRESH_TOKEN_DEFAULT_TIME = 5184000000L // 60 days
+    const val VERIFICATION_MAIL_TOKEN_TIME = 240000L // 4 minute
+    const val FORGOT_PASSWORD_MAIL_TOKEN_TIME = 240000L // 4 minute
 }

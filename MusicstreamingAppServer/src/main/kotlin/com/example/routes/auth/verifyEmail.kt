@@ -1,17 +1,15 @@
 package com.example.routes.auth
 
 import com.example.data.model.EndPoints
-import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.data.model.auth.stat.UpdateEmailVerificationStatus
-import com.example.util.verifyJWTTokenWithClaimMailId
-import com.example.util.Constants.USED_TOKEN
+import com.example.domain.repository.UserServiceRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
+fun Route.verifyEmail(userService: UserServiceRepository) {
     route(EndPoints.VerifyEmail.route) {
         get {
             val token = call.parameters["token"]
@@ -25,45 +23,46 @@ fun Route.verifyEmail(emailAuthUser: EmailAuthUserRepository) {
                 return@get
             }
 
-            token.verifyJWTTokenWithClaimMailId(call.application.environment)?.let { result ->
-                if (result == USED_TOKEN) {
+            when (
+                val status = userService.updateVerificationStatus(
+                    token = token
+                )
+            ) {
+                UpdateEmailVerificationStatus.VERIFIED -> {
                     call.respond(
-                        message = "This link has been already used",
+                        message = status,
                         status = HttpStatusCode.OK
                     )
-
-                    return@get
                 }
 
-                when (emailAuthUser.updateVerificationStatus(result)) {
-                    UpdateEmailVerificationStatus.DONE -> {
-                        call.respond( // todo return proper html
-                            message = "email verified",
-                            status = HttpStatusCode.OK
-                        )
-                    }
-
-                    UpdateEmailVerificationStatus.ALREADY_VERIFIED -> {
-                        call.respond(// todo return proper html
-                            message = "email already verified",
-                            status = HttpStatusCode.OK
-                        )
-                    }
-
-                    UpdateEmailVerificationStatus.SOMETHING_WENT_WRONG -> {
-                        call.respond(// todo return proper html
-                            message = "something went wrong",
-                            status = HttpStatusCode.InternalServerError
-                        )
-                    }
+                UpdateEmailVerificationStatus.TOKEN_USED -> {
+                    call.respond(
+                        message = status,
+                        status = HttpStatusCode.BadRequest
+                    )
                 }
-                return@get
+
+                UpdateEmailVerificationStatus.USER_NOT_FOUND -> {
+                    call.respond(
+                        message = status,
+                        status = HttpStatusCode.NotFound
+                    )
+                }
+
+                UpdateEmailVerificationStatus.TOKEN_NOT_VALID -> {
+                    call.respond(
+                        message = status,
+                        status = HttpStatusCode.Forbidden
+                    )
+                }
+
+                UpdateEmailVerificationStatus.SOMETHING_WENT_WRONG -> {
+                    call.respond(
+                        message = status,
+                        status = HttpStatusCode.Forbidden
+                    )
+                }
             }
-
-            call.respond(// todo return proper html
-                message = "This verification link is no more active",
-                status = HttpStatusCode.Forbidden
-            )
         }
     }
 }
