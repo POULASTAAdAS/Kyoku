@@ -1,0 +1,10 @@
+package com.example.data.model.database_table
+
+import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.Column
+
+object InvalidRefreshTokenTable : LongIdTable() {
+    val createTime: Column<Long> = long("createTime")
+    val oldRefreshToken: Column<String> = text("oldRefreshToken")
+    val emailUserId = reference("emailUserId", EmailAuthUserTable.id)
+}

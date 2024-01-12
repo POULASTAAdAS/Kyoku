@@ -27,5 +27,9 @@ interface EmailAuthUserRepository {
 
     suspend fun getUserProfilePic(email: String): File?
 
-    suspend fun updateRefreshToken(email: String, refreshToken: String): RefreshTokenUpdateStatus
+    suspend fun updateRefreshToken(
+        email: String,
+        oldRefreshToken: String,
+        refreshToken: String
+    ): RefreshTokenUpdateStatus
 }

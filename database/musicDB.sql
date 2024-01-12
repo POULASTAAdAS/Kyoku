@@ -32,9 +32,11 @@ create table emailAuthUser(
 
 select * from emailAuthUser;
 select * from GoogleAuthUser;
+select * from InvalidRefreshToken;
 
 drop table GoogleAuthUser;
 drop table emailAuthUser;
+drop table InvalidRefreshToken;
 
 select distinct album from song;
 

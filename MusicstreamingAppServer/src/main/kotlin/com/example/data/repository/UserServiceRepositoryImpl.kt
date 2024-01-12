@@ -215,6 +215,7 @@ class UserServiceRepositoryImpl(
 
         val status = emailAuthUserRepository.updateRefreshToken(
             email = email,
+            oldRefreshToken = token,
             refreshToken = refreshToken
         )
 
@@ -231,6 +232,10 @@ class UserServiceRepositoryImpl(
 
             RefreshTokenUpdateStatus.SOMETHING_WENT_WRONG -> RefreshTokenResponse(
                 status = status,
+            )
+
+            RefreshTokenUpdateStatus.DUPLICATE_TOKEN -> RefreshTokenResponse(
+                status = status
             )
 
             RefreshTokenUpdateStatus.TOKEN_EXPIRED -> throw IllegalArgumentException()

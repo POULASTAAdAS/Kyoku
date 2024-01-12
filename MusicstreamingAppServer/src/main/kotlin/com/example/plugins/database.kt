@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.data.model.database_table.EmailAuthUserTable
 import com.example.data.model.database_table.GoogleAuthUserTable
+import com.example.data.model.database_table.InvalidRefreshTokenTable
 import com.example.data.model.database_table.SongTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -27,6 +28,7 @@ fun Application.configureDatabase() {
         SchemaUtils.create(SongTable)
         SchemaUtils.create(EmailAuthUserTable)
         SchemaUtils.create(GoogleAuthUserTable)
+        SchemaUtils.create(InvalidRefreshTokenTable)
     }
 }
 

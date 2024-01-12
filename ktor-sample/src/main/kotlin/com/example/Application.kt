@@ -1,18 +1,18 @@
 package com.example
 
 import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.util.*
 import kotlinx.serialization.json.Json
-import org.apache.commons.codec.binary.Hex
+import java.util.*
 
 const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
 
 const val PATH = "E:/songdb/coverImage/Ruaan_Tiger_3.jpeg"
 
 fun main() {
+    val createTime = 1705079204350 + 5184000000
+    println(createTime > System.currentTimeMillis())
 
 
 //    val temp = "Whistle Baja 2.0 Heropanti 2";
@@ -30,7 +30,6 @@ fun main() {
 //        client.checkEmailVerificationStatus()
 //    }
 }
-
 
 
 fun removePart() {

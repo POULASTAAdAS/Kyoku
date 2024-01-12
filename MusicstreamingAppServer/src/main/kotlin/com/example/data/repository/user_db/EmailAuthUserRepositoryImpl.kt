@@ -3,19 +3,20 @@ package com.example.data.repository.user_db
 import com.example.data.model.auth.res.EmailLoginResponse
 import com.example.data.model.auth.stat.*
 import com.example.data.model.database_table.EmailAuthUserTable
+import com.example.data.model.database_table.InvalidRefreshTokenTable
 import com.example.domain.dao.EmailAuthUser
+import com.example.domain.dao.InvalidRefreshToken
 import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.plugins.dbQuery
+import com.example.util.Constants.REFRESH_TOKEN_DEFAULT_TIME
 import com.example.util.constructProfileUrl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jetbrains.exposed.dao.id.EntityID
 import java.io.File
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
-    private suspend fun findUser(email: String) = dbQuery {
-        EmailAuthUser.find {
-            EmailAuthUserTable.email eq email
-        }.firstOrNull()
-    }
-
     override suspend fun createUser(
         userName: String,
         email: String,
@@ -147,17 +148,70 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
     }
 
-    override suspend fun updateRefreshToken(email: String, refreshToken: String): RefreshTokenUpdateStatus {
+    override suspend fun updateRefreshToken(
+        email: String,
+        oldRefreshToken: String,
+        refreshToken: String
+    ): RefreshTokenUpdateStatus {
         return try {
             val user = findUser(email) ?: return RefreshTokenUpdateStatus.USER_NOT_FOUND
 
+            val isUsedToken = checkIfDuplicateToken(
+                token = oldRefreshToken,
+                userId = user.id
+            )
+
+            if (isUsedToken) return RefreshTokenUpdateStatus.DUPLICATE_TOKEN
+
             dbQuery {
                 user.refreshToken = refreshToken
+
+                // add token
+                InvalidRefreshToken.new {
+                    this.token = oldRefreshToken
+                    this.createTime = System.currentTimeMillis() + REFRESH_TOKEN_DEFAULT_TIME
+                    this.emailUserId = user.id
+                }
             }
 
             RefreshTokenUpdateStatus.UPDATED
         } catch (e: Exception) {
             RefreshTokenUpdateStatus.SOMETHING_WENT_WRONG
         }
+    }
+
+    private suspend fun findUser(email: String) = dbQuery {
+        EmailAuthUser.find {
+            EmailAuthUserTable.email eq email
+        }.firstOrNull()
+    }
+
+    private suspend fun checkIfDuplicateToken(token: String, userId: EntityID<Long>): Boolean {
+        val entries = dbQuery {
+            InvalidRefreshToken.find {
+                InvalidRefreshTokenTable.emailUserId eq userId
+            }.toList()
+        }
+
+        var status = false
+
+        entries.forEach {
+            if (it.token == token) {
+                status = true
+                return@forEach
+            }
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            dbQuery {
+                entries.forEach {
+                    val isAlive = it.createTime > System.currentTimeMillis()
+
+                    if (!isAlive) it.delete()
+                }
+            }
+        }
+
+        return status
     }
 }
