@@ -35,6 +35,8 @@ fun Application.configureRouting() {
         getSpotifyPlaylist(songRepository = songs)
         getCoverPhoto(songRepository = songs)
 
+        refreshToken(userService = userService)
+
         unauthorised()
 
         static(".well-known") {

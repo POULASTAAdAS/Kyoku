@@ -8,6 +8,8 @@ sealed class EndPoints(val route: String) {
     data object ForgotPassword : EndPoints(route = "/api/auth/forgotPassword")
     data object ResetPassword : EndPoints(route = "/api/auth/resetPassword")
 
+    data object RefreshToken : EndPoints(route = "/api/auth/refreshToken")
+
     data object ProfilePic : EndPoints(route = "/api/authorised/user/profilePic")
 
     data object GetSpotifyPlaylistSong : EndPoints(route = "/api/authorised/spotifyPlaylist")

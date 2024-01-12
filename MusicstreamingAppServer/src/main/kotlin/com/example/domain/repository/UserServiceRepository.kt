@@ -1,10 +1,7 @@
 package com.example.domain.repository
 
-import com.example.data.model.auth.res.EmailLoginResponse
-import com.example.data.model.auth.res.EmailSignInResponse
-import com.example.data.model.auth.res.EmailVerificationResponse
+import com.example.data.model.auth.res.*
 import com.example.data.model.auth.stat.PasswordResetStatus
-import com.example.data.model.auth.stat.SendForgotPasswordMail
 import com.example.data.model.auth.stat.UpdateEmailVerificationStatus
 import java.io.File
 
@@ -15,9 +12,13 @@ interface UserServiceRepository {
         password: String,
     ): EmailSignInResponse
 
+    suspend fun loginUser(
+        email: String,
+        password: String
+    ): EmailLoginResponse
+
     suspend fun updateVerificationStatus(token: String): UpdateEmailVerificationStatus
     suspend fun checkEmailVerification(email: String): EmailVerificationResponse
-    suspend fun loginUser(email: String, password: String): EmailLoginResponse
     suspend fun sendForgotPasswordMail(email: String): SendForgotPasswordMail
     suspend fun resetPassword(
         token: String,
@@ -25,4 +26,6 @@ interface UserServiceRepository {
     ): PasswordResetStatus
 
     suspend fun getUserProfilePic(email: String): File?
+
+    suspend fun refreshToken(token: String): RefreshTokenResponse
 }

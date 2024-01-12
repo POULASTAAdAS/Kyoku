@@ -2,6 +2,7 @@ package com.example.data.repository.jwt
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.example.data.model.auth.stat.UpdateEmailVerificationStatus
 import com.example.domain.repository.jwt.JWTRepository
@@ -26,8 +27,8 @@ class JWTRepositoryImpl(
 
     private val realm = getConfigProperty("jwt.realm")
 
-    fun getIssuer() = issuer
-    fun getRealm() = realm
+    override fun getIssuer() = issuer
+    override fun getRealm() = realm
 
     override fun generateAccessToken(
         sub: String,
@@ -83,14 +84,8 @@ class JWTRepositoryImpl(
     ): String? {
         if (invalidTokenList.contains(token)) return UpdateEmailVerificationStatus.TOKEN_USED.name
 
-        val publicKey = provideJWKProvider().get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
-        val algorithm = Algorithm.RSA256(publicKey as RSAPublicKey, null)
-
         return try {
-            JWT.require(algorithm)
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .build()
+            getJWTVerifier()
                 .verify(token).getClaim(claim).asString()
         } catch (e: Exception) {
             null
@@ -113,6 +108,16 @@ class JWTRepositoryImpl(
             .withClaim(claimName, email)
             .withExpiresAt(Date(System.currentTimeMillis() + validationTime))
             .sign(Algorithm.RSA256(publicKey as RSAPublicKey, privateKey as RSAPrivateKey))
+    }
+
+    private fun getJWTVerifier(): JWTVerifier {
+        val publicKey = provideJWKProvider().get("6f8856ed-9189-488f-9011-0ff4b6c08edc").publicKey
+        val algorithm = Algorithm.RSA256(publicKey as RSAPublicKey, null)
+
+        return JWT.require(algorithm)
+            .withAudience(audience)
+            .withIssuer(issuer)
+            .build()
     }
 
     private fun provideJWKProvider() = JwkProviderBuilder(issuer)

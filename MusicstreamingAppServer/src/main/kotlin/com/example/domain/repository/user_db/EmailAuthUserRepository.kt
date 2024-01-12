@@ -14,15 +14,18 @@ interface EmailAuthUserRepository {
 
     suspend fun updateVerificationStatus(email: String): UpdateEmailVerificationStatus
     suspend fun checkEmailVerification(email: String): EmailVerificationStatus
+
     suspend fun loginUser(
         email: String,
         password: String,
-        accessToken:String,
+        accessToken: String,
         refreshToken: String,
     ): EmailLoginResponse
 
-    suspend fun checkIfUSerExistsThenSendForgotPasswordMail(email: String): SendVerificationMailStatus
+    suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendVerificationMailStatus
     suspend fun resetPassword(email: String, password: String): PasswordResetStatus
 
     suspend fun getUserProfilePic(email: String): File?
+
+    suspend fun updateRefreshToken(email: String, refreshToken: String): RefreshTokenUpdateStatus
 }

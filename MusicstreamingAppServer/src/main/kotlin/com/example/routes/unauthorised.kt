@@ -12,7 +12,7 @@ fun Route.unauthorised() {
         get {
             call.respond(
                 message = UnAuthorisedResponse(
-                    message = "invalid request"
+                    message = "Unauthorised"
                 ),
                 status = HttpStatusCode.Forbidden
             )

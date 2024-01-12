@@ -39,4 +39,7 @@ interface JWTRepository {
     ): String
 
     fun verifyJWTToken(token: String, claim: String): String?
+
+    fun getIssuer(): String
+    fun getRealm(): String
 }

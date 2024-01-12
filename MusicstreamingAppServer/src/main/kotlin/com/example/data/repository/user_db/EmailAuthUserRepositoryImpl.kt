@@ -112,7 +112,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
     }
 
-    override suspend fun checkIfUSerExistsThenSendForgotPasswordMail(email: String): SendVerificationMailStatus {
+    override suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendVerificationMailStatus {
         return try {
             findUser(email) ?: SendVerificationMailStatus.USER_NOT_FOUND
             SendVerificationMailStatus.USER_EXISTS
@@ -138,17 +138,26 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
     }
 
     override suspend fun getUserProfilePic(email: String): File? {
-        // todo check is email verified
-        return try {
-            dbQuery {
-                val user = EmailAuthUser.find {
-                    EmailAuthUserTable.email eq email
-                }.first()
+        try {
+            val user = findUser(email) ?: return null
 
-                File(user.profilePic)
-            }
+            return File(user.profilePic)
         } catch (e: Exception) {
-            null
+            return null
+        }
+    }
+
+    override suspend fun updateRefreshToken(email: String, refreshToken: String): RefreshTokenUpdateStatus {
+        return try {
+            val user = findUser(email) ?: return RefreshTokenUpdateStatus.USER_NOT_FOUND
+
+            dbQuery {
+                user.refreshToken = refreshToken
+            }
+
+            RefreshTokenUpdateStatus.UPDATED
+        } catch (e: Exception) {
+            RefreshTokenUpdateStatus.SOMETHING_WENT_WRONG
         }
     }
 }

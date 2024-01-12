@@ -16,15 +16,18 @@ fun Route.getUserProfilePic(
     authenticate("jwt-auth") {
         route(EndPoints.ProfilePic.route) {
             get {
-                val claim = call.getClaimFromPayload()
+                val email = call.getClaimFromPayload()
 //                val sub = call.authentication.getSub()
 
-                claim?.let {
+                if (email == null && "".isEmpty() /* todo email authentication*/) {
+                    return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                }
+
+                email?.let {
                     userService.getUserProfilePic(email = it)?.let { file ->
                         respondFile(file)
                         return@get
                     }
-
 
                     call.respond(
                         message = "",
@@ -39,8 +42,6 @@ fun Route.getUserProfilePic(
 //
 //                    return@get
 //                }
-
-                call.respondRedirect(EndPoints.UnAuthorised.route)
             }
         }
     }

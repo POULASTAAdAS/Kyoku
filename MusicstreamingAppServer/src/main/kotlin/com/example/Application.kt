@@ -30,7 +30,7 @@ private suspend fun removeFirstTokenAfter10Minute() {
         try {
             invalidTokenList.removeAt(0)
         } catch (e: Exception) {
-            e.printStackTrace()
+            println(e.message.toString())
         }
     }
 }

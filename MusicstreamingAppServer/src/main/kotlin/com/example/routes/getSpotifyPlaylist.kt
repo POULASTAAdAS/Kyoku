@@ -37,6 +37,15 @@ fun Route.getSpotifyPlaylist(
 
                 val playlist = getPlaylist(playlistId)
 
+                if (playlist == null) {
+                    call.respond(
+                        message = SpotifyPlaylistResponse(),
+                        status = HttpStatusCode.InternalServerError
+                    )
+
+                    return@post
+                }
+
                 getSongNameAndAlbum(playlist, songRepository) {
                     call.respond(
                         message = it,
@@ -103,17 +112,17 @@ suspend fun getSongNameAndAlbum(
 }
 
 
-private suspend fun getPlaylist(playlistId: String): String {
-    val accessToken = getSpotifyPlaylistAccessToken()
+private suspend fun getPlaylist(playlistId: String): String? {
+    val accessToken = getSpotifyPlaylistAccessToken() ?: return null
 
     val client = HttpClient()
 
     val result = client.get("https://api.spotify.com/v1/playlists/$playlistId/tracks") {
         header("Authorization", "Bearer $accessToken")
-    }.bodyAsText()
+    }
 
     client.close()
-    return result
+    return result.bodyAsText()
 }
 
 
@@ -121,7 +130,7 @@ private suspend fun getPlaylist(playlistId: String): String {
 private suspend fun getSpotifyPlaylistAccessToken(
     clientId: String = System.getenv("spotifyClientId"),
     clientSecret: String = System.getenv("spotifyClientSecret"),
-): String {
+): String? {
     val tokenEndpoint = "https://accounts.spotify.com/api/token"
     val formData = Parameters.build {
         append("grant_type", "client_credentials")
@@ -138,7 +147,7 @@ private suspend fun getSpotifyPlaylistAccessToken(
 
     client.close()
 
-    return accessToken ?: throw IllegalStateException("Access token not found in the response")
+    return accessToken
 }
 
 private fun String.encodeBase64(): String {

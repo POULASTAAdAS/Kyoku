@@ -16,8 +16,6 @@ object Constants {
     const val SMS_EMAIL_GOOGLE_SMTP_HOST = "smtp.gmail.com"
     const val SMS_EMAIL_PORT = "587"
 
-    const val USED_TOKEN = "TOKEN_ALREADY_USED"
-
     const val ACCESS_TOKEN_CLAIM_KEY = "emailAccess"
     const val REFRESH_TOKEN_CLAIM_KEY = "emailRefresh"
     const val VERIFICATION_MAIL_TOKEN_CLAIM_KEY = "emailVerify"

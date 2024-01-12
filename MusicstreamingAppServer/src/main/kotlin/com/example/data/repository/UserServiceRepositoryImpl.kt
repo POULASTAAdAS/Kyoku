@@ -1,9 +1,7 @@
 package com.example.data.repository
 
 import com.example.data.model.EndPoints
-import com.example.data.model.auth.res.EmailLoginResponse
-import com.example.data.model.auth.res.EmailSignInResponse
-import com.example.data.model.auth.res.EmailVerificationResponse
+import com.example.data.model.auth.res.*
 import com.example.data.model.auth.stat.*
 import com.example.domain.repository.UserServiceRepository
 import com.example.domain.repository.jwt.JWTRepository
@@ -11,6 +9,7 @@ import com.example.domain.repository.user_db.EmailAuthUserRepository
 import com.example.invalidTokenList
 import com.example.util.Constants
 import com.example.util.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
+import com.example.util.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.example.util.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.example.util.constructProfileUrl
 import com.example.util.sendEmail
@@ -109,18 +108,33 @@ class UserServiceRepositoryImpl(
         val accessToken = jwtRepository.generateAccessToken(email = email)
         val refreshToken = jwtRepository.generateRefreshToken(email = email)
 
-        return emailAuthUserRepository.loginUser(
+        val response = emailAuthUserRepository.loginUser(
             email = email,
             password = password,
             accessToken = accessToken,
             refreshToken = refreshToken
         )
+
+        if (response.status == EmailLoginStatus.USER_PASS_MATCHED) {
+            CoroutineScope(Dispatchers.IO).launch {
+                sendEmail(
+                    to = email,
+                    subject = "Welcome back ${response.userName}",
+                    content = "It's fantastic to see you back with us!\n We've missed you and are thrilled to have you back.\n" +
+                            "We hope you're ready for an exciting journey ahead." +
+                            "Here's to making great memories and having a blast together!\n" +
+                            "Best regards,\n From Kyoku :)" //todo add html
+                )
+            }
+        }
+
+        return response
     }
 
     override suspend fun sendForgotPasswordMail(email: String): SendForgotPasswordMail {
         return when (
             val status = emailAuthUserRepository
-                .checkIfUSerExistsThenSendForgotPasswordMail(email)
+                .checkIfUSerExistsToSendForgotPasswordMail(email)
         ) {
             SendVerificationMailStatus.USER_EXISTS -> {
                 val token = jwtRepository.generateForgotPasswordMailToken(email = email)
@@ -188,7 +202,38 @@ class UserServiceRepositoryImpl(
         }
     }
 
-    override suspend fun getUserProfilePic(email: String): File? {
-        TODO("Not yet implemented")
+    override suspend fun getUserProfilePic(email: String): File? =
+        emailAuthUserRepository.getUserProfilePic(email)
+
+    override suspend fun refreshToken(token: String): RefreshTokenResponse {
+        val email = jwtRepository.verifyJWTToken(token, REFRESH_TOKEN_CLAIM_KEY) ?: return RefreshTokenResponse(
+            status = RefreshTokenUpdateStatus.TOKEN_EXPIRED
+        )
+
+        val accessToken = jwtRepository.generateAccessToken(email = email)
+        val refreshToken = jwtRepository.generateRefreshToken(email = email)
+
+        val status = emailAuthUserRepository.updateRefreshToken(
+            email = email,
+            refreshToken = refreshToken
+        )
+
+        return when (status) {
+            RefreshTokenUpdateStatus.UPDATED -> RefreshTokenResponse(
+                status = status,
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
+
+            RefreshTokenUpdateStatus.USER_NOT_FOUND -> RefreshTokenResponse(
+                status = status,
+            )
+
+            RefreshTokenUpdateStatus.SOMETHING_WENT_WRONG -> RefreshTokenResponse(
+                status = status,
+            )
+
+            RefreshTokenUpdateStatus.TOKEN_EXPIRED -> throw IllegalArgumentException()
+        }
     }
 }
