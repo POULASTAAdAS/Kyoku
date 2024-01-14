@@ -12,6 +12,7 @@ interface UserServiceRepository {
         password: String,
     ): EmailSignInResponse
 
+
     suspend fun loginUser(
         email: String,
         password: String
@@ -28,4 +29,12 @@ interface UserServiceRepository {
     suspend fun getUserProfilePic(email: String): File?
 
     suspend fun refreshToken(token: String): RefreshTokenResponse
+
+    suspend fun createUser(
+        userName: String,
+        email: String,
+        sub: String,
+        pictureUrl: String
+    ): GoogleSignInResponse
+
 }

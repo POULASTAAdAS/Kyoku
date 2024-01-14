@@ -2,9 +2,10 @@ package com.example.routes.auth.common
 
 import com.example.data.model.EndPoints
 import com.example.data.model.GoogleUserSession
+import com.example.data.model.Payload
 import com.example.data.model.auth.req.GoogleAuthReq
 import com.example.data.model.auth.stat.UserCreationStatus
-import com.example.domain.repository.user_db.GoogleAuthUserRepository
+import com.example.domain.repository.UserServiceRepository
 import com.example.util.Constants.ISSUER
 import com.example.util.toPayload
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
@@ -19,9 +20,9 @@ import io.ktor.util.pipeline.*
 
 suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
     googleAuthReq: GoogleAuthReq,
-    googleAuthUser: GoogleAuthUserRepository
+    userService: UserServiceRepository,
 ) {
-    val result = googleAuthReq.tokenId.verifyTokenId()
+    val result = googleAuthReq.verifyTokenId()
 
     if (result == null) {
         call.respondRedirect(EndPoints.UnAuthorised.route)
@@ -32,14 +33,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
     try {
         val payload = result.toPayload()
 
-        call.sessions.set(
-            GoogleUserSession(
-                sub = payload.sub,
-                name = payload.userName
-            )
-        )
-
-        val userCreationResponse = googleAuthUser.createUser(
+        val userCreationResponse = userService.createUser(
             userName = payload.userName,
             sub = payload.sub,
             email = payload.email,
@@ -48,6 +42,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
 
         when (userCreationResponse.status) {
             UserCreationStatus.CREATED -> {
+                payload.setSession(call)
+
                 call.respond(
                     message = userCreationResponse,
                     status = HttpStatusCode.OK
@@ -55,6 +51,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
             }
 
             UserCreationStatus.CONFLICT -> {
+                payload.setSession(call)
+
                 call.respond(
                     message = userCreationResponse,
                     status = HttpStatusCode.OK
@@ -76,13 +74,21 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleLogin(
     }
 }
 
-private fun String.verifyTokenId(): GoogleIdToken? = try {
-    println(this)
+private fun Payload.setSession(call: ApplicationCall) {
+    call.sessions.set(
+        GoogleUserSession(
+            email = this.email,
+            userName = this.userName
+        )
+    )
+}
+
+private fun GoogleAuthReq.verifyTokenId(): GoogleIdToken? = try {
     GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
         .setAudience(listOf(System.getenv("clientId")))
         .setIssuer(ISSUER)
         .build()
-        .verify(this)
+        .verify(this.tokenId)
 } catch (e: Exception) {
     null
 }

@@ -1,5 +1,6 @@
-package com.example.data.model
+package com.example.data.model.api.res
 
+import com.example.data.model.ResponseSong
 import kotlinx.serialization.Serializable
 
 @Serializable

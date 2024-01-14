@@ -8,6 +8,5 @@ data class GoogleSignInResponse(
     val status: UserCreationStatus,
     val userName: String = "",
     val profilePic: String? = null,
-    val token: String = "",
     val data: List<String> = emptyList(),
 )

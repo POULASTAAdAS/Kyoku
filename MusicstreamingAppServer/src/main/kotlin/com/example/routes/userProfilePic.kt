@@ -11,37 +11,24 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.getUserProfilePic(
-    userService: UserServiceRepository,
+    userService: UserServiceRepository
 ) {
     authenticate("jwt-auth") {
         route(EndPoints.ProfilePic.route) {
             get {
                 val email = call.getClaimFromPayload()
-//                val sub = call.authentication.getSub()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                if (email == null && "".isEmpty() /* todo email authentication*/) {
-                    return@get call.respondRedirect(EndPoints.UnAuthorised.route)
-                }
-
-                email?.let {
-                    userService.getUserProfilePic(email = it)?.let { file ->
-                        respondFile(file)
-                        return@get
-                    }
-
-                    call.respond(
-                        message = "",
-                        status = HttpStatusCode.NotFound
-                    )
+                userService.getUserProfilePic(email = email)?.let { file ->
+                    respondFile(file)
 
                     return@get
                 }
 
-//                sub?.let {
-//
-//
-//                    return@get
-//                }
+                call.respond(
+                    message = "",
+                    status = HttpStatusCode.NotFound
+                )
             }
         }
     }

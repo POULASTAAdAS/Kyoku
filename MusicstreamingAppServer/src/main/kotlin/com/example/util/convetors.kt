@@ -3,8 +3,10 @@ package com.example.util
 import com.example.data.model.EndPoints
 import com.example.data.model.Payload
 import com.example.data.model.ResponseSong
+import com.example.data.model.auth.res.GoogleSignInResponse
+import com.example.data.model.auth.stat.UserCreationStatus
+import com.example.domain.dao.GoogleAuthUser
 import com.example.domain.dao.Song
-import com.example.domain.repository.jwt.JWTRepository
 import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.COVER_IMAGE_ROOT_DIR
 import com.example.util.Constants.MASTER_PLAYLIST_ROOT_DIR
@@ -24,6 +26,13 @@ fun Song.toResponseSong(): ResponseSong = ResponseSong(
     description = this.description,
     track = this.track,
     date = this.date
+)
+
+fun GoogleAuthUser.toGoogleSignInResponse(status: UserCreationStatus): GoogleSignInResponse = GoogleSignInResponse(
+    status = status,
+    userName = this.userName,
+    profilePic = this.profilePicUrl,
+    data = emptyList() // todo add data
 )
 
 fun GoogleIdToken.toPayload() = Payload(
@@ -52,7 +61,6 @@ fun String.constructCoverPhotoUrl(): String = "$BASE_URL${EndPoints.CoverImage.r
     this.replace(COVER_IMAGE_ROOT_DIR, "")
 }"
 
-fun String.constructMasterPlaylistUrl(): String =
-    "$BASE_URL${EndPoints.PlaySongMaster.route}?playlist=${
-        this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
-    }"
+fun String.constructMasterPlaylistUrl(): String = "$BASE_URL${EndPoints.PlaySongMaster.route}?playlist=${
+    this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
+}"

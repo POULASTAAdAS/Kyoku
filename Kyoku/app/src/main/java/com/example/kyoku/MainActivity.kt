@@ -21,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.Test
 import com.example.kyoku.ui.theme.KyokuTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -44,49 +43,40 @@ class MainActivity : ComponentActivity() {
                     }
 
 
+                    val context = LocalContext.current as Activity
+
+                    StartActivityForResult(
+                        key = click.value,
+                        onResultReceived = {
+                            Log.d("token", it)
+                        },
+                        onDialogDismissed = {
+                            click.value = false
+                        },
+                        launcher = { activityLauncher ->
+                            singIn(
+                                activity = context,
+                                launchActivityResult = {
+                                    activityLauncher.launch(it)
+                                },
+                                accountNotFound = {
+
+                                }
+                            )
+                        }
+                    )
+
+
                     Button(onClick = {
                         click.value = true
                     }) {
                         Text(text = "Token")
                     }
-
-
-                    Test()
                 }
             }
         }
     }
 }
-
-@Composable
-fun Temp(
-    click: Boolean,
-    cancelClick: () -> Unit
-) {
-    val activity = LocalContext.current as Activity
-
-
-    StartActivityForResult(
-        key = click,
-        onResultReceived = {
-            Log.d("Token:", it)
-        },
-        onDialogDismissed = {
-            cancelClick()
-        }
-    ) { activityLauncher ->
-        singIn(
-            activity = activity,
-            launchActivityResult = { intentSenderRequest ->
-                activityLauncher.launch(intentSenderRequest)
-            },
-            accountNotFound = {
-                cancelClick()
-            }
-        )
-    }
-}
-
 
 @Composable
 fun StartActivityForResult(

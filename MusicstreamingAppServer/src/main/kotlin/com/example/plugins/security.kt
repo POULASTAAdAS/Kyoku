@@ -2,10 +2,12 @@ package com.example.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.example.data.model.EndPoints
+import com.example.data.model.GoogleUserSession
 import com.example.domain.repository.jwt.JWTRepository
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import org.koin.ktor.ext.inject
 
@@ -24,13 +26,22 @@ fun Application.configureSecurity() {
                     .build(), issuer
             )
 
-
             validate {
                 JWTPrincipal(it.payload)
             }
 
             challenge { _, _ ->
                 call.respondRedirect(EndPoints.UnAuthorised.route)
+            }
+        }
+
+        session<GoogleUserSession>("google-auth") {
+            validate {
+                it
+            }
+
+            challenge {
+                call.resolveResource(EndPoints.UnAuthorised.route)
             }
         }
     }

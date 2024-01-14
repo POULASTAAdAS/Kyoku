@@ -1,8 +1,8 @@
 package com.example.routes
 
 import com.example.data.model.EndPoints
-import com.example.data.model.HandleSpotifyPlaylistStatus
-import com.example.data.model.SpotifyPlaylistResponse
+import com.example.data.model.api.stat.HandleSpotifyPlaylistStatus
+import com.example.data.model.api.res.SpotifyPlaylistResponse
 import com.example.data.model.SpotifySong
 import com.example.domain.repository.song_db.SongRepository
 import com.example.util.getAlbum
@@ -24,7 +24,7 @@ import kotlinx.serialization.json.*
 fun Route.getSpotifyPlaylist(
     songRepository: SongRepository,
 ) {
-    authenticate("jwt-auth") {
+    authenticate("jwt-auth", "google-auth") {
         route(EndPoints.GetSpotifyPlaylistSong.route) {
             post {
                 val playlistId = call.parameters["playlistId"]

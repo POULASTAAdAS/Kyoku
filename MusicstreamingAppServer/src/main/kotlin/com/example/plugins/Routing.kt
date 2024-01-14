@@ -2,8 +2,8 @@ package com.example.plugins
 
 import com.example.domain.repository.UserServiceRepository
 import com.example.domain.repository.song_db.SongRepository
-import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.*
+import com.example.routes.common.addSessionInterceptor
 import com.example.routes.getCoverPhoto
 import com.example.routes.getSpotifyPlaylist
 import com.example.routes.getUserProfilePic
@@ -16,14 +16,12 @@ import java.io.File
 
 fun Application.configureRouting() {
     val userService: UserServiceRepository by inject()
-    val googleAuthUser: GoogleAuthUserRepository by inject()
     val songs: SongRepository by inject()
 
     routing {
-        authRoute(
-            userService = userService,
-            googleAuthUser = googleAuthUser
-        )
+        addSessionInterceptor()
+
+        authRoute(userService = userService)
         verifyEmail(userService = userService)
         emailVerificationCheck(userService = userService)
 

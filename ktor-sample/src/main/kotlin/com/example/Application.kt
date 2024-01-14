@@ -11,8 +11,12 @@ const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
 const val PATH = "E:/songdb/coverImage/Ruaan_Tiger_3.jpeg"
 
 fun main() {
-    val createTime = 1705079204350 + 5184000000
-    println(createTime > System.currentTimeMillis())
+//    val createTime = 1705079204350 + 5184000000
+//    println(createTime > System.currentTimeMillis())
+
+    println(
+        "00112233445566778899aabbccddeeff".length
+    )
 
 
 //    val temp = "Whistle Baja 2.0 Heropanti 2";

@@ -9,6 +9,8 @@ object Constants {
 
     const val ISSUER = "https://accounts.google.com"
 
+    const val SESSION_NAME = "GOOGLE_USER_SESSION"
+
     const val AUTH_TYPE_GOOGLE = "AUTH_TYPE_GOOGLE"
     const val AUTH_TYPE_EMAIL_SIGN_UP = "AUTH_TYPE_EMAIL_SIGN_UP"
     const val AUTH_TYPE_EMAIL_LOG_IN = "AUTH_TYPE_EMAIL_LOG_IN"
@@ -21,8 +23,10 @@ object Constants {
     const val VERIFICATION_MAIL_TOKEN_CLAIM_KEY = "emailVerify"
     const val FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY = "forgotPassword"
 
+    const val DEFAULT_SESSION_MAX_AGE = 7L * 24 * 3600 // 7 days
+
     const val ACCESS_TOKEN_DEFAULT_TIME = 240000L // todo increase
-    const val REFRESH_TOKEN_DEFAULT_TIME = 5184000000L // 60 days
+    const val REFRESH_TOKEN_DEFAULT_TIME = 60L * 24 * 3600 // 60 days
     const val VERIFICATION_MAIL_TOKEN_TIME = 240000L // 4 minute
     const val FORGOT_PASSWORD_MAIL_TOKEN_TIME = 240000L // 4 minute
 }

@@ -6,9 +6,9 @@ import com.example.data.model.auth.req.EmailLoginReq
 import com.example.data.model.auth.req.EmailSignUpReq
 import com.example.data.model.auth.req.GoogleAuthReq
 import com.example.domain.repository.UserServiceRepository
-import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.routes.auth.common.handleEmailLogin
 import com.example.routes.auth.common.handleEmailSignup
+import com.example.routes.auth.common.handleGoogleLogin
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -16,8 +16,7 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 
 fun Route.authRoute(
-    userService: UserServiceRepository,
-    googleAuthUser: GoogleAuthUserRepository
+    userService: UserServiceRepository
 ) {
     route(EndPoints.Auth.route) {
         post {
@@ -53,10 +52,10 @@ fun Route.authRoute(
                 }
 
                 is GoogleAuthReq -> {
-//                    handleGoogleLogin(
-//                        googleAuthReq = payload,
-//                        googleAuthUser = googleAuthUser
-//                    )
+                    handleGoogleLogin(
+                        googleAuthReq = payload,
+                        userService = userService
+                    )
                 }
             }
         }

@@ -6,46 +6,41 @@ import com.example.data.model.database_table.GoogleAuthUserTable
 import com.example.domain.dao.GoogleAuthUser
 import com.example.domain.repository.user_db.GoogleAuthUserRepository
 import com.example.plugins.dbQuery
-import org.jetbrains.exposed.exceptions.ExposedSQLException
+import com.example.util.toGoogleSignInResponse
 
 class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
+    private suspend fun findUser(email: String): GoogleAuthUser? = dbQuery {
+        GoogleAuthUser.find {
+            GoogleAuthUserTable.email eq email
+        }.firstOrNull()
+    }
+
     override suspend fun createUser(
         userName: String,
         email: String,
         sub: String,
         pictureUrl: String
     ): GoogleSignInResponse {
-        return try {
-            dbQuery {
-                GoogleAuthUser.new {
-                    this.userName = userName
-                    this.sub = sub
-                    this.email = email
-                    this.profilePicUrl = pictureUrl
+        try {
+            val user = findUser(email)
+
+            if (user == null) {
+                val newUser = dbQuery {
+                    GoogleAuthUser.new {
+                        this.userName = userName
+                        this.sub = sub
+                        this.email = email
+                        this.profilePicUrl = pictureUrl
+                    }
                 }
-            }
-            GoogleSignInResponse(
-                status = UserCreationStatus.CREATED,
-                userName = userName,
-                profilePic = pictureUrl,
-                token = ""
-            )
-        } catch (e: ExposedSQLException) {
-            val user = dbQuery {
-                GoogleAuthUser.find {
-                    GoogleAuthUserTable.sub eq sub
-                }.first()
+
+                return newUser.toGoogleSignInResponse(status = UserCreationStatus.CREATED) // signup
             }
 
-            GoogleSignInResponse( // todo query other values
-                status = UserCreationStatus.CONFLICT,
-                userName = user.userName,
-                profilePic = user.profilePicUrl,
-                token = "",
-                data = emptyList()
-            )
+
+            return user.toGoogleSignInResponse(status = UserCreationStatus.CONFLICT) // login
         } catch (e: Exception) {
-            GoogleSignInResponse(
+            return GoogleSignInResponse(
                 status = UserCreationStatus.SOMETHING_WENT_WRONG
             )
         }

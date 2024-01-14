@@ -36,8 +36,9 @@ fun provideDatabaseRepo() = module {
 fun provideService() = module {
     single<UserServiceRepository> {
         UserServiceRepositoryImpl(
-            emailAuthUserRepository = get(),
-            jwtRepository = get()
+            emailAuthUser = get(),
+            jwtRepository = get(),
+            googleAuthUser = get()
         )
     }
 }

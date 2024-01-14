@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 fun Route.getCoverPhoto(
     songRepository: SongRepository
 ) {
-    authenticate("jwt-auth") {
+    authenticate("jwt-auth", "google-auth") {
         route(EndPoints.CoverImage.route) {
             get {
                 val coverImage = call.parameters["coverImage"] ?: return@get
@@ -29,8 +29,6 @@ fun Route.getCoverPhoto(
                     message = "no cover photo found",
                     status = HttpStatusCode.OK
                 )
-
-                // todo add google auth users
             }
         }
     }
