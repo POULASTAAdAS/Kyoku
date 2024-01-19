@@ -5,7 +5,7 @@ object Constants {
     const val COVER_IMAGE_ROOT_DIR = "E:/songdb/coverImage/"
     const val PROFILE_PIC_ROOT_DIR = "E:/songdb/userProfilePic"
 
-    const val BASE_URL = "https://e387-103-192-116-166.ngrok-free.app"
+    const val BASE_URL = "https://ccba-103-44-173-204.ngrok-free.app"
 
     const val ISSUER = "https://accounts.google.com"
 

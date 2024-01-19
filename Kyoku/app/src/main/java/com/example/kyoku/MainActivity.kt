@@ -21,6 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.kyoku.navigation.createPasskey
+import com.example.kyoku.navigation.generateFidoChallenge
+import com.example.kyoku.navigation.req
+import com.example.kyoku.navigation.signIn
+import com.example.kyoku.navigation.signUp
 import com.example.kyoku.ui.theme.KyokuTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -43,28 +48,37 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-                    val context = LocalContext.current as Activity
+                    val activity = LocalContext.current as Activity
 
-                    StartActivityForResult(
-                        key = click.value,
-                        onResultReceived = {
-                            Log.d("token", it)
-                        },
-                        onDialogDismissed = {
-                            click.value = false
-                        },
-                        launcher = { activityLauncher ->
-                            singIn(
-                                activity = context,
-                                launchActivityResult = {
-                                    activityLauncher.launch(it)
-                                },
-                                accountNotFound = {
 
-                                }
-                            )
-                        }
-                    )
+
+                    if (click.value)
+                        createPasskey(
+                            req,
+                            activity
+                        )
+                    Log.d("encode", generateFidoChallenge())
+
+//                    StartActivityForResult(
+//                        key = click.value,
+//                        onResultReceived = {
+//                            Log.d("token", it)
+//                        },
+//                        onDialogDismissed = {
+//                            click.value = false
+//                        },
+//                        launcher = { activityLauncher ->
+//                            singIn(
+//                                activity = context,
+//                                launchActivityResult = {
+//                                    activityLauncher.launch(it)
+//                                },
+//                                accountNotFound = {
+//
+//                                }
+//                            )
+//                        }
+//                    )
 
 
                     Button(onClick = {

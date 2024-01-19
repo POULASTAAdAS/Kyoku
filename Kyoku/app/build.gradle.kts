@@ -26,6 +26,11 @@ android {
             useSupportLibrary = true
         }
 
+//        resValue(
+//            type = "string",
+//            name = "asset_statements",
+//            value = "https://unique-catkin-tendency.glitch.me/.well-known/assetlinks.json"
+//        )
     }
 
     buildTypes {
@@ -133,6 +138,12 @@ dependencies {
 
     // For building media playback UIs
     implementation("androidx.media3:media3-ui:$media3Version")
+
+    implementation("androidx.credentials:credentials:1.3.0-alpha01")
+
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
 
 
     // For extracting data from media containers

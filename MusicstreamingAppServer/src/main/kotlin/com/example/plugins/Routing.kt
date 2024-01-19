@@ -2,12 +2,9 @@ package com.example.plugins
 
 import com.example.domain.repository.UserServiceRepository
 import com.example.domain.repository.song_db.SongRepository
+import com.example.routes.*
 import com.example.routes.auth.*
 import com.example.routes.common.addSessionInterceptor
-import com.example.routes.getCoverPhoto
-import com.example.routes.getSpotifyPlaylist
-import com.example.routes.getUserProfilePic
-import com.example.routes.unauthorised
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -21,6 +18,8 @@ fun Application.configureRouting() {
     routing {
         addSessionInterceptor()
 
+        createPasskey()
+
         authRoute(userService = userService)
         verifyEmail(userService = userService)
         emailVerificationCheck(userService = userService)
@@ -33,13 +32,15 @@ fun Application.configureRouting() {
         getSpotifyPlaylist(songRepository = songs)
         getCoverPhoto(songRepository = songs)
 
+
         refreshToken(userService = userService)
 
         unauthorised()
 
-        static(".well-known") {
-            staticRootFolder = File("certs")
-            file("jwks.json")
-        }
+
+        staticFiles(
+            remotePath = ".well-known",
+            dir = File("certs")
+        )
     }
 }

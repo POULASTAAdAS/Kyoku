@@ -1,4 +1,3 @@
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -30,10 +29,17 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock:$ktor_version")
 //    testImplementation("junit:junit:$junit_version")
 
-    implementation ("javazoom:jlayer:1.0.1")
+    implementation("javazoom:jlayer:1.0.1")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
     implementation("commons-validator:commons-validator:1.8.0")
+
+    implementation("com.webauthn4j:webauthn4j-core:0.10.0.RELEASE")
+
+    implementation("com.upokecenter:cbor:4.5.2")
+
+    implementation("org.json:json:20231013")
+
 }
