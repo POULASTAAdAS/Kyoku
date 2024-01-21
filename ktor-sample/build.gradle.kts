@@ -34,12 +34,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
-    implementation("commons-validator:commons-validator:1.8.0")
-
-    implementation("com.webauthn4j:webauthn4j-core:0.10.0.RELEASE")
-
     implementation("com.upokecenter:cbor:4.5.2")
 
-    implementation("org.json:json:20231013")
+//    implementation("org.json:json:20231013")
 
 }

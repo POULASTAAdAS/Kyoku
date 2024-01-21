@@ -55,8 +55,9 @@ select * from song where album like '%Animal%';
 
 SELECT * FROM song WHERE (song.title LIKE '%Mauka Parast%') AND (song.album LIKE '%Heropanti 2%');
 
+select count(*) from song where genre = 'punjabi';
 
-
+select coverImage , masterPlaylistPath from song;
 
 
 
