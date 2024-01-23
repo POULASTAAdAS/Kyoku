@@ -17,3 +17,5 @@ create table song(
 	track text not null default('Kyoku'),
 	date text not null
 );
+
+select distinct genre from song;

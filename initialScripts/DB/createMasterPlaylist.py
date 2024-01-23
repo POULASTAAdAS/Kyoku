@@ -25,7 +25,6 @@ def create_master_playlist(song_path):
     _128_folder_name = f'{_128}{only_name}'
     _320_folder_name = f'{_320}{only_name}'
     master_folder_name = f'{master}{only_name}'
-    print(_128_folder_name)
 
     try:
         make_dirs(_128_folder_name, _320_folder_name, master_folder_name)
