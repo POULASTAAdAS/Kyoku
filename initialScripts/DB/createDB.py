@@ -9,10 +9,10 @@ from DB.insertValues import insert_into_db
 
 CONST_APP_NAME = '"Kyoku"'
 
-songDir = "F:/23-24/"
+songDir = "E:/22-24/"
 
 songs = os.listdir(songDir)
-rootDir = "F:/music/"
+rootDir = "F:/songs/"
 
 _128 = rootDir + "128/"
 _320 = rootDir + "320/"
@@ -20,7 +20,7 @@ cover_image_storage_dir = rootDir + "coverPhoto/"
 master = rootDir + "master/"
 
 _id = 1
-CONST_DEFAULT_COVER_IMAGE_PATH = "F:/default/default_cover_image.jpg"
+CONST_DEFAULT_COVER_IMAGE_PATH = "F:/songs/default_cover_image.jpg"
 
 CONST_SONG_MAP = {
     'id': str(_id),
@@ -150,15 +150,11 @@ def make_dir():
 if __name__ == '__main__':
     make_dir()
 
-    query_list = []
-
     # get query_list
     for song in songs:
         song = os.path.join(songDir, song)
         single_query = create_single_query(song)
         _id += 1
 
-        query_list.append(single_query)
-    # execute query_list
-    for line in query_list:
-        insert_into_db(line.removesuffix(","))
+        # insert into db
+        insert_into_db(single_query)

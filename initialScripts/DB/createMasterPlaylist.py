@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-storageDir = "F:/music/"
+storageDir = "F:/songs/"
 
 _128 = storageDir + "128/"
 _320 = storageDir + "320/"

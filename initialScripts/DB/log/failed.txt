@@ -1,0 +1,4 @@
+insert into song values (1, "F:/songs/coverPhoto/'Dhak_Dhak_Karne_Laga.jpeg", "F:/songs/master/'Dhak_Dhak_Karne_Laga/'Dhak_Dhak_Karne_Laga_master.m3u8", 318955.10204081633, "'Dhak Dhak Karne Laga(Kyoku)", "Kyokui.Com", "Best Of Old Mp3 Songs - Kyokui.Com", "Kyokui.Com", "Kyokui.Com", "Kyokui.Com", "Kyoku", "Kyoku", "Kyoku", "2022");
+insert into song values (2, "F:/songs/coverPhoto/100_Rupaya.jpeg", "F:/songs/master/100_Rupaya/100_Rupaya_master.m3u8", 197146.1224489796, "100 Rupaya(Kyoku)", "Kyoku.Com", "New Bhojpuri Songs 2022 - Kyoku.Com", "Kyoku.Com", "Kyoku.Com", "Kyoku.Com", "Kyoku", "Kyoku", "Kyoku", "2022");
+insert into song values None;
+insert into song values None;

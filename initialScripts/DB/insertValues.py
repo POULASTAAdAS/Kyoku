@@ -19,5 +19,14 @@ def insert_into_db(query):
 
         cursor.execute(query)
         db.commit()
+
+        with open('query/insertQuery.sql', 'a') as wr:
+            wr.write(f'{query}\n')
+        wr.close()
+
     except Exception as e:
-        print(str(e))
+        print((str(e)))
+
+        with open('log/failed.txt', 'a') as f:
+            f.write(f'{query}\n')
+        f.close()

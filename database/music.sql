@@ -19,3 +19,14 @@ create table song(
 );
 
 select distinct genre from song;
+
+select count(*) from song;
+
+select * from song;
+
+select * from emailAuthUser;
+
+drop table emailAuthUser;
+drop table sessionStorage;
+drop table invalidrefreshToken;
+drop table googleAuthUser;
