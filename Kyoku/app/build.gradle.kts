@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.kyoku"
+    namespace = "com.poulastaa.kyoku"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.kyoku"
+        applicationId = "com.poulastaa.kyoku"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -25,12 +25,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-//        resValue(
-//            type = "string",
-//            name = "asset_statements",
-//            value = "https://unique-catkin-tendency.glitch.me/.well-known/assetlinks.json"
-//        )
     }
 
     buildTypes {

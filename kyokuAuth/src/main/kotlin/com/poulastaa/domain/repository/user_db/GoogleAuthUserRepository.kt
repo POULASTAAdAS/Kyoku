@@ -1,6 +1,6 @@
 package com.poulastaa.domain.repository.user_db
 
-import com.poulastaa.data.model.auth.res.GoogleSignInResponse
+import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 
 
 interface GoogleAuthUserRepository {
@@ -9,5 +9,5 @@ interface GoogleAuthUserRepository {
         email: String,
         sub: String,
         pictureUrl: String
-    ): GoogleSignInResponse
+    ): GoogleAuthResponse
 }

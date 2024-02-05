@@ -1,8 +1,8 @@
 package com.poulastaa.routes.auth.common
 
-import com.poulastaa.data.model.auth.req.EmailLoginReq
-import com.poulastaa.data.model.auth.res.EmailLoginResponse
-import com.poulastaa.data.model.auth.stat.EmailLoginStatus
+import com.poulastaa.data.model.auth.EmailLoginReq
+import com.poulastaa.data.model.auth.jwt.EmailLoginResponse
+import com.poulastaa.data.model.auth.jwt.EmailLoginStatus
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.verifyEmailIdWithApi
 import io.ktor.http.*
@@ -29,7 +29,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
             }
         }
 
-    val result = userService.loginUser(
+    val result = userService.getEmailUser(
         email = emailLoginReq.email.trim(),
         password = emailLoginReq.password.trim()
     )

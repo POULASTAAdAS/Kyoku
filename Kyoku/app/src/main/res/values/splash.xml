@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Kyoku.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FFFFFBFF</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/light_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.Kyoku</item>
+    </style>
+</resources>

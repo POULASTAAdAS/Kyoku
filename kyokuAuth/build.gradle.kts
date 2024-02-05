@@ -42,8 +42,8 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
-
-     implementation("io.insert-koin:koin-ktor:$koin_ktor")
+    // koin
+    implementation("io.insert-koin:koin-ktor:$koin_ktor")
 
     implementation("io.ktor:ktor-server-auth-jvm")
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
@@ -63,7 +63,4 @@ dependencies {
 
     // Google Client API Library
     implementation("com.google.api-client:google-api-client:2.2.0")
-
-    // spotify web api
-    implementation("se.michaelthelin.spotify:spotify-web-api-java:8.3.4")
 }

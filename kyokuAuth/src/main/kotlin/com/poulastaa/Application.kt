@@ -7,7 +7,6 @@ import kotlinx.coroutines.*
 val invalidTokenList = ArrayList<String>()
 
 
-
 @OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)

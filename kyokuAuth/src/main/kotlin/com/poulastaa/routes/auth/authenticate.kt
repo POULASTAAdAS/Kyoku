@@ -2,14 +2,12 @@ package com.poulastaa.routes.auth
 
 
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.auth.req.AuthReqBaseModel
-import com.poulastaa.data.model.auth.req.EmailLoginReq
-import com.poulastaa.data.model.auth.req.EmailSignUpReq
-import com.poulastaa.data.model.auth.req.GoogleAuthReq
+import com.poulastaa.data.model.auth.*
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.routes.auth.common.handleEmailLogin
 import com.poulastaa.routes.auth.common.handleEmailSignup
-import com.poulastaa.routes.auth.common.handleGoogleLogin
+import com.poulastaa.routes.auth.common.handleGoogleAuth
+import com.poulastaa.routes.auth.common.handlePasskeyAuth
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -53,8 +51,15 @@ fun Route.authRoute(
                 }
 
                 is GoogleAuthReq -> {
-                    handleGoogleLogin(
+                    handleGoogleAuth(
                         googleAuthReq = payload,
+                        userService = userService
+                    )
+                }
+
+                is PasskeyAuthReq -> {
+                    handlePasskeyAuth(
+                        passkeyAuthReq = payload,
                         userService = userService
                     )
                 }

@@ -1,8 +1,8 @@
 package com.poulastaa.routes.auth.common
 
-import com.poulastaa.data.model.auth.req.EmailSignUpReq
-import com.poulastaa.data.model.auth.res.EmailSignInResponse
-import com.poulastaa.data.model.auth.stat.UserCreationStatus
+import com.poulastaa.data.model.auth.EmailSignUpReq
+import com.poulastaa.data.model.auth.jwt.EmailSignInResponse
+import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.verifyEmailIdWithApi
 import io.ktor.http.*
@@ -71,7 +71,7 @@ private suspend fun createUser(
     password: String,
     userService: UserServiceRepository,
 ): EmailSignInResponse {
-    return userService.createUser(
+    return userService.createEmailUser(
         userName = userName.trim(),
         email = email.trim(),
         password = password.trim()

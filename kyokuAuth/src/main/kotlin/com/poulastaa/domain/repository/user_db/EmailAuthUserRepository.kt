@@ -1,7 +1,7 @@
 package com.poulastaa.domain.repository.user_db
 
-import com.poulastaa.data.model.auth.res.EmailLoginResponse
-import com.poulastaa.data.model.auth.stat.*
+import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.jwt.*
 import java.io.File
 
 interface EmailAuthUserRepository {

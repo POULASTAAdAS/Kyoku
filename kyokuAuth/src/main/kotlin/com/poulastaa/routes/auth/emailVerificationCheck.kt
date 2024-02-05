@@ -2,7 +2,7 @@ package com.poulastaa.routes.auth
 
 
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.auth.stat.EmailVerificationStatus
+import com.poulastaa.data.model.auth.jwt.EmailVerificationStatus
 import com.poulastaa.domain.repository.UserServiceRepository
 import io.ktor.http.*
 import io.ktor.server.application.*

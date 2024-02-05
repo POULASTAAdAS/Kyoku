@@ -1,6 +1,7 @@
 package com.poulastaa.plugins
 
-import com.poulastaa.data.model.GoogleUserSession
+import com.poulastaa.data.model.auth.google.GoogleUserSession
+import com.poulastaa.data.model.auth.passkey.PasskeyUserSession
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.routes.auth.*
 import com.poulastaa.routes.getUserProfilePic
@@ -18,6 +19,10 @@ fun Application.configureRouting() {
         sessionInterceptor()
 
         authRoute(userService)
+
+        createPasskeyUser(userService)
+        getPasskeyUser(userService)
+
         verifyEmail(userService)
         emailVerificationCheck(userService)
 
@@ -39,9 +44,11 @@ fun Application.configureRouting() {
 
 private fun Route.sessionInterceptor() {
     intercept(ApplicationCallPipeline.Call) {
-        val session = call.sessions.get<GoogleUserSession>()
+        call.sessions.get<GoogleUserSession>()?.let {
+            call.sessions.set(it)
+        }
 
-        session?.let {
+        call.sessions.get<PasskeyUserSession>()?.let {
             call.sessions.set(it)
         }
     }

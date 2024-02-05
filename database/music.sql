@@ -22,11 +22,18 @@ select distinct genre from song;
 
 select count(*) from song;
 
+select distinct artist from song;
+
 select * from song;
 
 select * from emailAuthUser;
+select * from googleAuthUser;
+select * from passkeyAuthUser;
+
+select * from sessionStorage;
 
 drop table emailAuthUser;
 drop table sessionStorage;
+drop table passkeyAuthUser;
 drop table invalidrefreshToken;
 drop table googleAuthUser;

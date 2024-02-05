@@ -1,6 +1,6 @@
 package com.poulastaa.utils
 
-import com.example.data.model.VerificationMailApiResponse
+import com.poulastaa.data.model.api.email_authen.VerificationMailApiResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*

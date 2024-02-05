@@ -3,11 +3,16 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.domain.repository.user_db.GoogleAuthUserRepository
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.auth.res.*
-import com.poulastaa.data.model.auth.stat.*
+import com.poulastaa.data.model.User
+import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.google.GoogleAuthResponse
+import com.poulastaa.data.model.auth.jwt.*
+import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.domain.dao.PasskeyAuthUser
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
+import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
 import com.poulastaa.invalidTokenList
 import com.poulastaa.utils.Constants
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
@@ -15,17 +20,19 @@ import com.poulastaa.utils.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
+import com.poulastaa.utils.toPasskeyAuthResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
 class UserServiceRepositoryImpl(
-    private val emailAuthUser: EmailAuthUserRepository,
     private val jwtRepository: JWTRepository,
-    private val googleAuthUser: GoogleAuthUserRepository
+    private val emailAuthUser: EmailAuthUserRepository,
+    private val googleAuthUser: GoogleAuthUserRepository,
+    private val passkeyAuthUser: PasskeyAuthUserRepository
 ) : UserServiceRepository {
-    override suspend fun createUser(
+    override suspend fun createEmailUser(
         userName: String,
         email: String,
         password: String
@@ -64,10 +71,12 @@ class UserServiceRepositoryImpl(
 
                 EmailSignInResponse(
                     status = status,
-                    userName = userName,
+                    user = User(
+                        userName = userName,
+                        profilePic = constructProfileUrl()
+                    ),
                     accessToken = accessToken,
                     refreshToken = refreshToken,
-                    profilePic = constructProfileUrl()
                 )
             }
 
@@ -82,6 +91,8 @@ class UserServiceRepositoryImpl(
                     status = status
                 )
             }
+
+            UserCreationStatus.USER_NOT_FOUND -> throw IllegalArgumentException("invalid")
 
             UserCreationStatus.EMAIL_NOT_VALID -> throw IllegalArgumentException("invalid")
         }
@@ -107,7 +118,7 @@ class UserServiceRepositoryImpl(
     override suspend fun checkEmailVerification(email: String): EmailVerificationResponse =
         EmailVerificationResponse(status = emailAuthUser.checkEmailVerification(email))
 
-    override suspend fun loginUser(email: String, password: String): EmailLoginResponse {
+    override suspend fun getEmailUser(email: String, password: String): EmailLoginResponse {
         val accessToken = jwtRepository.generateAccessToken(email = email)
         val refreshToken = jwtRepository.generateRefreshToken(email = email)
 
@@ -122,7 +133,7 @@ class UserServiceRepositoryImpl(
             CoroutineScope(Dispatchers.IO).launch {
                 sendLogInMail(
                     to = email,
-                    subject = "Welcome back ${response.userName}"
+                    userName = response.user.userName
                 )
             }
         }
@@ -201,9 +212,6 @@ class UserServiceRepositoryImpl(
         }
     }
 
-    override suspend fun getUserProfilePic(email: String): File? =
-        emailAuthUser.getUserProfilePic(email)
-
     override suspend fun refreshToken(token: String): RefreshTokenResponse {
         val email = jwtRepository.verifyJWTToken(token, REFRESH_TOKEN_CLAIM_KEY) ?: return RefreshTokenResponse(
             status = RefreshTokenUpdateStatus.TOKEN_EXPIRED
@@ -241,14 +249,16 @@ class UserServiceRepositoryImpl(
         }
     }
 
+    override suspend fun getUserProfilePic(email: String): File? =
+        emailAuthUser.getUserProfilePic(email)
 
     // google user service
-    override suspend fun createUser(
+    override suspend fun createGoogleUser(
         userName: String,
         email: String,
         sub: String,
         pictureUrl: String
-    ): GoogleSignInResponse {
+    ): GoogleAuthResponse {
         val response = googleAuthUser.createUser(
             userName = userName,
             email = email,
@@ -256,36 +266,13 @@ class UserServiceRepositoryImpl(
             pictureUrl = pictureUrl
         )
 
-        val scope = CoroutineScope(Dispatchers.IO)
-
-        if (response.status == UserCreationStatus.CREATED) {
-            scope.launch {
-                sendEmail(
-                    to = email,
-                    subject = "Welcome ${response.userName}",
-                    content = (
-                            "<html>"
-                                    + "<body>"
-                                    + "<h1>Welcome to Kyoku :)</h1>"
-                                    + "<br>"
-                                    + "<p>Listen to millions of songs add free</p>"
-                                    + "<p>Download as much songs as you want</p>"
-                                    + "<br>"
-                                    + "<p>This app is developed by only one Developer :)</p>"
-                                    + "<p>If it contains any bug please mail me on this email</p>"
-                                    + "<p>-> ${System.getenv("email")} <-</p>"
-                                    + "<p>Hope You have a great experience with Kyoku</p>"
-                                    + "<p>Thank You :)</p>"
-                                    + "</body>"
-                                    + "</html>"
-                            )
-                )
-            }
-        } else if (response.status == UserCreationStatus.CONFLICT) {
-            scope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (response.status == UserCreationStatus.CREATED) {
+                createMail(email, response.user.userName)
+            } else if (response.status == UserCreationStatus.CONFLICT) {
                 sendLogInMail(
                     to = email,
-                    subject = "Welcome back ${response.userName}"
+                    userName = response.user.userName
                 )
             }
         }
@@ -293,13 +280,93 @@ class UserServiceRepositoryImpl(
         return response
     }
 
+    override suspend fun findUserByEmail(email: String): PasskeyAuthUser? =
+        passkeyAuthUser.findUserByEmail(email)
+
+    override suspend fun createPasskeyUser(
+        userName: String,
+        email: String,
+        userId: String
+    ): PasskeyAuthResponse {
+        val response = passkeyAuthUser.createUser(
+            userId = userId,
+            email = email,
+            userName = userName
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            when (response.status) {
+                UserCreationStatus.CREATED -> {
+                    createMail(
+                        email = email,
+                        userName = response.user.userName
+                    )
+                }
+
+                UserCreationStatus.CONFLICT -> {
+                    sendLogInMail(
+                        to = email,
+                        userName = response.user.userName
+                    )
+                }
+
+                else -> Unit
+            }
+        }
+
+        return response
+    }
+
+    override suspend fun getPasskeyUser(userId: String): PasskeyAuthResponse {
+        val user = passkeyAuthUser.getUser(userId)
+
+        if (user != null) {
+            sendLogInMail(
+                to = user.email,
+                userName = user.displayName
+            )
+            return user.toPasskeyAuthResponse(status = UserCreationStatus.CONFLICT)
+        }
+
+        return PasskeyAuthResponse(
+            status = UserCreationStatus.USER_NOT_FOUND
+        )
+    }
+
+
+    private fun createMail(
+        email: String,
+        userName: String
+    ) {
+        sendEmail(
+            to = email,
+            subject = "Welcome $userName",
+            content = (
+                    "<html>"
+                            + "<body>"
+                            + "<h1>Welcome to Kyoku :)</h1>"
+                            + "<br>"
+                            + "<p>Listen to millions of songs add free</p>"
+                            + "<p>Download as much songs as you want</p>"
+                            + "<br>"
+                            + "<p>This app is developed by only one Developer :)</p>"
+                            + "<p>If it contains any bug please mail me on this email</p>"
+                            + "<p>-> ${System.getenv("email")} <-</p>"
+                            + "<p>Hope You have a great experience with Kyoku</p>"
+                            + "<p>Thank You :)</p>"
+                            + "</body>"
+                            + "</html>"
+                    )
+        )
+    }
+
     private fun sendLogInMail(
         to: String,
-        subject: String
+        userName: String
     ) {
         sendEmail(
             to = to,
-            subject = subject,
+            subject = "Welcome back $userName",
             content = "It's fantastic to see you back with us!\n" +
                     "We've missed you and are thrilled to have you back.\n" +
                     "We hope you're ready for an exciting journey ahead." +

@@ -3,15 +3,22 @@ package com.poulastaa.utils
 object Constants {
     const val PROFILE_PIC_ROOT_DIR = "F:/songs/profilePic"
 
+    const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
+
     const val BASE_URL = "https://ccba-103-44-173-204.ngrok-free.app"
 
     const val ISSUER = "https://accounts.google.com"
 
-    const val SESSION_NAME = "GOOGLE_USER_SESSION"
+    const val SESSION_NAME_GOOGLE = "GOOGLE_USER_SESSION"
+    const val SESSION_NAME_PASSKEY = "PASSKEY_USER_SESSION"
+
+    const val AUTH_RESPONSE_PASSKEY_TYPE_LOGIN = "AUTH_RESPONSE_PASSKEY_TYPE_LOGIN"
+    const val AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP = "AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP"
 
     const val AUTH_TYPE_GOOGLE = "AUTH_TYPE_GOOGLE"
     const val AUTH_TYPE_EMAIL_SIGN_UP = "AUTH_TYPE_EMAIL_SIGN_UP"
     const val AUTH_TYPE_EMAIL_LOG_IN = "AUTH_TYPE_EMAIL_LOG_IN"
+    const val AUTH_TYPE_PASSKEY = "AUTH_TYPE_PASSKEY"
 
     const val SMS_EMAIL_GOOGLE_SMTP_HOST = "smtp.gmail.com"
     const val SMS_EMAIL_PORT = "587"

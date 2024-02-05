@@ -5,20 +5,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".Kyoku"
+        android:name="com.poulastaa.kyoku.Kyoku"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/light_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/light_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kyoku"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.poulastaa.kyoku.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Kyoku">
+            android:theme="@style/Theme.Kyoku.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

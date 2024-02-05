@@ -2,7 +2,8 @@ package com.poulastaa.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.GoogleUserSession
+import com.poulastaa.data.model.auth.google.GoogleUserSession
+import com.poulastaa.data.model.auth.passkey.PasskeyUserSession
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -36,13 +37,15 @@ fun Application.configureSecurity() {
         }
 
         session<GoogleUserSession>("google-auth") {
-            validate {
-                it
-            }
+            validate { it }
 
-            challenge {
-                call.resolveResource(EndPoints.UnAuthorised.route)
-            }
+            challenge { call.resolveResource(EndPoints.UnAuthorised.route) }
+        }
+
+        session<PasskeyUserSession>("passkey-auth") {
+            validate { it }
+
+            challenge { call.resolveResource(EndPoints.UnAuthorised.route) }
         }
     }
 }

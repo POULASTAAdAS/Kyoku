@@ -1,19 +1,23 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.auth.res.*
-import com.poulastaa.data.model.auth.stat.PasswordResetStatus
-import com.poulastaa.data.model.auth.stat.UpdateEmailVerificationStatus
+import com.poulastaa.data.model.auth.google.GoogleAuthResponse
+import com.poulastaa.data.model.auth.jwt.*
+import com.poulastaa.data.model.auth.jwt.PasswordResetStatus
+import com.poulastaa.data.model.auth.jwt.UpdateEmailVerificationStatus
+import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.domain.dao.PasskeyAuthUser
 import java.io.File
 
 interface UserServiceRepository {
-    suspend fun createUser(
+    // email auth
+    suspend fun createEmailUser(
         userName: String,
         email: String,
         password: String,
     ): EmailSignInResponse
 
 
-    suspend fun loginUser(
+    suspend fun getEmailUser(
         email: String,
         password: String
     ): EmailLoginResponse
@@ -26,14 +30,26 @@ interface UserServiceRepository {
         password: String
     ): PasswordResetStatus
 
-    suspend fun getUserProfilePic(email: String): File?
-
     suspend fun refreshToken(token: String): RefreshTokenResponse
 
-    suspend fun createUser(
+    suspend fun getUserProfilePic(email: String): File?
+
+    // google auth
+    suspend fun createGoogleUser(
         userName: String,
         email: String,
         sub: String,
         pictureUrl: String
-    ): GoogleSignInResponse
+    ): GoogleAuthResponse
+
+    // passkey auth
+    suspend fun createPasskeyUser(
+        userName: String,
+        email: String,
+        userId: String
+    ): PasskeyAuthResponse
+
+    suspend fun getPasskeyUser(userId: String): PasskeyAuthResponse
+
+    suspend fun findUserByEmail(email: String): PasskeyAuthUser?
 }

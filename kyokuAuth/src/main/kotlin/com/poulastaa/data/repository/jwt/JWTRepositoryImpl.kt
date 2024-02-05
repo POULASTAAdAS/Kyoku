@@ -4,7 +4,7 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import com.poulastaa.data.model.auth.stat.UpdateEmailVerificationStatus
+import com.poulastaa.data.model.auth.jwt.UpdateEmailVerificationStatus
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.invalidTokenList
 import io.ktor.server.application.*

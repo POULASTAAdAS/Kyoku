@@ -1,7 +1,7 @@
 package com.poulastaa.routes.auth
 
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.auth.stat.PasswordResetStatus
+import com.poulastaa.data.model.auth.jwt.PasswordResetStatus
 import com.poulastaa.domain.repository.UserServiceRepository
 import io.ktor.http.*
 import io.ktor.server.application.*

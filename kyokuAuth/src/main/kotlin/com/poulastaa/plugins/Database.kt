@@ -1,9 +1,6 @@
 package com.poulastaa.plugins
 
-import com.poulastaa.data.model.db_table.EmailAuthUserTable
-import com.poulastaa.data.model.db_table.GoogleAuthUserTable
-import com.poulastaa.data.model.db_table.InvalidRefreshTokenTable
-import com.poulastaa.data.model.db_table.SessionStorageTable
+import com.poulastaa.data.model.db_table.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -27,6 +24,7 @@ fun Application.configureDatabase() {
     transaction(db) {
         SchemaUtils.create(EmailAuthUserTable)
         SchemaUtils.create(GoogleAuthUserTable)
+        SchemaUtils.create(PasskeyAuthUserTable)
         SchemaUtils.create(InvalidRefreshTokenTable)
         SchemaUtils.create(SessionStorageTable)
     }

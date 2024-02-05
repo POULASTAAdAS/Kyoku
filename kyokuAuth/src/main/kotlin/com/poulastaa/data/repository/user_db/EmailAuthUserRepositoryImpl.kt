@@ -1,7 +1,8 @@
 package com.poulastaa.data.repository.user_db
 
-import com.poulastaa.data.model.auth.res.EmailLoginResponse
-import com.poulastaa.data.model.auth.stat.*
+import com.poulastaa.data.model.User
+import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.jwt.*
 import com.poulastaa.data.model.db_table.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.InvalidRefreshTokenTable
 import com.poulastaa.domain.dao.EmailAuthUser
@@ -15,7 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.dao.id.EntityID
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.IOException
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
@@ -102,10 +102,12 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
 
             return EmailLoginResponse(
                 status = EmailLoginStatus.USER_PASS_MATCHED,
-                userName = user.userName,
                 accessToken = accessToken,
                 refreshToken = refreshToken,
-                profilePic = constructProfileUrl(),
+                user = User(
+                    userName = user.userName,
+                    profilePic = constructProfileUrl()
+                ),
                 data = emptyList()
             )
         } catch (e: Exception) {
