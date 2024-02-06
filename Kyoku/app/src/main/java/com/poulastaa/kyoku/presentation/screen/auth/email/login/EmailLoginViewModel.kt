@@ -21,10 +21,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class EmailLoginViewModel @Inject constructor(
-    private val connectivity: NetworkObserver,
+    @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
     private val dataStore: DataStoreOperation,
     private val useCases: UseCases
 ) : ViewModel() {

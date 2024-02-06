@@ -47,9 +47,11 @@ fun SetupNavGraph(
         }
 
         composable(Screens.ForgotPassword.route) {
-            ForgotPasswordScreen {
-                navController.popBackStack()
-            }
+            ForgotPasswordScreen(
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(Screens.Home.route) {

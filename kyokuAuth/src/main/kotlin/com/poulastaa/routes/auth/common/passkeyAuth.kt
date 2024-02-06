@@ -13,32 +13,13 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handlePasskeyAuth(
     passkeyAuthReq: PasskeyAuthReq,
     userService: UserServiceRepository
 ) {
-    val user = userService.findUserByEmail(email = passkeyAuthReq.email)
-
-    user?.let {
-        call.respond(
-            message = GetPasskeyJson(
-                allowCredentials = listOf(
-                    GetPasskeyJson.AllowCredentials(
-                        id = it.userId,
-                        transports = listOf(),
-                        type = "public-key"
-                    )
-                )
-            ),
-            status = HttpStatusCode.OK
-        )
-
-        return
-    }
+    val response = userService.getPasskeyJsonResponse(
+        email = passkeyAuthReq.email,
+        displayName = passkeyAuthReq.displayName
+    )
 
     call.respond(
-        message = CreatePasskeyJson(
-            user = CreatePasskeyJson.User(
-                name = passkeyAuthReq.email,
-                displayName = passkeyAuthReq.displayName
-            )
-        ),
+        message = response,
         status = HttpStatusCode.OK
     )
 }

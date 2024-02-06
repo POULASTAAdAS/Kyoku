@@ -10,6 +10,7 @@ interface PasskeyAuthUserRepository {
         userId: String,
         email: String,
         userName: String,
+        profilePic:String
     ): PasskeyAuthResponse
 
     suspend fun getUser(

@@ -7,6 +7,8 @@ import com.poulastaa.data.model.User
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.jwt.*
+import com.poulastaa.data.model.auth.passkey.CreatePasskeyJson
+import com.poulastaa.data.model.auth.passkey.GetPasskeyJson
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.domain.dao.PasskeyAuthUser
 import com.poulastaa.domain.repository.UserServiceRepository
@@ -15,7 +17,10 @@ import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
 import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
 import com.poulastaa.invalidTokenList
 import com.poulastaa.utils.Constants
+import com.poulastaa.utils.Constants.DEFAULT_PROFILE_PIC
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
+import com.poulastaa.utils.Constants.PASSKEY_USER_CREATION_CLAIM_KEY
+import com.poulastaa.utils.Constants.PASSKEY_USER_GET_CLAIM_KEY
 import com.poulastaa.utils.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
@@ -95,6 +100,8 @@ class UserServiceRepositoryImpl(
             UserCreationStatus.USER_NOT_FOUND -> throw IllegalArgumentException("invalid")
 
             UserCreationStatus.EMAIL_NOT_VALID -> throw IllegalArgumentException("invalid")
+
+            UserCreationStatus.TOKEN_NOT_VALID -> throw IllegalArgumentException("invalid")
         }
     }
 
@@ -280,19 +287,35 @@ class UserServiceRepositoryImpl(
         return response
     }
 
-    override suspend fun findUserByEmail(email: String): PasskeyAuthUser? =
-        passkeyAuthUser.findUserByEmail(email)
-
     override suspend fun createPasskeyUser(
+        token: String,
         userName: String,
         email: String,
         userId: String
     ): PasskeyAuthResponse {
-        val response = passkeyAuthUser.createUser(
-            userId = userId,
-            email = email,
-            userName = userName
+        val result = jwtRepository.verifyJWTToken(
+            token = token,
+            claim = PASSKEY_USER_CREATION_CLAIM_KEY
+        ) ?: return PasskeyAuthResponse(
+            status = UserCreationStatus.TOKEN_NOT_VALID
         )
+
+        if (result == "TOKEN_USED") return PasskeyAuthResponse(
+            status = UserCreationStatus.TOKEN_NOT_VALID
+        )
+
+        val response = try {
+            passkeyAuthUser.createUser(
+                userId = userId,
+                email = email,
+                userName = userName,
+                profilePic = DEFAULT_PROFILE_PIC
+            )
+        } catch (e: Exception) {
+            return PasskeyAuthResponse(
+                status = UserCreationStatus.SOMETHING_WENT_WRONG
+            )
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
             when (response.status) {
@@ -317,14 +340,20 @@ class UserServiceRepositoryImpl(
         return response
     }
 
-    override suspend fun getPasskeyUser(userId: String): PasskeyAuthResponse {
+    override suspend fun getPasskeyUser(userId: String, token: String): PasskeyAuthResponse {
         val user = passkeyAuthUser.getUser(userId)
 
+        jwtRepository.verifyJWTToken(token, PASSKEY_USER_GET_CLAIM_KEY) ?: return PasskeyAuthResponse(
+            status = UserCreationStatus.TOKEN_NOT_VALID
+        )
+
         if (user != null) {
-            sendLogInMail(
-                to = user.email,
-                userName = user.displayName
-            )
+            CoroutineScope(Dispatchers.IO).launch {
+                sendLogInMail(
+                    to = user.email,
+                    userName = user.displayName
+                )
+            }
             return user.toPasskeyAuthResponse(status = UserCreationStatus.CONFLICT)
         }
 
@@ -333,6 +362,40 @@ class UserServiceRepositoryImpl(
         )
     }
 
+    override suspend fun getPasskeyJsonResponse(email: String, displayName: String): Any {
+        val user = passkeyAuthUser.findUserByEmail(email)
+
+        user?.let {
+            return GetPasskeyJson(
+                token = jwtRepository.generateAccessToken(
+                    sub = "PasskeyUser",
+                    email = email,
+                    claimName = PASSKEY_USER_GET_CLAIM_KEY,
+                    validationTime = 120000L  // 2 minute
+                ),
+                allowCredentials = listOf(
+                    GetPasskeyJson.AllowCredentials(
+                        id = it.userId,
+                        transports = listOf(),
+                        type = "public-key"
+                    )
+                )
+            )
+        }
+
+        return CreatePasskeyJson(
+            token = jwtRepository.generateAccessToken(
+                sub = "PasskeyUser",
+                email = email,
+                claimName = PASSKEY_USER_CREATION_CLAIM_KEY,
+                validationTime = 120000 // 2 minute
+            ),
+            user = CreatePasskeyJson.User(
+                name = email,
+                displayName = displayName
+            )
+        )
+    }
 
     private fun createMail(
         email: String,

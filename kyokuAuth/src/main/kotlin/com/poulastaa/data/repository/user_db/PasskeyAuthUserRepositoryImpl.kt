@@ -19,22 +19,26 @@ class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
         userId: String,
         email: String,
         userName: String,
+        profilePic: String
     ): PasskeyAuthResponse {
-        val user = findUserByUserId(userId)
+        val user = findUserByEmail(email)
 
         if (user == null) {
             val newUser = dbQuery {
                 PasskeyAuthUser.new {
                     this.userId = userId
                     this.email = email
-                    this.displayName = displayName
+                    this.displayName = userName
+                    this.profilePic = profilePic
                 }
             }
 
             return newUser.toPasskeyAuthResponse(status = UserCreationStatus.CREATED)
         }
 
-        return user.toPasskeyAuthResponse(status = UserCreationStatus.CONFLICT)
+        return PasskeyAuthResponse(
+            status = UserCreationStatus.CONFLICT
+        )
     }
 
     override suspend fun getUser(userId: String): PasskeyAuthUser? = findUserByUserId(userId)

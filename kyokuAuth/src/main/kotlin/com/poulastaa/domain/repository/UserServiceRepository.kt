@@ -44,12 +44,13 @@ interface UserServiceRepository {
 
     // passkey auth
     suspend fun createPasskeyUser(
+        token:String,
         userName: String,
         email: String,
         userId: String
     ): PasskeyAuthResponse
 
-    suspend fun getPasskeyUser(userId: String): PasskeyAuthResponse
+    suspend fun getPasskeyUser(userId: String , token:String): PasskeyAuthResponse
 
-    suspend fun findUserByEmail(email: String): PasskeyAuthUser?
+    suspend fun getPasskeyJsonResponse(email: String , displayName:String): Any
 }

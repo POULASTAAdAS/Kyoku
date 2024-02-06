@@ -1,14 +1,17 @@
 package com.poulastaa.data.model.auth.passkey
 
+import com.poulastaa.utils.Constants
 import com.poulastaa.utils.Constants.AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP
 import com.poulastaa.utils.generateFidoChallenge
 import kotlinx.serialization.Serializable
+import java.util.*
 
 @Serializable
 data class CreatePasskeyJson(
+    val token: String,
     val challenge: String = generateFidoChallenge(),
     val rp: Rp = Rp(),
-    val user: User = User(),
+    val user: User,
     val pubKeyCredParams: List<PubKeyCredParams> = listOf(
         PubKeyCredParams()
     ),
@@ -16,19 +19,18 @@ data class CreatePasskeyJson(
     val attestation: String = "none",
     val excludeCredentials: List<ExcludeCredentials> = emptyList(),
     val authenticatorSelection: AuthenticatorSelection = AuthenticatorSelection()
-): PasskeyBaseModel(type = AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
-
+) : PasskeyBaseModel(type = AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
     @Serializable
     data class Rp(
         val name: String = "Kyoku",
-        val id: String = "com.example.kyoku"
+        val id: String = Constants.BASE_URL.removePrefix("https://")
     )
 
     @Serializable
     data class User(
-        val id: String = "1",
-        val name: String = "poulastaadas2@gmail.com",
-        val displayName: String = "Anshu"
+        val id: String = UUID.randomUUID().toString(),
+        val name: String,
+        val displayName: String
     )
 
     @Serializable

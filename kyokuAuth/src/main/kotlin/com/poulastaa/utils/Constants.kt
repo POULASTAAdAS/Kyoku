@@ -5,7 +5,9 @@ object Constants {
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
-    const val BASE_URL = "https://ccba-103-44-173-204.ngrok-free.app"
+    const val BASE_URL = "https://5608-103-42-158-249.ngrok-free.app"
+
+    const val PROFILE_PIC_URL = "$BASE_URL/api/authorised/user/profilePic"
 
     const val ISSUER = "https://accounts.google.com"
 
@@ -27,6 +29,9 @@ object Constants {
     const val REFRESH_TOKEN_CLAIM_KEY = "emailRefresh"
     const val VERIFICATION_MAIL_TOKEN_CLAIM_KEY = "emailVerify"
     const val FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY = "forgotPassword"
+
+    const val PASSKEY_USER_CREATION_CLAIM_KEY = "createPasskeyUser"
+    const val PASSKEY_USER_GET_CLAIM_KEY = "getPasskeyUser"
 
     const val DEFAULT_SESSION_MAX_AGE = 7L * 24 * 3600 // 7 days
 

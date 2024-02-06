@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 class CreatePasskeyUserReq(
     val id: String,
     val email: String,
-    val userName: String
+    val userName: String,
+    val token:String
 )

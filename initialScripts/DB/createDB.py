@@ -9,7 +9,7 @@ from DB.insertValues import insert_into_db
 
 CONST_APP_NAME = '"Kyoku"'
 
-songDir = "E:/22-24/"
+songDir = "E:/19-21/"
 
 songs = os.listdir(songDir)
 rootDir = "F:/songs/"
@@ -19,7 +19,7 @@ _320 = rootDir + "320/"
 cover_image_storage_dir = rootDir + "coverPhoto/"
 master = rootDir + "master/"
 
-_id = 12231
+_id = 15649
 CONST_DEFAULT_COVER_IMAGE_PATH = "F:/songs/default_cover_image.jpg"
 
 CONST_SONG_MAP = {
@@ -155,6 +155,10 @@ if __name__ == '__main__':
         song = os.path.join(songDir, song)
         single_query = create_single_query(song)
         _id += 1
+
+        with open('log/query.sql', 'a') as f:
+            f.write(f'{single_query}\n')
+        f.close()
 
         # insert into db
         insert_into_db(single_query)

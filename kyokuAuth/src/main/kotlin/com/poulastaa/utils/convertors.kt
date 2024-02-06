@@ -10,6 +10,7 @@ import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.domain.dao.GoogleAuthUser
 import com.poulastaa.domain.dao.PasskeyAuthUser
 import com.poulastaa.utils.Constants.BASE_URL
+import com.poulastaa.utils.Constants.PROFILE_PIC_URL
 
 
 fun GoogleAuthUser.toGoogleAuthResponse(status: UserCreationStatus): GoogleAuthResponse = GoogleAuthResponse(
@@ -25,7 +26,7 @@ fun PasskeyAuthUser.toPasskeyAuthResponse(status: UserCreationStatus): PasskeyAu
     status = status,
     user = User(
         userName = this.displayName,
-        profilePic = this.profilePic
+        profilePic = PROFILE_PIC_URL
     ),
     data = emptyList() // todo add data
 )

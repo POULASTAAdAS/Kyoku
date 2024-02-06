@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetPasskeyUserReq(
-    val id:String
+    val id: String,
+    val token: String
 )

@@ -18,15 +18,18 @@ fun Route.getPasskeyUser(
 ) {
     route(EndPoints.GetPasskeyUser.route) {
         post {
-            val userReq = call.receiveNullable<GetPasskeyUserReq>() ?: return@post call.respond(
-                message = PasskeyAuthResponse(
-                    status = UserCreationStatus.USER_NOT_FOUND
-                ),
-                status = HttpStatusCode.BadRequest
+            val userReq = call.receiveNullable<GetPasskeyUserReq>()
+                ?: return@post call.respond(
+                    message = PasskeyAuthResponse(
+                        status = UserCreationStatus.TOKEN_NOT_VALID
+                    ),
+                    status = HttpStatusCode.BadRequest
+                )
+
+            val response = userService.getPasskeyUser(
+                userId = userReq.id,
+                userReq.token
             )
-
-            val response = userService.getPasskeyUser(userId = userReq.id)
-
 
             if (response.status == UserCreationStatus.CONFLICT)
                 response.setSession(call, userReq.id)

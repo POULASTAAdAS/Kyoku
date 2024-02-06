@@ -11,13 +11,18 @@ sealed class DefaultAuthModel(
 
 @Serializable
 data class EmailLoginReq(
+    val type: String,
+    val authType: String,
     val email: String,
     val password: String
-) : DefaultAuthModel(
-    authType = "AUTH_TYPE_EMAIL_LOG_IN"
 )
 
 fun main() {
-    val data: DefaultAuthModel = EmailLoginReq("example.email", "examplePassword")
+    val data = EmailLoginReq(
+        type = "com.example.EmailLoginReq",
+        authType = "AUTH_TYPE_EMAIL_LOG_IN",
+        email = "example.email",
+        password = "examplePassword"
+    )
     println(Json.encodeToString(data)) // Serializing data of compile-time type Project
 }

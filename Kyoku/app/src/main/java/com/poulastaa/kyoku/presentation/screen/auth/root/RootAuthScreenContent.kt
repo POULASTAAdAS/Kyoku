@@ -1,6 +1,9 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +37,8 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.presentation.screen.common.CustomAuthButton
 import com.poulastaa.kyoku.presentation.screen.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.common.CustomTextFiled
+import com.poulastaa.kyoku.ui.theme.dark_type_two_onPrimaryContainer
+import com.poulastaa.kyoku.ui.theme.light_type_two_onPrimaryContainer
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

@@ -13,7 +13,7 @@ fun ApplicationCall.getClaimFromPayload(): String? =
 
 fun generateFidoChallenge(): String {
     val secureRandom = SecureRandom()
-    val challengeBytes = ByteArray(32)
+    val challengeBytes = ByteArray(64)
     secureRandom.nextBytes(challengeBytes)
     return challengeBytes.b64Encode()
 }

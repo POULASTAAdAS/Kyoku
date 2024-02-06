@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
+import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +16,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
-import com.poulastaa.kyoku.data.model.auth.root.RootAuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.root.RootUiEvent
+import com.poulastaa.kyoku.presentation.screen.auth.root.google.StartActivityForResult
+import com.poulastaa.kyoku.presentation.screen.auth.root.google.singIn
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -40,10 +44,40 @@ fun RootAuthScreen(
         }
     }
 
+    StartActivityForResult(
+        key = viewModel.state.googleAuthLoading,
+        onResultReceived = {
+            viewModel.onEvent(RootUiEvent.SendGoogleAuthApiRequest(it))
+        },
+        onDialogDismissed = {
+            viewModel.onEvent(RootUiEvent.OnAuthCanceled)
+        },
+        launcher = { activityLauncher ->
+            if (viewModel.state.googleAuthLoading) {
+                singIn(
+                    activity = context as Activity,
+                    launchActivityResult = {
+                        viewModel.onEvent(RootUiEvent.OnAuthCanceled)
+                        activityLauncher.launch(it)
+                    },
+                    accountNotFound = {
+                        viewModel.onEvent(RootUiEvent.OnAuthCanceled)
+                        viewModel.onEvent(RootUiEvent.NoGoogleAccountFound)
+                    },
+                    somethingWentWrong = {
+                        viewModel.onEvent(RootUiEvent.OnAuthCanceled)
+                        viewModel.onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                    }
+                )
+            }
+        }
+    )
+
+
     val autoFillEmail = AutofillNode(
         autofillTypes = listOf(AutofillType.EmailAddress),
         onFill = {
-            viewModel.onEvent(RootAuthUiEvent.OnAuthFillPasskeyEmail(it))
+            viewModel.onEvent(RootUiEvent.OnAutoFillPasskeyEmail(it))
         }
     )
 
@@ -56,7 +90,7 @@ fun RootAuthScreen(
     RootAuthScreenContent(
         email = viewModel.state.passkeyEmail,
         onValueChange = {
-            viewModel.onEvent(RootAuthUiEvent.OnPasskeyEmailEnter(it))
+            viewModel.onEvent(RootUiEvent.OnPasskeyEmailEnter(it))
         },
         autoFillEmail = autoFillEmail,
         autoFill = autoFill,
@@ -65,15 +99,15 @@ fun RootAuthScreen(
         passkeySignUpClicked = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             focusManager.clearFocus()
-            viewModel.onEvent(RootAuthUiEvent.OnPasskeyAuthClick)
+            viewModel.onEvent(RootUiEvent.OnPasskeyAuthClick(context as Activity))
         },
         emailSignUpClicked = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            viewModel.onEvent(RootAuthUiEvent.OnEmailAuthClick)
+            viewModel.onEvent(RootUiEvent.OnEmailAuthClick)
         },
         googleSignupClicked = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            viewModel.onEvent(RootAuthUiEvent.OnGoogleAuthClick)
+            viewModel.onEvent(RootUiEvent.OnGoogleAuthClick)
         },
         passkeyContinueLoading = viewModel.state.passkeyAuthLoading,
         googleAuthLoading = viewModel.state.googleAuthLoading,

@@ -20,6 +20,9 @@ create table song(
 
 select distinct genre from song;
 
+select count(*) from song where genre = "Punjabi";
+select count(*) from song where genre = "Tamil";
+
 select count(*) from song;
 
 select distinct artist from song;
