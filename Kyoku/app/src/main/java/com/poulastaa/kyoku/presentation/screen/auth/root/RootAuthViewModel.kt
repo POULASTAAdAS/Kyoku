@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,8 +8,12 @@ import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
@@ -22,21 +25,29 @@ import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.presentation.screen.auth.root.passkey.createPasskey
 import com.poulastaa.kyoku.presentation.screen.auth.root.passkey.getPasskey
 import com.poulastaa.kyoku.utils.Constants.AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP
+import com.poulastaa.kyoku.utils.extractTokenOrCookie
+import com.poulastaa.kyoku.utils.storeProfilePic
+import com.poulastaa.kyoku.utils.storeSignInState
+import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeUsername
 import com.poulastaa.kyoku.utils.toPasskeyAuthRequest
 import com.poulastaa.kyoku.utils.toCreatePasskeyUserReq
 import com.poulastaa.kyoku.utils.toGetPasskeyUserReq
+import com.poulastaa.kyoku.utils.toGoogleAuthReq
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.net.CookieManager
 import javax.inject.Inject
 import javax.inject.Named
 
 @HiltViewModel
 class RootAuthViewModel @Inject constructor(
     @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
-    private val dataStore: DataStoreOperation,
+    @Named("AuthCookie") private val cookieManager: CookieManager,
+    private val ds: DataStoreOperation,
     private val validateEmail: ValidateEmail,
     private val credentialManager: CredentialManager,
     @Named("AuthApiImpl") private val api: AuthRepository
@@ -84,31 +95,8 @@ class RootAuthViewModel @Inject constructor(
             is RootUiEvent.OnPasskeyAuthClick -> {
                 if (!state.emailAuthLoading && !state.passkeyAuthLoading && !state.googleAuthLoading)
                     if (checkInternetConnection()) {
-                        when (validateEmail(state.passkeyEmail)) {
-                            ValidateEmail.EmailVerificationType.TYPE_EMAIL_FIELD_EMPTY -> {
-                                state = RootAuthScreenState(
-                                    passkeyEmailSupportingText = "Please Enter an Email",
-                                    isPasskeyEmailError = true
-                                )
-                            }
-
-                            ValidateEmail.EmailVerificationType.TYPE_INVALID_EMAIL -> {
-                                state = RootAuthScreenState(
-                                    passkeyEmailSupportingText = "Please Enter a valid Email",
-                                    passkeyEmail = state.passkeyEmail,
-                                    isPasskeyEmailError = true
-                                )
-                            }
-
-                            ValidateEmail.EmailVerificationType.TYPE_EMAIL_SUCCESS -> {
-                                state = RootAuthScreenState(
-                                    passkeyEmail = state.passkeyEmail,
-                                    passkeyAuthLoading = true
-                                )
-
-                                startPasskeyAuth(state.toPasskeyAuthRequest(), event.activity)
-                            }
-                        }
+                        if (validate())
+                            startPasskeyAuth(state.toPasskeyAuthRequest(), event.activity)
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
@@ -119,7 +107,7 @@ class RootAuthViewModel @Inject constructor(
             RootUiEvent.OnGoogleAuthClick -> {
                 if (!state.emailAuthLoading && !state.passkeyAuthLoading && !state.googleAuthLoading)
                     if (checkInternetConnection()) {
-                        state = RootAuthScreenState(
+                        state = state.copy(
                             googleAuthLoading = true
                         )
                     } else {
@@ -127,6 +115,10 @@ class RootAuthViewModel @Inject constructor(
                             _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
                         }
                     }
+            }
+
+            is RootUiEvent.SendGoogleAuthApiRequest -> {
+                startGoogleAuth(event.token.toGoogleAuthReq())
             }
 
             RootUiEvent.OnEmailAuthClick -> {
@@ -142,14 +134,6 @@ class RootAuthViewModel @Inject constructor(
                         }
                     }
             }
-
-            is RootUiEvent.SendGoogleAuthApiRequest -> {
-                val token = event.token
-
-                Log.d("token", token)
-            }
-
-            RootUiEvent.SendPasskeyAuthApiRequest -> {}
 
             RootUiEvent.NoGoogleAccountFound -> {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -173,10 +157,38 @@ class RootAuthViewModel @Inject constructor(
         }
     }
 
+    private fun validate(): Boolean {
+        return when (validateEmail(state.passkeyEmail)) {
+            ValidateEmail.EmailVerificationType.TYPE_EMAIL_FIELD_EMPTY -> {
+                state = state.copy(
+                    passkeyEmailSupportingText = "Please Enter an Email",
+                    isPasskeyEmailError = true
+                )
+                false
+            }
+
+            ValidateEmail.EmailVerificationType.TYPE_INVALID_EMAIL -> {
+                state = state.copy(
+                    passkeyEmailSupportingText = "Please Enter a valid Email",
+                    isPasskeyEmailError = true
+                )
+                false
+            }
+
+            ValidateEmail.EmailVerificationType.TYPE_EMAIL_SUCCESS -> {
+                true
+            }
+        }
+    }
+
     private fun startPasskeyAuth(
         req: PasskeyAuthReq,
         activity: Activity
     ) {
+        state = state.copy(
+            passkeyAuthLoading = true
+        )
+
         viewModelScope.launch(Dispatchers.IO) {
             // make api call
             api.passkeyReq(req)?.let { passkeyJson ->
@@ -188,7 +200,7 @@ class RootAuthViewModel @Inject constructor(
                         challenge = passkeyJson.challenge,
                         sendUserToServer = { id ->
                             id?.let {
-                                sendUserToServer( // create user
+                                sendPasskeyUserToServer( // create user
                                     user = it.toCreatePasskeyUserReq(
                                         email = state.passkeyEmail,
                                         token = passkeyJson.token
@@ -210,7 +222,7 @@ class RootAuthViewModel @Inject constructor(
                         passkeyJson.challenge,
                         getUserFromId = {
                             it?.let {
-                                getUserFromServer(
+                                getPasskeyUserFromServer(
                                     user = it.toGetPasskeyUserReq(passkeyJson.token)
                                 )
 
@@ -233,51 +245,119 @@ class RootAuthViewModel @Inject constructor(
         }
     }
 
-    private fun sendUserToServer(
+    private fun sendPasskeyUserToServer(
         user: CreatePasskeyUserReq
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiEvent.send(element = AuthUiEvent.ShowToast("Please wait while we get things ready"))
 
-            api.createPasskeyUser(user)?.let {
-                Log.d("user", it.toString())
+            api.createPasskeyUser(user)?.let { response -> // get response from server
+                when (response.status) {
+                    UserCreationStatus.CREATED -> setupPasskeyUser(response)
 
-                //todo handle type of userCreation status
+                    UserCreationStatus.TOKEN_NOT_VALID -> {
+                        onEvent(RootUiEvent.OnAuthCanceled)
+                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                    }
 
-                state = state.copy(
-                    passkeyAuthLoading = false
-                )
-
-                // todo prompt user to next screen
-
+                    else -> {
+                        onEvent(RootUiEvent.OnAuthCanceled)
+                        onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                    }
+                }
                 return@launch
             }
 
-            // error occurred
+            // error occurred on  getting response from server
             onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
             onEvent(RootUiEvent.OnAuthCanceled)
         }
     }
 
-    private fun getUserFromServer(user: GetPasskeyUserReq) {
+    private fun getPasskeyUserFromServer(user: GetPasskeyUserReq) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiEvent.send(element = AuthUiEvent.ShowToast("Please wait while we get things ready"))
 
-            api.getPasskeyUser(user)?.let {
-                Log.d("userrrrrrrrrrrrrrrrrrrrrrrrrr", it.toString())
+            api.getPasskeyUser(user)?.let { response -> // get user from server
+                when (response.status) {
+                    UserCreationStatus.CONFLICT -> setupPasskeyUser(response)
 
-                //todo handle type of userCreation status
+                    UserCreationStatus.TOKEN_NOT_VALID -> {
+                        onEvent(RootUiEvent.OnAuthCanceled)
+                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                    }
 
-                state = state.copy(
-                    passkeyAuthLoading = false
-                )
+                    else -> {
+                        onEvent(RootUiEvent.OnAuthCanceled)
+                        onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                    }
+                }
+                return@launch
+            }
+
+            // error occurred on  getting user from server
+            onEvent(RootUiEvent.OnAuthCanceled)
+            onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+        }
+    }
+
+    private fun setupPasskeyUser(
+        response: PasskeyAuthResponse,
+    ) {
+        // store cookie
+        storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
+
+        storeProfilePic(uri = response.user.profilePic, ds)
+        storeUsername(username = response.user.userName, ds)
+
+        when (response.status) {
+            UserCreationStatus.CREATED -> storeSignInState(data = SignInStatus.NEW_USER, ds)
+
+            UserCreationStatus.CONFLICT -> {
+                storeSignInState(data = SignInStatus.OLD_USER, ds)
+
+                // todo handle user song data
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun startGoogleAuth(req: GoogleAuthReq) {
+        viewModelScope.launch(Dispatchers.IO) {
+            api.googleAuth(req)?.let { response ->
+
+                storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
+
+                storeProfilePic(uri = response.user.profilePic, ds)
+                storeUsername(username = response.user.userName, ds)
+
+                when (response.status) {
+                    UserCreationStatus.CREATED -> storeSignInState(
+                        data = SignInStatus.NEW_USER,
+                        ds
+                    )
+
+                    UserCreationStatus.CONFLICT -> {
+                        storeSignInState(
+                            data = SignInStatus.OLD_USER,
+                            ds
+                        )
+
+                        // todo handle data
+                    }
+
+                    UserCreationStatus.TOKEN_NOT_VALID -> {
+                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                    }
+
+                    else -> Unit
+                }
 
                 return@launch
             }
 
-            // error occurred
             onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
-            onEvent(RootUiEvent.OnAuthCanceled)
         }
     }
 }

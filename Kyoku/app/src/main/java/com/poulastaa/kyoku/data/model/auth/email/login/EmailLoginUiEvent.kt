@@ -13,5 +13,15 @@ sealed class EmailLoginUiEvent {
 
     data object OnForgotPasswordClick : EmailLoginUiEvent()
 
+    data class EmitEmailSupportingText(val message: String) : EmailLoginUiEvent()
+    data class EmitPasswordSupportingText(val message: String) : EmailLoginUiEvent()
+
+    data object OnAuthCanceled: EmailLoginUiEvent()
+    data object SomeErrorOccurredOnAuth : EmailLoginUiEvent()
+
+    data object OnResendVerificationMailClick : EmailLoginUiEvent()
+
+    data class EmitToast(val message: String): EmailLoginUiEvent()
+
     data object OnSignUpClick : EmailLoginUiEvent()
 }

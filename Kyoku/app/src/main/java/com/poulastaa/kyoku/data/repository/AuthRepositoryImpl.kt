@@ -1,11 +1,17 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
+import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
+import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
+import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
+import com.poulastaa.kyoku.data.model.auth.email.signup.EmailVerificationStatus
 import com.poulastaa.kyoku.data.remote.AuthApi
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.utils.toPasskeyJson
@@ -38,8 +44,45 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             return api.getPasskeyUser(user)
         } catch (e: Exception) {
-            Log.d("apiError", e.message.toString())
             null
+        }
+    }
+
+    override suspend fun googleAuth(req: GoogleAuthReq): GoogleAuthResponse? {
+        return try {
+            return api.googleReq(req)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun emailSignUp(req: EmailSignUpReq): EmailSignUpResponse? {
+        return try {
+            return api.emailSignUp(req)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun emailLogIn(req: EmailLogInReq): EmailLogInResponse? {
+        return try {
+            return api.emailLogIn(req)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun isEmailVerified(email: String): Boolean {
+        return try {
+            val response = api.isEmailVerified(email)
+
+            return when (response.status) {
+                EmailVerificationStatus.VERIFIED -> true
+                EmailVerificationStatus.UN_VERIFIED -> false
+                else -> false
+            }
+        } catch (e: Exception) {
+            false
         }
     }
 }

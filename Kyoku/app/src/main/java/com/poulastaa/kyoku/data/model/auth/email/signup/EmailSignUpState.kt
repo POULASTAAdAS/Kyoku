@@ -16,6 +16,10 @@ data class EmailSignUpState(
     val isPasswordError: Boolean = false,
     val isConformPasswordError: Boolean = false,
 
+    val isResendVerificationMailPromptVisible: Boolean = false,
+    val sendVerificationMailTimer: Int = 0,
+    val isResendMailEnabled: Boolean = false,
+
     val isPasswordVisible: Boolean = true,
 
     val isLoading: Boolean = false,

@@ -45,21 +45,21 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
         EmailLoginStatus.PASSWORD_DOES_NOT_MATCH -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.BadRequest
+                status = HttpStatusCode.OK
             )
         }
 
         EmailLoginStatus.EMAIL_NOT_VERIFIED -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.BadRequest
+                status = HttpStatusCode.OK
             )
         }
 
         EmailLoginStatus.USER_DOES_NOT_EXISTS -> {
             call.respond(
                 message = result,
-                status = HttpStatusCode.Forbidden
+                status = HttpStatusCode.OK
             )
         }
 

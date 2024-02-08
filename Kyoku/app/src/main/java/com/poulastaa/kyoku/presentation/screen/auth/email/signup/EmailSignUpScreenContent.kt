@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.signup
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -48,6 +51,7 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.presentation.screen.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.common.CustomTextFiled
 import com.poulastaa.kyoku.presentation.screen.common.CustomPasswordField
+import com.poulastaa.kyoku.presentation.screen.common.ResendMailButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -79,6 +83,11 @@ fun EmailSignUpScreenContent(
 
     passwordVisibility: Boolean,
     changePasswordVisibility: () -> Unit,
+
+    isResendVerificationMailPromptVisible: Boolean,
+    sendVerificationMailTimer: Int,
+    isResendMailEnabled: Boolean,
+    resendButtonClicked: () -> Unit,
 
     onLogInClick: () -> Unit,
     onDone: () -> Unit,
@@ -268,6 +277,35 @@ fun EmailSignUpScreenContent(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+
+        AnimatedVisibility(visible = isResendVerificationMailPromptVisible) {
+            val temp = remember {
+                isResendVerificationMailPromptVisible
+            }
+            if (temp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Didn't Receive a mail? Send Again",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+
+                    ResendMailButton(
+                        text = sendVerificationMailTimer,
+                        isEnabled = isResendMailEnabled,
+                        onClick = resendButtonClicked,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .size(52.dp)
+                    )
+                }
+        }
     }
 }
 
@@ -305,6 +343,10 @@ private fun Preview() {
         changePasswordVisibility = { /*TODO*/ },
         onLogInClick = { /*TODO*/ },
         onDone = { /*TODO*/ },
-        isLoading = false
+        isLoading = false,
+        isResendMailEnabled = false,
+        resendButtonClicked = {},
+        isResendVerificationMailPromptVisible = true,
+        sendVerificationMailTimer = 10
     )
 }

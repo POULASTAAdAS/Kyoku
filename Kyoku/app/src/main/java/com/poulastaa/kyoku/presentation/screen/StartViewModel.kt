@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.presentation.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +24,12 @@ class StartViewModel @Inject constructor(
     init { // read sign in state
         viewModelScope.launch {
             dataStore.readSignedInState().collect {
-                _startDestination.value = if (it) Screens.Home.route else Screens.Auth.route
+                when (it) {
+                    SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
+                    SignInStatus.NEW_USER.name ->_startDestination.value = Screens.GetSpotifyPlaylist.route
+                    SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
+                }
+
                 _keepSplashOn.value = false
             }
         }

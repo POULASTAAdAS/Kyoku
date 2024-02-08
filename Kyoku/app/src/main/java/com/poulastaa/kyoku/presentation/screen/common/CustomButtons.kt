@@ -14,6 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -137,6 +140,40 @@ fun CustomAuthButton(
 }
 
 
+@Composable
+fun ResendMailButton(
+    text: Int,
+    isEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    color: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary
+    ),
+    onClick: () -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        shape = shape,
+        enabled = isEnabled,
+        colors = color
+    ) {
+        if (isEnabled) Text(
+            text = "S E N D",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            textAlign = TextAlign.Center
+        )
+        else Text(
+            text = "$text",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun Preview() {
@@ -153,6 +190,12 @@ private fun Preview() {
             text = "Continue With Google",
             loading = false
         ) {
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        ResendMailButton(text = 20, isEnabled = true) {
 
         }
     }

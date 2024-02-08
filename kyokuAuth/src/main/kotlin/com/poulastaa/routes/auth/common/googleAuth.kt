@@ -10,6 +10,7 @@ import com.poulastaa.data.model.auth.google.GoogleUserSession
 import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.auth.GoogleAuthReq
 import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants.ISSUER
 import com.poulastaa.utils.toPayload
@@ -23,13 +24,12 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleAuth(
     googleAuthReq: GoogleAuthReq,
     userService: UserServiceRepository,
 ) {
-    val result = googleAuthReq.verifyTokenId()
-
-    if (result == null) {
-        call.respondRedirect(EndPoints.UnAuthorised.route)
-
-        return
-    }
+    val result = googleAuthReq.verifyTokenId() ?: return call.respond(
+        message = GoogleAuthResponse(
+            status = UserCreationStatus.TOKEN_NOT_VALID
+        ),
+        status = HttpStatusCode.Unauthorized
+    )
 
     try {
         val payload = result.toPayload()

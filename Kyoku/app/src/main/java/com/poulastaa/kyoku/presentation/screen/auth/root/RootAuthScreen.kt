@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

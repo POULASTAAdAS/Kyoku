@@ -2,11 +2,16 @@ package com.poulastaa.kyoku.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_REFRESH_TOKEN_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PROFILE_PIC_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_SIGNED_IN_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_USERNAME_KEY
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -17,16 +22,20 @@ class DataStoreOperationImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : DataStoreOperation {
     private object PreferencesKey {
-        val signedInKey = booleanPreferencesKey(name = PREFERENCES_SIGNED_IN_KEY)
+        val signedInKey = stringPreferencesKey(name = PREFERENCES_SIGNED_IN_KEY)
+        val usernameKey = stringPreferencesKey(name = PREFERENCES_USERNAME_KEY)
+        val profilePicUrlKey = stringPreferencesKey(name = PREFERENCES_PROFILE_PIC_KEY)
+        val accessTokenOrCookieKey = stringPreferencesKey(name = PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY)
+        val refreshTokenKey = stringPreferencesKey(name = PREFERENCES_JWT_REFRESH_TOKEN_KEY)
     }
 
-    override suspend fun storeSignedInState(signedInState: Boolean) {
+    override suspend fun storeSignedInState(signedInState: String) {
         dataStore.edit {
             it[PreferencesKey.signedInKey] = signedInState
         }
     }
 
-    override fun readSignedInState(): Flow<Boolean> = dataStore
+    override fun readSignedInState(): Flow<String> = dataStore
         .data
         .catch { e ->
             if (e is IOException) {
@@ -35,7 +44,85 @@ class DataStoreOperationImpl @Inject constructor(
                 throw e
             }
         }.map {
-            val signedInState = it[PreferencesKey.signedInKey] ?: false
+            val signedInState = it[PreferencesKey.signedInKey] ?: SignInStatus.AUTH.name
             signedInState
         }
+
+    override suspend fun storeUsername(username: String) {
+        dataStore.edit {
+            it[PreferencesKey.usernameKey] = username
+        }
+    }
+
+    override fun readUsername(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val username = it[PreferencesKey.usernameKey] ?: "User"
+            username
+        }
+
+
+    override suspend fun storeProfilePic(uir: String) {
+        dataStore.edit {
+            it[PreferencesKey.profilePicUrlKey] = uir
+        }
+    }
+
+    override fun readProfilePic(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val uri = it[PreferencesKey.profilePicUrlKey] ?: ""
+            uri
+        }
+
+    override suspend fun storeCookieOrAccessToken(data: String) {
+        dataStore.edit {
+            it[PreferencesKey.accessTokenOrCookieKey] = data
+        }
+    }
+
+
+    override fun readTokenOrCookie(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val tokenOrCookie = it[PreferencesKey.accessTokenOrCookieKey] ?: ""
+            tokenOrCookie
+        }
+
+    override suspend fun storeRefreshToken(data: String) {
+        dataStore.edit {
+            it[PreferencesKey.refreshTokenKey] = data
+        }
+    }
+
+    override fun readAccessToken(): Flow<String> = dataStore
+    .data
+    .catch { e ->
+        if (e is IOException) {
+            emit(emptyPreferences())
+        } else {
+            throw e
+        }
+    }.map {
+        val tokenOrCookie = it[PreferencesKey.refreshTokenKey] ?: ""
+        tokenOrCookie
+    }
 }

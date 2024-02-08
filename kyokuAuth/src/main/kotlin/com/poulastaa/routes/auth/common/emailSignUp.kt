@@ -49,7 +49,7 @@ suspend fun handleEmailSignup(
         UserCreationStatus.CONFLICT -> {
             response(
                 result,
-                HttpStatusCode.Conflict
+                HttpStatusCode.OK
             )
         }
 

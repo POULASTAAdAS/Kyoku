@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.di
 
-import com.poulastaa.kyoku.domain.usecase.UseCases
+import com.poulastaa.kyoku.domain.usecase.AuthUseCases
 import com.poulastaa.kyoku.domain.usecase.ValidateConformPassword
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail
 import com.poulastaa.kyoku.domain.usecase.ValidatePassword
@@ -39,7 +39,7 @@ object EmailLoginAuthModule {
         validateUserName: ValidateUserName,
         validatePassword: ValidatePassword,
         validateConformPassword: ValidateConformPassword
-    ): UseCases = UseCases(
+    ): AuthUseCases = AuthUseCases(
         validateEmail = validateEmail,
         validatePassword = validatePassword,
         validateUserName = validateUserName,

@@ -32,7 +32,7 @@ select * from song;
 select * from emailAuthUser;
 select * from googleAuthUser;
 select * from passkeyAuthUser;
-
+select * from invalidrefreshToken;
 select * from sessionStorage;
 
 drop table emailAuthUser;

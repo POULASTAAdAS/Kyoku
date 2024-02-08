@@ -106,6 +106,13 @@ fun EmailSignUpScreen(
             viewModel.onEvent(event = EmailSignUpUiEvent.OnPasswordVisibilityChange)
         },
 
+        isResendVerificationMailPromptVisible = viewModel.state.isResendVerificationMailPromptVisible,
+        sendVerificationMailTimer = viewModel.state.sendVerificationMailTimer,
+        isResendMailEnabled = viewModel.state.isResendMailEnabled,
+        resendButtonClicked = {
+            viewModel.onEvent(event = EmailSignUpUiEvent.OnResendVerificationMailClick)
+        },
+
         onLogInClick = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             viewModel.onEvent(event = EmailSignUpUiEvent.OnLogInClick)

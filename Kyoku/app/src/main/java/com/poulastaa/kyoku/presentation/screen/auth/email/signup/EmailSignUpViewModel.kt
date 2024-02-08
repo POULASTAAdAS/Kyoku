@@ -1,25 +1,38 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.signup
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
-import com.poulastaa.kyoku.data.model.auth.email.login.EmailLoginState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpUiEvent
+import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
-import com.poulastaa.kyoku.domain.usecase.UseCases
+import com.poulastaa.kyoku.domain.usecase.AuthUseCases
 import com.poulastaa.kyoku.domain.usecase.ValidateConformPassword
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail
 import com.poulastaa.kyoku.domain.usecase.ValidatePassword
 import com.poulastaa.kyoku.domain.usecase.ValidateUserName
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeProfilePic
+import com.poulastaa.kyoku.utils.storeRefreshToken
+import com.poulastaa.kyoku.utils.storeSignInState
+import com.poulastaa.kyoku.utils.storeUsername
+import com.poulastaa.kyoku.utils.toEmailSignUpReq
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,8 +41,9 @@ import javax.inject.Named
 @HiltViewModel
 class EmailSignUpViewModel @Inject constructor(
     @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
-    private val dataStore: DataStoreOperation,
-    private val useCases: UseCases,
+    private val ds: DataStoreOperation,
+    private val authUseCases: AuthUseCases,
+    @Named("AuthApiImpl") private val api: AuthRepository
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
@@ -47,6 +61,9 @@ class EmailSignUpViewModel @Inject constructor(
     private fun checkInternetConnection(): Boolean {
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
+
+    private var emailVerificationJob: Job? = null
+    private var resendVerificationMailJob: Job? = null
 
     var state by mutableStateOf(EmailSignUpState())
         private set
@@ -138,7 +155,7 @@ class EmailSignUpViewModel @Inject constructor(
                                 isLoading = true
                             )
 
-                            // todo make api call
+                            startEmailSignIn(state.toEmailSignUpReq())
                         }
 
                     } else {
@@ -147,11 +164,43 @@ class EmailSignUpViewModel @Inject constructor(
                         }
                     }
             }
+
+            is EmailSignUpUiEvent.EmitEmailSupportingText -> {
+                state = state.copy(
+                    emailSupportingText = event.message,
+                    isEmailError = true,
+                    isLoading = false
+                )
+            }
+
+            EmailSignUpUiEvent.SomeErrorOccurredOnAuth -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(element = AuthUiEvent.ShowToast("Opus Something went wrong"))
+                }
+            }
+
+            EmailSignUpUiEvent.OnResendVerificationMailClick -> {
+                state = state.copy(
+                    isResendMailEnabled = false
+                )
+
+                // todo send req
+
+                resendVerificationMailJob?.cancel()
+                emailVerificationJob?.cancel()
+
+                resendVerificationMailJob = resendVerificationMailTimer()
+                emailVerificationJob = checkEmailVerificationState()
+
+                viewModelScope.launch {
+                    _uiEvent.send(element = AuthUiEvent.ShowToast("An verification mail is send to you"))
+                }
+            }
         }
     }
 
     private fun validate(): Boolean {
-        val validEmail = when (useCases.validateEmail(state.email)) {
+        val validEmail = when (authUseCases.validateEmail(state.email)) {
             ValidateEmail.EmailVerificationType.TYPE_EMAIL_FIELD_EMPTY -> {
                 state = state.copy(
                     emailSupportingText = "Please Enter an Email",
@@ -173,7 +222,7 @@ class EmailSignUpViewModel @Inject constructor(
             }
         }
 
-        val validPassword = when (useCases.validatePassword(state.password)) {
+        val validPassword = when (authUseCases.validatePassword(state.password)) {
             ValidatePassword.PasswordValidityType.TYPE_PASSWORD_TO_SHORT -> {
                 state = state.copy(
                     passwordSupportingText = "Password to Short",
@@ -195,7 +244,7 @@ class EmailSignUpViewModel @Inject constructor(
             }
         }
 
-        val validUserName = when (useCases.validateUserName(state.userName)) {
+        val validUserName = when (authUseCases.validateUserName(state.userName)) {
             ValidateUserName.UsernameVerificationType.TYPE_USERNAME_FIELD_EMPTY -> {
                 state = state.copy(
                     isUserNameError = true,
@@ -226,7 +275,7 @@ class EmailSignUpViewModel @Inject constructor(
         }
 
         val validConformPassword =
-            when (useCases.validateConformPassword(state.password, state.conformPassword)) {
+            when (authUseCases.validateConformPassword(state.password, state.conformPassword)) {
                 ValidateConformPassword.ConformPasswordVerificationType.TYPE_SAME_PASSWORD -> {
                     true
                 }
@@ -249,5 +298,88 @@ class EmailSignUpViewModel @Inject constructor(
             }
 
         return validEmail && validPassword && validUserName && validConformPassword
+    }
+
+    private fun startEmailSignIn(req: EmailSignUpReq) {
+        viewModelScope.launch(Dispatchers.IO) {
+            api.emailSignUp(req)?.let { response ->
+                Log.d("response", response.toString())
+                when (response.status) {
+                    UserCreationStatus.CREATED -> setUpUser(response)
+
+                    UserCreationStatus.CONFLICT -> {
+                        onEvent(EmailSignUpUiEvent.EmitEmailSupportingText("Email already in use"))
+                    }
+
+                    UserCreationStatus.EMAIL_NOT_VALID -> {
+                        onEvent(EmailSignUpUiEvent.EmitEmailSupportingText("not a valid email"))
+                    }
+
+                    else -> Unit
+                }
+
+                return@launch
+            }
+
+            onEvent(EmailSignUpUiEvent.SomeErrorOccurredOnAuth)
+        }
+    }
+
+    private fun setUpUser(response: EmailSignUpResponse) {
+        storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds = ds)
+        storeRefreshToken(data = response.refreshToken, ds)
+
+        storeUsername(response.user.userName, ds)
+        storeProfilePic(response.user.profilePic, ds)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiEvent.send(element = AuthUiEvent.ShowToast("An verification mail is sent to you please conform it to continue"))
+        }
+
+        // start checking
+        emailVerificationJob?.cancel()
+        emailVerificationJob = checkEmailVerificationState()
+
+        // set timer for resend email
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(8000) // 8's
+            state = state.copy(
+                isResendVerificationMailPromptVisible = true
+            )
+            resendVerificationMailJob?.cancel()
+            resendVerificationMailJob = resendVerificationMailTimer()
+        }
+    }
+
+    private fun checkEmailVerificationState(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
+            for (i in 1..70) { // 3.5 minute
+                delay(3000) // 3's
+
+                api.isEmailVerified(state.email).let {
+                    if (it) {
+                        state = EmailSignUpState()
+                        storeSignInState(data = SignInStatus.NEW_USER, ds)
+                    }
+                }
+            }
+            _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+            emailVerificationJob?.cancel()
+        }
+    }
+
+    private fun resendVerificationMailTimer(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
+            for (i in 20 downTo 1) {
+                delay(1000) // 1's
+                state = state.copy(
+                    sendVerificationMailTimer = i
+                )
+            }
+
+            state = state.copy(
+                isResendMailEnabled = true
+            )
+        }
     }
 }

@@ -7,5 +7,7 @@ sealed class Screens(val route: String) {
 
     data object ForgotPassword : Screens("/auth/forgotPassword")
 
-    data object Home : Screens("/home")
+    data object GetSpotifyPlaylist : Screens("/app/getSpotifyPlaylist")
+
+    data object Home : Screens("/app/home")
 }

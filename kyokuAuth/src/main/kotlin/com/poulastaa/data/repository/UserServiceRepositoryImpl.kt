@@ -326,13 +326,6 @@ class UserServiceRepositoryImpl(
                     )
                 }
 
-                UserCreationStatus.CONFLICT -> {
-                    sendLogInMail(
-                        to = email,
-                        userName = response.user.userName
-                    )
-                }
-
                 else -> Unit
             }
         }
