@@ -11,7 +11,7 @@ import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLoginStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLoginUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -69,7 +69,7 @@ class EmailLoginViewModel @Inject constructor(
     var state by mutableStateOf(EmailLogInState())
         private set
 
-    private val _uiEvent = Channel<AuthUiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
 
@@ -131,21 +131,21 @@ class EmailLoginViewModel @Inject constructor(
 
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
+                            _uiEvent.send(element = UiEvent.ShowToast("Please Check Your Internet Connection"))
                         }
                     }
             }
 
             EmailLoginUiEvent.OnForgotPasswordClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.Navigate(Screens.ForgotPassword.route))
+                    _uiEvent.send(element = UiEvent.Navigate(Screens.ForgotPassword.route))
                 }
                 state = EmailLogInState()
             }
 
             EmailLoginUiEvent.OnSignUpClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.Navigate(Screens.AuthEmailSignUp.route))
+                    _uiEvent.send(element = UiEvent.Navigate(Screens.AuthEmailSignUp.route))
                 }
                 state = EmailLogInState()
             }
@@ -166,7 +166,7 @@ class EmailLoginViewModel @Inject constructor(
 
             is EmailLoginUiEvent.EmitToast -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast(event.message))
+                    _uiEvent.send(element = UiEvent.ShowToast(event.message))
                 }
             }
 
@@ -178,7 +178,7 @@ class EmailLoginViewModel @Inject constructor(
 
             EmailLoginUiEvent.SomeErrorOccurredOnAuth -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast("Opus Something went wrong"))
+                    _uiEvent.send(element = UiEvent.ShowToast("Opus Something went wrong"))
                 }
             }
 

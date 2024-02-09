@@ -139,7 +139,6 @@ dependencies {
     // Android 13 and below.
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
 
-
     // For extracting data from media containers
 //    implementation("androidx.media3:media3-extractor:$media3Version")
 }

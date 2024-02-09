@@ -16,7 +16,7 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.root.RootUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -69,7 +69,7 @@ class RootAuthViewModel @Inject constructor(
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
-    private val _uiEvent = Channel<AuthUiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var state by mutableStateOf(RootAuthScreenState())
@@ -99,7 +99,7 @@ class RootAuthViewModel @Inject constructor(
                             startPasskeyAuth(state.toPasskeyAuthRequest(), event.activity)
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
+                            _uiEvent.send(element = UiEvent.ShowToast("Please Check Your Internet Connection"))
                         }
                     }
             }
@@ -112,7 +112,7 @@ class RootAuthViewModel @Inject constructor(
                         )
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
+                            _uiEvent.send(element = UiEvent.ShowToast("Please Check Your Internet Connection"))
                         }
                     }
             }
@@ -126,18 +126,18 @@ class RootAuthViewModel @Inject constructor(
                     if (checkInternetConnection()) {
                         state = RootAuthScreenState()
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.Navigate(Screens.AuthEmailLogin.route))
+                            _uiEvent.send(element = UiEvent.Navigate(Screens.AuthEmailLogin.route))
                         }
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
+                            _uiEvent.send(element = UiEvent.ShowToast("Please Check Your Internet Connection"))
                         }
                     }
             }
 
             RootUiEvent.NoGoogleAccountFound -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast("Please Create a Google account"))
+                    _uiEvent.send(element = UiEvent.ShowToast("Please Create a Google account"))
                 }
                 // todo prompt to account creation
             }
@@ -151,7 +151,7 @@ class RootAuthViewModel @Inject constructor(
 
             RootUiEvent.SomeErrorOccurredOnAuth -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast("Opus Something went wrong"))
+                    _uiEvent.send(element = UiEvent.ShowToast("Opus Something went wrong"))
                 }
             }
         }
@@ -249,7 +249,7 @@ class RootAuthViewModel @Inject constructor(
         user: CreatePasskeyUserReq
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiEvent.send(element = AuthUiEvent.ShowToast("Please wait while we get things ready"))
+            _uiEvent.send(element = UiEvent.ShowToast("Please wait while we get things ready"))
 
             api.createPasskeyUser(user)?.let { response -> // get response from server
                 when (response.status) {
@@ -257,7 +257,7 @@ class RootAuthViewModel @Inject constructor(
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {
                         onEvent(RootUiEvent.OnAuthCanceled)
-                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                        _uiEvent.send(element = UiEvent.ShowToast("Please try SigningIn again"))
                     }
 
                     else -> {
@@ -276,7 +276,7 @@ class RootAuthViewModel @Inject constructor(
 
     private fun getPasskeyUserFromServer(user: GetPasskeyUserReq) {
         viewModelScope.launch(Dispatchers.IO) {
-            _uiEvent.send(element = AuthUiEvent.ShowToast("Please wait while we get things ready"))
+            _uiEvent.send(element = UiEvent.ShowToast("Please wait while we get things ready"))
 
             api.getPasskeyUser(user)?.let { response -> // get user from server
                 when (response.status) {
@@ -284,7 +284,7 @@ class RootAuthViewModel @Inject constructor(
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {
                         onEvent(RootUiEvent.OnAuthCanceled)
-                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                        _uiEvent.send(element = UiEvent.ShowToast("Please try SigningIn again"))
                     }
 
                     else -> {
@@ -348,7 +348,7 @@ class RootAuthViewModel @Inject constructor(
                     }
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {
-                        _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+                        _uiEvent.send(element = UiEvent.ShowToast("Please try SigningIn again"))
                     }
 
                     else -> Unit

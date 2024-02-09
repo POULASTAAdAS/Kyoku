@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.presentation.screen.common.CustomAuthButton
-import com.poulastaa.kyoku.presentation.screen.common.CustomOkButton
-import com.poulastaa.kyoku.presentation.screen.common.CustomTextFiled
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomAuthButton
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
 import com.poulastaa.kyoku.ui.theme.dark_type_two_onPrimaryContainer
 import com.poulastaa.kyoku.ui.theme.light_type_two_onPrimaryContainer
 

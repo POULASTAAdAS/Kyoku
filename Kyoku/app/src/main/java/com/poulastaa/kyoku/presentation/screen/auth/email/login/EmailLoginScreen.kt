@@ -12,22 +12,22 @@ import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLoginUiEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EmailLoginScreen(
     viewModel: EmailLoginViewModel = hiltViewModel(),
-    navigate: (AuthUiEvent.Navigate) -> Unit
+    navigate: (UiEvent.Navigate) -> Unit
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is AuthUiEvent.Navigate -> navigate(event)
-                is AuthUiEvent.ShowToast -> {
+                is UiEvent.Navigate -> navigate(event)
+                is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
                         event.message,

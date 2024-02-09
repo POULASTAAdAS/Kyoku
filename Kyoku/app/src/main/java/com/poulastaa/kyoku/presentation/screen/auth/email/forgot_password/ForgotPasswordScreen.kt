@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordUiEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -27,8 +27,8 @@ fun ForgotPasswordScreen(
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is AuthUiEvent.Navigate -> navigateBack.invoke()
-                is AuthUiEvent.ShowToast -> {
+                is UiEvent.Navigate -> navigateBack.invoke()
+                is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
                         event.message,

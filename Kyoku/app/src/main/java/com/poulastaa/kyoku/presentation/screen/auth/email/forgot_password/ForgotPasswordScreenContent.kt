@@ -34,8 +34,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.presentation.screen.common.CustomOkButton
-import com.poulastaa.kyoku.presentation.screen.common.CustomTextFiled
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable

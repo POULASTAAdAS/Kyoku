@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.presentation.screen.common
+package com.poulastaa.kyoku.presentation.screen.auth.common
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

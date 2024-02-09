@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.root.RootUiEvent
 import com.poulastaa.kyoku.presentation.screen.auth.root.google.StartActivityForResult
 import com.poulastaa.kyoku.presentation.screen.auth.root.google.singIn
@@ -23,16 +23,16 @@ import com.poulastaa.kyoku.presentation.screen.auth.root.google.singIn
 @Composable
 fun RootAuthScreen(
     viewModel: RootAuthViewModel = hiltViewModel(),
-    navigateToEmailAuth: (AuthUiEvent.Navigate) -> Unit
+    navigateToEmailAuth: (UiEvent.Navigate) -> Unit
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { uiEvent ->
             when (uiEvent) {
-                is AuthUiEvent.Navigate -> navigateToEmailAuth.invoke(uiEvent)
+                is UiEvent.Navigate -> navigateToEmailAuth.invoke(uiEvent)
 
-                is AuthUiEvent.ShowToast -> {
+                is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
                         uiEvent.message,

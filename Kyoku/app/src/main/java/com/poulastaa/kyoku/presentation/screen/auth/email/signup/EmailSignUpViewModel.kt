@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.signup
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,8 +11,7 @@ import com.poulastaa.kyoku.data.model.api.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
-import com.poulastaa.kyoku.data.model.auth.email.login.EmailLoginUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -72,7 +70,7 @@ class EmailSignUpViewModel @Inject constructor(
     var state by mutableStateOf(EmailSignUpState())
         private set
 
-    private val _uiEvent = Channel<AuthUiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun onEvent(event: EmailSignUpUiEvent) {
@@ -138,7 +136,7 @@ class EmailSignUpViewModel @Inject constructor(
 
             EmailSignUpUiEvent.OnLogInClick -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.Navigate(Screens.AuthEmailLogin.route))
+                    _uiEvent.send(element = UiEvent.Navigate(Screens.AuthEmailLogin.route))
                 }
                 state = EmailSignUpState()
             }
@@ -177,7 +175,7 @@ class EmailSignUpViewModel @Inject constructor(
 
             is EmailSignUpUiEvent.EmitToast -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast(event.message))
+                    _uiEvent.send(element = UiEvent.ShowToast(event.message))
                 }
             }
 

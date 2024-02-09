@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.navigation
 
 import androidx.navigation.NavHostController
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 
-fun NavHostController.navigate(event: AuthUiEvent.Navigate) = this.navigate(event.route)
+fun NavHostController.navigate(event: UiEvent.Navigate) = this.navigate(event.route)

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
-import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordState
 import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -47,7 +47,7 @@ class ForgotPasswordViewModel @Inject constructor(
 
     private var email: String? = null
 
-    private val _uiEvent = Channel<AuthUiEvent>()
+    private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var state by mutableStateOf(ForgotPasswordState())
@@ -98,14 +98,14 @@ class ForgotPasswordViewModel @Inject constructor(
 
             ForgotPasswordUiEvent.OnNavigateBackClicked -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.Navigate(Screens.AuthEmailLogin.route))
+                    _uiEvent.send(element = UiEvent.Navigate(Screens.AuthEmailLogin.route))
                 }
             }
 
 
             is ForgotPasswordUiEvent.EmitToast -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(AuthUiEvent.ShowToast(event.message))
+                    _uiEvent.send(UiEvent.ShowToast(event.message))
                 }
             }
 

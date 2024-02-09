@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.presentation.screen.common
+package com.poulastaa.kyoku.presentation.screen.auth.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
