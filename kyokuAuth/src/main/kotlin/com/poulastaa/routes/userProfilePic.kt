@@ -9,6 +9,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+// todo delete from here
+
 fun Route.getUserProfilePic(
     userService: UserServiceRepository
 ) {

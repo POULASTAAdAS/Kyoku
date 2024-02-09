@@ -142,9 +142,10 @@ fun CustomAuthButton(
 
 @Composable
 fun ResendMailButton(
-    text: Int,
-    isEnabled: Boolean,
     modifier: Modifier = Modifier,
+    text: Int,
+    defaultText: String = "S E N D",
+    isEnabled: Boolean,
     shape: RoundedCornerShape = RoundedCornerShape(8.dp),
     color: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,
@@ -160,7 +161,7 @@ fun ResendMailButton(
         colors = color
     ) {
         if (isEnabled) Text(
-            text = "S E N D",
+            text = defaultText,
             fontWeight = FontWeight.SemiBold,
             fontSize = MaterialTheme.typography.titleMedium.fontSize,
             textAlign = TextAlign.Center

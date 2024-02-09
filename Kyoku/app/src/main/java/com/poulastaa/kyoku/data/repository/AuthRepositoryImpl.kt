@@ -1,7 +1,12 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
+import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMail
+import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
@@ -24,7 +29,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val result = api.passkeyReq(req).string()
 
-            return result.toPasskeyJson() // convert to class and remove type and token
+            result.toPasskeyJson() // convert to class and remove type and token
         } catch (e: Exception) {
             null
         }
@@ -34,7 +39,7 @@ class AuthRepositoryImpl @Inject constructor(
         createPasskeyUserReq: CreatePasskeyUserReq
     ): PasskeyAuthResponse? {
         return try {
-            return api.createPasskeyUser(createPasskeyUserReq)
+            api.createPasskeyUser(createPasskeyUserReq)
         } catch (e: Exception) {
             null
         }
@@ -42,7 +47,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getPasskeyUser(user: GetPasskeyUserReq): PasskeyAuthResponse? {
         return try {
-            return api.getPasskeyUser(user)
+            api.getPasskeyUser(user)
         } catch (e: Exception) {
             null
         }
@@ -50,7 +55,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun googleAuth(req: GoogleAuthReq): GoogleAuthResponse? {
         return try {
-            return api.googleReq(req)
+            api.googleReq(req)
         } catch (e: Exception) {
             null
         }
@@ -58,7 +63,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun emailSignUp(req: EmailSignUpReq): EmailSignUpResponse? {
         return try {
-            return api.emailSignUp(req)
+            api.emailSignUp(req)
         } catch (e: Exception) {
             null
         }
@@ -66,7 +71,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun emailLogIn(req: EmailLogInReq): EmailLogInResponse? {
         return try {
-            return api.emailLogIn(req)
+            api.emailLogIn(req)
         } catch (e: Exception) {
             null
         }
@@ -76,13 +81,30 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = api.isEmailVerified(email)
 
-            return when (response.status) {
+            when (response.status) {
                 EmailVerificationStatus.VERIFIED -> true
                 EmailVerificationStatus.UN_VERIFIED -> false
                 else -> false
             }
         } catch (e: Exception) {
             false
+        }
+    }
+
+    override suspend fun resendVerificationMail(email: String): ResendVerificationMailStatus {
+        return try {
+            api.resendVerificationMail(email).status
+        } catch (e: Exception) {
+            Log.d("resendVerificationMail", e.message.toString())
+            ResendVerificationMailStatus.SOMETHING_WENT_WRONG
+        }
+    }
+
+    override suspend fun forgotPassword(email: String): SendForgotPasswordMailStatus {
+        return try {
+            api.forgotPassword(email).status
+        } catch (e: Exception) {
+            SendForgotPasswordMailStatus.SOMETHING_WENT_WRONG
         }
     }
 }

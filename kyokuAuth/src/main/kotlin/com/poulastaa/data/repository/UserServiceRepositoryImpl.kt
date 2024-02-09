@@ -10,7 +10,6 @@ import com.poulastaa.data.model.auth.jwt.*
 import com.poulastaa.data.model.auth.passkey.CreatePasskeyJson
 import com.poulastaa.data.model.auth.passkey.GetPasskeyJson
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.domain.dao.PasskeyAuthUser
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
@@ -57,21 +56,7 @@ class UserServiceRepositoryImpl(
                 val verificationMailToken = jwtRepository.generateVerificationMailToken(email = email)
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    sendEmail( // conform email
-                        to = email,
-                        subject = "Authentication Mail",
-                        content = (
-                                (
-                                        "<html>"
-                                                + "<body>"
-                                                + "<h1>Email Authentication</h1>"
-                                                + "<p>Click the following link to authenticate your email:</p>"
-                                                + "<a href=\"${Constants.BASE_URL + EndPoints.VerifyEmail.route}?token=" + verificationMailToken
-                                        ) + "\">Authenticate</a>"
-                                        + "</body>"
-                                        + "</html>"
-                                )
-                    )
+                    sendEmailVerificationMail(email, verificationMailToken)
                 }
 
                 EmailSignInResponse(
@@ -153,7 +138,7 @@ class UserServiceRepositoryImpl(
             val status = emailAuthUser
                 .checkIfUSerExistsToSendForgotPasswordMail(email)
         ) {
-            SendVerificationMailStatus.USER_EXISTS -> {
+            SendForgotPasswordMailStatus.USER_EXISTS -> {
                 val token = jwtRepository.generateForgotPasswordMailToken(email = email)
 
                 val content = (
@@ -163,7 +148,7 @@ class UserServiceRepositoryImpl(
                                         + "<h1>Do not share this email</h1>"
                                         + "<p>Click the following link to reset your password:</p>"
                                         + "<a href=\"${Constants.BASE_URL + EndPoints.ResetPassword.route}?token=" + token
-                                ) + "\">Reset Password</a>" // todo add js and textField
+                                ) + "\">Reset Password</a>" // todo add html css and js
                                 + "</body>"
                                 + "</html>"
                         )
@@ -180,18 +165,18 @@ class UserServiceRepositoryImpl(
                     )
                 } else {
                     SendForgotPasswordMail(
-                        status = SendVerificationMailStatus.SOMETHING_WENT_WRONG
+                        status = SendForgotPasswordMailStatus.SOMETHING_WENT_WRONG
                     )
                 }
             }
 
-            SendVerificationMailStatus.USER_NOT_FOUND -> {
+            SendForgotPasswordMailStatus.USER_NOT_FOUND -> {
                 SendForgotPasswordMail(
                     status = status
                 )
             }
 
-            SendVerificationMailStatus.SOMETHING_WENT_WRONG -> {
+            SendForgotPasswordMailStatus.SOMETHING_WENT_WRONG -> {
                 SendForgotPasswordMail(
                     status = status
                 )
@@ -390,6 +375,36 @@ class UserServiceRepositoryImpl(
         )
     }
 
+    override suspend fun sendVerificationMail(email: String): ResendVerificationMailResponse {
+        return when (val response = emailAuthUser.checkVerificationMailStatus(email)) {
+            ResendVerificationMailStatus.EMAIL_ALREADY_VERIFIED -> {
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            ResendVerificationMailStatus.VERIFICATION_MAIL_SEND -> {
+                val verificationMailToken = jwtRepository.generateVerificationMailToken(email = email)
+                CoroutineScope(Dispatchers.IO).launch {
+                    sendEmailVerificationMail(email, verificationMailToken)
+                }
+
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            ResendVerificationMailStatus.SOMETHING_WENT_WRONG -> {
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            else -> throw IllegalArgumentException("Invalid Request")
+        }
+    }
+
+
     private fun createMail(
         email: String,
         userName: String
@@ -428,6 +443,27 @@ class UserServiceRepositoryImpl(
                     "We hope you're ready for an exciting journey ahead." +
                     "Here's to making great memories and having a blast together!\n" +
                     "Best regards,\n From Kyoku :)" //todo add html
+        )
+    }
+
+    private fun sendEmailVerificationMail(
+        email: String,
+        verificationMailToken: String
+    ) {
+        sendEmail( // verification mail
+            to = email,
+            subject = "Authentication Mail",
+            content = (
+                    (
+                            "<html>"
+                                    + "<body>"
+                                    + "<h1>Email Authentication</h1>"
+                                    + "<p>Click the following link to authenticate your email:</p>"
+                                    + "<a href=\"${Constants.BASE_URL + EndPoints.VerifyEmail.route}?token=" + verificationMailToken
+                            ) + "\">Authenticate</a>"
+                            + "</body>"
+                            + "</html>"
+                    )
         )
     }
 }

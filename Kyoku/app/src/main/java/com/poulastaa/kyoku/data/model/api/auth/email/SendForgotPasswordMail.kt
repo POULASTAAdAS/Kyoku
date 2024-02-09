@@ -1,4 +1,4 @@
-package com.poulastaa.data.model.auth.jwt
+package com.poulastaa.kyoku.data.model.api.auth.email
 
 import kotlinx.serialization.Serializable
 

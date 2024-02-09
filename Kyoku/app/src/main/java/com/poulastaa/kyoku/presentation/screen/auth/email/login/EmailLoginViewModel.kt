@@ -9,6 +9,7 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLoginStatus
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLogInState
@@ -122,6 +123,9 @@ class EmailLoginViewModel @Inject constructor(
                                 isLoading = true
                             )
 
+                            email = state.email
+                            password = state.password
+
                             startEmailLogIn(state.toEmailLogInReq())
                         }
 
@@ -173,7 +177,6 @@ class EmailLoginViewModel @Inject constructor(
             }
 
             EmailLoginUiEvent.SomeErrorOccurredOnAuth -> {
-
                 viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(element = AuthUiEvent.ShowToast("Opus Something went wrong"))
                 }
@@ -184,15 +187,7 @@ class EmailLoginViewModel @Inject constructor(
                 state = state.copy(
                     isResendMailEnabled = false
                 )
-                // todo send verification mail
-
-                resendVerificationMailJob?.cancel()
-                emailVerificationJob?.cancel()
-
-                resendVerificationMailJob = resendVerificationMailTimer()
-                emailVerificationJob = checkEmailVerificationState()
-
-                onEvent(EmailLoginUiEvent.EmitToast("An verification mail is send to you"))
+                handleEmailVerification()
             }
         }
     }
@@ -256,8 +251,6 @@ class EmailLoginViewModel @Inject constructor(
                     }
 
                     EmailLoginStatus.EMAIL_NOT_VERIFIED -> {
-                        email = state.email
-                        password = state.password
                         handleEmailVerification()
                     }
 
@@ -286,22 +279,38 @@ class EmailLoginViewModel @Inject constructor(
     }
 
     private fun handleEmailVerification() {
-        // todo send verification mail
+        if (email != null)
+            viewModelScope.launch(Dispatchers.IO) {
+                api.resendVerificationMail(email!!).let { status ->
+                    when (status) {
+                        ResendVerificationMailStatus.VERIFICATION_MAIL_SEND -> {
+                            onEvent(EmailLoginUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
 
-        onEvent(EmailLoginUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
+                            // start checking
+                            emailVerificationJob?.cancel()
+                            emailVerificationJob = checkEmailVerificationState()
 
-        // start checking
-        emailVerificationJob?.cancel()
-        emailVerificationJob = checkEmailVerificationState()
+                            // set timer for resend email
+                            viewModelScope.launch(Dispatchers.IO) {
+                                delay(8000) // 8's
+                                state = state.copy(
+                                    isResendVerificationMailPromptVisible = true
+                                )
+                                resendVerificationMailJob?.cancel()
+                                resendVerificationMailJob = resendVerificationMailTimer()
+                            }
+                        }
 
-        // set timer for resend email
-        viewModelScope.launch(Dispatchers.IO) {
-            delay(8000) // 8's
-            state = state.copy(
-                isResendVerificationMailPromptVisible = true
-            )
-            resendVerificationMailJob?.cancel()
-            resendVerificationMailJob = resendVerificationMailTimer()
+                        else -> {
+                            onEvent(EmailLoginUiEvent.OnAuthCanceled)
+                            onEvent(EmailLoginUiEvent.SomeErrorOccurredOnAuth)
+                        }
+                    }
+                }
+            }
+        else {
+            onEvent(EmailLoginUiEvent.EmitToast("Please try SigningIn again"))
+            onEvent(EmailLoginUiEvent.OnAuthCanceled)
         }
     }
 
@@ -313,7 +322,12 @@ class EmailLoginViewModel @Inject constructor(
                 api.isEmailVerified(state.email).let {
                     if (it) {
                         if (email != null && password != null) {
-                            startEmailLogIn(state.toEmailLogInReq(email!!, password!!)) // send req
+                            startEmailLogIn(  // send login req again
+                                state.toEmailLogInReq(
+                                    email!!,
+                                    password!!
+                                )
+                            )
                             emailVerificationJob?.cancel()
                         } else {
                             onEvent(EmailLoginUiEvent.EmitToast("Please try SigningIn again"))

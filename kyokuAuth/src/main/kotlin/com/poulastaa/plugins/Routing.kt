@@ -24,6 +24,7 @@ fun Application.configureRouting() {
         getPasskeyUser(userService)
 
         verifyEmail(userService)
+        resendVerificationMail(userService)
         emailVerificationCheck(userService)
 
         forgotPassword(userService)

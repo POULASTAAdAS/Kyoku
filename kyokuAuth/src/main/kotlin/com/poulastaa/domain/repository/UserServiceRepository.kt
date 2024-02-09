@@ -53,4 +53,6 @@ interface UserServiceRepository {
     suspend fun getPasskeyUser(userId: String , token:String): PasskeyAuthResponse
 
     suspend fun getPasskeyJsonResponse(email: String , displayName:String): Any
+
+    suspend fun sendVerificationMail(email:String): ResendVerificationMailResponse
 }

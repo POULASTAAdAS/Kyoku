@@ -22,7 +22,7 @@ interface EmailAuthUserRepository {
         refreshToken: String,
     ): EmailLoginResponse
 
-    suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendVerificationMailStatus
+    suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendForgotPasswordMailStatus
     suspend fun resetPassword(email: String, password: String): PasswordResetStatus
 
     suspend fun getUserProfilePic(email: String): File?
@@ -32,4 +32,6 @@ interface EmailAuthUserRepository {
         oldRefreshToken: String,
         refreshToken: String
     ): RefreshTokenUpdateStatus
+
+    suspend fun checkVerificationMailStatus(email: String): ResendVerificationMailStatus
 }

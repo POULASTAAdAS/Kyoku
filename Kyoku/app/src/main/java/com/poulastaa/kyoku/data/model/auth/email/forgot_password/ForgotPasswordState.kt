@@ -10,5 +10,10 @@ data class ForgotPasswordState(
     val navigateBackClicked: Boolean = false,
     val isInternetAvailable: Boolean = false,
 
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+
+    val isEnabled: Boolean = true,
+    val enableTimer: Int = 40,
+
+    val emailSendText: String = ""
 )

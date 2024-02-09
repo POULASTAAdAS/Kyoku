@@ -2,6 +2,8 @@ package com.poulastaa.kyoku.data.remote
 
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMail
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
@@ -48,8 +50,18 @@ interface AuthApi {
         @Query("email") email: String
     ): EmailVerificationResponse
 
+    @GET("/api/auth/resendVerificationMail")
+    suspend fun resendVerificationMail(
+        @Query("email") email: String
+    ): ResendVerificationMailResponse
+
     @POST("/api/auth")
     suspend fun emailLogIn(
         @Body request: EmailLogInReq
     ): EmailLogInResponse
+
+    @GET("/api/auth/forgotPassword")
+    suspend fun forgotPassword(
+        @Query("email") email: String
+    ): SendForgotPasswordMail
 }

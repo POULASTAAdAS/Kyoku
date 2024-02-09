@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.forgot_password
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +17,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,6 +30,8 @@ import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.presentation.screen.common.CustomOkButton
@@ -44,6 +48,9 @@ fun ForgotPasswordScreenContent(
     autofill: Autofill?,
     emailSupportingText: String,
     onNavigateBack: () -> Unit,
+    isEnabled: Boolean,
+    enableTimer: Int,
+    emailSendText: String,
     onDone: () -> Unit
 ) {
     Scaffold(
@@ -66,13 +73,13 @@ fun ForgotPasswordScreenContent(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = it.calculateTopPadding() + 40.dp,
-                    bottom = it.calculateBottomPadding(),
+                    top = paddingValues.calculateTopPadding() + 40.dp,
+                    bottom = paddingValues.calculateBottomPadding(),
                     start = 15.dp,
                     end = 15.dp
                 ),
@@ -103,12 +110,29 @@ fun ForgotPasswordScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomOkButton(
-                text = "get email",
+                text = if (isEnabled) "Get Mail" else "$enableTimer",
                 modifier = Modifier.fillMaxWidth(),
                 loading = isLoading,
                 shape = RoundedCornerShape(8.dp),
                 onClick = onDone
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AnimatedVisibility(visible = !isEnabled) {
+                val temp = remember {
+                    !isEnabled
+                }
+
+                if (temp)
+                    Text(
+                        text = emailSendText,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+            }
         }
     }
 
@@ -132,7 +156,11 @@ private fun Preview() {
         isError = false,
         emailSupportingText = "",
         isLoading = false,
-        onNavigateBack = {}
+        onNavigateBack = {},
+        isEnabled = false,
+        enableTimer = 10,
+        emailSendText = "An Password reset mail is sent to you\n" +
+                "Please Change The Password and login again"
     ) {
 
     }

@@ -40,3 +40,5 @@ drop table sessionStorage;
 drop table passkeyAuthUser;
 drop table invalidrefreshToken;
 drop table googleAuthUser;
+
+update emailAuthUser set emailverified = 0 where id = 2;

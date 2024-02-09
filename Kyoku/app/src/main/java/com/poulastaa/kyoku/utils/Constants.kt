@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.utils
 
 object Constants {
-    const val BASE_URL = "https://5a8b-103-42-159-136.ngrok-free.app"
+    const val BASE_URL = "https://3d77-103-42-159-136.ngrok-free.app"
 
     const val PREFERENCES_NAME = "appPreferences"
 

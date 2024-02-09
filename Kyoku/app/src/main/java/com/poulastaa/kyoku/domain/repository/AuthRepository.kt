@@ -2,6 +2,10 @@ package com.poulastaa.kyoku.domain.repository
 
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
+import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMail
+import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
@@ -23,4 +27,7 @@ interface AuthRepository {
     suspend fun emailLogIn(req: EmailLogInReq): EmailLogInResponse?
 
     suspend fun isEmailVerified(email: String): Boolean
+    suspend fun resendVerificationMail(email: String): ResendVerificationMailStatus
+
+    suspend fun forgotPassword(email: String): SendForgotPasswordMailStatus
 }

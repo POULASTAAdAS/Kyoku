@@ -10,8 +10,10 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.auth.AuthUiEvent
+import com.poulastaa.kyoku.data.model.auth.email.login.EmailLoginUiEvent
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -64,6 +66,8 @@ class EmailSignUpViewModel @Inject constructor(
 
     private var emailVerificationJob: Job? = null
     private var resendVerificationMailJob: Job? = null
+
+    private var email: String? = null
 
     var state by mutableStateOf(EmailSignUpState())
         private set
@@ -155,14 +159,12 @@ class EmailSignUpViewModel @Inject constructor(
                                 isLoading = true
                             )
 
+                            email = state.email
+
                             startEmailSignIn(state.toEmailSignUpReq())
                         }
 
-                    } else {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = AuthUiEvent.ShowToast("Please Check Your Internet Connection"))
-                        }
-                    }
+                    } else onEvent(EmailSignUpUiEvent.EmitToast("Please Check Your Internet Connection"))
             }
 
             is EmailSignUpUiEvent.EmitEmailSupportingText -> {
@@ -173,10 +175,18 @@ class EmailSignUpViewModel @Inject constructor(
                 )
             }
 
-            EmailSignUpUiEvent.SomeErrorOccurredOnAuth -> {
+            is EmailSignUpUiEvent.EmitToast -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast("Opus Something went wrong"))
+                    _uiEvent.send(element = AuthUiEvent.ShowToast(event.message))
                 }
+            }
+
+            EmailSignUpUiEvent.SomeErrorOccurredOnAuth -> onEvent(EmailSignUpUiEvent.EmitToast("Opus Something went wrong"))
+
+            EmailSignUpUiEvent.OnAuthCanceled -> {
+                state = state.copy(
+                    isLoading = false
+                )
             }
 
             EmailSignUpUiEvent.OnResendVerificationMailClick -> {
@@ -184,17 +194,7 @@ class EmailSignUpViewModel @Inject constructor(
                     isResendMailEnabled = false
                 )
 
-                // todo send req
-
-                resendVerificationMailJob?.cancel()
-                emailVerificationJob?.cancel()
-
-                resendVerificationMailJob = resendVerificationMailTimer()
-                emailVerificationJob = checkEmailVerificationState()
-
-                viewModelScope.launch {
-                    _uiEvent.send(element = AuthUiEvent.ShowToast("An verification mail is send to you"))
-                }
+                resendVerificationMail()
             }
         }
     }
@@ -303,7 +303,6 @@ class EmailSignUpViewModel @Inject constructor(
     private fun startEmailSignIn(req: EmailSignUpReq) {
         viewModelScope.launch(Dispatchers.IO) {
             api.emailSignUp(req)?.let { response ->
-                Log.d("response", response.toString())
                 when (response.status) {
                     UserCreationStatus.CREATED -> setUpUser(response)
 
@@ -312,7 +311,7 @@ class EmailSignUpViewModel @Inject constructor(
                     }
 
                     UserCreationStatus.EMAIL_NOT_VALID -> {
-                        onEvent(EmailSignUpUiEvent.EmitEmailSupportingText("not a valid email"))
+                        onEvent(EmailSignUpUiEvent.EmitEmailSupportingText("Please enter a valid email"))
                     }
 
                     else -> Unit
@@ -332,9 +331,7 @@ class EmailSignUpViewModel @Inject constructor(
         storeUsername(response.user.userName, ds)
         storeProfilePic(response.user.profilePic, ds)
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _uiEvent.send(element = AuthUiEvent.ShowToast("An verification mail is sent to you please conform it to continue"))
-        }
+        onEvent(EmailSignUpUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
 
         // start checking
         emailVerificationJob?.cancel()
@@ -343,6 +340,7 @@ class EmailSignUpViewModel @Inject constructor(
         // set timer for resend email
         viewModelScope.launch(Dispatchers.IO) {
             delay(8000) // 8's
+
             state = state.copy(
                 isResendVerificationMailPromptVisible = true
             )
@@ -359,11 +357,14 @@ class EmailSignUpViewModel @Inject constructor(
                 api.isEmailVerified(state.email).let {
                     if (it) {
                         state = EmailSignUpState()
-                        storeSignInState(data = SignInStatus.NEW_USER, ds)
+                        storeSignInState(data = SignInStatus.NEW_USER, ds) // login user to app
                     }
                 }
             }
-            _uiEvent.send(element = AuthUiEvent.ShowToast("Please try SigningIn again"))
+
+            // took to long to validate email
+            onEvent(EmailSignUpUiEvent.EmitToast("Please try SigningIn again"))
+            onEvent(EmailSignUpUiEvent.OnAuthCanceled)
             emailVerificationJob?.cancel()
         }
     }
@@ -380,6 +381,36 @@ class EmailSignUpViewModel @Inject constructor(
             state = state.copy(
                 isResendMailEnabled = true
             )
+        }
+    }
+
+    private fun resendVerificationMail() {
+        if (email != null)
+            viewModelScope.launch(Dispatchers.IO) {
+                api.resendVerificationMail(email!!).let { status ->
+                    when (status) {
+                        ResendVerificationMailStatus.VERIFICATION_MAIL_SEND -> {
+                            onEvent(EmailSignUpUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
+
+                            // start checking
+                            emailVerificationJob?.cancel()
+                            emailVerificationJob = checkEmailVerificationState()
+
+                            // set timer for resend email
+                            resendVerificationMailJob?.cancel()
+                            resendVerificationMailJob = resendVerificationMailTimer()
+                        }
+
+                        else -> {
+                            onEvent(EmailSignUpUiEvent.OnAuthCanceled)
+                            onEvent(EmailSignUpUiEvent.SomeErrorOccurredOnAuth)
+                        }
+                    }
+                }
+            }
+        else {
+            onEvent(EmailSignUpUiEvent.EmitToast("Please try SigningIn again"))
+            onEvent(EmailSignUpUiEvent.OnAuthCanceled)
         }
     }
 }

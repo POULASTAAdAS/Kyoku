@@ -20,5 +20,9 @@ sealed class EmailSignUpUiEvent {
 
     data class EmitEmailSupportingText(val message: String) : EmailSignUpUiEvent()
 
+    data object OnAuthCanceled: EmailSignUpUiEvent()
+
+    data class EmitToast(val message:String): EmailSignUpUiEvent()
+
     data object OnLogInClick : EmailSignUpUiEvent()
 }

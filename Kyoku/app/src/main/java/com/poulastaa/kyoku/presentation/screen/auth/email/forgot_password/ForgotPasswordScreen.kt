@@ -54,7 +54,9 @@ fun ForgotPasswordScreen(
 
     ForgotPasswordScreenContent(
         email = viewModel.state.email,
-        onValueChange = {},
+        onValueChange = {
+            viewModel.onEvent(ForgotPasswordUiEvent.OnEmailEnter(it))
+        },
         isError = viewModel.state.isEmailError,
         isLoading = viewModel.state.isLoading,
         autoFillEmail = autoFillEmail,
@@ -68,6 +70,9 @@ fun ForgotPasswordScreen(
             focusManager.clearFocus()
 
             viewModel.onEvent(event = ForgotPasswordUiEvent.OnGetEmailClick)
-        }
+        },
+        isEnabled = viewModel.state.isEnabled,
+        enableTimer = viewModel.state.enableTimer,
+        emailSendText = viewModel.state.emailSendText
     )
 }

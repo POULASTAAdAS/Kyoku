@@ -117,12 +117,12 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
     }
 
-    override suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendVerificationMailStatus {
+    override suspend fun checkIfUSerExistsToSendForgotPasswordMail(email: String): SendForgotPasswordMailStatus {
         return try {
-            findUser(email) ?: SendVerificationMailStatus.USER_NOT_FOUND
-            SendVerificationMailStatus.USER_EXISTS
+            findUser(email) ?: return SendForgotPasswordMailStatus.USER_NOT_FOUND
+            SendForgotPasswordMailStatus.USER_EXISTS
         } catch (e: Exception) {
-            SendVerificationMailStatus.SOMETHING_WENT_WRONG
+            SendForgotPasswordMailStatus.SOMETHING_WENT_WRONG
         }
     }
 
@@ -217,5 +217,16 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }
 
         return status
+    }
+
+    override suspend fun checkVerificationMailStatus(email: String): ResendVerificationMailStatus {
+        val response = dbQuery {
+            EmailAuthUser.find {
+                EmailAuthUserTable.email eq email
+            }.firstOrNull()?.emailVerified
+        } ?: return ResendVerificationMailStatus.SOMETHING_WENT_WRONG
+
+        return if (response) ResendVerificationMailStatus.EMAIL_ALREADY_VERIFIED
+        else ResendVerificationMailStatus.VERIFICATION_MAIL_SEND
     }
 }
