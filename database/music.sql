@@ -18,6 +18,7 @@ create table song(
 	date text not null
 );
 
+
 select distinct genre from song;
 
 select count(*) from song where genre = "Punjabi";
@@ -35,10 +36,21 @@ select * from passkeyAuthUser;
 select * from invalidrefreshToken;
 select * from sessionStorage;
 
+select * from PasskeyUserPlaylist;
+select * from GoogleUserPlaylist;
+select * from EmailUserPlaylist;
+
+
+
+
+
 drop table emailAuthUser;
-drop table sessionStorage;
+drop table googleAuthUser;
 drop table passkeyAuthUser;
 drop table invalidrefreshToken;
-drop table googleAuthUser;
+drop table sessionStorage;
 
-update emailAuthUser set emailverified = 0 where id = 2;
+drop table PasskeyUserPlaylist;
+drop table GoogleUserPlaylist;
+drop table EmailUserPlaylist;
+

@@ -141,7 +141,7 @@ fun CustomAuthButton(
 
 
 @Composable
-fun ResendMailButton(
+fun CustomButton(
     modifier: Modifier = Modifier,
     text: Int,
     defaultText: String = "S E N D",
@@ -196,7 +196,7 @@ private fun Preview() {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        ResendMailButton(text = 20, isEnabled = true) {
+        CustomButton(text = 20, isEnabled = true) {
 
         }
     }

@@ -23,7 +23,6 @@ import retrofit2.Retrofit
 import java.net.CookieManager
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
-import javax.inject.Qualifier
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -52,7 +51,7 @@ object AuthModule {
         val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(Constants.AUTH_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()

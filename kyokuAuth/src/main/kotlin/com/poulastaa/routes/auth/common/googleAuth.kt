@@ -78,7 +78,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleAuth(
 private fun Payload.setSession(call: ApplicationCall) {
     call.sessions.set(
         GoogleUserSession(
-            email = this.email,
+            sub = this.sub,
             userName = this.userName
         )
     )

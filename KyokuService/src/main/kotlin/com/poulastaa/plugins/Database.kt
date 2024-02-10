@@ -1,10 +1,14 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.data.model.db_table.playlist.EmailUserPlaylistTable
+import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
+import com.poulastaa.data.model.db_table.playlist.PasskeyUserPlaylistTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -20,7 +24,9 @@ fun Application.configureDatabase() {
     )
 
     transaction(db) {
-
+        SchemaUtils.create(EmailUserPlaylistTable)
+        SchemaUtils.create(GoogleUserPlaylistTable)
+        SchemaUtils.create(PasskeyUserPlaylistTable)
     }
 }
 

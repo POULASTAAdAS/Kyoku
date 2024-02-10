@@ -48,7 +48,7 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomPasswordField
-import com.poulastaa.kyoku.presentation.screen.auth.common.ResendMailButton
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -236,7 +236,7 @@ fun EmailLogInScreenContent(
                         fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
 
-                    ResendMailButton(
+                    CustomButton(
                         text = sendVerificationMailTimer,
                         isEnabled = isResendMailEnabled,
                         onClick = resendButtonClicked,

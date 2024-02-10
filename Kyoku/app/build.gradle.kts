@@ -122,7 +122,7 @@ dependencies {
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    val media3Version = "1.2.0"
+    val media3Version = "1.2.1"
 
     // For media playback using ExoPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
@@ -138,6 +138,9 @@ dependencies {
     // optional - needed for credentials support from play services, for devices running
     // Android 13 and below.
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // For extracting data from media containers
 //    implementation("androidx.media3:media3-extractor:$media3Version")

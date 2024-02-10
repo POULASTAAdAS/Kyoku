@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,7 +50,7 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomPasswordField
-import com.poulastaa.kyoku.presentation.screen.auth.common.ResendMailButton
+import com.poulastaa.kyoku.presentation.screen.auth.common.CustomButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -296,7 +295,7 @@ fun EmailSignUpScreenContent(
                         fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
 
-                    ResendMailButton(
+                    CustomButton(
                         text = sendVerificationMailTimer,
                         isEnabled = isResendMailEnabled,
                         onClick = resendButtonClicked,

@@ -58,7 +58,7 @@ fun SetupNavGraph(
         composable(Screens.GetSpotifyPlaylist.route) {
             SpotifyPlaylistScreen(
                 navigateToBDatePick = {
-//                    navController.popBackStack()
+                    navController.popBackStack()
                     navController.navigate(it)
                 }
             )

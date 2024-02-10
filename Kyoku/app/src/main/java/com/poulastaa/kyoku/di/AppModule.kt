@@ -4,7 +4,11 @@ import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.connectivity.NetworkObserverImpl
-import com.poulastaa.kyoku.utils.Constants.BASE_URL
+import com.poulastaa.kyoku.data.remote.ServiceApi
+import com.poulastaa.kyoku.data.repository.ServiceRepositoryImpl
+import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.utils.Constants.AUTH_BASE_URL
+import com.poulastaa.kyoku.utils.Constants.SERVICE_BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +19,7 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.create
 import java.net.CookieManager
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -43,7 +48,7 @@ object AppModule {
         val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(SERVICE_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
@@ -53,4 +58,12 @@ object AppModule {
     @Singleton
     fun provideNetworkConnectivityObserver(@ApplicationContext context: Context): NetworkObserver =
         NetworkObserverImpl(context = context)
+
+    @Provides
+    @Singleton
+    fun provideServiceApi(retrofit: Retrofit): ServiceApi = retrofit.create(ServiceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideServiceRepository(api: ServiceApi): ServiceRepository = ServiceRepositoryImpl(api)
 }

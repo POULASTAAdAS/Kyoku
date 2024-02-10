@@ -2,17 +2,14 @@ package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,13 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,7 +48,8 @@ fun SpotifyPlaylistScreenContent(
     isLoading: Boolean,
     isFirstPlaylist: Boolean,
     onAddClick: () -> Unit,
-    onSkipClick: () -> Unit
+    onSkipClick: () -> Unit,
+    onContinueClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -80,7 +75,8 @@ fun SpotifyPlaylistScreenContent(
             isError = isError,
             isFirstPlaylist = isFirstPlaylist,
             isLoading = isLoading,
-            onAddClick = onAddClick
+            onAddClick = onAddClick,
+            onContinueClick = onContinueClick
         )
 
         LazyColumn(
@@ -108,7 +104,7 @@ fun SpotifyPlaylistScreenContent(
                     Image(
                         painter = painterResource(id = it.image),
                         contentDescription = null,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(80.dp)
                     )
 
                     Text(text = it.name)
@@ -137,6 +133,7 @@ fun TopPart(
     isFirstPlaylist: Boolean,
     isLoading: Boolean,
     onAddClick: () -> Unit,
+    onContinueClick: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -169,14 +166,22 @@ fun TopPart(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             CustomOkButton(
                 text = if (isFirstPlaylist) "Add" else "Add another",
-                modifier = Modifier.width(100.dp),
+                modifier = Modifier.fillMaxWidth(.4f),
                 loading = isLoading,
                 shape = RoundedCornerShape(8.dp),
                 onClick = onAddClick
+            )
+
+            CustomOkButton(
+                text = "Continue",
+                modifier = Modifier.fillMaxWidth(.5f),
+                loading = false,
+                shape = RoundedCornerShape(8.dp),
+                onClick = onContinueClick
             )
         }
     }
@@ -236,7 +241,8 @@ private fun Preview() {
         isError = false,
         isLoading = false,
         isFirstPlaylist = true,
-        onAddClick = { /*TODO*/ }) {
+        onAddClick = { /*TODO*/ },
+        onSkipClick = {}) {
 
     }
 }

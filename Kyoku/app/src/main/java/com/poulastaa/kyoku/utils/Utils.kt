@@ -11,3 +11,10 @@ fun String.b64Decode(): ByteArray = Base64.getUrlDecoder().decode(this)
 
 fun CookieManager.extractTokenOrCookie(): String =
     this.cookieStore.cookies[0].toString()
+
+fun String.validateSpotifyLink(): Boolean {
+    return (this.startsWith("https://open.spotify.com/playlist/") && this.contains("?si="))
+}
+
+fun String.toSpotifyPlaylistId(): String =
+    this.removePrefix("https://open.spotify.com/playlist/").split("?si=")[0]

@@ -73,6 +73,9 @@ fun SpotifyPlaylistScreen(
             },
             onSkipClick = {
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
+            },
+            onContinueClick = {
+                
             }
         )
     }

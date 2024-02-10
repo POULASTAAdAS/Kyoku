@@ -57,4 +57,8 @@ dependencies {
 
     // koin
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
+
+    // client
+    implementation("io.ktor:ktor-client-core-jvm")
+    implementation("io.ktor:ktor-client-apache-jvm")
 }

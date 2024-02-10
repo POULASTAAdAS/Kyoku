@@ -5,33 +5,31 @@ import com.poulastaa.data.model.spotify.*
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.toResponseSong
-import io.ktor.util.collections.ConcurrentMap
+import com.poulastaa.utils.toResponseSongList
+import io.ktor.util.collections.*
 import org.jetbrains.exposed.sql.and
 import java.io.File
 
 class SongRepositoryImpl : SongRepository {
     override suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist {
-        val hasMapOfFoundSongs = ConcurrentMap<Long, ResponseSong>()
+        val hasMapOfFoundSongs = ConcurrentMap<Long, Song>()
 
         return try {
-             dbQuery {
+            dbQuery {
                 list.forEach { spotifySong ->
-                    Song.find {
-                         SongTable.title like "%${spotifySong.title}%" and (SongTable.album like "%${spotifySong.album}%")
+                    Song.find { // searching by title and album
+                        SongTable.title like "%${spotifySong.title}%" and (SongTable.album like "%${spotifySong.album}%")
                     }.forEach {
                         if (!hasMapOfFoundSongs.containsKey(it.id.value))
-                            hasMapOfFoundSongs[it.id.value] = it.toResponseSong()
+                            hasMapOfFoundSongs[it.id.value] = it
                     }
 
-                    Song.find {
+                    Song.find {// searching by title
                         SongTable.title like "%${spotifySong.title}%"
                     }.forEach {
-                        if (!hasMapOfFoundSongs.containsKey(it.id.value))
+                        if (!hasMapOfFoundSongs.containsKey(it.id.value)) // putting if any left
                             if (spotifySong.album!!.contains(it.album))
-                                hasMapOfFoundSongs[it.id.value] = it.toResponseSong()
-
-                        println(it.toResponseSong())
+                                hasMapOfFoundSongs[it.id.value] = it
                     }
                 }
             }
@@ -39,14 +37,15 @@ class SongRepositoryImpl : SongRepository {
             HandleSpotifyPlaylist(
                 status = HandleSpotifyPlaylistStatus.SUCCESS,
                 spotifyPlaylistResponse = SpotifyPlaylistResponse(
-                    listOfResponseSong = hasMapOfFoundSongs.values.toList()
+                    status = HandleSpotifyPlaylistStatus.SUCCESS,
+                    listOfResponseSong = hasMapOfFoundSongs.values.toResponseSongList()
                 ),
                 spotifySongDownloaderApiReq = SpotifySongDownloaderApiReq(
-                    listOfSong = notFoundSongs(list, hasMapOfFoundSongs.values.toList())
-                )
+                    listOfSong = notFoundSongs(list, hasMapOfFoundSongs.values.toResponseSongList())
+                ),
+                songIdList = hasMapOfFoundSongs.keys.toList()
             )
         } catch (e: Exception) {
-            e.printStackTrace()
             HandleSpotifyPlaylist(
                 status = HandleSpotifyPlaylistStatus.FAILURE
             )
