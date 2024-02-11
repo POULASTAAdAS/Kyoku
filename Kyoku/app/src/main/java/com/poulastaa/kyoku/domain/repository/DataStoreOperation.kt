@@ -16,5 +16,8 @@ interface DataStoreOperation {
     fun readTokenOrCookie(): Flow<String>
 
     suspend fun storeRefreshToken(data: String)
-    fun readAccessToken(): Flow<String>
+    fun readRefreshToken(): Flow<String>
+
+    suspend fun storeAuthType(data: String)
+    fun readAuthType(): Flow<String>
 }

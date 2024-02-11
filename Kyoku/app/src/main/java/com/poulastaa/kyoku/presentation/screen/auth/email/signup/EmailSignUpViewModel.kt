@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
@@ -22,8 +23,9 @@ import com.poulastaa.kyoku.domain.usecase.ValidateEmail
 import com.poulastaa.kyoku.domain.usecase.ValidatePassword
 import com.poulastaa.kyoku.domain.usecase.ValidateUserName
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
-import com.poulastaa.kyoku.utils.storeProfilePic
+import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeRefreshToken
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.storeUsername
@@ -326,8 +328,10 @@ class EmailSignUpViewModel @Inject constructor(
         storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds = ds)
         storeRefreshToken(data = response.refreshToken, ds)
 
+        storeAuthType(AuthType.EMAIL_AUTH, ds)
+
         storeUsername(response.user.userName, ds)
-        storeProfilePic(response.user.profilePic, ds)
+        storeProfilePicUri(response.user.profilePic, ds)
 
         onEvent(EmailSignUpUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
 

@@ -40,17 +40,3 @@ select * from PasskeyUserPlaylist;
 select * from GoogleUserPlaylist;
 select * from EmailUserPlaylist;
 
-
-
-
-
-drop table emailAuthUser;
-drop table googleAuthUser;
-drop table passkeyAuthUser;
-drop table invalidrefreshToken;
-drop table sessionStorage;
-
-drop table PasskeyUserPlaylist;
-drop table GoogleUserPlaylist;
-drop table EmailUserPlaylist;
-

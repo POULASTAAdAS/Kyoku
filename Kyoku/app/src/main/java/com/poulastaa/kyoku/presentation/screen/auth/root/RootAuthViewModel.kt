@@ -10,13 +10,14 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
-import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.auth.UiEvent
+import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.auth.root.RootUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -26,14 +27,15 @@ import com.poulastaa.kyoku.presentation.screen.auth.root.passkey.createPasskey
 import com.poulastaa.kyoku.presentation.screen.auth.root.passkey.getPasskey
 import com.poulastaa.kyoku.utils.Constants.AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP
 import com.poulastaa.kyoku.utils.extractTokenOrCookie
-import com.poulastaa.kyoku.utils.storeProfilePic
-import com.poulastaa.kyoku.utils.storeSignInState
+import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeProfilePicUri
+import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.storeUsername
-import com.poulastaa.kyoku.utils.toPasskeyAuthRequest
 import com.poulastaa.kyoku.utils.toCreatePasskeyUserReq
 import com.poulastaa.kyoku.utils.toGetPasskeyUserReq
 import com.poulastaa.kyoku.utils.toGoogleAuthReq
+import com.poulastaa.kyoku.utils.toPasskeyAuthRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -306,8 +308,9 @@ class RootAuthViewModel @Inject constructor(
     ) {
         // store cookie
         storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
+        storeAuthType(AuthType.PASSKEY_AUTH, ds)
 
-        storeProfilePic(uri = response.user.profilePic, ds)
+        storeProfilePicUri(uri = response.user.profilePic, ds)
         storeUsername(username = response.user.userName, ds)
 
         when (response.status) {
@@ -326,10 +329,10 @@ class RootAuthViewModel @Inject constructor(
     private fun startGoogleAuth(req: GoogleAuthReq) {
         viewModelScope.launch(Dispatchers.IO) {
             api.googleAuth(req)?.let { response ->
-
                 storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
+                storeAuthType(AuthType.GOOGLE_AUTH, ds)
 
-                storeProfilePic(uri = response.user.profilePic, ds)
+                storeProfilePicUri(uri = response.user.profilePic, ds)
                 storeUsername(username = response.user.userName, ds)
 
                 when (response.status) {

@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.repository
 
+import com.poulastaa.kyoku.data.model.api.service.HandleSpotifyPlaylistStatus
 import com.poulastaa.kyoku.data.model.api.service.SpotifyPlaylistResponse
 import com.poulastaa.kyoku.data.remote.ServiceApi
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -11,11 +12,14 @@ class ServiceRepositoryImpl @Inject constructor(
     override suspend fun getSpotifyPlaylist(
         tokenOrCookie: String,
         playlistId: String
-    ): SpotifyPlaylistResponse? {
+    ): SpotifyPlaylistResponse {
         return try {
             api.getSpotifyPlaylistSong(tokenOrCookie = tokenOrCookie, playlistId = playlistId)
         } catch (e: Exception) {
-            null
+            SpotifyPlaylistResponse(
+                status = HandleSpotifyPlaylistStatus.FAILURE,
+                listOfResponseSong = emptyList()
+            )
         }
     }
 }

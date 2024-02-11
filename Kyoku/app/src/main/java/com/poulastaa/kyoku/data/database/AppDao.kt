@@ -15,8 +15,8 @@ interface AppDao {
     fun getAllPlaylist(): Flow<List<PlaylistRelationTable>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertSong(song: SongTable): Long
+    suspend fun insertSong(song: SongTable): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertSongIntoPlaylist(playlist: PlaylistTable)
+    suspend fun insertSongIntoPlaylist(playlist: PlaylistTable)
 }

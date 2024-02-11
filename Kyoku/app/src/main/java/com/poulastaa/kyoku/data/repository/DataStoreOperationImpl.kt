@@ -6,7 +6,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_AUTH_TYPE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_REFRESH_TOKEN_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PROFILE_PIC_KEY
@@ -23,9 +25,13 @@ class DataStoreOperationImpl @Inject constructor(
 ) : DataStoreOperation {
     private object PreferencesKey {
         val signedInKey = stringPreferencesKey(name = PREFERENCES_SIGNED_IN_KEY)
+        val authTypeKey = stringPreferencesKey(name = PREFERENCES_AUTH_TYPE_KEY)
+
         val usernameKey = stringPreferencesKey(name = PREFERENCES_USERNAME_KEY)
         val profilePicUrlKey = stringPreferencesKey(name = PREFERENCES_PROFILE_PIC_KEY)
-        val accessTokenOrCookieKey = stringPreferencesKey(name = PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY)
+
+        val accessTokenOrCookieKey =
+            stringPreferencesKey(name = PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY)
         val refreshTokenKey = stringPreferencesKey(name = PREFERENCES_JWT_REFRESH_TOKEN_KEY)
     }
 
@@ -113,16 +119,35 @@ class DataStoreOperationImpl @Inject constructor(
         }
     }
 
-    override fun readAccessToken(): Flow<String> = dataStore
-    .data
-    .catch { e ->
-        if (e is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw e
+    override fun readRefreshToken(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val tokenOrCookie = it[PreferencesKey.refreshTokenKey] ?: ""
+            tokenOrCookie
         }
-    }.map {
-        val tokenOrCookie = it[PreferencesKey.refreshTokenKey] ?: ""
-        tokenOrCookie
+
+    override suspend fun storeAuthType(data: String) {
+        dataStore.edit {
+            it[PreferencesKey.authTypeKey] = data
+        }
     }
+
+    override fun readAuthType(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val authType = it[PreferencesKey.authTypeKey] ?: AuthType.UN_AUTH.name
+            authType
+        }
 }

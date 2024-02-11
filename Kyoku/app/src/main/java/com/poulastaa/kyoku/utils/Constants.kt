@@ -1,12 +1,13 @@
 package com.poulastaa.kyoku.utils
 
 object Constants {
-    const val AUTH_BASE_URL = "https://696d-103-42-159-136.ngrok-free.app"
-    const val SERVICE_BASE_URL = "https://6585-103-42-159-136.ngrok-free.app"
+    const val AUTH_BASE_URL = "https://7204-103-44-173-12.ngrok-free.app"
+    const val SERVICE_BASE_URL = "https://a167-103-44-173-12.ngrok-free.app"
 
     const val PREFERENCES_NAME = "appPreferences"
 
     const val PREFERENCES_SIGNED_IN_KEY = "PREFERENCES_SIGNED_IN_KEY"
+    const val PREFERENCES_AUTH_TYPE_KEY = "PREFERENCES_AUTH_TYPE_KEY"
     const val PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY = "PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY"
     const val PREFERENCES_JWT_REFRESH_TOKEN_KEY = "PREFERENCES_JWT_REFRESH_TOKEN_KEY"
     const val PREFERENCES_USERNAME_KEY = "PREFERENCES_USERNAME_KEY"

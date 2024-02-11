@@ -21,6 +21,8 @@ private fun String.toSpotifyPlaylistId(): String =
 
 
 fun main() {
+    println(mapOf("Set-Cookie" to mutableListOf("tokenOrCookie.value")))
+
     val map = HashMap<Int, Item>()
 
     for (i in 1..10) {

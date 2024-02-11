@@ -1,16 +1,19 @@
 package com.poulastaa.kyoku.utils
 
 import com.google.gson.JsonParser
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
+import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -86,4 +89,36 @@ fun EmailLogInState.toEmailLogInReq(email: String, password: String) = EmailLogI
     authType = AUTH_TYPE_EMAIL_LOG_IN,
     email = email,
     password = password
+)
+
+fun ResponseSong.toSongTable() = SongTable(
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    totalTime = this.totalTime,
+    title = this.title,
+    artist = this.artist,
+    album = this.album,
+    genre = this.genre,
+    composer = this.composer,
+    publisher = this.publisher,
+    albumArtist = this.albumArtist,
+    description = this.description,
+    track = this.track,
+    date = this.date
+)
+
+fun <T> Iterable<T>.toListOfSongTable(): List<SongTable> {
+    val list = ArrayList<SongTable>()
+
+    this.forEach {
+        it as ResponseSong
+        list.add(it.toSongTable())
+    }
+
+    return list
+}
+
+fun Long.toPlaylistTable(name:String) = PlaylistTable(
+    name = name,
+    songId = this
 )

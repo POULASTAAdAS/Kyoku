@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLoginStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
@@ -20,8 +21,9 @@ import com.poulastaa.kyoku.domain.usecase.AuthUseCases
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail
 import com.poulastaa.kyoku.domain.usecase.ValidatePassword
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
-import com.poulastaa.kyoku.utils.storeProfilePic
+import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeRefreshToken
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.storeUsername
@@ -360,8 +362,10 @@ class EmailLoginViewModel @Inject constructor(
         storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds)
         storeRefreshToken(response.refreshToken, ds)
 
+        storeAuthType(AuthType.EMAIL_AUTH, ds)
+
         storeUsername(response.user.userName, ds)
-        storeProfilePic(response.user.profilePic, ds)
+        storeProfilePicUri(response.user.profilePic, ds)
 
         //todo handle response data
 
