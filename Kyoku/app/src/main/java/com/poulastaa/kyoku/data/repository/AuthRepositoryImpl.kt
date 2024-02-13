@@ -1,11 +1,8 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
-import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
-import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMail
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
@@ -95,7 +92,6 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             api.resendVerificationMail(email).status
         } catch (e: Exception) {
-            Log.d("resendVerificationMail", e.message.toString())
             ResendVerificationMailStatus.SOMETHING_WENT_WRONG
         }
     }

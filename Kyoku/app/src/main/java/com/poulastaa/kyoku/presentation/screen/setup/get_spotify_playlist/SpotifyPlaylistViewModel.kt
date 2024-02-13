@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,30 +10,25 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.DsState
 import com.poulastaa.kyoku.data.model.api.service.HandleSpotifyPlaylistStatus
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.database.table.PlaylistRelationTable
 import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.extractTokenOrCookie
-import com.poulastaa.kyoku.utils.generatePlaylistName
+import com.poulastaa.kyoku.utils.insertIntoPlaylist
 import com.poulastaa.kyoku.utils.populateDsState
-import com.poulastaa.kyoku.utils.readPlaylistFromDatabase
 import com.poulastaa.kyoku.utils.setCookie
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
 import com.poulastaa.kyoku.utils.storeSignInState
-import com.poulastaa.kyoku.utils.toListOfSongTable
-import com.poulastaa.kyoku.utils.toPlaylistTable
+import com.poulastaa.kyoku.utils.toListOfUiPlaylist
 import com.poulastaa.kyoku.utils.toSpotifyPlaylistId
 import com.poulastaa.kyoku.utils.validateSpotifyLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.net.CookieManager
@@ -54,7 +48,7 @@ class SpotifyPlaylistViewModel @Inject constructor(
         viewModelScope.launch {
             connectivity.observe().collect {
                 network.value = it
-                state = GetSpotifyPlaylistUiState(
+                state = state.copy(
                     isInternetAvailable = checkInternetConnection()
                 )
             }
@@ -65,29 +59,37 @@ class SpotifyPlaylistViewModel @Inject constructor(
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
-    private var dsState by mutableStateOf(DsState())
+    var dsState by mutableStateOf(DsState())
+        private set
 
     init {
         viewModelScope.launch {
             dsState = populateDsState(ds)
 
-            Log.d("dsState", dsState.toString())
-
             if (dsState.authType === AuthType.UN_AUTH)
                 storeSignInState(SignInStatus.AUTH, ds)
-            if (dsState.authType == AuthType.GOOGLE_AUTH || dsState.authType == AuthType.PASSKEY_AUTH)
+
+            if (dsState.authType == AuthType.SESSION_AUTH) {
                 setCookie(cm, dsState.tokenOrCookie)
+                dsState = dsState.copy(
+                    isCookie = true
+                )
+            }
         }
     }
 
-    private val _playlist = MutableStateFlow<List<PlaylistRelationTable>>(emptyList())
-    val playlist get() = _playlist.asStateFlow()
+    private fun loadPlaylist() {
+        viewModelScope.launch(Dispatchers.IO) {
+            db.getAllPlaylist().collect {
+                state = state.copy(
+                    listOfPlaylist = it.toListOfUiPlaylist()
+                )
+            }
+        }
+    }
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _playlist.value = readPlaylistFromDatabase(db)
-            Log.d("playlist", _playlist.value.toString())
-        }
+        loadPlaylist()
     }
 
     private val _uiEvent = Channel<UiEvent>()
@@ -124,12 +126,24 @@ class SpotifyPlaylistViewModel @Inject constructor(
                 }
             }
 
-            GetSpotifyPlaylistUiEvent.OnSkipClick -> {
-                Log.d("playlist", _playlist.value.toString())
-//                viewModelScope.launch(Dispatchers.IO) { // todo may change
-//                    _uiEvent.send(UiEvent.Navigate(Screens.SetBirthDate.route))
-//                }
+            is GetSpotifyPlaylistUiEvent.OnPlaylistClick -> {
+                state = state.copy(
+                    listOfPlaylist = state.listOfPlaylist.map {
+                        if (it.name == event.name) it.copy(isExpanded = !it.isExpanded)
+                        else it
+                    }
+                )
+            }
 
+            GetSpotifyPlaylistUiEvent.OnContinueClick -> {
+                if (state.listOfPlaylist.isEmpty()) onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
+                else storeSignInState(SignInStatus.OLD_USER, ds)
+            }
+
+            GetSpotifyPlaylistUiEvent.OnSkipClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(UiEvent.Navigate(Screens.SetBirthDate.route))
+                }
             }
 
             is GetSpotifyPlaylistUiEvent.EmitToast -> {
@@ -147,46 +161,29 @@ class SpotifyPlaylistViewModel @Inject constructor(
     private fun makeApiCall() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = api.getSpotifyPlaylist(
-                tokenOrCookie = dsState.tokenOrCookie,
                 playlistId = state.link.toSpotifyPlaylistId()
             )
 
             when (response.status) {
                 HandleSpotifyPlaylistStatus.SUCCESS -> {
                     state = GetSpotifyPlaylistUiState(
+                        listOfPlaylist = state.listOfPlaylist,
                         isFirstPlaylist = false
                     )
 
-                    try {
+                    if (dsState.isCookie) // todo try to move to interceptor
                         storeCookieOrAccessToken(cm.extractTokenOrCookie(), ds) // update cookie
-                    } catch (_: Exception) {
-                    }
 
-                    handleResponseData(data = response.listOfResponseSong)
+                    insertIntoPlaylist(db, response.listOfResponseSong)
                 }
 
                 HandleSpotifyPlaylistStatus.FAILURE -> {
                     onEvent(GetSpotifyPlaylistUiEvent.EmitToast("Opp's something went wrong"))
-                    state = GetSpotifyPlaylistUiState()
+                    state = state.copy(
+                        link = "",
+                        isMakingApiCall = false
+                    )
                 }
-            }
-            // todo add network interceptor 1
-            // todo check header problem on api
-        }
-    }
-
-    private fun handleResponseData(data: List<ResponseSong>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val list = ArrayList<Long>()
-
-            data.toListOfSongTable().forEach {
-                list.add(db.insertSong(it)) // collecting ids
-            }
-
-            val name = generatePlaylistName()
-
-            list.forEach {
-                db.insertSongIntoPlaylist(it.toPlaylistTable(name))
             }
         }
     }

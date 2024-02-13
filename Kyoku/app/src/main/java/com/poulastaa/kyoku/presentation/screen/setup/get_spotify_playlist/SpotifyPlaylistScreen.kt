@@ -9,13 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiEvent
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +42,9 @@ fun SpotifyPlaylistScreen(
         }
     }
 
+    val haptic = LocalHapticFeedback.current
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -60,6 +65,9 @@ fun SpotifyPlaylistScreen(
     ) { paddingValues ->
         SpotifyPlaylistScreenContent(
             paddingValues = paddingValues,
+            uiPlaylist = viewModel.state.listOfPlaylist,
+            isCookie = viewModel.dsState.isCookie,
+            headerValue = viewModel.dsState.tokenOrCookie,
             link = viewModel.state.link,
             onValueChange = {
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnLinkEnter(it))
@@ -68,14 +76,20 @@ fun SpotifyPlaylistScreen(
             isError = viewModel.state.isLinkError,
             isLoading = viewModel.state.isMakingApiCall,
             isFirstPlaylist = viewModel.state.isFirstPlaylist,
+            onPlaylistClick = {
+                viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnPlaylistClick(it))
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            },
             onAddClick = {
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnAddButtonClick)
+                focusManager.clearFocus()
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             },
             onSkipClick = {
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
             },
             onContinueClick = {
-                
+                viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnContinueClick)
             }
         )
     }

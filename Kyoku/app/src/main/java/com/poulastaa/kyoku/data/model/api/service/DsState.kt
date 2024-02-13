@@ -7,5 +7,6 @@ data class DsState(
     val refreshToken: String = "",
     val authType: AuthType = AuthType.UN_AUTH,
     val profilePidUri: String = "",
-    val userName: String = ""
+    val userName: String = "",
+    val isCookie: Boolean = false
 )

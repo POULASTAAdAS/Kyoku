@@ -8,5 +8,9 @@ sealed class GetSpotifyPlaylistUiEvent {
     data object OnSkipClick : GetSpotifyPlaylistUiEvent()
 
     data class EmitToast(val message: String) : GetSpotifyPlaylistUiEvent()
-    data object SomethingWentWrong: GetSpotifyPlaylistUiEvent()
+    data object SomethingWentWrong : GetSpotifyPlaylistUiEvent()
+
+    data object OnContinueClick : GetSpotifyPlaylistUiEvent()
+
+    data class OnPlaylistClick(val name: String) : GetSpotifyPlaylistUiEvent()
 }

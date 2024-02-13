@@ -12,8 +12,12 @@ import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
+import com.poulastaa.kyoku.data.model.database.SongInfo
+import com.poulastaa.kyoku.data.model.database.table.PlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.ui.UiPlaylist
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -118,7 +122,36 @@ fun <T> Iterable<T>.toListOfSongTable(): List<SongTable> {
     return list
 }
 
-fun Long.toPlaylistTable(name:String) = PlaylistTable(
+fun toPlaylistTable(name: String) = PlaylistTable(
     name = name,
-    songId = this
 )
+
+fun playlistRelationTable(songId: Long, playlistId: Long) = PlaylistRelationTable(
+    playlistId = playlistId,
+    songId = songId
+)
+
+fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
+    val list = ArrayList<UiPlaylist>()
+
+    val map = HashMap<String, ArrayList<SongInfo>>()
+
+    this.forEach {
+        if (!map.containsKey(it.song.name)) {
+            map[it.song.name] = arrayListOf(it.song.song)
+        } else if (map.containsKey(it.song.name)) {
+            map[it.song.name]?.add(it.song.song)
+        }
+    }
+
+    map.forEach {
+        list.add(
+            UiPlaylist(
+                name = it.key,
+                songs = it.value
+            )
+        )
+    }
+
+    return list
+}

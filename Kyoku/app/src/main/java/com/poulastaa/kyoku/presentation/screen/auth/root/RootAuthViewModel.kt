@@ -47,8 +47,8 @@ import javax.inject.Named
 
 @HiltViewModel
 class RootAuthViewModel @Inject constructor(
-    @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
-    @Named("AuthCookie") private val cookieManager: CookieManager,
+    private val connectivity: NetworkObserver,
+    private val cookieManager: CookieManager,
     private val ds: DataStoreOperation,
     private val validateEmail: ValidateEmail,
     private val credentialManager: CredentialManager,
@@ -97,8 +97,10 @@ class RootAuthViewModel @Inject constructor(
             is RootUiEvent.OnPasskeyAuthClick -> {
                 if (!state.emailAuthLoading && !state.passkeyAuthLoading && !state.googleAuthLoading)
                     if (checkInternetConnection()) {
-                        if (validate())
-                            startPasskeyAuth(state.toPasskeyAuthRequest(), event.activity)
+                        if (validate()) startPasskeyAuth(
+                            state.toPasskeyAuthRequest(),
+                            event.activity
+                        )
                     } else {
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(element = UiEvent.ShowToast("Please Check Your Internet Connection"))
@@ -308,7 +310,7 @@ class RootAuthViewModel @Inject constructor(
     ) {
         // store cookie
         storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
-        storeAuthType(AuthType.PASSKEY_AUTH, ds)
+        storeAuthType(AuthType.SESSION_AUTH, ds)
 
         storeProfilePicUri(uri = response.user.profilePic, ds)
         storeUsername(username = response.user.userName, ds)
@@ -330,7 +332,7 @@ class RootAuthViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             api.googleAuth(req)?.let { response ->
                 storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
-                storeAuthType(AuthType.GOOGLE_AUTH, ds)
+                storeAuthType(AuthType.SESSION_AUTH, ds)
 
                 storeProfilePicUri(uri = response.user.profilePic, ds)
                 storeUsername(username = response.user.userName, ds)

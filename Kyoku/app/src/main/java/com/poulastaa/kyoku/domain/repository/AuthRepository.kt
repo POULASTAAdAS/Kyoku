@@ -2,19 +2,19 @@ package com.poulastaa.kyoku.domain.repository
 
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
-import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
-import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMail
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
+import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenReq
+import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenResponse
 
 interface AuthRepository {
     suspend fun passkeyReq(req: PasskeyAuthReq): PasskeyJson?

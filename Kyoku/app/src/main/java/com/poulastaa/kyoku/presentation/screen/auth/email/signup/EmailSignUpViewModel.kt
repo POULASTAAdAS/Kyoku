@@ -42,7 +42,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class EmailSignUpViewModel @Inject constructor(
-    @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
+    private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
     private val authUseCases: AuthUseCases,
     @Named("AuthApiImpl") private val api: AuthRepository
@@ -328,7 +328,7 @@ class EmailSignUpViewModel @Inject constructor(
         storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds = ds)
         storeRefreshToken(data = response.refreshToken, ds)
 
-        storeAuthType(AuthType.EMAIL_AUTH, ds)
+        storeAuthType(AuthType.JWT_AUTH, ds)
 
         storeUsername(response.user.userName, ds)
         storeProfilePicUri(response.user.profilePic, ds)

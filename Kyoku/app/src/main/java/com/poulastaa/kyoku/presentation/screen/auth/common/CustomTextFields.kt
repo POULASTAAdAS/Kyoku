@@ -35,22 +35,21 @@ fun CustomTextFiled(
     isError: Boolean,
     supportingText: String,
     shape: RoundedCornerShape = RoundedCornerShape(32.dp),
-    colors: TextFieldColors =
-        OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
 
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedBorderColor = MaterialTheme.colorScheme.inversePrimary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.primary,
+        focusedBorderColor = MaterialTheme.colorScheme.inversePrimary,
 
-            unfocusedLabelColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.inversePrimary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.primary,
+        focusedLabelColor = MaterialTheme.colorScheme.inversePrimary,
 
-            cursorColor = MaterialTheme.colorScheme.inversePrimary,
+        cursorColor = MaterialTheme.colorScheme.inversePrimary,
 
-            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-            focusedTrailingIconColor = MaterialTheme.colorScheme.inversePrimary,
-        ),
+        unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+        focusedTrailingIconColor = MaterialTheme.colorScheme.inversePrimary,
+    ),
     trailingIcon: @Composable (() -> Unit) = {
         Icon(
             imageVector = Icons.Rounded.Email,

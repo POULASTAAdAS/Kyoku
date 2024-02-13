@@ -1,12 +1,11 @@
 package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,13 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,24 +29,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.ui.UiPlaylist
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
+import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.components.SongView
 
 @Composable
 fun SpotifyPlaylistScreenContent(
     paddingValues: PaddingValues,
+    uiPlaylist: List<UiPlaylist>,
+    isCookie: Boolean,
+    headerValue: String,
     link: String,
     onValueChange: (String) -> Unit,
     supportingText: String,
     isError: Boolean,
     isLoading: Boolean,
     isFirstPlaylist: Boolean,
+    onPlaylistClick: (name: String) -> Unit,
     onAddClick: () -> Unit,
     onSkipClick: () -> Unit,
     onContinueClick: () -> Unit
@@ -79,7 +86,7 @@ fun SpotifyPlaylistScreenContent(
             onContinueClick = onContinueClick
         )
 
-        LazyColumn(
+        MidPart(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(
@@ -87,30 +94,14 @@ fun SpotifyPlaylistScreenContent(
                     color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(8.dp)
                 )
+                .padding(4.dp)
                 .weight(7f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(4.dp)
-        ) {
-            items(
-                items = returnFun(),
-                key = {
-                    it.id
-                }
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Image(
-                        painter = painterResource(id = it.image),
-                        contentDescription = null,
-                        modifier = Modifier.size(80.dp)
-                    )
+            uiPlaylist = uiPlaylist,
+            isCookie = isCookie,
+            headerValue = headerValue,
+            onPlaylistClick = onPlaylistClick
+        )
 
-                    Text(text = it.name)
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -189,20 +180,68 @@ fun TopPart(
 
 @Composable
 fun MidPart(
-    modifier: Modifier, // todo send data
-    content: @Composable ColumnScope.() -> Unit
+    modifier: Modifier,
+    uiPlaylist: List<UiPlaylist>,
+    isCookie: Boolean,
+    headerValue: String,
+    onPlaylistClick: (name: String) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .border(
-                width = 1.5.dp,
-                shape = RoundedCornerShape(8.dp),
-                color = MaterialTheme.colorScheme.primary
-            ),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        content = content
-    )
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(4.dp)
+        ) {
+            items(
+                items = uiPlaylist,
+                key = {
+                    it.name
+                }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clickable(
+                            onClick = { onPlaylistClick.invoke(it.name) },
+                            interactionSource = MutableInteractionSource(),
+                            indication = null
+                        )
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = it.name,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        modifier = Modifier.weight(7f)
+                    )
+
+                    Icon(
+                        modifier = Modifier.weight(1f),
+                        imageVector = if (it.isExpanded) Icons.Rounded.KeyboardArrowUp
+                        else Icons.Rounded.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
+
+                it.songs.forEach { song ->
+                    AnimatedVisibility(visible = it.isExpanded) {
+                        SongView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                            imageUrl = song.coverImage,
+                            title = song.title,
+                            artist = song.artist,
+                            isCookie = isCookie,
+                            headerValue = headerValue,
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -231,36 +270,20 @@ fun EndPart(
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-
-
     SpotifyPlaylistScreenContent(
         paddingValues = PaddingValues(15.dp),
         link = "",
+        uiPlaylist = emptyList(),
         onValueChange = {},
         supportingText = "",
+        headerValue = "",
         isError = false,
         isLoading = false,
+        isCookie = true,
         isFirstPlaylist = true,
         onAddClick = { /*TODO*/ },
+        onPlaylistClick = {},
         onSkipClick = {}) {
 
     }
-}
-
-
-class Item(
-    val id: Int,
-    val name: String,
-    @DrawableRes val image: Int
-)
-
-
-fun returnFun(): List<Item> {
-    val list = ArrayList<Item>()
-
-    for (i in 1..30) {
-        list.add(Item(id = i, name = "Item", image = R.drawable.google))
-    }
-
-    return list
 }

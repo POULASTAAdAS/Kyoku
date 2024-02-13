@@ -1,3 +1,4 @@
+use music;
 drop table PasskeyUserPlaylist;
 drop table GoogleUserPlaylist;
 drop table EmailUserPlaylist;
@@ -8,3 +9,6 @@ drop table sessionStorage;
 drop table emailAuthUser;
 drop table googleAuthUser;
 drop table passkeyAuthUser;
+
+drop table playlist;
+drop table playlistrelation;

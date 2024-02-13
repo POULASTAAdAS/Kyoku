@@ -1,12 +1,29 @@
 package com.poulastaa.kyoku.data.model.database.table
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
+@Entity(
+    tableName = "PlaylistRelationTable",
+    foreignKeys = [
+        ForeignKey(
+            entity = PlaylistTable::class,
+            parentColumns = ["id"],
+            childColumns = ["playlistId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = SongTable::class,
+            parentColumns = ["id"],
+            childColumns = ["songId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class PlaylistRelationTable(
-    @Embedded val playlist: PlaylistTable = PlaylistTable(),
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "id"
-    ) val songs: List<SongTable> = emptyList()
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val playlistId: Long = 0,
+    val songId: Long = 0
 )

@@ -24,7 +24,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    @Named("AuthNetworkObserver") private val connectivity: NetworkObserver,
+    private val connectivity: NetworkObserver,
     private val validateEmail: ValidateEmail,
     @Named("AuthApiImpl") private val api: AuthRepository
 ) : ViewModel() {
