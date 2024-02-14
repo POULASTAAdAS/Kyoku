@@ -33,6 +33,13 @@ fun ViewModel.storeUsername(username: String, ds: DataStoreOperation) {
     }
 }
 
+fun ViewModel.storeBDate(date: String, ds: DataStoreOperation) {
+    viewModelScope.launch(Dispatchers.IO) {
+        ds.storeBDate(date)
+    }
+}
+
+
 fun ViewModel.storeSignInState(data: SignInStatus, ds: DataStoreOperation) {
     viewModelScope.launch(Dispatchers.IO) {
         ds.storeSignedInState(data.name)

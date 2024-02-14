@@ -9,6 +9,7 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_AUTH_TYPE_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_B_DATE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_REFRESH_TOKEN_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PROFILE_PIC_KEY
@@ -33,6 +34,8 @@ class DataStoreOperationImpl @Inject constructor(
         val accessTokenOrCookieKey =
             stringPreferencesKey(name = PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY)
         val refreshTokenKey = stringPreferencesKey(name = PREFERENCES_JWT_REFRESH_TOKEN_KEY)
+
+        val bDateKey = stringPreferencesKey(name = PREFERENCES_B_DATE_KEY)
     }
 
     override suspend fun storeSignedInState(signedInState: String) {
@@ -149,5 +152,24 @@ class DataStoreOperationImpl @Inject constructor(
         }.map {
             val authType = it[PreferencesKey.authTypeKey] ?: AuthType.UN_AUTH.name
             authType
+        }
+
+    override suspend fun storeBDate(date: String) {
+        dataStore.edit {
+            it[PreferencesKey.bDateKey] = date
+        }
+    }
+
+    override fun readBDate(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val bDate = it[PreferencesKey.bDateKey] ?: ""
+            bDate
         }
 }

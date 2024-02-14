@@ -16,7 +16,6 @@ import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlayl
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
-import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.insertIntoPlaylist
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toListOfUiPlaylist
@@ -155,14 +154,12 @@ class SpotifyPlaylistViewModel @Inject constructor(
             }
 
             GetSpotifyPlaylistUiEvent.OnContinueClick -> {
-                if (state.listOfPlaylist.isEmpty()) onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
+                if (state.listOfPlaylist.isEmpty()) storeSignInState(SignInStatus.B_DATE_SET,ds)
                 else storeSignInState(SignInStatus.OLD_USER, ds)
             }
 
             GetSpotifyPlaylistUiEvent.OnSkipClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(UiEvent.Navigate(Screens.SetBirthDate.route))
-                }
+                storeSignInState(SignInStatus.B_DATE_SET,ds)
             }
 
             is GetSpotifyPlaylistUiEvent.EmitToast -> {

@@ -12,6 +12,8 @@ import com.poulastaa.kyoku.presentation.screen.auth.root.RootAuthScreen
 import com.poulastaa.kyoku.presentation.screen.home.HomeScreen
 import com.poulastaa.kyoku.presentation.screen.setup.birth_date.SetBirthDateScreen
 import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.SpotifyPlaylistScreen
+import com.poulastaa.kyoku.presentation.screen.setup.select_artist.SelectArtistScreen
+import com.poulastaa.kyoku.presentation.screen.setup.select_genre.SelectGenreScreen
 
 @Composable
 fun SetupNavGraph(
@@ -56,18 +58,20 @@ fun SetupNavGraph(
         }
 
         composable(Screens.GetSpotifyPlaylist.route) {
-            SpotifyPlaylistScreen(
-                navigateToBDatePick = {
-                    navController.popBackStack()
-                    navController.navigate(it)
-                }
-            )
+            SpotifyPlaylistScreen()
         }
 
         composable(Screens.SetBirthDate.route) {
             SetBirthDateScreen()
         }
 
+        composable(Screens.SelectGenre.route) {
+            SelectGenreScreen()
+        }
+
+        composable(Screens.SelectArtist.route) {
+            SelectArtistScreen()
+        }
 
         composable(Screens.Home.route) {
             HomeScreen()

@@ -27,7 +27,10 @@ class StartViewModel @Inject constructor(
                 when (it) {
                     SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
                     SignInStatus.NEW_USER.name ->_startDestination.value = Screens.GetSpotifyPlaylist.route
+                    SignInStatus.B_DATE_SET.name -> _startDestination.value = Screens.SetBirthDate.route
                     SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
+                    SignInStatus.GENRE_SET.name  -> _startDestination.value = Screens.SelectGenre.route
+                    SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SelectArtist.route
                 }
 
                 _keepSplashOn.value = false

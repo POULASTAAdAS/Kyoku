@@ -23,14 +23,13 @@ import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlayl
 @Composable
 fun SpotifyPlaylistScreen(
     viewModel: SpotifyPlaylistViewModel = hiltViewModel(),
-    navigateToBDatePick: (UiEvent.Navigate) -> Unit
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is UiEvent.Navigate -> navigateToBDatePick.invoke(event)
+                is UiEvent.Navigate -> Unit
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,

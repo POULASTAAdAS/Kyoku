@@ -20,4 +20,7 @@ interface DataStoreOperation {
 
     suspend fun storeAuthType(data: String)
     fun readAuthType(): Flow<String>
+
+    suspend fun storeBDate(date: String)
+    fun readBDate(): Flow<String>
 }
