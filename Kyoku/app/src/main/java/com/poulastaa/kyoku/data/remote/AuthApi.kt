@@ -12,6 +12,8 @@ import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
+import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenReq
+import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenResponse
 import com.poulastaa.kyoku.data.model.auth.email.signup.EmailVerificationResponse
 import okhttp3.ResponseBody
 import retrofit2.http.Body
@@ -65,5 +67,8 @@ interface AuthApi {
         @Query("email") email: String
     ): SendForgotPasswordMail
 
-
+    @POST("/api/auth/refreshToken")
+    suspend fun refreshToken(
+        @Body req: RefreshTokenReq
+    ): RefreshTokenResponse
 }

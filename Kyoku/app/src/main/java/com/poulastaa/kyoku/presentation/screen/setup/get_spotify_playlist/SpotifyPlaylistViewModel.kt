@@ -39,7 +39,7 @@ class SpotifyPlaylistViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
     private val cm: CookieManager,
-    private val api: ServiceRepository,
+    private val service: ServiceRepository,
     private val db: DatabaseRepositoryImpl
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
@@ -160,8 +160,8 @@ class SpotifyPlaylistViewModel @Inject constructor(
 
     private fun makeApiCall() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = api.getSpotifyPlaylist(
-                playlistId = state.link.toSpotifyPlaylistId()
+            val response = service.getSpotifyPlaylist(
+                playlistId = state.link.toSpotifyPlaylistId(),
             )
 
             when (response.status) {

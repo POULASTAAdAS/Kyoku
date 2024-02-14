@@ -367,7 +367,7 @@ class EmailLoginViewModel @Inject constructor(
         storeUsername(response.user.userName, ds)
         storeProfilePicUri(response.user.profilePic, ds)
 
-        //todo handle response data
+        // todo handle response data
 
         storeSignInState(data = SignInStatus.OLD_USER, ds)
     }

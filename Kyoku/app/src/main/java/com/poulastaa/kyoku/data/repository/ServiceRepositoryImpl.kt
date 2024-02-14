@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
 import com.poulastaa.kyoku.data.model.api.service.HandleSpotifyPlaylistStatus
 import com.poulastaa.kyoku.data.model.api.service.SpotifyPlaylistResponse
 import com.poulastaa.kyoku.data.remote.ServiceApi
@@ -16,7 +15,7 @@ class ServiceRepositoryImpl @Inject constructor(
         return try {
             serviceApi.getSpotifyPlaylistSong(playlistId = playlistId)
         } catch (e: Exception) {
-            Log.d("getSpotifyPlaylistSong", e.message.toString())
+
             SpotifyPlaylistResponse(
                 status = HandleSpotifyPlaylistStatus.FAILURE,
                 listOfResponseSong = emptyList()
