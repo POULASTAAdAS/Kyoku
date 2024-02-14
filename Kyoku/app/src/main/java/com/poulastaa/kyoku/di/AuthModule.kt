@@ -58,7 +58,6 @@ object AuthModule {
 
     @Provides
     @ViewModelScoped
-    @Named("AuthApiImpl")
     fun provideAuthRepo(authApi: AuthApi): AuthRepository =
         AuthRepositoryImpl(authApi)
 }

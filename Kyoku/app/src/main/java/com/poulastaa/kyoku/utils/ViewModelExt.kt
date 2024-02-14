@@ -4,15 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.service.DsState
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
-import com.poulastaa.kyoku.data.model.ui.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.SERVICE_BASE_URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.CookieManager
@@ -54,32 +51,6 @@ fun ViewModel.storeAuthType(data: AuthType, ds: DataStoreOperation) {
     }
 }
 
-
-suspend fun populateDsState(ds: DataStoreOperation): DsState {
-    return withContext(Dispatchers.IO) {
-        DsState(
-            tokenOrCookie = async { ds.readTokenOrCookie().first() }.await(),
-            refreshToken = async { ds.readRefreshToken().first() }.await(),
-            authType = async {
-                when (ds.readAuthType().first()) {
-                    AuthType.SESSION_AUTH.name -> AuthType.SESSION_AUTH
-                    AuthType.JWT_AUTH.name -> AuthType.JWT_AUTH
-                    else -> AuthType.UN_AUTH
-                }
-            }.await(),
-            profilePidUri = async { ds.readProfilePic().first() }.await(),
-            userName = async { ds.readUsername().first() }.await()
-        )
-    }
-}
-
-suspend fun readPlaylistFromDatabase(db: DatabaseRepositoryImpl): List<UiPlaylist> {
-    var a: List<UiPlaylist> = emptyList()
-    db.getAllPlaylist().collect {
-        a = it.toListOfUiPlaylist()
-    }
-    return a
-}
 
 fun setCookie(cm: CookieManager, cookie: String) {
     cm.put(

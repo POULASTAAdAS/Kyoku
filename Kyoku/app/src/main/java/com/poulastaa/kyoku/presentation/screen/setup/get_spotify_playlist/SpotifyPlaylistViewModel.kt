@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.service.DsState
 import com.poulastaa.kyoku.data.model.api.service.HandleSpotifyPlaylistStatus
+import com.poulastaa.kyoku.data.model.api.service.SpotifyDataStoreState
 import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiState
@@ -17,11 +17,7 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.utils.extractTokenOrCookie
 import com.poulastaa.kyoku.utils.insertIntoPlaylist
-import com.poulastaa.kyoku.utils.populateDsState
-import com.poulastaa.kyoku.utils.setCookie
-import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toListOfUiPlaylist
 import com.poulastaa.kyoku.utils.toSpotifyPlaylistId
@@ -31,14 +27,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.net.CookieManager
 import javax.inject.Inject
 
 @HiltViewModel
 class SpotifyPlaylistViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
-    private val cm: CookieManager,
     private val service: ServiceRepository,
     private val db: DatabaseRepositoryImpl
 ) : ViewModel() {
@@ -59,23 +53,52 @@ class SpotifyPlaylistViewModel @Inject constructor(
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
-    var dsState by mutableStateOf(DsState())
+    var dsState by mutableStateOf(SpotifyDataStoreState())
         private set
 
-    init {
+    private fun readAccessToken() {
         viewModelScope.launch {
-            dsState = populateDsState(ds)
-
-            if (dsState.authType === AuthType.UN_AUTH)
-                storeSignInState(SignInStatus.AUTH, ds)
-
-            if (dsState.authType == AuthType.SESSION_AUTH) {
-                setCookie(cm, dsState.tokenOrCookie)
+            ds.readTokenOrCookie().collect {
                 dsState = dsState.copy(
-                    isCookie = true
+                    tokenOrCookie = it
                 )
             }
         }
+    }
+
+    private fun readAuthType() {
+        viewModelScope.launch {
+            ds.readAuthType().collect {
+                when (it) {
+                    AuthType.SESSION_AUTH.name -> {
+                        dsState = dsState.copy(
+                            isCookie = true,
+                            authType = AuthType.SESSION_AUTH
+                        )
+                        AuthType.SESSION_AUTH
+                    }
+
+                    AuthType.JWT_AUTH.name -> {
+                        dsState = dsState.copy(
+                            authType = AuthType.JWT_AUTH
+                        )
+                        AuthType.JWT_AUTH
+                    }
+
+                    else -> {
+                        storeSignInState(SignInStatus.AUTH, ds)
+
+                        AuthType.UN_AUTH
+                    }
+                }
+            }
+        }
+    }
+
+    init {
+        readAccessToken()
+        readAuthType()
+        loadPlaylist()
     }
 
     private fun loadPlaylist() {
@@ -86,10 +109,6 @@ class SpotifyPlaylistViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    init {
-        loadPlaylist()
     }
 
     private val _uiEvent = Channel<UiEvent>()
@@ -171,18 +190,16 @@ class SpotifyPlaylistViewModel @Inject constructor(
                         isFirstPlaylist = false
                     )
 
-                    if (dsState.isCookie) // todo try to move to interceptor
-                        storeCookieOrAccessToken(cm.extractTokenOrCookie(), ds) // update cookie
-
                     insertIntoPlaylist(db, response.listOfResponseSong)
                 }
 
                 HandleSpotifyPlaylistStatus.FAILURE -> {
-                    onEvent(GetSpotifyPlaylistUiEvent.EmitToast("Opp's something went wrong"))
+                    onEvent(GetSpotifyPlaylistUiEvent.EmitToast("Your Session has expired please login again"))
                     state = state.copy(
                         link = "",
                         isMakingApiCall = false
                     )
+                    storeSignInState(SignInStatus.AUTH, ds)
                 }
             }
         }

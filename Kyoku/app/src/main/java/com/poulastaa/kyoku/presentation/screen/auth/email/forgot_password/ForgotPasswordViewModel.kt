@@ -26,7 +26,7 @@ import javax.inject.Named
 class ForgotPasswordViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val validateEmail: ValidateEmail,
-    @Named("AuthApiImpl") private val api: AuthRepository
+    private val api: AuthRepository
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 

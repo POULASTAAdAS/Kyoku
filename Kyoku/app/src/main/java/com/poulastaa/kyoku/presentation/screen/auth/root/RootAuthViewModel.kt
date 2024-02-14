@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.net.CookieManager
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class RootAuthViewModel @Inject constructor(
@@ -51,8 +50,8 @@ class RootAuthViewModel @Inject constructor(
     private val cookieManager: CookieManager,
     private val ds: DataStoreOperation,
     private val validateEmail: ValidateEmail,
-    private val credentialManager: CredentialManager,
-    @Named("AuthApiImpl") private val api: AuthRepository
+    private val cred: CredentialManager,
+    private val api: AuthRepository
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
@@ -198,7 +197,7 @@ class RootAuthViewModel @Inject constructor(
             api.passkeyReq(req)?.let { passkeyJson ->
                 if (passkeyJson.type == AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
                     createPasskey( // create passkey from string and convert to CreatePublicKeyCredential
-                        credentialManager = credentialManager,
+                        credentialManager = cred,
                         jsonString = passkeyJson.req,
                         activity = activity,
                         challenge = passkeyJson.challenge,
@@ -220,7 +219,7 @@ class RootAuthViewModel @Inject constructor(
                     )
                 } else {
                     getPasskey(
-                        credentialManager,
+                        cred,
                         passkeyJson.req,
                         activity,
                         passkeyJson.challenge,

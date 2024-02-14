@@ -41,7 +41,7 @@ select * from GoogleUserPlaylist;
 select * from EmailUserPlaylist;
 
 
-
+delete from emailAuthUser where id = 2;
 
 
 

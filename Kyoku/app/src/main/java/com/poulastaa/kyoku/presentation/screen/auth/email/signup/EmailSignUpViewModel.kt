@@ -45,7 +45,7 @@ class EmailSignUpViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
     private val authUseCases: AuthUseCases,
-    @Named("AuthApiImpl") private val api: AuthRepository
+    private val api: AuthRepository
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 

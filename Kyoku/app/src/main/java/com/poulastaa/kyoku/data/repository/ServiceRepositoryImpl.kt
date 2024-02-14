@@ -15,7 +15,6 @@ class ServiceRepositoryImpl @Inject constructor(
         return try {
             serviceApi.getSpotifyPlaylistSong(playlistId = playlistId)
         } catch (e: Exception) {
-
             SpotifyPlaylistResponse(
                 status = HandleSpotifyPlaylistStatus.FAILURE,
                 listOfResponseSong = emptyList()
