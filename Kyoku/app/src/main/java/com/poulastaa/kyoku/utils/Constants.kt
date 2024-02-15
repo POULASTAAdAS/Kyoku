@@ -1,8 +1,8 @@
 package com.poulastaa.kyoku.utils
 
 object Constants {
-    const val AUTH_BASE_URL = "https://e7d2-103-42-159-95.ngrok-free.app"
-    const val SERVICE_BASE_URL = "https://074e-103-42-159-95.ngrok-free.app"
+    const val AUTH_BASE_URL = "https://8205-103-192-117-134.ngrok-free.app"
+    const val SERVICE_BASE_URL = "https://e04a-103-192-117-134.ngrok-free.app"
 
     const val PREFERENCES_NAME = "appPreferences"
 
@@ -12,6 +12,8 @@ object Constants {
     const val PREFERENCES_JWT_REFRESH_TOKEN_KEY = "PREFERENCES_JWT_REFRESH_TOKEN_KEY"
     const val PREFERENCES_USERNAME_KEY = "PREFERENCES_USERNAME_KEY"
     const val PREFERENCES_PROFILE_PIC_KEY = "PREFERENCES_PROFILE_PIC_KEY"
+    const val PREFERENCES_EMAIL_KEY = "PREFERENCES_EMAIL_KEY"
+    const val PREFERENCES_PASSWORD_KEY = "PREFERENCES_PASSWORD_KEY"
     const val PREFERENCES_B_DATE_KEY = "PREFERENCES_B_DATE_KEY"
 
     const val TYPE_PASSKEY_AUTH_REQ = "com.poulastaa.data.model.auth.PasskeyAuthReq"

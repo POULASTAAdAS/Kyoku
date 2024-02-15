@@ -3,10 +3,7 @@ package com.poulastaa.plugins
 import com.poulastaa.data.model.auth.GoogleUserSession
 import com.poulastaa.data.model.auth.PasskeyUserSession
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.routes.getMasterPlaylist
-import com.poulastaa.routes.getSongCover
-import com.poulastaa.routes.getSpotifyPlaylist
-import com.poulastaa.routes.unauthorized
+import com.poulastaa.routes.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -15,15 +12,16 @@ import org.koin.ktor.ext.inject
 import java.io.File
 
 fun Application.configureRouting() {
-
     val service: UserServiceRepository by inject()
 
     routing {
         sessionInterceptor()
 
         getSpotifyPlaylist(service)
-
         getSongCover(service)
+
+        storeBDate(service)
+
         getMasterPlaylist(service)
 
         unauthorized()

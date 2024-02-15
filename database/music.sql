@@ -26,7 +26,14 @@ select count(*) from song where genre = "Tamil";
 
 select count(*) from song;
 
+select count(distinct genre) from song;
+
 select distinct artist from song;
+
+select * from song where genre = "PaglaSongs.com";
+
+SET SQL_SAFE_UPDATES = 0;
+
 
 select * from song where genre in (select distinct genre from song);
 
@@ -40,21 +47,32 @@ select * from PasskeyUserPlaylist;
 select * from GoogleUserPlaylist;
 select * from EmailUserPlaylist;
 
-
 delete from emailAuthUser where id = 2;
 
+create table genre(
+id int primary key auto_increment,
+genre varchar(120) unique not null
+);
+
+select * from genre;
+drop table genre;
+
+-- create table usersGenre(
+-- id Long primary key,
+-- genreId int,
+-- userId varchar(320)
+-- );
+
+create table artist(
+    id int PRIMARY KEY auto_increment,
+    name varchar(120) UNIQUE not null,
+    profilePicUrl text not null,
+    country text not null,
+    preferedSpeakingLang text not null
+);
 
 
-
-
-
-
-
-
-
-
-
-
+select distinct preferedSpeakingLang from artist;
 
 
 

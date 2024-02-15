@@ -12,6 +12,12 @@ interface DataStoreOperation {
     suspend fun storeProfilePic(uir: String)
     fun readProfilePic(): Flow<String>
 
+    suspend fun storeEmail(email: String)
+    fun readEmail(): Flow<String>
+
+    suspend fun storePassword(password: String)
+    fun readPassword(): Flow<String>
+
     suspend fun storeCookieOrAccessToken(data: String)
     fun readTokenOrCookie(): Flow<String>
 

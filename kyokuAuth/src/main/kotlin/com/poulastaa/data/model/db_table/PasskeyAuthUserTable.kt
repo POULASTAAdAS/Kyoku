@@ -10,4 +10,5 @@ object PasskeyAuthUserTable : LongIdTable() {
     val email: Column<String> = varchar("email", 320).uniqueIndex()
     val profilePic: Column<String> = varchar("profilePic", 200)
         .default(DEFAULT_PROFILE_PIC)
+    val bDate: Column<Long?> = long("bDate").nullable()
 }

@@ -3,6 +3,9 @@ package com.poulastaa.plugins
 import com.poulastaa.data.model.db_table.playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.PasskeyUserPlaylistTable
+import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
+import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
+import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -27,6 +30,10 @@ fun Application.configureDatabase() {
         SchemaUtils.create(EmailUserPlaylistTable)
         SchemaUtils.create(GoogleUserPlaylistTable)
         SchemaUtils.create(PasskeyUserPlaylistTable)
+
+        SchemaUtils.create(EmailAuthUserTable)
+        SchemaUtils.create(GoogleAuthUserTable)
+        SchemaUtils.create(PasskeyAuthUserTable)
     }
 }
 

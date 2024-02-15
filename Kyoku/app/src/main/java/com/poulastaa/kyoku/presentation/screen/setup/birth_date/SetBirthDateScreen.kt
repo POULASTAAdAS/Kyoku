@@ -56,6 +56,7 @@ fun SetBirthDateScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
                 else -> Unit
             }
         }
@@ -107,7 +108,7 @@ fun SetBirthDateScreen(
         CustomOkButton(
             text = "Continue",
             modifier = Modifier.fillMaxWidth(),
-            loading = false,
+            loading = viewModel.state.isLoading,
             shape = RoundedCornerShape(8.dp),
             onClick = {
                 viewModel.onEvent(SetBirthDateUiEvent.OnContinueClick)
@@ -148,7 +149,7 @@ fun SetBirthDateScreen(
             DatePicker(
                 state = datePicker,
                 title = {
-                    Text(text = "Select B'Date")
+                    Text(text = "Select Your B'Date")
                 },
                 modifier = Modifier.padding(PaddingValues(start = 24.dp, end = 12.dp, top = 16.dp))
             )

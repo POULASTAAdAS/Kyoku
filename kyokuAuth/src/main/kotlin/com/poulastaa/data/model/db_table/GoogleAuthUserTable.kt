@@ -11,4 +11,5 @@ object GoogleAuthUserTable : LongIdTable() {
     val sub: Column<String> = varchar("sub", 30).uniqueIndex()
     val profilePic: Column<String> = varchar("profilePic", 200)
         .default(DEFAULT_PROFILE_PIC)
+    val bDate: Column<Long?> = long("bDate").nullable()
 }

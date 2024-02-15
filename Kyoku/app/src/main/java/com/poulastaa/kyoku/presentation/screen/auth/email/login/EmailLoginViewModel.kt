@@ -23,6 +23,8 @@ import com.poulastaa.kyoku.domain.usecase.ValidatePassword
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeEmail
+import com.poulastaa.kyoku.utils.storePassword
 import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeRefreshToken
 import com.poulastaa.kyoku.utils.storeSignInState
@@ -36,7 +38,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class EmailLoginViewModel @Inject constructor(
@@ -366,6 +367,11 @@ class EmailLoginViewModel @Inject constructor(
 
         storeUsername(response.user.userName, ds)
         storeProfilePicUri(response.user.profilePic, ds)
+
+        if (email != null && password != null) {
+            storeEmail(email!!, ds)
+            storePassword(password!!, ds)
+        }
 
         // todo handle response data
 

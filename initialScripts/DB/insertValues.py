@@ -25,7 +25,6 @@ def insert_into_db(query):
         db.commit()
 
 
-
     except Exception as e:
         print((str(e)))
 

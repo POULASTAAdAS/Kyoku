@@ -3,7 +3,7 @@ package com.poulastaa.routes
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.utils.getHelperUser
+import com.poulastaa.utils.getUserType
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -24,7 +24,7 @@ fun Route.getSpotifyPlaylist(
     authenticate("jwt-auth", "google-auth", "passkey-auth") {
         route(EndPoints.GetSpotifyPlaylistSong.route) {
             post {
-                val user = getHelperUser() ?: return@post call.respond(
+                val user = getUserType() ?: return@post call.respond(
                     message = SpotifyPlaylistResponse(),
                     status = HttpStatusCode.OK
                 )

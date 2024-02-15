@@ -25,6 +25,8 @@ import com.poulastaa.kyoku.domain.usecase.ValidateUserName
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeEmail
+import com.poulastaa.kyoku.utils.storePassword
 import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeRefreshToken
 import com.poulastaa.kyoku.utils.storeSignInState
@@ -38,7 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class EmailSignUpViewModel @Inject constructor(
@@ -68,6 +69,7 @@ class EmailSignUpViewModel @Inject constructor(
     private var resendVerificationMailJob: Job? = null
 
     private var email: String? = null
+    private var password: String? = null
 
     var state by mutableStateOf(EmailSignUpState())
         private set
@@ -160,6 +162,7 @@ class EmailSignUpViewModel @Inject constructor(
                             )
 
                             email = state.email
+                            password = state.password
 
                             startEmailSignIn(state.toEmailSignUpReq())
                         }
@@ -332,6 +335,11 @@ class EmailSignUpViewModel @Inject constructor(
 
         storeUsername(response.user.userName, ds)
         storeProfilePicUri(response.user.profilePic, ds)
+
+        if (email != null && password != null) {
+            storeEmail(email!!, ds)
+            storePassword(password!!, ds)
+        }
 
         onEvent(EmailSignUpUiEvent.EmitToast("An verification mail is sent to you please conform it to continue"))
 

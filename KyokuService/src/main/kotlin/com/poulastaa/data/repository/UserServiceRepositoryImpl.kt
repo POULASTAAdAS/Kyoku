@@ -1,8 +1,10 @@
 package com.poulastaa.data.repository
 
 import com.poulastaa.data.model.CreatePlaylistHelper
-import com.poulastaa.data.model.CreatePlaylistHelperUser
+import com.poulastaa.data.model.DbUser
+import com.poulastaa.data.model.FindUserType
 import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.spotify.SpotifySong
@@ -22,11 +24,12 @@ import java.io.File
 
 class UserServiceRepositoryImpl(
     private val songRepository: SongRepository,
-    private val playlist: PlaylistRepository
+    private val playlist: PlaylistRepository,
+    private val users: DbUser
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
-        user: CreatePlaylistHelperUser
+        user: FindUserType
     ): SpotifyPlaylistResponse {
         val list = ArrayList<SpotifySong>()
 
@@ -108,5 +111,29 @@ class UserServiceRepositoryImpl(
                 )
             }
         }
+    }
+
+    override suspend fun storeBDate(
+        date: Long,
+        userType: UserType,
+        id: String
+    ): SetBDateResponse {
+        val response = when (userType) {
+            UserType.GOOGLE_USER -> {
+                users.googleUser.updateBDate(date, id)
+            }
+
+            UserType.EMAIL_USER -> {
+                users.emailUser.updateBDate(date, id)
+            }
+
+            UserType.PASSKEY_USER -> {
+                users.passekyUser.updateBDate(date, id)
+            }
+        }
+
+        return SetBDateResponse(
+            status = response
+        )
     }
 }

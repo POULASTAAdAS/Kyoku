@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.setup.birth_date
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,16 +8,21 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.BDateFroMaterHelperStatus
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateReq
+import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateResponseStatus
 import com.poulastaa.kyoku.data.model.auth.UiEvent
 import com.poulastaa.kyoku.data.model.setup.set_birth_date.SetBirthDateUiEvent
 import com.poulastaa.kyoku.data.model.setup.set_birth_date.SetBirthDateUiState
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.utils.storeBDate
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toDate
+import com.poulastaa.kyoku.utils.toSetBDateReq
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SetBirthDateViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
-    private val ds: DataStoreOperation
+    private val ds: DataStoreOperation,
+    private val service: ServiceRepository
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
@@ -51,13 +56,15 @@ class SetBirthDateViewModel @Inject constructor(
     var state by mutableStateOf(SetBirthDateUiState())
         private set
 
+    var bDateAsLong: Long? = null
+
     fun onEvent(event: SetBirthDateUiEvent) {
         when (event) {
             is SetBirthDateUiEvent.OnDateSelected -> {
                 state = if (event.date.length > 3) {
                     val date = event.date.toLong().toDate()
 
-                    Log.d("date", date.toString())
+                    bDateAsLong = event.date.toLong()
 
                     when (date.status) {
                         BDateFroMaterHelperStatus.OK -> {
@@ -108,21 +115,49 @@ class SetBirthDateViewModel @Inject constructor(
             }
 
             SetBirthDateUiEvent.OnContinueClick -> {
-                if (state.bDate.isEmpty() || state.isError) {
+                if (state.bDate.isEmpty() || state.isError || bDateAsLong == null) {
                     onEvent(SetBirthDateUiEvent.EmitToast("Please Select Your Birth Date"))
                     return
                 }
 
-                // todo make api call 
-
-                storeBDate(state.bDate, ds)
-                storeSignInState(SignInStatus.GENRE_SET, ds)
+                state = state.copy(
+                    isLoading = true
+                )
+                sendBDateToServer()
             }
 
             is SetBirthDateUiEvent.EmitToast -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(UiEvent.ShowToast(event.message))
                 }
+            }
+        }
+    }
+
+    private fun sendBDateToServer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val email = ds.readEmail().first()
+
+            makeApiCall(bDateAsLong!!.toSetBDateReq(email))
+        }
+    }
+
+    private fun makeApiCall(req: SetBDateReq) {
+        viewModelScope.launch(Dispatchers.IO) {
+            service.sendBDateToServer(req).let {
+                when (it.status) {
+                    SetBDateResponseStatus.SUCCESS -> {
+                        storeBDate(state.bDate, ds)
+                        storeSignInState(SignInStatus.GENRE_SET, ds)
+                    }
+
+                    SetBDateResponseStatus.FAILURE -> {
+                        onEvent(SetBirthDateUiEvent.EmitToast("Opp's Something went wrong"))
+                    }
+                }
+                state = state.copy(
+                    isLoading = false
+                )
             }
         }
     }

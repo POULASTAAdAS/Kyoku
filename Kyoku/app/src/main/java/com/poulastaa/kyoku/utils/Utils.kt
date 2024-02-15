@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.utils
 
 import com.poulastaa.kyoku.data.model.BDateFroMaterHelper
 import com.poulastaa.kyoku.data.model.BDateFroMaterHelperStatus
+import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateReq
 import java.net.CookieManager
 import java.time.Instant
 import java.time.LocalDateTime
@@ -67,3 +68,8 @@ fun Long.toDate(): BDateFroMaterHelper {
         )
     }
 }
+
+fun Long.toSetBDateReq(email: String) = SetBDateReq(
+    date = this,
+    email = email
+)

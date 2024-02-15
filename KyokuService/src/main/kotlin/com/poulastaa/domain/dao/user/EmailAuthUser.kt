@@ -1,9 +1,9 @@
 package com.poulastaa.domain.dao.user
 
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
 
 class EmailAuthUser(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<EmailAuthUser>(EmailAuthUserTable)
@@ -14,4 +14,5 @@ class EmailAuthUser(id: EntityID<Long>) : LongEntity(id) {
     var emailVerified by EmailAuthUserTable.emailVerified
     var profilePic by EmailAuthUserTable.profilePic
     var refreshToken by EmailAuthUserTable.refreshToken
+    var bDate by EmailAuthUserTable.bDate
 }

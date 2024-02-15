@@ -10,8 +10,10 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_AUTH_TYPE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_B_DATE_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_EMAIL_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_REFRESH_TOKEN_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PASSWORD_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PROFILE_PIC_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_SIGNED_IN_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_USERNAME_KEY
@@ -30,6 +32,10 @@ class DataStoreOperationImpl @Inject constructor(
 
         val usernameKey = stringPreferencesKey(name = PREFERENCES_USERNAME_KEY)
         val profilePicUrlKey = stringPreferencesKey(name = PREFERENCES_PROFILE_PIC_KEY)
+
+        val emailKey = stringPreferencesKey(name = PREFERENCES_EMAIL_KEY)
+        val passwordKey = stringPreferencesKey(name = PREFERENCES_PASSWORD_KEY)
+
 
         val accessTokenOrCookieKey =
             stringPreferencesKey(name = PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY)
@@ -94,6 +100,44 @@ class DataStoreOperationImpl @Inject constructor(
         }.map {
             val uri = it[PreferencesKey.profilePicUrlKey] ?: ""
             uri
+        }
+
+    override suspend fun storeEmail(email: String) {
+        dataStore.edit {
+            it[PreferencesKey.emailKey] = email
+        }
+    }
+
+    override fun readEmail(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val email = it[PreferencesKey.emailKey] ?: ""
+            email
+        }
+
+    override suspend fun storePassword(password: String) {
+        dataStore.edit {
+            it[PreferencesKey.passwordKey] = password
+        }
+    }
+
+    override fun readPassword(): Flow<String> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val password = it[PreferencesKey.passwordKey] ?: ""
+            password
         }
 
     override suspend fun storeCookieOrAccessToken(data: String) {

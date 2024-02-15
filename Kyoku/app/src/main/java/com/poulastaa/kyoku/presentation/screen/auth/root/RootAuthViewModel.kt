@@ -29,6 +29,7 @@ import com.poulastaa.kyoku.utils.Constants.AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP
 import com.poulastaa.kyoku.utils.extractTokenOrCookie
 import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeEmail
 import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.storeUsername
@@ -313,6 +314,8 @@ class RootAuthViewModel @Inject constructor(
 
         storeProfilePicUri(uri = response.user.profilePic, ds)
         storeUsername(username = response.user.userName, ds)
+
+        storeEmail(state.passkeyEmail, ds)
 
         when (response.status) {
             UserCreationStatus.CREATED -> storeSignInState(data = SignInStatus.NEW_USER, ds)
