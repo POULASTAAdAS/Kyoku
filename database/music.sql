@@ -55,7 +55,7 @@ genre varchar(120) unique not null
 );
 
 select * from genre;
-drop table genre;
+select * from genre where genre = ' Hindi Pop';
 
 -- create table usersGenre(
 -- id Long primary key,
@@ -68,11 +68,17 @@ create table artist(
     name varchar(120) UNIQUE not null,
     profilePicUrl text not null,
     country text not null,
-    preferedSpeakingLang text not null
+    genre int references genre(id) on delete set null
 );
 
+select name from artist;
 
-select distinct preferedSpeakingLang from artist;
+select count(*) from genre where id in (select distinct(genre) from artist);
+
+
+
+
+
 
 
 

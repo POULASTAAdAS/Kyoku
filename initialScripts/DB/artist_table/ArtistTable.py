@@ -1,31 +1,48 @@
-import mysql.connector
+folder = "D:/musicStreaming/Music-Streaming-App/database/"
 
-folder = "D:/musicStreaming/Music-Streaming-App/database/query.txt"
+oldFile = f"{folder}TempQuery.txt"
+newFile = f'{folder}ArtistEntry.sql'
 
-CONST_QUERY = "insert into artist (name,profilePicUrl,country,preferedSpeakingLang) value "
+genre = f'{folder}genre.txt'
 
-with open(folder, 'r', encoding='utf=8') as f:
-    for line in f:
-        line = line.strip()
+CONST_ARTIST_QUERY = "insert into artist (name,profilePicUrl,country,genre) values "
 
-        if not line.startswith("INSERT"):
-            if line.endswith(","):
-                line = line.removesuffix(',')
-                line = line + ';'
-                query = CONST_QUERY + line
+CONST_GENRE_QUERY = "insert ignore into genre (genre) values "
 
-        try:
-            db = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="password",
-                database="music"
-            )
+genreList = {}
 
-            cursor = db.cursor()
+with open(genre, 'r', encoding='utf-8') as rd:
+    for line in rd:
+        key = line.strip().split(',')[0]
+        value = line.strip().split(',')[1].replace('"', '')
+        genreList[key] = value
 
-            cursor.execute(query)
-            db.commit()
+with open(newFile, 'a', encoding='utf-8') as wf:
+    wf.write(CONST_ARTIST_QUERY + "\n")
+    with open(oldFile, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
 
-        except Exception as e:
-            print(str(e))
+            try:
+                if not line.startswith("INSERT"):
+                    if "Unknown" not in line:
+                        query = line
+
+                        line = line.removesuffix(',')
+                        genre = line.split(',')[-1].replace("'", '').removesuffix(')')
+                        genre = genre.removesuffix(');')
+
+                        for key, value in genreList.items():
+                            if value in line:
+                                line = line.replace(value, key)
+
+                                if line.endswith(";"):
+                                    line = line.removesuffix(';')
+                                    line = line + ','
+                                    wf.write(line + '\n')
+                                    print(line)
+                                else:
+                                    wf.write(line + ',' + '\n')
+                                    print(line + ',')
+            except:
+                continue

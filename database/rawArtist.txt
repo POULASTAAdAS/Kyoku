@@ -42,6 +42,10 @@
 "MalÃƒÂ©na "
 "Emiway Bantai "
 "Renuka Panwar "
+
+
+
+
 "Pawan Sing, Shivani Singh  "
 "Arijit Singh, Asees Kaur "
 "Moona Kanagi "
@@ -70,6 +74,13 @@
 "Raj Barman "
 "Laqshay Kapoor, Akashdeep Sengupta, Suvarna Tiwari "
 "KMRN "
+
+
+
+
+
+
+
 "Matteo "
 "Airaa Udupi "
 "Acraze ft. Cherish "
@@ -106,6 +117,8 @@
 "Madhavas Rock Band "
 "Rony Ajnali, Gill Machhrai, Yo Yo Honey Singh"
 "Umaria "
+
+
 "Amit Mishra "
 "Arijit Singh & Shilpa Rao "
 "Parvathy Kapoor "
@@ -136,6 +149,10 @@
 "Nihal Tauro "
 "Alka Yagnik, Kumar Sanu "
 "Mani "
+
+
+
+
 "Kumar Sharma "
 "Manan Bhardwaj, Sarthak "
 "Nehaal Naseem "
@@ -171,36 +188,49 @@
 "Aoora "
 
 
+
 "Jaura Phagwara "
 " Anonymous King "
 "Prem Dhillon "
-"Sidhu Moose Wala, Sunny Malton "
-"Sachet Tandon, Parampara Tandon "
-"Anurag Kulkarni, Sinduri S "
+"Sidhu Moose Wala,
+ Sunny Malton "
+"Sachet Tandon,
+ Parampara Tandon "
+"Anurag Kulkarni,
+ Sinduri S "
 "Abhijeet "
-"Surya Singh, Ananya Wadkar "
+"Surya Singh,
+ Ananya Wadkar "
 "Kaifi Khalil "
 "Zack Knight "
 "Dhananjay Dhadkan "
 "Nawal Khan "
-"Diler Kharkiya, Manisha Sharma "
+"Diler Kharkiya,
+ Manisha Sharma "
 "Payal Dev "
 "Anirudh Ravichander "
 "Sean Roldan, Kalyani Nair "
-"Kaifi Khalil x Eva B x Abdul Wahab Bugti "
-"Kaabil, Ashu Twinkle "
+"Kaifi Khalil 
+ Eva B 
+ Abdul Wahab Bugti "
+"Kaabil, 
+Ashu Twinkle "
 "Manndakini Bora "
 "Varsha Singh Dhanoa "
 "Sneh Upadhya "
 "Shrey Singhal "
 "Vishal Mishra, Shreya Ghoshal "
 "Saaj Bhatt "
-"Raj Barman, Rupali Kashyap "
-"Arijit Singh, Kaushiki Chakraborty "
+"Raj Barman, 
+Rupali Kashyap "
+"Arijit Singh,
+ Kaushiki Chakraborty "
 "CKay, Payal Dev "
 "Akhil "
-"Tahir Chishti, DJ Tajuddin Aligarh "
-"Shiblu Mredha, Aleya Begum "
+"Tahir Chishti,
+ DJ Tajuddin Aligarh "
+"Shiblu Mredha,
+ Aleya Begum "
 "Asees Kaur "
 "B Praak "
 "Mirthula Siva "
@@ -208,8 +238,14 @@
 "Dj Umi "
 "Alka Yagnik "
 "Kabyashree "
-"Tanishk Bagchi, Romy, Neeraj Rajawat"
+"Tanishk Bagchi,
+ Romy,
+ Neeraj Rajawat"
 "Kk "
+
+
+
+
 "Indu Sonali "
 "Flop Likhari ft Harpi Gill "
 "The Bassicks x Kartik Chandna "
@@ -228,7 +264,6 @@
 "Abhilipsa, Kailash "
 "Himesh Reshammiya "
 "Vasudev Gandharv "
-"K.K "
 
 
 "Raka "
@@ -421,10 +456,6 @@ Ninja
 "Amit Trivedi, Swanand Kirkire, Shahid Mallya"
 "Vishvajeet Choudhary"
 "Yasser Desai, Rajat Nagpal"
-
-
-
-
 "Ilaiyaraaja, Yuvan Shankar Raja"
 "Gaush, Karan Kanchan"
 "Prashant Ingole, Naresh Iyer, Chinmayi Sripada"
@@ -450,13 +481,12 @@ Ninja
 "Arjun Kanungo, Shirley Setia"
 "K S Makhan"
 Nazz
+
+
+
+
 "Husan Mandair"
 "Bir Singh"
-
-
-
-
-
 "Asees Kaur, Sangeet Haldipur, Siddharth Haldipur"
 "Pritam, Darshan Raval, Antara Mitra, Amitabh Bhattacharya"
 "Mufeed, Mizajii"
@@ -525,10 +555,6 @@ Shlovij
 "Sann Sarwang, Jasmine Kaur, Swara Verma"
 "Tarsem Jassar, Ranjit Bawa, Balli Bajlit"
 Kaka
-
-
-
-
 "Dipayan Banerjee "
 "Hesham Abdul Wahab"
 "Tarsem Jassar, Kulbir Jhinjer, Amrit Maan"
@@ -553,6 +579,8 @@ Jigar
 "Mc Headshot"
 "R Sandy"
 "Suresh Wadkar "
+
+
 
 
 
@@ -593,10 +621,6 @@ Vicky
 "DJ Scoob "
 "Vishal Mishra"
 "Young Preet"
-
-
-
-
 "Riya Mukherjee, Ravi Basrur, Menuka Poudel"
 "Hardeep Grewal"
 "G.V. Prakash Kumar, Adithya RK, Bhadra Rajin"
@@ -635,6 +659,8 @@ Tejas
 
 
 
+
+
 "Sunidhi Chauhan"
 "Vijay Varma, Ashu Twinkle, Ricky Singh, Ankit Vij"
 "Sam C.S., Kapil Kapilan"
@@ -670,9 +696,6 @@ Harnoor
 "Arsh Khairaa"
 "Mohammed Irfan, Himesh Reshammiya"
 "R Dany"
-
-
-
 "Ashish Chhabra"
 "Arpita Mukherjee "
 "Ninja, Goldboy, Akashdeep Sandhu"
@@ -712,6 +735,8 @@ Ilaiyaraaja
 Sivakumar
 
 
+
+
 "Gippy Grewal, Zahrah S Khan, Tanishk Bagchi, Romy"
 "Neel Adhikari, Karsh Kale, Kashishi"
 "Narayanan Ravishankar, Jithin Raj"
@@ -746,6 +771,8 @@ Sivakumar
 "Ganesh Acharya, Divya Kumar"
 "Somvir Kathurwal, Simran Bumrah, Riyaazi"
 "Gp Ji"
+
+
 
 
 "Amitabh Bhattacharya, Usha Uthup, Devi Sri Prasad, Ajay Devgn, Vijay Prakash"
@@ -783,9 +810,6 @@ Shez
 "Jass Bajwa, Gagana"
 "B Praak, Jaani"
 "Manna Mand"
-
-
-
 "Deepak Blue, Govind Prasad, Yogisekar, Mohan Krishna, Santhosh, Sachin Basrur, Ravi Basrur, Puneeth Rudranag, VAISH"
 Shiqaari
 Jerry
@@ -828,6 +852,7 @@ Jerry
 
 
 
+
 "Fotty Seven "
 "Sireesha Bhagavatula "
 "Aasa Singh, Himesh Reshammiya"
@@ -856,10 +881,6 @@ Jerry
 "Nakul Abhyankar, Drums Shivamani"
 KhullarG
 Panther
-
-
-
-
 "Vishal Chandrashekhar, Yazin Nizar"
 "Sean Roldan, Padmapriya Raghavan"
 "Mohan Rajan, Charan Raj, Kapil Kapilan"
@@ -889,8 +910,6 @@ Panther
 "Shankar Mahadevan, K. S. Chithra, Harini"
 "Darbuka Siva, Abhay Jodhpurkar, Keerthi"
 "Fotty Seven"
-
-
 Sakaar
 "Vineeth Sreenivasan, Shaan Rahman"
 Ofro
@@ -914,6 +933,12 @@ Ofro
 "Sharry Mann"
 "Zeeshan Arshad, Soman Jawad "
 Heizenberg
+
+
+
+
+
+
 
 
 "Zubi, Ashref and Anatu "
@@ -941,8 +966,6 @@ Arivu
 Lambaddaar
 "Falak Shabir"
 "Gaurav Raina, Kamakshi Khanna, Ankur Tewari"
-
-
 "Harvy Sandhu, Jaggi Singh"
 "Santhosh Narayanan, Benny Dayal"
 "Yuvan Shankar Raja, Anthony Daasan"
@@ -960,8 +983,6 @@ Lambaddaar
 "Hariharan "
 "Hitesh Sonik, Sunidhi Chauhan"
 "Adnan Sami "
-
-
 "G.V. Prakash Kumar, Arya Dhayal"
 "Prashant Ingole, Javed Ali"
 "Anurag Kulkarni"
@@ -985,6 +1006,12 @@ Lambaddaar
 "Preetinder,Preetinder"
 "Gana Bala, Vishal Chandrashekhar"
 "Brijen Gajjar"
+
+
+
+
+
+
 
 
 "Saurav Mishra, Chahat Kakkar"
@@ -1011,9 +1038,6 @@ Navjeet
 "Millind Gaba, Aditi Singh Sharma"
 "Vishal Dadlani,Sunidhi Chauhan,Mellow D"
 "Altaaf Sayyed"
-
-
-
 "D. Imman, Adithya Suresh, Sahana Bajpaie"
 Bali
 "Jassa Dhillon, Gur Sidhu"
@@ -1038,9 +1062,6 @@ Naveen
 "Honey Sidhu"
 Karthik
 "Mahalingam, Diwakar, Ajesh"
-
-
-
 "Imran Shahid"
 "Harish Moyal, Neha Karode"
 "Zack Knight"
@@ -1076,6 +1097,8 @@ Fouji
 
 
 
+
+
 "Khesari Lal Yadav, Antra Singh Priyanka"
 Arko
 "Pritam,Tanishk Bagchi,Daler Mehndi"
@@ -1103,10 +1126,7 @@ Bohemia
 "Mumin Beigh"
 "The Landers"
 "Anker Deol, Garry Nandpur, Rummy Grewal"
-
-
-
-"Arijit Singh, Sruthy Sasidharan"
+"Sruthy Sasidharan"
 "Neha Kakkar, Tony Kakkar, Bohemia"
 "Gurwin Athwal, Anny Singh"
 "Master Saleem,Manan Bhardwaj,Nusrat Fateh Ali Khan"
@@ -1146,9 +1166,6 @@ Kunwarr
 "Rai Jujhar, Sukhmani Dhindsa"
 "Krishna Kishor,Asees Kaur,Pradeep Kumar"
 "Krishna Kishor, Sanam Puri"
-
-
-
 "Ashutosh Phatak"
 "Mamta Upadhyay"
 "Sukhvir Bajwa"
@@ -1187,6 +1204,9 @@ Jaani
 
 
 
+
+
+
 "Ritviz, Nucleya"
 "Dhibu Ninan Thomas, Sathyaprakash D, Ala B Bala"
 "Garry Sohal"
@@ -1222,10 +1242,6 @@ Khazala
 "Amitabh Bachchan, Amit Mishra, Clinton Cerejo, Jizzy"
 "Raman Gill"
 "Param Sabi"
-
-
-
-
 "Preety Panesar"
 "Rahul Mishra"
 "Digvijay Joshi"
@@ -1271,6 +1287,9 @@ Salim-Sulaiman
 "Pawan Singh, Priyanka Singh"
 "Goldie Sohel"
 "Kirt Jas"
+
+
+
 
 
 
@@ -1320,8 +1339,6 @@ Himanshux
 Akull
 "Raman Kapoor"
 Yaad
-
-
 "Inder Chahal"
 "Hiphop Tamizha"
 "Sonu Nigam, Hema Sardesai, Govinda"
@@ -1368,6 +1385,8 @@ DIVINE
 
 
 
+
+
 "K. S. Chithra"
 "Shayra Apoorva, Shivang Mathur, Kanchan Meena"
 "Masoom Sharma"
@@ -1407,9 +1426,6 @@ Ritviz
 "Jyotica Tangri, Ramji Gulati"
 "Ashu Twinkle"
 Mj5
-
-
-
 "Sukhwinder Singh, Ram Shankar, Jaswinder Narula, Bappi Lahiri"
 "Vijay Varma, Mohini Patel"
 "Emanat Preet Kaur"
@@ -1455,6 +1471,10 @@ Mukku
 "Zayn Malik"
 "CJ Singh"
 Jujhar
+
+
+
+
 
 
 "Rahat Fateh Ali Khan, Ammar Masood"
@@ -1508,9 +1528,6 @@ Pardhaan
 "Harkirat Virdi, Jay K (Jassi Katyal)"
 "Annu Kapoor, Sherry"
 "Anmol Preet"
-
-
-
 "Ruchika Jangid, Somvir Kathurwal"
 "Vandna Jangid, Sara Singh"
 "Pritam, Benny Dayal"
@@ -1557,7 +1574,6 @@ Raftaar
 Vshvaa
 
 
-
 "Davinder Ruhi"
 "Zora Randhawa, Sandeep Thind"
 "Badshah, Fotty Seven"
@@ -1575,6 +1591,11 @@ Hellac
 "Deep Jandu"
 MusikStar
 "Sher Sandhu"
+
+
+
+
+
 "Arivu, K. Sivaangi"
 "Neetu Sharma, Krishan Sanwra"
 "Palash Sen, Swaroop Khan"
@@ -1621,8 +1642,6 @@ BTS
 "Karan Goswami"
 "Naveen Chaudhary"
 Fatehjit
-
-
 "Dyp Sxngh, Jit"
 "Sidhu Moose Wala, Raja Game Changerz"
 "Neeraj Shridhar, Neeti Mohan"
@@ -1651,6 +1670,9 @@ Sharan
 "Jung Sandhu"
 "Luv Singh"
 "Rav Hanjra"
+
+
+
 "Sikander Kahlon"
 "Debi Brar"
 "Angad Aliwal"
@@ -1670,9 +1692,6 @@ Sharan
 "Saindhavi, G.V. Prakash Kumar"
 Saindhavi
 Mann
-
-
-
 "Harjeet Deewana"
 "Jeet Rajput"
 "Kambi Rajpuria"
@@ -1723,6 +1742,13 @@ Simrita
 "Sandhu Surjit, Preet Payal"
 "Shivangi Garg, Harry Nafre"
 PBN
+
+
+
+
+
+
+
 
 
 
@@ -1786,9 +1812,6 @@ Ragasur
 "Aman Shergill"
 "Palak Muchhal, RCR"
 "Maninder Ajit"
-
-
-
 "Shashi Lal Yadav, Shilpi Raj"
 "Banshidhar Chaudhary, Prabha Raj"
 "TERA BHAI ZB"
@@ -1832,6 +1855,11 @@ Sikandar
 "Raj Pandit"
 "Jovan Dhillon"
 Deep
+
+
+
+
+
 
 
 
@@ -1943,6 +1971,11 @@ Devil
 "A.R. Rahman, Nakul Abhyankar"
 "Pritam, Nikhita Gandhi, AKASA"
 "Kabira Wahi"
+
+
+
+
+
 "Roop Bhullar"
 "Diler Kharkiya, Renuka Panwar"
 "Amar Sandhu, MixSingh, Veet Baljit"
@@ -2031,6 +2064,15 @@ Ryaan
 "Benny Dayal, Neeti Mohan, Rochak Kohli"
 "Poonam Kandiara"
 Arjun
+
+
+
+
+
+
+
+
+
 "Baba Beli"
 Jorawar
 "RV Campos"
@@ -2163,6 +2205,18 @@ Dhee
 "Ap Dhillon, Gurinder Gill, Intense"
 "Arsh Lally"
 Gavy
+
+
+
+
+
+
+
+
+
+
+
+
 "Nav Benipal"
 "Rummy Grewal"
 "Rohanpreet Singh"
@@ -2266,6 +2320,15 @@ Vivek-Mervin
 "Hunar Sidhu"
 "Sukhbir Sarao"
 Gurnazar
+
+
+
+
+
+
+
+
+
 "Gunjan Singh, Antra Singh Priyanka"
 "Jass Manak, Nikhita Gandhi"
 "Darshan Raval, Shreya Ghoshal"
@@ -2387,6 +2450,18 @@ Romaana
 "R Sukhraj"
 "Gopi Sandhu"
 Spice
+
+
+
+
+
+
+
+
+
+
+
+
 "Ekam Sudhar, Jagga"
 "Kelly Bhullar"
 "Rammy R"
@@ -2474,6 +2549,12 @@ Ashu
 "Mika Singh, Asees Kaur"
 "Rajveer Rajaa"
 K9
+
+
+
+
+
+
 "Barbie Maan"
 "Raja Hasan"
 Misaal
@@ -2570,6 +2651,16 @@ Srinivas
 "Meet Bros, Ayushmann Khurrana"
 "Sukh J"
 "Deep Saroye"
+
+
+
+
+
+
+
+
+
+
 "Piara Gill"
 "Jasmine Sandlas, Garry Sandhu"
 "Yatender Solanki"
@@ -2665,6 +2756,15 @@ Shivii
 "Poornima, Bappi Lahiri"
 "Palak Muchhal, Armaan Malik"
 "Luck E"
+
+
+
+
+
+
+
+
+
 "Shrirang Krishnan"
 "Mika Singh, Neha Kakkar"
 "Vikram Montrose"
@@ -2782,6 +2882,19 @@ Thoratt
 "Neha Kakkar, B Praak"
 "Jay Maan, Sukh Brar"
 "Shriya Jain"
+
+
+
+
+
+
+
+
+
+
+
+
+
 "Amit Mishra, Tarannum Mallik"
 "Udit Narayan, Kavita Krishnamurthy"
 Tigerr
@@ -2868,7 +2981,6 @@ Shalmali
 "Sukh Jay"
 "Binda B"
 Wasim
-KK
 "Badshah, Uchana Amit"
 "Veen Ranjha"
 "Udit Saxena"
@@ -2899,6 +3011,18 @@ KK
 "Vishal Dadlani, Goldie Sohel"
 Vatsala
 Ajesh
+
+
+
+
+
+
+
+
+
+
+
+
 "Raashi Sood"
 "Santhosh Narayanan, Ramanathapuram Marungan Melam Team"
 "Arun Solanki"
@@ -2971,6 +3095,11 @@ Flowbo
 "Harry Kaleka"
 "Bally Sagoo"
 "Music Wala"
+
+
+
+
+
 "Nimrat Khaira, Arjan Dhillon"
 "Jubin Nautiyal, Dhvani Bhanushali, Meet Bros"
 "Raashi Sood, UpsideDown, ICONYK"
@@ -3007,6 +3136,12 @@ Loka
 "Alisha Chinai"
 "Samaksh Rajpoot"
 MEMAX
+
+
+
+
+
+
 "Rishika Kapoor"
 "Bunty Jaja"
 "Vishal Dadlani, Sachin-Jigar"
@@ -3065,6 +3200,10 @@ Kahlon
 "Nav Shekhar"
 "Gourov-Roshin, Yasser Desai, Rajesh Manthan"
 "Siddharth Slathia"
+
+
+
+
 "Anupama Deshpande, Bappi Lahiri"
 "Beant Sandhu"
 "Meet Kaur"
@@ -3119,6 +3258,10 @@ Tank
 "Yo Yo Honey Singh, Simar Kaur"
 "Gurdas Sandhu"
 Anitta
+
+
+
+
 "Abhinav Shekhar"
 Mukesh
 "Payal Dev, Dev Negi"
@@ -3179,6 +3322,11 @@ Hardeep
 "Kanika Kapoor, Arindam Chakraborty"
 "Ruhika Rao"
 Nagii
+
+
+
+
+
 "Nam Johal"
 "Kaber Vasuki"
 "Karan Khokhar"
@@ -3244,6 +3392,9 @@ Mano
 "Kunal Ganjawala, Deepanshi Nagar, Padmanabh Gaikwad"
 "Babli Dhaliwal, Jashanmeet"
 "Sayam Qureshi"
+
+
+
 "Suresh Iyer"
 "Tanzeel Khan, Mr. MNV, Aakash"
 "Arry Grewal"
@@ -3323,6 +3474,10 @@ Raunaq
 "Krisha Arora"
 "Saurabh Gangal, Anushka Gupta"
 "Jass Gurm"
+
+
+
+
 "Arijit Singh, Neeti Mohan, Kaushik, Guddu, Akash"
 "Lata Mangeshkar"
 "Ambili Menon"
@@ -3381,6 +3536,15 @@ Singhsta
 "Aakanksha Sharma, Kunal Sachdeva"
 "Shanky Goswami"
 "Pavii Ghuman"
+
+
+
+
+
+
+
+
+
 "Khesari Lal Yadav, Swati Sharma"
 "Khasa Aala Chahar, Upasna Gahlot"
 "Barbie Maan, Sidhu Moose Wala"
@@ -3484,6 +3648,12 @@ Sukhbir
 "Ram Sampath, Keerthi Sagathia"
 "Mayank Rao"
 Ahen
+
+
+
+
+
+
 "Arivu, Saravedi Saran"
 "Seedhe Maut, MC STAN"
 "Aanchal Ahuja"
@@ -3552,6 +3722,12 @@ SKD
 "Karthick Devaraj, K. Sivaangi"
 "Surinder Baba, Shaan Sandhu"
 "Jassi Virk"
+
+
+
+
+
+
 "Rashmeet Kaur, Gurbax"
 "Neha Kakkar, Sachin-Jigar, Darshan Raval"
 "Supriyaa Ram (Supriya Lohith), Sathyaprakash D"
@@ -3582,7 +3758,7 @@ SKD
 "Neha Kakkar, Sonu Kakkar, Tony Kakkar"
 "Anirudh Ravichander, Arivu"
 "Abdu Rozik"
-"Shreya Ghoshal, Keshav Kumar"
+"Keshav Kumar"
 "Dipak Thakor"
 "Yazin Nizar, Sanah Moidutty, Ghibran"
 "Gurpreet Moor"
@@ -3614,6 +3790,10 @@ Avi
 Rai
 "Ammy Virk, Jasmeen Akhtar"
 "Mars King, V Boy, ZB"
+
+
+
+
 "Sandeep Brar, Gurlej Akhtar, The Boss"
 "G.V. Prakash Kumar, Navakkarai Naveen Prabanjam"
 "Asees Kaur, B Praak"
@@ -3674,6 +3854,9 @@ Gavvy
 "Renuka Panwar, U K Haryanvi, MJ Aman Jaji"
 "Ammy Virk, Tarannum Mallik"
 "Money Aujla"
+
+
+
 "Ashwath, Abhay Jodhpurkar"
 "Bharath Sankar, Shakthisree Gopalan"
 "Jatinder Gill"
@@ -3738,6 +3921,11 @@ G-Eazy
 "Shivjot, The Boss"
 "G.V. Prakash Kumar, Mangli, Suchithra Balasubramanian, Bharath Narayan"
 "Nirbhay Punia, MixSingh"
+
+
+
+
+
 "Mayur Suryawanshi"
 "Pradeep Kumar, Kalyani Nair"
 "Vivek-Mervin, Yazin Nizar"
@@ -3749,7 +3937,7 @@ G-Eazy
 "Shankar Mahadevan"
 "Gurtej Aulakh"
 "Sharry Hassan"
-"Amaal Mallik,Shreya Ghoshal,Manoj Muntashir"
+"Amaal Mallik,Manoj Muntashir"
 "Priyankit Jaiswal, Loveleen Kaur"
 "Jassie Gill"
 "Salman Khan"
@@ -3791,6 +3979,11 @@ Lovejit
 "Saurabh Sharma"
 "Sneha Khanwalkar, Neha Nair, Jackson Vijayan"
 Arish
+
+
+
+
+
 "Vibha Saraf, Jubin Nautiyal"
 "Armaan Bedil, Dhanshri Dev, Kartik Dev, Gaurav Dev"
 "Lakhwinder Wadali, Neeti Mohan"
@@ -3846,6 +4039,19 @@ Ramjeevan
 "Guru Virk"
 "Navjot Lambar"
 Gulaab
+
+
+
+"Hassan Manak, Amrinder Sidhu"
+"Masoom Sharma, Ruchika Jangid"
+"Tanishk Bagchi, Sukh-E Muzical Doctorz, Parampara Tandon"
+"Sartaj Virk, G Khan"
+"Jazzy B, Sonu Kakkar"
+"Sanam Puri"
+"Ranvir, B Praak"
+"Renuka Panwar, U K Haryanvi, MJ Aman Jaji"
+"Ammy Virk, Tarannum Mallik"
+"Money Aujla"
 "Harman Hundal"
 "Mani Singh"
 "Gopi Sarpanch"
@@ -3904,6 +4110,15 @@ R&#039;Maahi
 "Harry Kahlon &amp; Turban Beats"
 "Nivas K. Prasanna"
 Nav
+
+
+
+
+
+
+
+
+
 "Visk E"
 "Vineet Gill"
 "Harjot, Gurlej Akhtar, Jassi X"
@@ -3963,6 +4178,9 @@ Sobha
 "Raja Sandhu"
 "Sachin-Jigar, Mika Singh, Nikhita Gandhi, Benny Dayal"
 "Kavi Sandhu"
+
+
+
 "Bass Mafia, Megha"
 "Durga Prasad Majumdar, Anuradha Paudwal"
 "Bimal Bhanot"
@@ -4030,6 +4248,10 @@ Challa
 "Pritam, Arijit Singh, Madhubanti Bagchi"
 "Gill Karan"
 "Pari Pandher"
+
+
+
+
 Shehzad
 Sabba
 "Yasir Hussain"
@@ -4084,6 +4306,9 @@ Tarna
 Prodgk
 "Soh Anmol"
 "Ipsitaa, Tanishk Bagchi"
+
+
+
 "Bunty Swami, Renuka Panwar"
 "Jonas Blue, Awa"
 "Ankit Tiwari, Sasha Tirupati"
@@ -4147,6 +4372,11 @@ Sameer
 "Arub Khanam"
 "Zora Randhawa"
 Darbara
+
+
+
+
+
 "Sahib Sandhu"
 "Dushyant Kumar"
 "Sonal Pradhan, Saaj Bhatt"
@@ -4206,6 +4436,9 @@ Kaaj
 "Shekhar Ravjiani, Prakriti Kakar"
 "Simar Doarraha, Twinkle Arora"
 "Gurshabad, MixSingh"
+
+
+
 "Zahrah S Khan, Jass Manak"
 "Shashwat Sachdev, Shirley Setia, Romy"
 "Gurnazar, Asees Kaur"
@@ -4268,6 +4501,9 @@ PaglaSongs.Com
 "Abhay Singh"
 "Deedar Kaur, Krsna Solo"
 "Toshi Sabri"
+
+
+
 "Ruchika Jangid, Sbm Loharo"
 "Renuka Panwar, Sunit Itawa"
 "Millind Gaba, Aparshakti Khurana, King Kaazi"
@@ -4330,6 +4566,26 @@ Zoraawer
 "Sammy Kahlon"
 "Vishal Mishra, Neeti Mohan"
 "Harshdeep Kaur"
+
+
+
+
+
+ Himesh Reshammiya"
+"Armaan Malik, Amaal Mallik"
+"Soham Naik, Ritrisha Sarmah"
+"Payel Dev, Stebin Ben"
+"Jubin Nautiyal, Dhvani Bhanushali"
+"Bojo Teddy"
+"Vicky Singh"
+"Arjun Kanungo, Prakriti Kakar, M Ajay Vaas"
+"Ankit Tiwari, Leena Bose"
+"Manna Boy"
+"Ranjit Rana"
+"Nimma Malri, Rajia Sultan, Johnyy Vick"
+"Azaan Sami Khan"
+"Ashutosh Phatak, Naseeruddin Shah, Altamash Faridi"
+"Ranvir Singh"
 "Jassi Sidhu, IP Singh"
 "Girishh, Poorvi Koutish"
 "Guru Randhawa, Jassi Sidhu, Zahrah S Khan"
@@ -4399,6 +4655,103 @@ Rochak
 "Azaan Sami Khan"
 "Ashutosh Phatak, Naseeruddin Shah, Altamash Faridi"
 "Ranvir Singh"
+
+
+
+
+
+
+
+
+
+"Jassi Sidhu, IP Singh"
+"Girishh, Poorvi Koutish"
+"Guru Randhawa, Jassi Sidhu, Zahrah S Khan"
+"Isheeta Chakrvarty"
+"Titu Mama"
+Armaan Malik, Prajakta Shukre"
+"Ammy Virk, Afsana Khan"
+"Karn Sekhon, Intense"
+"Kaushiki Chakraborty, Papon"
+"Javed-Mohsin, Dev Negi, Neha Kakkar"
+"Guru Randhawa, Payal Dev, Vee"
+"Karan Grith"
+"Saad Hafeez"
+"Bups Saggu, Manwal, Icey Stanley"
+"Maninder Buttar, AKASA"
+"Parineeti Chopra"
+PaglaSongs.Com
+"Abhay Singh"
+"Deedar Kaur, Krsna Solo"
+"Toshi Sabri"
+"Zahrah S Khan, Jass Manak"
+"Shashwat Sachdev, Shirley Setia, Romy"
+"Gurnazar, Asees Kaur"
+"Sachin-Jigar, Jigar Saraiya, Divya Kumar"
+"Farhad Bhiwandiwala"
+"Manav Singh"
+"Tulsi Kumar, Akhil Sachdeva"
+"Soch, Adnan Dhool, Rabi Ahmed"
+"Pratiksha Vashishtha"
+Rromeo
+"Rochak Kohli"
+"Nikhil D&#039;souza, Tanishk Bagchi"
+"King, High Born"
+"Manish Sharmaa"
+"Gajendra Verma, Jonita Gandhi"
+"Khushboo Grewal, Meet Bros"
+"Balkar Sidhu"
+"Tulsi Kumar, Darshan Raval, Manan Bhardwaj"
+"Anjali 99"
+
+
+Tri
+"Sahhil Dhir"
+"HappE Singh"
+"Kumar Sanu, Aankhi Das"
+Manreet
+"Prateek Kuhad"
+"Mavi Singh"
+"Shivang Mathur, Kalpana Gandharva"
+"Jaigmeet, Melody Renu"
+F1rstman
+"Shirley Setia, Gurnazar"
+"Tulsi Kumar, Darshan Raval"
+"Revaansh Kohli"
+"Asis Singh"
+"Haricharan, Shreya Ghoshal"
+"Simantinee Roy"
+"Toshant Kumar, Anushree Tripathi"
+"Rahul Netra Negi, Ashwini V"
+"Renessa Das, Ash King"
+"Mohammed Irfan, Asees Kaur"
+"Shilpa Rao, Darshan Raval"
+Deeplove
+"Urvashi Kiran Sharma"
+"Gurdas Maan"
+"Preet Virk"
+"Diljaan, Madhar Kartarvi"
+"Sody Desi Boy"
+"Darshan Raval, Neha Kakkar, Manan Bhardwaj"
+"Armaan Malik, Prajakta Shukre"
+"Ammy Virk, Afsana Khan"
+"Karn Sekhon, Intense"
+"Kaushiki Chakraborty, Papon"
+"Javed-Mohsin, Dev Negi, Neha Kakkar"
+"Guru Randhawa, Payal Dev, Vee"
+"Karan Grith"
+"Saad Hafeez"
+"Bups Saggu, Manwal, Icey Stanley"
+"Maninder Buttar, AKASA"
+"Parineeti Chopra"
+PaglaSongs.Com
+"Abhay Singh"
+
+
+
+
+"Deedar Kaur, Krsna Solo"
+"Toshi Sabri"
 "Ash King, Palak Muchhal, Parry G"
 "Nitin Patkar, Vishal Mishra"
 "Jyoti Nooran, Vikram Sahney"
