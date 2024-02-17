@@ -7,7 +7,7 @@ create table song(
     masterPlaylistPath text not null,
     totalTime text not null,
     title text not null,
-	artist text not null default('Kyoku'),
+	artist text not null default('Kyoku'), -- references 
     album text not null default('Kyoku'),
     genre text not null default('Kyoku'),
     composer text not null default('Kyoku'),
@@ -18,34 +18,23 @@ create table song(
 	date text not null
 );
 
+alter table song add column points bigint not null default 0;
 
-select distinct genre from song;
-
-select count(*) from song where genre = "Punjabi";
-select count(*) from song where genre = "Tamil";
-
+select * from song;
+select * from song where id = 21005;
+select * from song where album = 'Animal';
 select count(*) from song;
+
+select distinct album from song;
 
 select count(distinct genre) from song;
 
 select distinct artist from song;
 
-select * from song where genre = "PaglaSongs.com";
-
 SET SQL_SAFE_UPDATES = 0;
 
 
 select * from song where genre in (select distinct genre from song);
-
-select * from emailAuthUser;
-select * from googleAuthUser;
-select * from passkeyAuthUser;
-select * from invalidrefreshToken;
-select * from sessionStorage;
-
-select * from PasskeyUserPlaylist;
-select * from GoogleUserPlaylist;
-select * from EmailUserPlaylist;
 
 delete from emailAuthUser where id = 2;
 
@@ -53,6 +42,8 @@ create table genre(
 id int primary key auto_increment,
 genre varchar(120) unique not null
 );
+
+alter table genre add column points bigint not null default 0;
 
 select * from genre;
 select * from genre where genre = ' Hindi Pop';
@@ -68,20 +59,72 @@ create table artist(
     name varchar(120) UNIQUE not null,
     profilePicUrl text not null,
     country text not null,
-    genre int references genre(id) on delete set null
+    genre int not null references genre(id)
 );
 
-select name from artist;
+
+alter table artist add column points bigint not null default 0;
+
+select * from artist;
+select * from artist where id = 22;
 
 select count(*) from genre where id in (select distinct(genre) from artist);
 
 
 
+select * from emailAuthUser;
+select * from googleAuthUser;
+select * from passkeyAuthUser;
+select * from invalidrefreshToken;
+select * from sessionStorage;
+
+select * from PasskeyUserPlaylist;
+select * from GoogleUserPlaylist;
+select * from EmailUserPlaylist;
+
+select * from EmailUserGenreRelation;
+select * from GoogleUserGenreRelation;
+select * from PasskeyUserGenreRelation;
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- user
 
 
 create table playlist(
@@ -89,7 +132,7 @@ id int primary key auto_increment,
 name varchar(20) unique
 );
 
-create table playlistrelation(
+create table playlistRelation(
 id int primary key auto_increment,
 playlistid int references playlist.id,
 songid bigint references song.id
@@ -128,8 +171,3 @@ JOIN playlistrelation pr ON s.id = pr.songid
 JOIN playlist p ON pr.playlistid = p.id;
 
 SELECT song.id, song.coverimage, song.title, song.artist, playlist.name FROM song JOIN playlistrelation ON song.id = playlistrelation.songId JOIN playlist ON playlistrelation.playlistId = playlist.id;
-
-
-
-
-

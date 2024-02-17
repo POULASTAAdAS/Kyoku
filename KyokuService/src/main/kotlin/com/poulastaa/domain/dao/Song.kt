@@ -19,6 +19,7 @@ class Song(id: EntityID<Long>) : LongEntity(id) {
     val publisher by SongTable.publisher
     val albumArtist by SongTable.album_artist
     val description by SongTable.description
-    val track  by SongTable.track
+    val track by SongTable.track
     val date by SongTable.date
+    var points by SongTable.points
 }

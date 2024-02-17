@@ -1,8 +1,8 @@
 package com.poulastaa.kyoku.utils
 
 object Constants {
-    const val AUTH_BASE_URL = "https://8205-103-192-117-134.ngrok-free.app"
-    const val SERVICE_BASE_URL = "https://e04a-103-192-117-134.ngrok-free.app"
+    const val AUTH_BASE_URL = "https://7795-103-42-156-125.ngrok-free.app"
+    const val SERVICE_BASE_URL = "https://ec24-103-42-156-125.ngrok-free.app"
 
     const val PREFERENCES_NAME = "appPreferences"
 

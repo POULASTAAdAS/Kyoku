@@ -2,6 +2,7 @@ package com.poulastaa.routes
 
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.domain.repository.UserServiceRepository
+import com.poulastaa.utils.Constants
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -11,7 +12,7 @@ import io.ktor.server.routing.*
 fun Route.getSongCover(
     service: UserServiceRepository
 ) {
-    authenticate("jwt-auth", "google-auth", "passkey-auth") {
+    authenticate(configurations = Constants.SECURITY_LIST) {
         route(EndPoints.CoverImage.route) {
             get {
                 val coverImage = call.parameters["coverImage"] ?: return@get

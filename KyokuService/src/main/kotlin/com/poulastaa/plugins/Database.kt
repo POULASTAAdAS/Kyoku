@@ -1,11 +1,19 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.data.model.db_table.ArtistTable
+import com.poulastaa.data.model.db_table.GenreTable
 import com.poulastaa.data.model.db_table.playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.PasskeyUserPlaylistTable
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
+import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_genre.EmailUserGenreRelationTable
+import com.poulastaa.data.model.db_table.user_genre.GoogleUserGenreRelationTable
+import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -34,6 +42,17 @@ fun Application.configureDatabase() {
         SchemaUtils.create(EmailAuthUserTable)
         SchemaUtils.create(GoogleAuthUserTable)
         SchemaUtils.create(PasskeyAuthUserTable)
+
+        SchemaUtils.create(GenreTable)
+        SchemaUtils.create(ArtistTable)
+
+        SchemaUtils.create(EmailUserGenreRelationTable)
+        SchemaUtils.create(GoogleUserGenreRelationTable)
+        SchemaUtils.create(PasskeyUserGenreRelationTable)
+
+        SchemaUtils.create(EmailUserArtistRelationTable)
+        SchemaUtils.create(GoogleUserArtistRelationTable)
+        SchemaUtils.create(PasskeyUserArtistRelationTable)
     }
 }
 

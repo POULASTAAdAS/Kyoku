@@ -7,7 +7,7 @@ object Constants {
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
-    const val BASE_URL = "https://e04a-103-192-117-134.ngrok-free.app"
+    const val BASE_URL = "https://ec24-103-42-156-125.ngrok-free.app"
 
     const val ISSUER = "https://accounts.google.com"
 
@@ -36,4 +36,10 @@ object Constants {
     const val REFRESH_TOKEN_DEFAULT_TIME = 60L * 24 * 3600 // 60 days
     const val VERIFICATION_MAIL_TOKEN_TIME = 240000L // 4 minute
     const val FORGOT_PASSWORD_MAIL_TOKEN_TIME = 240000L // 4 minute
+
+    private const val SECURITY_TYPE_EMAIL = "jwt-auth"
+    private const val SECURITY_TYPE_GOOGLE = "google-auth"
+    private const val SECURITY_TYPE_PASSKEY = "passkey-auth"
+
+    val SECURITY_LIST = arrayOf(SECURITY_TYPE_EMAIL, SECURITY_TYPE_GOOGLE, SECURITY_TYPE_PASSKEY)
 }

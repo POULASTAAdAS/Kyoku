@@ -17,4 +17,5 @@ object SongTable : LongIdTable() {
     val description: Column<String> = text("description")
     val track = text("track")
     val date: Column<String> = text("date")
+    val points = long("points").default(0)
 }
