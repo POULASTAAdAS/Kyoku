@@ -1,4 +1,4 @@
-package com.poulastaa.data.repository
+package com.poulastaa.data.repository.song
 
 import com.poulastaa.data.model.db_table.SongTable
 import com.poulastaa.data.model.spotify.*

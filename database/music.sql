@@ -46,6 +46,7 @@ genre varchar(120) unique not null
 alter table genre add column points bigint not null default 0;
 
 select * from genre;
+select distinct(genre) from genre;
 select * from genre where genre = ' Hindi Pop';
 
 -- create table usersGenre(
@@ -87,24 +88,19 @@ select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
 
+select * from Country;
+select * from CountryGenreRelation;
 
 
 
+select * from song where id in (1 , 2 ,3) order by title;
 
 
+SELECT genre.id, genre.genre, genre.points FROM genre WHERE genre.id IN (1, 2, 3, 5, 7, 18, 40, 43, 47, 53, 58, 62, 66, 68, 76, 78, 80, 92, 94, 105, 108, 111);
 
+SELECT distinct(genre) FROM artist WHERE artist.genre IN (1, 2, 3, 7 , 18);
 
-
-
-
-
-
-
-
-
-
-
-
+select * from genre where id in (select distinct(genre) from artist);
 
 
 

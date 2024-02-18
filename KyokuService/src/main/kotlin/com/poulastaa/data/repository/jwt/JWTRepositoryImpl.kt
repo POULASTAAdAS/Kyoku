@@ -1,4 +1,4 @@
-package com.poulastaa.data.repository
+package com.poulastaa.data.repository.jwt
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT

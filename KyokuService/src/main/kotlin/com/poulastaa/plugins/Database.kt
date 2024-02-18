@@ -1,7 +1,9 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.data.model.db_table.ArtistTable
+import com.poulastaa.data.model.db_table.CountryGenreRelationTable
 import com.poulastaa.data.model.db_table.GenreTable
+import com.poulastaa.data.model.db_table.CountryTable
 import com.poulastaa.data.model.db_table.playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.playlist.PasskeyUserPlaylistTable
@@ -53,6 +55,10 @@ fun Application.configureDatabase() {
         SchemaUtils.create(EmailUserArtistRelationTable)
         SchemaUtils.create(GoogleUserArtistRelationTable)
         SchemaUtils.create(PasskeyUserArtistRelationTable)
+
+
+        SchemaUtils.create(CountryTable)
+        SchemaUtils.create(CountryGenreRelationTable)
     }
 }
 

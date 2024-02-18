@@ -5,12 +5,15 @@ import com.poulastaa.data.model.DbUser
 import com.poulastaa.data.model.FindUserType
 import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
+import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreReq
+import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponse
 import com.poulastaa.data.model.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.spotify.SpotifySong
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
+import com.poulastaa.domain.repository.suggest_genre.SuggestGenreRepository
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.getAlbum
 import com.poulastaa.utils.removeAlbum
@@ -25,7 +28,8 @@ import java.io.File
 class UserServiceRepositoryImpl(
     private val songRepository: SongRepository,
     private val playlist: PlaylistRepository,
-    private val users: DbUser
+    private val users: DbUser,
+    private val genre: SuggestGenreRepository
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
@@ -135,5 +139,9 @@ class UserServiceRepositoryImpl(
         return SetBDateResponse(
             status = response
         )
+    }
+
+    override suspend fun suggestGenre(req: SuggestGenreReq): List<SuggestGenreResponse> {
+        return genre.suggestGenre(req)
     }
 }

@@ -6,8 +6,8 @@ import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.routes.getMasterPlaylist
 import com.poulastaa.routes.getSongCover
 import com.poulastaa.routes.sertup.getSpotifyPlaylist
-import com.poulastaa.routes.sertup.selectGenre
 import com.poulastaa.routes.sertup.storeBDate
+import com.poulastaa.routes.sertup.suggestGenre
 import com.poulastaa.routes.unauthorized
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -26,7 +26,7 @@ fun Application.configureRouting() {
         getSongCover(service)
 
         storeBDate(service)
-        selectGenre(service)
+        suggestGenre(service)
 
         getMasterPlaylist(service)
 
