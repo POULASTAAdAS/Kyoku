@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.SERVICE_BASE_URL

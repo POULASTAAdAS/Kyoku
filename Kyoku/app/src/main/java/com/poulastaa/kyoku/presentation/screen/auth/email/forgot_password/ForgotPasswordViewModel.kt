@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordState
-import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordUiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.email.forgot_password.ForgotPasswordState
+import com.poulastaa.kyoku.data.model.screens.auth.email.forgot_password.ForgotPasswordUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail
 import com.poulastaa.kyoku.navigation.Screens

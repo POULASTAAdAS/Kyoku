@@ -8,10 +8,10 @@ import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
-import com.poulastaa.kyoku.data.model.auth.email.login.EmailLogInState
-import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
-import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
+import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
+import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
 import com.poulastaa.kyoku.data.model.database.table.PlaylistRelationTable

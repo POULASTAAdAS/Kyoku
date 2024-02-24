@@ -32,8 +32,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.setup.set_birth_date.SetBirthDateUiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiEvent
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 
 @OptIn(ExperimentalMaterial3Api::class)

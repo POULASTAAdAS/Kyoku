@@ -8,11 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.service.HandleSpotifyPlaylistStatus
-import com.poulastaa.kyoku.data.model.api.service.SpotifyDataStoreState
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiEvent
-import com.poulastaa.kyoku.data.model.setup.get_spotify_playlist.GetSpotifyPlaylistUiState
+import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.HandleSpotifyPlaylistStatus
+import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyDataStoreState
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
+import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository

@@ -13,8 +13,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.auth.email.forgot_password.ForgotPasswordUiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.email.forgot_password.ForgotPasswordUiEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

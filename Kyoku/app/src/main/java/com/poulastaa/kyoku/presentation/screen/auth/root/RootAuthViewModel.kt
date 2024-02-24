@@ -16,9 +16,9 @@ import com.poulastaa.kyoku.data.model.api.req.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.auth.root.RootAuthScreenState
-import com.poulastaa.kyoku.data.model.auth.root.RootUiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.screens.auth.root.RootUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail

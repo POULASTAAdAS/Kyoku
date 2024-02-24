@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.data.remote
 
-import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenReq
-import com.poulastaa.kyoku.data.model.auth.email.reafresh_token.RefreshTokenResponse
+import com.poulastaa.kyoku.data.model.api.req.RefreshTokenReq
+import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

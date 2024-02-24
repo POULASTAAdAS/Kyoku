@@ -12,7 +12,7 @@ import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
-import com.poulastaa.kyoku.data.model.auth.email.signup.EmailVerificationResponse
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailVerificationResponse
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET

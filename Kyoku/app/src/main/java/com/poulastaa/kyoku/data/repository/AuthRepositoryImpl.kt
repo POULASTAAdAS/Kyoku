@@ -13,7 +13,7 @@ import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
-import com.poulastaa.kyoku.data.model.auth.email.signup.EmailVerificationStatus
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailVerificationStatus
 import com.poulastaa.kyoku.data.remote.AuthApi
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.utils.toPasskeyJson

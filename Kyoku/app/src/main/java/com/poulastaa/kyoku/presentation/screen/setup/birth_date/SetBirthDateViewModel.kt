@@ -6,15 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
-import com.poulastaa.kyoku.data.model.BDateFroMaterHelperStatus
 import com.poulastaa.kyoku.data.model.SignInStatus
-import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateReq
-import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateResponseStatus
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.setup.set_birth_date.SetBirthDateUiEvent
-import com.poulastaa.kyoku.data.model.setup.set_birth_date.SetBirthDateUiState
+import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
+import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponseStatus
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiEvent
+import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiState
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.utils.BDateFroMaterHelperStatus
 import com.poulastaa.kyoku.utils.storeBDate
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toDate
@@ -56,7 +56,7 @@ class SetBirthDateViewModel @Inject constructor(
     var state by mutableStateOf(SetBirthDateUiState())
         private set
 
-    var bDateAsLong: Long? = null
+    private var bDateAsLong: Long? = null
 
     fun onEvent(event: SetBirthDateUiEvent) {
         when (event) {

@@ -12,9 +12,9 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
-import com.poulastaa.kyoku.data.model.auth.UiEvent
-import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpState
-import com.poulastaa.kyoku.data.model.auth.email.signup.EmailSignUpUiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.usecase.AuthUseCases

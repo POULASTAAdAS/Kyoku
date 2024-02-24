@@ -1,8 +1,6 @@
 package com.poulastaa.kyoku.utils
 
-import com.poulastaa.kyoku.data.model.BDateFroMaterHelper
-import com.poulastaa.kyoku.data.model.BDateFroMaterHelperStatus
-import com.poulastaa.kyoku.data.model.api.service.setup.SetBDateReq
+import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import java.net.CookieManager
 import java.time.Instant
 import java.time.LocalDateTime
