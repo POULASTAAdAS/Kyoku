@@ -8,6 +8,7 @@ interface GoogleAuthUserRepository {
         userName: String,
         email: String,
         sub: String,
-        pictureUrl: String
+        pictureUrl: String,
+        countryId: Int
     ): GoogleAuthResponse
 }

@@ -151,7 +151,7 @@ class EmailSignUpViewModel @Inject constructor(
                 )
             }
 
-            EmailSignUpUiEvent.OnContinueClick -> {
+            is EmailSignUpUiEvent.OnContinueClick -> {
                 if (!state.isLoading)
                     if (checkInternetConnection()) {
                         val result = validate()
@@ -164,7 +164,14 @@ class EmailSignUpViewModel @Inject constructor(
                             email = state.email
                             password = state.password
 
-                            startEmailSignIn(state.toEmailSignUpReq())
+                            val localList = event.activity.resources.configuration.locales
+
+                            if (!localList.isEmpty) startEmailSignIn(
+                                state.toEmailSignUpReq(
+                                    localList[0].country
+                                )
+                            )
+                            else onEvent(EmailSignUpUiEvent.SomeErrorOccurredOnAuth)
                         }
 
                     } else onEvent(EmailSignUpUiEvent.EmitToast("Please Check Your Internet Connection"))

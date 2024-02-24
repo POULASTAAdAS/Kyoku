@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SuggestGenreReq(
-    val countryName: String,
+    val isSelectReq: Boolean = false,
     val alreadySendGenreList: List<String>?
 )

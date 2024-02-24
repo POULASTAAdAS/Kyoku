@@ -1,9 +1,9 @@
-package com.poulastaa.data.repository.user_db
+package com.poulastaa.data.repository.users
 
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.EmailAuthUser
-import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
+import com.poulastaa.domain.repository.users.EmailAuthUserRepository
 import com.poulastaa.plugins.dbQuery
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
@@ -25,4 +25,6 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
             SetBDateResponseStatus.FAILURE
         }
     }
+
+    override suspend fun getCountryId(email: String): Int? = findUser(email)?.countryId
 }

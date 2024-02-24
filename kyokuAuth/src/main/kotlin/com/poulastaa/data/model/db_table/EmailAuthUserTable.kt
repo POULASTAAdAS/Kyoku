@@ -13,4 +13,5 @@ object EmailAuthUserTable : LongIdTable() {
         .default("$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png")
     val refreshToken: Column<String> = text("refreshToken")
     val bDate: Column<Long?> = long("bDate").nullable()
+    val countryId: Column<Int> = integer("countryId").references(CountryTable.id)
 }

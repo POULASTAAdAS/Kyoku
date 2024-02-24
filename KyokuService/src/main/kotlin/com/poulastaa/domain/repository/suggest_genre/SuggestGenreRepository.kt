@@ -4,5 +4,8 @@ import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponse
 
 interface SuggestGenreRepository {
-    suspend fun suggestGenre(req: SuggestGenreReq): List<SuggestGenreResponse>
+    suspend fun suggestGenre(
+        req: SuggestGenreReq,
+        countryId: Int
+    ): SuggestGenreResponse
 }

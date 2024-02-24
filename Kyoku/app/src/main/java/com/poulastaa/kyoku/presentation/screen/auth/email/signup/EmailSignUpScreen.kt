@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.signup
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -119,7 +120,7 @@ fun EmailSignUpScreen(
         },
         onDone = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            viewModel.onEvent(event = EmailSignUpUiEvent.OnContinueClick)
+            viewModel.onEvent(event = EmailSignUpUiEvent.OnContinueClick(activity = context as Activity))
         },
         isLoading = viewModel.state.isLoading
     )

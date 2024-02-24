@@ -1,9 +1,9 @@
-package com.poulastaa.data.repository.user_db
+package com.poulastaa.data.repository.users
 
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
-import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
+import com.poulastaa.domain.repository.users.PasskeyAuthUserRepository
 import com.poulastaa.plugins.dbQuery
 
 class PasskeyAuthUserRepositoryImpl: PasskeyAuthUserRepository {
@@ -25,4 +25,6 @@ class PasskeyAuthUserRepositoryImpl: PasskeyAuthUserRepository {
             SetBDateResponseStatus.FAILURE
         }
     }
+
+    override suspend fun getCountryId(email: String): Int? = findUser(email)?.countryId
 }

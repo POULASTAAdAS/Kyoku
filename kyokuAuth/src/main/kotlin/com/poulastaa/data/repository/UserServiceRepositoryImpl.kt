@@ -10,11 +10,14 @@ import com.poulastaa.data.model.auth.jwt.*
 import com.poulastaa.data.model.auth.passkey.CreatePasskeyJson
 import com.poulastaa.data.model.auth.passkey.GetPasskeyJson
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.data.model.db_table.CountryTable
+import com.poulastaa.domain.dao.Country
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
 import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
 import com.poulastaa.invalidTokenList
+import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.Constants
 import com.poulastaa.utils.Constants.DEFAULT_PROFILE_PIC
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
@@ -28,7 +31,9 @@ import com.poulastaa.utils.toPasskeyAuthResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.upperCase
 import java.io.File
+
 
 class UserServiceRepositoryImpl(
     private val jwtRepository: JWTRepository,
@@ -36,11 +41,27 @@ class UserServiceRepositoryImpl(
     private val googleAuthUser: GoogleAuthUserRepository,
     private val passkeyAuthUser: PasskeyAuthUserRepository
 ) : UserServiceRepository {
+
+    private val countryListMap = mapOf(
+        "In" to "INDIA",
+        "US" to "US"
+    )
+
     override suspend fun createEmailUser(
         userName: String,
         email: String,
-        password: String
+        password: String,
+        countryCode: String
     ): EmailSignInResponse {
+        val countryId = getCountryId(
+            country = countryCode.countryCodeToCountry() ?: return EmailSignInResponse(
+                status = UserCreationStatus.SOMETHING_WENT_WRONG
+            )
+        ) ?: return EmailSignInResponse(
+            status = UserCreationStatus.SOMETHING_WENT_WRONG
+        )
+
+
         val accessToken = jwtRepository.generateAccessToken(email = email)
         val refreshToken = jwtRepository.generateRefreshToken(email = email)
 
@@ -48,7 +69,8 @@ class UserServiceRepositoryImpl(
             userName = userName,
             email = email,
             password = password,
-            refreshToken = refreshToken
+            refreshToken = refreshToken,
+            countryId = countryId
         )
 
         return when (status) {
@@ -103,6 +125,35 @@ class UserServiceRepositoryImpl(
             invalidTokenList.add(token)
 
             return emailAuthUser.updateVerificationStatus(it)
+        }
+    }
+
+    override suspend fun resendVerificationMail(email: String): ResendVerificationMailResponse {
+        return when (val response = emailAuthUser.checkVerificationMailStatus(email)) {
+            ResendVerificationMailStatus.EMAIL_ALREADY_VERIFIED -> {
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            ResendVerificationMailStatus.VERIFICATION_MAIL_SEND -> {
+                val verificationMailToken = jwtRepository.generateVerificationMailToken(email = email)
+                CoroutineScope(Dispatchers.IO).launch {
+                    sendEmailVerificationMail(email, verificationMailToken)
+                }
+
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            ResendVerificationMailStatus.SOMETHING_WENT_WRONG -> {
+                ResendVerificationMailResponse(
+                    status = response
+                )
+            }
+
+            else -> throw IllegalArgumentException("Invalid Request")
         }
     }
 
@@ -249,13 +300,23 @@ class UserServiceRepositoryImpl(
         userName: String,
         email: String,
         sub: String,
-        pictureUrl: String
+        pictureUrl: String,
+        countryCode: String
     ): GoogleAuthResponse {
+        val countryId = getCountryId(
+            country = countryCode.countryCodeToCountry() ?: return GoogleAuthResponse(
+                status = UserCreationStatus.SOMETHING_WENT_WRONG
+            )
+        ) ?: return GoogleAuthResponse(
+            status = UserCreationStatus.SOMETHING_WENT_WRONG
+        )
+
         val response = googleAuthUser.createUser(
             userName = userName,
             email = email,
             sub = sub,
-            pictureUrl = pictureUrl
+            pictureUrl = pictureUrl,
+            countryId = countryId
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -276,7 +337,8 @@ class UserServiceRepositoryImpl(
         token: String,
         userName: String,
         email: String,
-        userId: String
+        userId: String,
+        countryCode: String
     ): PasskeyAuthResponse {
         val result = jwtRepository.verifyJWTToken(
             token = token,
@@ -289,12 +351,21 @@ class UserServiceRepositoryImpl(
             status = UserCreationStatus.TOKEN_NOT_VALID
         )
 
+        val countryId = getCountryId(
+            country = countryCode.countryCodeToCountry() ?: return PasskeyAuthResponse(
+                status = UserCreationStatus.SOMETHING_WENT_WRONG
+            )
+        ) ?: return PasskeyAuthResponse(
+            status = UserCreationStatus.SOMETHING_WENT_WRONG
+        )
+
         val response = try {
             passkeyAuthUser.createUser(
                 userId = userId,
                 email = email,
                 userName = userName,
-                profilePic = DEFAULT_PROFILE_PIC
+                profilePic = DEFAULT_PROFILE_PIC,
+                countryId = countryId
             )
         } catch (e: Exception) {
             return PasskeyAuthResponse(
@@ -375,33 +446,19 @@ class UserServiceRepositoryImpl(
         )
     }
 
-    override suspend fun sendVerificationMail(email: String): ResendVerificationMailResponse {
-        return when (val response = emailAuthUser.checkVerificationMailStatus(email)) {
-            ResendVerificationMailStatus.EMAIL_ALREADY_VERIFIED -> {
-                ResendVerificationMailResponse(
-                    status = response
-                )
-            }
 
-            ResendVerificationMailStatus.VERIFICATION_MAIL_SEND -> {
-                val verificationMailToken = jwtRepository.generateVerificationMailToken(email = email)
-                CoroutineScope(Dispatchers.IO).launch {
-                    sendEmailVerificationMail(email, verificationMailToken)
-                }
-
-                ResendVerificationMailResponse(
-                    status = response
-                )
-            }
-
-            ResendVerificationMailStatus.SOMETHING_WENT_WRONG -> {
-                ResendVerificationMailResponse(
-                    status = response
-                )
-            }
-
-            else -> throw IllegalArgumentException("Invalid Request")
+    private fun String.countryCodeToCountry(): String? {
+        countryListMap.forEach { (key, value) ->
+            if (key.uppercase() == this.uppercase()) return value
         }
+
+        return null
+    }
+
+    private suspend fun getCountryId(country: String): Int? = dbQuery {
+        Country.find {
+            CountryTable.name.upperCase() eq country
+        }.firstOrNull()?.id?.value
     }
 
 

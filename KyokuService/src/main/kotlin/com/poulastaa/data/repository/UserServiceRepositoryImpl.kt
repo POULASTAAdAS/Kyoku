@@ -7,6 +7,7 @@ import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponse
+import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponseStatus
 import com.poulastaa.data.model.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.spotify.SpotifySong
@@ -95,28 +96,6 @@ class UserServiceRepositoryImpl(
         path = "${COVER_IMAGE_ROOT_DIR}$name" // convert to folder path
     )
 
-    private suspend fun createPlaylist(helper: CreatePlaylistHelper) {
-        when (helper.user.userType) {
-            UserType.EMAIL_USER -> {
-                playlist.cretePlaylistForEmailUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-            }
-
-            UserType.GOOGLE_USER -> {
-                playlist.cretePlaylistForGoogleUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-            }
-
-            UserType.PASSKEY_USER -> {
-                playlist.cretePlaylistForPasskeyUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-            }
-        }
-    }
-
     override suspend fun storeBDate(
         date: Long,
         userType: UserType,
@@ -141,7 +120,48 @@ class UserServiceRepositoryImpl(
         )
     }
 
-    override suspend fun suggestGenre(req: SuggestGenreReq): List<SuggestGenreResponse> {
-        return genre.suggestGenre(req)
+    override suspend fun suggestGenre(req: SuggestGenreReq, userType: FindUserType): SuggestGenreResponse {
+
+        val id = when (userType.userType) {
+            UserType.GOOGLE_USER -> {
+                users.googleUser.getCountryId(userType.id)
+            }
+
+            UserType.EMAIL_USER -> {
+                users.emailUser.getCountryId(userType.id)
+            }
+
+            UserType.PASSKEY_USER -> {
+                users.passekyUser.getCountryId(userType.id)
+            }
+        } ?: return SuggestGenreResponse(
+            status = SuggestGenreResponseStatus.FAILURE
+        )
+
+
+        return genre.suggestGenre(req, id)
+    }
+
+
+     private suspend fun createPlaylist(helper: CreatePlaylistHelper) {
+        when (helper.user.userType) {
+            UserType.EMAIL_USER -> {
+                playlist.cretePlaylistForEmailUser(
+                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+                )
+            }
+
+            UserType.GOOGLE_USER -> {
+                playlist.cretePlaylistForGoogleUser(
+                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+                )
+            }
+
+            UserType.PASSKEY_USER -> {
+                playlist.cretePlaylistForPasskeyUser(
+                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+                )
+            }
+        }
     }
 }

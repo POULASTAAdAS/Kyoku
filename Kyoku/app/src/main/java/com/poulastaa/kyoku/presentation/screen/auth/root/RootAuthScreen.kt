@@ -46,7 +46,12 @@ fun RootAuthScreen(
     StartActivityForResult(
         key = viewModel.state.googleAuthLoading,
         onResultReceived = {
-            viewModel.onEvent(RootUiEvent.SendGoogleAuthApiRequest(it))
+            viewModel.onEvent(
+                RootUiEvent.SendGoogleAuthApiRequest(
+                    token = it,
+                    activity = context as Activity
+                )
+            )
         },
         onDialogDismissed = {
             viewModel.onEvent(RootUiEvent.OnAuthCanceled)

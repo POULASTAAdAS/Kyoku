@@ -19,11 +19,13 @@ import java.io.File
 import java.io.IOException
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
+
     override suspend fun createUser(
         userName: String,
         email: String,
         password: String,
-        refreshToken: String
+        refreshToken: String,
+        countryId: Int
     ): UserCreationStatus = try {
         val user = findUser(email)
 
@@ -34,6 +36,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                     this.email = email
                     this.password = password
                     this.refreshToken = refreshToken
+                    this.countryId = countryId
                 }
             }.let {
                 UserCreationStatus.CREATED

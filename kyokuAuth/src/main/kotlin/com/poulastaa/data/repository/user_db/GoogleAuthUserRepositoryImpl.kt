@@ -20,7 +20,8 @@ class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
         userName: String,
         email: String,
         sub: String,
-        pictureUrl: String
+        pictureUrl: String,
+        countryId: Int
     ): GoogleAuthResponse {
         try {
             val user = findUser(email)
@@ -32,6 +33,7 @@ class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
                         this.sub = sub
                         this.email = email
                         this.profilePicUrl = pictureUrl
+                        this.countryId = countryId
                     }
                 }
 

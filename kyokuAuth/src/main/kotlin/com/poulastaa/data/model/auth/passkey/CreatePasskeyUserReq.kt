@@ -7,5 +7,6 @@ class CreatePasskeyUserReq(
     val id: String,
     val email: String,
     val userName: String,
-    val token:String
+    val token:String,
+    val countryCode: String
 )

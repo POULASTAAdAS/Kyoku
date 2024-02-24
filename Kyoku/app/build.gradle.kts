@@ -91,8 +91,8 @@ dependencies {
     // dagger hilt
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.47")
-    kapt("androidx.hilt:hilt-compiler:1.1.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // retrofit , okhttp
@@ -103,7 +103,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
     // navigation
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     val roomVersion = "2.6.1"
 
@@ -114,7 +114,7 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
 
     // Google Auth
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     // Splash API
     implementation("androidx.core:core-splashscreen:1.0.1")
@@ -141,6 +141,8 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // implementation ("com.google.accompanist:accompanist-permissions:0.25.0")
 
     // For extracting data from media containers
 //    implementation("androidx.media3:media3-extractor:$media3Version")

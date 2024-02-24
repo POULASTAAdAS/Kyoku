@@ -19,7 +19,8 @@ class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
         userId: String,
         email: String,
         userName: String,
-        profilePic: String
+        profilePic: String,
+        countryId: Int
     ): PasskeyAuthResponse {
         val user = findUserByEmail(email)
 
@@ -30,6 +31,7 @@ class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
                     this.email = email
                     this.displayName = userName
                     this.profilePic = profilePic
+                    this.countryId = countryId
                 }
             }
 

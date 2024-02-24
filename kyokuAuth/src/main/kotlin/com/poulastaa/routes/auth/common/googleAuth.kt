@@ -38,7 +38,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleAuth(
             userName = payload.userName,
             sub = payload.sub,
             email = payload.email,
-            pictureUrl = payload.pictureUrl
+            pictureUrl = payload.pictureUrl,
+            countryCode = googleAuthReq.countryCode
         )
 
         when (userCreationResponse.status) {

@@ -11,10 +11,13 @@ fun main() {
 
 
     val list2 = myList.associateBy(
-            keySelector = { it.first },
-            valueTransform = { it.second }
-        )
-        .keys.toList()
+        keySelector = { it.first },
+        valueTransform = { it.second }
+    ).keys.toList()
+
+
+    val filtered = list1.filterNot { list2.contains(it) }.take(15)
+    println(filtered)
 }
 
 

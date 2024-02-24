@@ -9,7 +9,8 @@ interface EmailAuthUserRepository {
         userName: String,
         email: String,
         password: String,
-        refreshToken: String
+        refreshToken: String,
+        countryId: Int
     ): UserCreationStatus
 
     suspend fun updateVerificationStatus(email: String): UpdateEmailVerificationStatus

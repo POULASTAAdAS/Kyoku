@@ -30,7 +30,8 @@ fun Route.createPasskeyUser(
                 token = userReq.token,
                 userName = userReq.userName,
                 email = userReq.email,
-                userId = userReq.id
+                userId = userReq.id,
+                countryCode = userReq.countryCode
             )
 
             when (response.status) {

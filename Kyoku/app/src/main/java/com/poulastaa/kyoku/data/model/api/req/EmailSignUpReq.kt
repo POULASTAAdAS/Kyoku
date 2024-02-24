@@ -8,5 +8,6 @@ data class EmailSignUpReq(
     val authType:String,
     val email:String,
     val password: String,
-    val userName: String
+    val userName: String,
+    val countryCode: String
 )

@@ -1,9 +1,9 @@
-package com.poulastaa.data.repository.user_db
+package com.poulastaa.data.repository.users
 
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.GoogleAuthUser
-import com.poulastaa.domain.repository.user_db.GoogleAuthUserRepository
+import com.poulastaa.domain.repository.users.GoogleAuthUserRepository
 import com.poulastaa.plugins.dbQuery
 
 class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
@@ -25,4 +25,6 @@ class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
             SetBDateResponseStatus.FAILURE
         }
     }
+
+    override suspend fun getCountryId(sub: String): Int? = findUser(sub)?.countryId
 }

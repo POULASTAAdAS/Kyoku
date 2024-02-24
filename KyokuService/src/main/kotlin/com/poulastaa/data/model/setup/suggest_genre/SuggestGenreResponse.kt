@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class SuggestGenreResponse(
-    val genre: String,
-    val artistUrl: String
+    val status: SuggestGenreResponseStatus,
+    val genreList: List<String> = emptyList()
 )

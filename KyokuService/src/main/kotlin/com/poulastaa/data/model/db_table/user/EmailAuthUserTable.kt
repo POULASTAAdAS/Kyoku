@@ -1,5 +1,6 @@
 package com.poulastaa.data.model.db_table.user
 
+import com.poulastaa.data.model.db_table.CountryTable
 import com.poulastaa.utils.Constants.PROFILE_PIC_ROOT_DIR
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.Column
@@ -13,4 +14,5 @@ object EmailAuthUserTable : LongIdTable() {
         .default("$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png")
     val refreshToken: Column<String> = text("refreshToken")
     val bDate: Column<Long?> = long("bDate").nullable()
+    val countryId: Column<Int> = integer("countryId").references(CountryTable.id)
 }

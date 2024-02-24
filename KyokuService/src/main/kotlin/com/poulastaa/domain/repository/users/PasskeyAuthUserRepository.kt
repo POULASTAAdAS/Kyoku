@@ -1,7 +1,8 @@
-package com.poulastaa.domain.repository.user_db
+package com.poulastaa.domain.repository.users
 
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 
-interface EmailAuthUserRepository {
+interface PasskeyAuthUserRepository {
     suspend fun updateBDate(date: Long, email: String): SetBDateResponseStatus
+    suspend fun getCountryId(email: String): Int?
 }

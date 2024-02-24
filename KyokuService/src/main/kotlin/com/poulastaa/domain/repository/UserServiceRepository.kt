@@ -14,5 +14,5 @@ interface UserServiceRepository {
 
     suspend fun storeBDate(date: Long, userType: UserType, id: String): SetBDateResponse
 
-    suspend fun suggestGenre(req: SuggestGenreReq): List<SuggestGenreResponse>
+    suspend fun suggestGenre(req: SuggestGenreReq, userType: FindUserType): SuggestGenreResponse
 }

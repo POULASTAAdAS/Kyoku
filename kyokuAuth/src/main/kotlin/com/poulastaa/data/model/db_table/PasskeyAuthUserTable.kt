@@ -11,4 +11,5 @@ object PasskeyAuthUserTable : LongIdTable() {
     val profilePic: Column<String> = varchar("profilePic", 200)
         .default(DEFAULT_PROFILE_PIC)
     val bDate: Column<Long?> = long("bDate").nullable()
+    val countryId: Column<Int> = integer("countryId").references(CountryTable.id)
 }

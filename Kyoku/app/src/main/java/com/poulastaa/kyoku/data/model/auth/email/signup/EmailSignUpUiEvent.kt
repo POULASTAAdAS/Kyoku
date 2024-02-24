@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.model.auth.email.signup
 
+import android.app.Activity
+
 sealed class EmailSignUpUiEvent {
     data class OnEmailEnter(val data: String) : EmailSignUpUiEvent()
     data class OnUsernameEnter(val data: String) : EmailSignUpUiEvent()
@@ -14,15 +16,15 @@ sealed class EmailSignUpUiEvent {
 
     data object OnPasswordVisibilityChange : EmailSignUpUiEvent()
 
-    data object OnContinueClick : EmailSignUpUiEvent()
+    data class OnContinueClick(val activity: Activity) : EmailSignUpUiEvent()
 
     data object SomeErrorOccurredOnAuth : EmailSignUpUiEvent()
 
     data class EmitEmailSupportingText(val message: String) : EmailSignUpUiEvent()
 
-    data object OnAuthCanceled: EmailSignUpUiEvent()
+    data object OnAuthCanceled : EmailSignUpUiEvent()
 
-    data class EmitToast(val message:String): EmailSignUpUiEvent()
+    data class EmitToast(val message: String) : EmailSignUpUiEvent()
 
     data object OnLogInClick : EmailSignUpUiEvent()
 }

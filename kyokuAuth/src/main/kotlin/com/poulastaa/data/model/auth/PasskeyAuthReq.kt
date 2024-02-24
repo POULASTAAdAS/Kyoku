@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PasskeyAuthReq(
-    val email:String,
+    val email: String,
     val displayName: String
-): AuthReqBaseModel(authType = AUTH_TYPE_PASSKEY)
+) : AuthReqBaseModel(authType = AUTH_TYPE_PASSKEY)

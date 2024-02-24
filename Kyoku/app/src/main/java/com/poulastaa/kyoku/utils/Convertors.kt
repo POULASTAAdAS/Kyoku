@@ -1,11 +1,11 @@
 package com.poulastaa.kyoku.utils
 
 import com.google.gson.JsonParser
-import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
-import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
+import com.poulastaa.kyoku.data.model.api.req.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
+import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
@@ -53,12 +53,18 @@ fun String.toPasskeyJson(): PasskeyJson {
     )
 }
 
-fun String.toCreatePasskeyUserReq(email: String, token: String) = CreatePasskeyUserReq(
-    id = this,
-    email = email,
-    userName = email.removeSuffix("@gmail.com"),
-    token = token
-)
+fun String.toCreatePasskeyUserReq(
+    email: String,
+    token: String,
+    countryCode: String
+) =
+    CreatePasskeyUserReq(
+        id = this,
+        email = email,
+        userName = email.removeSuffix("@gmail.com"),
+        token = token,
+        countryCode = countryCode
+    )
 
 
 fun String.toGetPasskeyUserReq(token: String) = GetPasskeyUserReq(
@@ -67,18 +73,20 @@ fun String.toGetPasskeyUserReq(token: String) = GetPasskeyUserReq(
 )
 
 
-fun String.toGoogleAuthReq(): GoogleAuthReq = GoogleAuthReq(
+fun String.toGoogleAuthReq(countryCode: String): GoogleAuthReq = GoogleAuthReq(
     type = TYPE_GOOGLE_AUTH_REQ,
     authType = AUTH_TYPE_GOOGLE,
-    tokenId = this
+    tokenId = this,
+    countryCode = countryCode
 )
 
-fun EmailSignUpState.toEmailSignUpReq() = EmailSignUpReq(
+fun EmailSignUpState.toEmailSignUpReq(countryCode: String) = EmailSignUpReq(
     type = TYPE_EMAIL_SIGN_UP_REQ,
     authType = AUTH_TYPE_EMAIL_SIGN_UP,
     email = this.email,
     password = this.password,
-    userName = this.userName
+    userName = this.userName,
+    countryCode = countryCode
 )
 
 fun EmailLogInState.toEmailLogInReq() = EmailLogInReq(

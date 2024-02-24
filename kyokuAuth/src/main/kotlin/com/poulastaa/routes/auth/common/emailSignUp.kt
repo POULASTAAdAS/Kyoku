@@ -8,8 +8,6 @@ import com.poulastaa.utils.verifyEmailIdWithApi
 import io.ktor.http.*
 
 
-// http://127.0.0.1:8080/.well-known/jwks.json
-
 suspend fun handleEmailSignup(
     emailSignUpReq: EmailSignUpReq,
     userService: UserServiceRepository,
@@ -31,11 +29,11 @@ suspend fun handleEmailSignup(
             }
         }
 
-    val result = createUser(
-        emailSignUpReq.userName,
-        emailSignUpReq.email,
-        emailSignUpReq.password,
-        userService = userService
+    val result = userService.createEmailUser(
+        userName = emailSignUpReq.userName.trim(),
+        email = emailSignUpReq.email.trim(),
+        password = emailSignUpReq.password.trim(),
+        countryCode = emailSignUpReq.countryCode
     )
 
     when (result.status) {
@@ -62,18 +60,4 @@ suspend fun handleEmailSignup(
 
         else -> Unit
     }
-}
-
-
-private suspend fun createUser(
-    userName: String,
-    email: String,
-    password: String,
-    userService: UserServiceRepository,
-): EmailSignInResponse {
-    return userService.createEmailUser(
-        userName = userName.trim(),
-        email = email.trim(),
-        password = password.trim()
-    )
 }

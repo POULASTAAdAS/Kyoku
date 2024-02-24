@@ -7,7 +7,7 @@ create table song(
     masterPlaylistPath text not null,
     totalTime text not null,
     title text not null,
-	artist text not null default('Kyoku'), -- references 
+	artist text not null default('Kyoku'),
     album text not null default('Kyoku'),
     genre text not null default('Kyoku'),
     composer text not null default('Kyoku'),
@@ -87,10 +87,16 @@ select * from EmailUserGenreRelation;
 select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
+select * from emailAuthUser;
+
+
+delete googleAuthUser from googleAuthUser where id = 1;
 
 select * from Country;
 select * from CountryGenreRelation;
 
+select * from genre;
+select genre from genre where id in (select genreId from CountryGenreRelation where countryId = 2);
 
 
 select * from song where id in (1 , 2 ,3) order by title;

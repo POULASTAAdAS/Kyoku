@@ -10,7 +10,10 @@ sealed class RootUiEvent {
     data object OnGoogleAuthClick : RootUiEvent()
     data object OnEmailAuthClick : RootUiEvent()
 
-    data class SendGoogleAuthApiRequest(val token: String) : RootUiEvent()
+    data class SendGoogleAuthApiRequest(
+        val token: String,
+        val activity: Activity
+    ) : RootUiEvent()
 
     data object NoGoogleAccountFound : RootUiEvent()
     data object OnAuthCanceled : RootUiEvent()

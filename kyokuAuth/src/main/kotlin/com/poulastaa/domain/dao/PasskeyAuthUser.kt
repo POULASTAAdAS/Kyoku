@@ -13,4 +13,5 @@ class PasskeyAuthUser(id: EntityID<Long>) : LongEntity(id) {
     var displayName by PasskeyAuthUserTable.userName
     var profilePic by PasskeyAuthUserTable.profilePic
     var bDate by PasskeyAuthUserTable.bDate
+    var countryId by PasskeyAuthUserTable.countryId
 }

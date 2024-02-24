@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GoogleAuthReq(
-    val tokenId: String
+    val tokenId: String,
+    val countryCode: String
 ): AuthReqBaseModel(authType = AUTH_TYPE_GOOGLE)

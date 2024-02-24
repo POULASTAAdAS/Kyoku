@@ -13,4 +13,5 @@ class GoogleAuthUser(id: EntityID<Long>) : LongEntity(id) {
     var sub by GoogleAuthUserTable.sub
     var profilePicUrl by GoogleAuthUserTable.profilePic
     var bDate by GoogleAuthUserTable.bDate
+    var countryId by GoogleAuthUserTable.countryId
 }

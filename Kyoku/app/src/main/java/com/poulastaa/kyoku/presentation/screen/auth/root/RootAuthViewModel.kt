@@ -11,9 +11,9 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
-import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.kyoku.data.model.api.req.CreatePasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.auth.UiEvent
@@ -122,7 +122,18 @@ class RootAuthViewModel @Inject constructor(
             }
 
             is RootUiEvent.SendGoogleAuthApiRequest -> {
-                startGoogleAuth(event.token.toGoogleAuthReq())
+                val localeList = event.activity.resources.configuration.locales
+
+                if (!localeList.isEmpty)
+                    startGoogleAuth(
+                        event.token.toGoogleAuthReq(
+                            countryCode = localeList[0].country
+                        )
+                    )
+                else {
+                    onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                    onEvent(RootUiEvent.OnAuthCanceled)
+                }
             }
 
             RootUiEvent.OnEmailAuthClick -> {
@@ -195,53 +206,58 @@ class RootAuthViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             // make api call
-            api.passkeyReq(req)?.let { passkeyJson ->
-                if (passkeyJson.type == AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
-                    createPasskey( // create passkey from string and convert to CreatePublicKeyCredential
-                        credentialManager = cred,
-                        jsonString = passkeyJson.req,
-                        activity = activity,
-                        challenge = passkeyJson.challenge,
-                        sendUserToServer = { id ->
-                            id?.let {
-                                sendPasskeyUserToServer( // create user
-                                    user = it.toCreatePasskeyUserReq(
-                                        email = state.passkeyEmail,
-                                        token = passkeyJson.token
+
+            val localeList = activity.resources.configuration.locales
+
+            if (!localeList.isEmpty)
+                api.passkeyReq(req)?.let { passkeyJson ->
+                    if (passkeyJson.type == AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
+                        createPasskey( // create passkey from string and convert to CreatePublicKeyCredential
+                            credentialManager = cred,
+                            jsonString = passkeyJson.req,
+                            activity = activity,
+                            challenge = passkeyJson.challenge,
+                            sendUserToServer = { id ->
+                                id?.let {
+                                    sendPasskeyUserToServer( // create user
+                                        user = it.toCreatePasskeyUserReq(
+                                            email = state.passkeyEmail,
+                                            token = passkeyJson.token,
+                                            countryCode = localeList[0].country
+                                        )
                                     )
-                                )
-                                return@createPasskey
+                                    return@createPasskey
+                                }
+
+                                // error occurred
+                                onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                                onEvent(RootUiEvent.OnAuthCanceled)
                             }
+                        )
+                    } else {
+                        getPasskey(
+                            cred,
+                            passkeyJson.req,
+                            activity,
+                            passkeyJson.challenge,
+                            getUserFromId = {
+                                it?.let {
+                                    getPasskeyUserFromServer(
+                                        user = it.toGetPasskeyUserReq(passkeyJson.token)
+                                    )
 
-                            // error occurred
-                            onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
-                            onEvent(RootUiEvent.OnAuthCanceled)
-                        }
-                    )
-                } else {
-                    getPasskey(
-                        cred,
-                        passkeyJson.req,
-                        activity,
-                        passkeyJson.challenge,
-                        getUserFromId = {
-                            it?.let {
-                                getPasskeyUserFromServer(
-                                    user = it.toGetPasskeyUserReq(passkeyJson.token)
-                                )
+                                    return@getPasskey
+                                }
 
-                                return@getPasskey
+                                // error occurred
+                                onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
+                                onEvent(RootUiEvent.OnAuthCanceled)
                             }
+                        )
+                    }
 
-                            // error occurred
-                            onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
-                            onEvent(RootUiEvent.OnAuthCanceled)
-                        }
-                    )
+                    return@launch
                 }
-
-                return@launch
-            }
 
             // error occurred
             onEvent(RootUiEvent.SomeErrorOccurredOnAuth)

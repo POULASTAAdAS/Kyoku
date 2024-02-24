@@ -32,7 +32,7 @@ fun Route.resendVerificationMail(
                     )
                 }
 
-            val response = userService.sendVerificationMail(email)
+            val response = userService.resendVerificationMail(email)
 
             call.respond(
                 message = response,
