@@ -9,7 +9,7 @@ sealed class Screens(val route: String) {
 
     data object GetSpotifyPlaylist : Screens("/setup/getSpotifyPlaylist")
     data object SetBirthDate : Screens("/setup/setBirthDate")
-    data object SelectGenre : Screens("/setup/selectGenre")
+    data object SuggestGenre : Screens("/setup/suggestGenre")
     data object SelectArtist : Screens("/setup/selectArtist")
 
     data object Home : Screens("/app/home")

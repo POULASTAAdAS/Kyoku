@@ -9,14 +9,16 @@ import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
-import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
-import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
-import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
 import com.poulastaa.kyoku.data.model.database.table.PlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
+import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
+import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.ui.UiPlaylist
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
@@ -163,3 +165,22 @@ fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
 
     return list
 }
+
+
+fun SuggestGenreResponse.toUiGenre(): List<UiGenre> = this.genreList.map {
+    UiGenre(
+        name = it,
+        isSelected = false
+    )
+}
+
+
+
+
+
+
+
+
+
+
+

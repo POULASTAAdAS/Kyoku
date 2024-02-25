@@ -15,32 +15,29 @@ create table song(
     album_artist text not null default('Kyoku'),
 	description text not null default('Kyoku'),
 	track text not null default('Kyoku'),
-	date text not null
+	date text not null,
+    points bigint not null default 0
 );
-
-alter table song add column points bigint not null default 0;
 
 select * from song;
 select * from song where id = 21005;
 select * from song where album = 'Animal';
 select count(*) from song;
-
 select distinct album from song;
-
 select count(distinct genre) from song;
-
 select distinct artist from song;
 
 SET SQL_SAFE_UPDATES = 0;
 
+create table Country(
+id int primary key auto_increment,
+name varchar(200) not null unique
+);
 
-select * from song where genre in (select distinct genre from song);
-
-delete from emailAuthUser where id = 2;
 
 create table genre(
 id int primary key auto_increment,
-genre varchar(120) unique not null
+name varchar(120) unique not null
 );
 
 alter table genre add column points bigint not null default 0;
@@ -49,33 +46,22 @@ select * from genre;
 select distinct(genre) from genre;
 select * from genre where genre = ' Hindi Pop';
 
--- create table usersGenre(
--- id Long primary key,
--- genreId int,
--- userId varchar(320)
--- );
 
 create table artist(
     id int PRIMARY KEY auto_increment,
     name varchar(120) UNIQUE not null,
     profilePicUrl text not null,
-    country text not null,
+    country int not null references Country(id),
     genre int not null references genre(id)
 );
 
-
-alter table artist add column points bigint not null default 0;
-
-select * from artist;
-select * from artist where id = 22;
-
-select count(*) from genre where id in (select distinct(genre) from artist);
 
 
 
 select * from emailAuthUser;
 select * from googleAuthUser;
 select * from passkeyAuthUser;
+
 select * from invalidrefreshToken;
 select * from sessionStorage;
 
@@ -87,16 +73,22 @@ select * from EmailUserGenreRelation;
 select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
-select * from emailAuthUser;
-
 
 delete googleAuthUser from googleAuthUser where id = 1;
 
+
+select * from artist;
+select * from artist where Country = 'United States';
+select distinct(genre) from artist;
+select distinct(country) from artist;
+
+select id , genre from genre where id in (select distinct(genre) from artist);
+
 select * from Country;
-select * from CountryGenreRelation;
+
 
 select * from genre;
-select genre from genre where id in (select genreId from CountryGenreRelation where countryId = 2);
+select * from genre where id in (select genreId from CountryGenreRelation where countryId = 1);
 
 
 select * from song where id in (1 , 2 ,3) order by title;

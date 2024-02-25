@@ -13,6 +13,7 @@ data class SuggestGenreUiState(
         status = SuggestGenreResponseStatus.FAILURE,
         genreList = emptyList()
     ),
-    val isMakingApiCall: Boolean = false,
+    val isMakingApiCall: Boolean = true,
     val isInternetAvailable: Boolean = false,
+    val isFirstCall: Boolean = true
 )

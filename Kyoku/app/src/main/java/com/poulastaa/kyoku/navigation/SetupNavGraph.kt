@@ -13,7 +13,7 @@ import com.poulastaa.kyoku.presentation.screen.home.HomeScreen
 import com.poulastaa.kyoku.presentation.screen.setup.birth_date.SetBirthDateScreen
 import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.SpotifyPlaylistScreen
 import com.poulastaa.kyoku.presentation.screen.setup.select_artist.SelectArtistScreen
-import com.poulastaa.kyoku.presentation.screen.setup.select_genre.SelectGenreScreen
+import com.poulastaa.kyoku.presentation.screen.setup.select_genre.SuggestGenreScreen
 
 @Composable
 fun SetupNavGraph(
@@ -65,8 +65,8 @@ fun SetupNavGraph(
             SetBirthDateScreen()
         }
 
-        composable(Screens.SelectGenre.route) {
-            SelectGenreScreen()
+        composable(Screens.SuggestGenre.route) {
+            SuggestGenreScreen()
         }
 
         composable(Screens.SelectArtist.route) {
