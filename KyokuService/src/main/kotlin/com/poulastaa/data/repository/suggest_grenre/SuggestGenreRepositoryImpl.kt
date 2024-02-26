@@ -45,7 +45,7 @@ class SuggestGenreRepositoryImpl : SuggestGenreRepository {
             Genre.find {
                 GenreTable.id inList genreIdList
             }.map {
-                it.id.value to it.genre
+                it.id.value to it.name
             }.removeDuplicateGenre(
                 oldList = req.alreadySendGenreList ?: emptyList(),
                 isSelectRequest = req.isSelectReq

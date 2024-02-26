@@ -19,14 +19,6 @@ create table song(
     points bigint not null default 0
 );
 
-select * from song;
-select * from song where id = 21005;
-select * from song where album = 'Animal';
-select count(*) from song;
-select distinct album from song;
-select count(distinct genre) from song;
-select distinct artist from song;
-
 SET SQL_SAFE_UPDATES = 0;
 
 create table Country(
@@ -40,21 +32,21 @@ id int primary key auto_increment,
 name varchar(120) unique not null
 );
 
-alter table genre add column points bigint not null default 0;
-
-select * from genre;
-select distinct(genre) from genre;
-select * from genre where genre = ' Hindi Pop';
-
 
 create table artist(
     id int PRIMARY KEY auto_increment,
     name varchar(120) UNIQUE not null,
     profilePicUrl text not null,
     country int not null references Country(id),
-    genre int not null references genre(id)
+    genre int not null references genre(id),
+    points bigint not null default 0
 );
 
+create table CountryGenreRelation(
+	id bigint primary key auto_increment,
+    countryId int not null references Country(id),
+    genreId int not null references Genre(id)
+);
 
 
 
@@ -74,31 +66,25 @@ select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
 
-delete googleAuthUser from googleAuthUser where id = 1;
 
 
-select * from artist;
-select * from artist where Country = 'United States';
-select distinct(genre) from artist;
-select distinct(country) from artist;
-
-select id , genre from genre where id in (select distinct(genre) from artist);
-
-select * from Country;
 
 
-select * from genre;
-select * from genre where id in (select genreId from CountryGenreRelation where countryId = 1);
 
 
-select * from song where id in (1 , 2 ,3) order by title;
 
 
-SELECT genre.id, genre.genre, genre.points FROM genre WHERE genre.id IN (1, 2, 3, 5, 7, 18, 40, 43, 47, 53, 58, 62, 66, 68, 76, 78, 80, 92, 94, 105, 108, 111);
 
-SELECT distinct(genre) FROM artist WHERE artist.genre IN (1, 2, 3, 7 , 18);
 
-select * from genre where id in (select distinct(genre) from artist);
+
+
+
+
+
+
+
+
+
 
 
 

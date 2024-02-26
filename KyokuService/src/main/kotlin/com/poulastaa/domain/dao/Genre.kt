@@ -8,6 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 class Genre(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Genre>(GenreTable)
 
-    val genre by GenreTable.genre
+    val name by GenreTable.name
     var points by GenreTable.points
 }
