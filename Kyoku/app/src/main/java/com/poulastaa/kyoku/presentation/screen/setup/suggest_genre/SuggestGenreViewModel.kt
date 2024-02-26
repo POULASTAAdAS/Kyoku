@@ -1,6 +1,5 @@
-package com.poulastaa.kyoku.presentation.screen.setup.select_genre
+package com.poulastaa.kyoku.presentation.screen.setup.suggest_genre
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,16 +12,19 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiState
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.utils.toAlreadySendGenreList
 import com.poulastaa.kyoku.utils.toUiGenre
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectGenreViewModel @Inject constructor(
+class SuggestGenreViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val api: ServiceRepository
 ) : ViewModel() {
@@ -44,6 +46,9 @@ class SelectGenreViewModel @Inject constructor(
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
+    private var suggestGenreJOb: Job? = null
+    private var selectedGenre: Int = 0
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -51,8 +56,9 @@ class SelectGenreViewModel @Inject constructor(
         private set
 
     init {
-        if (state.isFirstCall)
-            viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(300)
+            if (state.isFirstApiCall && state.isInternetAvailable) {
                 val response = api.suggestGenre(
                     req = SuggestGenreReq(
                         isSelectReq = false,
@@ -60,25 +66,25 @@ class SelectGenreViewModel @Inject constructor(
                     )
                 )
 
-                when (response.status) {
+                state = when (response.status) {
                     SuggestGenreResponseStatus.SUCCESS -> {
-                        Log.d("called", response.genreList.toString())
-
-                        state = state.copy(
-                            data = response.toUiGenre()
+                        state.copy(
+                            data = response.toUiGenre(),
+                            isFirstApiCall = false
                         )
                     }
 
                     SuggestGenreResponseStatus.FAILURE -> {
                         onEvent(SuggestGenreUiEvent.SomethingWentWrong)
+                        state.copy(
+                            isFirstApiCall = false
+                        )
                     }
                 }
-
-                state = state.copy(
-                    isFirstReq = false,
-                    isMakingApiCall = false
-                )
             }
+
+            if (!state.isInternetAvailable) onEvent(SuggestGenreUiEvent.EmitToast("Please check Your Internet Connection"))
+        }
     }
 
     fun onEvent(event: SuggestGenreUiEvent) {
@@ -86,19 +92,32 @@ class SelectGenreViewModel @Inject constructor(
             is SuggestGenreUiEvent.OnGenreClick -> {
                 state = state.copy(
                     data = state.data.map {
-                        if (it.name == event.name) it.copy(isSelected = !it.isSelected)
-                        else it
+                        if (it.name == event.name) {
+                            val isSelected = !it.isSelected // inverse before operating
+
+                            updateSelectedGenre(isSelected)
+
+                            if (isSelected && state.isAnyGenreLeft) {
+                                if (state.isInternetAvailable) {
+                                    suggestGenreJOb?.cancel()
+                                    suggestGenreJOb = requestExtraGenre(state.data.indexOf(it) + 1)
+                                } else {
+                                    onEvent(SuggestGenreUiEvent.EmitToast("Please check Your Internet Connection"))
+                                }
+                            }
+
+                            it.copy(isSelected = isSelected)
+                        } else it
                     }
                 )
             }
 
             SuggestGenreUiEvent.OnContinueClick -> {
-//                if (state.selectedGenre < 3) {
-//                    onEvent(SuggestGenreUiEvent.EmitToast("please select at-list 3 genre"))
-//                    return
-//                }
+                if (selectedGenre < 3) {
+                    onEvent(SuggestGenreUiEvent.EmitToast("Please select at-list 4 Genre"))
+                    return
+                }
 
-                Log.d("data", state.data.toString())
             }
 
             is SuggestGenreUiEvent.EmitToast -> {
@@ -110,6 +129,42 @@ class SelectGenreViewModel @Inject constructor(
             SuggestGenreUiEvent.SomethingWentWrong -> {
                 onEvent(SuggestGenreUiEvent.EmitToast("Opp's something went wrong"))
             }
+        }
+    }
+
+    private fun updateSelectedGenre(isSelected: Boolean) {
+        if (isSelected) selectedGenre += 1
+        else if (selectedGenre > 0) selectedGenre -= 1
+    }
+
+    private fun requestExtraGenre(index: Int): Job = viewModelScope.launch(Dispatchers.IO) {
+        val response = api.suggestGenre(
+            req = SuggestGenreReq(
+                isSelectReq = true,
+                alreadySendGenreList = state.data.toAlreadySendGenreList()
+            )
+        )
+
+        when (response.status) {
+            SuggestGenreResponseStatus.SUCCESS -> {
+                val newList = response.toUiGenre()
+
+                state = if (newList.isNotEmpty()) {
+                    val data = state.data.toMutableList()
+
+                    data.addAll(index, newList)
+
+                    state.copy(
+                        data = data
+                    )
+                } else {
+                    state.copy(
+                        isAnyGenreLeft = false
+                    )
+                }
+            }
+
+            SuggestGenreResponseStatus.FAILURE -> Unit
         }
     }
 }

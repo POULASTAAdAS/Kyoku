@@ -13,7 +13,7 @@ import com.poulastaa.kyoku.presentation.screen.home.HomeScreen
 import com.poulastaa.kyoku.presentation.screen.setup.birth_date.SetBirthDateScreen
 import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.SpotifyPlaylistScreen
 import com.poulastaa.kyoku.presentation.screen.setup.select_artist.SelectArtistScreen
-import com.poulastaa.kyoku.presentation.screen.setup.select_genre.SuggestGenreScreen
+import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreScreen
 
 @Composable
 fun SetupNavGraph(

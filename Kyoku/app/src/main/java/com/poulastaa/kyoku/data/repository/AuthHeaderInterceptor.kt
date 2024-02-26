@@ -1,10 +1,11 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.req.RefreshTokenReq
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenUpdateStatus
+import com.poulastaa.kyoku.data.model.api.req.RefreshTokenReq
 import com.poulastaa.kyoku.data.remote.RefreshTokenApi
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.AUTH_BASE_URL
@@ -20,7 +21,7 @@ import retrofit2.Retrofit
 import javax.inject.Inject
 
 class AuthHeaderInterceptor @Inject constructor(
-    private val ds: DataStoreOperation,
+    private val ds: DataStoreOperation
 ) : Interceptor {
     private fun refreshToken(ds: DataStoreOperation): RefreshTokenResponse {
         val oldRefreshToken = runBlocking {
@@ -70,6 +71,8 @@ class AuthHeaderInterceptor @Inject constructor(
         val tokenOrCookie = runBlocking(Dispatchers.IO) {
             ds.readTokenOrCookie().first()
         }
+
+        Log.d("cookie" , tokenOrCookie)
 
         val newReq = oldReq.newBuilder()
             .header(

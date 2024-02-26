@@ -11,19 +11,23 @@ import com.poulastaa.domain.repository.suggest_genre.SuggestGenreRepository
 import com.poulastaa.plugins.dbQuery
 
 class SuggestGenreRepositoryImpl : SuggestGenreRepository {
+    private val appName = listOf(
+        "Kyokui.Com",
+        "Kyoku.Com",
+        "Kyoku",
+        "Kyoku.To"
+    )
 
     private fun List<Pair<Int, String>>.removeDuplicateGenre(
         oldList: List<String>,
         isSelectRequest: Boolean
     ): Map<Int, String> {
-        val filteredMap = this.filterNot { (_, u) -> oldList.contains(u.trim()) }
-        return filteredMap.sortedBy { it.first }.take(if (isSelectRequest) 3 else 15).toMap()  // works like paging
-    }
+        var filteredMap = this.filterNot { (_, u) -> oldList.contains(u.trim()) }
 
-    private fun List<Pair<Int, String>>.removeDuplicateArtist(): List<String> {
-        return this.associateBy({ it.first }, { it.second }).values.toList()
-    }
+        filteredMap = if (!isSelectRequest) filteredMap.filterNot { (_, v) -> appName.contains(v) } else filteredMap
 
+        return filteredMap.sortedBy { it.first }.take(if (isSelectRequest) 3 else 6).toMap()  // works like paging
+    }
 
     private fun Map<Int, String>.toSuggestGenreResponse(): SuggestGenreResponse = SuggestGenreResponse(
         status = SuggestGenreResponseStatus.SUCCESS,
@@ -47,20 +51,10 @@ class SuggestGenreRepositoryImpl : SuggestGenreRepository {
             }.map {
                 it.id.value to it.name
             }.removeDuplicateGenre(
-                oldList = req.alreadySendGenreList ?: emptyList(),
+                oldList = req.alreadySendGenreList,
                 isSelectRequest = req.isSelectReq
             )
         }
-
-
-//        val artistUrlList = dbQuery {
-//            Artist.find {
-//                ArtistTable.genre inList genreMap.keys
-//            }.map {
-//                it.genre to it.profilePicUrl
-//            }.removeDuplicateArtist()
-//        }
-
 
         return genreMap.toSuggestGenreResponse()
     }

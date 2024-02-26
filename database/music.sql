@@ -43,11 +43,12 @@ create table artist(
 );
 
 create table CountryGenreRelation(
-	id bigint primary key auto_increment,
-    countryId int not null references Country(id),
-    genreId int not null references Genre(id)
+	id bigint not null primary key auto_increment,
+    countryId int not null,
+    genreId int not null,
+    foreign key (countryId) references Country(id),
+    foreign key (genreId) references Genre(id)
 );
-
 
 
 select * from emailAuthUser;
@@ -66,9 +67,10 @@ select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
 
-
-
-
+select * from genre;
+select * from country;
+select * from CountryGenreRelation;
+select * from CountryGenreRelation where countryId = 1;
 
 
 

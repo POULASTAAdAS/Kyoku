@@ -121,11 +121,10 @@ fun ResponseSong.toSongTable() = SongTable(
     date = this.date
 )
 
-fun <T> Iterable<T>.toListOfSongTable(): List<SongTable> {
+fun Iterable<ResponseSong>.toListOfSongTable(): List<SongTable> {
     val list = ArrayList<SongTable>()
 
     this.forEach {
-        it as ResponseSong
         list.add(it.toSongTable())
     }
 
@@ -173,6 +172,8 @@ fun SuggestGenreResponse.toUiGenre(): List<UiGenre> = this.genreList.map {
         isSelected = false
     )
 }
+
+fun Iterable<UiGenre>.toAlreadySendGenreList(): List<String> = this.map { it.name }
 
 
 
