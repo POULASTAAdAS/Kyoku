@@ -9,5 +9,5 @@ class PasskeyUserGenreRelation(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PasskeyUserGenreRelation>(PasskeyUserGenreRelationTable)
 
     var genreId by PasskeyUserGenreRelationTable.genreId
-    var userID by PasskeyUserGenreRelationTable.userId
+    var userId by PasskeyUserGenreRelationTable.userId
 }

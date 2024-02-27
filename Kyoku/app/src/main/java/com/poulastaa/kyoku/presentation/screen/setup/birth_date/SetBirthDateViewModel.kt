@@ -62,7 +62,7 @@ class SetBirthDateViewModel @Inject constructor(
         when (event) {
             is SetBirthDateUiEvent.OnDateSelected -> {
                 state = if (event.date.length > 3) {
-                    val date = event.date.toLong().toDate()
+                    val date = event.date.toLong().toDate() // todo error if only year selected
 
                     bDateAsLong = event.date.toLong()
 

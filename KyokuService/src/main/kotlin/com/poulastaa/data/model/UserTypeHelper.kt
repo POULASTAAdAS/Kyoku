@@ -1,6 +1,6 @@
 package com.poulastaa.data.model
 
-data class FindUserType(
+data class UserTypeHelper(
     val userType: UserType,
     val id: String
 )

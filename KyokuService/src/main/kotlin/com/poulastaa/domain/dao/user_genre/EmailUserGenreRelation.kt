@@ -9,5 +9,5 @@ class EmailUserGenreRelation(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<EmailUserGenreRelation>(EmailUserGenreRelationTable)
 
     var genreId by EmailUserGenreRelationTable.genreId
-    var userID by EmailUserGenreRelationTable.userId
+    var userId by EmailUserGenreRelationTable.userId
 }

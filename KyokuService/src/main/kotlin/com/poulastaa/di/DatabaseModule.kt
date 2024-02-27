@@ -1,19 +1,19 @@
 package com.poulastaa.di
 
-import com.poulastaa.data.model.DbUser
+import com.poulastaa.data.model.DbUsers
 import com.poulastaa.data.repository.UserServiceRepositoryImpl
+import com.poulastaa.data.repository.genre.GenreRepository
 import com.poulastaa.data.repository.jwt.JWTRepositoryImpl
 import com.poulastaa.data.repository.playlist.PlaylistRepositoryImpl
 import com.poulastaa.data.repository.song.SongRepositoryImpl
-import com.poulastaa.data.repository.suggest_grenre.SuggestGenreRepositoryImpl
 import com.poulastaa.data.repository.users.EmailAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.GoogleAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.PasskeyAuthUserRepositoryImpl
 import com.poulastaa.domain.repository.UserServiceRepository
+import com.poulastaa.domain.repository.genre.GenreRepositoryImpl
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
-import com.poulastaa.domain.repository.suggest_genre.SuggestGenreRepository
 import com.poulastaa.domain.repository.users.EmailAuthUserRepository
 import com.poulastaa.domain.repository.users.GoogleAuthUserRepository
 import com.poulastaa.domain.repository.users.PasskeyAuthUserRepository
@@ -42,14 +42,14 @@ fun provideDatabaseRepo() = module {
     single<PasskeyAuthUserRepository> {
         PasskeyAuthUserRepositoryImpl()
     }
-    single<SuggestGenreRepository> {
-        SuggestGenreRepositoryImpl()
+    single<GenreRepository> {
+        GenreRepositoryImpl()
     }
 }
 
 fun provideDbUsers() = module {
-    single<DbUser> {
-        DbUser(
+    single<DbUsers> {
+        DbUsers(
             emailUser = get(),
             googleUser = get(),
             passekyUser = get()
@@ -61,9 +61,9 @@ fun provideDbUsers() = module {
 fun provideService() = module {
     single<UserServiceRepository> {
         UserServiceRepositoryImpl(
-            songRepository = get(),
+            song = get(),
             playlist = get(),
-            users = get(),
+            dbUsers = get(),
             genre = get()
         )
     }

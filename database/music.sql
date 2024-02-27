@@ -74,12 +74,7 @@ select * from CountryGenreRelation where countryId = 1;
 
 
 
-
-
-
-
-
-
+SELECT sessionstorage.id, sessionstorage.sessionid, sessionstorage.`value` FROM sessionstorage WHERE sessionstorage.sessionid = 'b4bde9ec816a94330679afd73989b916';
 
 
 

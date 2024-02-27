@@ -1,20 +1,18 @@
 package com.poulastaa.data.repository
 
 import com.poulastaa.data.model.CreatePlaylistHelper
-import com.poulastaa.data.model.DbUser
-import com.poulastaa.data.model.FindUserType
+import com.poulastaa.data.model.DbUsers
 import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.UserTypeHelper
+import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreReq
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponse
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponseStatus
 import com.poulastaa.data.model.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.spotify.SpotifySong
+import com.poulastaa.data.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
-import com.poulastaa.domain.repository.suggest_genre.SuggestGenreRepository
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.getAlbum
 import com.poulastaa.utils.removeAlbum
@@ -27,14 +25,14 @@ import kotlinx.serialization.json.*
 import java.io.File
 
 class UserServiceRepositoryImpl(
-    private val songRepository: SongRepository,
+    private val song: SongRepository,
     private val playlist: PlaylistRepository,
-    private val users: DbUser,
-    private val genre: SuggestGenreRepository
+    private val dbUsers: DbUsers,
+    private val genre: GenreRepository
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
-        user: FindUserType
+        user: UserTypeHelper
     ): SpotifyPlaylistResponse {
         val list = ArrayList<SpotifySong>()
 
@@ -68,7 +66,7 @@ class UserServiceRepositoryImpl(
         } catch (_: Exception) {
         }
 
-        val result = songRepository.handleSpotifyPlaylist(list)
+        val result = song.handleSpotifyPlaylist(list)
 
         return when (result.status) {
             HandleSpotifyPlaylistStatus.SUCCESS -> {
@@ -92,7 +90,7 @@ class UserServiceRepositoryImpl(
         }
     }
 
-    override suspend fun getSongCover(name: String): File? = songRepository.getCoverImage(
+    override suspend fun getSongCover(name: String): File? = song.getCoverImage(
         path = "${COVER_IMAGE_ROOT_DIR}$name" // convert to folder path
     )
 
@@ -103,15 +101,15 @@ class UserServiceRepositoryImpl(
     ): SetBDateResponse {
         val response = when (userType) {
             UserType.GOOGLE_USER -> {
-                users.googleUser.updateBDate(date, id)
+                dbUsers.googleUser.updateBDate(date, id)
             }
 
             UserType.EMAIL_USER -> {
-                users.emailUser.updateBDate(date, id)
+                dbUsers.emailUser.updateBDate(date, id)
             }
 
             UserType.PASSKEY_USER -> {
-                users.passekyUser.updateBDate(date, id)
+                dbUsers.passekyUser.updateBDate(date, id)
             }
         }
 
@@ -120,48 +118,57 @@ class UserServiceRepositoryImpl(
         )
     }
 
-    override suspend fun suggestGenre(req: SuggestGenreReq, userType: FindUserType): SuggestGenreResponse {
-
+    override suspend fun suggestGenre(
+        req: SuggestGenreReq,
+        userType: UserTypeHelper
+    ): SuggestGenreResponse {
         val id = when (userType.userType) {
-            UserType.GOOGLE_USER -> {
-                users.googleUser.getCountryId(userType.id)
-            }
+            UserType.GOOGLE_USER -> dbUsers.googleUser.getCountryId(userType.id)
 
-            UserType.EMAIL_USER -> {
-                users.emailUser.getCountryId(userType.id)
-            }
+            UserType.EMAIL_USER -> dbUsers.emailUser.getCountryId(userType.id)
 
-            UserType.PASSKEY_USER -> {
-                users.passekyUser.getCountryId(userType.id)
-            }
+            UserType.PASSKEY_USER -> dbUsers.passekyUser.getCountryId(userType.id)
         } ?: return SuggestGenreResponse(
-            status = SuggestGenreResponseStatus.FAILURE
+            status = GenreResponseStatus.FAILURE
         )
-
 
         return genre.suggestGenre(req, id)
     }
 
+    override suspend fun storeGenre(
+        req: StoreGenreReq,
+        helper: UserTypeHelper
+    ): StoreGenreResponse {
+        val user = dbUsers.gerDbUser(helper) ?: return StoreGenreResponse(
+            status = GenreResponseStatus.FAILURE
+        )
 
-     private suspend fun createPlaylist(helper: CreatePlaylistHelper) {
+
+        return genre.storeGenre(
+            helper = UserTypeHelper(
+                userType = helper.userType,
+                id = user.id.toString()
+            ),
+            genreNameList = req.data
+        )
+    }
+
+    private suspend fun createPlaylist(helper: CreatePlaylistHelper) {
         when (helper.user.userType) {
-            UserType.EMAIL_USER -> {
-                playlist.cretePlaylistForEmailUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-            }
+            UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
+                helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+            )
 
-            UserType.GOOGLE_USER -> {
+
+            UserType.GOOGLE_USER ->
                 playlist.cretePlaylistForGoogleUser(
                     helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
                 )
-            }
 
-            UserType.PASSKEY_USER -> {
-                playlist.cretePlaylistForPasskeyUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-            }
+
+            UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
+                helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+            )
         }
     }
 }

@@ -1,7 +1,14 @@
 package com.poulastaa.data.repository.song
 
+import com.poulastaa.data.model.db_table.CountryGenreRelationTable
+import com.poulastaa.data.model.db_table.GenreTable
 import com.poulastaa.data.model.db_table.SongTable
+import com.poulastaa.data.model.setup.genre.SuggestGenreReq
+import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
+import com.poulastaa.data.model.setup.genre.GenreResponseStatus
 import com.poulastaa.data.model.spotify.*
+import com.poulastaa.domain.dao.CountryGenreRelation
+import com.poulastaa.domain.dao.Genre
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
@@ -57,33 +64,33 @@ class SongRepositoryImpl : SongRepository {
     } catch (e: Exception) {
         null
     }
-}
 
-private fun notFoundSongs(
-    list: List<SpotifySong>,
-    responseSong: List<ResponseSong>
-): List<SpotifySong> {
-    val listOfNotFoundSongs = ArrayList<SpotifySong>()
+    private fun notFoundSongs(
+        list: List<SpotifySong>,
+        responseSong: List<ResponseSong>
+    ): List<SpotifySong> {
+        val listOfNotFoundSongs = ArrayList<SpotifySong>()
 
-    for (spotifySong in list) {
-        var found = false
+        for (spotifySong in list) {
+            var found = false
+            for (res in responseSong) {
+                if (res.title.contains(spotifySong.title!!)) {
+                    found = true
+                    break
+                }
+            }
+
+            if (!found)
+                listOfNotFoundSongs.add(spotifySong)
+        }
+
         for (res in responseSong) {
-            if (res.title.contains(spotifySong.title!!)) {
-                found = true
-                break
+            for (spotifySong in listOfNotFoundSongs) {
+                if (res.title.contains(spotifySong.title!!))
+                    listOfNotFoundSongs.remove(spotifySong)
             }
         }
 
-        if (!found)
-            listOfNotFoundSongs.add(spotifySong)
+        return listOfNotFoundSongs
     }
-
-    for (res in responseSong) {
-        for (spotifySong in listOfNotFoundSongs) {
-            if (res.title.contains(spotifySong.title!!))
-                listOfNotFoundSongs.remove(spotifySong)
-        }
-    }
-
-    return listOfNotFoundSongs
 }

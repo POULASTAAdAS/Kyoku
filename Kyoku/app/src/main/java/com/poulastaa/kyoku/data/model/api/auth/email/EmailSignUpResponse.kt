@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.data.model.api.auth.email
 
 import com.poulastaa.kyoku.data.model.User
-import com.poulastaa.kyoku.data.model.api.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.UserCreationStatus
 import kotlinx.serialization.Serializable
 
 @Serializable

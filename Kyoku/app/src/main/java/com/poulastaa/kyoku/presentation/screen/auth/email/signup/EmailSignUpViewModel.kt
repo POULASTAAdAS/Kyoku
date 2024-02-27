@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
-import com.poulastaa.kyoku.data.model.api.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
-import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpUiEvent

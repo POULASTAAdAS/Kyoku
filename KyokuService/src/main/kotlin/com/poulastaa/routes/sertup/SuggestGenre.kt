@@ -1,9 +1,9 @@
 package com.poulastaa.routes.sertup
 
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreReq
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponse
-import com.poulastaa.data.model.setup.suggest_genre.SuggestGenreResponseStatus
+import com.poulastaa.data.model.setup.genre.GenreResponseStatus
+import com.poulastaa.data.model.setup.genre.SuggestGenreReq
+import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import com.poulastaa.utils.getUserType
@@ -21,13 +21,15 @@ fun Route.suggestGenre(
         route(EndPoints.SuggestGenre.route) {
             post {
                 val req = call.receiveNullable<SuggestGenreReq>() ?: return@post call.respond(
-                    message = emptyList<SuggestGenreReq>(),
+                    message = SuggestGenreResponse(
+                        status = GenreResponseStatus.FAILURE
+                    ),
                     status = HttpStatusCode.OK
                 )
 
                 val user = getUserType() ?: return@post call.respond(
                     message = SuggestGenreResponse(
-                        status = SuggestGenreResponseStatus.FAILURE
+                        status = GenreResponseStatus.FAILURE
                     ),
                     status = HttpStatusCode.OK
                 )

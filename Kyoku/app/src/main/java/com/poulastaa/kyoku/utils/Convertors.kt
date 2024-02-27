@@ -1,14 +1,15 @@
 package com.poulastaa.kyoku.utils
 
 import com.google.gson.JsonParser
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
+import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
-import com.poulastaa.kyoku.data.model.api.req.CreatePasskeyUserReq
-import com.poulastaa.kyoku.data.model.api.req.EmailLogInReq
-import com.poulastaa.kyoku.data.model.api.req.EmailSignUpReq
-import com.poulastaa.kyoku.data.model.api.req.GetPasskeyUserReq
-import com.poulastaa.kyoku.data.model.api.req.GoogleAuthReq
-import com.poulastaa.kyoku.data.model.api.req.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
@@ -175,7 +176,15 @@ fun SuggestGenreResponse.toUiGenre(): List<UiGenre> = this.genreList.map {
 
 fun Iterable<UiGenre>.toAlreadySendGenreList(): List<String> = this.map { it.name }
 
+fun Iterable<UiGenre>.toGenreNameList(): List<String> {
+    return this.mapNotNull {
+        if (it.isSelected) it.name else null
+    }
+}
 
+fun List<String>.toStoreGenreReq() = StoreGenreReq(
+    data = this
+)
 
 
 

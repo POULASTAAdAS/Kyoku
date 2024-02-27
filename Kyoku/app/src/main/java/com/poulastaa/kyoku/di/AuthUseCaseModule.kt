@@ -14,7 +14,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object EmailLoginAuthModule {
+object AuthUseCaseModule {
     @Provides
     @ViewModelScoped
     fun provideValidateEmail(): ValidateEmail = ValidateEmail()

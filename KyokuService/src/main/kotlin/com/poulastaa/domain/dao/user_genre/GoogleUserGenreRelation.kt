@@ -9,5 +9,5 @@ class GoogleUserGenreRelation(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GoogleUserGenreRelation>(GoogleUserGenreRelationTable)
 
     var genreId by GoogleUserGenreRelationTable.genreId
-    var userID by GoogleUserGenreRelationTable.userId
+    var userId by GoogleUserGenreRelationTable.userId
 }

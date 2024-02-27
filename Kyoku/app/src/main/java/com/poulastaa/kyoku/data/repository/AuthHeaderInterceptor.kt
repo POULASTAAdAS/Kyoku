@@ -5,7 +5,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenUpdateStatus
-import com.poulastaa.kyoku.data.model.api.req.RefreshTokenReq
+import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenReq
 import com.poulastaa.kyoku.data.remote.RefreshTokenApi
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.AUTH_BASE_URL

@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.data.model.api.req
+package com.poulastaa.kyoku.data.model.api.auth.google
 
 import kotlinx.serialization.Serializable
 

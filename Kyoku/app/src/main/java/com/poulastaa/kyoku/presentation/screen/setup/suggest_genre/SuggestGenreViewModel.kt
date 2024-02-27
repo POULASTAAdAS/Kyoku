@@ -6,13 +6,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.GenreResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
-import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponseStatus
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiState
+import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toAlreadySendGenreList
+import com.poulastaa.kyoku.utils.toGenreNameList
+import com.poulastaa.kyoku.utils.toStoreGenreReq
 import com.poulastaa.kyoku.utils.toUiGenre
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SuggestGenreViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
-    private val api: ServiceRepository
+    private val api: ServiceRepository,
+    private val ds: DataStoreOperation
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
@@ -67,14 +73,14 @@ class SuggestGenreViewModel @Inject constructor(
                 )
 
                 state = when (response.status) {
-                    SuggestGenreResponseStatus.SUCCESS -> {
+                    GenreResponseStatus.SUCCESS -> {
                         state.copy(
                             data = response.toUiGenre(),
                             isFirstApiCall = false
                         )
                     }
 
-                    SuggestGenreResponseStatus.FAILURE -> {
+                    GenreResponseStatus.FAILURE -> {
                         onEvent(SuggestGenreUiEvent.SomethingWentWrong)
                         state.copy(
                             isFirstApiCall = false
@@ -118,6 +124,15 @@ class SuggestGenreViewModel @Inject constructor(
                     return
                 }
 
+                if (state.isInternetAvailable) {
+                    if (!state.isSendingDataToApi) {
+                        state = state.copy(
+                            isSendingDataToApi = true
+                        )
+
+                        storeGenre(state.data.toGenreNameList())
+                    }
+                } else onEvent(SuggestGenreUiEvent.EmitToast("Please check Your Internet Connection"))
             }
 
             is SuggestGenreUiEvent.EmitToast -> {
@@ -129,6 +144,26 @@ class SuggestGenreViewModel @Inject constructor(
             SuggestGenreUiEvent.SomethingWentWrong -> {
                 onEvent(SuggestGenreUiEvent.EmitToast("Opp's something went wrong"))
             }
+        }
+    }
+
+    private fun storeGenre(genreNameList: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = api.storeGenre(genreNameList.toStoreGenreReq())
+
+            when (response.status) {
+                GenreResponseStatus.SUCCESS -> {
+                    storeSignInState(SignInStatus.ARTIST_SET, ds)
+                }
+
+                GenreResponseStatus.FAILURE -> {
+                    onEvent(SuggestGenreUiEvent.EmitToast("Opp's something went wrong"))
+                }
+            }
+
+            state = state.copy(
+                isSendingDataToApi = false
+            )
         }
     }
 
@@ -146,7 +181,7 @@ class SuggestGenreViewModel @Inject constructor(
         )
 
         when (response.status) {
-            SuggestGenreResponseStatus.SUCCESS -> {
+            GenreResponseStatus.SUCCESS -> {
                 val newList = response.toUiGenre()
 
                 state = if (newList.isNotEmpty()) {
@@ -164,7 +199,7 @@ class SuggestGenreViewModel @Inject constructor(
                 }
             }
 
-            SuggestGenreResponseStatus.FAILURE -> Unit
+            GenreResponseStatus.FAILURE -> Unit
         }
     }
 }
