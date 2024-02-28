@@ -5,10 +5,7 @@ import com.poulastaa.data.model.auth.PasskeyUserSession
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.routes.getMasterPlaylist
 import com.poulastaa.routes.getSongCover
-import com.poulastaa.routes.sertup.getSpotifyPlaylist
-import com.poulastaa.routes.sertup.storeBDate
-import com.poulastaa.routes.sertup.storeGenre
-import com.poulastaa.routes.sertup.suggestGenre
+import com.poulastaa.routes.sertup.*
 import com.poulastaa.routes.unauthorized
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -24,12 +21,16 @@ fun Application.configureRouting() {
         sessionInterceptor()
 
         getSpotifyPlaylist(service)
-        getSongCover(service)
+        getSongCover()
 
         storeBDate(service)
 
         suggestGenre(service)
         storeGenre(service)
+
+        suggestArtist(service)
+        getArtistImage()
+        storeArtist(service)
 
         getMasterPlaylist(service)
 

@@ -1,10 +1,13 @@
 package com.poulastaa.data.repository.users
 
+import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.repository.users.EmailAuthUserRepository
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.toUser
 
 class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
     private suspend fun findUser(email: String) = dbQuery {
@@ -27,4 +30,6 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
     }
 
     override suspend fun getCountryId(email: String): Int? = findUser(email)?.countryId
+
+    override suspend fun getUser(email: String): User? = findUser(email)?.toUser(UserType.EMAIL_USER)
 }

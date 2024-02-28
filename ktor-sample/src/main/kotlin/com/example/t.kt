@@ -1,9 +1,13 @@
 package com.example
 
+import java.io.File
+
 fun main() {
-    val a =  "13329378287".toLong()
+    val path = "F:/songs/artist/Pawan Sing/"
 
+    val folder = File(path)
 
+    val image = folder.listFiles()?.random()
 
-    println(a)
+    println(image)
 }

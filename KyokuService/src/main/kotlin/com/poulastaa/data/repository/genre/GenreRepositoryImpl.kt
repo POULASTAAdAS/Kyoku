@@ -1,4 +1,4 @@
-package com.poulastaa.domain.repository.genre
+package com.poulastaa.data.repository.genre
 
 import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.UserTypeHelper
@@ -11,12 +11,12 @@ import com.poulastaa.data.model.setup.genre.GenreResponseStatus
 import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
-import com.poulastaa.data.repository.genre.GenreRepository
 import com.poulastaa.domain.dao.CountryGenreRelation
 import com.poulastaa.domain.dao.Genre
 import com.poulastaa.domain.dao.user_genre.EmailUserGenreRelation
 import com.poulastaa.domain.dao.user_genre.GoogleUserGenreRelation
 import com.poulastaa.domain.dao.user_genre.PasskeyUserGenreRelation
+import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.plugins.dbQuery
 import org.jetbrains.exposed.sql.and
 
@@ -84,6 +84,7 @@ class GenreRepositoryImpl : GenreRepository {
     ): Map<Int, String> {
         var filteredMap = this.filterNot { (_, u) -> oldList.contains(u.trim()) }
 
+        // not sending appNames on first request
         filteredMap = if (!isSelectRequest) filteredMap.filterNot { (_, v) -> appName.contains(v) } else filteredMap
 
         return filteredMap.sortedBy { it.first }.take(if (isSelectRequest) 3 else 6).toMap()  // works like paging

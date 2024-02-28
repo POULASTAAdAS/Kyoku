@@ -6,9 +6,11 @@ sealed class EndPoints(val route: String) {
     data object StoreBDate : EndPoints(route = "/api/authorised/storeBDate")
 
     data object SuggestGenre : EndPoints(route = "/api/authorised/suggestGenre")
-    data object StoreGenre: EndPoints(route = "/api/authorised/storeGenre")
+    data object StoreGenre : EndPoints(route = "/api/authorised/storeGenre")
 
-    data object SelectArtists : EndPoints(route = "/api/authorised/selectArtists")
+    data object SuggestArtist : EndPoints(route = "/api/authorised/suggestArtist")
+    data object GetArtistImageUrl : EndPoints(route = "/api/authorised/getArtistImage")
+    data object StoreArtist: EndPoints(route = "/api/authorised/storeArtist")
 
     data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
     data object PlaySongPlaylist : EndPoints(route = "/api/authorised/playSong/playlist")

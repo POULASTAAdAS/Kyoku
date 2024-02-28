@@ -2,7 +2,8 @@ package com.poulastaa.di
 
 import com.poulastaa.data.model.DbUsers
 import com.poulastaa.data.repository.UserServiceRepositoryImpl
-import com.poulastaa.data.repository.genre.GenreRepository
+import com.poulastaa.data.repository.artist.ArtistRepositoryImpl
+import com.poulastaa.data.repository.genre.GenreRepositoryImpl
 import com.poulastaa.data.repository.jwt.JWTRepositoryImpl
 import com.poulastaa.data.repository.playlist.PlaylistRepositoryImpl
 import com.poulastaa.data.repository.song.SongRepositoryImpl
@@ -10,7 +11,8 @@ import com.poulastaa.data.repository.users.EmailAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.GoogleAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.PasskeyAuthUserRepositoryImpl
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.domain.repository.genre.GenreRepositoryImpl
+import com.poulastaa.domain.repository.aritst.ArtistRepository
+import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
@@ -45,6 +47,9 @@ fun provideDatabaseRepo() = module {
     single<GenreRepository> {
         GenreRepositoryImpl()
     }
+    single<ArtistRepository> {
+        ArtistRepositoryImpl()
+    }
 }
 
 fun provideDbUsers() = module {
@@ -64,7 +69,8 @@ fun provideService() = module {
             song = get(),
             playlist = get(),
             dbUsers = get(),
-            genre = get()
+            genre = get(),
+            artist = get()
         )
     }
 }

@@ -66,15 +66,19 @@ select * from EmailUserGenreRelation;
 select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
+select * from emailuserartistrelation;
+select * from googleuserartistrelation;
+select * from passkeyuserartistrelation;
+
 
 select * from genre;
 select * from country;
+select * from artist;
+
+select * from artist where country = 1 order by points desc;
+
 select * from CountryGenreRelation;
 select * from CountryGenreRelation where countryId = 1;
-
-
-
-SELECT sessionstorage.id, sessionstorage.sessionid, sessionstorage.`value` FROM sessionstorage WHERE sessionstorage.sessionid = 'b4bde9ec816a94330679afd73989b916';
 
 
 

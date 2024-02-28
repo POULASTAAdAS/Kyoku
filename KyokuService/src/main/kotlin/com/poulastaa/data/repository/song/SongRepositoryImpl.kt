@@ -1,21 +1,13 @@
 package com.poulastaa.data.repository.song
 
-import com.poulastaa.data.model.db_table.CountryGenreRelationTable
-import com.poulastaa.data.model.db_table.GenreTable
 import com.poulastaa.data.model.db_table.SongTable
-import com.poulastaa.data.model.setup.genre.SuggestGenreReq
-import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
-import com.poulastaa.data.model.setup.genre.GenreResponseStatus
 import com.poulastaa.data.model.spotify.*
-import com.poulastaa.domain.dao.CountryGenreRelation
-import com.poulastaa.domain.dao.Genre
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.toResponseSongList
 import io.ktor.util.collections.*
 import org.jetbrains.exposed.sql.and
-import java.io.File
 
 class SongRepositoryImpl : SongRepository {
     override suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist {
@@ -57,12 +49,6 @@ class SongRepositoryImpl : SongRepository {
                 status = HandleSpotifyPlaylistStatus.FAILURE
             )
         }
-    }
-
-    override fun getCoverImage(path: String): File? = try {
-        File(path)
-    } catch (e: Exception) {
-        null
     }
 
     private fun notFoundSongs(

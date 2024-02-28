@@ -8,6 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 class PasskeyUserArtistRelation(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<PasskeyUserArtistRelation>(PasskeyUserArtistRelationTable)
 
-    var artistId by PasskeyUserArtistRelationTable.userId
+    var artistId by PasskeyUserArtistRelationTable.artistId
     var userId by PasskeyUserArtistRelationTable.userId
 }

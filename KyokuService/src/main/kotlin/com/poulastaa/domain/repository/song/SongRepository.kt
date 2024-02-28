@@ -6,5 +6,4 @@ import java.io.File
 
 interface SongRepository {
     suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist
-    fun getCoverImage(path: String): File?
 }

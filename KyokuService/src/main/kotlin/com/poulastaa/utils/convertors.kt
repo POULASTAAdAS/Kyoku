@@ -4,11 +4,14 @@ import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.PlaylistRow
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.setup.artist.ResponseArtist
 import com.poulastaa.data.model.spotify.ResponseSong
+import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
+import com.poulastaa.utils.Constants.ARTIST_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.BASE_URL
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.MASTER_PLAYLIST_ROOT_DIR
@@ -29,39 +32,15 @@ fun Song.toResponseSong(): ResponseSong = ResponseSong(
     date = this.date
 )
 
-fun <T> Iterable<T>.toResponseSongList(): List<ResponseSong> {
-    val list = ArrayList<ResponseSong>()
-    this.forEach {
-        it as Song
-        list.add(it.toResponseSong())
-    }
-    return list
+fun Iterable<Song>.toResponseSongList() = this.map {
+    it.toResponseSong()
 }
 
-fun <T> Iterable<T>.toSongIdList(): List<Long> {
-    val list = ArrayList<Long>()
-
-    this.forEach {
-        it as Song
-        list.add(it.id.value)
-    }
-
-    return list
-}
-
-fun <T> List<T>.toListOfPlaylistRow(id: String): List<PlaylistRow> {
-    val list = ArrayList<PlaylistRow>()
-    this.forEach {
-        it as Long
-        list.add(
-            PlaylistRow(
-                songId = it,
-                userId = id
-            )
-        )
-    }
-
-    return list
+fun List<Long>.toListOfPlaylistRow(id: String) = this.map {
+    PlaylistRow(
+        songId = it,
+        userId = id
+    )
 }
 
 
@@ -113,3 +92,45 @@ fun Any.toUser(userType: UserType) = when (userType) {
         )
     }
 }
+
+/**
+ * adding _ on blank for easier req handling
+ *   must be removed on [Endpoints.GetArtistImageUrl.route]
+ */
+fun Iterable<Artist>.toResponseArtist() = this.map {
+    ResponseArtist(
+        id = it.id.value,
+        name = it.name,
+        imageUrl = ResponseArtist.getArtistImageUrl(
+            it.profilePicUrl
+                .replace(ARTIST_IMAGE_ROOT_DIR, "")
+                .removeSuffix("/")
+                .replace(" ", "_")
+        )
+    )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

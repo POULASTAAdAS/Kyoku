@@ -1,4 +1,4 @@
-package com.poulastaa.data.repository.genre
+package com.poulastaa.domain.repository.genre
 
 import com.poulastaa.data.model.UserTypeHelper
 import com.poulastaa.data.model.setup.genre.StoreGenreResponse

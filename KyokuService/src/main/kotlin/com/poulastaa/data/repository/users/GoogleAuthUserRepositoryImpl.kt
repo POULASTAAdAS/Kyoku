@@ -1,10 +1,13 @@
 package com.poulastaa.data.repository.users
 
+import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.repository.users.GoogleAuthUserRepository
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.toUser
 
 class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
     private suspend fun findUser(sub: String) = dbQuery {
@@ -27,4 +30,6 @@ class GoogleAuthUserRepositoryImpl : GoogleAuthUserRepository {
     }
 
     override suspend fun getCountryId(sub: String): Int? = findUser(sub)?.countryId
+
+    override suspend fun getUser(sub: String): User? = findUser(sub)?.toUser(UserType.GOOGLE_USER)
 }

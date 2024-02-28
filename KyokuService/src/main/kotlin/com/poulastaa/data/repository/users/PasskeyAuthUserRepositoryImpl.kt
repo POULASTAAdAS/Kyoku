@@ -1,20 +1,23 @@
 package com.poulastaa.data.repository.users
 
+import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
 import com.poulastaa.domain.repository.users.PasskeyAuthUserRepository
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.toUser
 
-class PasskeyAuthUserRepositoryImpl: PasskeyAuthUserRepository {
-    private suspend fun findUser(email: String) = dbQuery {
+class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
+    private suspend fun findUser(userId: String) = dbQuery {
         PasskeyAuthUser.find {
-            PasskeyAuthUserTable.email eq email
+            PasskeyAuthUserTable.userId eq userId
         }.firstOrNull()
     }
 
-    override suspend fun updateBDate(date: Long, email: String): SetBDateResponseStatus {
-        val user = findUser(email) ?: return SetBDateResponseStatus.FAILURE
+    override suspend fun updateBDate(date: Long, userId: String): SetBDateResponseStatus {
+        val user = findUser(userId) ?: return SetBDateResponseStatus.FAILURE
 
         return try {
             dbQuery {
@@ -26,5 +29,7 @@ class PasskeyAuthUserRepositoryImpl: PasskeyAuthUserRepository {
         }
     }
 
-    override suspend fun getCountryId(email: String): Int? = findUser(email)?.countryId
+    override suspend fun getCountryId(userId: String): Int? = findUser(userId)?.countryId
+
+    override suspend fun getUser(userId: String): User? = findUser(userId)?.toUser(UserType.PASSKEY_USER)
 }

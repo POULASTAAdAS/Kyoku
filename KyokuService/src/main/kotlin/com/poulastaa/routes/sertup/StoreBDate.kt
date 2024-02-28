@@ -28,32 +28,26 @@ fun Route.storeBDate(
                     status = HttpStatusCode.OK
                 )
 
-                val user = getUserType() ?: return@post call.respond(
+                val helper = getUserType() ?: return@post call.respond(
                     message = SetBDateResponse(
                         status = SetBDateResponseStatus.FAILURE
                     ),
                     status = HttpStatusCode.OK
                 )
 
-                val response = when (user.userType) {
+                val response = when (helper.userType) {
                     UserType.GOOGLE_USER -> {
-                        service.storeBDate(req.date, user.userType, user.id)
+                        service.storeBDate(req.date, helper)
                     }
 
                     UserType.EMAIL_USER -> {
-                        service.storeBDate(req.date, user.userType, user.id)
+                        service.storeBDate(req.date, helper)
                     }
 
                     UserType.PASSKEY_USER -> {
                         service.storeBDate(
                             date = req.date,
-                            userType = user.userType,
-                            id = req.email ?: return@post call.respond(
-                                message = SetBDateResponse(
-                                    status = SetBDateResponseStatus.FAILURE
-                                ),
-                                status = HttpStatusCode.OK
-                            )
+                            helper = helper
                         )
                     }
                 }

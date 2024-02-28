@@ -8,6 +8,6 @@ import org.jetbrains.exposed.dao.id.EntityID
 class GoogleUserArtistRelation(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<GoogleUserArtistRelation>(GoogleUserArtistRelationTable)
 
-    var artistId by GoogleUserArtistRelationTable.userId
+    var artistId by GoogleUserArtistRelationTable.artistId
     var userId by GoogleUserArtistRelationTable.userId
 }
