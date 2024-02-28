@@ -9,6 +9,9 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistReq
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistResponse
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.UiArtist
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
@@ -147,11 +150,8 @@ fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
     val map = HashMap<String, ArrayList<SongInfo>>()
 
     this.forEach {
-        if (!map.containsKey(it.song.name)) {
-            map[it.song.name] = arrayListOf(it.song.song)
-        } else if (map.containsKey(it.song.name)) {
-            map[it.song.name]?.add(it.song.song)
-        }
+        if (!map.containsKey(it.song.name)) map[it.song.name] = arrayListOf(it.song.song)
+        else if (map.containsKey(it.song.name)) map[it.song.name]?.add(it.song.song)
     }
 
     map.forEach {
@@ -167,24 +167,45 @@ fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
 }
 
 
-fun SuggestGenreResponse.toUiGenre(): List<UiGenre> = this.genreList.map {
+fun SuggestGenreResponse.toUiGenreList(): List<UiGenre> = this.genreList.map {
     UiGenre(
         name = it,
         isSelected = false
     )
 }
 
-fun Iterable<UiGenre>.toAlreadySendGenreList(): List<String> = this.map { it.name }
-
-fun Iterable<UiGenre>.toGenreNameList(): List<String> {
-    return this.mapNotNull {
-        if (it.isSelected) it.name else null
-    }
+fun Iterable<UiGenre>.toGenreNameList(): List<String> = this.mapNotNull {
+    if (it.isSelected) it.name else null
 }
 
 fun List<String>.toStoreGenreReq() = StoreGenreReq(
     data = this
 )
+
+fun Iterable<UiGenre>.toAlreadySendGenreList(): List<String> = this.map { it.name }
+
+
+fun SuggestArtistResponse.toUiArtistList() = this.artistList.map {
+    UiArtist(
+        name = it.name,
+        profileUrl = it.imageUrl,
+        isSelected = false
+    )
+}
+
+fun Iterable<UiArtist>.toAlreadySendArtistList() = this.map {
+    it.name
+}
+
+
+fun Iterable<UiArtist>.toArtistNameList() = this.mapNotNull {
+    if (it.isSelected) it.name else null
+}
+
+fun List<String>.toStoreArtistReq() = StoreArtistReq(
+    data = this
+)
+
 
 
 

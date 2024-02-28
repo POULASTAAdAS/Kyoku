@@ -4,6 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SetBDateReq(
-    val date: Long,
-    val email: String
+    val date: Long
 )

@@ -22,8 +22,6 @@ class StartViewModel @Inject constructor(
     val keepSplashOn get() = _keepSplashOn.asStateFlow()
 
     init { // read sign in state
-//        _startDestination.value = Screens.SuggestGenre.route
-
         viewModelScope.launch {
             dataStore.readSignedInState().collect {
                 when (it) {
@@ -32,11 +30,12 @@ class StartViewModel @Inject constructor(
                     SignInStatus.B_DATE_SET.name -> _startDestination.value = Screens.SetBirthDate.route
                     SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
                     SignInStatus.GENRE_SET.name  -> _startDestination.value = Screens.SuggestGenre.route
-                    SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SelectArtist.route
+                    SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SuggestArtist.route
+                    SignInStatus.HOME.name -> _startDestination.value = Screens.Home.route
                 }
 
             _keepSplashOn.value = false
-        }
+            }
         }
     }
 }

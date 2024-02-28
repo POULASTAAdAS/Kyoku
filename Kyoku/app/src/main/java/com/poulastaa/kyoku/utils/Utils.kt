@@ -68,6 +68,5 @@ fun Long.toDate(): BDateFroMaterHelper {
 }
 
 fun Long.toSetBDateReq(email: String) = SetBDateReq(
-    date = this,
-    email = email
+    date = this
 )

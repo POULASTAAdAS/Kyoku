@@ -18,7 +18,7 @@ import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toAlreadySendGenreList
 import com.poulastaa.kyoku.utils.toGenreNameList
 import com.poulastaa.kyoku.utils.toStoreGenreReq
-import com.poulastaa.kyoku.utils.toUiGenre
+import com.poulastaa.kyoku.utils.toUiGenreList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -75,7 +75,7 @@ class SuggestGenreViewModel @Inject constructor(
                 state = when (response.status) {
                     GenreResponseStatus.SUCCESS -> {
                         state.copy(
-                            data = response.toUiGenre(),
+                            data = response.toUiGenreList(),
                             isFirstApiCall = false
                         )
                     }
@@ -182,7 +182,7 @@ class SuggestGenreViewModel @Inject constructor(
 
         when (response.status) {
             GenreResponseStatus.SUCCESS -> {
-                val newList = response.toUiGenre()
+                val newList = response.toUiGenreList()
 
                 state = if (newList.isNotEmpty()) {
                     val data = state.data.toMutableList()

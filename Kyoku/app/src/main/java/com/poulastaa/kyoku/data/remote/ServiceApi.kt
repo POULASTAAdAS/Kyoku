@@ -3,6 +3,10 @@ package com.poulastaa.kyoku.data.remote
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyPlaylistResponse
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistReq
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistResponse
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistReq
+import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
@@ -31,4 +35,14 @@ interface ServiceApi {
     suspend fun storeGenre(
         @Body request: StoreGenreReq
     ): StoreGenreResponse
+
+    @POST("/api/authorised/suggestArtist")
+    suspend fun suggestArtist(
+        @Body request: SuggestArtistReq
+    ): SuggestArtistResponse
+
+    @POST("/api/authorised/storeArtist")
+    suspend fun storeArtist(
+        @Body request: StoreArtistReq
+    ): StoreArtistResponse
 }

@@ -7,4 +7,5 @@ enum class SignInStatus {
     B_DATE_SET,
     GENRE_SET,
     ARTIST_SET,
+    HOME
 }
