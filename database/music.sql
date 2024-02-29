@@ -21,6 +21,8 @@ create table song(
 
 SET SQL_SAFE_UPDATES = 0;
 
+
+
 create table Country(
 id int primary key auto_increment,
 name varchar(200) not null unique
@@ -81,11 +83,7 @@ select * from CountryGenreRelation;
 select * from CountryGenreRelation where countryId = 1;
 
 
-
-
-
-
-
+select * from playlist;
 
 
 
@@ -135,8 +133,7 @@ insert into playlistrelation values
 (7 , 2 , 423),
 (8 ,2 , 123),
 (9 , 2, 23);
- 
-drop table playlistrelation;
+
  
 select playlist.name from playlist;
  

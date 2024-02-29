@@ -21,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
@@ -102,15 +100,7 @@ fun SpotifyPlaylistScreenContent(
             onPlaylistClick = onPlaylistClick
         )
 
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        EndPart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.8f),
-            onClick = onSkipClick
-        )
     }
 }
 
@@ -243,29 +233,6 @@ fun MidPart(
         }
     }
 }
-
-@Composable
-fun EndPart(
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.End
-    ) {
-        Button(
-            onClick = onClick,
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(4.dp),
-                text = "skip",
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable

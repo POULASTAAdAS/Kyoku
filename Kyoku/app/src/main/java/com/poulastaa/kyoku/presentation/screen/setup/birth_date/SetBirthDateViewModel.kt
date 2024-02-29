@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.setup.birth_date
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,7 +23,6 @@ import com.poulastaa.kyoku.utils.toSetBDateReq
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -60,6 +60,10 @@ class SetBirthDateViewModel @Inject constructor(
 
     fun onEvent(event: SetBirthDateUiEvent) {
         when (event) {
+            SetBirthDateUiEvent.OnBackClick -> {
+                storeSignInState(SignInStatus.NEW_USER, ds)
+            }
+
             is SetBirthDateUiEvent.OnDateSelected -> {
                 state = if (event.date.length > 3) {
                     val date = event.date.toLong().toDate() // todo error if only year selected
@@ -136,9 +140,7 @@ class SetBirthDateViewModel @Inject constructor(
 
     private fun sendBDateToServer() {
         viewModelScope.launch(Dispatchers.IO) {
-            val email = ds.readEmail().first()
-
-            makeApiCall(bDateAsLong!!.toSetBDateReq(email))
+            makeApiCall(bDateAsLong!!.toSetBDateReq())
         }
     }
 

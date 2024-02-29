@@ -9,6 +9,7 @@ import java.util.*
 class GoogleUserPlaylist(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<GoogleUserPlaylist>(GoogleUserPlaylistTable)
 
+    var playlistId by GoogleUserPlaylistTable.playlistId
     var songId by GoogleUserPlaylistTable.songId
-    var userId by GoogleUserPlaylistTable.sub
+    var userId by GoogleUserPlaylistTable.userId
 }

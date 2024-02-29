@@ -3,7 +3,7 @@ package com.poulastaa.routes.sertup
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.utils.Constants
+import com.poulastaa.utils.Constants.SECURITY_LIST
 import com.poulastaa.utils.getUserType
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -22,7 +22,7 @@ import kotlinx.serialization.json.jsonPrimitive
 fun Route.getSpotifyPlaylist(
     userService: UserServiceRepository
 ) {
-    authenticate(configurations = Constants.SECURITY_LIST) {
+    authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.GetSpotifyPlaylistSong.route) {
             post {
                 val user = getUserType() ?: return@post call.respond(

@@ -7,13 +7,10 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
-import com.poulastaa.kyoku.utils.Constants.SERVICE_BASE_URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.net.CookieManager
-import java.net.URI
 
 fun ViewModel.storeCookieOrAccessToken(data: String, ds: DataStoreOperation) {
     viewModelScope.launch(Dispatchers.IO) {
@@ -70,34 +67,28 @@ fun ViewModel.storeAuthType(data: AuthType, ds: DataStoreOperation) {
     }
 }
 
-
-fun setCookie(cm: CookieManager, cookie: String) {
-    cm.put(
-        URI.create(SERVICE_BASE_URL),
-        mapOf("Set-Cookie" to listOf(cookie))
-    )
-}
-
-fun ViewModel.insertIntoPlaylist(db: DatabaseRepositoryImpl, data: List<ResponseSong>) {
+fun ViewModel.insertIntoPlaylist(
+    db: DatabaseRepositoryImpl,
+    data: List<ResponseSong>,
+    playlistName: String
+) {
     viewModelScope.launch(Dispatchers.IO) {
         withContext(Dispatchers.IO) {
-            val songId = ArrayList<Long>()
-            async {
-                data.toListOfSongTable().forEach {
-                    songId.add(db.insertSong(it)) // collecting songIds
+            val songIdList = async {
+                data.toListOfSongTable().map {
+                    db.insertSong(it)
                 }
             }.await()
 
-            val name = generatePlaylistName()
 
             val playlistId = async {
-                db.insertSongIntoPlaylist(toPlaylistTable(name))
+                db.insertPlaylist(playlistName)
             }.await()
 
             async {
-                songId.forEach {
-                    db.insertDataIntoPlaylistRelationTable(
-                        playlistRelationTable(
+                songIdList.forEach {
+                    db.insertSongPlaylistRelation(
+                        data = playlistRelationTable(
                             songId = it,
                             playlistId = playlistId
                         )

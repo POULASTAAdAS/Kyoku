@@ -1,6 +1,7 @@
 package com.poulastaa.data.model
 
 data class CreatePlaylistHelper(
-    val user: UserTypeHelper,
-    val listOfSongId: List<Long>
+    val typeHelper: UserTypeHelper,
+    val listOfSongId: List<Long>,
+    val playlistName:String
 )

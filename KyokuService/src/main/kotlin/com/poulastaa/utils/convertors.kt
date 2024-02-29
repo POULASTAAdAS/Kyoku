@@ -36,7 +36,7 @@ fun Iterable<Song>.toResponseSongList() = this.map {
     it.toResponseSong()
 }
 
-fun List<Long>.toListOfPlaylistRow(id: String) = this.map {
+fun List<Long>.toListOfPlaylistRow(id: Long) = this.map {
     PlaylistRow(
         songId = it,
         userId = id

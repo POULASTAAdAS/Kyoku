@@ -5,6 +5,7 @@ import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 
 object EmailUserPlaylistTable : UUIDTable() {
+    val playlistId = long("playlistId").references(PlaylistTable.id)
     val songId = long("songId").references(SongTable.id)
-    val userEmail = varchar("emailId", 320).references(EmailAuthUserTable.email)
+    val userId = long("userId").references(EmailAuthUserTable.id)
 }

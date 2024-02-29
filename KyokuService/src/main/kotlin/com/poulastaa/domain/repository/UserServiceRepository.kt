@@ -13,7 +13,7 @@ import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
 
 interface UserServiceRepository {
-    suspend fun getFoundSpotifySongs(json: String, user: UserTypeHelper): SpotifyPlaylistResponse
+    suspend fun getFoundSpotifySongs(json: String, helper: UserTypeHelper): SpotifyPlaylistResponse
 
     suspend fun storeBDate(date: Long, helper: UserTypeHelper): SetBDateResponse
 

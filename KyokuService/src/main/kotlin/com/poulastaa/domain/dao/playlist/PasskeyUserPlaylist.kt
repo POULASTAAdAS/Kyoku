@@ -9,6 +9,7 @@ import java.util.*
 class PasskeyUserPlaylist(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<PasskeyUserPlaylist>(PasskeyUserPlaylistTable)
 
+    var playlistId by PasskeyUserPlaylistTable.playlistId
     var songId by PasskeyUserPlaylistTable.songId
     var userId by PasskeyUserPlaylistTable.userId
 }

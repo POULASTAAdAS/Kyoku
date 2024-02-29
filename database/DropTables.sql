@@ -14,6 +14,8 @@ drop table PasskeyUserArtistRelation;
 drop table invalidrefreshToken;
 drop table sessionStorage;
 
+drop table playlist;
+
 drop table emailAuthUser;
 drop table googleAuthUser;
 drop table passkeyAuthUser;

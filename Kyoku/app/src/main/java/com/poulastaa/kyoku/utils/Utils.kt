@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Base64
-import kotlin.random.Random
 
 fun Char.isUserName(): Boolean =
     if (this == '_') true
@@ -24,8 +23,6 @@ fun String.validateSpotifyLink(): Boolean {
 
 fun String.toSpotifyPlaylistId(): String =
     this.removePrefix("https://open.spotify.com/playlist/").split("?si=")[0]
-
-fun generatePlaylistName(): String = "Playlist #${Random.nextLong(1, 10_000)}"
 
 fun Long.toDate(): BDateFroMaterHelper {
     val bDate = BDateFroMaterHelper(
@@ -67,6 +64,6 @@ fun Long.toDate(): BDateFroMaterHelper {
     }
 }
 
-fun Long.toSetBDateReq(email: String) = SetBDateReq(
+fun Long.toSetBDateReq() = SetBDateReq(
     date = this
 )

@@ -1,6 +1,14 @@
 package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -9,12 +17,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
@@ -22,7 +34,7 @@ import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyP
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpotifyPlaylistScreen(
-    viewModel: SpotifyPlaylistViewModel = hiltViewModel(),
+    viewModel: SpotifyPlaylistViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -60,6 +72,40 @@ fun SpotifyPlaylistScreen(
                     titleContentColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = viewModel.state.canSkip,
+                exit = fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = FastOutSlowInEasing
+                    )
+                ) + slideOutHorizontally(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = FastOutSlowInEasing
+                    ),
+                    targetOffsetX = { it / 2 }
+                )
+            ) {
+                val temp = remember {
+                    viewModel.state.canSkip
+                }
+
+                if (temp)
+                    Button(
+                        modifier = Modifier.padding(16.dp),
+                        onClick = { },
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = "skip",
+                            textAlign = TextAlign.Center
+                        )
+                    }
+            }
         }
     ) { paddingValues ->
         SpotifyPlaylistScreenContent(

@@ -33,39 +33,11 @@ class UserServiceRepositoryImpl(
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
-        user: UserTypeHelper
+        helper: UserTypeHelper
     ): SpotifyPlaylistResponse {
-        val list = ArrayList<SpotifySong>()
+        val list = extractSpotifySong(json)
 
-        try {
-            val jsonElement = Json.parseToJsonElement(json)
-
-            val itemsArray = jsonElement.jsonObject["items"]?.jsonArray
-
-            itemsArray?.forEach { item ->
-                val trackJson = item?.jsonObject?.get("track") // some items don't exist this check is important
-
-                if (trackJson != null && trackJson is JsonObject) {
-                    val spotifySong = SpotifySong()
-
-                    item.jsonObject["track"]?.jsonObject?.get("name")
-                        ?.jsonPrimitive?.contentOrNull?.let { name ->
-                            if (name.isNotBlank())
-                                spotifySong.title = name.removeAlbum()
-                        }
-
-                    item.jsonObject["track"]?.jsonObject?.get("album")
-                        ?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull?.let {
-                            if (it.isNotBlank())
-                                spotifySong.album = it.getAlbum()
-                        }
-
-                    if (spotifySong.album != null || spotifySong.title != null)
-                        list.add(spotifySong)
-                }
-            }
-        } catch (_: Exception) {
-        }
+        if (list.isEmpty()) return SpotifyPlaylistResponse()
 
         val result = song.handleSpotifyPlaylist(list)
 
@@ -77,14 +49,23 @@ class UserServiceRepositoryImpl(
 
                 // send to make playlist of found song for this user
                 CoroutineScope(Dispatchers.IO).launch {
-                    createPlaylist(
-                        helper = CreatePlaylistHelper(
-                            user = user,
-                            listOfSongId = result.songIdList
+                    val user = dbUsers.gerDbUser(userTypeHelper = helper)
+
+                    if (user != null) {
+                        createPlaylist(
+                            playlistHelper = CreatePlaylistHelper(
+                                typeHelper = UserTypeHelper(
+                                    userType = helper.userType,
+                                    id = user.id.toString()
+                                ),
+                                listOfSongId = result.songIdList,
+                                playlistName = result.spotifyPlaylistResponse.name
+                            ),
                         )
-                    )
+                    }
                 }
-                result.spotifyPlaylistResponse // send response data
+
+                result.spotifyPlaylistResponse // send response data back
             }
 
             HandleSpotifyPlaylistStatus.FAILURE -> result.spotifyPlaylistResponse
@@ -131,21 +112,29 @@ class UserServiceRepositoryImpl(
         )
     }
 
-    private suspend fun createPlaylist(helper: CreatePlaylistHelper) {
-        when (helper.user.userType) {
+    private suspend fun createPlaylist(
+        playlistHelper: CreatePlaylistHelper
+    ) {
+        when (playlistHelper.typeHelper.userType) {
             UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
-                helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+                playlist = playlistHelper
+                    .listOfSongId
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                playlistName = playlistHelper.playlistName
             )
 
-
-            UserType.GOOGLE_USER ->
-                playlist.cretePlaylistForGoogleUser(
-                    helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
-                )
-
+            UserType.GOOGLE_USER -> playlist.cretePlaylistForGoogleUser(
+                playlist = playlistHelper
+                    .listOfSongId
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                playlistName = playlistHelper.playlistName
+            )
 
             UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
-                helper.listOfSongId.toListOfPlaylistRow(helper.user.id)
+                playlist = playlistHelper
+                    .listOfSongId
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                playlistName = playlistHelper.playlistName
             )
         }
     }
@@ -176,5 +165,41 @@ class UserServiceRepositoryImpl(
             ),
             artistNameList = req.data
         )
+    }
+
+    private fun extractSpotifySong(json: String): List<SpotifySong> {
+        val list = ArrayList<SpotifySong>()
+
+        return try {
+            val jsonElement = Json.parseToJsonElement(json)
+
+            val itemsArray = jsonElement.jsonObject["items"]?.jsonArray
+
+            itemsArray?.forEach { item ->
+                val trackJson = item?.jsonObject?.get("track") // some items don't exist this check is important
+
+                if (trackJson != null && trackJson is JsonObject) {
+                    val spotifySong = SpotifySong()
+
+                    item.jsonObject["track"]?.jsonObject?.get("name")
+                        ?.jsonPrimitive?.contentOrNull?.let { name ->
+                            if (name.isNotBlank())
+                                spotifySong.title = name.removeAlbum()
+                        }
+
+                    item.jsonObject["track"]?.jsonObject?.get("album")
+                        ?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull?.let {
+                            if (it.isNotBlank())
+                                spotifySong.album = it.getAlbum()
+                        }
+
+                    if (spotifySong.album != null || spotifySong.title != null)
+                        list.add(spotifySong)
+                }
+            }
+            list
+        } catch (_: Exception) {
+            emptyList()
+        }
     }
 }

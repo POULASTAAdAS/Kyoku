@@ -8,6 +8,7 @@ import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.toResponseSongList
 import io.ktor.util.collections.*
 import org.jetbrains.exposed.sql.and
+import kotlin.random.Random
 
 class SongRepositoryImpl : SongRepository {
     override suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist {
@@ -37,6 +38,7 @@ class SongRepositoryImpl : SongRepository {
                 status = HandleSpotifyPlaylistStatus.SUCCESS,
                 spotifyPlaylistResponse = SpotifyPlaylistResponse(
                     status = HandleSpotifyPlaylistStatus.SUCCESS,
+                    name = "Playlist #${Random.nextInt(1000,99999)}",
                     listOfResponseSong = hasMapOfFoundSongs.values.toResponseSongList()
                 ),
                 spotifySongDownloaderApiReq = SpotifySongDownloaderApiReq(

@@ -12,4 +12,5 @@ data class GetSpotifyPlaylistUiState(
     val isMakingApiCall: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val listOfPlaylist: List<UiPlaylist> = emptyList(),
+    val canSkip: Boolean = true
 )

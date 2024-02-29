@@ -94,17 +94,13 @@ class SpotifyPlaylistViewModel @Inject constructor(
         }
     }
 
-    init {
-        readAccessToken()
-        readAuthType()
-        loadPlaylist()
-    }
 
     private fun loadPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             db.getAllPlaylist().collect {
                 state = state.copy(
-                    listOfPlaylist = it.toListOfUiPlaylist()
+                    listOfPlaylist = it.toListOfUiPlaylist(),
+                    canSkip = it.isEmpty()
                 )
             }
         }
@@ -115,6 +111,14 @@ class SpotifyPlaylistViewModel @Inject constructor(
 
     var state by mutableStateOf(GetSpotifyPlaylistUiState())
         private set
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            readAccessToken()
+            readAuthType()
+            loadPlaylist()
+        }
+    }
 
     fun onEvent(event: GetSpotifyPlaylistUiEvent) {
         when (event) {
@@ -154,12 +158,11 @@ class SpotifyPlaylistViewModel @Inject constructor(
             }
 
             GetSpotifyPlaylistUiEvent.OnContinueClick -> {
-                if (state.listOfPlaylist.isEmpty()) storeSignInState(SignInStatus.B_DATE_SET,ds)
-                else storeSignInState(SignInStatus.OLD_USER, ds)
+                storeSignInState(SignInStatus.B_DATE_SET, ds)
             }
 
             GetSpotifyPlaylistUiEvent.OnSkipClick -> {
-                storeSignInState(SignInStatus.B_DATE_SET,ds)
+                storeSignInState(SignInStatus.B_DATE_SET, ds)
             }
 
             is GetSpotifyPlaylistUiEvent.EmitToast -> {
@@ -177,17 +180,20 @@ class SpotifyPlaylistViewModel @Inject constructor(
     private fun makeApiCall() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = service.getSpotifyPlaylist(
-                playlistId = state.link.toSpotifyPlaylistId(),
+                playlistId = state.link.toSpotifyPlaylistId()
             )
 
             when (response.status) {
                 HandleSpotifyPlaylistStatus.SUCCESS -> {
                     state = GetSpotifyPlaylistUiState(
-                        listOfPlaylist = state.listOfPlaylist,
                         isFirstPlaylist = false
                     )
 
-                    insertIntoPlaylist(db, response.listOfResponseSong)
+                    insertIntoPlaylist(
+                        db = db,
+                        data = response.listOfResponseSong,
+                        playlistName = response.name
+                    )
                 }
 
                 HandleSpotifyPlaylistStatus.FAILURE -> {

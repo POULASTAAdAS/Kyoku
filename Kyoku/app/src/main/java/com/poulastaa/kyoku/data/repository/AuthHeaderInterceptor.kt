@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenResponse
@@ -71,8 +70,6 @@ class AuthHeaderInterceptor @Inject constructor(
         val tokenOrCookie = runBlocking(Dispatchers.IO) {
             ds.readTokenOrCookie().first()
         }
-
-        Log.d("cookie" , tokenOrCookie)
 
         val newReq = oldReq.newBuilder()
             .header(

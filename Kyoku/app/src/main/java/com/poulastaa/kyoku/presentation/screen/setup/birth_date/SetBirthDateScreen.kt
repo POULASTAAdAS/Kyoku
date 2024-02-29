@@ -5,21 +5,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,59 +68,94 @@ fun SetBirthDateScreen(
         }
     }
 
-    Column(
+    Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(
+                        modifier = Modifier.padding(
+                            start = 8.dp
+                        ),
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            viewModel.onEvent(SetBirthDateUiEvent.OnBackClick)
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.surface
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }
     ) {
-        Text(
-            text = "Select Your Birth Date",
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        OutlinedTextField(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    onClick = {
-                        viewModel.onEvent(SetBirthDateUiEvent.OnDateSelectorClicked)
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    },
-                    indication = null,
-                    interactionSource = MutableInteractionSource()
+                .fillMaxSize()
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = it.calculateTopPadding(),
+                    bottom = it.calculateBottomPadding()
                 ),
-            value = viewModel.state.bDate,
-            onValueChange = {},
-            enabled = false,
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledContainerColor = Color.Transparent,
-                disabledTextColor = MaterialTheme.colorScheme.primary,
-                disabledLabelColor = MaterialTheme.colorScheme.primary,
-                disabledBorderColor = MaterialTheme.colorScheme.primary
-            ),
-            label = {
-                Text(text = "day/month/year")
-            }
-        )
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Select Your Birth Date",
+                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-        CustomOkButton(
-            text = "Continue",
-            modifier = Modifier.fillMaxWidth(),
-            loading = viewModel.state.isLoading,
-            shape = RoundedCornerShape(8.dp),
-            onClick = {
-                viewModel.onEvent(SetBirthDateUiEvent.OnContinueClick)
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            }
-        )
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(
+                        onClick = {
+                            viewModel.onEvent(SetBirthDateUiEvent.OnDateSelectorClicked)
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        },
+                        indication = null,
+                        interactionSource = MutableInteractionSource()
+                    ),
+                value = viewModel.state.bDate,
+                onValueChange = {},
+                enabled = false,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledContainerColor = Color.Transparent,
+                    disabledTextColor = MaterialTheme.colorScheme.primary,
+                    disabledLabelColor = MaterialTheme.colorScheme.primary,
+                    disabledBorderColor = MaterialTheme.colorScheme.primary
+                ),
+                label = {
+                    Text(text = "day/month/year")
+                }
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            CustomOkButton(
+                text = "Continue",
+                modifier = Modifier.fillMaxWidth(),
+                loading = viewModel.state.isLoading,
+                shape = RoundedCornerShape(8.dp),
+                onClick = {
+                    viewModel.onEvent(SetBirthDateUiEvent.OnContinueClick)
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            )
+        }
     }
 
 
@@ -128,7 +169,7 @@ fun SetBirthDateScreen(
                     onClick = {
                         viewModel.onEvent(
                             SetBirthDateUiEvent.OnDateSelected(
-                                date = datePicker.selectedDateMillis.toString()
+                                date = if (datePicker.selectedDateMillis != null) datePicker.selectedDateMillis.toString() else ""
                             )
                         )
                     }
@@ -149,9 +190,12 @@ fun SetBirthDateScreen(
             DatePicker(
                 state = datePicker,
                 title = {
-                    Text(text = "Select Your B'Date")
-                },
-                modifier = Modifier.padding(PaddingValues(start = 24.dp, end = 12.dp, top = 16.dp))
+                    Text(
+                        text = "Select Your B'Date",
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
+                    )
+                }
             )
         }
     }

@@ -9,6 +9,7 @@ import java.util.*
 class EmailUserPlaylist(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<EmailUserPlaylist>(EmailUserPlaylistTable)
 
+    var playlistId by EmailUserPlaylistTable.playlistId
     var songId by EmailUserPlaylistTable.songId
-    var userEmail by EmailUserPlaylistTable.userEmail
+    var userId by EmailUserPlaylistTable.userId
 }
