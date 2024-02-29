@@ -85,7 +85,7 @@ select * from CountryGenreRelation where countryId = 1;
 
 select * from playlist;
 
-
+delete passkeyauthuser from passkeyauthuser where id = 1;
 
 
 

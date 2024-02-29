@@ -14,7 +14,6 @@ import com.poulastaa.utils.constructProfileUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.exposed.dao.id.EntityID
 import java.io.File
 import java.io.IOException
 
@@ -165,7 +164,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
 
             val isUsedToken = checkIfDuplicateToken(
                 token = oldRefreshToken,
-                userId = user.id
+                userId = user.id.value
             )
 
             if (isUsedToken) return RefreshTokenUpdateStatus.DUPLICATE_TOKEN
@@ -177,7 +176,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 InvalidRefreshToken.new {
                     this.token = oldRefreshToken
                     this.createTime = System.currentTimeMillis() + REFRESH_TOKEN_DEFAULT_TIME
-                    this.emailUserId = user.id
+                    this.userId = user.id.value
                 }
             }
 
@@ -193,10 +192,10 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         }.firstOrNull()
     }
 
-    private suspend fun checkIfDuplicateToken(token: String, userId: EntityID<Long>): Boolean {
+    private suspend fun checkIfDuplicateToken(token: String, userId: Long): Boolean {
         val entries = dbQuery {
             InvalidRefreshToken.find {
-                InvalidRefreshTokenTable.emailUserId eq userId
+                InvalidRefreshTokenTable.userId eq userId
             }.toList()
         }
 

@@ -1,11 +1,10 @@
 package com.poulastaa.data.model.db_table
 
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ReferenceOption
 
 object InvalidRefreshTokenTable : LongIdTable() {
-    val createTime: Column<Long> = long("createTime")
-    val oldRefreshToken: Column<String> = text("oldRefreshToken")
-    val emailUserId = reference("emailUserId", EmailAuthUserTable.id)
-
+    val createTime = long("createTime").default(System.currentTimeMillis())
+    val oldRefreshToken = text("oldRefreshToken")
+    val userId = long("userId").references(EmailAuthUserTable.id, onDelete = ReferenceOption.CASCADE)
 }
