@@ -1,7 +1,8 @@
 package com.poulastaa.data.repository.song
 
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.SongTable
-import com.poulastaa.data.model.spotify.*
+import com.poulastaa.data.model.setup.spotify.*
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery

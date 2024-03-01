@@ -1,4 +1,4 @@
-package com.poulastaa.data.model
+package com.poulastaa.data.model.utils
 
 data class CreatePlaylistHelper(
     val typeHelper: UserTypeHelper,

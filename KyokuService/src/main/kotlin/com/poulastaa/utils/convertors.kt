@@ -1,11 +1,11 @@
 package com.poulastaa.utils
 
-import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.PlaylistRow
-import com.poulastaa.data.model.User
-import com.poulastaa.data.model.UserType
-import com.poulastaa.data.model.setup.artist.ResponseArtist
-import com.poulastaa.data.model.spotify.ResponseSong
+import com.poulastaa.data.model.common.EndPoints
+import com.poulastaa.data.model.utils.PlaylistRow
+import com.poulastaa.data.model.utils.User
+import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.common.ResponseArtist
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.dao.user.EmailAuthUser

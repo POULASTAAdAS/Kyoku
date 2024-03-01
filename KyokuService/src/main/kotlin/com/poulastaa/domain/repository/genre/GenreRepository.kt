@@ -1,6 +1,6 @@
 package com.poulastaa.domain.repository.genre
 
-import com.poulastaa.data.model.UserTypeHelper
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse

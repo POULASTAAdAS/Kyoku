@@ -1,7 +1,7 @@
 package com.poulastaa.routes.sertup
 
-import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.common.EndPoints
+import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.setup.set_b_date.SetBDateReq
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus

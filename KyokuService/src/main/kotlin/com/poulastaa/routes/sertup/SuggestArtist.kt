@@ -1,6 +1,6 @@
 package com.poulastaa.routes.sertup
 
-import com.poulastaa.data.model.EndPoints
+import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
 import com.poulastaa.domain.repository.UserServiceRepository

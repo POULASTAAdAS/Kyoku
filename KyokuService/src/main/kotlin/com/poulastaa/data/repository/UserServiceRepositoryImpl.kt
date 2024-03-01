@@ -1,15 +1,15 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.CreatePlaylistHelper
-import com.poulastaa.data.model.DbUsers
-import com.poulastaa.data.model.UserType
-import com.poulastaa.data.model.UserTypeHelper
+import com.poulastaa.data.model.utils.CreatePlaylistHelper
+import com.poulastaa.data.model.utils.DbUsers
+import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
-import com.poulastaa.data.model.spotify.HandleSpotifyPlaylistStatus
-import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
-import com.poulastaa.data.model.spotify.SpotifySong
+import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylistStatus
+import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
+import com.poulastaa.data.model.setup.spotify.SpotifySong
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.domain.repository.genre.GenreRepository

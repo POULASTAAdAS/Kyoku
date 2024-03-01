@@ -1,4 +1,4 @@
-package com.poulastaa.data.model
+package com.poulastaa.data.model.utils
 
 import com.poulastaa.domain.repository.users.EmailAuthUserRepository
 import com.poulastaa.domain.repository.users.GoogleAuthUserRepository

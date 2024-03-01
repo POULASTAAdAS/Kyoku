@@ -1,5 +1,6 @@
 Insert into CountryGenreRelation (countryId, genreId) values
 (1, 9),
+(1, 4),
 (1, 85),
 (1, 89),
 (1, 61),
@@ -12,7 +13,6 @@ Insert into CountryGenreRelation (countryId, genreId) values
 (1, 5),
 (1, 6),
 (1, 7),
-(1, 8),
 (1, 11),
 (1, 17),
 (1, 23),

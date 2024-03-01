@@ -1,7 +1,7 @@
 package com.poulastaa.data.repository.users
 
-import com.poulastaa.data.model.User
-import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.utils.User
+import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 import com.poulastaa.domain.dao.user.GoogleAuthUser

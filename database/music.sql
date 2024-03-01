@@ -44,12 +44,22 @@ create table artist(
     points bigint not null default 0
 );
 
+create table SongArtistRelation(
+	id bigint primary key auto_increment,
+    songId bigInt,
+    artistId int,
+    foreign key (songId) references Song(id),
+    foreign key (artistId) references artist(id)
+);
+
+
 create table CountryGenreRelation(
 	id bigint not null primary key auto_increment,
     countryId int not null,
     genreId int not null,
     foreign key (countryId) references Country(id),
-    foreign key (genreId) references Genre(id)
+    foreign key (genreId) references Genre(id),
+    points bigint not null default 0
 );
 
 
@@ -72,20 +82,58 @@ select * from emailuserartistrelation;
 select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
-
 select * from genre;
+select * from genre where id in (4,5,6,9,40,87);
 select * from country;
 select * from artist;
 
 select * from artist where country = 1 order by points desc;
 
 select * from CountryGenreRelation;
-select * from CountryGenreRelation where countryId = 1;
-
+select * from genre where id in (select genreId from CountryGenreRelation where countryId = 1);
 
 select * from playlist;
 
-delete passkeyauthuser from passkeyauthuser where id = 1;
+
+select title , coverImage , artist , album from song where id in(
+	select songId from songartistrelation where artistId in (
+		select id from artist where id in (
+			select artistId from passkeyuserartistrelation where userId = 1
+        )
+    )
+) order by points desc limit 5;
+
+
+select title , coverImage , artist , album from song where id in(
+	select songId from songartistrelation where artistId in (
+		select artistId from passkeyuserartistrelation where userId = 1
+    )
+) order by points desc limit 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -104,8 +152,6 @@ delete passkeyauthuser from passkeyauthuser where id = 1;
 
 
 -- user
-
-
 create table playlist(
 id int primary key auto_increment,
 name varchar(20) unique
@@ -116,7 +162,6 @@ id int primary key auto_increment,
 playlistid int references playlist.id,
 songid bigint references song.id
 );
-
 
 
 insert into playlist values

@@ -1,6 +1,6 @@
 package com.poulastaa.domain.repository.users
 
-import com.poulastaa.data.model.User
+import com.poulastaa.data.model.utils.User
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponseStatus
 
 interface GoogleAuthUserRepository {

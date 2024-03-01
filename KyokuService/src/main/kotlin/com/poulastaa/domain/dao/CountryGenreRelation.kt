@@ -10,4 +10,5 @@ class CountryGenreRelation(id: EntityID<Long>) : LongEntity(id) {
 
     val countryId by CountryGenreRelationTable.countryId
     val genreId by CountryGenreRelationTable.genreId
+    var points by CountryGenreRelationTable.points
 }

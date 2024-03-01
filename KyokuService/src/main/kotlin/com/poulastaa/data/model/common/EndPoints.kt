@@ -1,4 +1,4 @@
-package com.poulastaa.data.model
+package com.poulastaa.data.model.common
 
 sealed class EndPoints(val route: String) {
     data object GetSpotifyPlaylistSong : EndPoints(route = "/api/authorised/spotifyPlaylist")
@@ -10,7 +10,9 @@ sealed class EndPoints(val route: String) {
 
     data object SuggestArtist : EndPoints(route = "/api/authorised/suggestArtist")
     data object GetArtistImageUrl : EndPoints(route = "/api/authorised/getArtistImage")
-    data object StoreArtist: EndPoints(route = "/api/authorised/storeArtist")
+    data object StoreArtist : EndPoints(route = "/api/authorised/storeArtist")
+
+    data object Home : EndPoints(route = "/api/authorised/home")
 
     data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
     data object PlaySongPlaylist : EndPoints(route = "/api/authorised/playSong/playlist")

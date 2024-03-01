@@ -1,6 +1,6 @@
 package com.poulastaa.routes.sertup
 
-import com.poulastaa.data.model.EndPoints
+import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.utils.Constants.ARTIST_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.server.application.*

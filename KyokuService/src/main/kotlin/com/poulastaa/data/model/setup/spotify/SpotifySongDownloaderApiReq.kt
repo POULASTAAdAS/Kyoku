@@ -1,4 +1,4 @@
-package com.poulastaa.data.model.spotify
+package com.poulastaa.data.model.setup.spotify
 
 import kotlinx.serialization.Serializable
 

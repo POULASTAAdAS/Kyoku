@@ -1,7 +1,7 @@
 package com.poulastaa.utils
 
-import com.poulastaa.data.model.UserTypeHelper
-import com.poulastaa.data.model.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.auth.GoogleUserSession
 import com.poulastaa.data.model.auth.PasskeyUserSession
 import io.ktor.server.application.*

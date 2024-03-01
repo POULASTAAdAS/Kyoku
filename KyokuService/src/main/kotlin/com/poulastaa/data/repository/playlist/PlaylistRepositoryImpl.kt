@@ -1,6 +1,6 @@
 package com.poulastaa.data.repository.playlist
 
-import com.poulastaa.data.model.PlaylistRow
+import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.domain.dao.playlist.EmailUserPlaylist
 import com.poulastaa.domain.dao.playlist.GoogleUserPlaylist
 import com.poulastaa.domain.dao.playlist.PasskeyUserPlaylist

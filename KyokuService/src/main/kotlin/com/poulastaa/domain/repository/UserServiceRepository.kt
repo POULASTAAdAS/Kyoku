@@ -1,6 +1,6 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.UserTypeHelper
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -10,7 +10,7 @@ import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
-import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
+import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
 
 interface UserServiceRepository {
     suspend fun getFoundSpotifySongs(json: String, helper: UserTypeHelper): SpotifyPlaylistResponse

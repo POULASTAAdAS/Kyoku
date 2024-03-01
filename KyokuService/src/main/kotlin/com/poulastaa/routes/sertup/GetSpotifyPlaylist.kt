@@ -1,7 +1,7 @@
 package com.poulastaa.routes.sertup
 
-import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.spotify.SpotifyPlaylistResponse
+import com.poulastaa.data.model.common.EndPoints
+import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import com.poulastaa.utils.getUserType

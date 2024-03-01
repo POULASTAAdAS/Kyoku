@@ -1,7 +1,5 @@
 package com.poulastaa.data.repository.genre
 
-import com.poulastaa.data.model.UserType
-import com.poulastaa.data.model.UserTypeHelper
 import com.poulastaa.data.model.db_table.CountryGenreRelationTable
 import com.poulastaa.data.model.db_table.GenreTable
 import com.poulastaa.data.model.db_table.user_genre.EmailUserGenreRelationTable
@@ -11,6 +9,8 @@ import com.poulastaa.data.model.setup.genre.GenreResponseStatus
 import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
+import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.CountryGenreRelation
 import com.poulastaa.domain.dao.Genre
 import com.poulastaa.domain.dao.user_genre.EmailUserGenreRelation
@@ -18,6 +18,10 @@ import com.poulastaa.domain.dao.user_genre.GoogleUserGenreRelation
 import com.poulastaa.domain.dao.user_genre.PasskeyUserGenreRelation
 import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.plugins.dbQuery
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 
 class GenreRepositoryImpl : GenreRepository {
@@ -35,9 +39,9 @@ class GenreRepositoryImpl : GenreRepository {
         val genreIdList = dbQuery {
             CountryGenreRelation.find {
                 CountryGenreRelationTable.countryId eq countryId
-            }.map { it.genreId }
+            }.orderBy(CountryGenreRelationTable.points to SortOrder.DESC)
+                .map { it.genreId }
         }
-
 
         val genreMap = dbQuery {
             Genre.find {
@@ -72,6 +76,8 @@ class GenreRepositoryImpl : GenreRepository {
 
             UserType.PASSKEY_USER -> genreIdList.storeGenreForPasskeyUser(id = helper.id.toLong())
         }
+
+        incrementGenrePoints(genreIdList)
 
         return StoreGenreResponse(
             status = GenreResponseStatus.SUCCESS
@@ -139,4 +145,24 @@ class GenreRepositoryImpl : GenreRepository {
             }
         }
     }
+
+
+    private fun incrementGenrePoints(idList: List<Int>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = dbQuery {
+                idList.mapNotNull {
+                    CountryGenreRelation.find {
+                        CountryGenreRelationTable.genreId eq it
+                    }.firstOrNull()
+                }
+            }
+
+            result.forEach {
+                dbQuery {
+                    it.points = ++it.points
+                }
+            }
+        }
+    }
+
 }

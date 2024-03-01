@@ -1,5 +1,6 @@
-package com.poulastaa.data.model.spotify
+package com.poulastaa.data.model.setup.spotify
 
+import com.poulastaa.data.model.common.ResponseSong
 import kotlinx.serialization.Serializable
 
 @Serializable

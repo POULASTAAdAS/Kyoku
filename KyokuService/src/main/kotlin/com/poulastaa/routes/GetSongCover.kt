@@ -1,6 +1,6 @@
 package com.poulastaa.routes
 
-import com.poulastaa.data.model.EndPoints
+import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.utils.Constants
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

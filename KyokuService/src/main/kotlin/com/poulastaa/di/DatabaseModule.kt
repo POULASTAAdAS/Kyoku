@@ -1,6 +1,6 @@
 package com.poulastaa.di
 
-import com.poulastaa.data.model.DbUsers
+import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.repository.UserServiceRepositoryImpl
 import com.poulastaa.data.repository.artist.ArtistRepositoryImpl
 import com.poulastaa.data.repository.genre.GenreRepositoryImpl

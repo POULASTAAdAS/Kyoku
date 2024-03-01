@@ -1,5 +1,6 @@
 package com.poulastaa.data.model.setup.artist
 
+import com.poulastaa.data.model.common.ResponseArtist
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,7 +1,7 @@
 package com.poulastaa.routes
 
-import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.UnAuthorisedResponse
+import com.poulastaa.data.model.common.EndPoints
+import com.poulastaa.data.model.auth.UnAuthorisedResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*

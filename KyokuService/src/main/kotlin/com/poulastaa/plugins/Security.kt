@@ -1,7 +1,7 @@
 package com.poulastaa.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.poulastaa.data.model.EndPoints
+import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.auth.GoogleUserSession
 import com.poulastaa.data.model.auth.PasskeyUserSession
 import com.poulastaa.domain.repository.jwt.JWTRepository

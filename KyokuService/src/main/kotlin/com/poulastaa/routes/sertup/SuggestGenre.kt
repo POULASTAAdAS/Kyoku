@@ -1,6 +1,6 @@
 package com.poulastaa.routes.sertup
 
-import com.poulastaa.data.model.EndPoints
+import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.setup.genre.GenreResponseStatus
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
