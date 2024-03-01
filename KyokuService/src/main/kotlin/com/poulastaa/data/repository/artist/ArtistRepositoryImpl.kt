@@ -202,6 +202,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             }
         }.orderBy(SongTable.points to SortOrder.DESC).limit(5).map {
             HomeResponseSong(
+                id = it.id.value.toString(),
                 title = it.title,
                 coverImage = it.coverImage.constructCoverPhotoUrl(),
                 artist = it.artist,

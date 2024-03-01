@@ -1,6 +1,7 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.data.model.home.HomeReq
+import com.poulastaa.data.model.home.HomeResponse
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -11,6 +12,7 @@ import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
+import com.poulastaa.data.model.utils.UserTypeHelper
 
 interface UserServiceRepository {
     suspend fun getFoundSpotifySongs(json: String, helper: UserTypeHelper): SpotifyPlaylistResponse
@@ -22,4 +24,6 @@ interface UserServiceRepository {
 
     suspend fun suggestArtist(req: SuggestArtistReq, helper: UserTypeHelper): SuggestArtistResponse
     suspend fun storeArtist(req: StoreArtistReq, helper: UserTypeHelper): StoreArtistResponse
+
+    suspend fun generateHomeResponse(req: HomeReq, helper: UserTypeHelper): HomeResponse
 }

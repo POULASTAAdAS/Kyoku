@@ -1,18 +1,21 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.utils.CreatePlaylistHelper
-import com.poulastaa.data.model.utils.DbUsers
-import com.poulastaa.data.model.utils.UserType
-import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.data.model.home.HomeReq
+import com.poulastaa.data.model.home.HomeResponse
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.setup.spotify.SpotifySong
+import com.poulastaa.data.model.utils.CreatePlaylistHelper
+import com.poulastaa.data.model.utils.DbUsers
+import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.domain.repository.genre.GenreRepository
+import com.poulastaa.domain.repository.home.HomeRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.utils.getAlbum
@@ -29,7 +32,8 @@ class UserServiceRepositoryImpl(
     private val playlist: PlaylistRepository,
     private val dbUsers: DbUsers,
     private val genre: GenreRepository,
-    private val artist: ArtistRepository
+    private val artist: ArtistRepository,
+    private val home: HomeRepository
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
@@ -164,6 +168,22 @@ class UserServiceRepositoryImpl(
                 id = user.id.toString()
             ),
             artistNameList = req.data
+        )
+    }
+
+
+    override suspend fun generateHomeResponse(
+        req: HomeReq,
+        helper: UserTypeHelper
+    ): HomeResponse {
+        val user = dbUsers.gerDbUser(helper) ?: return HomeResponse()
+
+
+        return home.generateHomeResponse(
+            req, helper = UserTypeHelper(
+                userType = helper.userType,
+                id = user.id.toString()
+            )
         )
     }
 

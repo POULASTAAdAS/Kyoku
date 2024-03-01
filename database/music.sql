@@ -34,6 +34,15 @@ id int primary key auto_increment,
 name varchar(120) unique not null
 );
 
+create table CountryGenreRelation(
+	id bigint not null primary key auto_increment,
+    countryId int not null,
+    genreId int not null,
+    foreign key (countryId) references Country(id),
+    foreign key (genreId) references Genre(id),
+    points bigint not null default 0
+);
+
 
 create table artist(
     id int PRIMARY KEY auto_increment,
@@ -52,15 +61,25 @@ create table SongArtistRelation(
     foreign key (artistId) references artist(id)
 );
 
-
-create table CountryGenreRelation(
-	id bigint not null primary key auto_increment,
-    countryId int not null,
-    genreId int not null,
-    foreign key (countryId) references Country(id),
-    foreign key (genreId) references Genre(id),
-    points bigint not null default 0
+create table album(
+	id bigint primary key auto_increment,
+	name varchar(200) unique not null,
+	points bigint not null default 0
 );
+
+create table SongAlbumArtistRelation(
+    songId bigInt,
+    artistId int,
+    albumId bigInt,
+    foreign key (songId) references Song(id),
+    foreign key (artistId) references artist(id),
+    foreign key (albumId) references Album(id),
+    primary key (songId , artistId , albumId) 
+);
+
+
+
+
 
 
 select * from emailAuthUser;
@@ -82,54 +101,95 @@ select * from emailuserartistrelation;
 select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
-select * from genre;
-select * from genre where id in (4,5,6,9,40,87);
-select * from country;
-select * from artist;
-
-select * from artist where country = 1 order by points desc;
-
-select * from CountryGenreRelation;
-select * from genre where id in (select genreId from CountryGenreRelation where countryId = 1);
-
-select * from playlist;
-
-
-select title , coverImage , artist , album from song where id in(
-	select songId from songartistrelation where artistId in (
-		select id from artist where id in (
-			select artistId from passkeyuserartistrelation where userId = 1
-        )
-    )
-) order by points desc limit 5;
-
 
 select title , coverImage , artist , album from song where id in(
 	select songId from songartistrelation where artistId in (
 		select artistId from passkeyuserartistrelation where userId = 1
     )
-) order by points desc limit 5
+) order by points desc limit 5;
+
+
+select id , coverImage , title , artist , album from song where id in (
+	SELECT songId from SongAlbumArtistRelation where albumId in(
+		select id from album where id in (
+			select albumId from SongAlbumArtistRelation where artistId in(
+				select artistId from PasskeyUserArtistRelation where userId = 1
+			)
+		) order by album.points desc
+	)
+);
 
 
 
+SELECT s.id , s.title , s.coverImage , s.artist , s.album
+FROM song s
+JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
+JOIN album a ON sar.albumId = a.id
+WHERE a.id IN (
+    SELECT saar.albumId
+    FROM SongAlbumArtistRelation saar
+    WHERE saar.artistId IN (
+        SELECT pua.artistId
+        FROM passkeyuserartistrelation pua
+        WHERE pua.userId = 1
+    )
+)
+ORDER BY a.points DESC;
 
 
 
+SELECT s.id, s.title, s.coverImage, s.artist, s.album FROM song s WHERE s.id IN (
+    SELECT sar.songId FROM SongAlbumArtistRelation sar WHERE sar.albumId IN (
+        SELECT a.id FROM album a WHERE a.id IN (
+            SELECT saar.albumId FROM SongAlbumArtistRelation saar WHERE saar.artistId IN (
+                SELECT pua.artistId FROM passkeyuserartistrelation pua WHERE pua.userId = 1
+            )
+        )
+    )
+)
+ORDER BY (
+    SELECT points FROM album WHERE id = (
+        SELECT sar.albumId FROM SongAlbumArtistRelation sar WHERE sar.songId = s.id limit 1
+    )
+) DESC;
 
 
 
+SELECT s.id , s.title , s.coverImage , s.artist , s.album
+FROM song s
+JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
+JOIN album a ON sar.albumId = a.id
+WHERE a.id IN (
+    SELECT saar.albumId
+    FROM SongAlbumArtistRelation saar
+    WHERE saar.artistId IN (
+        SELECT pua.artistId
+        FROM passkeyuserartistrelation pua
+        WHERE pua.userId = 1
+    )
+)
+ORDER BY a.points DESC limit 30;
 
 
-
-
-
-
-
-
-
-
-
-
+WITH RankedSongs AS (
+   SELECT s.id , s.title , s.coverImage , s.artist , s.album,
+        ROW_NUMBER() OVER (PARTITION BY a.id ORDER BY a.points DESC, s.id) AS rnk
+    FROM
+        song s
+        JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
+        JOIN album a ON sar.albumId = a.id
+    WHERE
+        a.id IN (
+            SELECT saar.albumId
+            FROM SongAlbumArtistRelation saar
+            WHERE saar.artistId IN (
+                SELECT pua.artistId
+                FROM passkeyuserartistrelation pua
+                WHERE pua.userId = 1
+            )
+        ) ORDER BY a.points DESC
+)
+SELECT * FROM RankedSongs WHERE rnk = 1 limit 6;
 
 
 

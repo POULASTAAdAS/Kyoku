@@ -28,8 +28,5 @@ try:
                     f.write(f'({songId} , {artistId}),\n')
 
 
-
-# 5363
-
 except Exception as e:
     print(str(e))

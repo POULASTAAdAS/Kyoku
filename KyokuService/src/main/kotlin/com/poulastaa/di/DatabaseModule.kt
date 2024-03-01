@@ -2,8 +2,10 @@ package com.poulastaa.di
 
 import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.repository.UserServiceRepositoryImpl
+import com.poulastaa.data.repository.album.AlbumRepositoryImpl
 import com.poulastaa.data.repository.artist.ArtistRepositoryImpl
 import com.poulastaa.data.repository.genre.GenreRepositoryImpl
+import com.poulastaa.data.repository.home.HomeRepositoryImpl
 import com.poulastaa.data.repository.jwt.JWTRepositoryImpl
 import com.poulastaa.data.repository.playlist.PlaylistRepositoryImpl
 import com.poulastaa.data.repository.song.SongRepositoryImpl
@@ -11,8 +13,10 @@ import com.poulastaa.data.repository.users.EmailAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.GoogleAuthUserRepositoryImpl
 import com.poulastaa.data.repository.users.PasskeyAuthUserRepositoryImpl
 import com.poulastaa.domain.repository.UserServiceRepository
+import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.domain.repository.genre.GenreRepository
+import com.poulastaa.domain.repository.home.HomeRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
@@ -50,6 +54,20 @@ fun provideDatabaseRepo() = module {
     single<ArtistRepository> {
         ArtistRepositoryImpl()
     }
+    single<AlbumRepository> {
+        AlbumRepositoryImpl()
+    }
+
+    single<HomeRepository> {
+        HomeRepositoryImpl(
+            dbUsers = get(),
+            song = get(),
+            artist = get(),
+            genre = get(),
+            playlist = get(),
+            album = get()
+        )
+    }
 }
 
 fun provideDbUsers() = module {
@@ -70,7 +88,8 @@ fun provideService() = module {
             playlist = get(),
             dbUsers = get(),
             genre = get(),
-            artist = get()
+            artist = get(),
+            home = get()
         )
     }
 }

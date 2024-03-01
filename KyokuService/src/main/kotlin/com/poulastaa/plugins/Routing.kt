@@ -5,6 +5,7 @@ import com.poulastaa.data.model.auth.PasskeyUserSession
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.routes.getMasterPlaylist
 import com.poulastaa.routes.getSongCover
+import com.poulastaa.routes.home.home
 import com.poulastaa.routes.sertup.*
 import com.poulastaa.routes.unauthorized
 import io.ktor.server.application.*
@@ -31,6 +32,8 @@ fun Application.configureRouting() {
         suggestArtist(service)
         getArtistImage()
         storeArtist(service)
+
+        home(service)
 
         getMasterPlaylist(service)
 
