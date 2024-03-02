@@ -78,6 +78,7 @@ create table SongAlbumArtistRelation(
 );
 
 
+select * from album;
 
 
 
@@ -102,42 +103,6 @@ select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
 
-select title , coverImage , artist , album from song where id in(
-	select songId from songartistrelation where artistId in (
-		select artistId from passkeyuserartistrelation where userId = 1
-    )
-) order by points desc limit 5;
-
-
-select id , coverImage , title , artist , album from song where id in (
-	SELECT songId from SongAlbumArtistRelation where albumId in(
-		select id from album where id in (
-			select albumId from SongAlbumArtistRelation where artistId in(
-				select artistId from PasskeyUserArtistRelation where userId = 1
-			)
-		) order by album.points desc
-	)
-);
-
-
-
-SELECT s.id , s.title , s.coverImage , s.artist , s.album
-FROM song s
-JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
-JOIN album a ON sar.albumId = a.id
-WHERE a.id IN (
-    SELECT saar.albumId
-    FROM SongAlbumArtistRelation saar
-    WHERE saar.artistId IN (
-        SELECT pua.artistId
-        FROM passkeyuserartistrelation pua
-        WHERE pua.userId = 1
-    )
-)
-ORDER BY a.points DESC;
-
-
-
 SELECT s.id, s.title, s.coverImage, s.artist, s.album FROM song s WHERE s.id IN (
     SELECT sar.songId FROM SongAlbumArtistRelation sar WHERE sar.albumId IN (
         SELECT a.id FROM album a WHERE a.id IN (
@@ -152,6 +117,15 @@ ORDER BY (
         SELECT sar.albumId FROM SongAlbumArtistRelation sar WHERE sar.songId = s.id limit 1
     )
 ) DESC;
+
+
+SELECT s.id , s.title , s.coverImage , s.artist
+FROM song s
+join songartistrelation sar on s.id = sar.songId
+where sar.artistId in (
+	select puar.artistid from passkeyuserartistrelation puar
+    where puar.userid = 1
+) order by s.artist;
 
 
 
@@ -190,6 +164,138 @@ WITH RankedSongs AS (
         ) ORDER BY a.points DESC
 )
 SELECT * FROM RankedSongs WHERE rnk = 1 limit 6;
+
+
+
+SELECT s.id , s.title , s.coverImage , s.artist , s.points
+from song s
+join artist a on a.name = s.artist 
+join passkeyuserartistrelation puar on puar.artistid = a.id 
+where puar.userId = 1 
+order by s.artist , s.points;
+
+
+with ResponseAlbumPreview as (
+SELECT s.id , s.title , s.coverImage , s.artist , s.points, 
+ROW_NUMBER() OVER (PARTITION BY s.artist ORDER BY s.points DESC) AS rnk
+from song s
+join artist a on a.name = s.artist 
+join passkeyuserartistrelation puar on puar.artistid = a.id 
+where puar.userId = 1 order by s.artist , s.points
+) select * from ResponseAlbumPreview where rnk <= 5;
+
+
+with ResponseAlbumPreview as (
+    select
+        s.id,
+        s.title,
+        s.coverImage,
+        s.artist,
+        s.points,
+        row_number() over (partition by s.artist order by s.points desc) rnk
+    from
+        song s
+    inner join
+        artist a on a.name = s.artist
+    inner join
+        passkeyuserartistrelation puar on puar.artistid = a.id
+    where 
+        puar.userId = 1
+    order by
+        s.artist, s.points desc
+) select * from ResponseAlbumPreview where rnk <= 5;
+
+select
+        s.id,
+        s.title,
+        s.coverImage,
+        s.artist,
+        s.points
+    from
+        song s
+    inner join
+        artist a on a.name = s.artist
+    inner join
+        passkeyuserartistrelation puar on puar.artistid = a.id
+    where 
+        puar.userId = 1
+    order by s.artist, s.points desc ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

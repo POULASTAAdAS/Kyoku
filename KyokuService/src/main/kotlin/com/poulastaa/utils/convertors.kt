@@ -1,17 +1,16 @@
 package com.poulastaa.utils
 
 import com.poulastaa.data.model.common.EndPoints
+import com.poulastaa.data.model.common.ResponseArtist
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.data.model.utils.User
 import com.poulastaa.data.model.utils.UserType
-import com.poulastaa.data.model.common.ResponseArtist
-import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
-import com.poulastaa.utils.Constants.ARTIST_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.BASE_URL
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.MASTER_PLAYLIST_ROOT_DIR
@@ -95,20 +94,17 @@ fun Any.toUser(userType: UserType) = when (userType) {
 
 /**
  * adding _ on blank for easier req handling
- *   must be removed on [Endpoints.GetArtistImageUrl.route]
+ *   must be removed on Endpoints.GetArtistImageUrl.route
  */
 fun Iterable<Artist>.toResponseArtist() = this.map {
-    ResponseArtist(
-        id = it.id.value,
-        name = it.name,
-        imageUrl = ResponseArtist.getArtistImageUrl(
-            it.profilePicUrl
-                .replace(ARTIST_IMAGE_ROOT_DIR, "")
-                .removeSuffix("/")
-                .replace(" ", "_")
-        )
-    )
+    it.toResponseArtist()
 }
+
+fun Artist.toResponseArtist() = ResponseArtist(
+    id = this.id.value,
+    name = this.name,
+    imageUrl = ResponseArtist.getArtistImageUrl(this.profilePicUrl)
+)
 
 
 

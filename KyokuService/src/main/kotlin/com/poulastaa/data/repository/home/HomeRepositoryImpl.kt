@@ -35,29 +35,33 @@ class HomeRepositoryImpl(
             HomeType.NEW_USER_REQ -> {
                 val artistIdList = dbQuery {
                     PasskeyUserArtistRelation.find {
-                        PasskeyUserArtistRelationTable.userId eq 1
+                        PasskeyUserArtistRelationTable.userId eq helper.id.toLong()
                     }.map {
                         it.artistId
                     }
                 }
 
+                val fevArtistsMixDeferred = async { artist.getArtistMixPreview(helper) }
+                val albumDeferred = async { album.getResponseAlbumPreview(artistIdList) }
+                val artistDeferred = async {
+                    artist.getResponseArtistPreview(
+                        helper.id.toLong(),
+                        helper.userType
+                    )
+                }
+
                 HomeResponse(
                     status = HomeResponseStatus.SUCCESS,
                     type = HomeType.NEW_USER_REQ,
-                    fevArtistsMix = async { artist.getArtistMixPreview(helper) }.await(),
-                    album = async { album.getResponseAlbumPreview(artistIdList) }.await(),
+                    fevArtistsMix = fevArtistsMixDeferred.await(),
+                    album = albumDeferred.await(),
+                    artists = artistDeferred.await()
                 )
             }
 
-            HomeType.DALY_REFRESH_REQ -> {
-                HomeResponse(
-                    status = HomeResponseStatus.SUCCESS,
-                    type = HomeType.DALY_REFRESH_REQ,
-                    fevArtistsMix = async { artist.getArtistMixPreview(helper) }.await(),
-                )
-            }
+            HomeType.DALY_REFRESH_REQ -> HomeResponse() // todo
 
-            HomeType.ALREADY_USER_REQ -> HomeResponse()
+            HomeType.ALREADY_USER_REQ -> HomeResponse()// this will not occur on service api
         }
     }
 }

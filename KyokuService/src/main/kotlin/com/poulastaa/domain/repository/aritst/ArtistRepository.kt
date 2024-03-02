@@ -1,9 +1,11 @@
 package com.poulastaa.domain.repository.aritst
 
 import com.poulastaa.data.model.home.FevArtistsMixPreview
+import com.poulastaa.data.model.home.ResponseArtistsPreview
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
+import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
 
 interface ArtistRepository {
@@ -19,5 +21,10 @@ interface ArtistRepository {
 
     suspend fun getArtistMixPreview(
         helper: UserTypeHelper
-    ):FevArtistsMixPreview
+    ): FevArtistsMixPreview
+
+    suspend fun getResponseArtistPreview(
+        usedId:Long,
+        userType: UserType
+    ): List<ResponseArtistsPreview>
 }

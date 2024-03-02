@@ -9,6 +9,7 @@ import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTab
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.HomeResponseSong
+import com.poulastaa.data.model.home.ResponseArtistsPreview
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -28,8 +29,7 @@ import com.poulastaa.utils.toResponseArtist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.*
 
 class ArtistRepositoryImpl : ArtistRepository {
     override suspend fun suggestArtist(
@@ -112,6 +112,39 @@ class ArtistRepositoryImpl : ArtistRepository {
             }
         }
     )
+
+    override suspend fun getResponseArtistPreview(
+        usedId: Long,
+        userType: UserType
+    ): List<ResponseArtistsPreview> {
+        return dbQuery {
+            getQuery(usedId, userType)
+                .orderBy(
+                    column = SongTable.artist,
+                    order = SortOrder.ASC
+                ).orderBy(
+                    column = SongTable.points,
+                    order = SortOrder.DESC
+                ).map {
+                    HomeResponseSong(
+                        id = it[SongTable.id].value.toString(),
+                        title = it[SongTable.title],
+                        coverImage = it[SongTable.coverImage],
+                        artist = it[SongTable.artist],
+                        album = it[SongTable.album]
+                    )
+                }.groupBy {
+                    it.artist
+                }.map {
+                    ResponseArtistsPreview(
+                        artist = Artist.find {
+                            ArtistTable.name eq it.key
+                        }.first().toResponseArtist(),
+                        listOgSongs = it.value.take(5)
+                    )
+                }
+        }
+    }
 
     private fun Iterable<ResponseArtist>.removeDuplicate(
         oldList: List<String>,
@@ -200,14 +233,98 @@ class ArtistRepositoryImpl : ArtistRepository {
             }.map {
                 it.songId
             }
-        }.orderBy(SongTable.points to SortOrder.DESC).limit(5).map {
-            HomeResponseSong(
-                id = it.id.value.toString(),
-                title = it.title,
-                coverImage = it.coverImage.constructCoverPhotoUrl(),
-                artist = it.artist,
-                album = it.album
-            )
+        }.orderBy(SongTable.points to SortOrder.DESC)
+            .limit(4).map {
+                HomeResponseSong(
+                    id = it.id.value.toString(),
+                    title = it.title,
+                    coverImage = it.coverImage.constructCoverPhotoUrl(),
+                    artist = it.artist,
+                    album = it.album
+                )
+            }
+    }
+
+    private fun getQuery(
+        usedId: Long,
+        userType: UserType
+    ) = when (userType) {
+        UserType.GOOGLE_USER -> {
+            SongTable
+                .join(
+                    otherTable = ArtistTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongTable.artist eq ArtistTable.name
+                    }
+                ).join(
+                    otherTable = GoogleUserArtistRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        ArtistTable.id eq GoogleUserArtistRelationTable.artistId as Column<*>
+                    }
+                ).slice(
+                    SongTable.id,
+                    SongTable.title,
+                    SongTable.coverImage,
+                    SongTable.artist,
+                    SongTable.album,
+                    SongTable.points
+                ).select {
+                    GoogleUserArtistRelationTable.userId eq usedId
+                }
+        }
+
+        UserType.EMAIL_USER -> {
+            SongTable
+                .join(
+                    otherTable = ArtistTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongTable.artist eq ArtistTable.name
+                    }
+                ).join(
+                    otherTable = EmailUserArtistRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        ArtistTable.id eq EmailUserArtistRelationTable.artistId as Column<*>
+                    }
+                ).slice(
+                    SongTable.id,
+                    SongTable.title,
+                    SongTable.coverImage,
+                    SongTable.artist,
+                    SongTable.album,
+                    SongTable.points
+                ).select {
+                    EmailUserArtistRelationTable.userId eq usedId
+                }
+        }
+
+        UserType.PASSKEY_USER -> {
+            SongTable
+                .join(
+                    otherTable = ArtistTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongTable.artist eq ArtistTable.name
+                    }
+                ).join(
+                    otherTable = PasskeyUserArtistRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        ArtistTable.id eq PasskeyUserArtistRelationTable.artistId as Column<*>
+                    }
+                ).slice(
+                    SongTable.id,
+                    SongTable.title,
+                    SongTable.coverImage,
+                    SongTable.artist,
+                    SongTable.album,
+                    SongTable.points
+                ).select {
+                    PasskeyUserArtistRelationTable.userId eq usedId
+                }
         }
     }
 }

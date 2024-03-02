@@ -14,16 +14,6 @@ import org.jetbrains.exposed.sql.select
 
 class AlbumRepositoryImpl : AlbumRepository {
     override suspend fun getResponseAlbumPreview(artistIdList: List<Int>): List<ResponseAlbumPreview> {
-//        val albumIdList = dbQuery {
-//            SongAlbumArtistRelationTable
-//                .slice(SongAlbumArtistRelationTable.albumId)
-//                .select {
-//                    SongAlbumArtistRelationTable.artistId inList artistIdList
-//                }.map {
-//                    it[SongAlbumArtistRelationTable.albumId]
-//                }
-//        }
-
         val homeResponseSongList = dbQuery {
             SongTable
                 .join(
