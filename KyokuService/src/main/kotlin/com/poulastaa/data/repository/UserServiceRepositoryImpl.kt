@@ -1,7 +1,7 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.home.HomeReq
-import com.poulastaa.data.model.home.HomeResponse
+import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
+import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
@@ -12,19 +12,19 @@ import com.poulastaa.data.model.utils.CreatePlaylistHelper
 import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.UserServiceRepository
+import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.domain.repository.genre.GenreRepository
-import com.poulastaa.domain.repository.home.HomeRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
+import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.getAlbum
 import com.poulastaa.utils.removeAlbum
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
 import com.poulastaa.utils.toListOfPlaylistRow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 
 class UserServiceRepositoryImpl(
@@ -33,7 +33,7 @@ class UserServiceRepositoryImpl(
     private val dbUsers: DbUsers,
     private val genre: GenreRepository,
     private val artist: ArtistRepository,
-    private val home: HomeRepository
+    private val album: AlbumRepository,
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
@@ -60,7 +60,7 @@ class UserServiceRepositoryImpl(
                             playlistHelper = CreatePlaylistHelper(
                                 typeHelper = UserTypeHelper(
                                     userType = helper.userType,
-                                    id = user.id.toString()
+                                    id = user.id
                                 ),
                                 listOfSongId = result.songIdList,
                                 playlistName = result.spotifyPlaylistResponse.name
@@ -110,7 +110,7 @@ class UserServiceRepositoryImpl(
         return genre.storeGenre(
             helper = UserTypeHelper(
                 userType = helper.userType,
-                id = user.id.toString()
+                id = user.id
             ),
             genreNameList = req.data
         )
@@ -123,21 +123,21 @@ class UserServiceRepositoryImpl(
             UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
                 playlist = playlistHelper
                     .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
                 playlistName = playlistHelper.playlistName
             )
 
             UserType.GOOGLE_USER -> playlist.cretePlaylistForGoogleUser(
                 playlist = playlistHelper
                     .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
                 playlistName = playlistHelper.playlistName
             )
 
             UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
                 playlist = playlistHelper
                     .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id.toLong()),
+                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
                 playlistName = playlistHelper.playlistName
             )
         }
@@ -165,7 +165,7 @@ class UserServiceRepositoryImpl(
         return artist.storeArtist(
             helper = UserTypeHelper(
                 userType = helper.userType,
-                id = user.id.toString()
+                id = user.id
             ),
             artistNameList = req.data
         )
@@ -179,12 +179,66 @@ class UserServiceRepositoryImpl(
         val user = dbUsers.gerDbUser(helper) ?: return HomeResponse()
 
 
-        return home.generateHomeResponse(
-            req, helper = UserTypeHelper(
-                userType = helper.userType,
-                id = user.id.toString()
-            )
-        )
+        return withContext(Dispatchers.IO) {
+            when (req.type) {
+                HomeType.NEW_USER_REQ -> {
+                    val artistIdList = dbQuery {
+                        PasskeyUserArtistRelation.find {
+                            PasskeyUserArtistRelationTable.userId eq helper.id
+                        }.map {
+                            it.artistId
+                        }
+                    }
+
+                    val fevArtistsMixDeferred = async {
+                        artist.getArtistMixPreview(
+                            helper = UserTypeHelper(
+                                userType = helper.userType,
+                                id = user.id
+                            )
+                        )
+                    }
+                    val albumDeferred = async { album.getResponseAlbumPreview(artistIdList) }
+                    val artistDeferred = async {
+                        artist.getResponseArtistPreview(
+                            usedId = user.id,
+                            userType = helper.userType
+                        )
+                    }
+
+
+
+                    HomeResponse(
+                        status = HomeResponseStatus.SUCCESS,
+                        type = req.type,
+                        fevArtistsMix = fevArtistsMixDeferred.await(),
+                        album = albumDeferred.await(),
+                        artists = artistDeferred.await()
+                    )
+                }
+
+                HomeType.DAILY_REFRESH_REQ -> {
+                    val dailyMixDeferred = async {
+                        if (req.isOldEnough)
+                            song.getDailyMixPreview(
+                                helper = UserTypeHelper(
+                                    userType = helper.userType,
+                                    id = user.id
+                                )
+                            )
+                        else DailyMixPreview()
+                    }
+
+                    HomeResponse(
+                        status = HomeResponseStatus.SUCCESS,
+                        type = req.type,
+                        dailyMix = dailyMixDeferred.await()
+                    )
+                }
+
+                HomeType.ALREADY_USER_REQ -> HomeResponse()// this will not occur on service api
+            }
+        }
     }
 
     private fun extractSpotifySong(json: String): List<SpotifySong> {

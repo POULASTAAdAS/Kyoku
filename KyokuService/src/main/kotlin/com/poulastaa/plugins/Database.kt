@@ -4,9 +4,9 @@ import com.poulastaa.data.model.db_table.ArtistTable
 import com.poulastaa.data.model.db_table.CountryGenreRelationTable
 import com.poulastaa.data.model.db_table.GenreTable
 import com.poulastaa.data.model.db_table.CountryTable
-import com.poulastaa.data.model.db_table.playlist.EmailUserPlaylistTable
-import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
-import com.poulastaa.data.model.db_table.playlist.PasskeyUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable

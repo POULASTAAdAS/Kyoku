@@ -1,5 +1,6 @@
-package com.poulastaa.data.model.db_table.playlist
+package com.poulastaa.data.model.db_table.user_playlist
 
+import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.SongTable
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import org.jetbrains.exposed.dao.id.UUIDTable

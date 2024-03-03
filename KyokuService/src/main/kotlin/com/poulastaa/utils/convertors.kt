@@ -14,6 +14,7 @@ import com.poulastaa.domain.dao.user.PasskeyAuthUser
 import com.poulastaa.utils.Constants.BASE_URL
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.MASTER_PLAYLIST_ROOT_DIR
+import org.jetbrains.exposed.dao.LongEntity
 
 fun Song.toResponseSong(): ResponseSong = ResponseSong(
     coverImage = this.coverImage.constructCoverPhotoUrl(),
@@ -63,7 +64,7 @@ fun String.getAlbum(): String {
 fun String.removeAlbum(): String =
     this.replace(Regex("\\(.*"), "").trim()
 
-fun Any.toUser(userType: UserType) = when (userType) {
+fun LongEntity.toUser(userType: UserType) = when (userType) {
     UserType.GOOGLE_USER -> {
         this as GoogleAuthUser
 

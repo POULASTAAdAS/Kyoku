@@ -1,110 +1,63 @@
 package com.example
 
 fun main() {
-    val map = HashMap<Int, String>()
+    val a = data.flatten()
+        .distinctBy {
+            it.id
+        }.filterNot { new ->
+            old.any {
+                it.name == new.name
+            }
+        }
 
-    myList.forEach {
-        if (!map.keys.contains(it.first))
-            map[it.first] = it.second
-    }
-    val list1 = map.keys.toList()
+    val new = a + old
 
-
-    val list2 = myList.associateBy(
-        keySelector = { it.first },
-        valueTransform = { it.second }
-    ).keys.toList()
-
-
-    val filtered = list1.filterNot { list2.contains(it) }.take(15)
-    println(filtered)
+    println(new)
 }
 
+val data
+    get() =
+        listOf(
+            sub,
+            sub,
+            sub,
+            sub,
+        )
 
-val myList = listOf(
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(1, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(2, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name"),
-    Pair(3, "name")
+
+val sub = listOf(
+    Cl(
+        1,
+        "name"
+    ), Cl(
+        2,
+        "name2"
+    ), Cl(
+        3,
+        "name1"
+    ), Cl(
+        4,
+        "name"
+    ), Cl(
+        5,
+        "name"
+    ), Cl(
+        6,
+        "name1"
+    )
+)
+
+val old = listOf(
+    Cl(
+        1,
+        "name"
+    ), Cl(
+        2,
+        "name2"
+    )
+)
+
+data class Cl(
+    val id: Int,
+    val name: String
 )

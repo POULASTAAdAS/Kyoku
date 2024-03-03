@@ -3,8 +3,6 @@ package com.poulastaa.data.model.home
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class HomeReq(
-    val type: HomeType,
-    val time: TimeType,
-    val isOldEnough: Boolean
+data class DailyMixPreview(
+    val listOfSongs: List<HomeResponseSong> = emptyList()
 )

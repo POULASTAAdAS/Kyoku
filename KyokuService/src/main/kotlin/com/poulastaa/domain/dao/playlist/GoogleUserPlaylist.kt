@@ -1,6 +1,6 @@
 package com.poulastaa.domain.dao.playlist
 
-import com.poulastaa.data.model.db_table.playlist.GoogleUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

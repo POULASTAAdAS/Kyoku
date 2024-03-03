@@ -1,6 +1,6 @@
 package com.poulastaa.domain.dao.playlist
 
-import com.poulastaa.data.model.db_table.playlist.PlaylistTable
+import com.poulastaa.data.model.db_table.PlaylistTable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

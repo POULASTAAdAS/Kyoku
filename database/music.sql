@@ -1,85 +1,4 @@
-create database music;
-use music;
-
-create table song(
-	id bigInt primary key auto_increment,
-    coverImage text not null,
-    masterPlaylistPath text not null,
-    totalTime text not null,
-    title text not null,
-	artist text not null default('Kyoku'),
-    album text not null default('Kyoku'),
-    genre text not null default('Kyoku'),
-    composer text not null default('Kyoku'),
-    publisher text not null default('Kyoku'),
-    album_artist text not null default('Kyoku'),
-	description text not null default('Kyoku'),
-	track text not null default('Kyoku'),
-	date text not null,
-    points bigint not null default 0
-);
-
 SET SQL_SAFE_UPDATES = 0;
-
-
-
-create table Country(
-id int primary key auto_increment,
-name varchar(200) not null unique
-);
-
-
-create table genre(
-id int primary key auto_increment,
-name varchar(120) unique not null
-);
-
-create table CountryGenreRelation(
-	id bigint not null primary key auto_increment,
-    countryId int not null,
-    genreId int not null,
-    foreign key (countryId) references Country(id),
-    foreign key (genreId) references Genre(id),
-    points bigint not null default 0
-);
-
-
-create table artist(
-    id int PRIMARY KEY auto_increment,
-    name varchar(120) UNIQUE not null,
-    profilePicUrl text not null,
-    country int not null references Country(id),
-    genre int not null references genre(id),
-    points bigint not null default 0
-);
-
-create table SongArtistRelation(
-	id bigint primary key auto_increment,
-    songId bigInt,
-    artistId int,
-    foreign key (songId) references Song(id),
-    foreign key (artistId) references artist(id)
-);
-
-create table album(
-	id bigint primary key auto_increment,
-	name varchar(200) unique not null,
-	points bigint not null default 0
-);
-
-create table SongAlbumArtistRelation(
-    songId bigInt,
-    artistId int,
-    albumId bigInt,
-    foreign key (songId) references Song(id),
-    foreign key (artistId) references artist(id),
-    foreign key (albumId) references Album(id),
-    primary key (songId , artistId , albumId) 
-);
-
-
-select * from album;
-
 
 
 
@@ -220,6 +139,111 @@ select
     where 
         puar.userId = 1
     order by s.artist, s.points desc ;
+
+select * from PasskeyUserListenHistory;
+
+SELECT DISTINCT songId
+FROM PasskeyUserListenHistory
+WHERE date >= CURRENT_DATE - interval 3 day and userId = 1 order by rand() limit 8;
+
+SELECT s.id , s.title , s.coverImage , s.artist , s.points
+  from song s where id in (
+	select songId from songartistrelation where artistId in (
+		select id from artist where id in (
+			select artistId from songartistrelation where songid in (14400, 17510,16624,12029,15018,14026,17793,20743)
+		)
+	)
+) order by points desc;
+
+SELECT song.id , song.title , song.coverImage , song.artist , song.points
+  from song
+  join songartistrelation sar1 on sar1.songId = song.id
+  join  artist on sar1.artistId = artist.id
+  join songartistrelation sar2 on artist.id = sar2.artistId
+  where sar2.songId in (14400, 17510,16624,12029,15018,14026,17793,20743)
+  order by song.points desc;
+  
+  
+  SELECT count(song.id)
+  from song
+  join songartistrelation sar1 on song.id = sar1.songId 
+  join  artist on  artist.id = sar1.artistId
+  join songartistrelation sar2 on artist.id = sar2.artistId
+  where sar2.songId in (14400, 17510,16624,12029,15018,14026,17793,20743)
+  order by song.points desc;
+  
+SELECT song.id, song.title, song.coverimage, song.artist, song.album, song.points
+ FROM song
+ INNER JOIN songartistrelation sar1 ON  (song.id = sar1.songid)
+ INNER JOIN artist ON  (artist.id = sar1.songid)
+ INNER JOIN songartistrelation sar2 ON  (artist.id = sar2.artistid)
+ WHERE sar2.songid IN (21435, 15518, 17793, 18836, 20743, 19373, 21745, 16624)
+ ORDER BY song.points DESC;
+
+
+SELECT s.id , s.title , s.coverImage , s.artist , s.points
+ from song s where id in (
+	select songId from SongGenreRelation where genreId in (
+		select genreid from passkeyusergenrerelation where userid = 1
+	)
+ ) order by points desc limit 50;
+
+SELECT s.id , s.title , s.coverImage , s.artist ,  s.genre, s.points
+ from song s
+ join SongGenreRelation on SongGenreRelation.songid = s.id
+ join passkeyusergenrerelation on SongGenreRelation.genreId = passkeyusergenrerelation.genreid
+ where passkeyusergenrerelation.userid = 1
+ order by s.points desc
+ limit 12;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -70,11 +70,11 @@ class GenreRepositoryImpl : GenreRepository {
         }
 
         when (helper.userType) {
-            UserType.GOOGLE_USER -> genreIdList.storeGenreForGoogleUser(id = helper.id.toLong())
+            UserType.GOOGLE_USER -> genreIdList.storeGenreForGoogleUser(id = helper.id)
 
-            UserType.EMAIL_USER -> genreIdList.storeGenreForEmailUser(id = helper.id.toLong())
+            UserType.EMAIL_USER -> genreIdList.storeGenreForEmailUser(id = helper.id)
 
-            UserType.PASSKEY_USER -> genreIdList.storeGenreForPasskeyUser(id = helper.id.toLong())
+            UserType.PASSKEY_USER -> genreIdList.storeGenreForPasskeyUser(id = helper.id)
         }
 
         incrementGenrePoints(genreIdList)

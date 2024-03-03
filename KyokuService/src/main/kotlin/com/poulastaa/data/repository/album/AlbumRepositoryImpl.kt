@@ -17,8 +17,8 @@ class AlbumRepositoryImpl : AlbumRepository {
         val homeResponseSongList = dbQuery {
             SongTable
                 .join(
-                    SongAlbumArtistRelationTable,
-                    JoinType.INNER,
+                    otherTable = SongAlbumArtistRelationTable,
+                    joinType = JoinType.INNER,
                     additionalConstraint = {
                         SongTable.id eq SongAlbumArtistRelationTable.songId as Column<*>
                     }

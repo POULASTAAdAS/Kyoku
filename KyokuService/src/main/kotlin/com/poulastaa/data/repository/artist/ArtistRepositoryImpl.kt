@@ -63,11 +63,11 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
 
         when (helper.userType) {
-            UserType.GOOGLE_USER -> artistIdList.storeArtistForGoogleUser(id = helper.id.toLong())
+            UserType.GOOGLE_USER -> artistIdList.storeArtistForGoogleUser(id = helper.id)
 
-            UserType.EMAIL_USER -> artistIdList.storeArtistForEmailUser(id = helper.id.toLong())
+            UserType.EMAIL_USER -> artistIdList.storeArtistForEmailUser(id = helper.id)
 
-            UserType.PASSKEY_USER -> artistIdList.storeArtistForPasskeyUser(id = helper.id.toLong())
+            UserType.PASSKEY_USER -> artistIdList.storeArtistForPasskeyUser(id = helper.id)
         }
 
         incrementArtistPoints(artistIdList)
@@ -84,7 +84,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             UserType.GOOGLE_USER -> {
                 dbQuery {
                     GoogleUserArtistRelation.find {
-                        GoogleUserArtistRelationTable.userId eq helper.id.toLong()
+                        GoogleUserArtistRelationTable.userId eq helper.id
                     }.map {
                         it.artistId
                     }.getHomeResponseSongList()
@@ -94,7 +94,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             UserType.EMAIL_USER -> {
                 dbQuery {
                     EmailUserArtistRelation.find {
-                        EmailUserArtistRelationTable.userId eq helper.id.toLong()
+                        EmailUserArtistRelationTable.userId eq helper.id
                     }.map {
                         it.artistId
                     }.getHomeResponseSongList()
@@ -104,7 +104,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             UserType.PASSKEY_USER -> {
                 dbQuery {
                     PasskeyUserArtistRelation.find {
-                        PasskeyUserArtistRelationTable.userId eq helper.id.toLong()
+                        PasskeyUserArtistRelationTable.userId eq helper.id
                     }.map {
                         it.artistId
                     }.getHomeResponseSongList()
@@ -140,7 +140,7 @@ class ArtistRepositoryImpl : ArtistRepository {
                         artist = Artist.find {
                             ArtistTable.name eq it.key
                         }.first().toResponseArtist(),
-                        listOgSongs = it.value.take(5)
+                        listOfSongs = it.value.take(5)
                     )
                 }
         }

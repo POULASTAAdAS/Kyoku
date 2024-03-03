@@ -10,26 +10,26 @@ class DbUsers(
     private val passekyUser: PasskeyAuthUserRepository
 ) {
     suspend fun gerDbUser(userTypeHelper: UserTypeHelper) = when (userTypeHelper.userType) {
-        UserType.GOOGLE_USER -> googleUser.getUser(userTypeHelper.id)
+        UserType.GOOGLE_USER -> googleUser.getUser(userTypeHelper.headerId)
 
-        UserType.EMAIL_USER -> emailUser.getUser(userTypeHelper.id)
+        UserType.EMAIL_USER -> emailUser.getUser(userTypeHelper.headerId)
 
-        UserType.PASSKEY_USER -> passekyUser.getUser(userTypeHelper.id)
+        UserType.PASSKEY_USER -> passekyUser.getUser(userTypeHelper.headerId)
     }
 
     suspend fun storeBDate(userTypeHelper: UserTypeHelper, date: Long) = when (userTypeHelper.userType) {
-        UserType.GOOGLE_USER -> googleUser.updateBDate(date, userTypeHelper.id)
+        UserType.GOOGLE_USER -> googleUser.updateBDate(date, userTypeHelper.headerId)
 
-        UserType.EMAIL_USER -> emailUser.updateBDate(date, userTypeHelper.id)
+        UserType.EMAIL_USER -> emailUser.updateBDate(date, userTypeHelper.headerId)
 
-        UserType.PASSKEY_USER -> passekyUser.updateBDate(date, userTypeHelper.id)
+        UserType.PASSKEY_USER -> passekyUser.updateBDate(date, userTypeHelper.headerId)
     }
 
     suspend fun getCountryId(helper: UserTypeHelper) = when (helper.userType) {
-        UserType.GOOGLE_USER -> googleUser.getCountryId(helper.id)
+        UserType.GOOGLE_USER -> googleUser.getCountryId(helper.headerId)
 
-        UserType.EMAIL_USER -> emailUser.getCountryId(helper.id)
+        UserType.EMAIL_USER -> emailUser.getCountryId(helper.headerId)
 
-        UserType.PASSKEY_USER -> passekyUser.getCountryId(helper.id)
+        UserType.PASSKEY_USER -> passekyUser.getCountryId(helper.headerId)
     }
 }

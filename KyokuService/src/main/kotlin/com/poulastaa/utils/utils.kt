@@ -1,9 +1,9 @@
 package com.poulastaa.utils
 
-import com.poulastaa.data.model.utils.UserTypeHelper
-import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.auth.GoogleUserSession
 import com.poulastaa.data.model.auth.PasskeyUserSession
+import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -21,17 +21,17 @@ fun PipelineContext<Unit, ApplicationCall>.getUserType(): UserTypeHelper? {
     return if (googleUser != null) {
         UserTypeHelper(
             userType = UserType.GOOGLE_USER,
-            id = googleUser.sub
+            headerId = googleUser.sub
         )
     } else if (passkeyUser != null) {
         UserTypeHelper(
             userType = UserType.PASSKEY_USER,
-            id = passkeyUser.id
+            headerId = passkeyUser.id
         )
     } else if (emailUser != null) {
         UserTypeHelper(
             userType = UserType.EMAIL_USER,
-            id = emailUser
+            headerId = emailUser
         )
     } else {
         return null

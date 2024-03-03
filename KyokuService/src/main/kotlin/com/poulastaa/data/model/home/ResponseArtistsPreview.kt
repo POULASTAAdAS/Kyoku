@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseArtistsPreview(
     val artist:ResponseArtist = ResponseArtist(),
-    val listOgSongs:List<HomeResponseSong> = emptyList()
+    val listOfSongs:List<HomeResponseSong> = emptyList()
 )

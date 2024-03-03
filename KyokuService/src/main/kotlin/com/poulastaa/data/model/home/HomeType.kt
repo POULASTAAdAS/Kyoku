@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 enum class HomeType {
     NEW_USER_REQ, // signIn
     ALREADY_USER_REQ, // signUp
-    DALY_REFRESH_REQ
+    DAILY_REFRESH_REQ
 }
