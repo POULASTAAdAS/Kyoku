@@ -23,7 +23,12 @@ interface ArtistRepository {
         helper: UserTypeHelper
     ): List<FevArtistsMixPreview>
 
-    suspend fun getResponseArtistPreview(
+    suspend fun getResponseArtistPreviewForNewUser(
+        usedId:Long,
+        userType: UserType
+    ): List<ResponseArtistsPreview>
+
+    suspend fun getResponseArtistPreviewDailyUser(
         usedId:Long,
         userType: UserType
     ): List<ResponseArtistsPreview>

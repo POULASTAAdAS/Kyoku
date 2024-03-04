@@ -11,6 +11,10 @@ drop table EmailUserArtistRelation;
 drop table GoogleUserArtistRelation;
 drop table PasskeyUserArtistRelation;
 
+drop table PasskeyUserAlbumRelation;
+drop table GoogleUserAlbumRelation;
+drop table EmailUserAlbumRelation;
+
 drop table invalidrefreshToken;
 drop table sessionStorage;
 

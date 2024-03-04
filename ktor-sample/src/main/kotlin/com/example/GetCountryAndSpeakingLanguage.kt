@@ -12,7 +12,8 @@ fun main() {
 
     val new = a + old
 
-    println(new)
+    println(old.take(1))
+
 }
 
 val data

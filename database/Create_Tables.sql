@@ -109,6 +109,126 @@ create table SongGenreRelation(
 
 
 
+create table PasskeyUserAlbumRelation(
+	userId bigint references PasskeyAuthUser(id) on delete cascade,
+    albumId bigInt references Album(id),
+    points int not null default 0,
+    primary key (userId , albumId)
+);
+
+
+create table GoogleUserAlbumRelation(
+	userId bigint references GoogleAuthUser(id) on delete cascade,
+    albumId bigInt references Album(id),
+    points int not null default 0,
+    primary key (userId , albumId)
+);
+
+
+create table EmailUserAlbumRelation(
+	userId bigint references EmailAuthUser(id) on delete cascade,
+    albumId bigInt references Album(id),
+    points int not null default 0,
+    primary key (userId , albumId)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

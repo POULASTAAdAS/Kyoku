@@ -8,4 +8,5 @@ import com.poulastaa.data.model.utils.UserTypeHelper
 interface SongRepository {
     suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist
     suspend fun getDailyMixPreview(helper: UserTypeHelper): DailyMixPreview
+    suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
 }

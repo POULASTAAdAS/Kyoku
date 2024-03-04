@@ -95,8 +95,12 @@ insert ignore into PasskeyUserListenHistory (userId , songId) values
 
 
 
-
-
+insert into PasskeyUserAlbumRelation (userid , albumid) values 
+(1,829),
+(1,118),
+(1,54),
+(1,1441),
+(1,130);
 
 
 

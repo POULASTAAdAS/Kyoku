@@ -75,7 +75,7 @@ from song s
 join artist a on a.name = s.artist 
 join passkeyuserartistrelation puar on puar.artistid = a.id 
 where puar.userId = 1 
-order by s.artist , s.points;
+order by a.points desc, s.points desc;
 
 
 with ResponseAlbumPreview as (
@@ -84,7 +84,7 @@ ROW_NUMBER() OVER (PARTITION BY s.artist ORDER BY s.points DESC) AS rnk
 from song s
 join artist a on a.name = s.artist 
 join passkeyuserartistrelation puar on puar.artistid = a.id 
-where puar.userId = 1 order by s.artist , s.points
+where puar.userId = 1 order by a.points  desc, s.points desc
 ) select * from ResponseAlbumPreview where rnk <= 5;
 
 select
@@ -159,27 +159,45 @@ SELECT s.id , s.title , s.coverImage , s.artist ,  s.genre, s.points
 
 
 
+select * from PasskeyUserAlbumRelation where userid = 1;
+
+select * from album order by points desc;
+
+select * from album where id in (
+130 , 54	  -- select albumid from PasskeyUserAlbumRelation where userid = 1 order by points desc
+) order by points;
 
 
 
+SELECT s.id , s.title , s.coverImage , s.artist ,  s.genre, s.points , s.album
+ from song s
+ join songalbumartistrelation saar on saar.songid = s.id
+ join album a on a.id = saar.albumId
+ where a.id in (
+	select albumid from PasskeyUserAlbumRelation where userid = 1 order by points desc
+ ) order by a.points;
+
+
+select albumid from PasskeyUserAlbumRelation where userid = 1 order by points desc limit 2;
 
 
 
+SELECT s.title , s.coverImage , s.album , s.artist
+FROM song s
+JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
+JOIN album a ON sar.albumId = a.id
+WHERE a.id IN (
+    130, 54, 185, 67, 288
+) order by a.points;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT song.title, song.coverimage, song.artist, song.album 
+FROM song 
+INNER JOIN songalbumartistrelation ON  (song.id = songalbumartistrelation.songid)
+ INNER JOIN album ON  (songalbumartistrelation.albumid = album.id)
+ WHERE album.id IN (
+ 130, 54, 185, 67, 288
+ )
+ ORDER BY album.points ASC;
 
 
 

@@ -111,14 +111,14 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
     }
 
-    override suspend fun getResponseArtistPreview(
+    override suspend fun getResponseArtistPreviewForNewUser(
         usedId: Long,
         userType: UserType
     ) = dbQuery {
         getQuery(usedId, userType)
             .orderBy(
-                column = SongTable.artist,
-                order = SortOrder.ASC
+                column = ArtistTable.points,
+                order = SortOrder.DESC
             ).orderBy(
                 column = SongTable.points,
                 order = SortOrder.DESC
@@ -140,6 +140,16 @@ class ArtistRepositoryImpl : ArtistRepository {
                     listOfSongs = it.value.take(5)
                 )
             }
+    }
+
+
+    override suspend fun getResponseArtistPreviewDailyUser(
+        usedId: Long,
+        userType: UserType
+    ): List<ResponseArtistsPreview> {
+
+
+        return emptyList() // todo
     }
 
     private fun Iterable<ResponseArtist>.removeDuplicate(

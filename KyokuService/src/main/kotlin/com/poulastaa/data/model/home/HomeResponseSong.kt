@@ -9,8 +9,4 @@ data class HomeResponseSong(
     val coverImage: String = "",
     val artist: String = "",
     val album: String = "",
-) {
-    companion object {
-
-    }
-}
+)

@@ -73,14 +73,27 @@ class SongRepositoryImpl : SongRepository {
         }
     }
 
-    override suspend fun getDailyMixPreview(helper: UserTypeHelper) = withContext(Dispatchers.IO) {
+    override suspend fun getDailyMixPreview(helper: UserTypeHelper): DailyMixPreview {
+        val historySongIdList = getHistorySongIdList(helper.userType, helper.id) // get artistId from history
+        val songsByTheArtistUnSorted = getPreviewSongsByTheArtists(historySongIdList)
+
+        return DailyMixPreview(
+            listOfSongs = songsByTheArtistUnSorted.flatMap {
+                it.value.take(10)
+            }.distinctBy {
+                it.id
+            }.shuffled(java.util.Random()).take(4)
+        )
+    }
+
+    override suspend fun getDailyMix(helper: UserTypeHelper) = withContext(Dispatchers.IO) {
         val subResponseOneDeferred = async {
             val historySongIdList = getHistorySongIdList(helper.userType, helper.id)
 
             val historySongList = historySongIdList.getHistorySongList()
 
             // get songs based on artists of users last listened songs
-            val songsByTheArtistUnSorted = getsSongsByTheArtists(historySongIdList)
+            val songsByTheArtistUnSorted = getPreviewSongsByTheArtists(historySongIdList)
 
             val songByArtistSorted = songsByTheArtistUnSorted.flatMap {
                 it.value.take(songsByTheArtistUnSorted.size / 30)
@@ -202,7 +215,7 @@ class SongRepositoryImpl : SongRepository {
         }
     }
 
-    private suspend fun getsSongsByTheArtists(songIdList: List<Long>) = dbQuery {
+    private suspend fun getPreviewSongsByTheArtists(songIdList: List<Long>) = dbQuery {
         val sar1 = SongArtistRelationTable.alias("sar1")
         val sar2 = SongArtistRelationTable.alias("sar2")
 

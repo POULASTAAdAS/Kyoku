@@ -182,7 +182,6 @@ class UserServiceRepositoryImpl(
     ): HomeResponse {
         val user = dbUsers.gerDbUser(helper) ?: return HomeResponse()
 
-
         return withContext(Dispatchers.IO) {
             when (req.type) {
                 HomeType.NEW_USER_REQ -> {
@@ -196,9 +195,9 @@ class UserServiceRepositoryImpl(
                             )
                         )
                     }
-                    val albumDeferred = async { album.getResponseAlbumPreview(artistIdList) }
+                    val albumDeferred = async { album.getResponseAlbumPreviewForNewUser(artistIdList) }
                     val artistDeferred = async {
-                        artist.getResponseArtistPreview(
+                        artist.getResponseArtistPreviewForNewUser(
                             usedId = user.id,
                             userType = helper.userType
                         )
@@ -209,9 +208,9 @@ class UserServiceRepositoryImpl(
                     HomeResponse(
                         status = HomeResponseStatus.SUCCESS,
                         type = req.type,
-                        fevArtistsMix = fevArtistsMixDeferred.await(),
-                        album = albumDeferred.await(),
-                        artists = artistDeferred.await()
+                        fevArtistsMixPreview = fevArtistsMixDeferred.await(),
+                        albumPreview = albumDeferred.await(),
+                        artistsPreview = artistDeferred.await()
                     )
                 }
 
@@ -227,10 +226,27 @@ class UserServiceRepositoryImpl(
                         else DailyMixPreview()
                     }
 
+                    val albumDeferred = async {
+                        album.getResponseAlbumPreviewForDailyRefresh(
+                            userType = helper.userType,
+                            userId = user.id
+                        )
+                    }
+
+                    val artistDeferred = async {
+                        artist.getResponseArtistPreviewDailyUser(
+                            user.id,
+                            helper.userType
+                        )
+                    }
+
+
                     HomeResponse(
                         status = HomeResponseStatus.SUCCESS,
                         type = req.type,
-                        dailyMix = dailyMixDeferred.await()
+                        albumPreview = albumDeferred.await(),
+                        dailyMixPreview = dailyMixDeferred.await(),
+                        artistsPreview = artistDeferred.await()
                     )
                 }
 
