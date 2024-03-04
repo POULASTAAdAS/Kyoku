@@ -79,71 +79,67 @@ class ArtistRepositoryImpl : ArtistRepository {
 
     override suspend fun getArtistMixPreview(
         helper: UserTypeHelper
-    ): FevArtistsMixPreview = FevArtistsMixPreview(
-        listOfSong = when (helper.userType) {
-            UserType.GOOGLE_USER -> {
-                dbQuery {
-                    GoogleUserArtistRelation.find {
-                        GoogleUserArtistRelationTable.userId eq helper.id
-                    }.map {
-                        it.artistId
-                    }.getHomeResponseSongList()
-                }
-            }
-
-            UserType.EMAIL_USER -> {
-                dbQuery {
-                    EmailUserArtistRelation.find {
-                        EmailUserArtistRelationTable.userId eq helper.id
-                    }.map {
-                        it.artistId
-                    }.getHomeResponseSongList()
-                }
-            }
-
-            UserType.PASSKEY_USER -> {
-                dbQuery {
-                    PasskeyUserArtistRelation.find {
-                        PasskeyUserArtistRelationTable.userId eq helper.id
-                    }.map {
-                        it.artistId
-                    }.getHomeResponseSongList()
-                }
+    ) = when (helper.userType) {
+        UserType.GOOGLE_USER -> {
+            dbQuery {
+                GoogleUserArtistRelation.find {
+                    GoogleUserArtistRelationTable.userId eq helper.id
+                }.map {
+                    it.artistId
+                }.getListOfFevArtistMixPreview()
             }
         }
-    )
+
+        UserType.EMAIL_USER -> {
+            dbQuery {
+                EmailUserArtistRelation.find {
+                    EmailUserArtistRelationTable.userId eq helper.id
+                }.map {
+                    it.artistId
+                }.getListOfFevArtistMixPreview()
+            }
+        }
+
+        UserType.PASSKEY_USER -> {
+            dbQuery {
+                PasskeyUserArtistRelation.find {
+                    PasskeyUserArtistRelationTable.userId eq helper.id
+                }.map {
+                    it.artistId
+                }.getListOfFevArtistMixPreview()
+            }
+        }
+    }
 
     override suspend fun getResponseArtistPreview(
         usedId: Long,
         userType: UserType
-    ): List<ResponseArtistsPreview> {
-        return dbQuery {
-            getQuery(usedId, userType)
-                .orderBy(
-                    column = SongTable.artist,
-                    order = SortOrder.ASC
-                ).orderBy(
-                    column = SongTable.points,
-                    order = SortOrder.DESC
-                ).map {
-                    HomeResponseSong(
-                        id = it[SongTable.id].value.toString(),
-                        title = it[SongTable.title],
-                        coverImage = it[SongTable.coverImage],
-                        artist = it[SongTable.artist],
-                        album = it[SongTable.album]
-                    )
-                }.groupBy {
-                    it.artist
-                }.map {
-                    ResponseArtistsPreview(
-                        artist = Artist.find {
-                            ArtistTable.name eq it.key
-                        }.first().toResponseArtist(),
-                        listOfSongs = it.value.take(5)
-                    )
-                }
-        }
+    ) = dbQuery {
+        getQuery(usedId, userType)
+            .orderBy(
+                column = SongTable.artist,
+                order = SortOrder.ASC
+            ).orderBy(
+                column = SongTable.points,
+                order = SortOrder.DESC
+            ).map {
+                HomeResponseSong(
+                    id = it[SongTable.id].value.toString(),
+                    title = it[SongTable.title],
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album]
+                )
+            }.groupBy {
+                it.artist
+            }.map {
+                ResponseArtistsPreview(
+                    artist = Artist.find {
+                        ArtistTable.name eq it.key
+                    }.first().toResponseArtist(),
+                    listOfSongs = it.value.take(5)
+                )
+            }
     }
 
     private fun Iterable<ResponseArtist>.removeDuplicate(
@@ -226,21 +222,18 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
     }
 
-    private suspend fun List<Int>.getHomeResponseSongList() = dbQuery {
+    private suspend fun List<Int>.getListOfFevArtistMixPreview() = dbQuery {
         Song.find {
             SongTable.id inList SongArtistRelation.find {
-                SongArtistRelationTable.artistId inList this@getHomeResponseSongList
+                SongArtistRelationTable.artistId inList this@getListOfFevArtistMixPreview
             }.map {
                 it.songId
             }
         }.orderBy(SongTable.points to SortOrder.DESC)
             .limit(4).map {
-                HomeResponseSong(
-                    id = it.id.value.toString(),
-                    title = it.title,
+                FevArtistsMixPreview(
                     coverImage = it.coverImage.constructCoverPhotoUrl(),
-                    artist = it.artist,
-                    album = it.album
+                    artist = it.artist
                 )
             }
     }

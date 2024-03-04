@@ -22,21 +22,6 @@ select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
 
-SELECT s.id, s.title, s.coverImage, s.artist, s.album FROM song s WHERE s.id IN (
-    SELECT sar.songId FROM SongAlbumArtistRelation sar WHERE sar.albumId IN (
-        SELECT a.id FROM album a WHERE a.id IN (
-            SELECT saar.albumId FROM SongAlbumArtistRelation saar WHERE saar.artistId IN (
-                SELECT pua.artistId FROM passkeyuserartistrelation pua WHERE pua.userId = 1
-            )
-        )
-    )
-)
-ORDER BY (
-    SELECT points FROM album WHERE id = (
-        SELECT sar.albumId FROM SongAlbumArtistRelation sar WHERE sar.songId = s.id limit 1
-    )
-) DESC;
-
 
 SELECT s.id , s.title , s.coverImage , s.artist
 FROM song s
@@ -44,11 +29,10 @@ join songartistrelation sar on s.id = sar.songId
 where sar.artistId in (
 	select puar.artistid from passkeyuserartistrelation puar
     where puar.userid = 1
-) order by s.artist;
+) order by s.points;
 
 
-
-SELECT s.id , s.title , s.coverImage , s.artist , s.album
+SELECT s.title , s.coverImage , s.album , s.artist -- getResponseAlbumPreview
 FROM song s
 JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
 JOIN album a ON sar.albumId = a.id
@@ -64,7 +48,7 @@ WHERE a.id IN (
 ORDER BY a.points DESC limit 30;
 
 
-WITH RankedSongs AS (
+WITH RankedSongs AS ( -- getResponseAlbumPreview
    SELECT s.id , s.title , s.coverImage , s.artist , s.album,
         ROW_NUMBER() OVER (PARTITION BY a.id ORDER BY a.points DESC, s.id) AS rnk
     FROM
@@ -82,7 +66,7 @@ WITH RankedSongs AS (
             )
         ) ORDER BY a.points DESC
 )
-SELECT * FROM RankedSongs WHERE rnk = 1 limit 6;
+SELECT * FROM RankedSongs WHERE rnk = 1 limit 5;
 
 
 
@@ -103,27 +87,6 @@ join passkeyuserartistrelation puar on puar.artistid = a.id
 where puar.userId = 1 order by s.artist , s.points
 ) select * from ResponseAlbumPreview where rnk <= 5;
 
-
-with ResponseAlbumPreview as (
-    select
-        s.id,
-        s.title,
-        s.coverImage,
-        s.artist,
-        s.points,
-        row_number() over (partition by s.artist order by s.points desc) rnk
-    from
-        song s
-    inner join
-        artist a on a.name = s.artist
-    inner join
-        passkeyuserartistrelation puar on puar.artistid = a.id
-    where 
-        puar.userId = 1
-    order by
-        s.artist, s.points desc
-) select * from ResponseAlbumPreview where rnk <= 5;
-
 select
         s.id,
         s.title,
@@ -132,10 +95,8 @@ select
         s.points
     from
         song s
-    inner join
-        artist a on a.name = s.artist
-    inner join
-        passkeyuserartistrelation puar on puar.artistid = a.id
+    inner join artist a on a.name = s.artist
+    inner join passkeyuserartistrelation puar on puar.artistid = a.id
     where 
         puar.userId = 1
     order by s.artist, s.points desc ;

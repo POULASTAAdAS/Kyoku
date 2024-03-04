@@ -1,5 +1,7 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.setup.artist.*
@@ -12,6 +14,8 @@ import com.poulastaa.data.model.utils.CreatePlaylistHelper
 import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
+import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.album.AlbumRepository
@@ -182,13 +186,7 @@ class UserServiceRepositoryImpl(
         return withContext(Dispatchers.IO) {
             when (req.type) {
                 HomeType.NEW_USER_REQ -> {
-                    val artistIdList = dbQuery {
-                        PasskeyUserArtistRelation.find {
-                            PasskeyUserArtistRelationTable.userId eq helper.id
-                        }.map {
-                            it.artistId
-                        }
-                    }
+                    val artistIdList = getArtistIdList(helper.userType, user.id)
 
                     val fevArtistsMixDeferred = async {
                         artist.getArtistMixPreview(
@@ -274,6 +272,34 @@ class UserServiceRepositoryImpl(
             list
         } catch (_: Exception) {
             emptyList()
+        }
+    }
+
+    private suspend fun getArtistIdList(userType: UserType, userId: Long) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserArtistRelation.find {
+                    GoogleUserArtistRelationTable.userId eq userId
+                }.map {
+                    it.artistId
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserArtistRelation.find {
+                    EmailUserArtistRelationTable.userId eq userId
+                }.map {
+                    it.artistId
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserArtistRelation.find {
+                    PasskeyUserArtistRelationTable.userId eq userId
+                }.map {
+                    it.artistId
+                }
+            }
         }
     }
 }

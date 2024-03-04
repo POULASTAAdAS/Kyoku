@@ -21,7 +21,7 @@ interface ArtistRepository {
 
     suspend fun getArtistMixPreview(
         helper: UserTypeHelper
-    ): FevArtistsMixPreview
+    ): List<FevArtistsMixPreview>
 
     suspend fun getResponseArtistPreview(
         usedId:Long,

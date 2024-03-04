@@ -4,6 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseAlbumPreview(
-    val name:String = "",
-    val listOfSongs:List<HomeResponseSong> = emptyList()
+    val listOfPreviewAlbum: List<AlbumPreview> = emptyList()
 )
