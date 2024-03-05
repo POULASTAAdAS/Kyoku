@@ -11,5 +11,7 @@ object GoogleUserListenHistoryTable : Table() {
     val songId = EmailUserListenHistoryTable.long("songId").references(SongTable.id)
     val date = datetime("date").defaultExpression(CurrentDateTime)
 
+    val repeat = integer("repeat").default(0)
+
     override val primaryKey = PrimaryKey(userId, songId, date)
 }

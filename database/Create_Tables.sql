@@ -79,6 +79,7 @@ create table EmailUserListenHistory(
 	userId bigInt references EmailAuthUser(id) on delete cascade,
 	songId bigInt references Song(id),
 	date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `repeat` int not null default 0 ,
     primary key (userId , songId , date)
 );
 
@@ -86,6 +87,7 @@ create table GoogleUserListenHistory(
 	userId bigInt references GoogleAuthUser(id) on delete cascade,
 	songId bigInt references Song(id),
 	date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `repeat` int not null default 0 ,
     primary key (userId , songId , date)
 );
 
@@ -93,12 +95,11 @@ create table PasskeyUserListenHistory(
 	userId bigInt references PasskeyAuthUser(id) on delete cascade,
 	songId bigInt references Song(id),
 	date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `repeat` int not null default 0 ,
     primary key (userId , songId , date)
 );
 
-
-
-
+drop table PasskeyUserListenHistory;
 
 create table SongGenreRelation(
 	songId bigint references Song(id),

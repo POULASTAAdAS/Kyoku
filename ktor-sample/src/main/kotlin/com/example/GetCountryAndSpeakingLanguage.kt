@@ -1,64 +1,83 @@
 package com.example
 
 fun main() {
-    val a = data.flatten()
-        .distinctBy {
-            it.id
-        }.filterNot { new ->
-            old.any {
-                it.name == new.name
-            }
+    map.groupBy {
+        it.first
+    }.forEach {
+        println(it)
+    }
+
+    println()
+    println()
+    println()
+
+    map.groupBy {
+        it.first
+    }.map {
+        Pair(
+            it.key,
+            it.value.sumOf { pair ->
+                pair.second
+            } + it.value.count()
+        )
+    }.sortedByDescending {
+        it.second
+    }.take(2)
+        .forEach {
+            println(it)
         }
 
-    val new = a + old
+    println()
+    println()
+    println()
 
-    println(old.take(1))
-
+    map.groupBy(
+        keySelector = { it.first },
+        valueTransform = { it.second }
+    ).map { (key, values) ->
+        key to (values.sum() + values.size)
+    }.sortedBy {
+        it.second
+    }
 }
 
-val data
-    get() =
-        listOf(
-            sub,
-            sub,
-            sub,
-            sub,
-        )
 
-
-val sub = listOf(
-    Cl(
-        1,
-        "name"
-    ), Cl(
-        2,
-        "name2"
-    ), Cl(
-        3,
-        "name1"
-    ), Cl(
-        4,
-        "name"
-    ), Cl(
-        5,
-        "name"
-    ), Cl(
-        6,
-        "name1"
+val map = listOf(
+    Pair(
+        first = 732,
+        second = 10
+    ), Pair(
+        first = 2743,
+        second = 0
+    ), Pair(
+        first = 6743,
+        second = 1
+    ), Pair(
+        first = 4743,
+        second = 2
+    ), Pair(
+        first = 9743,
+        second = 0
+    ), Pair(
+        first = 732,
+        second = 0
+    ), Pair(
+        first = 7372,
+        second = 0
+    ), Pair(
+        first = 6743,
+        second = 2
+    ), Pair(
+        first = 4743,
+        second = 1
+    ), Pair(
+        first = 9743,
+        second = 0
+    ), Pair(
+        first = 4743,
+        second = 5
+    ), Pair(
+        first = 9743,
+        second = 0
     )
-)
-
-val old = listOf(
-    Cl(
-        1,
-        "name"
-    ), Cl(
-        2,
-        "name2"
-    )
-)
-
-data class Cl(
-    val id: Int,
-    val name: String
 )

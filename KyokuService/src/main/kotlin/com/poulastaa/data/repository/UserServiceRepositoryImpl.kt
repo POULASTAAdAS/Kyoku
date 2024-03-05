@@ -167,10 +167,8 @@ class UserServiceRepositoryImpl(
         )
 
         return artist.storeArtist(
-            helper = UserTypeHelper(
-                userType = helper.userType,
-                id = user.id
-            ),
+            userType = helper.userType,
+            usedId = user.id,
             artistNameList = req.data
         )
     }
@@ -189,10 +187,8 @@ class UserServiceRepositoryImpl(
 
                     val fevArtistsMixDeferred = async {
                         artist.getArtistMixPreview(
-                            helper = UserTypeHelper(
-                                userType = helper.userType,
-                                id = user.id
-                            )
+                            userType = helper.userType,
+                            usedId = user.id
                         )
                     }
                     val albumDeferred = async { album.getResponseAlbumPreviewForNewUser(artistIdList) }
@@ -202,7 +198,6 @@ class UserServiceRepositoryImpl(
                             userType = helper.userType
                         )
                     }
-
 
 
                     HomeResponse(

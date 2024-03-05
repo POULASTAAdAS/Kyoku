@@ -7,15 +7,19 @@ import com.poulastaa.data.model.db_table.SongTable
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
 import com.poulastaa.data.model.home.FevArtistsMixPreview
-import com.poulastaa.data.model.home.HomeResponseSong
 import com.poulastaa.data.model.home.ResponseArtistsPreview
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
+import com.poulastaa.data.model.utils.DbResponseArtistPreview
+import com.poulastaa.data.model.utils.DbResponseArtistPreview.Companion.toListOfSongPreview
 import com.poulastaa.data.model.utils.UserType
-import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.dao.SongArtistRelation
@@ -26,10 +30,10 @@ import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toResponseArtist
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 class ArtistRepositoryImpl : ArtistRepository {
     override suspend fun suggestArtist(
@@ -51,7 +55,8 @@ class ArtistRepositoryImpl : ArtistRepository {
     }
 
     override suspend fun storeArtist(
-        helper: UserTypeHelper,
+        usedId: Long,
+        userType: UserType,
         artistNameList: List<String>
     ): StoreArtistResponse {
         val artistIdList = dbQuery {
@@ -62,12 +67,12 @@ class ArtistRepositoryImpl : ArtistRepository {
             }
         }
 
-        when (helper.userType) {
-            UserType.GOOGLE_USER -> artistIdList.storeArtistForGoogleUser(id = helper.id)
+        when (userType) {
+            UserType.GOOGLE_USER -> artistIdList.storeArtistForGoogleUser(id = usedId)
 
-            UserType.EMAIL_USER -> artistIdList.storeArtistForEmailUser(id = helper.id)
+            UserType.EMAIL_USER -> artistIdList.storeArtistForEmailUser(id = usedId)
 
-            UserType.PASSKEY_USER -> artistIdList.storeArtistForPasskeyUser(id = helper.id)
+            UserType.PASSKEY_USER -> artistIdList.storeArtistForPasskeyUser(id = usedId)
         }
 
         incrementArtistPoints(artistIdList)
@@ -78,12 +83,13 @@ class ArtistRepositoryImpl : ArtistRepository {
     }
 
     override suspend fun getArtistMixPreview(
-        helper: UserTypeHelper
-    ) = when (helper.userType) {
+        usedId: Long,
+        userType: UserType
+    ) = when (userType) {
         UserType.GOOGLE_USER -> {
             dbQuery {
                 GoogleUserArtistRelation.find {
-                    GoogleUserArtistRelationTable.userId eq helper.id
+                    GoogleUserArtistRelationTable.userId eq usedId
                 }.map {
                     it.artistId
                 }.getListOfFevArtistMixPreview()
@@ -93,7 +99,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         UserType.EMAIL_USER -> {
             dbQuery {
                 EmailUserArtistRelation.find {
-                    EmailUserArtistRelationTable.userId eq helper.id
+                    EmailUserArtistRelationTable.userId eq usedId
                 }.map {
                     it.artistId
                 }.getListOfFevArtistMixPreview()
@@ -103,7 +109,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         UserType.PASSKEY_USER -> {
             dbQuery {
                 PasskeyUserArtistRelation.find {
-                    PasskeyUserArtistRelationTable.userId eq helper.id
+                    PasskeyUserArtistRelationTable.userId eq usedId
                 }.map {
                     it.artistId
                 }.getListOfFevArtistMixPreview()
@@ -115,7 +121,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         usedId: Long,
         userType: UserType
     ) = dbQuery {
-        getQuery(usedId, userType)
+        getResponseArtistOnUserId(usedId, userType)
             .orderBy(
                 column = ArtistTable.points,
                 order = SortOrder.DESC
@@ -123,7 +129,7 @@ class ArtistRepositoryImpl : ArtistRepository {
                 column = SongTable.points,
                 order = SortOrder.DESC
             ).map {
-                HomeResponseSong(
+                SongPreview(
                     id = it[SongTable.id].value.toString(),
                     title = it[SongTable.title],
                     coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
@@ -146,10 +152,16 @@ class ArtistRepositoryImpl : ArtistRepository {
     override suspend fun getResponseArtistPreviewDailyUser(
         usedId: Long,
         userType: UserType
-    ): List<ResponseArtistsPreview> {
+    ): List<ResponseArtistsPreview> = withContext(Dispatchers.IO) {
+        val historyArtistIdListDeferred = async { getHistoryArtistIdList(userType, usedId) }
+        val fevArtistIdListDeferred = async { getFevArtistIdList(userType, usedId) }
 
+        val historyArtistIdList = historyArtistIdListDeferred.await()
+        val fevArtistIdList = fevArtistIdListDeferred.await().filterNot {
+            it in historyArtistIdList
+        }
 
-        return emptyList() // todo
+        (historyArtistIdList + fevArtistIdList.take(3)).getResponseArtistPreviewOnArtistIdList()
     }
 
     private fun Iterable<ResponseArtist>.removeDuplicate(
@@ -248,7 +260,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             }
     }
 
-    private fun getQuery(
+    private fun getResponseArtistOnUserId(
         usedId: Long,
         userType: UserType
     ) = when (userType) {
@@ -329,5 +341,161 @@ class ArtistRepositoryImpl : ArtistRepository {
                     PasskeyUserArtistRelationTable.userId eq usedId
                 }
         }
+    }
+
+    private suspend fun getHistoryArtistIdList(
+        userType: UserType,
+        usedId: Long
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserListenHistoryTable
+                    .slice(
+                        GoogleUserListenHistoryTable.songId,
+                        GoogleUserListenHistoryTable.repeat
+                    )
+                    .select {
+                        GoogleUserListenHistoryTable.userId eq usedId and (
+                                GoogleUserListenHistoryTable.date greaterEq (
+                                        LocalDateTime.now().minus(1, ChronoUnit.DAYS)
+                                        )
+                                )
+                    }.map {
+                        Pair(
+                            first = it[GoogleUserListenHistoryTable.songId],
+                            second = it[GoogleUserListenHistoryTable.repeat]
+                        )
+                    }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserListenHistoryTable
+                    .slice(
+                        EmailUserListenHistoryTable.songId,
+                        EmailUserListenHistoryTable.repeat
+                    )
+                    .select {
+                        EmailUserListenHistoryTable.userId eq usedId and (
+                                EmailUserListenHistoryTable.date greaterEq (
+                                        LocalDateTime.now().minus(1, ChronoUnit.DAYS)
+                                        )
+                                )
+                    }.map {
+                        Pair(
+                            first = it[EmailUserListenHistoryTable.songId],
+                            second = it[EmailUserListenHistoryTable.repeat]
+                        )
+                    }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserListenHistoryTable
+                    .slice(
+                        PasskeyUserListenHistoryTable.songId,
+                        PasskeyUserListenHistoryTable.repeat
+                    )
+                    .select {
+                        PasskeyUserListenHistoryTable.userId eq usedId and (
+                                PasskeyUserListenHistoryTable.date greaterEq (
+                                        LocalDateTime.now().minus(1, ChronoUnit.DAYS)
+                                        )
+                                )
+                    }.map {
+                        Pair(
+                            first = it[PasskeyUserListenHistoryTable.songId],
+                            second = it[PasskeyUserListenHistoryTable.repeat]
+                        )
+                    }
+            }
+        }.groupBy(
+            keySelector = { it.first },
+            valueTransform = { it.second }
+        ).map { (key, values) ->
+            key to (values.sum() + values.size)
+        }.sortedByDescending {
+            it.second
+        }.take(2)
+            .map { it.first }
+            .let {
+                SongArtistRelation.find {
+                    SongArtistRelationTable.songId inList it
+                }.map {
+                    it.artistId
+                }
+            }
+    }
+
+    private suspend fun getFevArtistIdList(
+        userType: UserType,
+        usedId: Long
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserArtistRelation.find {
+                    GoogleUserArtistRelationTable.userId eq usedId
+                }.map {
+                    it.artistId
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserArtistRelation.find {
+                    EmailUserArtistRelationTable.userId eq usedId
+                }.map {
+                    it.artistId
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserArtistRelation.find {
+                    PasskeyUserArtistRelationTable.userId eq usedId
+                }.map {
+                    it.artistId
+                }
+            }
+        }
+    }
+
+    private suspend fun List<Int>.getResponseArtistPreviewOnArtistIdList() = dbQuery {
+        SongTable
+            .join(
+                otherTable = ArtistTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    SongTable.artist eq ArtistTable.name
+                }
+            ).slice(
+                SongTable.id,
+                SongTable.title,
+                SongTable.coverImage,
+                SongTable.artist,
+                SongTable.album,
+                SongTable.points,
+                ArtistTable.id,
+                ArtistTable.profilePicUrl
+            ).select {
+                ArtistTable.id inList this@getResponseArtistPreviewOnArtistIdList
+            }.map {
+                DbResponseArtistPreview(
+                    songId = it[SongTable.id].value.toString(),
+                    songTitle = it[SongTable.title],
+                    songCover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album],
+                    artistId = it[ArtistTable.id].value,
+                    artistImage = it[ArtistTable.profilePicUrl]
+                )
+            }.groupBy {
+                it.artist
+            }.map {
+                ResponseArtistsPreview(
+                    artist = ResponseArtist(
+                        id = it.value[0].artistId,
+                        name = it.key,
+                        imageUrl = ResponseArtist.getArtistImageUrl(it.value[0].artistImage)
+                    ),
+                    listOfSongs = it.value.toListOfSongPreview().take(5)
+                )
+            }
     }
 }

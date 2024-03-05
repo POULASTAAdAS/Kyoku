@@ -78,30 +78,13 @@ where puar.userId = 1
 order by a.points desc, s.points desc;
 
 
-with ResponseAlbumPreview as (
-SELECT s.id , s.title , s.coverImage , s.artist , s.points, 
-ROW_NUMBER() OVER (PARTITION BY s.artist ORDER BY s.points DESC) AS rnk
+select s.id, s.title, s.coverImage, s.artist, s.points
 from song s
-join artist a on a.name = s.artist 
-join passkeyuserartistrelation puar on puar.artistid = a.id 
-where puar.userId = 1 order by a.points  desc, s.points desc
-) select * from ResponseAlbumPreview where rnk <= 5;
+inner join artist a on a.name = s.artist
+inner join passkeyuserartistrelation puar on puar.artistid = a.id
+where puar.userId = 1
+order by s.artist desc;
 
-select
-        s.id,
-        s.title,
-        s.coverImage,
-        s.artist,
-        s.points
-    from
-        song s
-    inner join artist a on a.name = s.artist
-    inner join passkeyuserartistrelation puar on puar.artistid = a.id
-    where 
-        puar.userId = 1
-    order by s.artist, s.points desc ;
-
-select * from PasskeyUserListenHistory;
 
 SELECT DISTINCT songId
 FROM PasskeyUserListenHistory
@@ -201,34 +184,44 @@ INNER JOIN songalbumartistrelation ON  (song.id = songalbumartistrelation.songid
 
 
 
+select count(*)from passkeyuserlistenhistory where userid = 1 and songid = 12029;
+
+select  songid  , `repeat` from PasskeyUserListenHistory  where userid = 1 and date >= current_date() - interval 1 day;
 
 
 
 
 
+SELECT song.title, song.coverimage, song.artist, song.album , artist.id , artist.profilePicUrl 
+FROM song 
+join artist on artist.name = song.artist
+where artist.id in (
+	select artistId from passkeyuserartistrelation where userid = 1
+) order by artist.points;
+
+
+SELECT song.title, song.coverimage, song.artist, song.album , artist.id , artist.profilePicUrl 
+FROM song 
+join artist on artist.name = song.artist
+join passkeyuserartistrelation on passkeyuserartistrelation.artistid = artist.id
+where passkeyuserartistrelation.userid = 1;
 
 
 
+select s.id, s.title, s.coverImage, s.artist, s.points  , a.id , a.profilePicUrl
+from song s
+inner join artist a on a.name = s.artist
+where a.id in (3 , 6 , 4);
+
+select * from artist order by points desc;
 
 
+select * from artist where id = 5;
+
+select * from artist where name = 'Aditya Rikhari';
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+select * from song where artist like '%Aditya Rikhari%';
 
 
 

@@ -12,7 +12,7 @@ import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHist
 import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
 import com.poulastaa.data.model.home.DailyMixPreview
-import com.poulastaa.data.model.home.HomeResponseSong
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.setup.spotify.*
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
@@ -205,7 +205,7 @@ class SongRepositoryImpl : SongRepository {
         Song.find {
             SongTable.id inList this@getHistorySongList
         }.map {
-            HomeResponseSong(
+            SongPreview(
                 id = it.id.value.toString(),
                 title = it.title,
                 coverImage = it.coverImage,
@@ -249,7 +249,7 @@ class SongRepositoryImpl : SongRepository {
                 sar2[SongArtistRelationTable.songId] inList songIdList
             }.orderBy(SongTable.points, SortOrder.DESC)
             .map {
-                HomeResponseSong(
+                SongPreview(
                     it[SongTable.id].toString(),
                     it[SongTable.title],
                     it[SongTable.coverImage],
@@ -271,7 +271,7 @@ class SongRepositoryImpl : SongRepository {
         ).join(userType, this)
             .orderBy(SongTable.points, SortOrder.DESC)
             .map {
-                HomeResponseSong(
+                SongPreview(
                     it[SongTable.id].toString(),
                     it[SongTable.title],
                     it[SongTable.coverImage],
