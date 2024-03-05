@@ -5,6 +5,7 @@ import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.auth.google.GoogleUserSession
 import com.poulastaa.data.model.auth.passkey.PasskeyUserSession
 import com.poulastaa.domain.repository.jwt.JWTRepository
+import com.poulastaa.utils.Constants
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -19,7 +20,7 @@ fun Application.configureSecurity() {
     val issuer = jwtRepository.getIssuer()
 
     install(Authentication) {
-        jwt("jwt-auth") {
+        jwt(Constants.SECURITY_LIST[0]) {
             realm = myRealm
 
             verifier(
@@ -36,13 +37,13 @@ fun Application.configureSecurity() {
             }
         }
 
-        session<GoogleUserSession>("google-auth") {
+        session<GoogleUserSession>(Constants.SECURITY_LIST[1]) {
             validate { it }
 
             challenge { call.resolveResource(EndPoints.UnAuthorised.route) }
         }
 
-        session<PasskeyUserSession>("passkey-auth") {
+        session<PasskeyUserSession>(Constants.SECURITY_LIST[2]) {
             validate { it }
 
             challenge { call.resolveResource(EndPoints.UnAuthorised.route) }

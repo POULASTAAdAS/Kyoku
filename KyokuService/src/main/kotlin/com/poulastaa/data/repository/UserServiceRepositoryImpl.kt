@@ -55,7 +55,7 @@ class UserServiceRepositoryImpl(
                     result.spotifySongDownloaderApiReq.makeApiCallOnNotFoundSpotifySongs()
                 }
 
-                // send to make playlist of found song for this user
+                //make playlist of found song for this user
                 CoroutineScope(Dispatchers.IO).launch {
                     val user = dbUsers.gerDbUser(userTypeHelper = helper)
 
@@ -66,9 +66,11 @@ class UserServiceRepositoryImpl(
                                     userType = helper.userType,
                                     id = user.id
                                 ),
-                                listOfSongId = result.songIdList,
+                                listOfSongId = result.listOfSongs.map {
+                                    it.id.value
+                                },
                                 playlistName = result.spotifyPlaylistResponse.name
-                            ),
+                            )
                         )
                     }
                 }
@@ -86,18 +88,14 @@ class UserServiceRepositoryImpl(
     ): SetBDateResponse {
         val response = dbUsers.storeBDate(helper, date)
 
-        return SetBDateResponse(
-            status = response
-        )
+        return SetBDateResponse(status = response)
     }
 
     override suspend fun suggestGenre(
         req: SuggestGenreReq,
         helper: UserTypeHelper
     ): SuggestGenreResponse {
-        val id = dbUsers.getCountryId(helper) ?: return SuggestGenreResponse(
-            status = GenreResponseStatus.FAILURE
-        )
+        val id = dbUsers.getCountryId(helper) ?: return SuggestGenreResponse(status = GenreResponseStatus.FAILURE)
 
         return genre.suggestGenre(req, id)
     }
@@ -106,10 +104,7 @@ class UserServiceRepositoryImpl(
         req: StoreGenreReq,
         helper: UserTypeHelper
     ): StoreGenreResponse {
-        val user = dbUsers.gerDbUser(helper) ?: return StoreGenreResponse(
-            status = GenreResponseStatus.FAILURE
-        )
-
+        val user = dbUsers.gerDbUser(helper) ?: return StoreGenreResponse(status = GenreResponseStatus.FAILURE)
 
         return genre.storeGenre(
             helper = UserTypeHelper(
@@ -240,8 +235,8 @@ class UserServiceRepositoryImpl(
                         status = HomeResponseStatus.SUCCESS,
                         type = req.type,
                         albumPreview = albumDeferred.await(),
-                        dailyMixPreview = dailyMixDeferred.await(),
-                        artistsPreview = artistDeferred.await()
+                        artistsPreview = artistDeferred.await(),
+                        dailyMixPreview = dailyMixDeferred.await()
                     )
                 }
 

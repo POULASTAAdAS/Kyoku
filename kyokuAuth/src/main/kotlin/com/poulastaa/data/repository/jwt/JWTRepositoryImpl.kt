@@ -17,7 +17,7 @@ import java.util.*
 class JWTRepositoryImpl(
     private val application: Application
 ) : JWTRepository {
-   private val issuer = getConfigProperty("jwt.issuer")
+    private val issuer = getConfigProperty("jwt.issuer")
     private val audience = getConfigProperty("jwt.audience")
     private val privateKeyString = getConfigProperty("jwt.privateKey")
 

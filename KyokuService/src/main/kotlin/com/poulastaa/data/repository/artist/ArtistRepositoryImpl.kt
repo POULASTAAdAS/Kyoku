@@ -12,7 +12,6 @@ import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHis
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
-import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -128,24 +127,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             ).orderBy(
                 column = SongTable.points,
                 order = SortOrder.DESC
-            ).map {
-                SongPreview(
-                    id = it[SongTable.id].value.toString(),
-                    title = it[SongTable.title],
-                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
-                    artist = it[SongTable.artist],
-                    album = it[SongTable.album]
-                )
-            }.groupBy {
-                it.artist
-            }.map {
-                ResponseArtistsPreview(
-                    artist = Artist.find {
-                        ArtistTable.name eq it.key
-                    }.first().toResponseArtist(),
-                    listOfSongs = it.value.take(5)
-                )
-            }
+            ).mapToResponseArtistsPreview()
     }
 
 
@@ -284,7 +266,9 @@ class ArtistRepositoryImpl : ArtistRepository {
                     SongTable.coverImage,
                     SongTable.artist,
                     SongTable.album,
-                    SongTable.points
+                    SongTable.points,
+                    ArtistTable.id,
+                    ArtistTable.profilePicUrl
                 ).select {
                     GoogleUserArtistRelationTable.userId eq usedId
                 }
@@ -310,7 +294,9 @@ class ArtistRepositoryImpl : ArtistRepository {
                     SongTable.coverImage,
                     SongTable.artist,
                     SongTable.album,
-                    SongTable.points
+                    SongTable.points,
+                    ArtistTable.id,
+                    ArtistTable.profilePicUrl
                 ).select {
                     EmailUserArtistRelationTable.userId eq usedId
                 }
@@ -336,7 +322,9 @@ class ArtistRepositoryImpl : ArtistRepository {
                     SongTable.coverImage,
                     SongTable.artist,
                     SongTable.album,
-                    SongTable.points
+                    SongTable.points,
+                    ArtistTable.id,
+                    ArtistTable.profilePicUrl
                 ).select {
                     PasskeyUserArtistRelationTable.userId eq usedId
                 }
@@ -475,27 +463,29 @@ class ArtistRepositoryImpl : ArtistRepository {
                 ArtistTable.profilePicUrl
             ).select {
                 ArtistTable.id inList this@getResponseArtistPreviewOnArtistIdList
-            }.map {
-                DbResponseArtistPreview(
-                    songId = it[SongTable.id].value.toString(),
-                    songTitle = it[SongTable.title],
-                    songCover = it[SongTable.coverImage].constructCoverPhotoUrl(),
-                    artist = it[SongTable.artist],
-                    album = it[SongTable.album],
-                    artistId = it[ArtistTable.id].value,
-                    artistImage = it[ArtistTable.profilePicUrl]
-                )
-            }.groupBy {
-                it.artist
-            }.map {
-                ResponseArtistsPreview(
-                    artist = ResponseArtist(
-                        id = it.value[0].artistId,
-                        name = it.key,
-                        imageUrl = ResponseArtist.getArtistImageUrl(it.value[0].artistImage)
-                    ),
-                    listOfSongs = it.value.toListOfSongPreview().take(5)
-                )
-            }
+            }.mapToResponseArtistsPreview()
+    }
+
+    private fun Query.mapToResponseArtistsPreview() = this.map {
+        DbResponseArtistPreview(
+            songId = it[SongTable.id].value.toString(),
+            songTitle = it[SongTable.title],
+            songCover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+            artist = it[SongTable.artist],
+            album = it[SongTable.album],
+            artistId = it[ArtistTable.id].value,
+            artistImage = it[ArtistTable.profilePicUrl]
+        )
+    }.groupBy {
+        it.artist
+    }.map {
+        ResponseArtistsPreview(
+            artist = ResponseArtist(
+                id = it.value[0].artistId,
+                name = it.key,
+                imageUrl = ResponseArtist.getArtistImageUrl(it.value[0].artistImage)
+            ),
+            listOfSongs = it.value.toListOfSongPreview().take(5)
+        )
     }
 }

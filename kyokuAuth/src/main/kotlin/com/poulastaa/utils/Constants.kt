@@ -5,7 +5,7 @@ object Constants {
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
-    const val BASE_URL = "https://6a51-103-42-156-195.ngrok-free.app"
+    const val BASE_URL = "https://6987-103-42-158-18.ngrok-free.app"
 
     const val PROFILE_PIC_URL = "$BASE_URL/api/authorised/user/profilePic"
 
@@ -32,6 +32,12 @@ object Constants {
 
     const val PASSKEY_USER_CREATION_CLAIM_KEY = "createPasskeyUser"
     const val PASSKEY_USER_GET_CLAIM_KEY = "getPasskeyUser"
+
+    private const val SECURITY_TYPE_EMAIL = "jwt-auth"
+    private const val SECURITY_TYPE_GOOGLE = "google-auth"
+    private const val SECURITY_TYPE_PASSKEY = "passkey-auth"
+
+    val SECURITY_LIST = arrayOf(SECURITY_TYPE_EMAIL, SECURITY_TYPE_GOOGLE, SECURITY_TYPE_PASSKEY)
 
     const val DEFAULT_SESSION_MAX_AGE = 7L * 24 * 3600 // 7 days
 

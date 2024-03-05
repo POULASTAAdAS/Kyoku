@@ -37,7 +37,7 @@ class SongRepositoryImpl : SongRepository {
         return try {
             dbQuery {
                 list.forEach { spotifySong ->
-                    Song.find { // searching by title and album
+                    Song.find {// searching by title and album
                         SongTable.title like "%${spotifySong.title}%" and (SongTable.album like "%${spotifySong.album}%")
                     }.forEach {
                         foundSongs.putIfAbsent(it.id.value, it)
@@ -64,7 +64,7 @@ class SongRepositoryImpl : SongRepository {
                 spotifySongDownloaderApiReq = SpotifySongDownloaderApiReq(
                     listOfSong = notFoundSongs(list, foundSongs.values.toResponseSongList())
                 ),
-                songIdList = foundSongs.keys.toList()
+                listOfSongs = foundSongs.values.toList()
             )
         } catch (e: Exception) {
             HandleSpotifyPlaylist(

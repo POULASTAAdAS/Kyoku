@@ -2,6 +2,7 @@ package com.poulastaa.routes
 
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.domain.repository.UserServiceRepository
+import com.poulastaa.utils.Constants
 import com.poulastaa.utils.getClaimFromPayload
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,7 +15,7 @@ import io.ktor.server.routing.*
 fun Route.getUserProfilePic(
     userService: UserServiceRepository
 ) {
-    authenticate("jwt-auth") {
+    authenticate(configurations = Constants.SECURITY_LIST) {
         route(EndPoints.ProfilePic.route) {
             get {
                 val email = call.getClaimFromPayload()

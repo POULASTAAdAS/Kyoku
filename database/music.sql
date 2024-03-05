@@ -213,16 +213,7 @@ from song s
 inner join artist a on a.name = s.artist
 where a.id in (3 , 6 , 4);
 
-select * from artist order by points desc;
-
-
-select * from artist where id = 5;
-
-select * from artist where name = 'Aditya Rikhari';
-
-
-select * from song where artist like '%Aditya Rikhari%';
-
+select * from playlist;
 
 
 
