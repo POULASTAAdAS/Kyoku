@@ -157,7 +157,8 @@ class ArtistRepositoryImpl : ArtistRepository {
         return filteredResult.take(if (isSelectedReq) 3 else 5)
     }
 
-    private suspend fun Iterable<Int>.storeArtistForEmailUser(id: Long) {
+
+    private suspend fun List<Int>.storeArtistForEmailUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = EmailUserArtistRelation.find {
@@ -174,7 +175,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
     }
 
-    private suspend fun Iterable<Int>.storeArtistForGoogleUser(id: Long) {
+    private suspend fun List<Int>.storeArtistForGoogleUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = GoogleUserArtistRelation.find {
@@ -191,7 +192,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
     }
 
-    private suspend fun Iterable<Int>.storeArtistForPasskeyUser(id: Long) {
+    private suspend fun List<Int>.storeArtistForPasskeyUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = PasskeyUserArtistRelation.find {
@@ -207,6 +208,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             }
         }
     }
+
 
     private fun incrementArtistPoints(idList: List<Int>) {
         CoroutineScope(Dispatchers.IO).launch {

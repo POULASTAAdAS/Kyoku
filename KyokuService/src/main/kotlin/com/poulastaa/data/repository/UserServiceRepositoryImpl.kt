@@ -1,5 +1,9 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.model.db_table.ArtistTable
+import com.poulastaa.data.model.db_table.GenreTable
+import com.poulastaa.data.model.db_table.SongArtistRelationTable
+import com.poulastaa.data.model.db_table.SongGenreRelationTable
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
@@ -30,6 +34,9 @@ import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
 import com.poulastaa.utils.toListOfPlaylistRow
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.select
 
 class UserServiceRepositoryImpl(
     private val song: SongRepository,
@@ -37,7 +44,7 @@ class UserServiceRepositoryImpl(
     private val dbUsers: DbUsers,
     private val genre: GenreRepository,
     private val artist: ArtistRepository,
-    private val album: AlbumRepository,
+    private val album: AlbumRepository
 ) : UserServiceRepository {
     override suspend fun getFoundSpotifySongs(
         json: String,
@@ -55,24 +62,33 @@ class UserServiceRepositoryImpl(
                     result.spotifySongDownloaderApiReq.makeApiCallOnNotFoundSpotifySongs()
                 }
 
-                //make playlist of found song for this user
-                CoroutineScope(Dispatchers.IO).launch {
-                    val user = dbUsers.gerDbUser(userTypeHelper = helper)
-
-                    if (user != null) {
-                        createPlaylist(
-                            playlistHelper = CreatePlaylistHelper(
-                                typeHelper = UserTypeHelper(
-                                    userType = helper.userType,
-                                    id = user.id
-                                ),
-                                listOfSongId = result.listOfSongs.map {
-                                    it.id.value
-                                },
-                                playlistName = result.spotifyPlaylistResponse.name
-                            )
-                        )
+                dbUsers.getDbUser(userTypeHelper = helper)?.let {
+                    val songIdList = result.listOfSongs.map { song ->
+                        song.id.value
                     }
+
+                    createPlaylist(
+                        playlistHelper = CreatePlaylistHelper(
+                            typeHelper = UserTypeHelper(
+                                userType = helper.userType,
+                                id = it.id
+                            ),
+                            listOfSongId = songIdList,
+                            playlistName = result.spotifyPlaylistResponse.name
+                        )
+                    )
+
+                    storeGenreFromSpotifyPlaylist(
+                        userType = helper.userType,
+                        userId = it.id,
+                        songIdList = songIdList
+                    )
+
+                    storeArtistFromSpotifyPlaylist(
+                        userType = helper.userType,
+                        userId = it.id,
+                        songIdList = songIdList
+                    )
                 }
 
                 result.spotifyPlaylistResponse // send response data back
@@ -104,43 +120,15 @@ class UserServiceRepositoryImpl(
         req: StoreGenreReq,
         helper: UserTypeHelper
     ): StoreGenreResponse {
-        val user = dbUsers.gerDbUser(helper) ?: return StoreGenreResponse(status = GenreResponseStatus.FAILURE)
+        val user = dbUsers.getDbUser(helper) ?: return StoreGenreResponse(status = GenreResponseStatus.FAILURE)
 
         return genre.storeGenre(
-            helper = UserTypeHelper(
-                userType = helper.userType,
-                id = user.id
-            ),
+            userType = helper.userType,
+            userId = user.id,
             genreNameList = req.data
         )
     }
 
-    private suspend fun createPlaylist(
-        playlistHelper: CreatePlaylistHelper
-    ) {
-        when (playlistHelper.typeHelper.userType) {
-            UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
-                playlist = playlistHelper
-                    .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                playlistName = playlistHelper.playlistName
-            )
-
-            UserType.GOOGLE_USER -> playlist.cretePlaylistForGoogleUser(
-                playlist = playlistHelper
-                    .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                playlistName = playlistHelper.playlistName
-            )
-
-            UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
-                playlist = playlistHelper
-                    .listOfSongId
-                    .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                playlistName = playlistHelper.playlistName
-            )
-        }
-    }
 
     override suspend fun suggestArtist(
         req: SuggestArtistReq,
@@ -157,7 +145,7 @@ class UserServiceRepositoryImpl(
         req: StoreArtistReq,
         helper: UserTypeHelper
     ): StoreArtistResponse {
-        val user = dbUsers.gerDbUser(helper) ?: return StoreArtistResponse(
+        val user = dbUsers.getDbUser(helper) ?: return StoreArtistResponse(
             status = ArtistResponseStatus.FAILURE
         )
 
@@ -173,7 +161,7 @@ class UserServiceRepositoryImpl(
         req: HomeReq,
         helper: UserTypeHelper
     ): HomeResponse {
-        val user = dbUsers.gerDbUser(helper) ?: return HomeResponse()
+        val user = dbUsers.getDbUser(helper) ?: return HomeResponse()
 
         return withContext(Dispatchers.IO) {
             when (req.type) {
@@ -242,6 +230,94 @@ class UserServiceRepositoryImpl(
 
                 HomeType.ALREADY_USER_REQ -> HomeResponse()// this will not occur on service api
             }
+        }
+    }
+
+    private suspend fun createPlaylist(
+        playlistHelper: CreatePlaylistHelper
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            when (playlistHelper.typeHelper.userType) {
+                UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
+                    playlist = playlistHelper
+                        .listOfSongId
+                        .toListOfPlaylistRow(playlistHelper.typeHelper.id),
+                    playlistName = playlistHelper.playlistName
+                )
+
+                UserType.GOOGLE_USER -> playlist.cretePlaylistForGoogleUser(
+                    playlist = playlistHelper
+                        .listOfSongId
+                        .toListOfPlaylistRow(playlistHelper.typeHelper.id),
+                    playlistName = playlistHelper.playlistName
+                )
+
+                UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
+                    playlist = playlistHelper
+                        .listOfSongId
+                        .toListOfPlaylistRow(playlistHelper.typeHelper.id),
+                    playlistName = playlistHelper.playlistName
+                )
+            }
+        }
+    }
+
+
+    private fun storeGenreFromSpotifyPlaylist(
+        userType: UserType,
+        userId: Long,
+        songIdList: List<Long>
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val genreNameList = GenreTable
+                .join(
+                    otherTable = SongGenreRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongGenreRelationTable.genreId as Column<*> eq GenreTable.id
+                    }
+                ).slice(GenreTable.name)
+                .select {
+                    SongGenreRelationTable.songId inList songIdList
+                }.distinctBy {
+                    it[GenreTable.name]
+                }.map {
+                    it[GenreTable.name]
+                }
+
+            genre.storeGenre(
+                userType = userType,
+                userId = userId,
+                genreNameList = genreNameList
+            )
+        }
+    }
+
+    private fun storeArtistFromSpotifyPlaylist(
+        userType: UserType,
+        userId: Long,
+        songIdList: List<Long>
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val artistNameList = ArtistTable
+                .join(
+                    otherTable = SongArtistRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+                    }
+                ).slice(
+                    ArtistTable.name
+                ).select {
+                    SongArtistRelationTable.songId inList songIdList
+                }.distinctBy {
+                    it[ArtistTable.name]
+                }
+                .map {
+                    it[ArtistTable.name]
+                }
+
+            artist.storeArtist(userId, userType, artistNameList)
         }
     }
 

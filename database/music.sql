@@ -216,22 +216,37 @@ where a.id in (3 , 6 , 4);
 select * from playlist;
 
 
+select * from songArtistRelation;
 
+select  distinct name from artist
+join songArtistRelation on songArtistRelation.artistId = artist.id
+where songArtistRelation.songId in (
+ 11,
+426,
+596,
+805,
+1341,
+1469,
+1555,
+1556
+);
 
+select * from songGenreRelation;
 
+select * from genre;
 
-
-
-
-
-
-
-
-
-
-
-
-
+select distinct name from genre
+join songGenreRelation on songGenreRelation.genreId = Genre.id
+where songGenreRelation.songId in (
+ 11,
+426,
+596,
+805,
+1341,
+1469,
+1555,
+1556
+);
 
 
 

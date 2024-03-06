@@ -9,7 +9,7 @@ class DbUsers(
     private val googleUser: GoogleAuthUserRepository,
     private val passekyUser: PasskeyAuthUserRepository
 ) {
-    suspend fun gerDbUser(userTypeHelper: UserTypeHelper) = when (userTypeHelper.userType) {
+    suspend fun getDbUser(userTypeHelper: UserTypeHelper) = when (userTypeHelper.userType) {
         UserType.GOOGLE_USER -> googleUser.getUser(userTypeHelper.headerId)
 
         UserType.EMAIL_USER -> emailUser.getUser(userTypeHelper.headerId)

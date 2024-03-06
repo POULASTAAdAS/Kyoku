@@ -20,6 +20,10 @@ drop table sessionStorage;
 
 drop table playlist;
 
+drop table EmailUserListenHistory;
+drop table GoogleUserListenHistory;
+drop table PasskeyUserListenHistory;
+
 drop table emailAuthUser;
 drop table googleAuthUser;
 drop table passkeyAuthUser;

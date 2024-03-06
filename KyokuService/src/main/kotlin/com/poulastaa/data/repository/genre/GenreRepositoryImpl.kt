@@ -10,7 +10,6 @@ import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
 import com.poulastaa.data.model.utils.UserType
-import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.CountryGenreRelation
 import com.poulastaa.domain.dao.Genre
 import com.poulastaa.domain.dao.user_genre.EmailUserGenreRelation
@@ -58,7 +57,8 @@ class GenreRepositoryImpl : GenreRepository {
     }
 
     override suspend fun storeGenre(
-        helper: UserTypeHelper,
+        userType: UserType,
+        userId: Long,
         genreNameList: List<String>
     ): StoreGenreResponse {
         val genreIdList = dbQuery {
@@ -69,12 +69,12 @@ class GenreRepositoryImpl : GenreRepository {
             }
         }
 
-        when (helper.userType) {
-            UserType.GOOGLE_USER -> genreIdList.storeGenreForGoogleUser(id = helper.id)
+        when (userType) {
+            UserType.GOOGLE_USER -> genreIdList.storeGenreForGoogleUser(id = userId)
 
-            UserType.EMAIL_USER -> genreIdList.storeGenreForEmailUser(id = helper.id)
+            UserType.EMAIL_USER -> genreIdList.storeGenreForEmailUser(id = userId)
 
-            UserType.PASSKEY_USER -> genreIdList.storeGenreForPasskeyUser(id = helper.id)
+            UserType.PASSKEY_USER -> genreIdList.storeGenreForPasskeyUser(id = userId)
         }
 
         incrementGenrePoints(genreIdList)
@@ -101,7 +101,8 @@ class GenreRepositoryImpl : GenreRepository {
         genreList = this.values.map { it.trim() }.toList()
     )
 
-    private suspend fun Iterable<Int>.storeGenreForEmailUser(id: Long) {
+
+    private suspend fun List<Int>.storeGenreForEmailUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = EmailUserGenreRelation.find {
@@ -116,7 +117,7 @@ class GenreRepositoryImpl : GenreRepository {
         }
     }
 
-    private suspend fun Iterable<Int>.storeGenreForGoogleUser(id: Long) {
+    private suspend fun List<Int>.storeGenreForGoogleUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = GoogleUserGenreRelation.find {
@@ -131,7 +132,7 @@ class GenreRepositoryImpl : GenreRepository {
         }
     }
 
-    private suspend fun Iterable<Int>.storeGenreForPasskeyUser(id: Long) {
+    private suspend fun List<Int>.storeGenreForPasskeyUser(id: Long) {
         dbQuery {
             this.forEach {
                 val found = PasskeyUserGenreRelation.find {

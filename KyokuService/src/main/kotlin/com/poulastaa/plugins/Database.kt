@@ -1,21 +1,23 @@
 package com.poulastaa.plugins
 
-import com.poulastaa.data.model.db_table.ArtistTable
-import com.poulastaa.data.model.db_table.CountryGenreRelationTable
-import com.poulastaa.data.model.db_table.GenreTable
-import com.poulastaa.data.model.db_table.CountryTable
-import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
-import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
-import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
+import com.poulastaa.data.model.db_table.user_album.EmailUserAlbumRelation
+import com.poulastaa.data.model.db_table.user_album.GoogleUserAlbumRelation
+import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_genre.EmailUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.GoogleUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTable
+import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
+import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -37,28 +39,29 @@ fun Application.configureDatabase() {
     )
 
     transaction(db) {
-        SchemaUtils.create(EmailUserPlaylistTable)
-        SchemaUtils.create(GoogleUserPlaylistTable)
-        SchemaUtils.create(PasskeyUserPlaylistTable)
-
         SchemaUtils.create(EmailAuthUserTable)
         SchemaUtils.create(GoogleAuthUserTable)
         SchemaUtils.create(PasskeyAuthUserTable)
 
-        SchemaUtils.create(GenreTable)
-        SchemaUtils.create(ArtistTable)
-
-        SchemaUtils.create(EmailUserGenreRelationTable)
-        SchemaUtils.create(GoogleUserGenreRelationTable)
-        SchemaUtils.create(PasskeyUserGenreRelationTable)
+        SchemaUtils.create(EmailUserAlbumRelation)
+        SchemaUtils.create(GoogleUserAlbumRelation)
+        SchemaUtils.create(PasskeyUserAlbumRelation)
 
         SchemaUtils.create(EmailUserArtistRelationTable)
         SchemaUtils.create(GoogleUserArtistRelationTable)
         SchemaUtils.create(PasskeyUserArtistRelationTable)
 
+        SchemaUtils.create(EmailUserGenreRelationTable)
+        SchemaUtils.create(GoogleUserGenreRelationTable)
+        SchemaUtils.create(PasskeyUserGenreRelationTable)
 
-        SchemaUtils.create(CountryTable)
-        SchemaUtils.create(CountryGenreRelationTable)
+        SchemaUtils.create(EmailUserListenHistoryTable)
+        SchemaUtils.create(GoogleUserListenHistoryTable)
+        SchemaUtils.create(PasskeyUserListenHistoryTable)
+
+        SchemaUtils.create(EmailUserPlaylistTable)
+        SchemaUtils.create(GoogleUserPlaylistTable)
+        SchemaUtils.create(PasskeyUserPlaylistTable)
     }
 }
 

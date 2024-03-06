@@ -7,8 +7,8 @@ import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.datetime
 
 object GoogleUserListenHistoryTable : Table() {
-    val userId = EmailUserListenHistoryTable.long("userId").references(GoogleAuthUserTable.id)
-    val songId = EmailUserListenHistoryTable.long("songId").references(SongTable.id)
+    val userId = long("userId").references(GoogleAuthUserTable.id)
+    val songId = long("songId").references(SongTable.id)
     val date = datetime("date").defaultExpression(CurrentDateTime)
 
     val repeat = integer("repeat").default(0)

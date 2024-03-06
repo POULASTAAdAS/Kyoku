@@ -1,9 +1,9 @@
 package com.poulastaa.domain.repository.genre
 
-import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.data.model.setup.genre.StoreGenreResponse
 import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
+import com.poulastaa.data.model.utils.UserType
 
 interface GenreRepository {
     suspend fun suggestGenre(
@@ -12,7 +12,8 @@ interface GenreRepository {
     ): SuggestGenreResponse
 
     suspend fun storeGenre(
-        helper: UserTypeHelper,
+        userType: UserType,
+        userId: Long,
         genreNameList: List<String>
     ): StoreGenreResponse
 }
