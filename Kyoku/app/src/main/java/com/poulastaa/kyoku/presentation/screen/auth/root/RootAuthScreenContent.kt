@@ -1,15 +1,13 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
-import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,19 +24,19 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomAuthButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
-import com.poulastaa.kyoku.ui.theme.dark_type_two_onPrimaryContainer
-import com.poulastaa.kyoku.ui.theme.light_type_two_onPrimaryContainer
+import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.isCompactSmall
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -46,6 +44,7 @@ fun RootAuthScreenContent(
     email: String,
     onValueChange: (String) -> Unit,
     autoFillEmail: AutofillNode,
+    isCompactSmall: Boolean = isCompactSmall(LocalConfiguration.current.screenWidthDp),
     passkeyContinueLoading: Boolean,
     emailAuthLoading: Boolean,
     googleAuthLoading: Boolean,
@@ -57,13 +56,15 @@ fun RootAuthScreenContent(
     googleSignupClicked: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = Modifier // 411 , 659 // 452 , 971
             .fillMaxSize()
-            .padding(15.dp),
+            .navigationBarsPadding()
+            .padding(MaterialTheme.dimens.medium1),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        Spacer(modifier = Modifier.weight(.3f))
+        if (!isCompactSmall)
+            Spacer(modifier = Modifier.weight(.3f)) // don't allow for small screen
 
         TopPart(
             modifier = Modifier.weight(1f),
@@ -78,7 +79,7 @@ fun RootAuthScreenContent(
         MidPart(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(.9f),
+                .weight(if (isCompactSmall) .5f else .8f), // for small .5 else .8
             value = email,
             autoFillEmail = autoFillEmail,
             passkeyContinueLoading = passkeyContinueLoading,
@@ -92,7 +93,7 @@ fun RootAuthScreenContent(
         EndPart(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(.4f),
+                .weight(.3f),
             emailSignUpClicked = emailSignUpClicked,
             googleSignupClicked = googleSignupClicked,
             googleAuthLoading = googleAuthLoading,
@@ -110,7 +111,7 @@ fun TopPart(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
     ) {
         Image(
             painter = logo,
@@ -147,7 +148,7 @@ fun MidPart(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
     ) {
         CustomTextFiled(
             modifier = Modifier
@@ -188,7 +189,7 @@ fun EndPart(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
     ) {
         CustomAuthButton(
             modifier = Modifier.fillMaxWidth(),

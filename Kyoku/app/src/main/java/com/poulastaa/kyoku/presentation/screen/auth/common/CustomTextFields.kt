@@ -22,8 +22,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun CustomTextFiled(
@@ -34,7 +34,7 @@ fun CustomTextFiled(
     modifier: Modifier,
     isError: Boolean,
     supportingText: String,
-    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent,
         unfocusedContainerColor = Color.Transparent,
@@ -93,7 +93,7 @@ fun CustomPasswordField(
     modifier: Modifier,
     isError: Boolean,
     supportingText: String,
-    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3),
     colors: TextFieldColors =
         OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,

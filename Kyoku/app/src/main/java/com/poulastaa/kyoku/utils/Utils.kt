@@ -1,5 +1,11 @@
 package com.poulastaa.kyoku.utils
 
+import android.app.Activity
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import java.net.CookieManager
 import java.time.Instant
@@ -7,6 +13,16 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Base64
+
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+fun isCompactSmall(screenWidthDp: Int): Boolean {
+    val window = calculateWindowSizeClass(activity = LocalContext.current as Activity)
+
+    return window.widthSizeClass == WindowWidthSizeClass.Compact && screenWidthDp <= 360
+}
+
 
 fun Char.isUserName(): Boolean =
     if (this == '_') true

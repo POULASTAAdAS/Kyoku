@@ -32,13 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun CustomOkButton(
     text: String,
     modifier: Modifier,
     loading: Boolean,
-    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape2),
     onClick: () -> Unit
 ) {
     Column(
@@ -50,7 +51,7 @@ fun CustomOkButton(
                 color = MaterialTheme.colorScheme.primary,
                 shape = shape
             )
-            .height(52.dp),
+            .height(MaterialTheme.dimens.buttonHeight),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -61,7 +62,7 @@ fun CustomOkButton(
         } else {
             Text(
                 modifier = Modifier
-                    .padding(8.dp),
+                    .padding(MaterialTheme.dimens.roundedCornerShape1),
                 text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
@@ -84,8 +85,8 @@ fun CustomAuthButton(
     Surface(
         modifier = modifier
             .clickable(onClick = onClick)
-            .height(52.dp),
-        shape = RoundedCornerShape(32.dp),
+            .height(MaterialTheme.dimens.buttonHeight),
+        shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3),
         color = MaterialTheme.colorScheme.primary
     ) {
         Column(
@@ -109,15 +110,15 @@ fun CustomAuthButton(
                 ) {
                     Image(
                         modifier = Modifier
-                            .size(52.dp)
+                            .size(MaterialTheme.dimens.buttonHeight)
                             .background(
                                 color = Color.White,
-                                shape = RoundedCornerShape(32.dp)
+                                shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3)
                             )
                             .border(
                                 width = 2.dp,
                                 color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(32.dp)
+                                shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3)
                             ),
                         contentScale = ContentScale.Inside,
                         painter = painterResource(id = icon),
@@ -126,7 +127,7 @@ fun CustomAuthButton(
 
                     Text(
                         modifier = Modifier
-                            .padding(end = 32.dp)
+                            .padding(end = MaterialTheme.dimens.medium3)
                             .fillMaxWidth(),
                         text = text,
                         textAlign = TextAlign.Center,
@@ -146,7 +147,7 @@ fun CustomButton(
     text: Int,
     defaultText: String = "S E N D",
     isEnabled: Boolean,
-    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape1),
     color: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -183,7 +184,7 @@ private fun Preview() {
 
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
         CustomAuthButton(
             modifier = Modifier.fillMaxWidth(),
@@ -194,7 +195,7 @@ private fun Preview() {
 
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
         CustomButton(text = 20, isEnabled = true) {
 
