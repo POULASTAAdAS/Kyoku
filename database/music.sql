@@ -317,8 +317,6 @@ where songGenreRelation.songId in (
 
 
 
-
-
 -- user
 create table playlist(
 id int primary key auto_increment,
