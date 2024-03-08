@@ -38,8 +38,6 @@ suspend fun createPasskey(
     val json =
         (result as CreatePublicKeyCredentialResponse).registrationResponseJson
 
-    Log.d("json", json)
-
     val publicKeyCredentialResponse =
         Json.decodeFromString<CreatePublicKeyCredential>(json)
 

@@ -95,7 +95,7 @@ fun CustomPasswordField(
     modifier: Modifier,
     isError: Boolean,
     supportingText: String,
-    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
+    shape: CornerBasedShape = RoundedCornerShape(16.dp),
     colors: TextFieldColors =
         OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
