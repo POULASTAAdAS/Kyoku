@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,13 +19,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +43,7 @@ fun CustomOkButton(
     text: String,
     modifier: Modifier,
     loading: Boolean,
-    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape2),
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
     onClick: () -> Unit
 ) {
     Column(
@@ -51,7 +55,7 @@ fun CustomOkButton(
                 color = MaterialTheme.colorScheme.primary,
                 shape = shape
             )
-            .height(MaterialTheme.dimens.buttonHeight),
+            .height(53.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -62,7 +66,7 @@ fun CustomOkButton(
         } else {
             Text(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.roundedCornerShape1),
+                    .padding(52.dp),
                 text = text,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
@@ -74,80 +78,12 @@ fun CustomOkButton(
 }
 
 @Composable
-fun CustomAuthButton(
-    modifier: Modifier,
-    @DrawableRes
-    icon: Int,
-    text: String,
-    loading: Boolean,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .height(MaterialTheme.dimens.buttonHeight),
-        shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3),
-        color = MaterialTheme.colorScheme.primary
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            if (loading)
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            else
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .size(MaterialTheme.dimens.buttonHeight)
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape3)
-                            ),
-                        contentScale = ContentScale.Inside,
-                        painter = painterResource(id = icon),
-                        contentDescription = null,
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .padding(end = MaterialTheme.dimens.medium3)
-                            .fillMaxWidth(),
-                        text = text,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-        }
-    }
-}
-
-
-@Composable
 fun CustomButton(
     modifier: Modifier = Modifier,
     text: Int,
     defaultText: String = "S E N D",
     isEnabled: Boolean,
-    shape: RoundedCornerShape = RoundedCornerShape(MaterialTheme.dimens.roundedCornerShape1),
+    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
     color: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -176,22 +112,67 @@ fun CustomButton(
     }
 }
 
+
+@Composable
+fun IconTextButton(
+    modifier: Modifier = Modifier,
+    icon: Painter,
+    text: String,
+    isLoading: Boolean,
+    onClick: () -> Unit
+) {
+    FilledIconButton(
+        onClick = onClick,
+        modifier = modifier
+            .heightIn(min = MaterialTheme.dimens.large2),
+        enabled = !isLoading,
+        shape = MaterialTheme.shapes.large
+    ) {
+        if (isLoading)
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        else
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(MaterialTheme.dimens.large2) // 52.dp
+                        .background(
+                            color = Color.White,
+                            shape = MaterialTheme.shapes.extraLarge
+                        )
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.extraLarge
+                        ),
+                    contentScale = ContentScale.Inside
+                )
+
+                Text(
+                    text = text,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = MaterialTheme.dimens.large1), // 32.dp
+                    textAlign = TextAlign.Center
+                )
+            }
+    }
+}
+
+
 @Preview
 @Composable
 private fun Preview() {
     Column {
         CustomOkButton(text = "Continue", modifier = Modifier.fillMaxWidth(), loading = false) {
-
-        }
-
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
-
-        CustomAuthButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = R.drawable.google,
-            text = "Continue With Google",
-            loading = false
-        ) {
 
         }
 

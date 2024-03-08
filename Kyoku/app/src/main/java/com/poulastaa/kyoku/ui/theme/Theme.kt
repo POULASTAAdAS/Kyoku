@@ -55,52 +55,33 @@ fun KyokuTheme(
     val window = calculateWindowSizeClass(activity = activity)
     val config = LocalConfiguration.current
 
-    var typography = CompactTypography
     var appDimens = CompactDimens
 
     when (window.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
-            if (config.screenWidthDp <= 360) {
-                appDimens = CompactSmallDimens
-                typography = CompactSmallTypography
-                Log.d(
-                    "called",
-                    "Compact 360 : ${config.screenWidthDp} , ${config.screenHeightDp}"
-                )
+            appDimens = if (config.screenWidthDp <= 360) {
+                CompactSmallDimens
             } else if (config.screenWidthDp < 599) {
-                appDimens = CompactMediumDimens
-                typography = CompactMediumTypography
-                Log.d(
-                    "called",
-                    "Compact < 599 : ${config.screenWidthDp} , ${config.screenHeightDp}"
-                )
+                CompactMediumDimens
             } else {
-                appDimens = CompactDimens
-                typography = CompactTypography
-                Log.d(
-                    "called",
-                    "Compact > 599 : ${config.screenWidthDp} , ${config.screenHeightDp}"
-                )
+                CompactDimens
             }
         }
 
         WindowWidthSizeClass.Medium -> {
             appDimens = MediumDimens
-            typography = MediumTypography
-            Log.d("called", "Medium : ${config.screenWidthDp} , ${config.screenHeightDp}")
         }
 
         else -> {
             appDimens = ExpandedDimens
-            typography = ExpandedTypography
-            Log.d("called", "Expanded : ${config.screenWidthDp} , ${config.screenHeightDp}")
         }
     }
 
     AppThem(appDimens = appDimens) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = typography,
+            typography = AppTypography,
+            shapes = AppShape,
             content = content
         )
     }

@@ -1,122 +1,93 @@
 package com.poulastaa.kyoku.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
+import com.poulastaa.kyoku.R
 
-val CompactTypography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 32.sp
+private val Montserrat = FontFamily(
+    Font(R.font.montserrat_regular),
+    Font(R.font.montserrat_medium, FontWeight.W500)
+)
+
+val defaultTextStyle = TextStyle(
+    fontFamily = Montserrat,
+    platformStyle = PlatformTextStyle(
+        includeFontPadding = false
     ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
-    ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp
-    ),
-    labelMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None
     )
 )
 
-val CompactMediumTypography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 28.sp
+val AppTypography = Typography(
+    displayLarge = defaultTextStyle.copy(
+        fontSize = 57.sp, lineHeight = 64.sp, letterSpacing = (-0.25).sp
     ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
+    displayMedium = defaultTextStyle.copy(
+        fontSize = 45.sp, lineHeight = 52.sp, letterSpacing = 0.sp
     ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
+    displaySmall = defaultTextStyle.copy(
+        fontSize = 36.sp, lineHeight = 44.sp, letterSpacing = 0.sp
+    ),
+    headlineLarge = defaultTextStyle.copy(
+        fontSize = 32.sp, lineHeight = 40.sp, letterSpacing = 0.sp, lineBreak = LineBreak.Heading
+    ),
+    headlineMedium = defaultTextStyle.copy(
+        fontSize = 28.sp, lineHeight = 36.sp, letterSpacing = 0.sp, lineBreak = LineBreak.Heading
+    ),
+    headlineSmall = defaultTextStyle.copy(
+        fontSize = 24.sp, lineHeight = 32.sp, letterSpacing = 0.sp, lineBreak = LineBreak.Heading
+    ),
+    titleLarge = defaultTextStyle.copy(
+        fontSize = 22.sp, lineHeight = 28.sp, letterSpacing = 0.sp, lineBreak = LineBreak.Heading
+    ),
+    titleMedium = defaultTextStyle.copy(
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp
+        lineBreak = LineBreak.Heading
     ),
-    labelMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp
-    )
-)
-
-val CompactSmallTypography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 22.sp
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 16.sp
-    ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
+    titleSmall = defaultTextStyle.copy(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp,
         fontWeight = FontWeight.Medium,
-        fontSize = 10.sp
+        lineBreak = LineBreak.Heading
     ),
-    labelMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Normal,
-        fontSize = 10.sp
-    )
-)
-
-val MediumTypography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 38.sp
+    labelLarge = defaultTextStyle.copy(
+        fontSize = 14.sp, lineHeight = 20.sp, letterSpacing = 0.1.sp, fontWeight = FontWeight.Medium
     ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp
+    labelMedium = defaultTextStyle.copy(
+        fontSize = 12.sp, lineHeight = 16.sp, letterSpacing = 0.5.sp, fontWeight = FontWeight.Medium
     ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
+    labelSmall = defaultTextStyle.copy(
+        fontSize = 11.sp, lineHeight = 16.sp, letterSpacing = 0.5.sp, fontWeight = FontWeight.Medium
     ),
-    labelMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    )
-)
-
-val ExpandedTypography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 42.sp
+    bodyLarge = defaultTextStyle.copy(
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp,
+        lineBreak = LineBreak.Paragraph
     ),
-    headlineMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Bold,
-        fontSize = 34.sp
+    bodyMedium = defaultTextStyle.copy(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.25.sp,
+        lineBreak = LineBreak.Paragraph
     ),
-    titleMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Medium,
-        fontSize = 18.sp
-    ),
-    labelMedium = TextStyle(
-        fontFamily = FontFamily.Monospace,
-        fontWeight = FontWeight.Normal,
-        fontSize = 18.sp
+    bodySmall = defaultTextStyle.copy(
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.4.sp,
+        lineBreak = LineBreak.Paragraph
     )
 )

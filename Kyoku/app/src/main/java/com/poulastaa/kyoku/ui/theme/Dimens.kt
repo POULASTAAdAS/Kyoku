@@ -10,10 +10,8 @@ data class Dimens(
     val medium1: Dp = 16.dp,
     val medium2: Dp = 18.dp,
     val medium3: Dp = 24.dp,
-    val buttonHeight: Dp = 0.dp,
-    val roundedCornerShape1: Dp = 4.dp,
-    val roundedCornerShape2: Dp = 16.dp,
-    val roundedCornerShape3: Dp = 32.dp
+    val large1: Dp = 32.dp,
+    val large2: Dp = 52.dp
 )
 
 val CompactSmallDimens = Dimens(
@@ -23,7 +21,6 @@ val CompactSmallDimens = Dimens(
     medium1 = 10.dp,
     medium2 = 14.dp,
     medium3 = 20.dp,
-    buttonHeight = 38.dp
 )
 
 val CompactMediumDimens = Dimens( // default
@@ -33,37 +30,38 @@ val CompactMediumDimens = Dimens( // default
     medium1 = 16.dp,
     medium2 = 18.dp,
     medium3 = 24.dp,
-    buttonHeight = 52.dp
+    large1 = 32.dp,
+    large2 = 52.dp
 )
 
 
-val CompactDimens = Dimens( // todo not tested
+val CompactDimens = Dimens(
+    // todo not tested
     small1 = 4.dp,
     small2 = 6.dp,
     small3 = 8.dp,
     medium1 = 16.dp,
     medium2 = 18.dp,
     medium3 = 24.dp,
-    buttonHeight = 90.dp
 )
 
 
-val MediumDimens = Dimens( // todo not tested
+val MediumDimens = Dimens(
+    // todo not tested
     small1 = 4.dp,
     small2 = 8.dp,
     small3 = 16.dp,
     medium1 = 20.dp,
     medium2 = 24.dp,
     medium3 = 28.dp,
-    buttonHeight = 90.dp
 )
 
-val ExpandedDimens = Dimens( // todo not tested
+val ExpandedDimens = Dimens(
+    // todo not tested
     small1 = 4.dp,
     small2 = 8.dp,
     small3 = 16.dp,
     medium1 = 20.dp,
     medium2 = 24.dp,
     medium3 = 28.dp,
-    buttonHeight = 90.dp
 )

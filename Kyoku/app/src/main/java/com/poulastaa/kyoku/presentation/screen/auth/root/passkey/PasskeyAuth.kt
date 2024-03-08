@@ -73,8 +73,6 @@ fun RootAuthViewModel.getPasskey(
             request = credentialRequest
         ).credential as PublicKeyCredential
 
-        Log.d("dataaaaaaaaaaaaaaaa", response.authenticationResponseJson)
-
         val getPublicKeyCredential =
             Json.decodeFromString<GetPublicKeyCredential>(response.authenticationResponseJson)
 
