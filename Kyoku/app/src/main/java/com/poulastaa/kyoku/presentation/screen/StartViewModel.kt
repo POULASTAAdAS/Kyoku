@@ -23,16 +23,17 @@ class StartViewModel @Inject constructor(
 
     init { // read sign in state
         viewModelScope.launch {
+            _startDestination.value = Screens.GetSpotifyPlaylist.route
             dataStore.readSignedInState().collect {
-                when (it) {
-                    SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
-                    SignInStatus.NEW_USER.name ->_startDestination.value = Screens.GetSpotifyPlaylist.route
-                    SignInStatus.B_DATE_SET.name -> _startDestination.value = Screens.SetBirthDate.route
-                    SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
-                    SignInStatus.GENRE_SET.name  -> _startDestination.value = Screens.SuggestGenre.route
-                    SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SuggestArtist.route
-                    SignInStatus.HOME.name -> _startDestination.value = Screens.Home.route
-                }
+//                when (it) {
+//                    SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
+//                    SignInStatus.NEW_USER.name ->_startDestination.value = Screens.GetSpotifyPlaylist.route
+//                    SignInStatus.B_DATE_SET.name -> _startDestination.value = Screens.SetBirthDate.route
+//                    SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
+//                    SignInStatus.GENRE_SET.name  -> _startDestination.value = Screens.SuggestGenre.route
+//                    SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SuggestArtist.route
+//                    SignInStatus.HOME.name -> _startDestination.value = Screens.Home.route
+//                }
 
             _keepSplashOn.value = false
             }

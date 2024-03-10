@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,12 +96,14 @@ fun SpotifyPlaylistScreen(
 
                 if (temp)
                     Button(
-                        modifier = Modifier.padding(16.dp),
-                        onClick = { },
-                        shape = RoundedCornerShape(4.dp)
+                        modifier = Modifier.padding(MaterialTheme.dimens.medium1),
+                        onClick = {
+                            viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
+                        },
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
-                            modifier = Modifier.padding(4.dp),
+                            modifier = Modifier.padding(MaterialTheme.dimens.small1),
                             text = "skip",
                             textAlign = TextAlign.Center
                         )
@@ -129,9 +132,6 @@ fun SpotifyPlaylistScreen(
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnAddButtonClick)
                 focusManager.clearFocus()
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            },
-            onSkipClick = {
-                viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnSkipClick)
             },
             onContinueClick = {
                 viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnContinueClick)
