@@ -5,7 +5,7 @@ object Constants {
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
-    const val BASE_URL = "https://5dbe-103-192-118-25.ngrok-free.app"
+    const val BASE_URL = "https://f4cf-103-44-172-122.ngrok-free.app"
 
     const val PROFILE_PIC_URL = "$BASE_URL/api/authorised/user/profilePic"
 

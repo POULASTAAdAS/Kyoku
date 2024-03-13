@@ -44,7 +44,7 @@ class UserServiceRepositoryImpl(
 
     private val countryListMap = mapOf(
         "In" to "INDIA",
-        "US" to "US"
+        "US" to "United States"
     )
 
     override suspend fun createEmailUser(

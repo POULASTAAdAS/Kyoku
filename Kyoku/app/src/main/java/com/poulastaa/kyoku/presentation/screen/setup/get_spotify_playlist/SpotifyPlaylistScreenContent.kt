@@ -126,6 +126,7 @@ fun SpotifyPlaylistScreenContent(
                         )
                 }
 
+                
                 FilledIconButton(
                     onClick = onContinueClick,
                     modifier = Modifier
@@ -133,16 +134,11 @@ fun SpotifyPlaylistScreenContent(
                         .heightIn(min = MaterialTheme.dimens.large2),
                     shape = MaterialTheme.shapes.small
                 ) {
-                    if (isLoading)
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    else
-                        Text(
-                            text = "Continue",
-                            fontWeight = FontWeight.Medium,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize
-                        )
+                    Text(
+                        text = "Continue",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
                 }
             }
         }

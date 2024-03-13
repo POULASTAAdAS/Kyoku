@@ -1,11 +1,8 @@
 package com.poulastaa.kyoku.presentation.screen.auth.common
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,8 +17,8 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,45 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.ui.theme.dimens
-
-@Composable
-fun CustomOkButton(
-    text: String,
-    modifier: Modifier,
-    loading: Boolean,
-    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .clickable(
-                onClick = onClick
-            )
-            .background(
-                color = MaterialTheme.colorScheme.primary,
-                shape = shape
-            )
-            .height(53.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (loading) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-        } else {
-            Text(
-                modifier = Modifier
-                    .padding(52.dp),
-                text = text,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
 
 @Composable
 fun CustomButton(
@@ -127,7 +85,13 @@ fun IconTextButton(
         modifier = modifier
             .heightIn(min = MaterialTheme.dimens.large2),
         enabled = !isLoading,
-        shape = MaterialTheme.shapes.large
+        shape = MaterialTheme.shapes.large,
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.onPrimary
+        )
     ) {
         if (isLoading)
             CircularProgressIndicator(
@@ -173,13 +137,18 @@ fun IconTextButton(
 @Composable
 private fun Preview() {
     Column {
-        CustomOkButton(text = "Continue", modifier = Modifier.fillMaxWidth(), loading = false) {
+        CustomButton(text = 20, isEnabled = true) {
 
         }
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
-        CustomButton(text = 20, isEnabled = true) {
+        IconTextButton(
+            icon = painterResource(id = R.drawable.link),
+            text = "Text",
+            isLoading = true,
+            modifier = Modifier.fillMaxWidth()
+        ) {
 
         }
     }

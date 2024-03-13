@@ -191,7 +191,9 @@ class EmailSignUpViewModel @Inject constructor(
                 }
             }
 
-            EmailSignUpUiEvent.SomeErrorOccurredOnAuth -> onEvent(EmailSignUpUiEvent.EmitToast("Opus Something went wrong"))
+            EmailSignUpUiEvent.SomeErrorOccurredOnAuth -> {
+                onEvent(EmailSignUpUiEvent.EmitToast("Opus Something went wrong"))
+            }
 
             EmailSignUpUiEvent.OnAuthCanceled -> {
                 state = state.copy(
@@ -330,6 +332,7 @@ class EmailSignUpViewModel @Inject constructor(
                 return@launch
             }
 
+            onEvent(EmailSignUpUiEvent.OnAuthCanceled)
             onEvent(EmailSignUpUiEvent.SomeErrorOccurredOnAuth)
         }
     }

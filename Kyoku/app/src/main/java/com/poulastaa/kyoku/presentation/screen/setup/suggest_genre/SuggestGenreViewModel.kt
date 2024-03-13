@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.setup.suggest_genre
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -52,7 +53,7 @@ class SuggestGenreViewModel @Inject constructor(
         return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
-    private var suggestGenreJOb: Job? = null
+    private var suggestGenreJob: Job? = null
     private var selectedGenre: Int = 0
 
     private val _uiEvent = Channel<UiEvent>()
@@ -63,7 +64,7 @@ class SuggestGenreViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(300)
+            delay(500)
             if (state.isFirstApiCall && state.isInternetAvailable) {
                 val response = api.suggestGenre(
                     req = SuggestGenreReq(
@@ -105,8 +106,8 @@ class SuggestGenreViewModel @Inject constructor(
 
                             if (isSelected && state.isAnyGenreLeft) {
                                 if (state.isInternetAvailable) {
-                                    suggestGenreJOb?.cancel()
-                                    suggestGenreJOb = requestExtraGenre(state.data.indexOf(it) + 1)
+                                    suggestGenreJob?.cancel()
+                                    suggestGenreJob = requestExtraGenre(state.data.indexOf(it) + 1)
                                 } else {
                                     onEvent(SuggestGenreUiEvent.EmitToast("Please check Your Internet Connection"))
                                 }
