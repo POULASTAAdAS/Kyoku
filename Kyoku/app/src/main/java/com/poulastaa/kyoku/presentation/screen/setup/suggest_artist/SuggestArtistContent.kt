@@ -24,7 +24,6 @@ fun SuggestArtistContent(
     authHeader: String,
     onArtistClicked: (String) -> Unit
 ) {
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(maxGrid),
         modifier = Modifier

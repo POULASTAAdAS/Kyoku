@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    private val dataStore: DataStoreOperation,
+    private val dataStore: DataStoreOperation
 ) : ViewModel() {
     private val _startDestination = MutableStateFlow<String?>(null)
     val startDestination get() = _startDestination.asStateFlow()
@@ -21,18 +21,18 @@ class StartViewModel @Inject constructor(
     private val _keepSplashOn = MutableStateFlow(true)
     val keepSplashOn get() = _keepSplashOn.asStateFlow()
 
+
     init { // read sign in state
         viewModelScope.launch {
-//            _startDestination.value = Screens.SuggestArtist.route
             dataStore.readSignedInState().collect {
                 when (it) {
                     SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
                     SignInStatus.NEW_USER.name ->_startDestination.value = Screens.GetSpotifyPlaylist.route
                     SignInStatus.B_DATE_SET.name -> _startDestination.value = Screens.SetBirthDate.route
-                    SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.Home.route
+                    SignInStatus.OLD_USER.name  -> _startDestination.value = Screens.HomeRoot.route
                     SignInStatus.GENRE_SET.name  -> _startDestination.value = Screens.SuggestGenre.route
                     SignInStatus.ARTIST_SET.name  -> _startDestination.value = Screens.SuggestArtist.route
-                    SignInStatus.HOME.name -> _startDestination.value = Screens.Home.route
+                    SignInStatus.HOME.name -> _startDestination.value = Screens.HomeRoot.route
                 }
 
                 _keepSplashOn.value = false

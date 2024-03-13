@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.kyoku.data.model.LocalColorScheme
-import com.poulastaa.kyoku.navigation.SetupNavGraph
+import com.poulastaa.kyoku.navigation.root_navigation.SetupNavGraph
 import com.poulastaa.kyoku.presentation.screen.StartViewModel
 import com.poulastaa.kyoku.ui.theme.DarkColorSchemeTypeTwo
 import com.poulastaa.kyoku.ui.theme.KyokuTheme
