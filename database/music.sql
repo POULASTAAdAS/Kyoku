@@ -17,10 +17,15 @@ select * from EmailUserGenreRelation;
 select * from GoogleUserGenreRelation;
 select * from PasskeyUserGenreRelation;
 
-select * from emailuserartistrelation;
+select * from EmailUserArtistRelation;
 select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
+
+select * from EmailUserArtistRelation where userid = 1 and artistId = 10;
+
+delete emailAuthUser from emailAuthUser where id = 6;
+select * from country;
 
 
 SELECT s.id , s.title , s.coverImage , s.artist
@@ -250,9 +255,7 @@ where songGenreRelation.songId in (
 
 
 
-
-
-
+select * from artist order by points desc;
 
 
 

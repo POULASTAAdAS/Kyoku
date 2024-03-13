@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -29,8 +33,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiEvent
-import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,7 +83,7 @@ fun SetBirthDateScreen(
                 navigationIcon = {
                     IconButton(
                         modifier = Modifier.padding(
-                            start = 8.dp
+                            start = MaterialTheme.dimens.small3
                         ),
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -89,7 +95,7 @@ fun SetBirthDateScreen(
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = null
                         )
                     }
@@ -101,8 +107,8 @@ fun SetBirthDateScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    start = 16.dp,
-                    end = 16.dp,
+                    start = MaterialTheme.dimens.medium1,
+                    end = MaterialTheme.dimens.medium1,
                     top = it.calculateTopPadding(),
                     bottom = it.calculateBottomPadding()
                 ),
@@ -127,7 +133,9 @@ fun SetBirthDateScreen(
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         indication = null,
-                        interactionSource = MutableInteractionSource()
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        }
                     ),
                 value = viewModel.state.bDate,
                 onValueChange = {},
@@ -143,18 +151,34 @@ fun SetBirthDateScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
-            CustomOkButton(
-                text = "Continue",
-                modifier = Modifier.fillMaxWidth(),
-                loading = viewModel.state.isLoading,
-                shape = RoundedCornerShape(8.dp),
+            FilledIconButton(
                 onClick = {
                     viewModel.onEvent(SetBirthDateUiEvent.OnContinueClick)
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                }
-            )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = MaterialTheme.dimens.large2)
+                    .shadow(
+                        elevation = 3.dp,
+                        shape = MaterialTheme.shapes.small,
+                        clip = true
+                    ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                if (viewModel.state.isLoading)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                else
+                    Text(
+                        text = "C O N T I N U E",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+            }
         }
     }
 
@@ -192,7 +216,10 @@ fun SetBirthDateScreen(
                 title = {
                     Text(
                         text = "Select Your B'Date",
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                        modifier = Modifier.padding(
+                            start = MaterialTheme.dimens.medium1,
+                            top = MaterialTheme.dimens.medium1
+                        ),
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize
                     )
                 }

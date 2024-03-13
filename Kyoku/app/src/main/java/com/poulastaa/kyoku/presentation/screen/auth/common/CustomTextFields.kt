@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.presentation.screen.auth.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun CustomTextFiled(
@@ -34,7 +36,7 @@ fun CustomTextFiled(
     modifier: Modifier,
     isError: Boolean,
     supportingText: String,
-    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
+    shape: CornerBasedShape = RoundedCornerShape(16.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = Color.Transparent,
         unfocusedContainerColor = Color.Transparent,
@@ -93,7 +95,7 @@ fun CustomPasswordField(
     modifier: Modifier,
     isError: Boolean,
     supportingText: String,
-    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
+    shape: CornerBasedShape = RoundedCornerShape(16.dp),
     colors: TextFieldColors =
         OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,

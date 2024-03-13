@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.forgot_password
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,13 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.Autofill
 import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -34,8 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
+import com.poulastaa.kyoku.ui.theme.TestThem
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -58,15 +62,16 @@ fun ForgotPasswordScreenContent(
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(
+                    FilledIconButton(
                         onClick = onNavigateBack,
-                        colors = IconButtonDefaults.iconButtonColors(
+                        colors = IconButtonDefaults.filledIconButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.surface
-                        )
+                            contentColor = MaterialTheme.colorScheme.inversePrimary
+                        ),
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                             contentDescription = null
                         )
                     }
@@ -78,10 +83,10 @@ fun ForgotPasswordScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = paddingValues.calculateTopPadding() + 40.dp,
+                    top = paddingValues.calculateTopPadding() + MaterialTheme.dimens.large1,
                     bottom = paddingValues.calculateBottomPadding(),
-                    start = 15.dp,
-                    end = 15.dp
+                    start = MaterialTheme.dimens.medium1,
+                    end = MaterialTheme.dimens.medium1
                 ),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -104,20 +109,36 @@ fun ForgotPasswordScreenContent(
                 onDone = onDone,
                 isError = isError,
                 supportingText = emailSupportingText,
-                shape = RoundedCornerShape(8.dp)
+                shape = MaterialTheme.shapes.small
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-            CustomOkButton(
-                text = if (isEnabled) "Get Mail" else "$enableTimer",
-                modifier = Modifier.fillMaxWidth(),
-                loading = isLoading,
-                shape = RoundedCornerShape(8.dp),
-                onClick = onDone
-            )
+            FilledIconButton(
+                onClick = onDone,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = MaterialTheme.dimens.large2)
+                    .shadow(
+                        elevation = 3.dp,
+                        shape = MaterialTheme.shapes.small,
+                        clip = true
+                    ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                if (isLoading)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                else
+                    Text(
+                        text = if (isEnabled) "Get Email" else "$enableTimer",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium3))
 
             AnimatedVisibility(visible = !isEnabled) {
                 val temp = remember {
@@ -135,12 +156,13 @@ fun ForgotPasswordScreenContent(
             }
         }
     }
-
-
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Preview(showBackground = true)
+@Preview(
+    name = "Preview Night",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 private fun Preview() {
     val autoFillEmail = AutofillNode(
@@ -148,20 +170,22 @@ private fun Preview() {
         onFill = {}
     )
 
-    ForgotPasswordScreenContent(
-        email = "",
-        autoFillEmail = autoFillEmail,
-        autofill = null,
-        onValueChange = {},
-        isError = false,
-        emailSupportingText = "",
-        isLoading = false,
-        onNavigateBack = {},
-        isEnabled = false,
-        enableTimer = 10,
-        emailSendText = "An Password reset mail is sent to you\n" +
-                "Please Change The Password and login again"
-    ) {
+    TestThem {
+        ForgotPasswordScreenContent(
+            email = "",
+            autoFillEmail = autoFillEmail,
+            autofill = null,
+            onValueChange = {},
+            isError = false,
+            emailSupportingText = "",
+            isLoading = false,
+            onNavigateBack = {},
+            isEnabled = false,
+            enableTimer = 10,
+            emailSendText = "An Password reset mail is sent to you\n" +
+                    "Please Change The Password and login again"
+        ) {
 
+        }
     }
 }

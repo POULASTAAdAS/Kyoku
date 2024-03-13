@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun SuggestGenreItem(
@@ -37,7 +38,7 @@ fun SuggestGenreItem(
         modifier = modifier
             .clickable(onClick = clicked)
             .height(80.dp),
-        shape = RoundedCornerShape(4.dp),
+        shape = MaterialTheme.shapes.extraSmall,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
@@ -46,12 +47,12 @@ fun SuggestGenreItem(
         val color = MaterialTheme.colorScheme.tertiaryContainer
 
         Column(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(MaterialTheme.dimens.small1),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box(
-                modifier = modifier.padding(8.dp),
+                modifier = modifier.padding(MaterialTheme.dimens.small2),
                 contentAlignment = Alignment.TopEnd
             ) {
                 Canvas(modifier = Modifier) {

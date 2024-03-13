@@ -7,7 +7,7 @@ import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 class EmailUserArtistRelation(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<EmailUserArtistRelation>(EmailUserGenreRelationTable)
+    companion object : LongEntityClass<EmailUserArtistRelation>(EmailUserArtistRelationTable)
 
     var artistId by EmailUserArtistRelationTable.artistId
     var userId by EmailUserArtistRelationTable.userId

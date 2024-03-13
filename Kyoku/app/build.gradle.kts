@@ -122,7 +122,7 @@ dependencies {
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    val media3Version = "1.2.1"
+    val media3Version = "1.3.0"
 
     // For media playback using ExoPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
@@ -141,6 +141,9 @@ dependencies {
 
     // coil
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // adaptive layout
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
 
     // implementation ("com.google.accompanist:accompanist-permissions:0.25.0")
 

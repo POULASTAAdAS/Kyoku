@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.auth.email.RefreshTokenResponse
@@ -9,8 +10,10 @@ import com.poulastaa.kyoku.data.remote.RefreshTokenApi
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.AUTH_BASE_URL
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
@@ -44,16 +47,21 @@ class AuthHeaderInterceptor @Inject constructor(
         return when (response.status) {
             RefreshTokenUpdateStatus.UPDATED -> {
                 runBlocking {
-                    ds.storeRefreshToken(
-                        data = "Bearer ${response.refreshToken}"
-                    )
-                }
+                    withContext(Dispatchers.IO) {
+                        val storeRefreshToken = async {
+                            ds.storeRefreshToken(
+                                data = "Bearer ${response.refreshToken}"
+                            )
+                        }
 
-                runBlocking {
-                    ds.storeCookieOrAccessToken(data = "Bearer ${response.accessToken}")
-                }
+                        val storeCookieOrAccessToken =
+                            async { ds.storeCookieOrAccessToken(data = "Bearer ${response.accessToken}") }
 
-                response
+                        storeRefreshToken.await()
+                        storeCookieOrAccessToken.await()
+                    }
+                    response
+                }
             }
 
             else -> response

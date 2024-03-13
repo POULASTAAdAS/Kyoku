@@ -4,13 +4,17 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -26,6 +30,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiEvent
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.components.SuggestGenreTopBar
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun SuggestGenreScreen(
@@ -55,20 +60,27 @@ fun SuggestGenreScreen(
             SuggestGenreTopBar()
         },
         floatingActionButton = {
-            CustomOkButton(
-                text = "continue",
-                modifier = Modifier
-                    .padding(16.dp)
-                    .shadow(
-                        elevation = 3.dp,
-                        shape = RoundedCornerShape(4.dp)
-                    ),
-                shape = RoundedCornerShape(4.dp),
-                loading = viewModel.state.isSendingDataToApi,
+            FilledTonalButton(
                 onClick = {
                     viewModel.onEvent(SuggestGenreUiEvent.OnContinueClick)
-                }
-            )
+                },
+                modifier = Modifier.padding(MaterialTheme.dimens.small3),
+                shape = MaterialTheme.shapes.extraSmall,
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
+                elevation = ButtonDefaults.filledTonalButtonElevation(
+                    defaultElevation = 4.dp
+                )
+            ) {
+                if (viewModel.state.isSendingDataToApi)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
+                else Text(text = "Continue")
+            }
         }
     ) {
         if (viewModel.state.isFirstApiCall)

@@ -23,6 +23,7 @@ class StartViewModel @Inject constructor(
 
     init { // read sign in state
         viewModelScope.launch {
+//            _startDestination.value = Screens.SuggestArtist.route
             dataStore.readSignedInState().collect {
                 when (it) {
                     SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route
@@ -34,7 +35,7 @@ class StartViewModel @Inject constructor(
                     SignInStatus.HOME.name -> _startDestination.value = Screens.Home.route
                 }
 
-            _keepSplashOn.value = false
+                _keepSplashOn.value = false
             }
         }
     }

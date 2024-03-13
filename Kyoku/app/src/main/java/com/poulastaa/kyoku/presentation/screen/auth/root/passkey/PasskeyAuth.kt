@@ -38,8 +38,6 @@ suspend fun createPasskey(
     val json =
         (result as CreatePublicKeyCredentialResponse).registrationResponseJson
 
-    Log.d("json", json)
-
     val publicKeyCredentialResponse =
         Json.decodeFromString<CreatePublicKeyCredential>(json)
 
@@ -72,8 +70,6 @@ fun RootAuthViewModel.getPasskey(
             context = activity,
             request = credentialRequest
         ).credential as PublicKeyCredential
-
-        Log.d("dataaaaaaaaaaaaaaaa", response.authenticationResponseJson)
 
         val getPublicKeyCredential =
             Json.decodeFromString<GetPublicKeyCredential>(response.authenticationResponseJson)

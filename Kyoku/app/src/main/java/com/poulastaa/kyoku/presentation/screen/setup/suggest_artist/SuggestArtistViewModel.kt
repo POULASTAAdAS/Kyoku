@@ -98,7 +98,7 @@ class SuggestArtistViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(300) // making sure state.isInternetAvailable in loaded
+            delay(500) // making sure state.isInternetAvailable in loaded
             if (state.isFirstApiCall && state.isInternetAvailable) {
                 val response = api.suggestArtist(
                     req = SuggestArtistReq(

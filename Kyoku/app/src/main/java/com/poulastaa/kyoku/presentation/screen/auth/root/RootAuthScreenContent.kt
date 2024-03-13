@@ -1,16 +1,21 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,24 +26,20 @@ import androidx.compose.ui.autofill.Autofill
 import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.presentation.screen.auth.common.CustomAuthButton
-import com.poulastaa.kyoku.presentation.screen.auth.common.CustomOkButton
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
-import com.poulastaa.kyoku.ui.theme.dark_type_two_onPrimaryContainer
-import com.poulastaa.kyoku.ui.theme.light_type_two_onPrimaryContainer
+import com.poulastaa.kyoku.presentation.screen.auth.common.IconTextButton
+import com.poulastaa.kyoku.ui.theme.TestThem
+import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -59,160 +60,121 @@ fun RootAuthScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        Spacer(modifier = Modifier.weight(.3f))
-
-        TopPart(
-            modifier = Modifier.weight(1f),
-            logo = painterResource(
-                id =
-                if (isSystemInDarkTheme()) R.drawable.night_logo else R.drawable.light_logo
-            ),
-            content = "Listen to Millions of songs.\n" +
-                    "Add Free on Kyoku."
-        )
-
-        MidPart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.9f),
-            value = email,
-            autoFillEmail = autoFillEmail,
-            passkeyContinueLoading = passkeyContinueLoading,
-            autoFill = autoFill,
-            onValueChange = onValueChange,
-            isError = isError,
-            supportingText = supportingText,
-            onDone = passkeySignUpClicked
-        )
-
-        EndPart(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(.4f),
-            emailSignUpClicked = emailSignUpClicked,
-            googleSignupClicked = googleSignupClicked,
-            googleAuthLoading = googleAuthLoading,
-            emailAuthLoading = emailAuthLoading
-        )
-    }
-}
-
-@Composable
-fun TopPart(
-    modifier: Modifier,
-    logo: Painter,
-    content: String
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Image(
-            painter = logo,
-            contentDescription = "app logo"
-        )
-
-        Text(
-            text = content,
-            textAlign = TextAlign.Center,
-            letterSpacing = 1.sp,
-            softWrap = true,
-            style = TextStyle(
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                fontWeight = FontWeight.Medium
+            .background(
+                color = MaterialTheme.colorScheme.surface
             )
-        )
-    }
-}
-
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun MidPart(
-    modifier: Modifier,
-    value: String,
-    autoFillEmail: AutofillNode,
-    passkeyContinueLoading: Boolean,
-    autoFill: Autofill?,
-    onValueChange: (String) -> Unit,
-    isError: Boolean,
-    supportingText: String,
-    onDone: () -> Unit
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(MaterialTheme.dimens.medium1)
+            .navigationBarsPadding(),
     ) {
-        CustomTextFiled(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned {
-                    autoFillEmail.boundingBox = it.boundsInRoot()
-                }
-                .onFocusChanged {
-                    autoFill?.run {
-                        if (it.isFocused) requestAutofillForNode(autoFillEmail)
+                .fillMaxHeight(1f / 2),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(
+                    id = if (isSystemInDarkTheme()) R.drawable.night_logo
+                    else R.drawable.light_logo
+                ),
+                contentDescription = null
+            )
+
+            Text(
+                text = "Listen to Millions of songs.\n" +
+                        "Add Free on Kyoku.",
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                letterSpacing = 1.sp,
+                softWrap = true,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(1.1f / 2),
+            verticalArrangement = Arrangement.Center
+        ) {
+            CustomTextFiled(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned {
+                        autoFillEmail.boundingBox = it.boundsInRoot()
                     }
-                },
-            value = value,
-            onValueChange = onValueChange,
-            onDone = onDone,
-            isError = isError,
-            supportingText = supportingText
-        )
-
-        CustomOkButton(
-            modifier = Modifier.fillMaxWidth(),
-            text = "Continue With Passkey",
-            onClick = onDone,
-            loading = passkeyContinueLoading
-        )
-    }
-}
+                    .onFocusChanged {
+                        autoFill?.run {
+                            if (it.isFocused) requestAutofillForNode(autoFillEmail)
+                        }
+                    },
+                shape = MaterialTheme.shapes.large,
+                value = email,
+                onValueChange = onValueChange,
+                onDone = passkeySignUpClicked,
+                isError = isError,
+                supportingText = supportingText
+            )
 
 
-@Composable
-fun EndPart(
-    modifier: Modifier,
-    emailAuthLoading: Boolean,
-    googleAuthLoading: Boolean,
-    emailSignUpClicked: () -> Unit,
-    googleSignupClicked: () -> Unit
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        CustomAuthButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = R.drawable.google,
-            text = "Continue With Google",
-            onClick = googleSignupClicked,
-            loading = googleAuthLoading
-        )
+            FilledIconButton(
+                onClick = passkeySignUpClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = MaterialTheme.dimens.large2),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                if (passkeyContinueLoading)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                else
+                    Text(
+                        text = "Continue With Passkey",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
+            }
+        }
 
-        CustomAuthButton(
-            modifier = Modifier.fillMaxWidth(),
-            icon = R.drawable.email,
-            text = "Continue With Email",
-            onClick = emailSignUpClicked,
-            loading = emailAuthLoading
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(1f),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            IconTextButton(
+                icon = painterResource(id = R.drawable.google),
+                text = "Continue With Google",
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = googleAuthLoading,
+                onClick = googleSignupClicked
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+            IconTextButton(
+                icon = painterResource(id = R.drawable.email),
+                text = "Continue With Email",
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = emailAuthLoading,
+                onClick = emailSignUpClicked
+            )
+        }
     }
 }
 
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Preview(showBackground = true)
+
+@Preview(
+    name = "Preview Night",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
-private fun Preview() {
+private fun PreviewAll() {
     val autoFillEmail = AutofillNode(
         autofillTypes = listOf(AutofillType.EmailAddress),
         onFill = {
@@ -223,18 +185,20 @@ private fun Preview() {
     val autoFill = LocalAutofill.current
     LocalAutofillTree.current += autoFillEmail
 
-    RootAuthScreenContent(
-        autoFillEmail = autoFillEmail,
-        email = "",
-        onValueChange = {},
-        autoFill = autoFill,
-        isError = false,
-        supportingText = "",
-        passkeySignUpClicked = { },
-        emailSignUpClicked = { },
-        googleSignupClicked = {},
-        passkeyContinueLoading = false,
-        googleAuthLoading = false,
-        emailAuthLoading = false
-    )
+    TestThem {
+        RootAuthScreenContent(
+            autoFillEmail = autoFillEmail,
+            email = "",
+            onValueChange = {},
+            autoFill = autoFill,
+            isError = false,
+            supportingText = "",
+            passkeySignUpClicked = { },
+            emailSignUpClicked = { },
+            googleSignupClicked = {},
+            passkeyContinueLoading = false,
+            googleAuthLoading = false,
+            emailAuthLoading = false
+        )
+    }
 }

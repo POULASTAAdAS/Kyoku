@@ -6,13 +6,10 @@ import kotlinx.coroutines.*
 
 val invalidTokenList = ArrayList<String>()
 
-@OptIn(DelicateCoroutinesApi::class)
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 
-    GlobalScope.launch(Dispatchers.IO) {
-        removeFirstTokenAfter10Minute()
-    }
+    removeFirstTokenAfter10Minute()
 }
 
 fun Application.module() {
@@ -25,13 +22,15 @@ fun Application.module() {
 }
 
 
-private suspend fun removeFirstTokenAfter10Minute() {
-    while (true) {
-        delay(600000L)
-        try {
-            invalidTokenList.removeAt(0)
-        } catch (e: Exception) {
-            println(e.message.toString())
+private fun removeFirstTokenAfter10Minute() {
+    CoroutineScope(Dispatchers.IO).launch {
+        while (true) {
+            delay(600000L)
+            try {
+                invalidTokenList.removeAt(0)
+            } catch (e: Exception) {
+                println(e.message.toString())
+            }
         }
     }
 }
