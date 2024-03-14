@@ -15,11 +15,13 @@ sealed class Screens(val route: String) {
 
     data object HomeRoot : Screens("/app/homeRoot")
 
-    data object Profile : Screens("/app/homeRoot/profile")
-    data object Search : Screens("/route/homeRoot/search")
-
     data object Home : Screens("/app/homeRoot/home")
 
+    data object Profile : Screens("/app/homeRoot/profile")
     data object History : Screens("/app/homeRoot/history")
     data object Settings : Screens("/app/homeRoot/settings")
+
+    data object Search : Screens("/route/homeRoot/search")
+
+
 }

@@ -1,4 +1,4 @@
-package com.poulastaa.data.model.home
+package com.poulastaa.kyoku.data.model.api.service.home
 
 import kotlinx.serialization.Serializable
 

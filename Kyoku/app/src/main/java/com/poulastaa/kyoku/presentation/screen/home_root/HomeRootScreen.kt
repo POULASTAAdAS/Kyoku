@@ -42,12 +42,18 @@ fun HomeRootScreen(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             HomeDrawerContent(
-                navDrawerUserInfo = NavDrawerUserInfo(),
+                navDrawerUserInfo = NavDrawerUserInfo(
+                    imageUrl = viewModel.state.profilePicUrl,
+                    userName = viewModel.state.userName,
+                    isCookie = viewModel.state.isCookie,
+                    headerValue = viewModel.state.headerValue
+                ),
                 navigate = viewModel::onEvent
             )
         },
         content = {
             SetupHomeRootNavGraph(
+                homeRootUiState = viewModel.state,
                 navHostController = homeNavController,
                 opnDrawer = {
                     scope.launch {

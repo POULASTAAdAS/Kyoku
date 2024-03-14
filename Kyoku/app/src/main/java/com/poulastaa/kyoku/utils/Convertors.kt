@@ -8,7 +8,11 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
-import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.ResponseArtist
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
+import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.UiArtist
@@ -17,7 +21,11 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGen
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
+import com.poulastaa.kyoku.data.model.database.table.AlbumTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistTable
+import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
+import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
@@ -193,6 +201,33 @@ fun Iterable<UiArtist>.toArtistNameList() = this.mapNotNull {
 
 fun List<String>.toStoreArtistReq() = StoreArtistReq(
     data = this
+)
+
+
+fun AlbumPreview.toAlbumTableEntry() = AlbumTable(
+    name = this.name,
+    coverImage = this.coverImage,
+    title = this.title,
+    artist = this.artist
+)
+
+fun FevArtistsMixPreview.toFevArtistMixPrevTable() = FevArtistsMixPreviewTable(
+    artist = this.artist,
+    coverImage = this.coverImage
+)
+
+fun ResponseArtist.toArtistTableEntry() = ArtistTable(
+    id = this.id,
+    name = this.name,
+    imageUrl = this.imageUrl
+)
+
+fun SongPreview.toSongPrevTableEntry() = SongPreviewTable(
+    songId = this.id.toLong(),
+    title = this.title,
+    coverImage = this.coverImage,
+    artist = this.artist,
+    album = this.album
 )
 
 

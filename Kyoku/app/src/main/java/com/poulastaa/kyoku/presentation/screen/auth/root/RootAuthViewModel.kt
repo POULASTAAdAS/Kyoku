@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,13 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
-import com.poulastaa.kyoku.data.model.api.auth.UserCreationStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.kyoku.data.model.api.auth.UserCreationStatus
+import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
-import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootUiEvent
@@ -351,6 +352,8 @@ class RootAuthViewModel @Inject constructor(
             api.googleAuth(req)?.let { response ->
                 storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
                 storeAuthType(AuthType.SESSION_AUTH, ds)
+
+                Log.d("called login" , response.user.profilePic)
 
                 storeProfilePicUri(uri = response.user.profilePic, ds)
                 storeUsername(username = response.user.userName, ds)

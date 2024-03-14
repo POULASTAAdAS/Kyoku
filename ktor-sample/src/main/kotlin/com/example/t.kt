@@ -1,26 +1,14 @@
 package com.example
 
-import kotlinx.coroutines.*
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
-suspend fun main() {
-    CoroutineScope(Dispatchers.IO).launch {
-        val one = async {
-            println(1)
-        }
+fun main() {
+    val localTIme = LocalTime.now()
+    println(localTIme)
 
-        val two = async {
-            delay(200)
-            println(2)
-        }
+    val time = LocalTime.now().format(DateTimeFormatter.ofPattern("hh a"))
 
-        val three = async {
-            println(3)
-
-        }
-
-
-        one.await()
-        two.await()
-        three.await()
-    }.join()
+    println(time)
 }

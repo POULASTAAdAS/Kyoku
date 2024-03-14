@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeNavDrawerItemList
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.NavDrawerUserInfo
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -143,7 +143,7 @@ private fun TopPart(
             ),
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .wrapContentSize()
+                .size(90.dp)
                 .clip(CircleShape)
                 .border(
                     width = 2.dp,

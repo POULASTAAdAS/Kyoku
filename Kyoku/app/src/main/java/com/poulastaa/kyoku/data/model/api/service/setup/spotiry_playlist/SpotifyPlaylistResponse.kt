@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import kotlinx.serialization.Serializable
 
 @Serializable
