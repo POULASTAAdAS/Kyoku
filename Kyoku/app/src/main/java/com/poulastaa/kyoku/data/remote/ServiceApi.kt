@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.remote
 
+import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
+import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyPlaylistResponse
@@ -45,4 +47,9 @@ interface ServiceApi {
     suspend fun storeArtist(
         @Body request: StoreArtistReq
     ): StoreArtistResponse
+
+    @POST("/api/authorised/home")
+    suspend fun homeReq(
+        @Body request: HomeReq
+    ): HomeResponse
 }

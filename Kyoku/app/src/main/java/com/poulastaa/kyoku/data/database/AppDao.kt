@@ -5,7 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
+import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
@@ -41,32 +43,48 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongPlaylistRelation(data: SongPlaylistRelationTable)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoFevArtistMixPrev(data: FevArtistsMixPreviewTable)
-
-    @Query("delete from fevartistsmixpreviewtable")
-    fun deleteAllFromFevArtistMixPrevTable()
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoAlbum(data: AlbumTable)
-
-    @Query("delete from albumtable")
-    fun deleteAllFromAlbum()
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoArtist(data: ArtistTable): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoSongPrev(data: SongPreviewTable): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoFevArtistMixPrev(data: FevArtistsMixPreviewTable)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoAlbum(data: AlbumTable): Long
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoAlbumPrevSongRelationTable(data: AlbumPreviewSongRelationTable)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoArtist(data: ArtistTable): Long
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoArtistPrevSongRelationTable(data: ArtistPreviewSongRelation)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoDailyMixPrevTable(data: DailyMixPrevTable)
 
     @Query("select * from albumtable limit 1") // fetching all entry is un-necessary
     suspend fun checkIfNewUser(): List<AlbumTable> // could have any other table related to homeResponse
 
 
+    @Query("select * from fevartistsmixpreviewtable") // todo change
+    suspend fun readFevArtistPrev(): List<FevArtistsMixPreviewTable>
+
+    @Transaction
+    @Query(
+        """select SongPreviewTable.id ,SongPreviewTable.title , SongPreviewTable.artist ,  SongPreviewTable.coverImage ,  albumtable.name from SongPreviewTable 
+            join albumpreviewsongrelationtable on albumpreviewsongrelationtable.songId = SongPreviewTable.id
+            join albumtable on albumtable.id = albumpreviewsongrelationtable.albumId
+            where albumtable.id in ( 
+                select albumId from albumpreviewsongrelationtable
+            ) order by albumtable.id"""
+    )
+    suspend fun readAllAlbumPrev(): List<AlbumPrevResult>
 }

@@ -8,6 +8,7 @@ import com.poulastaa.data.model.db_table.user_album.GoogleUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
 import com.poulastaa.data.model.home.AlbumPreview
 import com.poulastaa.data.model.home.ResponseAlbumPreview
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Album
 import com.poulastaa.domain.repository.album.AlbumRepository
@@ -37,6 +38,7 @@ class AlbumRepositoryImpl : AlbumRepository {
                             SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
                         }
                     ).slice(
+                        SongTable.id,
                         SongTable.title,
                         SongTable.coverImage,
                         SongTable.artist,
@@ -51,20 +53,24 @@ class AlbumRepositoryImpl : AlbumRepository {
                                 )
                     }
                     .orderBy(AlbumTable.points, SortOrder.DESC)
-                    .limit(60)
+                    .limit(30)
                     .asSequence()
                     .map {
-                        AlbumPreview(
-                            name = it[SongTable.album],
-                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                        SongPreview(
+                            id = it[SongTable.id].value.toString(),
                             title = it[SongTable.title],
-                            artist = it[SongTable.artist]
+                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            artist = it[SongTable.artist],
+                            album = it[SongTable.album]
                         )
                     }.groupBy {
-                        it.name
+                        it.album
                     }.map {
-                        it.value.take(1)
-                    }.flatten()
+                        AlbumPreview(
+                            name = it.key,
+                            listOfSongs = it.value.take(4)
+                        )
+                    }
                     .take(5)
                     .toList()
             }
@@ -82,7 +88,7 @@ class AlbumRepositoryImpl : AlbumRepository {
         // make a single list take 5
 
         return ResponseAlbumPreview(
-            listOfPreviewAlbum = albumIdList.getAlbumOnAlbumIdList()
+            listOfPreviewAlbum = emptyList() /*albumIdList.getAlbumOnAlbumIdList()*/
         )
     }
 
@@ -135,39 +141,39 @@ class AlbumRepositoryImpl : AlbumRepository {
             .shuffled(Random())
     }
 
-    private suspend fun List<Long>.getAlbumOnAlbumIdList() = dbQuery {
-        SongTable
-            .join(
-                otherTable = SongAlbumArtistRelationTable,
-                joinType = JoinType.INNER,
-                additionalConstraint = {
-                    SongTable.id eq SongAlbumArtistRelationTable.songId as Column<*>
-                }
-            ).join(
-                otherTable = AlbumTable,
-                joinType = JoinType.INNER,
-                additionalConstraint = {
-                    SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
-                }
-            ).slice(
-                SongTable.title,
-                SongTable.coverImage,
-                SongTable.artist,
-                SongTable.album
-            ).select {
-                AlbumTable.id inList this@getAlbumOnAlbumIdList
-            }.orderBy(AlbumTable.points, SortOrder.ASC)
-            .map {
-                AlbumPreview(
-                    name = it[SongTable.album],
-                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
-                    title = it[SongTable.title],
-                    artist = it[SongTable.artist]
-                )
-            }.groupBy {
-                it.name
-            }.map {
-                it.value.take(1)
-            }.flatten()
-    }
+//    private suspend fun List<Long>.getAlbumOnAlbumIdList() = dbQuery {
+//        SongTable
+//            .join(
+//                otherTable = SongAlbumArtistRelationTable,
+//                joinType = JoinType.INNER,
+//                additionalConstraint = {
+//                    SongTable.id eq SongAlbumArtistRelationTable.songId as Column<*>
+//                }
+//            ).join(
+//                otherTable = AlbumTable,
+//                joinType = JoinType.INNER,
+//                additionalConstraint = {
+//                    SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
+//                }
+//            ).slice(
+//                SongTable.title,
+//                SongTable.coverImage,
+//                SongTable.artist,
+//                SongTable.album
+//            ).select {
+//                AlbumTable.id inList this@getAlbumOnAlbumIdList
+//            }.orderBy(AlbumTable.points, SortOrder.ASC)
+//            .map {
+//                AlbumPreview(
+//                    name = it[SongTable.album],
+//                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+//                    title = it[SongTable.title],
+//                    artist = it[SongTable.artist]
+//                )
+//            }.groupBy {
+//                it.name
+//            }.map {
+//                it.value.take(1)
+//            }.flatten()
+//    }
 }

@@ -2,7 +2,7 @@
     <string name="app_name">Kyoku</string>
     <string name="asset_statements" translatable="false">
 [{
-  \"include\": \"https://9024-103-42-159-245.ngrok-free.app/.well-known/assetlinks.json\"
+  \"include\": \"https://499c-103-42-157-115.ngrok-free.app/.well-known/assetlinks.json\"
 }]
 </string>
 </resources>

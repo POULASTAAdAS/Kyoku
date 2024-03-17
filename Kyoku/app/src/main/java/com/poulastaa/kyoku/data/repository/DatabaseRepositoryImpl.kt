@@ -6,14 +6,17 @@ import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseArtistsPreview
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
+import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
+import com.poulastaa.kyoku.utils.toSongPrev
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
@@ -56,9 +59,18 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun insertIntoAlbum(list: List<AlbumPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
-                dao.insertIntoAlbum(
-                    data = it.toAlbumTableEntry()
-                )
+                val albumId = dao.insertIntoAlbum(data = it.toAlbumTableEntry())
+
+                it.listOfSongs.forEach { song ->
+                    val songId = dao.insertIntoSongPrev(data = song.toSongPrevTableEntry())
+
+                    dao.insertIntoAlbumPrevSongRelationTable(
+                        data = AlbumPreviewSongRelationTable(
+                            albumId = albumId,
+                            songId = songId
+                        )
+                    )
+                }
             }
         }
     }
@@ -93,5 +105,16 @@ class DatabaseRepositoryImpl @Inject constructor(
                 )
             }
         }
+    }
+
+    suspend fun readAllAlbumPrev() = dao.readAllAlbumPrev().groupBy {
+        it.name
+    }.map {
+        HomeAlbumUiPrev(
+            name = it.key,
+            listOfSong = it.value.map { song ->
+                song.toSongPrev()
+            }
+        )
     }
 }

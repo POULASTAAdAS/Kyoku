@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.repository
 
+import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
+import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponseStatus
@@ -79,6 +81,14 @@ class ServiceRepositoryImpl @Inject constructor(
             StoreArtistResponse(
                 status = ArtistResponseStatus.FAILURE
             )
+        }
+    }
+
+    override suspend fun homeReq(req: HomeReq): HomeResponse {
+        return try {
+            api.homeReq(req)
+        } catch (e: Exception) {
+            HomeResponse()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
@@ -18,14 +19,15 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         PlaylistTable::class,
         SongPlaylistRelationTable::class,
         AlbumTable::class,
+        AlbumPreviewSongRelationTable::class,
         FevArtistsMixPreviewTable::class,
         SongPreviewTable::class,
         ArtistTable::class,
         ArtistPreviewSongRelation::class,
         DailyMixPrevTable::class
     ],
-    version = 1,
-    exportSchema = false
+    version = 11,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao

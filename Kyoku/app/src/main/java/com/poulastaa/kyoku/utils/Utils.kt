@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.utils
 
+import com.poulastaa.kyoku.data.model.api.service.home.TimeType
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import java.net.CookieManager
 import java.time.Instant
@@ -68,3 +69,20 @@ fun Long.toDate(): BDateFroMaterHelper {
 fun Long.toSetBDateReq() = SetBDateReq(
     date = this
 )
+
+fun getHomeReqTimeType(): TimeType {
+    val localTime = LocalDateTime.now().toLocalTime()
+
+    val currentTime = localTime.format(DateTimeFormatter.ofPattern("hh")).toInt()
+    val status = localTime.format(DateTimeFormatter.ofPattern("a")).uppercase()
+
+    return if (status == "AM") {
+        if (currentTime == 12 || currentTime < 4) TimeType.MID_NIGHT
+        else if (currentTime < 10) TimeType.MORNING
+        else TimeType.DAY
+    } else {
+        if (currentTime == 12 || currentTime < 6) TimeType.DAY
+        else if (currentTime in 6..10) TimeType.NIGHT
+        else TimeType.MID_NIGHT
+    }
+}
