@@ -43,9 +43,7 @@ fun HomeScreenContentLoading(
                 top = paddingValues.calculateTopPadding() + MaterialTheme.dimens.small3,
                 bottom = paddingValues.calculateBottomPadding()
             )
-            .verticalScroll(
-                state = rememberScrollState()
-            ),
+            .verticalScroll(state = rememberScrollState()),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium2)
     ) {

@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +11,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -40,8 +40,14 @@ class HomeScreenViewModel @Inject constructor(
             connectivity.observe().collect {
                 network.value = it
                 state = state.copy(
-                    isInternetAvailable = checkInternetConnection()
+                    isInternetAvailable = checkInternetConnection(),
+                    isInternetError = false
                 )
+                if (!checkInternetConnection())
+                    state = state.copy(
+                        isInternetError = true,
+                        errorMessage = "Please Check Your Internet Connection."
+                    )
             }
         }
     }
@@ -63,9 +69,6 @@ class HomeScreenViewModel @Inject constructor(
             delay(800)
             if (state.isInternetAvailable) {
                 loadStartupData()
-            } else {
-                // todo show network error
-                Log.d("called", "internet error")
             }
         }
     }
@@ -111,11 +114,16 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     HomeResponseStatus.FAILURE -> {
-                        // todo handle error
+                        onEvent(HomeUiEvent.EmitToast("Opp's Something went wrong."))
                     }
                 }
             } else {
-                loadFromDb()
+                if (state.data.albumPrev.isEmpty()) {
+                    state = state.copy(
+                        dataType = HomeType.DAILY_REFRESH_REQ
+                    )
+                    loadFromDb()
+                }
             }
         }
     }
@@ -137,7 +145,7 @@ class HomeScreenViewModel @Inject constructor(
             val dailyMixPrev = async {
 
             }
-            val playlist = {
+            val playlist = async {
 
             }
 
@@ -147,13 +155,32 @@ class HomeScreenViewModel @Inject constructor(
 
 
             state = state.copy(
-//                isLoading = false,
+                isInternetError = false,
                 data = HomeUiData(
                     fevArtistMixPrev = fevArtistMixPrev.await(),
                     albumPrev = albumPrev.await(),
                     artistPrev = artistPrev.await()
                 )
             )
+
+            delay(1000)
+            state = state.copy(
+                isLoading = false
+            )
+        }
+    }
+
+    fun onEvent(event: HomeUiEvent) {
+        when (event) {
+            is HomeUiEvent.EmitToast -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(UiEvent.ShowToast(event.message))
+                }
+            }
+
+            HomeUiEvent.SomethingWentWrong -> {
+
+            }
         }
     }
 }

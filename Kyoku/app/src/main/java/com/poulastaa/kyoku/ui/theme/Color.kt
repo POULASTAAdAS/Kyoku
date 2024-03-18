@@ -151,3 +151,5 @@ val listOfSuggestGenreCardColors = listOf(
     Color(0xFFFFCDD2),
     Color(0xFFFFAB91)
 )
+
+val a  = Color(0xFFDFBB78)
