@@ -147,7 +147,7 @@ class HomeScreenViewModel @Inject constructor(
 
 
             state = state.copy(
-                isLoading = false,
+//                isLoading = false,
                 data = HomeUiData(
                     fevArtistMixPrev = fevArtistMixPrev.await(),
                     albumPrev = albumPrev.await(),

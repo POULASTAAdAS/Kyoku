@@ -44,6 +44,7 @@ fun HomeTopAppBar(
     isCookie: Boolean,
     authHeader: String,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    isSmallPhone: Boolean,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
     onProfileClick: () -> Unit,
     onSearchClick: () -> Unit
@@ -82,7 +83,7 @@ fun HomeTopAppBar(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .padding(MaterialTheme.dimens.small1)
-                    .size(48.dp)
+                    .size(if (isSmallPhone) 40.dp else 48.dp)
                     .shadow(
                         elevation = 10.dp,
                         shape = CircleShape,
@@ -123,6 +124,7 @@ private fun Preview() {
             profileUrl = "",
             isCookie = false,
             authHeader = "",
+            isSmallPhone = false,
             onProfileClick = { /*TODO*/ }
         ) {
 

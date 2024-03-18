@@ -67,7 +67,7 @@ val DarkColorSchemeTypeOne = darkColorScheme(
     scrim = dark_type_one_scrim,
 )
 
-//
+
 
 val LightColorSchemeTypeTwo = lightColorScheme(
     primary = light_type_two_primary,
