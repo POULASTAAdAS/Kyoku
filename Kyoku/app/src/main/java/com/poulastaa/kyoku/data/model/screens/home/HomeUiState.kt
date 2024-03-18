@@ -28,8 +28,8 @@ data class HomeAlbumUiPrev(
 )
 
 data class HomeUiArtistPrev(
-    val id: Long,
     val name: String,
+    val artistCover: String,
     val lisOfPrevSong: List<HomeUiSongPrev> = emptyList()
 )
 

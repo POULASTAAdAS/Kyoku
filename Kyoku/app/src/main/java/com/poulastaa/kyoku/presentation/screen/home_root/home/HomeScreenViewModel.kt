@@ -11,6 +11,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -114,7 +115,6 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
             } else {
-                // todo load from db
                 loadFromDb()
             }
         }
@@ -123,7 +123,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun loadFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             val fevArtistMixPrev = async {
-
+                db.readFevArtistMixPrev()
             }
 
             val albumPrev = async {
@@ -131,7 +131,7 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             val artistPrev = async {
-
+                db.readAllArtistPrev()
             }
 
             val dailyMixPrev = async {
@@ -146,12 +146,14 @@ class HomeScreenViewModel @Inject constructor(
             }
 
 
-//            state = state.copy(
-//                isLoading = false,
-//                data = HomeUiData(
-//                    fevArtistMixPrev =
-//                )
-//            )
+            state = state.copy(
+                isLoading = false,
+                data = HomeUiData(
+                    fevArtistMixPrev = fevArtistMixPrev.await(),
+                    albumPrev = albumPrev.await(),
+                    artistPrev = artistPrev.await()
+                )
+            )
         }
     }
 }

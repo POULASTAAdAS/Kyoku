@@ -7,3 +7,11 @@ data class AlbumPrevResult(
     val coverImage: String,
     val name: String
 )
+
+data class ArtistPrevResult(
+    val id: Long,
+    val title: String,
+    val coverImage: String,
+    val name: String,
+    val imageUrl: String
+)

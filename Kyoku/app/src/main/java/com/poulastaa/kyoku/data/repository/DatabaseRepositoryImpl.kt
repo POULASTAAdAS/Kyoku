@@ -13,9 +13,12 @@ import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
+import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
+import com.poulastaa.kyoku.utils.toHomeUiSongPrev
 import com.poulastaa.kyoku.utils.toSongPrev
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -107,6 +110,10 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    suspend fun readFevArtistMixPrev() = dao.readFevArtistPrev().map {
+        it.toHomeUiFevArtistMix()
+    }
+
     suspend fun readAllAlbumPrev() = dao.readAllAlbumPrev().groupBy {
         it.name
     }.map {
@@ -115,6 +122,16 @@ class DatabaseRepositoryImpl @Inject constructor(
             listOfSong = it.value.map { song ->
                 song.toSongPrev()
             }
+        )
+    }
+
+    suspend fun readAllArtistPrev() = dao.readAllArtistPrev().groupBy {
+        it.name
+    }.map {
+        HomeUiArtistPrev(
+            name = it.key,
+            artistCover = it.value[0].imageUrl,
+            lisOfPrevSong = it.value.map { song -> song.toHomeUiSongPrev() }
         )
     }
 }
