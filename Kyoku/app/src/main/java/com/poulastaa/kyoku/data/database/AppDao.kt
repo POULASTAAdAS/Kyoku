@@ -74,7 +74,7 @@ interface AppDao {
     suspend fun insertIntoDailyMixPrevTable(data: DailyMixPrevTable)
 
     @Query("select * from albumtable limit 1") // fetching all entry is un-necessary
-    suspend fun checkIfNewUser(): List<AlbumTable> // could have any other table related to homeResponse
+    suspend fun checkIfNewUser(): List<AlbumTable> // could had any other table related to homeResponse
 
 
     @Query("select * from fevartistsmixpreviewtable")

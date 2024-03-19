@@ -49,11 +49,10 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun getAllPlaylist(): Flow<List<PlaylistWithSongs>> = dao.getAllPlaylist()
 
-    fun getAllSong(): Flow<List<SongTable>> = dao.getAllSong()
-
     suspend fun checkIfNewUser() = dao.checkIfNewUser().isEmpty()
 
-    fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>, ) {
+
+    fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
                 dao.insertIntoFevArtistMixPrev(
@@ -147,11 +146,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
     fun readFevArtistMixPrev() = dao.readFevArtistPrev()
-
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
-
     fun readAllArtistPrev() = dao.readAllArtistPrev()
-
-
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
 }
