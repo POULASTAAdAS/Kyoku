@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,6 +29,12 @@ fun SetupHomeRootNavGraph(
     opnDrawer: () -> Unit,
     handleUiEvent: (HomeRootUiEvent) -> Unit
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = homeScreenViewModel.state.isInternetAvailable) {
+        homeScreenViewModel.loadStartupData(context)
+    }
+
     NavHost(
         navController = navHostController,
         startDestination = startDestination

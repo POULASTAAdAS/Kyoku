@@ -26,7 +26,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         ArtistPreviewSongRelation::class,
         DailyMixPrevTable::class
     ],
-    version = 12,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -269,8 +269,8 @@ select * from album order by points desc;
 
 select * from EmailAuthUser;
 
-
-
+select * from googleAuthUser;
+select * from googleUserPlaylist order by playlistid;
 
 
 

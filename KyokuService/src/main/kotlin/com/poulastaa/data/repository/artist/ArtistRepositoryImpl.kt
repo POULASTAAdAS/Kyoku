@@ -31,6 +31,7 @@ import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toResponseArtist
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import java.io.File
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 

@@ -49,6 +49,7 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoSongPrev(data: SongPreviewTable): Long
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoFevArtistMixPrev(data: FevArtistsMixPreviewTable)
 
@@ -76,8 +77,8 @@ interface AppDao {
     suspend fun checkIfNewUser(): List<AlbumTable> // could have any other table related to homeResponse
 
 
-    @Query("select * from fevartistsmixpreviewtable") // todo change
-    suspend fun readFevArtistPrev(): List<FevArtistsMixPreviewTable>
+    @Query("select * from fevartistsmixpreviewtable")
+    fun readFevArtistPrev(): Flow<List<FevArtistsMixPreviewTable>>
 
     @Transaction
     @Query(
@@ -88,29 +89,33 @@ interface AppDao {
                 select albumId from albumpreviewsongrelationtable
             ) order by albumtable.id"""
     )
-    suspend fun readAllAlbumPrev(): List<AlbumPrevResult>
+    fun readAllAlbumPrev(): Flow<List<AlbumPrevResult>>
 
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         select SongPreviewTable.id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , ArtistTable.name , ArtistTable.imageUrl  from SongPreviewTable
             join ArtistPreviewSongRelation on ArtistPreviewSongRelation.songId = SongPreviewTable.id
             join ArtistTable on ArtistTable.id = ArtistPreviewSongRelation.artistId
             where ArtistTable.id in (
                 select artistId from ArtistTable
         ) order by ArtistTable.id
-    """)
-    suspend fun readAllArtistPrev(): List<ArtistPrevResult>
+    """
+    )
+    fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
 
-    @Query("""
+    @Query(
+        """
         select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
         join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
         join SongTable on SongTable.id = SongPlaylistRelationTable.songId
         where PlaylistTable.id in (
             select playlistId from SongPlaylistRelationTable
         ) order by PlaylistTable.points desc
-    """)
-    suspend fun readPreviewPlaylist(): List<PlaylistPrevResult>
+    """
+    )
+    fun readPreviewPlaylist(): Flow<List<PlaylistPrevResult>>
 }
 
 

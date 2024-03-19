@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.content.Context
 import com.poulastaa.kyoku.data.database.AppDao
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
@@ -12,28 +13,29 @@ import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
-import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
-import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
-import com.poulastaa.kyoku.data.model.screens.home.HomeUiPlaylistPrev
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
-import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
-import com.poulastaa.kyoku.utils.toHomeUiSongPrev
-import com.poulastaa.kyoku.utils.toSongPrev
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.util.Random
 import javax.inject.Inject
 
 @ViewModelScoped
 class DatabaseRepositoryImpl @Inject constructor(
     private val dao: AppDao
 ) {
+    private var context: Context? = null
+    private var header: String? = null
+
+    fun setValues(context: Context, header: String) {
+        this.context = context
+        this.header = header
+    }
+
     suspend fun insertSong(song: SongTable): Long = dao.insertSong(song)
 
     suspend fun insertPlaylist(name: String) = dao.insertPlaylist(
@@ -51,11 +53,15 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun checkIfNewUser() = dao.checkIfNewUser().isEmpty()
 
-    fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
+    fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>, ) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
                 dao.insertIntoFevArtistMixPrev(
-                    data = it.toFevArtistMixPrevTable()
+                    data = it.toFevArtistMixPrevTable(
+                        context = context!!,
+                        isCookie = !header!!.startsWith("B"),
+                        header = header!!
+                    )
                 )
             }
         }
@@ -67,7 +73,13 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val albumId = dao.insertIntoAlbum(data = it.toAlbumTableEntry())
 
                 it.listOfSongs.forEach { song ->
-                    val songId = dao.insertIntoSongPrev(data = song.toSongPrevTableEntry())
+                    val songId = dao.insertIntoSongPrev(
+                        data = song.toSongPrevTableEntry(
+                            context = context!!,
+                            isCookie = !header!!.startsWith("B"),
+                            header = header!!
+                        )
+                    )
 
                     dao.insertIntoAlbumPrevSongRelationTable(
                         data = AlbumPreviewSongRelationTable(
@@ -83,17 +95,35 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
-                val artistId = dao.insertIntoArtist(it.artist.toArtistTableEntry())
-                it.listOfSongs.forEach { previewSong ->
-                    val songId = dao.insertIntoSongPrev(previewSong.toSongPrevTableEntry())
-
-                    dao.insertIntoArtistPrevSongRelationTable(
-                        data = ArtistPreviewSongRelation(
-                            artistId = artistId.toInt(),
-                            songId = songId
+                try {
+                    dao.insertIntoArtist(
+                        it.artist.toArtistTableEntry(
+                            context = context!!,
+                            isCookie = !header!!.startsWith("B"),
+                            header = header!!
                         )
                     )
+                } catch (e: Exception) {
+                    null
+                }?.let { id ->
+                    it.listOfSongs.forEach { previewSong ->
+                        val songId = dao.insertIntoSongPrev(
+                            previewSong.toSongPrevTableEntry(
+                                context = context!!,
+                                isCookie = !header!!.startsWith("B"),
+                                header = header!!
+                            )
+                        )
+
+                        dao.insertIntoArtistPrevSongRelationTable(
+                            data = ArtistPreviewSongRelation(
+                                artistId = id,
+                                songId = songId
+                            )
+                        )
+                    }
                 }
+
             }
         }
     }
@@ -104,7 +134,11 @@ class DatabaseRepositoryImpl @Inject constructor(
                 dao.insertIntoDailyMixPrevTable(
                     data = DailyMixPrevTable(
                         id = dao.insertIntoSongPrev(
-                            data = it.toSongPrevTableEntry()
+                            data = it.toSongPrevTableEntry(
+                                context = context!!,
+                                isCookie = !header!!.startsWith("B"),
+                                header = header!!
+                            )
                         )
                     )
                 )
@@ -112,40 +146,12 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    suspend fun readFevArtistMixPrev() = dao.readFevArtistPrev().map {
-        it.toHomeUiFevArtistMix()
-    }
+    fun readFevArtistMixPrev() = dao.readFevArtistPrev()
 
-    suspend fun readAllAlbumPrev() = dao.readAllAlbumPrev().groupBy {
-        it.name
-    }.map {
-        HomeAlbumUiPrev(
-            name = it.key,
-            listOfSong = it.value.map { song ->
-                song.toSongPrev()
-            }
-        )
-    }
+    fun readAllAlbumPrev() = dao.readAllAlbumPrev()
 
-    suspend fun readAllArtistPrev() = dao.readAllArtistPrev().groupBy {
-        it.name
-    }.map {
-        HomeUiArtistPrev(
-            name = it.key,
-            artistCover = it.value[0].imageUrl,
-            lisOfPrevSong = it.value.map { song -> song.toHomeUiSongPrev() }
-        )
-    }
+    fun readAllArtistPrev() = dao.readAllArtistPrev()
 
 
-    suspend fun readPlaylistPreview() = dao.readPreviewPlaylist()
-        .groupBy { it.name }
-        .map {
-            HomeUiPlaylistPrev(
-                name = it.key,
-                listOfUrl = it.value.map { url ->
-                    url.coverImage
-                }.shuffled(Random()).take(4)
-            )
-        }
+    fun readPlaylistPreview() = dao.readPreviewPlaylist()
 }

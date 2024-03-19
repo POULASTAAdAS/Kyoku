@@ -39,8 +39,6 @@ fun HomeScreenContentNewUser(
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
     data: HomeUiData,
-    isCookie: Boolean,
-    headerValue: String,
     isInternetError: Boolean,
     errorMessage: String
 ) {
@@ -89,8 +87,6 @@ fun HomeScreenContentNewUser(
             HomeScreenCard(
                 size = if (isSmallPhone) 120.dp else 130.dp,
                 imageUrl = data.fevArtistMixPrev[0].coverImage,
-                authHeader = headerValue,
-                isCookie = isCookie,
                 onClick = {
 
                 }
@@ -137,8 +133,6 @@ fun HomeScreenContentNewUser(
                         HomeScreenCard(
                             size = if (isSmallPhone) 120.dp else 130.dp,
                             imageUrl = it.listOfSong[0].coverImage,
-                            authHeader = headerValue,
-                            isCookie = isCookie,
                             onClick = {
 
                             }
@@ -155,8 +149,6 @@ fun HomeScreenContentNewUser(
         // Artist
         homeScreenArtistList(
             artistPrev = data.artistPrev,
-            headerValue = headerValue,
-            isCookie = isCookie,
             isSmallPhone = isSmallPhone
         )
     }

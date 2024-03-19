@@ -5,8 +5,8 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 data class HomeUiState(
     val isInternetAvailable: Boolean = false,
     val isLoading: Boolean = true,
-    val isInternetError: Boolean = false,
-    val errorMessage: String = "",
+    val isInternetError: Boolean = true,
+    val errorMessage: String = "Please Check Your Internet Connection.",
 
     val dataType: HomeType = HomeType.NEW_USER_REQ,
     val data: HomeUiData = HomeUiData()

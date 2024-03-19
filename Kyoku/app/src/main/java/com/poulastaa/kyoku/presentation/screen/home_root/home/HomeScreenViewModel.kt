@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,20 +11,26 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
-import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
+import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.utils.getHomeReqTimeType
+import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
+import com.poulastaa.kyoku.utils.toHomeUiSongPrev
+import com.poulastaa.kyoku.utils.toSongPrev
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.Random
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,10 +52,8 @@ class HomeScreenViewModel @Inject constructor(
                 )
                 if (!state.isInternetAvailable)
                     state = state.copy(
-                        isInternetError = true,
-                        errorMessage = "Please Check Your Internet Connection."
+                        isInternetError = true
                     )
-                else load()
             }
         }
     }
@@ -61,13 +66,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun isFirstReq() = db.checkIfNewUser()
 
-    private fun load() {
-        viewModelScope.launch(Dispatchers.IO) {
-            loadStartupData()
-        }
-    }
-
-    private fun loadStartupData() {
+    fun loadStartupData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             if (isFirstReq()) {
                 // make api call
@@ -79,29 +78,20 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 )
 
+                db.setValues(
+                    context,
+                    async {
+                        ds.readTokenOrCookie().first()
+                    }.await()
+                )
+
                 // store response and read response
                 when (response.status) {
                     HomeResponseStatus.SUCCESS -> {
-                        val storeFevArtistMixJob = async {
-                            db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
-                        }
-
-                        val storeAlbumJob = async {
-                            db.insertIntoAlbum(list = response.albumPreview.listOfPreviewAlbum)
-                        }
-
-                        val storeArtistPrevJob = async {
-                            db.insertResponseArtistPrev(list = response.artistsPreview)
-                        }
-
-                        val storeDailyMixJob = async {
-                            db.insertDailyMixPrev(response.dailyMixPreview)
-                        }
-
-                        storeFevArtistMixJob.await()
-                        storeAlbumJob.await()
-                        storeArtistPrevJob.await()
-                        storeDailyMixJob.await()
+                        db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
+                        db.insertIntoAlbum(list = response.albumPreview.listOfPreviewAlbum)
+                        db.insertResponseArtistPrev(list = response.artistsPreview)
+                        db.insertDailyMixPrev(response.dailyMixPreview)
 
                         // load from db
                         loadFromDb()
@@ -125,44 +115,91 @@ class HomeScreenViewModel @Inject constructor(
     private fun loadFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             val fevArtistMixPrev = async {
-                db.readFevArtistMixPrev()
+                db.readFevArtistMixPrev().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            fevArtistMixPrev = it.map { entry ->
+                                entry.toHomeUiFevArtistMix()
+                            }
+                        )
+                    )
+                }
             }
 
             val albumPrev = async {
-                db.readAllAlbumPrev()
+                db.readAllAlbumPrev().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            albumPrev = it.groupBy { result ->
+                                result.name
+                            }.map { entry ->
+                                HomeAlbumUiPrev(
+                                    name = entry.key,
+                                    listOfSong = entry.value.map { song ->
+                                        song.toSongPrev()
+                                    }
+                                )
+                            }
+                        )
+                    )
+                }
             }
 
             val artistPrev = async {
-                db.readAllArtistPrev()
+                db.readAllArtistPrev().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            artistPrev = it.groupBy { result ->
+                                result.name
+                            }.map { entry ->
+                                HomeUiArtistPrev(
+                                    name = entry.key,
+                                    artistCover = entry.value[0].imageUrl,
+                                    lisOfPrevSong = entry.value.map { song -> song.toHomeUiSongPrev() }
+                                )
+                            }
+                        )
+                    )
+                }
             }
 
             val dailyMixPrev = async {
 
             }
+
             val playlist = async {
-                db.readPlaylistPreview()
+                db.readPlaylistPreview().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            playlist = it.groupBy { result -> result.name }
+                                .map { entry ->
+                                    HomeUiPlaylistPrev(
+                                        name = entry.key,
+                                        listOfUrl = entry.value.map { url ->
+                                            url.coverImage
+                                        }.shuffled(Random()).take(4)
+                                    )
+                                }
+                        )
+                    )
+                }
             }
 
             val favourites = async {
 
             }
 
-
-            state = state.copy(
-                isInternetError = false,
-                data = HomeUiData(
-                    fevArtistMixPrev = fevArtistMixPrev.await(),
-                    albumPrev = albumPrev.await(),
-                    artistPrev = artistPrev.await(),
-                    playlist = playlist.await()
-                )
-            )
-
-            delay(1000)
-            state = state.copy(
-                isLoading = false
-            )
+            fevArtistMixPrev.await()
+            albumPrev.await()
+            artistPrev.await()
+            dailyMixPrev.await()
+            playlist.await()
+            favourites.await()
         }
+
+        state = state.copy(
+            isLoading = false
+        )
     }
 
     fun onEvent(event: HomeUiEvent) {
@@ -174,7 +211,9 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             HomeUiEvent.SomethingWentWrong -> {
+                viewModelScope.launch(Dispatchers.IO) {
 
+                }
             }
         }
     }

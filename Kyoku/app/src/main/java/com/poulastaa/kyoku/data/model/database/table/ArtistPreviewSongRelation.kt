@@ -25,7 +25,7 @@ import androidx.room.ForeignKey
 )
 data class ArtistPreviewSongRelation(
     @ColumnInfo(index = true)
-    val artistId: Int,
+    val artistId: Long,
     @ColumnInfo(index = true)
     val songId: Long
 )

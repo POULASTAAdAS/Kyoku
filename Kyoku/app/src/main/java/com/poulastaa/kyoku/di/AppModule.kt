@@ -60,7 +60,6 @@ object AppModule {
     fun provideNetworkConnectivityObserver(@ApplicationContext context: Context): NetworkObserver =
         NetworkObserverImpl(context = context)
 
-
     @Provides
     @Singleton
     fun provideServiceApi(retrofit: Retrofit): ServiceApi = retrofit.create(ServiceApi::class.java)
