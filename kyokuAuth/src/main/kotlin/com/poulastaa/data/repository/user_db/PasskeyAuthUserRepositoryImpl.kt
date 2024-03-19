@@ -2,11 +2,13 @@ package com.poulastaa.data.repository.user_db
 
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.data.model.db_table.PasskeyAuthUserTable
-import com.poulastaa.domain.dao.PasskeyAuthUser
+import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
+import com.poulastaa.domain.dao.user.PasskeyAuthUser
 import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.toPasskeyAuthResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
     override suspend fun findUserByEmail(email: String): PasskeyAuthUser? = dbQuery {
@@ -43,7 +45,23 @@ class PasskeyAuthUserRepositoryImpl : PasskeyAuthUserRepository {
         )
     }
 
-    override suspend fun getUser(userId: String): PasskeyAuthUser? = findUserByUserId(userId)
+    override suspend fun loginUser(userId: String): Pair<String, PasskeyAuthResponse> {
+        val user = findUserByUserId(userId) ?: return Pair(
+            first = "",
+            second = PasskeyAuthResponse(
+                status = UserCreationStatus.USER_NOT_FOUND
+            )
+        )
+
+        return withContext(Dispatchers.IO) {
+            // todo get all data
+
+            Pair(
+                first = user.email,
+                second = user.toPasskeyAuthResponse(status = UserCreationStatus.CONFLICT)
+            )
+        }
+    }
 
 
     private suspend fun findUserByUserId(userId: String) = dbQuery {

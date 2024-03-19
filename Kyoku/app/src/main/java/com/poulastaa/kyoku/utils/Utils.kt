@@ -1,7 +1,5 @@
 package com.poulastaa.kyoku.utils
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -18,13 +16,10 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import com.poulastaa.kyoku.data.model.api.service.home.TimeType
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
-import java.io.ByteArrayOutputStream
 import java.net.CookieManager
 import java.time.Instant
 import java.time.LocalDateTime
@@ -149,25 +144,6 @@ fun Modifier.shimmerEffect() = composed {
 }
 
 
-object BitmapConverter {
-    fun encodeToSting(bitmap: Bitmap): String {
-        val baos = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos)
-        val byteArray = baos.toByteArray()
-
-        return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
-    }
-
-    fun decodeToBitmap(encodedString: String): ImageBitmap? {
-        return try {
-            val encodedBytes =
-                android.util.Base64.decode(encodedString, android.util.Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(encodedBytes, 0, encodedBytes.size).asImageBitmap()
-        } catch (e: Exception) {
-            null
-        }
-    }
-}
 
 
 

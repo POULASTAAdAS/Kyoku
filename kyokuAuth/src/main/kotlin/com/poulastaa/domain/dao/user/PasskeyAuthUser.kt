@@ -1,6 +1,6 @@
-package com.poulastaa.domain.dao
+package com.poulastaa.domain.dao.user
 
-import com.poulastaa.data.model.db_table.PasskeyAuthUserTable
+import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

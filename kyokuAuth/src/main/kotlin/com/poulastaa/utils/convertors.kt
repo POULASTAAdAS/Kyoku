@@ -6,9 +6,10 @@ import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.auth_response.HomeResponse
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.domain.dao.GoogleAuthUser
-import com.poulastaa.domain.dao.PasskeyAuthUser
+import com.poulastaa.domain.dao.user.GoogleAuthUser
+import com.poulastaa.domain.dao.user.PasskeyAuthUser
 import com.poulastaa.utils.Constants.BASE_URL
 import com.poulastaa.utils.Constants.PROFILE_PIC_URL
 
@@ -19,7 +20,7 @@ fun GoogleAuthUser.toGoogleAuthResponse(status: UserCreationStatus): GoogleAuthR
         userName = this.userName,
         profilePic = this.profilePicUrl
     ),
-    data = emptyList() // todo add data
+    data = HomeResponse()
 )
 
 fun PasskeyAuthUser.toPasskeyAuthResponse(status: UserCreationStatus): PasskeyAuthResponse = PasskeyAuthResponse(
@@ -28,7 +29,7 @@ fun PasskeyAuthUser.toPasskeyAuthResponse(status: UserCreationStatus): PasskeyAu
         userName = this.displayName,
         profilePic = PROFILE_PIC_URL
     ),
-    data = emptyList() // todo add data
+    data = HomeResponse()
 )
 
 

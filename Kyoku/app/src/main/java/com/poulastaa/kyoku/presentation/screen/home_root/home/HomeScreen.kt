@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
-import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeTopAppBar
 
@@ -92,11 +91,7 @@ fun HomeScreen(
                     )
                 }
 
-                HomeType.ALREADY_USER_REQ -> {
-
-                }
-
-                HomeType.DAILY_REFRESH_REQ -> {
+                else -> {
                     if (viewModel.state.data.favourites.isEmpty() &&
                         viewModel.state.data.playlist.isEmpty()
                     ) HomeScreenContentNewUser(
@@ -114,9 +109,7 @@ fun HomeScreen(
 
                             isInternetError = viewModel.state.isInternetError,
                             errorMessage = viewModel.state.errorMessage
-                        ) {
-                            viewModel.onEvent(HomeUiEvent.SomethingWentWrong)
-                        }
+                        )
                 }
             }
         }

@@ -27,7 +27,6 @@ import com.poulastaa.utils.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
-import com.poulastaa.utils.toPasskeyAuthResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -311,7 +310,7 @@ class UserServiceRepositoryImpl(
             status = UserCreationStatus.SOMETHING_WENT_WRONG
         )
 
-        val response = googleAuthUser.createUser(
+        val response = googleAuthUser.createOrLoginUser(
             userName = userName,
             email = email,
             sub = sub,
@@ -390,25 +389,23 @@ class UserServiceRepositoryImpl(
     }
 
     override suspend fun getPasskeyUser(userId: String, token: String): PasskeyAuthResponse {
-        val user = passkeyAuthUser.getUser(userId)
-
         jwtRepository.verifyJWTToken(token, PASSKEY_USER_GET_CLAIM_KEY) ?: return PasskeyAuthResponse(
             status = UserCreationStatus.TOKEN_NOT_VALID
         )
 
-        if (user != null) {
+        val result = passkeyAuthUser.loginUser(userId)
+
+        if (result.second.status == UserCreationStatus.CONFLICT) {
             CoroutineScope(Dispatchers.IO).launch {
                 sendLogInMail(
-                    to = user.email,
-                    userName = user.displayName
+                    to = result.first,
+                    userName = result.second.user.userName
                 )
             }
-            return user.toPasskeyAuthResponse(status = UserCreationStatus.CONFLICT)
+            return result.second
         }
 
-        return PasskeyAuthResponse(
-            status = UserCreationStatus.USER_NOT_FOUND
-        )
+        return result.second
     }
 
     override suspend fun getPasskeyJsonResponse(email: String, displayName: String): Any {

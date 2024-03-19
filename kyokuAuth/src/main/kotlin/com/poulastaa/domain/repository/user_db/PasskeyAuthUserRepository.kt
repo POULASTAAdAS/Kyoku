@@ -1,7 +1,7 @@
 package com.poulastaa.domain.repository.user_db
 
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.domain.dao.PasskeyAuthUser
+import com.poulastaa.domain.dao.user.PasskeyAuthUser
 
 interface PasskeyAuthUserRepository {
     suspend fun findUserByEmail(email: String): PasskeyAuthUser?
@@ -14,7 +14,7 @@ interface PasskeyAuthUserRepository {
         countryId: Int
     ): PasskeyAuthResponse
 
-    suspend fun getUser(
+    suspend fun loginUser(
         userId: String
-    ): PasskeyAuthUser?
+    ): Pair<String,PasskeyAuthResponse>
 }

@@ -82,7 +82,7 @@ class ArtistRepositoryImpl : ArtistRepository {
         )
     }
 
-    override suspend fun getArtistMixPreview(
+    override suspend fun getFevArtistMixPreview(
         usedId: Long,
         userType: UserType
     ) = when (userType) {

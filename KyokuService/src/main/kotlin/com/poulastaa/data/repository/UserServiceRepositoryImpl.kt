@@ -169,7 +169,7 @@ class UserServiceRepositoryImpl(
                     val artistIdList = getArtistIdList(helper.userType, user.id)
 
                     val fevArtistsMixDeferred = async {
-                        artist.getArtistMixPreview(
+                        artist.getFevArtistMixPreview(
                             userType = helper.userType,
                             usedId = user.id
                         )

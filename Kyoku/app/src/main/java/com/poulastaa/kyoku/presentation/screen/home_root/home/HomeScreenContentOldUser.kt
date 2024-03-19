@@ -41,7 +41,6 @@ fun HomeScreenContentOldUser(
     data: HomeUiData,
     isInternetError: Boolean,
     errorMessage: String,
-    onClick: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -99,7 +98,7 @@ fun HomeScreenContentOldUser(
                         imageUrls = data.playlist[0].listOfUrl,
                         
                     ) {
-                        onClick.invoke()
+
                     }
 
 

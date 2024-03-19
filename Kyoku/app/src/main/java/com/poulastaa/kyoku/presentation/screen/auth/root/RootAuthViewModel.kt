@@ -335,7 +335,7 @@ class RootAuthViewModel @Inject constructor(
         storeEmail(state.passkeyEmail, ds)
 
         when (response.status) {
-            UserCreationStatus.CREATED -> storeSignInState(data = SignInStatus.NEW_USER, ds)
+            UserCreationStatus.CREATED -> storeSignInState(data = SignInStatus.GET_SPOTIFY_PLAYLIST, ds)
 
             UserCreationStatus.CONFLICT -> {
                 storeSignInState(data = SignInStatus.OLD_USER, ds)
@@ -360,7 +360,7 @@ class RootAuthViewModel @Inject constructor(
 
                 when (response.status) {
                     UserCreationStatus.CREATED -> storeSignInState(
-                        data = SignInStatus.NEW_USER,
+                        data = SignInStatus.GET_SPOTIFY_PLAYLIST,
                         ds
                     )
 

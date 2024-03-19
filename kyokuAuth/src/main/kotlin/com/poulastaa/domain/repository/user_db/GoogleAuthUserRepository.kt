@@ -4,7 +4,7 @@ import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 
 
 interface GoogleAuthUserRepository {
-    suspend fun createUser(
+    suspend fun createOrLoginUser(
         userName: String,
         email: String,
         sub: String,

@@ -1,6 +1,6 @@
-package com.poulastaa.domain.dao
+package com.poulastaa.domain.dao.user
 
-import com.poulastaa.data.model.db_table.EmailAuthUserTable
+import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass

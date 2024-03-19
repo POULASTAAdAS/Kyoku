@@ -2,10 +2,11 @@ package com.poulastaa.data.repository.user_db
 
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.auth.UserCreationStatus
+import com.poulastaa.data.model.auth.auth_response.*
 import com.poulastaa.data.model.auth.jwt.*
-import com.poulastaa.data.model.db_table.EmailAuthUserTable
+import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.InvalidRefreshTokenTable
-import com.poulastaa.domain.dao.EmailAuthUser
+import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.dao.InvalidRefreshToken
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
 import com.poulastaa.plugins.dbQuery
@@ -14,6 +15,7 @@ import com.poulastaa.utils.constructProfileUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -102,16 +104,33 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
                 )
             }
 
-            return EmailLoginResponse(
-                status = EmailLoginStatus.USER_PASS_MATCHED,
-                accessToken = accessToken,
-                refreshToken = refreshToken,
-                user = User(
-                    userName = user.userName,
-                    profilePic = constructProfileUrl()
-                ),
-                data = emptyList()
-            )
+
+            return withContext(Dispatchers.IO) {
+                // todo get all data
+
+
+                EmailLoginResponse(
+                    status = EmailLoginStatus.USER_PASS_MATCHED,
+                    accessToken = accessToken,
+                    refreshToken = refreshToken,
+                    user = User(
+                        userName = user.userName,
+                        profilePic = constructProfileUrl()
+                    ),
+                    data = HomeResponse(
+                        status = HomeResponseStatus.SUCCESS,
+                        type = HomeType.ALREADY_USER_REQ,
+                        fevArtistsMixPreview = emptyList(),
+                        albumPreview = ResponseAlbumPreview(),
+                        artistsPreview = emptyList(),
+                        dailyMixPreview = DailyMixPreview(),
+
+
+                        playlist = emptyList(),
+                        favourites = Favourites()
+                    )
+                )
+            }
         } catch (e: Exception) {
             return EmailLoginResponse(
                 status = EmailLoginStatus.SOMETHING_WENT_WRONG

@@ -1,6 +1,9 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.data.model.db_table.*
+import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
+import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
+import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*

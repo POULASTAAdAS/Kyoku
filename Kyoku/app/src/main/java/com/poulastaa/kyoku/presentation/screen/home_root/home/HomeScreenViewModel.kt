@@ -68,7 +68,10 @@ class HomeScreenViewModel @Inject constructor(
 
     fun loadStartupData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (isFirstReq()) {
+            if (
+                isFirstReq() &&
+                ds.readAuthType().first() == HomeType.NEW_USER_REQ.toString()
+            ) {
                 // make api call
                 val response = api.homeReq(
                     req = HomeReq(
@@ -102,12 +105,10 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
             } else {
-                if (state.data.albumPrev.isEmpty()) {
-                    state = state.copy(
-                        dataType = HomeType.DAILY_REFRESH_REQ
-                    )
-                    loadFromDb()
-                }
+                state = state.copy(
+                    dataType = HomeType.DAILY_REFRESH_REQ
+                )
+                loadFromDb()
             }
         }
     }

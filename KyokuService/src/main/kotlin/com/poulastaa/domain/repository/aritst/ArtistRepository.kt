@@ -19,7 +19,7 @@ interface ArtistRepository {
         artistNameList: List<String>
     ): StoreArtistResponse
 
-    suspend fun getArtistMixPreview(
+    suspend fun getFevArtistMixPreview(
         usedId:Long,
         userType: UserType
     ): List<FevArtistsMixPreview>

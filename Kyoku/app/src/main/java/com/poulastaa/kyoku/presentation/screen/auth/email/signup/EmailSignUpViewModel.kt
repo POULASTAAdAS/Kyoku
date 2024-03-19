@@ -377,7 +377,7 @@ class EmailSignUpViewModel @Inject constructor(
                 api.isEmailVerified(state.email).let {
                     if (it) {
                         state = EmailSignUpState()
-                        storeSignInState(data = SignInStatus.NEW_USER, ds) // login user to app
+                        storeSignInState(data = SignInStatus.GET_SPOTIFY_PLAYLIST, ds) // login user to app
                     }
                 }
             }
