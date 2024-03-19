@@ -40,20 +40,17 @@ class HomeScreenViewModel @Inject constructor(
             connectivity.observe().collect {
                 network.value = it
                 state = state.copy(
-                    isInternetAvailable = checkInternetConnection(),
+                    isInternetAvailable = it == NetworkObserver.STATUS.AVAILABLE,
                     isInternetError = false
                 )
-                if (!checkInternetConnection())
+                if (!state.isInternetAvailable)
                     state = state.copy(
                         isInternetError = true,
                         errorMessage = "Please Check Your Internet Connection."
                     )
+                else load()
             }
         }
-    }
-
-    private fun checkInternetConnection(): Boolean {
-        return network.value == NetworkObserver.STATUS.AVAILABLE
     }
 
     private val _uiEvent = Channel<UiEvent>()
@@ -64,12 +61,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun isFirstReq() = db.checkIfNewUser()
 
-    init {
+    private fun load() {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(800)
-            if (state.isInternetAvailable) {
-                loadStartupData()
-            }
+            loadStartupData()
         }
     }
 

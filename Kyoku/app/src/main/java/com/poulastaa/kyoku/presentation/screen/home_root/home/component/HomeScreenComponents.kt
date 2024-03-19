@@ -2,6 +2,9 @@ package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,12 +18,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -36,8 +45,106 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+
+
+fun LazyListScope.homeScreenArtistList(
+    artistPrev: List<HomeUiArtistPrev>,
+    headerValue: String,
+    isCookie: Boolean,
+    isSmallPhone:Boolean
+) {
+    items(artistPrev.size){artistIndex ->
+        Row(
+            modifier = Modifier.height(if (isSmallPhone) 60.dp else 70.dp),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+        ) {
+            HomeScreenCard(
+                size = 60.dp,
+                imageUrl = artistPrev[artistIndex].artistCover,
+                authHeader = headerValue,
+                isCookie = isCookie,
+                shape = CircleShape,
+                onClick = {
+
+                }
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clickable(
+                        onClick = {
+
+                        },
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        },
+                        indication = null
+                    ),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(text = "More from")
+                Text(
+                    text = artistPrev[artistIndex].name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+        ) {
+            items(artistPrev[artistIndex].lisOfPrevSong.size) { songIndex ->
+                Box(
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    HomeScreenCard(
+                        size = 120.dp,
+                        imageUrl = artistPrev[artistIndex]
+                            .lisOfPrevSong[songIndex].coverImage,
+                        authHeader = headerValue,
+                        isCookie = isCookie
+                    ) {
+
+                    }
+
+                    Text(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.background.copy(.8f),
+                                shape = RoundedCornerShape(
+                                    bottomEnd = MaterialTheme.dimens.small3,
+                                    bottomStart = MaterialTheme.dimens.small3
+                                )
+                            ),
+                        text = artistPrev[artistIndex]
+                            .lisOfPrevSong[songIndex].title,
+                        maxLines = 2,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            item {
+                HomeScreenCardMore {
+
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+    }
+}
+
 
 @Composable
 fun CustomToast(

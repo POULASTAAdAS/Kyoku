@@ -24,10 +24,6 @@ drop table EmailUserListenHistory;
 drop table GoogleUserListenHistory;
 drop table PasskeyUserListenHistory;
 
-drop table EmailUserGenreRelation;
-drop table PasskeyUserGenreRelation;
-drop table GoogleUserGenreRelation;
-
 drop table emailAuthUser;
 drop table googleAuthUser;
 drop table passkeyAuthUser;

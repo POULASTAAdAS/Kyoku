@@ -6,11 +6,7 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,14 +15,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,14 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
-import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardMore
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
@@ -60,8 +50,7 @@ fun HomeScreenContentOldUser(
             .padding(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding(),
-            )
-            .navigationBarsPadding(),
+            ),
         contentPadding = PaddingValues(
             start = MaterialTheme.dimens.medium1,
             end = MaterialTheme.dimens.medium1
@@ -87,7 +76,7 @@ fun HomeScreenContentOldUser(
             }
         }
 
-        // playlist  , favourites , artist , album
+        // todo playlist , favourites , artist , album
         item {
             Column(
                 modifier = Modifier
@@ -180,6 +169,8 @@ fun HomeScreenContentOldUser(
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
 
+            // todo content
+
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
         }
 
@@ -215,93 +206,12 @@ fun HomeScreenContentOldUser(
         }
 
 
-        // artist
-        items(data.artistPrev.size) { artistIndex ->
-            Row(
-                modifier = Modifier.height(if (isSmallPhone) 60.dp else 70.dp),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-            ) {
-                HomeScreenCard(
-                    size = 60.dp,
-                    imageUrl = data.artistPrev[artistIndex].artistCover,
-                    authHeader = headerValue,
-                    isCookie = isCookie,
-                    shape = CircleShape,
-                    onClick = {
-
-                    }
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .clickable(
-                            onClick = {
-
-                            },
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            },
-                            indication = null
-                        ),
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(text = "More from")
-                    Text(
-                        text = data.artistPrev[artistIndex].name,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-            ) {
-                items(data.artistPrev[artistIndex].lisOfPrevSong.size) { songIndex ->
-                    Box(
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
-                        HomeScreenCard(
-                            size = 120.dp,
-                            imageUrl = data.artistPrev[artistIndex]
-                                .lisOfPrevSong[songIndex].coverImage,
-                            authHeader = headerValue,
-                            isCookie = isCookie
-                        ) {
-
-                        }
-
-                        Text(
-                            modifier = Modifier
-                                .width(120.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.background.copy(.8f),
-                                    shape = RoundedCornerShape(
-                                        bottomEnd = MaterialTheme.dimens.small3,
-                                        bottomStart = MaterialTheme.dimens.small3
-                                    )
-                                ),
-                            text = data.artistPrev[artistIndex]
-                                .lisOfPrevSong[songIndex].title,
-                            maxLines = 2,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-                item {
-                    HomeScreenCardMore {
-
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-        }
+        // Artist
+        homeScreenArtistList(
+            artistPrev = data.artistPrev,
+            headerValue = headerValue,
+            isCookie = isCookie,
+            isSmallPhone = isSmallPhone
+        )
     }
 }

@@ -21,6 +21,11 @@ select * from EmailUserArtistRelation;
 select * from googleuserartistrelation;
 select * from passkeyuserartistrelation;
 
+select * from EmailUserAlbumRelation;
+select * from PasskeyUserAlbumRelation;
+select * from GoogleUserAlbumRelation;
+
+
 
 select * from EmailUserArtistRelation where userid = 1 and artistId = 10;
 
@@ -255,15 +260,14 @@ where songGenreRelation.songId in (
 
 
 
-select * from artist order by points desc;
+select * from EmailUserAlbumRelation;
+select * from PasskeyUserAlbumRelation;
+select * from GoogleUserAlbumRelation;
 
 
+select * from album order by points desc;
 
-
-
-
-
-
+select * from EmailAuthUser;
 
 
 
