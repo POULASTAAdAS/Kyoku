@@ -146,7 +146,7 @@ class HomeScreenViewModel @Inject constructor(
 
             }
             val playlist = async {
-
+                db.readPlaylistPreview()
             }
 
             val favourites = async {
@@ -159,7 +159,8 @@ class HomeScreenViewModel @Inject constructor(
                 data = HomeUiData(
                     fevArtistMixPrev = fevArtistMixPrev.await(),
                     albumPrev = albumPrev.await(),
-                    artistPrev = artistPrev.await()
+                    artistPrev = artistPrev.await(),
+                    playlist = playlist.await()
                 )
             )
 

@@ -15,3 +15,9 @@ data class ArtistPrevResult(
     val name: String,
     val imageUrl: String
 )
+
+data class PlaylistPrevResult(
+    val id: Long,
+    val name: String,
+    val coverImage: String
+)

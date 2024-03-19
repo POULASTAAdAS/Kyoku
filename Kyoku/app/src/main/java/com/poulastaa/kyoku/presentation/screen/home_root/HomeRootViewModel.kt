@@ -88,9 +88,7 @@ class HomeRootViewModel @Inject constructor(
                     )
                 }
             } else {
-
-
-                state = if (currentTime <= 5) {
+                state = if (currentTime <= 5 || currentTime == 12) {
                     state.copy(
                         homeTopBarTitle = "Good Afternoon"
                     )

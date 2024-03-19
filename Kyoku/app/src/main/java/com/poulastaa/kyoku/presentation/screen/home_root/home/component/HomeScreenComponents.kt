@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -205,19 +208,169 @@ fun HomeScreenCardWithText(
     }
 }
 
+@Composable
+fun HomeScreenCardPlaylistPrev(
+    modifier: Modifier,
+    name: String,
+    imageUrls: List<String>,
+    authHeader: String,
+    isCookie: Boolean,
+    elevation: Dp = 10.dp,
+    isDarkThem: Boolean = isSystemInDarkTheme(),
+    shape: CornerBasedShape = MaterialTheme.shapes.small,
+    context: Context = LocalContext.current,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = modifier,
+        shape = shape,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = elevation
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+        onClick = onClick
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(1f / 3)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(1f / 2)
+                ) {
+                    PlaylistImage(
+                        context = context,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(1f / 2),
+                        isDarkThem = isDarkThem,
+                        url = imageUrls[0],
+                        authHeader = authHeader,
+                        isCookie = isCookie
+                    )
+
+                    if (imageUrls.size >= 2)
+                        PlaylistImage(
+                            context = context,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            isDarkThem = isDarkThem,
+                            url = imageUrls[1],
+                            authHeader = authHeader,
+                            isCookie = isCookie
+                        )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    if (imageUrls.size >= 3)
+                        PlaylistImage(
+                            context = context,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(1f / 2),
+                            isDarkThem = isDarkThem,
+                            url = imageUrls[2],
+                            authHeader = authHeader,
+                            isCookie = isCookie
+                        )
+                    if (imageUrls.size >= 4)
+                        PlaylistImage(
+                            context = context,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            isDarkThem = isDarkThem,
+                            url = imageUrls[3],
+                            authHeader = authHeader,
+                            isCookie = isCookie
+                        )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+            Text(
+                text = name,
+                fontWeight = FontWeight.Medium,
+                fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                maxLines = 2,
+                textAlign = TextAlign.Start
+            )
+        }
+    }
+}
+
+@Composable
+private fun PlaylistImage(
+    context: Context,
+    modifier: Modifier,
+    isDarkThem: Boolean,
+    url: String,
+    authHeader: String,
+    isCookie: Boolean
+) {
+    AsyncImage(
+        modifier = modifier,
+        model = ImageRequest.Builder(context)
+            .data(url)
+            .addHeader(
+                name = if (isCookie) "Cookie" else "Authorization",
+                value = authHeader
+            ).fallback(
+                drawableResId = if (isDarkThem) R.drawable.night_logo
+                else R.drawable.light_logo
+            )
+            .error(
+                drawableResId = if (isDarkThem) R.drawable.night_logo
+                else R.drawable.light_logo
+            )
+            .crossfade(true)
+            .build(),
+        placeholder = painterResource(
+            id = if (isDarkThem) R.drawable.night_logo
+            else R.drawable.light_logo
+        ),
+        contentScale = ContentScale.FillBounds,
+        contentDescription = null
+    )
+
+}
+
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
-@Preview()
+@Preview
 @Composable
 private fun Preview() {
     TestThem {
-        HomeScreenCardWithText(
+//        HomeScreenCardWithText(
+//            modifier = Modifier
+//                .height(100.dp)
+//                .width(240.dp),
+//            imageUrl = "",
+//            isCookie = false,
+//            authHeader = "",
+//            name = "Your Favourite"
+//        ) {
+//
+//        }
+
+        HomeScreenCardPlaylistPrev(
             modifier = Modifier
                 .height(100.dp)
                 .width(240.dp),
-            imageUrl = "",
+            imageUrls = listOf("", "", "", ""),
             isCookie = false,
             authHeader = "",
             name = "Your Favourite"

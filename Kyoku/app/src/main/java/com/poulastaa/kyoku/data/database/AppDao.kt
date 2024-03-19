@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
+import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
@@ -100,12 +101,17 @@ interface AppDao {
         ) order by ArtistTable.id
     """)
     suspend fun readAllArtistPrev(): List<ArtistPrevResult>
+
+    @Query("""
+        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
+        join SongTable on SongTable.id = SongPlaylistRelationTable.songId
+        where PlaylistTable.id in (
+            select playlistId from SongPlaylistRelationTable
+        ) order by PlaylistTable.points desc
+    """)
+    suspend fun readPreviewPlaylist(): List<PlaylistPrevResult>
 }
-
-
-
-
-
 
 
 

@@ -100,7 +100,16 @@ fun HomeScreen(
                         headerValue = authHeader,
                         isInternetError = viewModel.state.isInternetError,
                         errorMessage = viewModel.state.errorMessage
-                    )
+                    ) else
+                        HomeScreenContentOldUser(
+                            paddingValues = it,
+                            isSmallPhone = isSmallPhone,
+                            data = viewModel.state.data,
+                            isCookie = isCookie,
+                            headerValue = authHeader,
+                            isInternetError = viewModel.state.isInternetError,
+                            errorMessage = viewModel.state.errorMessage
+                        )
                 }
             }
         }

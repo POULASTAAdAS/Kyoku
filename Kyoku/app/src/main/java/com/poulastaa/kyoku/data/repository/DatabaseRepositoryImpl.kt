@@ -14,6 +14,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiPlaylistPrev
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
@@ -26,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.util.Random
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -134,4 +136,16 @@ class DatabaseRepositoryImpl @Inject constructor(
             lisOfPrevSong = it.value.map { song -> song.toHomeUiSongPrev() }
         )
     }
+
+
+    suspend fun readPlaylistPreview() = dao.readPreviewPlaylist()
+        .groupBy { it.name }
+        .map {
+            HomeUiPlaylistPrev(
+                name = it.key,
+                listOfUrl = it.value.map { url ->
+                    url.coverImage
+                }.shuffled(Random()).take(4)
+            )
+        }
 }

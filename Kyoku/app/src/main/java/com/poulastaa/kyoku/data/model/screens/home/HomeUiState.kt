@@ -6,7 +6,7 @@ data class HomeUiState(
     val isInternetAvailable: Boolean = false,
     val isLoading: Boolean = true,
     val isInternetError: Boolean = false,
-    val errorMessage:String = "",
+    val errorMessage: String = "",
 
     val dataType: HomeType = HomeType.NEW_USER_REQ,
     val data: HomeUiData = HomeUiData()
@@ -17,7 +17,7 @@ data class HomeUiData(
     val albumPrev: List<HomeAlbumUiPrev> = emptyList(),
     val artistPrev: List<HomeUiArtistPrev> = emptyList(),
     val dailyMixPrev: HomeUiDailyMixPrev = HomeUiDailyMixPrev(),
-    val playlist: List<String> = emptyList(), // todo change
+    val playlist: List<HomeUiPlaylistPrev> = emptyList(),
     val favourites: List<String> = emptyList(), // todo change
 )
 
@@ -47,5 +47,10 @@ data class HomeUiSongPrev(
 
 data class HomeUiDailyMixPrev(
     val listOfSong: List<HomeUiSongPrev> = emptyList()
+)
+
+data class HomeUiPlaylistPrev(
+    val name: String,
+    val listOfUrl: List<String>
 )
 
