@@ -3,6 +3,7 @@ package com.poulastaa.domain.repository.song
 import com.poulastaa.data.model.home.DailyMixPreview
 import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylist
 import com.poulastaa.data.model.setup.spotify.SpotifySong
+import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
 
 interface SongRepository {

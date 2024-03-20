@@ -1,5 +1,6 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
 import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
@@ -9,6 +10,9 @@ import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_fev.EmailUserFavouriteTable
+import com.poulastaa.data.model.db_table.user_fev.GoogleUserFavouriteTable
+import com.poulastaa.data.model.db_table.user_fev.PasskeyUserFavouriteTable
 import com.poulastaa.data.model.db_table.user_genre.EmailUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.GoogleUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTable
@@ -39,9 +43,7 @@ fun Application.configureDatabase() {
     )
 
     transaction(db) {
-        SchemaUtils.create(EmailAuthUserTable)
-        SchemaUtils.create(GoogleAuthUserTable)
-        SchemaUtils.create(PasskeyAuthUserTable)
+        SchemaUtils.create(PlaylistTable)
 
         SchemaUtils.create(EmailUserAlbumRelation)
         SchemaUtils.create(GoogleUserAlbumRelation)
@@ -62,6 +64,10 @@ fun Application.configureDatabase() {
         SchemaUtils.create(EmailUserPlaylistTable)
         SchemaUtils.create(GoogleUserPlaylistTable)
         SchemaUtils.create(PasskeyUserPlaylistTable)
+
+        SchemaUtils.create(EmailUserFavouriteTable)
+        SchemaUtils.create(GoogleUserFavouriteTable)
+        SchemaUtils.create(PasskeyUserFavouriteTable)
     }
 }
 

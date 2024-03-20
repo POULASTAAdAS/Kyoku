@@ -48,7 +48,6 @@ class PlaylistRepositoryImpl : PlaylistRepository {
 
         playlist.forEach {
             dbQuery {
-
                 PasskeyUserPlaylist.new {
                     this.playlistId = playlistId
                     this.songId = it.songId

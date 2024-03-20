@@ -264,6 +264,8 @@ select * from EmailUserAlbumRelation;
 select * from PasskeyUserAlbumRelation;
 select * from GoogleUserAlbumRelation;
 
+update GoogleUserAlbumRelation set points = 2 where userid = 1 and albumid = 54;
+
 
 select * from album order by points desc;
 
@@ -275,97 +277,67 @@ select * from googleUserPlaylist order by playlistid;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- user
-create table playlist(
-id int primary key auto_increment,
-name varchar(20) unique
+select song.id , song.title , song.artist, song.coverImage , song.album from Song 
+join songalbumartistrelation on songalbumartistrelation.songId = song.id
+join album on album.id = songalbumartistrelation.albumId
+where album.id in (
+	select albumid from GoogleUserAlbumRelation where userid = 1 order by points desc
 );
 
-create table playlistRelation(
-id int primary key auto_increment,
-playlistid int references playlist.id,
-songid bigint references song.id
+select * from googleuserlistenhistory  where userid = 1 order by date desc limit 5;
+
+select * from googleuseralbumrelation;
+
+select * from songalbumartistrelation where albumId = 54;
+
+
+-- get album
+select Song.id , Song.title , Song.album , Song.artist , Song.coverImage from song
+join songalbumartistrelation on songalbumartistrelation.songId = Song.id
+join googleuseralbumrelation on googleuseralbumrelation.albumid = songalbumartistrelation.albumid
+where googleuseralbumrelation.albumId in (
+	select albumId from googleuseralbumrelation where userid = 1 order by points desc
 );
 
+-- get playlist
 
-insert into playlist values
-(1 , "playliat 1"),
-(2 , "playliat 2");
+select * from playlist;
 
-insert into playlistrelation values
-(1 , 1 , 1),
-(2 , 1 , 100),
-(3 , 1 , 101),
-(4 , 1, 1423),
-(5 , 2 , 1424),
-(6 , 2 , 1423),
-(7 , 2 , 423),
-(8 ,2 , 123),
-(9 , 2, 23);
+select * from googleuserplaylist;
+select * from emailuserplaylist;
+select * from passkeyuserplaylist;
 
- 
-select playlist.name from playlist;
- 
-select playlistrelation.songId from playlistrelation where playlistrelation.playlistid in (select playlist.id from playlist);
- 
-select coverimage , title , artist , playlist.name from song , playlist where id in (select playlistrelation.songId from playlistrelation where playlistrelation.playlistid in (select playlist.id from playlist));
+select * from googleauthuser;
 
 
-SELECT s.coverImage , s.title , s.artist,
-p.name
-FROM song s
-JOIN playlistrelation pr ON s.id = pr.songid
-JOIN playlist p ON pr.playlistid = p.id;
+select Song.id , Song.title , Song.album , Song.artist , Song.coverImage , playlist.name , playlist.id from song
+join passkeyUserPlaylist on passkeyUserPlaylist.songid = song.id
+join playlist on playlist.id = passkeyUserPlaylist.playlistid
+where passkeyUserPlaylist.songid in (
+	select songid from passkeyUserPlaylist where userid = 1
+) order by playlist.points desc;
 
-SELECT song.id, song.coverimage, song.title, song.artist, playlist.name FROM song JOIN playlistrelation ON song.id = playlistrelation.songId JOIN playlist ON playlistrelation.playlistId = playlist.id;
+
+select * from passkeyUserPlaylist;
+
+select * from playlist;
+
+
+select count(*) from PasskeyUserListenHistory where userid = 1;
+
+select * from GoogleUserFavouriteTable;
+
+select Song.id , Song.title , Song.album , Song.artist , Song.coverImage from song
+join GoogleUserFavouriteTable on GoogleUserFavouriteTable.songId = Song.id
+where GoogleUserFavouriteTable.userid = 1 order by GoogleUserFavouriteTable.date desc;
+
+
+select * from PasskeyUserFavouriteTable;
+
+
+
+
+
+
+
+

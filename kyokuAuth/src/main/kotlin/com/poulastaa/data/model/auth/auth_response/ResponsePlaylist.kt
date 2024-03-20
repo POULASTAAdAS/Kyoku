@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponsePlaylist(
-    val name:String = "",
-    val listOfSongs:List<ResponseSong> = emptyList()
+    val id: Long = 0,
+    val name: String = "",
+    val listOfSongs: List<ResponseSong> = emptyList()
 )

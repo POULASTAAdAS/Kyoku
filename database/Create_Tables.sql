@@ -135,6 +135,26 @@ create table EmailUserAlbumRelation(
 
 
 
+create table EmailUserFavouriteTable(
+	userId bigint references EmailAuthUser(id) on delete cascade,
+    songId bigint references Song(id) on delete cascade,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    primary key (userid , songid)
+);
+
+create table GoogleUserFavouriteTable(
+	userId bigint references GoogleAuthUser(id) on delete cascade,
+    songId bigint references Song(id) on delete cascade,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    primary key (userid , songid)
+);
+
+create table PasskeyUserFavouriteTable(
+	userId bigint references PasskeyAuthUser(id) on delete cascade,
+    songId bigint references Song(id) on delete cascade,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    primary key (userid , songid)
+);
 
 
 

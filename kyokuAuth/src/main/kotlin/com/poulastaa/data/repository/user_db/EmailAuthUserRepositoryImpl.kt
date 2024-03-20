@@ -1,6 +1,7 @@
 package com.poulastaa.data.repository.user_db
 
 import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.auth_response.*
 import com.poulastaa.data.model.auth.jwt.*
@@ -8,18 +9,18 @@ import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.InvalidRefreshTokenTable
 import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.dao.InvalidRefreshToken
+import com.poulastaa.domain.repository.login.LogInResponseRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.Constants.REFRESH_TOKEN_DEFAULT_TIME
 import com.poulastaa.utils.constructProfileUrl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.IOException
 
-class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
+class EmailAuthUserRepositoryImpl(
+    private val loginRepository: LogInResponseRepository
+) : EmailAuthUserRepository {
 
     override suspend fun createUser(
         userName: String,
@@ -86,7 +87,7 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
         accessToken: String,
         refreshToken: String
     ): EmailLoginResponse {
-        try {
+        return try {
             val user = findUser(email)
                 ?: return EmailLoginResponse(
                     status = EmailLoginStatus.USER_DOES_NOT_EXISTS
@@ -105,34 +106,21 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
             }
 
 
-            return withContext(Dispatchers.IO) {
-                // todo get all data
-
-
-                EmailLoginResponse(
-                    status = EmailLoginStatus.USER_PASS_MATCHED,
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
-                    user = User(
-                        userName = user.userName,
-                        profilePic = constructProfileUrl()
-                    ),
-                    data = HomeResponse(
-                        status = HomeResponseStatus.SUCCESS,
-                        type = HomeType.ALREADY_USER_REQ,
-                        fevArtistsMixPreview = emptyList(),
-                        albumPreview = ResponseAlbumPreview(),
-                        artistsPreview = emptyList(),
-                        dailyMixPreview = DailyMixPreview(),
-
-
-                        playlist = emptyList(),
-                        favourites = Favourites()
-                    )
+            EmailLoginResponse(
+                status = EmailLoginStatus.USER_PASS_MATCHED,
+                accessToken = accessToken,
+                refreshToken = refreshToken,
+                user = User(
+                    userName = user.userName,
+                    profilePic = constructProfileUrl()
+                ),
+                data = getHomeResponse(
+                    userId = user.id.value,
+                    userType = UserType.EMAIL_USER
                 )
-            }
+            )
         } catch (e: Exception) {
-            return EmailLoginResponse(
+            EmailLoginResponse(
                 status = EmailLoginStatus.SOMETHING_WENT_WRONG
             )
         }
@@ -249,5 +237,53 @@ class EmailAuthUserRepositoryImpl : EmailAuthUserRepository {
 
         return if (response) ResendVerificationMailStatus.EMAIL_ALREADY_VERIFIED
         else ResendVerificationMailStatus.VERIFICATION_MAIL_SEND
+    }
+
+    private suspend fun getHomeResponse(userId: Long, userType: UserType) = withContext(Dispatchers.IO) {
+        val getFevArtistMixDeferred = async {
+            loginRepository.getFevArtistMix(userId, userType)
+        }
+
+        val getAlbumPrevDeferred = async {
+            loginRepository.getAlbumPrev(userId, userType)
+        }
+
+        val getArtistPrevDeferred = async {
+            loginRepository.getArtistPrev(userId, userType)
+        }
+
+        val getDailyMixPrevDeferred = async {
+            loginRepository.getDailyMixPrev(userId, userType)
+        }
+
+        val getHistoryPrevDeferred = async {
+            loginRepository.getHistoryPrev(userId, userType)
+        }
+
+        val getAlbumsDeferred = async {
+            loginRepository.getAlbums(userId, userType)
+        }
+
+        val getPlaylistsDeferred = async {
+            loginRepository.getPlaylists(userId, userType)
+        }
+
+        val getFavouritesDeferred = async {
+            loginRepository.getFavourites(userId, userType)
+        }
+
+
+        HomeResponse(
+            status = HomeResponseStatus.SUCCESS,
+            type = HomeType.ALREADY_USER_REQ,
+            fevArtistsMixPreview = getFevArtistMixDeferred.await(),
+            albumPreview = getAlbumPrevDeferred.await(),
+            artistsPreview = getArtistPrevDeferred.await(),
+            dailyMixPreview = getDailyMixPrevDeferred.await(),
+            albums = getAlbumsDeferred.await(),
+            playlist = getPlaylistsDeferred.await(),
+            favourites = getFavouritesDeferred.await(),
+            historyPreview = getHistoryPrevDeferred.await()
+        )
     }
 }

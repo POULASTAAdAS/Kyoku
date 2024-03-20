@@ -84,11 +84,12 @@ class AlbumRepositoryImpl : AlbumRepository {
         val userFevAlbumIdList = getFevAlbumIdList(userType, userId)
 
         // get most popular albums remove duplicate limit 7
-        val albumIdList = (userFevAlbumIdList + userFevAlbumIdList.getMostPopularAlbumsIdList()).take(5)
         // make a single list take 5
+        val albumIdList = (userFevAlbumIdList + userFevAlbumIdList.getMostPopularAlbumsIdList()).take(5)
 
-        return ResponseAlbumPreview( // todo
-            listOfPreviewAlbum = emptyList() /*albumIdList.getAlbumOnAlbumIdList()*/
+
+        return ResponseAlbumPreview(
+            listOfPreviewAlbum = albumIdList.getAlbumOnAlbumIdList()
         )
     }
 
@@ -141,39 +142,44 @@ class AlbumRepositoryImpl : AlbumRepository {
             .shuffled(Random())
     }
 
-//    private suspend fun List<Long>.getAlbumOnAlbumIdList() = dbQuery {
-//        SongTable
-//            .join(
-//                otherTable = SongAlbumArtistRelationTable,
-//                joinType = JoinType.INNER,
-//                additionalConstraint = {
-//                    SongTable.id eq SongAlbumArtistRelationTable.songId as Column<*>
-//                }
-//            ).join(
-//                otherTable = AlbumTable,
-//                joinType = JoinType.INNER,
-//                additionalConstraint = {
-//                    SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
-//                }
-//            ).slice(
-//                SongTable.title,
-//                SongTable.coverImage,
-//                SongTable.artist,
-//                SongTable.album
-//            ).select {
-//                AlbumTable.id inList this@getAlbumOnAlbumIdList
-//            }.orderBy(AlbumTable.points, SortOrder.ASC)
-//            .map {
-//                AlbumPreview(
-//                    name = it[SongTable.album],
-//                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
-//                    title = it[SongTable.title],
-//                    artist = it[SongTable.artist]
-//                )
-//            }.groupBy {
-//                it.name
-//            }.map {
-//                it.value.take(1)
-//            }.flatten()
-//    }
+    private suspend fun List<Long>.getAlbumOnAlbumIdList() = dbQuery {
+        SongTable
+            .join(
+                otherTable = SongAlbumArtistRelationTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    SongTable.id eq SongAlbumArtistRelationTable.songId as Column<*>
+                }
+            ).join(
+                otherTable = AlbumTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
+                }
+            ).slice(
+                SongTable.id,
+                SongTable.title,
+                SongTable.coverImage,
+                SongTable.artist,
+                SongTable.album
+            ).select {
+                AlbumTable.id inList this@getAlbumOnAlbumIdList
+            }.orderBy(AlbumTable.points, SortOrder.ASC)
+            .map {
+                SongPreview(
+                    id = it[SongTable.id].value.toString(),
+                    title = it[SongTable.title],
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album]
+                )
+            }.groupBy {
+                it.album
+            }.map {
+                AlbumPreview(
+                    name = it.key,
+                    listOfSongs = it.value.take(4)
+                )
+            }
+    }
 }
