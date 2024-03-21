@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
@@ -47,7 +46,6 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             api.getPasskeyUser(user)
         } catch (e: Exception) {
-            Log.d("error" , e.message.toString())
             null
         }
     }

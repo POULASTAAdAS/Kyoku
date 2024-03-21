@@ -68,7 +68,10 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun isFirstReq() = db.checkIfNewUser()
 
-    fun loadStartupData(context: Context) {
+    fun loadStartupData(
+        context: Context,
+        isLogin: Boolean = false // todo send info from which screen
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             val signInState = ds.readSignedInState().first()
 
@@ -109,15 +112,11 @@ class HomeScreenViewModel @Inject constructor(
                         onEvent(HomeUiEvent.EmitToast("Opp's Something went wrong."))
                     }
                 }
-            } else if (signInState == SignInStatus.OLD_USER.name) {
-                delay(7000)
+            } else {
+                if (isLogin) delay(8000)
+
                 state = state.copy(
                     dataType = HomeType.ALREADY_USER_REQ
-                )
-                loadFromDb()
-            } else {
-                state = state.copy(
-                    dataType = HomeType.DAILY_REFRESH_REQ
                 )
                 loadFromDb()
             }
@@ -197,8 +196,28 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-            val favourites = async {
+            val historyPrev = async {
+                db.redRecentlyPlayed().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            historyPrev = it
+                        )
+                    )
+                }
+            }
 
+            val savedAlbumPrev = async {
+                db.radSavedAlbumPrev().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            savedAlbumPrev = it
+                        )
+                    )
+                }
+            }
+
+            val favourites = async {
+                db.readFavouritePrev()
             }
 
             fevArtistMixPrev.await()
@@ -206,7 +225,16 @@ class HomeScreenViewModel @Inject constructor(
             artistPrev.await()
             dailyMixPrev.await()
             playlist.await()
-            favourites.await()
+            historyPrev.await()
+            savedAlbumPrev.await()
+
+            favourites.await().let {
+                state = state.copy(
+                    data = state.data.copy(
+                        favourites = it > 0
+                    )
+                )
+            }
         }
 
         state = state.copy(

@@ -59,11 +59,11 @@ ORDER BY a.points DESC limit 30;
 
 
 WITH RankedSongs AS ( -- getResponseAlbumPreview
-   SELECT s.id , s.title , s.coverImage , s.artist , s.album,
-        ROW_NUMBER() OVER (PARTITION BY a.id ORDER BY a.points DESC, s.id) AS rnk
+   SELECT song.id , song.title , song.coverImage , song.artist , song.album,
+        ROW_NUMBER() OVER (PARTITION BY a.id ORDER BY a.points DESC, song.id) AS rnk
     FROM
-        song s
-        JOIN SongAlbumArtistRelation sar ON s.id = sar.songId
+        song
+        JOIN SongAlbumArtistRelation sar ON song.id = sar.songId
         JOIN album a ON sar.albumId = a.id
     WHERE
         a.id IN (
@@ -335,14 +335,20 @@ where GoogleUserFavouriteTable.userid = 1 order by GoogleUserFavouriteTable.date
 select * from PasskeyUserFavouriteTable;
 
 
+select * from passkeyauthuser;
+
+select * from passkeyuserlistenhistory;
+
+select * from PasskeyUserAlbumRelation;
+
+select Album.id from Song
+ join songalbumartistrelation on songalbumartistrelation.songId = Song.id
+ join Album on Album.id = songalbumartistrelation.albumId
+ group by Album.id
+ order by Song.id asc;
 
 
-
-
-
-
-
-
+select * from songalbumartistrelation;
 
 
 

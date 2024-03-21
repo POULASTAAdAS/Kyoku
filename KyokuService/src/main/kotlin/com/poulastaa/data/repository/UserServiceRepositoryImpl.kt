@@ -174,7 +174,10 @@ class UserServiceRepositoryImpl(
                             usedId = user.id
                         )
                     }
-                    val albumDeferred = async { album.getResponseAlbumPreviewForNewUser(artistIdList) }
+                    val albumDeferred = async {
+                        album.getResponseAlbumPreviewForNewUser(artistIdList)
+                    }
+
                     val artistDeferred = async {
                         artist.getResponseArtistPreviewForNewUser(
                             usedId = user.id,

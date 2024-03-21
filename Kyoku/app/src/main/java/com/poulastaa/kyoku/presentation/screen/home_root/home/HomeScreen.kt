@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -29,8 +28,6 @@ fun HomeScreen(
     opnDrawer: () -> Unit,
     navigate: (HomeRootUiEvent) -> Unit
 ) {
-    Log.d("token" , authHeader)
-
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val isSmallPhone = LocalConfiguration.current.screenWidthDp <= 411

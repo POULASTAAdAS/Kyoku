@@ -177,6 +177,9 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
+    fun redRecentlyPlayed() = dao.redRecentlyPlayed()
+    fun radSavedAlbumPrev() = dao.radSavedAlbumPrev()
+    suspend fun readFavouritePrev() = dao.readFavouritePrev()
 
 
     fun insertIntoPlaylistHome(list: List<ResponsePlaylist>) {

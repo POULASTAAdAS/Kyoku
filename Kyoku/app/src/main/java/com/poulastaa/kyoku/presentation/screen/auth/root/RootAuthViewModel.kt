@@ -283,8 +283,6 @@ class RootAuthViewModel @Inject constructor(
 
             api.createPasskeyUser(user)?.let { response -> // get response from server
 
-                Log.d("response", response.toString())
-
                 when (response.status) {
                     UserCreationStatus.CREATED -> setupPasskeyUser(response, context)
 

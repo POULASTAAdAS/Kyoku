@@ -18,6 +18,8 @@ data class HomeUiData(
     val artistPrev: List<HomeUiArtistPrev> = emptyList(),
     val dailyMixPrev: HomeUiDailyMixPrev = HomeUiDailyMixPrev(),
     val playlist: List<HomeUiPlaylistPrev> = emptyList(),
+    val historyPrev: List<HomeUiSongPrev> = emptyList(),
+    val savedAlbumPrev: List<HomeUiSavedAlbumPrev> = emptyList(),
     val favourites: Boolean = false
 )
 
@@ -52,5 +54,10 @@ data class HomeUiDailyMixPrev(
 data class HomeUiPlaylistPrev(
     val name: String,
     val listOfUrl: List<String>
+)
+
+data class HomeUiSavedAlbumPrev(
+    val coverImage: String,
+    val album: String
 )
 

@@ -273,8 +273,6 @@ private fun String.encodeImage(
     isCookie: Boolean,
     header: String,
 ): String = runBlocking {
-    Log.d("url", this@encodeImage)
-
     val req = ImageRequest.Builder(context)
         .addHeader(if (isCookie) "Cookie" else "Authorization", header)
         .data(this@encodeImage)

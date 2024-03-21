@@ -112,7 +112,7 @@ insert into GoogleUserFavouriteTable (userId , songId) values
 
 
 
-insert into GoogleUserAlbumRelation (userid , albumid) values 
+insert into PasskeyUserAlbumRelation (userid , albumid) values 
 (1,829),
 (1,118),
 (1,54),

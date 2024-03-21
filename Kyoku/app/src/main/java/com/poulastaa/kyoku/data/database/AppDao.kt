@@ -23,6 +23,8 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -117,6 +119,32 @@ interface AppDao {
     )
     fun readPreviewPlaylist(): Flow<List<PlaylistPrevResult>>
 
+    @Query(
+        """
+        select songpreviewtable.id , songpreviewtable.title , songpreviewtable.artist , songpreviewtable.coverImage from songpreviewtable
+        join RecentlyPlayedPrevTable on RecentlyPlayedPrevTable.songId = songpreviewtable.id
+        where RecentlyPlayedPrevTable.songId in (
+            select songId from RecentlyPlayedPrevTable order by id desc
+        )
+    """
+    )
+    fun redRecentlyPlayed(): Flow<List<HomeUiSongPrev>>
+
+    @Query("select count(*) from FavouriteTable")
+    suspend fun readFavouritePrev(): Long
+
+    @Transaction
+    @Query(
+        """
+        select SongTable.coverImage  , SongTable.album  from SongTable
+        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
+        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
+        where SongAlbumRelationTable.albumId in (
+            select id from AlbumTable
+        ) group by AlbumTable.name order by AlbumTable.points desc limit 2
+    """
+    )
+    fun radSavedAlbumPrev(): Flow<List<HomeUiSavedAlbumPrev>>
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)

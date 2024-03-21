@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
@@ -193,7 +194,7 @@ fun HomeScreenCard(
         ),
         onClick = onClick
     ) {
-        PlaylistImage(
+        HomeScreenImage(
             isDarkThem = isDarkThem,
             url = imageUrl,
             isCookie = isCookie,
@@ -204,11 +205,15 @@ fun HomeScreenCard(
 
 @Composable
 fun HomeScreenCardMore(
+    text: String = "More",
+    maxLine: Int = 1,
+    size: Dp = 120.dp,
+    fontWeight: FontWeight = FontWeight.Black,
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
-            .size(120.dp),
+            .size(size),
         shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
@@ -224,10 +229,12 @@ fun HomeScreenCardMore(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "More",
-                fontWeight = FontWeight.Black,
+                text = text,
+                fontWeight = fontWeight,
                 fontSize = MaterialTheme.typography.displaySmall.fontSize,
-                maxLines = 1,
+                maxLines = maxLine,
+                letterSpacing = 2.sp,
+                lineHeight = MaterialTheme.typography.displaySmall.fontSize,
                 textAlign = TextAlign.Center
             )
         }
@@ -262,7 +269,9 @@ fun HomeScreenCardWithText(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            PlaylistImage(
+            HomeScreenImage(
+                modifier = Modifier.fillMaxHeight()
+                    .fillMaxWidth(1f/3),
                 isDarkThem = isDarkThem,
                 url = imageUrl,
                 isCookie = isCookie,
@@ -272,6 +281,7 @@ fun HomeScreenCardWithText(
             Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
 
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = name,
                 fontWeight = FontWeight.Medium,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
@@ -291,6 +301,7 @@ fun HomeScreenCardPlaylistPrev(
     isDarkThem: Boolean = isSystemInDarkTheme(),
     isCookie: Boolean,
     headerValue: String,
+    color: Color = MaterialTheme.colorScheme.background,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
     onClick: () -> Unit
 ) {
@@ -301,7 +312,7 @@ fun HomeScreenCardPlaylistPrev(
             defaultElevation = elevation
         ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = color
         ),
         onClick = onClick
     ) {
@@ -320,7 +331,7 @@ fun HomeScreenCardPlaylistPrev(
                         .fillMaxWidth()
                         .fillMaxHeight(1f / 2)
                 ) {
-                    PlaylistImage(
+                    HomeScreenImage(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(1f / 2),
@@ -331,7 +342,7 @@ fun HomeScreenCardPlaylistPrev(
                     )
 
                     if (imageUrls.size >= 2)
-                        PlaylistImage(
+                        HomeScreenImage(
                             modifier = Modifier
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
@@ -345,7 +356,7 @@ fun HomeScreenCardPlaylistPrev(
                         .fillMaxSize()
                 ) {
                     if (imageUrls.size >= 3)
-                        PlaylistImage(
+                        HomeScreenImage(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(1f / 2),
@@ -355,7 +366,7 @@ fun HomeScreenCardPlaylistPrev(
                             headerValue = headerValue
                         )
                     if (imageUrls.size >= 4)
-                        PlaylistImage(
+                        HomeScreenImage(
                             modifier = Modifier
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
@@ -380,7 +391,7 @@ fun HomeScreenCardPlaylistPrev(
 }
 
 @Composable
-private fun PlaylistImage(
+private fun HomeScreenImage(
     modifier: Modifier = Modifier,
     isDarkThem: Boolean,
     isCookie: Boolean,
@@ -390,6 +401,7 @@ private fun PlaylistImage(
     BitmapConverter.decodeToBitmap(url).let {
         if (it == null)
             AsyncImage(
+                modifier = modifier,
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(url)
                     .addHeader(
@@ -411,7 +423,7 @@ private fun PlaylistImage(
                     id = if (isDarkThem) R.drawable.night_logo
                     else R.drawable.light_logo
                 ),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
         else Image(
             modifier = modifier,
