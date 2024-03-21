@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootUiEvent
+import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.usecase.ValidateEmail
@@ -30,6 +32,7 @@ import com.poulastaa.kyoku.utils.Constants.AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP
 import com.poulastaa.kyoku.utils.extractTokenOrCookie
 import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeData
 import com.poulastaa.kyoku.utils.storeEmail
 import com.poulastaa.kyoku.utils.storeProfilePicUri
 import com.poulastaa.kyoku.utils.storeSignInState
@@ -51,6 +54,7 @@ class RootAuthViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val cookieManager: CookieManager,
     private val ds: DataStoreOperation,
+    private val db: DatabaseRepositoryImpl,
     private val validateEmail: ValidateEmail,
     private val cred: CredentialManager,
     private val api: AuthRepository
@@ -129,7 +133,8 @@ class RootAuthViewModel @Inject constructor(
                     startGoogleAuth(
                         event.token.toGoogleAuthReq(
                             countryCode = localeList[0].country
-                        )
+                        ),
+                        context = event.activity
                     )
                 else {
                     onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
@@ -213,7 +218,8 @@ class RootAuthViewModel @Inject constructor(
             if (!localeList.isEmpty)
                 api.passkeyReq(req)?.let { passkeyJson ->
                     if (passkeyJson.type == AUTH_RESPONSE_PASSKEY_TYPE_SIGN_UP) {
-                        createPasskey( // create passkey from string and convert to CreatePublicKeyCredential
+                        // create passkey from string and convert to CreatePublicKeyCredential
+                        createPasskey(
                             credentialManager = cred,
                             jsonString = passkeyJson.req,
                             activity = activity,
@@ -225,7 +231,8 @@ class RootAuthViewModel @Inject constructor(
                                             email = state.passkeyEmail,
                                             token = passkeyJson.token,
                                             countryCode = localeList[0].country
-                                        )
+                                        ),
+                                        context = activity
                                     )
                                     return@createPasskey
                                 }
@@ -244,7 +251,8 @@ class RootAuthViewModel @Inject constructor(
                             getUserFromId = {
                                 it?.let {
                                     getPasskeyUserFromServer(
-                                        user = it.toGetPasskeyUserReq(passkeyJson.token)
+                                        user = it.toGetPasskeyUserReq(passkeyJson.token),
+                                        context = activity
                                     )
 
                                     return@getPasskey
@@ -267,14 +275,18 @@ class RootAuthViewModel @Inject constructor(
     }
 
     private fun sendPasskeyUserToServer(
-        user: CreatePasskeyUserReq
+        user: CreatePasskeyUserReq,
+        context: Context
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiEvent.send(element = UiEvent.ShowToast("Please wait while we get things ready"))
 
             api.createPasskeyUser(user)?.let { response -> // get response from server
+
+                Log.d("response", response.toString())
+
                 when (response.status) {
-                    UserCreationStatus.CREATED -> setupPasskeyUser(response)
+                    UserCreationStatus.CREATED -> setupPasskeyUser(response, context)
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {
                         onEvent(RootUiEvent.OnAuthCanceled)
@@ -295,13 +307,13 @@ class RootAuthViewModel @Inject constructor(
         }
     }
 
-    private fun getPasskeyUserFromServer(user: GetPasskeyUserReq) {
+    private fun getPasskeyUserFromServer(user: GetPasskeyUserReq, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             _uiEvent.send(element = UiEvent.ShowToast("Please wait while we get things ready"))
 
             api.getPasskeyUser(user)?.let { response -> // get user from server
                 when (response.status) {
-                    UserCreationStatus.CONFLICT -> setupPasskeyUser(response)
+                    UserCreationStatus.CONFLICT -> setupPasskeyUser(response, context)
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {
                         onEvent(RootUiEvent.OnAuthCanceled)
@@ -316,17 +328,17 @@ class RootAuthViewModel @Inject constructor(
                 return@launch
             }
 
+
             // error occurred on  getting user from server
             onEvent(RootUiEvent.OnAuthCanceled)
             onEvent(RootUiEvent.SomeErrorOccurredOnAuth)
         }
     }
 
-    private fun setupPasskeyUser(
-        response: PasskeyAuthResponse,
-    ) {
-        // store cookie
-        storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
+    private fun setupPasskeyUser(response: PasskeyAuthResponse, context: Context) {
+        val cookie = cookieManager.extractTokenOrCookie()
+
+        storeCookieOrAccessToken(cookie, ds)
         storeAuthType(AuthType.SESSION_AUTH, ds)
 
         storeProfilePicUri(uri = response.user.profilePic, ds)
@@ -335,25 +347,33 @@ class RootAuthViewModel @Inject constructor(
         storeEmail(state.passkeyEmail, ds)
 
         when (response.status) {
-            UserCreationStatus.CREATED -> storeSignInState(data = SignInStatus.GET_SPOTIFY_PLAYLIST, ds)
+            UserCreationStatus.CREATED -> storeSignInState(
+                data = SignInStatus.GET_SPOTIFY_PLAYLIST,
+                ds
+            )
 
             UserCreationStatus.CONFLICT -> {
                 storeSignInState(data = SignInStatus.OLD_USER, ds)
 
-                // todo handle user song data
+                storeData(
+                    context = context,
+                    tokenOrCookie = cookie,
+                    response = response.data,
+                    db = db
+                )
             }
 
             else -> Unit
         }
     }
 
-    private fun startGoogleAuth(req: GoogleAuthReq) {
+    private fun startGoogleAuth(req: GoogleAuthReq, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             api.googleAuth(req)?.let { response ->
-                storeCookieOrAccessToken(cookieManager.extractTokenOrCookie(), ds)
-                storeAuthType(AuthType.SESSION_AUTH, ds)
+                val cookie = cookieManager.extractTokenOrCookie()
 
-                Log.d("called login" , response.user.profilePic)
+                storeCookieOrAccessToken(cookie, ds)
+                storeAuthType(AuthType.SESSION_AUTH, ds)
 
                 storeProfilePicUri(uri = response.user.profilePic, ds)
                 storeUsername(username = response.user.userName, ds)
@@ -370,7 +390,12 @@ class RootAuthViewModel @Inject constructor(
                             ds
                         )
 
-                        // todo handle data
+                        storeData(
+                            context = context,
+                            tokenOrCookie = cookie,
+                            response = response.data,
+                            db = db
+                        )
                     }
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {

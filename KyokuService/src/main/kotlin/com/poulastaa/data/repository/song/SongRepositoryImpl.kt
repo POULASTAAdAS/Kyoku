@@ -17,6 +17,7 @@ import com.poulastaa.data.model.setup.spotify.*
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.Song
+import com.poulastaa.domain.dao.playlist.Playlist
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.toResponseSongList
@@ -35,7 +36,7 @@ class SongRepositoryImpl : SongRepository {
         val foundSongs = ConcurrentHashMap<Long, Song>()
 
         return try {
-            dbQuery {
+            val playlist = dbQuery {
                 list.forEach { spotifySong ->
                     Song.find {// searching by title and album
                         SongTable.title like "%${spotifySong.title}%" and (SongTable.album like "%${spotifySong.album}%")
@@ -52,13 +53,21 @@ class SongRepositoryImpl : SongRepository {
                         ) foundSongs[it.id.value] = it
                     }
                 }
+
+                dbQuery {
+                    Playlist.new {
+                        this.name = "Playlist #${Random.nextInt(1000, 99999)}"
+                    }
+                }
             }
 
             HandleSpotifyPlaylist(
                 status = HandleSpotifyPlaylistStatus.SUCCESS,
+                playlist = playlist,
                 spotifyPlaylistResponse = SpotifyPlaylistResponse(
                     status = HandleSpotifyPlaylistStatus.SUCCESS,
-                    name = "Playlist #${Random.nextInt(1000, 99999)}",
+                    id = playlist.id.value,
+                    name = playlist.name,
                     listOfResponseSong = foundSongs.values.toResponseSongList()
                 ),
                 spotifySongDownloaderApiReq = SpotifySongDownloaderApiReq(

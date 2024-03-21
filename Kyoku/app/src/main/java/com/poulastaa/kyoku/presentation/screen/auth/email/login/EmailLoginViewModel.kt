@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.auth.email.login
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,13 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLoginStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
-import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLoginUiEvent
+import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.AuthRepository
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.usecase.AuthUseCases
@@ -23,6 +25,7 @@ import com.poulastaa.kyoku.domain.usecase.ValidatePassword
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeAuthType
 import com.poulastaa.kyoku.utils.storeCookieOrAccessToken
+import com.poulastaa.kyoku.utils.storeData
 import com.poulastaa.kyoku.utils.storeEmail
 import com.poulastaa.kyoku.utils.storePassword
 import com.poulastaa.kyoku.utils.storeProfilePicUri
@@ -43,6 +46,7 @@ import javax.inject.Inject
 class EmailLoginViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
+    private val db: DatabaseRepositoryImpl,
     private val authUseCases: AuthUseCases,
     private val api: AuthRepository
 ) : ViewModel() {
@@ -116,7 +120,7 @@ class EmailLoginViewModel @Inject constructor(
                 )
             }
 
-            EmailLoginUiEvent.OnContinueClick -> {
+            is EmailLoginUiEvent.OnContinueClick -> {
                 if (!state.isLoading)
                     if (checkInternetConnection()) {
                         val result = validate()
@@ -129,7 +133,7 @@ class EmailLoginViewModel @Inject constructor(
                             email = state.email
                             password = state.password
 
-                            startEmailLogIn(state.toEmailLogInReq())
+                            startEmailLogIn(state.toEmailLogInReq(), event.context)
                         }
 
                     } else {
@@ -186,11 +190,11 @@ class EmailLoginViewModel @Inject constructor(
             }
 
 
-            EmailLoginUiEvent.OnResendVerificationMailClick -> {
+            is EmailLoginUiEvent.OnResendVerificationMailClick -> {
                 state = state.copy(
                     isResendMailEnabled = false
                 )
-                handleEmailVerification()
+                handleEmailVerification(event.context)
             }
         }
     }
@@ -243,18 +247,18 @@ class EmailLoginViewModel @Inject constructor(
         return validEmail && validPassword
     }
 
-    private fun startEmailLogIn(req: EmailLogInReq) {
+    private fun startEmailLogIn(req: EmailLogInReq, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             api.emailLogIn(req)?.let { response ->
                 when (response.status) {
-                    EmailLoginStatus.USER_PASS_MATCHED -> setUpUser(response)
+                    EmailLoginStatus.USER_PASS_MATCHED -> setUpUser(response, context)
                     EmailLoginStatus.PASSWORD_DOES_NOT_MATCH -> {
                         onEvent(EmailLoginUiEvent.OnAuthCanceled)
                         onEvent(EmailLoginUiEvent.EmitPasswordSupportingText("Password does not match"))
                     }
 
                     EmailLoginStatus.EMAIL_NOT_VERIFIED -> {
-                        handleEmailVerification()
+                        handleEmailVerification(context)
                     }
 
                     EmailLoginStatus.USER_DOES_NOT_EXISTS -> {
@@ -281,7 +285,7 @@ class EmailLoginViewModel @Inject constructor(
         }
     }
 
-    private fun handleEmailVerification() {
+    private fun handleEmailVerification(context: Context) {
         if (email != null)
             viewModelScope.launch(Dispatchers.IO) {
                 api.resendVerificationMail(email!!).let { status ->
@@ -291,7 +295,7 @@ class EmailLoginViewModel @Inject constructor(
 
                             // start checking
                             emailVerificationJob?.cancel()
-                            emailVerificationJob = checkEmailVerificationState()
+                            emailVerificationJob = checkEmailVerificationState(context)
 
                             // set timer for resend email
                             viewModelScope.launch(Dispatchers.IO) {
@@ -317,7 +321,7 @@ class EmailLoginViewModel @Inject constructor(
         }
     }
 
-    private fun checkEmailVerificationState(): Job {
+    private fun checkEmailVerificationState(context: Context): Job {
         return viewModelScope.launch(Dispatchers.IO) {
             for (i in 1..70) { // 3.5 minute
                 delay(3000) // 3's
@@ -329,7 +333,8 @@ class EmailLoginViewModel @Inject constructor(
                                 state.toEmailLogInReq(
                                     email!!,
                                     password!!
-                                )
+                                ),
+                                context
                             )
                             emailVerificationJob?.cancel()
                         } else {
@@ -359,7 +364,7 @@ class EmailLoginViewModel @Inject constructor(
         }
     }
 
-    private fun setUpUser(response: EmailLogInResponse) {
+    private fun setUpUser(response: EmailLogInResponse, context: Context) {
         storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds)
         storeRefreshToken(response.refreshToken, ds)
 
@@ -373,8 +378,12 @@ class EmailLoginViewModel @Inject constructor(
             storePassword(password!!, ds)
         }
 
-        // todo handle response data
-
         storeSignInState(data = SignInStatus.OLD_USER, ds)
+        storeData(
+            context = context,
+            tokenOrCookie = "Bearer ${response.accessToken}",
+            response = response.data,
+            db = db
+        )
     }
 }

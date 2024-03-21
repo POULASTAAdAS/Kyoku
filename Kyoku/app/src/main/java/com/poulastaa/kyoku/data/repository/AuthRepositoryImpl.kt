@@ -1,18 +1,19 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInResponse
+import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpResponse
 import com.poulastaa.kyoku.data.model.api.auth.email.ResendVerificationMailStatus
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
+import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
+import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
-import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
-import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
-import com.poulastaa.kyoku.data.model.api.auth.google.GoogleAuthReq
-import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailVerificationStatus
 import com.poulastaa.kyoku.data.remote.AuthApi
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -46,6 +47,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             api.getPasskeyUser(user)
         } catch (e: Exception) {
+            Log.d("error" , e.message.toString())
             null
         }
     }

@@ -2,19 +2,18 @@ package com.poulastaa.utils
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.User
-import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.auth_response.HomeResponse
 import com.poulastaa.data.model.auth.auth_response.ResponseSong
+import com.poulastaa.data.model.auth.google.GoogleAuthResponse
+import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.data.model.db_table.PlaylistResult
 import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.song.SongTable
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
-import com.poulastaa.utils.Constants.BASE_URL
 import com.poulastaa.utils.Constants.PROFILE_PIC_URL
 import org.jetbrains.exposed.sql.ResultRow
 
@@ -52,7 +51,6 @@ fun GoogleIdToken.toPayload() = Payload(
     pictureUrl = this.payload["picture"].toString()
 )
 
-fun constructProfileUrl(): String = "$BASE_URL${EndPoints.ProfilePic.route}"
 
 fun ResultRow.toResponseSong(): ResponseSong = ResponseSong(
     coverImage = this[SongTable.coverImage].constructCoverPhotoUrl(),

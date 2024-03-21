@@ -1,11 +1,12 @@
 package com.poulastaa.domain.repository.playlist
 
 import com.poulastaa.data.model.utils.PlaylistRow
+import com.poulastaa.domain.dao.playlist.Playlist
 
 interface PlaylistRepository {
-    suspend fun cretePlaylistForEmailUser(playlist: List<PlaylistRow>, playlistName:String)
-    suspend fun cretePlaylistForGoogleUser(playlist: List<PlaylistRow>, playlistName:String)
-    suspend fun cretePlaylistForPasskeyUser(playlist: List<PlaylistRow>, playlistName:String)
+    suspend fun cretePlaylistForEmailUser(list: List<PlaylistRow>, playlist: Playlist)
+    suspend fun cretePlaylistForGoogleUser(list: List<PlaylistRow>, playlist: Playlist)
+    suspend fun cretePlaylistForPasskeyUser(list: List<PlaylistRow>, playlist: Playlist)
 
     fun getPlaylist()
 }

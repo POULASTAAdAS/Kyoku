@@ -98,10 +98,12 @@ class GoogleAuthUserRepositoryImpl(
         HomeResponse(
             status = HomeResponseStatus.SUCCESS,
             type = HomeType.ALREADY_USER_REQ,
+
             fevArtistsMixPreview = getFevArtistMixDeferred.await(),
             albumPreview = getAlbumPrevDeferred.await(),
             artistsPreview = getArtistPrevDeferred.await(),
             dailyMixPreview = getDailyMixPrevDeferred.await(),
+
             albums = getAlbumsDeferred.await(),
             playlist = getPlaylistsDeferred.await(),
             favourites = getFavouritesDeferred.await(),

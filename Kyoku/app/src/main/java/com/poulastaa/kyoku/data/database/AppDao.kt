@@ -9,13 +9,17 @@ import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
+import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
-import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
+import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
+import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
@@ -23,6 +27,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSong(song: SongTable): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPlaylist(playlist: PlaylistTable): Long
+
     @Transaction
     @Query(
         "SELECT songtable.id , songtable.coverimage, songtable.title, songtable.artist," +
@@ -31,16 +41,6 @@ interface AppDao {
                 "JOIN PlaylistTable ON SongPlaylistRelationTable.playlistId = PlaylistTable.id"
     )
     fun getAllPlaylist(): Flow<List<PlaylistWithSongs>>
-
-    @Transaction
-    @Query("select * from songtable")
-    fun getAllSong(): Flow<List<SongTable>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSong(song: SongTable): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPlaylist(playlist: PlaylistTable): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongPlaylistRelation(data: SongPlaylistRelationTable)
@@ -55,7 +55,7 @@ interface AppDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertIntoAlbum(data: AlbumTable): Long
+    suspend fun insertIntoAlbumPrev(data: AlbumPrevTable): Long
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -63,7 +63,7 @@ interface AppDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertIntoArtist(data: ArtistTable): Long
+    suspend fun insertIntoArtist(data: ArtistPrevTable): Long
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -73,21 +73,21 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoDailyMixPrevTable(data: DailyMixPrevTable)
 
-    @Query("select * from albumtable limit 1") // fetching all entry is un-necessary
-    suspend fun checkIfNewUser(): List<AlbumTable> // could had any other table related to homeResponse
+    @Query("select * from AlbumPrevTable limit 1") // fetching all entry is un-necessary
+    suspend fun checkIfNewUser(): List<AlbumPrevTable> // could had any other table related to homeResponse
 
-
+    @Transaction
     @Query("select * from fevartistsmixpreviewtable")
     fun readFevArtistPrev(): Flow<List<FevArtistsMixPreviewTable>>
 
     @Transaction
     @Query(
-        """select SongPreviewTable.id ,SongPreviewTable.title , SongPreviewTable.artist ,  SongPreviewTable.coverImage ,  albumtable.name from SongPreviewTable 
+        """select SongPreviewTable.id ,SongPreviewTable.title , SongPreviewTable.artist ,  SongPreviewTable.coverImage ,  AlbumPrevTable.name from SongPreviewTable 
             join albumpreviewsongrelationtable on albumpreviewsongrelationtable.songId = SongPreviewTable.id
-            join albumtable on albumtable.id = albumpreviewsongrelationtable.albumId
-            where albumtable.id in ( 
+            join AlbumPrevTable on AlbumPrevTable.id = albumpreviewsongrelationtable.albumId
+            where AlbumPrevTable.id in ( 
                 select albumId from albumpreviewsongrelationtable
-            ) order by albumtable.id"""
+            ) order by AlbumPrevTable.id"""
     )
     fun readAllAlbumPrev(): Flow<List<AlbumPrevResult>>
 
@@ -95,12 +95,12 @@ interface AppDao {
     @Transaction
     @Query(
         """
-        select SongPreviewTable.id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , ArtistTable.name , ArtistTable.imageUrl  from SongPreviewTable
+        select SongPreviewTable.id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , ArtistPrevTable.name , ArtistPrevTable.imageUrl  from SongPreviewTable
             join ArtistPreviewSongRelation on ArtistPreviewSongRelation.songId = SongPreviewTable.id
-            join ArtistTable on ArtistTable.id = ArtistPreviewSongRelation.artistId
-            where ArtistTable.id in (
-                select artistId from ArtistTable
-        ) order by ArtistTable.id
+            join ArtistPrevTable on ArtistPrevTable.id = ArtistPreviewSongRelation.artistId
+            where ArtistPrevTable.id in (
+                select artistId from ArtistPrevTable
+        ) order by ArtistPrevTable.id
     """
     )
     fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
@@ -116,6 +116,23 @@ interface AppDao {
     """
     )
     fun readPreviewPlaylist(): Flow<List<PlaylistPrevResult>>
+
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoFavourite(data: FavouriteTable)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoAlbum(data: AlbumTable): Long
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoSongAlbumRelationTable(data: SongAlbumRelationTable)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertIntoRecentlyPlayedPrevTable(data: RecentlyPlayedPrevTable)
 }
 
 

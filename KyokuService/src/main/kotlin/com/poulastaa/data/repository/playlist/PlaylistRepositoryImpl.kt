@@ -9,19 +9,11 @@ import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.plugins.dbQuery
 
 class PlaylistRepositoryImpl : PlaylistRepository {
-    private suspend fun createPlaylist(name: String) = dbQuery {
-        Playlist.new {
-            this.name = name
-        }
-    }.id.value
-
-    override suspend fun cretePlaylistForEmailUser(playlist: List<PlaylistRow>, playlistName: String) {
-        val playlistId = createPlaylist(playlistName)
-
-        playlist.forEach {
+    override suspend fun cretePlaylistForEmailUser(list: List<PlaylistRow>, playlist: Playlist) {
+        list.forEach {
             dbQuery {
                 EmailUserPlaylist.new {
-                    this.playlistId = playlistId
+                    this.playlistId = playlist.id.value
                     this.songId = it.songId
                     this.userId = it.userId
                 }
@@ -29,13 +21,11 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         }
     }
 
-    override suspend fun cretePlaylistForGoogleUser(playlist: List<PlaylistRow>, playlistName: String) {
-        val playlistId = createPlaylist(playlistName)
-
-        playlist.forEach {
+    override suspend fun cretePlaylistForGoogleUser(list: List<PlaylistRow>, playlist: Playlist) {
+        list.forEach {
             dbQuery {
                 GoogleUserPlaylist.new {
-                    this.playlistId = playlistId
+                    this.playlistId = playlist.id.value
                     this.songId = it.songId
                     this.userId = it.userId
                 }
@@ -43,13 +33,11 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         }
     }
 
-    override suspend fun cretePlaylistForPasskeyUser(playlist: List<PlaylistRow>, playlistName: String) {
-        val playlistId = createPlaylist(playlistName)
-
-        playlist.forEach {
+    override suspend fun cretePlaylistForPasskeyUser(list: List<PlaylistRow>, playlist: Playlist) {
+        list.forEach {
             dbQuery {
                 PasskeyUserPlaylist.new {
-                    this.playlistId = playlistId
+                    this.playlistId = playlist.id.value
                     this.songId = it.songId
                     this.userId = it.userId
                 }

@@ -4,28 +4,27 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 
-
 @Entity(
-    tableName = "ArtistPreviewSongRelation",
+    tableName = "SongAlbumRelationTable",
     foreignKeys = [
         ForeignKey(
-            entity = ArtistPrevTable::class,
-            parentColumns = ["id"],
-            childColumns = ["artistId"],
-            onDelete = ForeignKey.CASCADE
-        ),
-        ForeignKey(
-            entity = SongPreviewTable::class,
+            entity = SongTable::class,
             parentColumns = ["id"],
             childColumns = ["songId"],
             onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = AlbumTable::class,
+            parentColumns = ["id"],
+            childColumns = ["albumId"],
+            onDelete = ForeignKey.CASCADE
         )
     ],
-    primaryKeys = ["artistId", "songId"]
+    primaryKeys = ["songId", "albumId"]
 )
-data class ArtistPreviewSongRelation(
+data class SongAlbumRelationTable(
     @ColumnInfo(index = true)
-    val artistId: Long,
+    val songId: Long,
     @ColumnInfo(index = true)
-    val songId: Long
+    val albumId: Long
 )

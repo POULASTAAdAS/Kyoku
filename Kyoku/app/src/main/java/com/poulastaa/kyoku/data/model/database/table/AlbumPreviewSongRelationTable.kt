@@ -9,7 +9,7 @@ import androidx.room.ForeignKey
     tableName = "AlbumPreviewSongRelationTable",
     foreignKeys = [
         ForeignKey(
-            entity = AlbumTable::class,
+            entity = AlbumPrevTable::class,
             parentColumns = ["id"],
             childColumns = ["albumId"],
             onDelete = ForeignKey.CASCADE

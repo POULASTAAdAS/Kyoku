@@ -16,7 +16,6 @@ import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyP
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
-import com.poulastaa.kyoku.utils.insertIntoPlaylist
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toListOfUiPlaylist
 import com.poulastaa.kyoku.utils.toSpotifyPlaylistId
@@ -189,9 +188,9 @@ class SpotifyPlaylistViewModel @Inject constructor(
                         isFirstPlaylist = false
                     )
 
-                    insertIntoPlaylist(
-                        db = db,
+                    db.insertIntoPlaylistSpotify(
                         data = response.listOfResponseSong,
+                        id = response.id,
                         playlistName = response.name
                     )
                 }

@@ -2,24 +2,33 @@ package com.poulastaa.kyoku.data.repository
 
 import android.content.Context
 import com.poulastaa.kyoku.data.database.AppDao
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
+import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseArtistsPreview
+import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
+import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
+import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
+import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
-import com.poulastaa.kyoku.data.model.database.table.SongTable
-import com.poulastaa.kyoku.utils.toAlbumTableEntry
+import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
+import com.poulastaa.kyoku.utils.toSongTable
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,16 +45,35 @@ class DatabaseRepositoryImpl @Inject constructor(
         this.header = header
     }
 
-    suspend fun insertSong(song: SongTable): Long = dao.insertSong(song)
+    fun insertIntoPlaylistSpotify(
+        data: List<ResponseSong>,
+        id: Long,
+        playlistName: String
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val playlistId = async {
+                dao.insertPlaylist(
+                    playlist = PlaylistTable(
+                        playlistId = id,
+                        name = playlistName
+                    )
+                )
+            }.await()
 
-    suspend fun insertPlaylist(name: String) = dao.insertPlaylist(
-        playlist = PlaylistTable(
-            name = name
-        )
-    )
-
-    suspend fun insertSongPlaylistRelation(data: SongPlaylistRelationTable) =
-        dao.insertSongPlaylistRelation(data)
+            data.forEach {
+                dao.insertSongPlaylistRelation(
+                    data = SongPlaylistRelationTable(
+                        playlistId = playlistId,
+                        songId = async {
+                            dao.insertSong(
+                                song = it.toSongTable()
+                            )
+                        }.await()
+                    )
+                )
+            }
+        }
+    }
 
     fun getAllPlaylist(): Flow<List<PlaylistWithSongs>> = dao.getAllPlaylist()
 
@@ -66,10 +94,10 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun insertIntoAlbum(list: List<AlbumPreview>) {
+    fun insertIntoAlbumPrev(list: List<AlbumPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
-                val albumId = dao.insertIntoAlbum(data = it.toAlbumTableEntry())
+                val albumId = dao.insertIntoAlbumPrev(data = it.toAlbumTablePrevEntry())
 
                 it.listOfSongs.forEach { song ->
                     val songId = dao.insertIntoSongPrev(
@@ -149,4 +177,102 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
+
+
+    fun insertIntoPlaylistHome(list: List<ResponsePlaylist>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            list.forEach {
+                val playlistId = async {
+                    dao.insertPlaylist(
+                        playlist = PlaylistTable(
+                            playlistId = it.id,
+                            name = it.name
+                        )
+                    )
+                }.await()
+
+                it.listOfSongs.forEach { song ->
+                    val songId = async {
+                        dao.insertSong(
+                            song = song.toSongTable()
+                        )
+                    }.await()
+
+                    dao.insertSongPlaylistRelation(
+                        data = SongPlaylistRelationTable(
+                            playlistId = playlistId,
+                            songId = songId
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun insertIntoFavourite(list: List<ResponseSong>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            list.forEach {
+                dao.insertIntoFavourite(
+                    data = FavouriteTable(
+                        songId = dao.insertSong(
+                            song = it.toSongTable()
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    fun insertIntoAlbum(list: List<ResponseAlbum>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            list.forEach {
+                val albumId = async {
+                    dao.insertIntoAlbum(
+                        data = AlbumTable(
+                            name = it.name
+                        )
+                    )
+                }.await()
+
+                it.listOfSongs.forEach { song ->
+                    val songId = async {
+                        dao.insertSong(
+                            song = song.toSongTable()
+                        )
+                    }.await()
+
+                    dao.insertIntoSongAlbumRelationTable(
+                        data = SongAlbumRelationTable(
+                            songId = songId,
+                            albumId = albumId
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+
+    fun insertIntoRecentlyPlayedPrev(list: List<SongPreview>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            list.forEach {
+                val songId = async {
+                    dao.insertIntoSongPrev(
+                        data = it.toSongPrevTableEntry(
+                            context = context!!,
+                            isCookie = !header!!.startsWith("B"),
+                            header = header!!
+                        )
+                    )
+                }.await()
+
+
+                dao.insertIntoRecentlyPlayedPrevTable(
+                    data = RecentlyPlayedPrevTable(
+                        songId = songId
+                    )
+                )
+            }
+        }
+    }
 }

@@ -3,11 +3,9 @@ package com.poulastaa.kyoku.data.model.database.table
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "PlaylistTable")
-data class PlaylistTable(
+@Entity(tableName = "AlbumPrevTable")
+data class AlbumPrevTable(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val playlistId: Long,
-    val points: Int = 0,
-    val name: String = "",
+    val name: String = ""
 )

@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
@@ -27,6 +28,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -68,9 +70,11 @@ class HomeScreenViewModel @Inject constructor(
 
     fun loadStartupData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
+            val signInState = ds.readSignedInState().first()
+
             if (
                 isFirstReq() &&
-                ds.readAuthType().first() == HomeType.NEW_USER_REQ.toString()
+                signInState == SignInStatus.HOME.name
             ) {
                 // make api call
                 val response = api.homeReq(
@@ -92,11 +96,12 @@ class HomeScreenViewModel @Inject constructor(
                 when (response.status) {
                     HomeResponseStatus.SUCCESS -> {
                         db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
-                        db.insertIntoAlbum(list = response.albumPreview.listOfPreviewAlbum)
+                        db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
                         db.insertResponseArtistPrev(list = response.artistsPreview)
                         db.insertDailyMixPrev(response.dailyMixPreview)
 
                         // load from db
+                        delay(5000)
                         loadFromDb()
                     }
 
@@ -104,6 +109,12 @@ class HomeScreenViewModel @Inject constructor(
                         onEvent(HomeUiEvent.EmitToast("Opp's Something went wrong."))
                     }
                 }
+            } else if (signInState == SignInStatus.OLD_USER.name) {
+                delay(7000)
+                state = state.copy(
+                    dataType = HomeType.ALREADY_USER_REQ
+                )
+                loadFromDb()
             } else {
                 state = state.copy(
                     dataType = HomeType.DAILY_REFRESH_REQ

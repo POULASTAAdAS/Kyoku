@@ -39,6 +39,8 @@ fun HomeScreenContentOldUser(
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
     data: HomeUiData,
+    isCookie: Boolean,
+    headerValue:String,
     isInternetError: Boolean,
     errorMessage: String,
 ) {
@@ -96,7 +98,8 @@ fun HomeScreenContentOldUser(
                             .fillMaxWidth(1f / 2),
                         name = data.playlist[0].name,
                         imageUrls = data.playlist[0].listOfUrl,
-                        
+                        isCookie = isCookie,
+                        headerValue = headerValue
                     ) {
 
                     }
@@ -109,6 +112,8 @@ fun HomeScreenContentOldUser(
                                 .fillMaxSize(),
                             name = data.playlist[1].name,
                             imageUrls = data.playlist[1].listOfUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue
                         ) {
 
                         }
@@ -131,6 +136,8 @@ fun HomeScreenContentOldUser(
                             .fillMaxWidth(1f / 2),
                         name = data.playlist[0].name,
                         imageUrls = data.playlist[0].listOfUrl,
+                        isCookie = isCookie,
+                        headerValue = headerValue
                         
                     ) {
 
@@ -144,7 +151,8 @@ fun HomeScreenContentOldUser(
                                 .fillMaxSize(),
                             name = data.playlist[1].name,
                             imageUrls = data.playlist[1].listOfUrl,
-                            
+                            isCookie = isCookie,
+                            headerValue = headerValue
                         ) {
 
                         }
@@ -187,7 +195,8 @@ fun HomeScreenContentOldUser(
                     HomeScreenCard(
                         size = if (isSmallPhone) 120.dp else 130.dp,
                         imageUrl = data.albumPrev[albumIndex].listOfSong[0].coverImage,
-                        
+                        isCookie = isCookie,
+                        headerValue = headerValue
                     ) {
 
                     }
@@ -201,8 +210,9 @@ fun HomeScreenContentOldUser(
         // Artist
         homeScreenArtistList(
             artistPrev = data.artistPrev,
-            
-            isSmallPhone = isSmallPhone
+            isSmallPhone = isSmallPhone,
+            isCookie = isCookie,
+            headerValue = headerValue
         )
     }
 }

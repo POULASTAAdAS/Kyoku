@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponsePlaylist(
-    val name:String,
-    val listOfSongs:List<ResponseSong>
+    val id: Long,
+    val name: String,
+    val listOfSongs: List<ResponseSong>
 )

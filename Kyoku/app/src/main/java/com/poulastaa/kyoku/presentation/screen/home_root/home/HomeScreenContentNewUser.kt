@@ -38,6 +38,8 @@ import com.poulastaa.kyoku.ui.theme.dimens
 fun HomeScreenContentNewUser(
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
+    isCookie: Boolean,
+    headerValue:String,
     data: HomeUiData,
     isInternetError: Boolean,
     errorMessage: String
@@ -87,6 +89,8 @@ fun HomeScreenContentNewUser(
             HomeScreenCard(
                 size = if (isSmallPhone) 120.dp else 130.dp,
                 imageUrl = data.fevArtistMixPrev[0].coverImage,
+                isCookie = isCookie,
+                headerValue = headerValue,
                 onClick = {
 
                 }
@@ -133,6 +137,8 @@ fun HomeScreenContentNewUser(
                         HomeScreenCard(
                             size = if (isSmallPhone) 120.dp else 130.dp,
                             imageUrl = it.listOfSong[0].coverImage,
+                            isCookie = isCookie,
+                            headerValue = headerValue,
                             onClick = {
 
                             }
@@ -149,7 +155,9 @@ fun HomeScreenContentNewUser(
         // Artist
         homeScreenArtistList(
             artistPrev = data.artistPrev,
-            isSmallPhone = isSmallPhone
+            isSmallPhone = isSmallPhone,
+            isCookie = isCookie,
+            headerValue = headerValue,
         )
     }
 }

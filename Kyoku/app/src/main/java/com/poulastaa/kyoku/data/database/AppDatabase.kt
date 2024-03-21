@@ -2,13 +2,17 @@ package com.poulastaa.kyoku.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
-import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
+import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
+import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
@@ -18,13 +22,19 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         SongTable::class,
         PlaylistTable::class,
         SongPlaylistRelationTable::class,
-        AlbumTable::class,
+
+        SongPreviewTable::class,
+        AlbumPrevTable::class,
         AlbumPreviewSongRelationTable::class,
         FevArtistsMixPreviewTable::class,
-        SongPreviewTable::class,
-        ArtistTable::class,
+        ArtistPrevTable::class,
         ArtistPreviewSongRelation::class,
-        DailyMixPrevTable::class
+        DailyMixPrevTable::class,
+
+        FavouriteTable::class,
+        AlbumTable::class,
+        SongAlbumRelationTable::class,
+        RecentlyPlayedPrevTable::class
     ],
     version = 1,
     exportSchema = true

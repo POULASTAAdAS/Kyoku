@@ -18,7 +18,7 @@ data class HomeUiData(
     val artistPrev: List<HomeUiArtistPrev> = emptyList(),
     val dailyMixPrev: HomeUiDailyMixPrev = HomeUiDailyMixPrev(),
     val playlist: List<HomeUiPlaylistPrev> = emptyList(),
-    val favourites: List<String> = emptyList(), // todo change
+    val favourites: Boolean = false
 )
 
 data class HomeUiFevArtistMix(

@@ -24,9 +24,9 @@ drop table EmailUserListenHistory;
 drop table GoogleUserListenHistory;
 drop table PasskeyUserListenHistory;
 
-drop table EmailUserFavouriteTable;
-drop table GoogleUserFavouriteTable;
-drop table PasskeyUserFavouriteTable;
+drop table EmailUserFavourite;
+drop table googleuserfavourite;
+drop table PasskeyUserFavourite;
 
 drop table emailAuthUser;
 drop table googleAuthUser;

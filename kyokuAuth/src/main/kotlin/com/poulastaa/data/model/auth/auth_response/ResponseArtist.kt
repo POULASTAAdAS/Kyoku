@@ -1,9 +1,8 @@
 package com.poulastaa.data.model.auth.auth_response
 
 import com.poulastaa.data.model.EndPoints
-import com.poulastaa.utils.Constants
 import com.poulastaa.utils.Constants.ARTIST_IMAGE_ROOT_DIR
-import com.poulastaa.utils.Constants.BASE_URL
+import com.poulastaa.utils.Constants.SERVICE_URL
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,7 +13,7 @@ data class ResponseArtist(
 ) {
     companion object {
         fun getArtistImageUrl(profilePicUrl: String): String {
-            return "${BASE_URL}${EndPoints.GetArtistImageUrl.route}?name=${
+            return "${SERVICE_URL}${EndPoints.GetArtistImageUrl.route}?name=${
                 profilePicUrl.replace(ARTIST_IMAGE_ROOT_DIR, "")
                     .removeSuffix("/")
                     .replace(" ", "_")

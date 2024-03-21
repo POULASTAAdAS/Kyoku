@@ -1,16 +1,15 @@
 package com.poulastaa.kyoku.utils
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 fun ViewModel.storeCookieOrAccessToken(data: String, ds: DataStoreOperation) {
     viewModelScope.launch(Dispatchers.IO) {
@@ -67,34 +66,51 @@ fun ViewModel.storeAuthType(data: AuthType, ds: DataStoreOperation) {
     }
 }
 
-fun ViewModel.insertIntoPlaylist(
-    db: DatabaseRepositoryImpl,
-    data: List<ResponseSong>,
-    playlistName: String
+fun ViewModel.storeData(
+    context: Context,
+    tokenOrCookie: String,
+    response: HomeResponse,
+    db: DatabaseRepositoryImpl
 ) {
     viewModelScope.launch(Dispatchers.IO) {
-        withContext(Dispatchers.IO) {
-            val songIdList = async {
-                data.toListOfSongTable().map {
-                    db.insertSong(it)
-                }
-            }.await()
+        db.setValues(
+            context,
+            tokenOrCookie
+        )
 
+        db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
+        db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
+        db.insertResponseArtistPrev(list = response.artistsPreview)
+        db.insertDailyMixPrev(data = response.dailyMixPreview)
 
-            val playlistId = async {
-                db.insertPlaylist(playlistName)
-            }.await()
-
-            async {
-                songIdList.forEach {
-                    db.insertSongPlaylistRelation(
-                        data = playlistRelationTable(
-                            songId = it,
-                            playlistId = playlistId
-                        )
-                    )
-                }
-            }.await()
-        }
+        db.insertIntoPlaylistHome(list = response.playlist)
+        db.insertIntoFavourite(list = response.favourites.listOfSongs)
+        db.insertIntoAlbum(list = response.albums)
+        db.insertIntoRecentlyPlayedPrev(list = response.historyPreview)
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

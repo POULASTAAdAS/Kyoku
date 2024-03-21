@@ -95,15 +95,8 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
 
     override suspend fun getArtistPrev(userId: Long, userType: UserType): List<ResponseArtistsPreview> =
         withContext(Dispatchers.IO) {
-            val historyArtistIdListDeferred = async { getHistoryArtistIdList(userType, userId) }
-            val fevArtistIdListDeferred = async { getFevArtistIdList(userType, userId) }
-
-            val historyArtistIdList = historyArtistIdListDeferred.await()
-            val fevArtistIdList = fevArtistIdListDeferred.await().filterNot {
-                it in historyArtistIdList
-            }
-
-            (historyArtistIdList + fevArtistIdList.take(3)).getResponseArtistPreviewOnArtistIdList()
+            async { getFevArtistIdList(userType, userId) }.await()
+                .getResponseArtistPreviewOnArtistIdList()
         }
 
     override suspend fun getDailyMixPrev(userId: Long, userType: UserType): DailyMixPreview {

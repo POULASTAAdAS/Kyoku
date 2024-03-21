@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
-import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,7 +18,6 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeTopAppBar
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -30,6 +29,8 @@ fun HomeScreen(
     opnDrawer: () -> Unit,
     navigate: (HomeRootUiEvent) -> Unit
 ) {
+    Log.d("token" , authHeader)
+
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     val isSmallPhone = LocalConfiguration.current.screenWidthDp <= 411
@@ -87,12 +88,14 @@ fun HomeScreen(
                         data = viewModel.state.data,
 
                         isInternetError = viewModel.state.isInternetError,
-                        errorMessage = viewModel.state.errorMessage
+                        errorMessage = viewModel.state.errorMessage,
+                        isCookie = isCookie,
+                        headerValue = authHeader
                     )
                 }
 
                 else -> {
-                    if (viewModel.state.data.favourites.isEmpty() &&
+                    if (!viewModel.state.data.favourites &&
                         viewModel.state.data.playlist.isEmpty()
                     ) HomeScreenContentNewUser(
                         paddingValues = it,
@@ -100,7 +103,9 @@ fun HomeScreen(
                         data = viewModel.state.data,
 
                         isInternetError = viewModel.state.isInternetError,
-                        errorMessage = viewModel.state.errorMessage
+                        errorMessage = viewModel.state.errorMessage,
+                        isCookie = isCookie,
+                        headerValue = authHeader
                     ) else
                         HomeScreenContentOldUser(
                             paddingValues = it,
@@ -108,7 +113,9 @@ fun HomeScreen(
                             data = viewModel.state.data,
 
                             isInternetError = viewModel.state.isInternetError,
-                            errorMessage = viewModel.state.errorMessage
+                            errorMessage = viewModel.state.errorMessage,
+                            isCookie = isCookie,
+                            headerValue = authHeader
                         )
                 }
             }

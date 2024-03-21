@@ -23,10 +23,12 @@ fun generateFidoChallenge(): String {
 
 fun ByteArray.b64Encode(): String = Base64.getUrlEncoder().encodeToString(this)
 
-fun String.constructCoverPhotoUrl(): String = "${Constants.BASE_URL}${EndPoints.CoverImage.route}?coverImage=${
+fun constructProfileUrl(): String = "${Constants.SERVICE_URL}${EndPoints.ProfilePic.route}"
+
+fun String.constructCoverPhotoUrl(): String = "${Constants.SERVICE_URL}${EndPoints.CoverImage.route}?coverImage=${
     this.replace(COVER_IMAGE_ROOT_DIR, "")
 }"
 
-fun String.constructMasterPlaylistUrl(): String = "${Constants.BASE_URL}${EndPoints.PlaySongMaster.route}?playlist=${
+fun String.constructMasterPlaylistUrl(): String = "${Constants.SERVICE_URL}${EndPoints.PlaySongMaster.route}?playlist=${
     this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
 }"

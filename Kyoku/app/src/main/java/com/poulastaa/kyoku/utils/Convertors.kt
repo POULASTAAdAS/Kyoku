@@ -28,10 +28,9 @@ import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
-import com.poulastaa.kyoku.data.model.database.table.AlbumTable
-import com.poulastaa.kyoku.data.model.database.table.ArtistTable
+import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
-import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
@@ -142,21 +141,6 @@ fun ResponseSong.toSongTable() = SongTable(
     date = this.date
 )
 
-fun Iterable<ResponseSong>.toListOfSongTable(): List<SongTable> {
-    val list = ArrayList<SongTable>()
-
-    this.forEach {
-        list.add(it.toSongTable())
-    }
-
-    return list
-}
-
-fun playlistRelationTable(songId: Long, playlistId: Long) = SongPlaylistRelationTable(
-    playlistId = playlistId,
-    songId = songId
-)
-
 fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
     val map = HashMap<String, ArrayList<SongInfo>>()
 
@@ -214,7 +198,7 @@ fun List<String>.toStoreArtistReq() = StoreArtistReq(
 )
 
 
-fun AlbumPreview.toAlbumTableEntry() = AlbumTable(
+fun AlbumPreview.toAlbumTablePrevEntry() = AlbumPrevTable(
     name = this.name
 )
 
@@ -235,7 +219,7 @@ fun ResponseArtist.toArtistTableEntry(
     context: Context,
     isCookie: Boolean,
     header: String,
-) = ArtistTable(
+) = ArtistPrevTable(
     id = this.id,
     name = this.name,
     imageUrl = this.imageUrl.encodeImage(
@@ -260,6 +244,7 @@ fun SongPreview.toSongPrevTableEntry(
     artist = this.artist,
     album = this.album
 )
+
 
 fun AlbumPrevResult.toSongPrev() = HomeUiSongPrev(
     id = this.id,
@@ -288,13 +273,19 @@ private fun String.encodeImage(
     isCookie: Boolean,
     header: String,
 ): String = runBlocking {
+    Log.d("url", this@encodeImage)
+
     val req = ImageRequest.Builder(context)
         .addHeader(if (isCookie) "Cookie" else "Authorization", header)
         .data(this@encodeImage)
         .build()
 
-    (ImageLoader(context).execute(req).drawable as BitmapDrawable).bitmap.let {
-        BitmapConverter.encodeToSting(it)
+    try {
+        (ImageLoader(context).execute(req).drawable as BitmapDrawable).bitmap.let {
+            BitmapConverter.encodeToSting(it)
+        }
+    } catch (e: Exception) {
+        this@encodeImage
     }
 }
 

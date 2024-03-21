@@ -32,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -49,7 +53,9 @@ import com.poulastaa.kyoku.utils.BitmapConverter
 
 fun LazyListScope.homeScreenArtistList(
     artistPrev: List<HomeUiArtistPrev>,
-    isSmallPhone: Boolean
+    isSmallPhone: Boolean,
+    isCookie: Boolean,
+    headerValue: String,
 ) {
     items(artistPrev.size) { artistIndex ->
         Row(
@@ -60,6 +66,8 @@ fun LazyListScope.homeScreenArtistList(
                 size = 60.dp,
                 imageUrl = artistPrev[artistIndex].artistCover,
                 shape = CircleShape,
+                isCookie = isCookie,
+                headerValue = headerValue,
                 onClick = {
 
                 }
@@ -101,6 +109,8 @@ fun LazyListScope.homeScreenArtistList(
                         size = 120.dp,
                         imageUrl = artistPrev[artistIndex]
                             .lisOfPrevSong[songIndex].coverImage,
+                        isCookie = isCookie,
+                        headerValue = headerValue
                     ) {
 
                     }
@@ -165,6 +175,8 @@ fun HomeScreenCard(
     size: Dp,
     elevation: Dp = 10.dp,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    isCookie: Boolean,
+    headerValue: String,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
     imageUrl: String,
     onClick: () -> Unit
@@ -183,7 +195,9 @@ fun HomeScreenCard(
     ) {
         PlaylistImage(
             isDarkThem = isDarkThem,
-            url = imageUrl
+            url = imageUrl,
+            isCookie = isCookie,
+            headerValue = headerValue
         )
     }
 }
@@ -227,6 +241,8 @@ fun HomeScreenCardWithText(
     imageUrl: String,
     elevation: Dp = 10.dp,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    isCookie: Boolean,
+    headerValue: String,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
     onClick: () -> Unit
 ) {
@@ -248,7 +264,9 @@ fun HomeScreenCardWithText(
         ) {
             PlaylistImage(
                 isDarkThem = isDarkThem,
-                url = imageUrl
+                url = imageUrl,
+                isCookie = isCookie,
+                headerValue = headerValue
             )
 
             Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
@@ -271,6 +289,8 @@ fun HomeScreenCardPlaylistPrev(
     imageUrls: List<String>,
     elevation: Dp = 10.dp,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    isCookie: Boolean,
+    headerValue: String,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
     onClick: () -> Unit
 ) {
@@ -306,6 +326,8 @@ fun HomeScreenCardPlaylistPrev(
                             .fillMaxWidth(1f / 2),
                         isDarkThem = isDarkThem,
                         url = imageUrls[0],
+                        isCookie = isCookie,
+                        headerValue = headerValue
                     )
 
                     if (imageUrls.size >= 2)
@@ -314,6 +336,8 @@ fun HomeScreenCardPlaylistPrev(
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
                             url = imageUrls[1],
+                            isCookie = isCookie,
+                            headerValue = headerValue
                         )
                 }
                 Row(
@@ -327,6 +351,8 @@ fun HomeScreenCardPlaylistPrev(
                                 .fillMaxWidth(1f / 2),
                             isDarkThem = isDarkThem,
                             url = imageUrls[2],
+                            isCookie = isCookie,
+                            headerValue = headerValue
                         )
                     if (imageUrls.size >= 4)
                         PlaylistImage(
@@ -334,6 +360,8 @@ fun HomeScreenCardPlaylistPrev(
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
                             url = imageUrls[3],
+                            isCookie = isCookie,
+                            headerValue = headerValue
                         )
                 }
             }
@@ -355,17 +383,35 @@ fun HomeScreenCardPlaylistPrev(
 private fun PlaylistImage(
     modifier: Modifier = Modifier,
     isDarkThem: Boolean,
+    isCookie: Boolean,
+    headerValue: String,
     url: String,
 ) {
     BitmapConverter.decodeToBitmap(url).let {
         if (it == null)
-            Image(
-                modifier = modifier,
-                painter = painterResource(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(url)
+                    .addHeader(
+                        name = if (isCookie) "Cookie" else "Authorization",
+                        value = headerValue
+                    )
+                    .fallback(
+                        drawableResId = if (isDarkThem) R.drawable.night_logo
+                        else R.drawable.light_logo
+                    )
+                    .error(
+                        drawableResId = if (isDarkThem) R.drawable.night_logo
+                        else R.drawable.light_logo
+                    )
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                placeholder = painterResource(
                     id = if (isDarkThem) R.drawable.night_logo
                     else R.drawable.light_logo
                 ),
-                contentDescription = null
+                contentScale = ContentScale.Fit
             )
         else Image(
             modifier = modifier,
@@ -388,7 +434,9 @@ private fun Preview() {
                 .height(100.dp)
                 .width(240.dp),
             imageUrls = listOf("", "", "", ""),
-            name = "Your Favourite"
+            name = "Your Favourite",
+            isCookie = false,
+            headerValue = ""
         ) {
 
         }

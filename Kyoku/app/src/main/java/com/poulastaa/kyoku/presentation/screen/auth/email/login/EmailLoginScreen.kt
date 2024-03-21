@@ -82,7 +82,7 @@ fun EmailLoginScreen(
         },
         onDone = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            viewModel.onEvent(event = EmailLoginUiEvent.OnContinueClick)
+            viewModel.onEvent(event = EmailLoginUiEvent.OnContinueClick(context))
         },
         onForgotPassword = {
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -98,7 +98,7 @@ fun EmailLoginScreen(
         sendVerificationMailTimer = viewModel.state.sendVerificationMailTimer,
         isResendMailEnabled = viewModel.state.isResendMailEnabled,
         resendButtonClicked = {
-            viewModel.onEvent(event = EmailLoginUiEvent.OnResendVerificationMailClick)
+            viewModel.onEvent(event = EmailLoginUiEvent.OnResendVerificationMailClick(context))
         }
     )
 }

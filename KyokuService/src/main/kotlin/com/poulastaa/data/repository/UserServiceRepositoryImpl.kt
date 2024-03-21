@@ -74,7 +74,7 @@ class UserServiceRepositoryImpl(
                                 id = it.id
                             ),
                             listOfSongId = songIdList,
-                            playlistName = result.spotifyPlaylistResponse.name
+                            playlist = result.playlist!!
                         )
                     )
 
@@ -239,24 +239,24 @@ class UserServiceRepositoryImpl(
         CoroutineScope(Dispatchers.IO).launch {
             when (playlistHelper.typeHelper.userType) {
                 UserType.EMAIL_USER -> playlist.cretePlaylistForEmailUser(
-                    playlist = playlistHelper
+                    list = playlistHelper
                         .listOfSongId
                         .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                    playlistName = playlistHelper.playlistName
+                    playlist = playlistHelper.playlist
                 )
 
                 UserType.GOOGLE_USER -> playlist.cretePlaylistForGoogleUser(
-                    playlist = playlistHelper
+                    list = playlistHelper
                         .listOfSongId
                         .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                    playlistName = playlistHelper.playlistName
+                    playlist = playlistHelper.playlist
                 )
 
                 UserType.PASSKEY_USER -> playlist.cretePlaylistForPasskeyUser(
-                    playlist = playlistHelper
+                    list = playlistHelper
                         .listOfSongId
                         .toListOfPlaylistRow(playlistHelper.typeHelper.id),
-                    playlistName = playlistHelper.playlistName
+                    playlist = playlistHelper.playlist
                 )
             }
         }
@@ -269,21 +269,23 @@ class UserServiceRepositoryImpl(
         songIdList: List<Long>
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val genreNameList = GenreTable
-                .join(
-                    otherTable = SongGenreRelationTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        SongGenreRelationTable.genreId as Column<*> eq GenreTable.id
+            val genreNameList = dbQuery {
+                GenreTable
+                    .join(
+                        otherTable = SongGenreRelationTable,
+                        joinType = JoinType.INNER,
+                        additionalConstraint = {
+                            SongGenreRelationTable.genreId as Column<*> eq GenreTable.id
+                        }
+                    ).slice(GenreTable.name)
+                    .select {
+                        SongGenreRelationTable.songId inList songIdList
+                    }.distinctBy {
+                        it[GenreTable.name]
+                    }.map {
+                        it[GenreTable.name]
                     }
-                ).slice(GenreTable.name)
-                .select {
-                    SongGenreRelationTable.songId inList songIdList
-                }.distinctBy {
-                    it[GenreTable.name]
-                }.map {
-                    it[GenreTable.name]
-                }
+            }
 
             genre.storeGenre(
                 userType = userType,
@@ -299,23 +301,25 @@ class UserServiceRepositoryImpl(
         songIdList: List<Long>
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            val artistNameList = ArtistTable
-                .join(
-                    otherTable = SongArtistRelationTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        SongArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+            val artistNameList = dbQuery {
+                ArtistTable
+                    .join(
+                        otherTable = SongArtistRelationTable,
+                        joinType = JoinType.INNER,
+                        additionalConstraint = {
+                            SongArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+                        }
+                    ).slice(
+                        ArtistTable.name
+                    ).select {
+                        SongArtistRelationTable.songId inList songIdList
+                    }.distinctBy {
+                        it[ArtistTable.name]
                     }
-                ).slice(
-                    ArtistTable.name
-                ).select {
-                    SongArtistRelationTable.songId inList songIdList
-                }.distinctBy {
-                    it[ArtistTable.name]
-                }
-                .map {
-                    it[ArtistTable.name]
-                }
+                    .map {
+                        it[ArtistTable.name]
+                    }
+            }
 
             artist.storeArtist(userId, userType, artistNameList)
         }
