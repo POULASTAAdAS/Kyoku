@@ -12,11 +12,11 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
-import com.poulastaa.kyoku.data.model.screens.home.HomeUiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -105,7 +105,7 @@ class HomeScreenViewModel @Inject constructor(
                         db.insertDailyMixPrev(response.dailyMixPreview)
 
                         // load from db
-                        delay(5000)
+                        delay(6000)
                         loadFromDb()
                     }
 
@@ -185,7 +185,7 @@ class HomeScreenViewModel @Inject constructor(
                         data = state.data.copy(
                             playlist = it.groupBy { result -> result.name }
                                 .map { entry ->
-                                    HomeUiPlaylistPrev(
+                                    UiPlaylistPrev(
                                         name = entry.key,
                                         listOfUrl = entry.value.map { url ->
                                             url.coverImage

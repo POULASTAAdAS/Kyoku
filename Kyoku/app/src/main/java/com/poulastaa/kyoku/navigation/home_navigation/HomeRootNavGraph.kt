@@ -18,7 +18,7 @@ import androidx.navigation.compose.composable
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeScreen
+import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeContainer
 import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +47,7 @@ fun SetupHomeRootNavGraph(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HomeScreen(
+                HomeContainer(
                     title = homeRootUiState.homeTopBarTitle,
                     profileUrl = homeRootUiState.profilePicUrl,
                     isCookie = homeRootUiState.isCookie,

@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.data.model.screens.home
 
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
+import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 
 data class HomeUiState(
     val isInternetAvailable: Boolean = false,
@@ -19,7 +20,7 @@ data class HomeUiData(
     val albumPrev: List<HomeAlbumUiPrev> = emptyList(),
     val artistPrev: List<HomeUiArtistPrev> = emptyList(),
     val dailyMixPrev: HomeUiDailyMixPrev = HomeUiDailyMixPrev(),
-    val playlist: List<HomeUiPlaylistPrev> = emptyList(),
+    val playlist: List<UiPlaylistPrev> = emptyList(),
     val historyPrev: List<HomeUiSongPrev> = emptyList(),
     val savedAlbumPrev: List<HomeUiSavedAlbumPrev> = emptyList(),
     val favourites: Boolean = false
@@ -53,10 +54,7 @@ data class HomeUiDailyMixPrev(
     val listOfSong: List<HomeUiSongPrev> = emptyList()
 )
 
-data class HomeUiPlaylistPrev(
-    val name: String,
-    val listOfUrl: List<String>
-)
+
 
 data class HomeUiSavedAlbumPrev(
     val coverImage: String,
