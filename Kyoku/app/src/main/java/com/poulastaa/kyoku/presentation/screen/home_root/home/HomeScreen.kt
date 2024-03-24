@@ -1,12 +1,23 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
+import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
@@ -14,7 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomBar
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,18 +38,24 @@ fun HomeScreen(
     isCookie: Boolean,
     authHeader: String,
     viewModel: HomeScreenViewModel,
+    topAppBarScrollBehavior: TopAppBarScrollBehavior =
+        TopAppBarDefaults.enterAlwaysScrollBehavior(
+            rememberTopAppBarState()
+        ),
+    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior =
+        BottomAppBarDefaults.exitAlwaysScrollBehavior(
+            rememberBottomAppBarState()
+        ),
+    isSmallPhone: Boolean = LocalConfiguration.current.screenWidthDp <= 411,
+    context: Context = LocalContext.current,
     opnDrawer: () -> Unit,
     navigate: (HomeRootUiEvent) -> Unit
 ) {
-    val context = LocalContext.current
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val isSmallPhone = LocalConfiguration.current.screenWidthDp <= 411
-
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.Navigate -> {
-
+                    navigate.invoke(HomeRootUiEvent.Navigate(event.route))
                 }
 
                 is UiEvent.ShowToast -> {
@@ -51,7 +70,9 @@ fun HomeScreen(
     }
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             HomeTopAppBar(
                 title = title,
@@ -59,7 +80,7 @@ fun HomeScreen(
                 isCookie = isCookie,
                 authHeader = authHeader,
                 onProfileClick = opnDrawer,
-                scrollBehavior = scrollBehavior,
+                scrollBehavior = topAppBarScrollBehavior,
                 isSmallPhone = isSmallPhone,
                 onSearchClick = {
                     navigate.invoke(HomeRootUiEvent.Navigate(Screens.Search.route))
@@ -67,44 +88,25 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-
+            HomeScreenBottomBar(
+                scrollBehavior = bottomAppBarScrollBehavior,
+                isHome = viewModel.state.isHome
+            ) {
+                viewModel.onEvent(event = HomeUiEvent.BottomNavClick(it))
+            }
         }
     ) {
-        if (
-            viewModel.state.isLoading ||
-            viewModel.state.data.albumPrev.isEmpty() ||
-            viewModel.state.data.fevArtistMixPrev.isEmpty() ||
-            viewModel.state.data.artistPrev.isEmpty()
-        ) HomeScreenContentLoading(it, isSmallPhone)
-        else {
-            when (viewModel.state.dataType) {
-                HomeType.NEW_USER_REQ -> {
-                    HomeScreenContentNewUser(
-                        paddingValues = it,
-                        isSmallPhone = isSmallPhone,
-                        data = viewModel.state.data,
-
-                        isInternetError = viewModel.state.isInternetError,
-                        errorMessage = viewModel.state.errorMessage,
-                        isCookie = isCookie,
-                        headerValue = authHeader
-                    )
-                }
-
-                else -> {
-                    if (!viewModel.state.data.favourites &&
-                        viewModel.state.data.playlist.isEmpty()
-                    ) HomeScreenContentNewUser(
-                        paddingValues = it,
-                        isSmallPhone = isSmallPhone,
-                        data = viewModel.state.data,
-
-                        isInternetError = viewModel.state.isInternetError,
-                        errorMessage = viewModel.state.errorMessage,
-                        isCookie = isCookie,
-                        headerValue = authHeader
-                    ) else
-                        HomeScreenContentOldUser(
+        if (viewModel.state.isHome) {
+            if (
+                viewModel.state.isLoading ||
+                viewModel.state.data.albumPrev.isEmpty() ||
+                viewModel.state.data.fevArtistMixPrev.isEmpty() ||
+                viewModel.state.data.artistPrev.isEmpty()
+            ) HomeScreenContentLoading(it, isSmallPhone)
+            else {
+                when (viewModel.state.dataType) {
+                    HomeType.NEW_USER_REQ -> {
+                        HomeScreenContentNewUser(
                             paddingValues = it,
                             isSmallPhone = isSmallPhone,
                             data = viewModel.state.data,
@@ -114,7 +116,44 @@ fun HomeScreen(
                             isCookie = isCookie,
                             headerValue = authHeader
                         )
+                    }
+
+                    else -> {
+                        if (!viewModel.state.data.favourites &&
+                            viewModel.state.data.playlist.isEmpty()
+                        ) HomeScreenContentNewUser(
+                            paddingValues = it,
+                            isSmallPhone = isSmallPhone,
+                            data = viewModel.state.data,
+
+                            isInternetError = viewModel.state.isInternetError,
+                            errorMessage = viewModel.state.errorMessage,
+                            isCookie = isCookie,
+                            headerValue = authHeader
+                        ) else
+                            HomeScreenContentOldUser(
+                                paddingValues = it,
+                                isSmallPhone = isSmallPhone,
+                                data = viewModel.state.data,
+
+                                isInternetError = viewModel.state.isInternetError,
+                                errorMessage = viewModel.state.errorMessage,
+                                isCookie = isCookie,
+                                headerValue = authHeader
+                            )
+                    }
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Library",
+                    fontSize = MaterialTheme.typography.headlineLarge.fontSize
+                )
             }
         }
     }

@@ -100,7 +100,11 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
         }
 
     override suspend fun getDailyMixPrev(userId: Long, userType: UserType): DailyMixPreview {
-        val historySongIdList = getHistorySongIdList(userType, userId) // get artistId from history
+        val historySongIdList = try { // get artistId from history
+            getHistorySongIdList(userType, userId)
+        } catch (e: Exception) {
+            return DailyMixPreview()
+        }
         val songsByTheArtistUnSorted = getPreviewSongsByTheArtists(historySongIdList)
 
         return DailyMixPreview(

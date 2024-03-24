@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.ui.theme.dimens
 
@@ -39,7 +41,7 @@ fun HomeScreenContentNewUser(
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
     isCookie: Boolean,
-    headerValue:String,
+    headerValue: String,
     data: HomeUiData,
     isInternetError: Boolean,
     errorMessage: String
@@ -56,22 +58,78 @@ fun HomeScreenContentNewUser(
             end = MaterialTheme.dimens.medium1
         )
     ) {
-        // Toast
-        item {
-            AnimatedVisibility(
-                visible = isInternetError,
-                enter = fadeIn(animationSpec = tween(durationMillis = 1000)) + expandIn(),
-                exit = fadeOut(animationSpec = tween(durationMillis = 1000)) + shrinkOut()
-            ) {
-                val temp = remember {
-                    isInternetError
+
+        if (data.playlist.isNotEmpty()) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                ) {
+                    // saved playlist
+                    HomeScreenCardPlaylistPrev(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(1f / 2),
+                        name = data.playlist[0].name,
+                        imageUrls = data.playlist[0].listOfUrl,
+                        isCookie = isCookie,
+                        headerValue = headerValue
+                    ) {
+
+                    }
+
+
+                    // saved playlist
+                    if (data.playlist.size >= 2)
+                        HomeScreenCardPlaylistPrev(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            name = data.playlist[1].name,
+                            imageUrls = data.playlist[1].listOfUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue
+                        ) {
+
+                        }
                 }
 
-                if (temp) {
-                    CustomToast(
-                        message = errorMessage,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                ) {
+                    // saved playlist
+                    if (data.playlist.size >= 3)
+                        HomeScreenCardPlaylistPrev(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(1f / 2),
+                            name = data.playlist[2].name,
+                            imageUrls = data.playlist[2].listOfUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue
+                        ) {
+
+                        }
+
+
+                    // saved playlist
+                    if (data.playlist.size >= 4)
+                        HomeScreenCardPlaylistPrev(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            name = data.playlist[3].name,
+                            imageUrls = data.playlist[3].listOfUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue
+                        ) {
+
+                        }
                 }
             }
         }
@@ -109,6 +167,27 @@ fun HomeScreenContentNewUser(
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+        }
+
+
+        // Toast
+        item {
+            AnimatedVisibility(
+                visible = isInternetError,
+                enter = fadeIn(animationSpec = tween(durationMillis = 1000)) + expandIn(),
+                exit = fadeOut(animationSpec = tween(durationMillis = 1000)) + shrinkOut()
+            ) {
+                val temp = remember {
+                    isInternetError
+                }
+
+                if (temp) {
+                    CustomToast(
+                        message = errorMessage,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
 
         // Album

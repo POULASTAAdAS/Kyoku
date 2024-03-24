@@ -22,6 +22,4 @@ sealed class Screens(val route: String) {
     data object Settings : Screens("/app/homeRoot/settings")
 
     data object Search : Screens("/route/homeRoot/search")
-
-
 }

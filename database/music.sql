@@ -336,6 +336,7 @@ select * from PasskeyUserFavouriteTable;
 
 
 select * from passkeyauthuser;
+select * from googleauthuser;
 
 select * from passkeyuserlistenhistory;
 
