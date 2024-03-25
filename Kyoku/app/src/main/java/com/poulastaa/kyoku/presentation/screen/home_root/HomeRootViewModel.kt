@@ -9,8 +9,11 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
+import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeSignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -136,6 +139,56 @@ class HomeRootViewModel @Inject constructor(
 
             HomeRootUiEvent.LogOut -> {
                 storeSignInState(SignInStatus.AUTH, ds)
+            }
+
+            is HomeRootUiEvent.BottomNavClick -> {
+                when (event.bottomNav) {
+                    HomeScreenBottomNavigation.HOME_SCREEN -> {
+                        if (!state.isHome) {
+                            state = state.copy(
+                                isHome = true
+                            )
+
+                            viewModelScope.launch(Dispatchers.IO) {
+                                _uiEvent.send(UiEvent.Navigate(Screens.Home.route))
+                            }
+                        }
+                    }
+
+                    HomeScreenBottomNavigation.LIBRARY_SCREEN -> {
+                        if (state.isHome) {
+                            state = state.copy(
+                                isHome = false
+                            )
+
+                            viewModelScope.launch(Dispatchers.IO) {
+                                _uiEvent.send(UiEvent.Navigate(Screens.Library.route))
+                            }
+                        }
+                    }
+                }
+            }
+
+            HomeRootUiEvent.CreatePlaylistClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(element = UiEvent.Navigate(Screens.CreatePlaylist.route))
+                }
+            }
+
+            is HomeRootUiEvent.SearchClick -> {
+                when (event.type) {
+                    SearchType.ALL_SEARCH -> { // todo send additional data on what kind of search
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(element = UiEvent.Navigate(Screens.Search.route))
+                        }
+                    }
+
+                    SearchType.LIBRARY_SEARCH -> { // todo send additional data on what kind of search
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(element = UiEvent.Navigate(Screens.Search.route))
+                        }
+                    }
+                }
             }
         }
     }

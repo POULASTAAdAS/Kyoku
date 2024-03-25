@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -42,6 +43,8 @@ class DataStoreOperationImpl @Inject constructor(
         val refreshTokenKey = stringPreferencesKey(name = PREFERENCES_JWT_REFRESH_TOKEN_KEY)
 
         val bDateKey = stringPreferencesKey(name = PREFERENCES_B_DATE_KEY)
+
+        val librarySortType = booleanPreferencesKey(name = "")
     }
 
     override suspend fun storeSignedInState(signedInState: String) {
@@ -215,5 +218,25 @@ class DataStoreOperationImpl @Inject constructor(
         }.map {
             val bDate = it[PreferencesKey.bDateKey] ?: ""
             bDate
+        }
+
+
+    override suspend fun storeLibraryDataSortType(sortType: Boolean) {
+        dataStore.edit {
+            it[PreferencesKey.librarySortType] = sortType
+        }
+    }
+
+    override fun readLibraryDataSortType(): Flow<Boolean> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val sortType = it[PreferencesKey.librarySortType] ?: true
+            sortType
         }
 }

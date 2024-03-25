@@ -25,6 +25,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
+import com.poulastaa.kyoku.data.model.screens.library.Artist
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -161,6 +162,10 @@ interface AppDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoRecentlyPlayedPrevTable(data: RecentlyPlayedPrevTable)
+
+    @Transaction
+    @Query("select * from ArtistPrevTable")
+    fun readAllArtist(): Flow<List<Artist>>
 }
 
 

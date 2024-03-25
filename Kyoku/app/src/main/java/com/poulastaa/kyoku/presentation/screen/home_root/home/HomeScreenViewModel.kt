@@ -14,7 +14,6 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
@@ -255,25 +254,6 @@ class HomeScreenViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
 
                 }
-            }
-
-            is HomeUiEvent.BottomNavClick -> {
-                when (event.bottomNav) {
-                    HomeScreenBottomNavigation.HOME_SCREEN -> {
-                        if (!state.isHome)
-                            state = state.copy(
-                                isHome = true
-                            )
-                    }
-
-                    HomeScreenBottomNavigation.LIBRARY_SCREEN -> {
-                        if (state.isHome)
-                            state = state.copy(
-                                isHome = false
-                            )
-                    }
-                }
-
             }
 
             is HomeUiEvent.ItemClick -> {

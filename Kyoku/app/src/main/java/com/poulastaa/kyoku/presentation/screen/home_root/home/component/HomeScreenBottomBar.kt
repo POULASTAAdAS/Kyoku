@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenBottomNavigation
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -278,4 +278,6 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    fun readAllArtist() = dao.readAllArtist()
 }

@@ -44,6 +44,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun HomeScreenContentOldUser(
+
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
     data: HomeUiData,
@@ -61,7 +62,8 @@ fun HomeScreenContentOldUser(
             ),
         contentPadding = PaddingValues(
             start = MaterialTheme.dimens.medium1,
-            end = MaterialTheme.dimens.medium1
+            end = MaterialTheme.dimens.medium1,
+            top = MaterialTheme.dimens.medium1
         )
     ) {
         item {

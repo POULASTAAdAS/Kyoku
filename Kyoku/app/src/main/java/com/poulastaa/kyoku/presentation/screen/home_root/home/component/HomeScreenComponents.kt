@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -270,8 +272,9 @@ fun HomeScreenCardWithText(
             horizontalArrangement = Arrangement.Start
         ) {
             HomeScreenImage(
-                modifier = Modifier.fillMaxHeight()
-                    .fillMaxWidth(1f/3),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(1f / 3),
                 isDarkThem = isDarkThem,
                 url = imageUrl,
                 isCookie = isCookie,
@@ -295,22 +298,23 @@ fun HomeScreenCardWithText(
 @Composable
 fun HomeScreenCardPlaylistPrev(
     modifier: Modifier,
+    imageModifier: Modifier = Modifier,
     name: String,
     imageUrls: List<String>,
-    elevation: Dp = 10.dp,
+    elevation: CardElevation = CardDefaults.cardElevation(
+        defaultElevation = 10.dp
+    ),
     isDarkThem: Boolean = isSystemInDarkTheme(),
     isCookie: Boolean,
     headerValue: String,
     color: Color = MaterialTheme.colorScheme.background,
-    shape: CornerBasedShape = MaterialTheme.shapes.small,
+    shape: Shape = MaterialTheme.shapes.small,
     onClick: () -> Unit
 ) {
     Card(
         modifier = modifier,
         shape = shape,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = elevation
-        ),
+        elevation = elevation,
         colors = CardDefaults.cardColors(
             containerColor = color
         ),
@@ -325,6 +329,7 @@ fun HomeScreenCardPlaylistPrev(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(1f / 3)
+                    .then(imageModifier)
             ) {
                 Row(
                     modifier = Modifier
@@ -391,12 +396,13 @@ fun HomeScreenCardPlaylistPrev(
 }
 
 @Composable
-private fun HomeScreenImage(
+fun HomeScreenImage(
     modifier: Modifier = Modifier,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
     url: String,
+    contentScale: ContentScale = ContentScale.Crop
 ) {
     BitmapConverter.decodeToBitmap(url).let {
         if (it == null)
@@ -423,7 +429,7 @@ private fun HomeScreenImage(
                     id = if (isDarkThem) R.drawable.night_logo
                     else R.drawable.light_logo
                 ),
-                contentScale = ContentScale.Crop
+                contentScale = contentScale
             )
         else Image(
             modifier = modifier,

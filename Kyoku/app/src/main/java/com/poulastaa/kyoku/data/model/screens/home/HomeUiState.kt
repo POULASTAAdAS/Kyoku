@@ -9,8 +9,6 @@ data class HomeUiState(
     val isInternetError: Boolean = true,
     val errorMessage: String = "Please Check Your Internet Connection.",
 
-    val isHome: Boolean = true,
-
     val dataType: HomeType = HomeType.NEW_USER_REQ,
     val data: HomeUiData = HomeUiData()
 )

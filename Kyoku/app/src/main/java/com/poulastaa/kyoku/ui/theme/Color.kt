@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.ui.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val light_type_one_primary = Color(0xFF006C4E)
@@ -66,8 +68,6 @@ val dark_type_one_scrim = Color(0xFF000000)
 
 
 val seed_type_one = Color(0xFF006C4E)
-
-
 
 
 val light_type_two_primary = Color(0xFF7C5800)
@@ -152,4 +152,5 @@ val listOfSuggestGenreCardColors = listOf(
     Color(0xFFFFAB91)
 )
 
-val a  = Color(0xFFDFBB78)
+val background
+    @Composable get() = if (isSystemInDarkTheme()) dark_type_one_background else light_type_one_background

@@ -29,4 +29,7 @@ interface DataStoreOperation {
 
     suspend fun storeBDate(date: String)
     fun readBDate(): Flow<String>
+
+    suspend fun storeLibraryDataSortType(sortType: Boolean)
+    fun readLibraryDataSortType(): Flow<Boolean>
 }
