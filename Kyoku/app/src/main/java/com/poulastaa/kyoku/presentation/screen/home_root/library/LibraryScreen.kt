@@ -41,12 +41,14 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.FavouritePrev
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistGridView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistListView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistListView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.headLineSeparator
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.largeSpace
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemHeading
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
@@ -260,14 +262,14 @@ fun LibraryScreen(
                         )
                     }
                 ) {
-                    Column {
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+                    FavouritePrev(
+                        modifier = Modifier
+                            .fillMaxWidth(.2f)
+                            .height(80.dp),
+                        onClick = {
 
-                        // todo favourite preview
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
-
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-                    }
+                        }
+                    )
                 }
             }
 
@@ -280,22 +282,13 @@ fun LibraryScreen(
 
             // playlist
             if (viewModel.state.data.all.playlist.isNotEmpty()) {
-                item(
-                    span = {
-                        GridItemSpan(
-                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                            else viewModel.state.minGridSize
-                        )
+                libraryScreenItemHeading(
+                    heading = "Playlist",
+                    isGrid = viewModel.state.isGrid,
+                    onClick = {
+
                     }
-                ) {
-                    Text(
-                        text = "Playlist",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Black,
-                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                    )
-                }
+                )
 
                 headLineSeparator(viewModel.state.isGrid)
 
@@ -340,28 +333,17 @@ fun LibraryScreen(
 
             // artist
             if (viewModel.state.data.all.artist.isNotEmpty()) {
-                item(
-                    span = {
-                        GridItemSpan(
-                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                            else viewModel.state.minGridSize
-                        )
+                libraryScreenItemHeading(
+                    heading = "Artist",
+                    isGrid = viewModel.state.isGrid,
+                    onClick = {
+
                     }
-                ) {
-                    Text(
-                        text = "Artist",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Black,
-                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                    )
-                }
+                )
 
                 headLineSeparator(viewModel.state.isGrid)
 
                 items(viewModel.state.data.all.artist.size) {
-                    // todo separate to fun
-
                     if (viewModel.state.isGrid)
                         LibraryScreenArtistGridView(
                             modifier = Modifier
