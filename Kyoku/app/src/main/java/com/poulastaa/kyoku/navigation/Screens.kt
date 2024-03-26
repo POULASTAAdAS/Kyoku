@@ -16,9 +16,12 @@ sealed class Screens(val route: String) {
     data object HomeRoot : Screens("/app/homeRoot")
 
     data object Home : Screens("/app/homeRoot/home")
-    data object Library:Screens("/app/homeRoot/library")
+    data object Library : Screens("/app/homeRoot/library")
+    data object Favourite : Screens("/app/homeRoot/addAlbum")
 
-    data object CreatePlaylist: Screens("/app/homeRoot/library/createPlaylist")
+    data object CreatePlaylist : Screens("/app/homeRoot/library/createPlaylist")
+    data object AddArtist : Screens("/app/homeRoot/library/addArtist")
+    data object AddAlbum : Screens("/app/homeRoot/library/addAlbum")
 
     data object Profile : Screens("/app/homeRoot/profile")
     data object History : Screens("/app/homeRoot/history")

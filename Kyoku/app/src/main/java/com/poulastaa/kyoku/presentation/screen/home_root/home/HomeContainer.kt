@@ -76,9 +76,6 @@ fun HomeContainer(
                     onProfileClick = opnDrawer,
                     onSearchClick = {
                         navigate.invoke(HomeRootUiEvent.SearchClick(SearchType.LIBRARY_SEARCH))
-                    },
-                    createPlaylistClick = {
-                        navigate.invoke(HomeRootUiEvent.CreatePlaylistClick)
                     }
                 )
         },
@@ -113,7 +110,9 @@ fun HomeContainer(
                     paddingValues = paddingValue,
                     isCookie = isCookie,
                     headerValue = authHeader
-                )
+                ) {
+                    navigate.invoke(HomeRootUiEvent.Navigate(it.route))
+                }
             }
         }
     }

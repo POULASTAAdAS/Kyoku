@@ -5,7 +5,6 @@ sealed class HomeRootUiEvent {
     data class Navigate(val route: String) : HomeRootUiEvent()
     data class BottomNavClick(val bottomNav: HomeScreenBottomNavigation) : HomeRootUiEvent()
     data class SearchClick(val type: SearchType) : HomeRootUiEvent()
-    data object CreatePlaylistClick : HomeRootUiEvent()
     data object LogOut : HomeRootUiEvent()
 }
 

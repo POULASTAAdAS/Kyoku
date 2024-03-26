@@ -10,6 +10,7 @@ import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
@@ -34,7 +35,9 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         FavouriteTable::class,
         AlbumTable::class,
         SongAlbumRelationTable::class,
-        RecentlyPlayedPrevTable::class
+        RecentlyPlayedPrevTable::class,
+
+        PinnedTable::class
     ],
     version = 1,
     exportSchema = true

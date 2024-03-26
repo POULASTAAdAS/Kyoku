@@ -17,6 +17,7 @@ import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
@@ -30,9 +31,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDao {
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSong(song: SongTable): Long
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlaylist(playlist: PlaylistTable): Long
 
@@ -45,6 +48,7 @@ interface AppDao {
     )
     fun getAllPlaylist(): Flow<List<PlaylistWithSongs>>
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongPlaylistRelation(data: SongPlaylistRelationTable)
 
@@ -108,6 +112,7 @@ interface AppDao {
     )
     fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
 
+    @Transaction
     @Query(
         """
         select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
@@ -120,6 +125,7 @@ interface AppDao {
     )
     fun readPreviewPlaylist(): Flow<List<PlaylistPrevResult>>
 
+    @Transaction
     @Query(
         """
         select songpreviewtable.id , songpreviewtable.title , songpreviewtable.artist , songpreviewtable.coverImage from songpreviewtable
@@ -166,6 +172,40 @@ interface AppDao {
     @Transaction
     @Query("select * from ArtistPrevTable")
     fun readAllArtist(): Flow<List<Artist>>
+
+    @Query(
+        """
+        select id from PinnedTable where PinnedTable.playlistId = (
+            select id from PlaylistTable where name = :name
+        )
+    """
+    )
+    suspend fun checkIfPlaylistIdPinned(name: String): Long?
+
+    @Query(
+        """
+        select id from PinnedTable where PinnedTable.artistId = (
+            select id from ArtistPrevTable where name = :name
+        )
+    """
+    )
+    suspend fun checkIfArtistPinned(name: String): Long?
+
+    @Transaction
+    @Query("select id from PlaylistTable where name = :name")
+    suspend fun getIdOfPlaylist(name: String): Long?
+
+    @Transaction
+    @Query("select id from ArtistPrevTable where name = :name")
+    suspend fun getIdOfArtist(name: String): Long?
+
+    @Transaction
+    @Query("select id from AlbumTable where name = :name")
+    suspend fun getIdOfAlbum(name: String): Long?
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addToPinnedTable(data: PinnedTable)
 }
 
 

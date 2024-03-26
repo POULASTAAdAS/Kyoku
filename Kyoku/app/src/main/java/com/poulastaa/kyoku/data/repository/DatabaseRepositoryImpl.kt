@@ -16,10 +16,13 @@ import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
+import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
+import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
+import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
@@ -31,6 +34,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -280,4 +284,64 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
     fun readAllArtist() = dao.readAllArtist()
+
+    suspend fun checkIfPlaylistIdPinned(name: String) =
+        dao.checkIfPlaylistIdPinned(name)?.let { true } ?: false
+
+    suspend fun checkIfArtistPinned(name: String) =
+        dao.checkIfArtistPinned(name)?.let { true } ?: false
+
+    suspend fun addToPinnedTable(
+        type: PinnedDataType,
+        name: String,
+        ds: DataStoreOperation
+    ) = withContext(Dispatchers.IO) {
+        when (type) {
+            PinnedDataType.PLAYLIST -> {
+                val id = async {
+                    dao.getIdOfPlaylist(name)
+                }.await() ?: return@withContext false
+
+                dao.addToPinnedTable(
+                    data = PinnedTable(
+                        playlistId = id
+                    )
+                )
+
+                true
+            }
+
+            PinnedDataType.ARTIST -> {
+                val id = async {
+                    dao.getIdOfArtist(name)
+                }.await() ?: return@withContext false
+
+                dao.addToPinnedTable(
+                    data = PinnedTable(
+                        artistId = id
+                    )
+                )
+
+                true
+            }
+
+            PinnedDataType.ALBUM -> {
+                val id = async {
+                    dao.getIdOfAlbum(name)
+                }.await() ?: return@withContext false
+
+                dao.addToPinnedTable(
+                    data = PinnedTable(
+                        albumId = id
+                    )
+                )
+
+                true
+            }
+
+            PinnedDataType.FAVOURITE -> {
+                false
+            }
+        }
+    }
 }

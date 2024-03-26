@@ -1,8 +1,9 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library.component
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,17 +23,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -44,10 +54,115 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
+import com.poulastaa.kyoku.data.model.screens.library.PinnedData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.background
 import com.poulastaa.kyoku.ui.theme.dimens
+
+
+@Composable
+fun LibraryScreenPlaylistGridView(
+    modifier: Modifier = Modifier,
+    isDarkThem: Boolean = isSystemInDarkTheme(),
+    shape: Shape = MaterialTheme.shapes.small,
+    isCookie: Boolean,
+    authHeader: String,
+    name: String,
+    imageUrls: List<String>
+) {
+    Column(
+        modifier = Modifier.wrapContentSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = modifier,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            ),
+            shape = shape
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                if (imageUrls.size < 4)
+                    CustomImageView(
+                        modifier = Modifier.fillMaxSize(),
+                        isDarkThem = isDarkThem,
+                        isCookie = isCookie,
+                        headerValue = authHeader,
+                        url = imageUrls[0],
+                        contentScale = ContentScale.FillBounds
+                    )
+                else
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(.5f)
+                    ) {
+                        CustomImageView(
+                            modifier = Modifier
+                                .fillMaxWidth(.5f)
+                                .fillMaxHeight(),
+                            isDarkThem = isDarkThem,
+                            isCookie = isCookie,
+                            headerValue = authHeader,
+                            url = imageUrls[0],
+                            contentScale = ContentScale.FillBounds
+                        )
+
+                        CustomImageView(
+                            modifier = Modifier.fillMaxSize(),
+                            isDarkThem = isDarkThem,
+                            isCookie = isCookie,
+                            headerValue = authHeader,
+                            url = imageUrls[1],
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    CustomImageView(
+                        modifier = Modifier
+                            .fillMaxWidth(.5f)
+                            .fillMaxHeight(),
+                        isDarkThem = isDarkThem,
+                        isCookie = isCookie,
+                        headerValue = authHeader,
+                        url = imageUrls[2],
+                        contentScale = ContentScale.FillBounds
+                    )
+
+                    CustomImageView(
+                        modifier = Modifier.fillMaxSize(),
+                        isDarkThem = isDarkThem,
+                        isCookie = isCookie,
+                        headerValue = authHeader,
+                        url = imageUrls[3],
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+        Row {
+            Text(
+                text = name,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Medium,
+                fontSize = MaterialTheme.typography.titleMedium.fontSize
+            )
+        }
+    }
+}
 
 @Composable
 fun LibraryScreenPlaylistListView(
@@ -58,7 +173,6 @@ fun LibraryScreenPlaylistListView(
     shape: Shape = RoundedCornerShape(0.dp),
     name: String,
     imageUrls: List<String>,
-    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -80,8 +194,7 @@ fun LibraryScreenPlaylistListView(
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
             ),
-            shape = shape,
-            onClick = onClick
+            shape = shape
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -136,7 +249,7 @@ fun LibraryScreenPlaylistListView(
                                 isDarkThem = isDarkThem,
                                 isCookie = isCookie,
                                 headerValue = authHeader,
-                                url = imageUrls[0],
+                                url = imageUrls[2],
                             )
 
                             CustomImageView(
@@ -144,7 +257,7 @@ fun LibraryScreenPlaylistListView(
                                 isDarkThem = isDarkThem,
                                 isCookie = isCookie,
                                 headerValue = authHeader,
-                                url = imageUrls[1],
+                                url = imageUrls[3],
                             )
                         }
                     }
@@ -162,111 +275,8 @@ fun LibraryScreenPlaylistListView(
     }
 }
 
-@Composable
-fun LibraryScreenPlaylistGridView(
-    modifier: Modifier = Modifier,
-    isDarkThem: Boolean = isSystemInDarkTheme(),
-    shape: Shape = MaterialTheme.shapes.small,
-    isCookie: Boolean,
-    authHeader: String,
-    name: String,
-    imageUrls: List<String>,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card(
-            modifier = modifier,
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp
-            ),
-            shape = shape,
-            onClick = onClick
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                if (imageUrls.size < 4)
-                    CustomImageView(
-                        modifier = Modifier.fillMaxSize(),
-                        isDarkThem = isDarkThem,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        url = imageUrls[0],
-                        contentScale = ContentScale.FillBounds
-                    )
-                else
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(.5f)
-                    ) {
-                        CustomImageView(
-                            modifier = Modifier
-                                .fillMaxWidth(.5f)
-                                .fillMaxHeight(),
-                            isDarkThem = isDarkThem,
-                            isCookie = isCookie,
-                            headerValue = authHeader,
-                            url = imageUrls[0],
-                            contentScale = ContentScale.FillBounds
-                        )
 
-                        CustomImageView(
-                            modifier = Modifier.fillMaxSize(),
-                            isDarkThem = isDarkThem,
-                            isCookie = isCookie,
-                            headerValue = authHeader,
-                            url = imageUrls[1],
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    CustomImageView(
-                        modifier = Modifier
-                            .fillMaxWidth(.5f)
-                            .fillMaxHeight(),
-                        isDarkThem = isDarkThem,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        url = imageUrls[0],
-                        contentScale = ContentScale.FillBounds
-                    )
-
-                    CustomImageView(
-                        modifier = Modifier.fillMaxSize(),
-                        isDarkThem = isDarkThem,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        url = imageUrls[1],
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
-
-        Row {
-            Text(
-                text = name,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium,
-                fontSize = MaterialTheme.typography.titleMedium.fontSize
-            )
-        }
-    }
-}
-
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryScreenArtistGridView(
     modifier: Modifier,
@@ -275,12 +285,16 @@ fun LibraryScreenArtistGridView(
     isCookie: Boolean,
     headerValue: String,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .wrapContentSize()
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onLongClick = onLongClick,
+                onClick = onClick
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -316,6 +330,7 @@ fun LibraryScreenArtistGridView(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LibraryScreenArtistListView(
     modifier: Modifier,
@@ -324,12 +339,16 @@ fun LibraryScreenArtistListView(
     isCookie: Boolean,
     headerValue: String,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .wrapContentSize()
-            .clickable(onClick = onClick),
+            .combinedClickable(
+                onLongClick = onLongClick,
+                onClick = onClick
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -366,19 +385,18 @@ fun LibraryScreenArtistListView(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavouritePrev(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.small,
+    onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .clickable(
-                onClick = onClick
-            )
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
@@ -386,6 +404,10 @@ fun FavouritePrev(
                         MaterialTheme.colorScheme.primary
                     )
                 )
+            )
+            .combinedClickable(
+                onLongClick = onLongClick,
+                onClick = onClick
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -421,6 +443,103 @@ fun FavouritePrev(
             fontWeight = FontWeight.Medium,
             fontSize = MaterialTheme.typography.titleMedium.fontSize
         )
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LibraryScreenBottomSheet(
+    sheetState: SheetState,
+    pinnedData: PinnedData,
+    onClick: (LibraryUiEvent.BottomSheetItemClick) -> Unit,
+    cancelClick: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = cancelClick,
+        sheetState = sheetState,
+        properties = ModalBottomSheetDefaults.properties(
+            isFocusable = false
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(MaterialTheme.dimens.medium1),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = pinnedData.name.uppercase(),
+                textAlign = TextAlign.Start,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = MaterialTheme.colorScheme.primary)
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+            OutlinedButton(
+                onClick = {
+                    onClick.invoke(
+                        LibraryUiEvent.BottomSheetItemClick.AddClick(
+                            type = pinnedData.type,
+                            name = pinnedData.name
+                        )
+                    )
+                },
+                enabled = !pinnedData.isPinned
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .rotate(45f),
+                    painter = painterResource(id = R.drawable.pin),
+                    contentDescription = null
+                )
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                Text(text = "Add to pinned")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    onClick.invoke(LibraryUiEvent.BottomSheetItemClick.RemoveClick)
+                },
+                enabled = pinnedData.isPinned
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null
+                )
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                Text(text = "Remove from pinned")
+            }
+
+            OutlinedButton(
+                onClick = {
+                    onClick.invoke(LibraryUiEvent.BottomSheetItemClick.DeleteClick)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Delete,
+                    contentDescription = null
+                )
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                Text(text = "Delete ${pinnedData.type}  [${pinnedData.name.uppercase()}]")
+            }
+        }
     }
 }
 
@@ -538,6 +657,7 @@ fun LibraryScreenAddButton(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
@@ -545,13 +665,19 @@ fun LibraryScreenAddButton(
 @Composable
 private fun Preview() {
     TestThem {
-        FavouritePrev(
-            modifier = Modifier
-                .fillMaxWidth(.2f)
-                .height(80.dp),
-            onClick = {
+        val state = rememberModalBottomSheetState()
+
+        Column {
+            LibraryScreenBottomSheet(
+                sheetState = state,
+                pinnedData = PinnedData(
+                    name = "Playlist #9892",
+                    isPinned = true
+                ),
+                onClick = {}
+            ) {
 
             }
-        )
+        }
     }
 }

@@ -42,8 +42,7 @@ fun LibraryTopAppBar(
     isSmallPhone: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
     onSearchClick: () -> Unit,
-    onProfileClick: () -> Unit,
-    createPlaylistClick: () -> Unit
+    onProfileClick: () -> Unit
 ) {
     TopAppBar(
         title = {

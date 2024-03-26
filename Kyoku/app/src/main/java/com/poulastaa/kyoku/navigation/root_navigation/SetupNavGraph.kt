@@ -129,6 +129,16 @@ fun SetupNavGraph(
             }
         }
 
+        composable(Screens.Favourite.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Favourite")
+            }
+        }
+
         composable(Screens.CreatePlaylist.route) {
             Column(
                 modifier = Modifier.fillMaxSize(),
@@ -136,6 +146,26 @@ fun SetupNavGraph(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "CreatePlaylist")
+            }
+        }
+
+        composable(Screens.AddArtist.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "AddArtist")
+            }
+        }
+
+        composable(Screens.AddAlbum.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "AddAlbum")
             }
         }
     }

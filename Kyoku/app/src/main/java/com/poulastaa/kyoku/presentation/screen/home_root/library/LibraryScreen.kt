@@ -8,6 +8,8 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,14 +24,18 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -44,21 +50,28 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomTo
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.FavouritePrev
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistGridView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistListView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistListView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.headLineSeparator
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.largeSpace
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemHeading
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
+    sheetState: SheetState = rememberModalBottomSheetState(),
     viewModel: LibraryViewModel = hiltViewModel(),
     isSmallPhone: Boolean,
     isCookie: Boolean,
     headerValue: String,
     context: Context,
+    scope: CoroutineScope = rememberCoroutineScope(),
     paddingValues: PaddingValues,
+    navigate: (UiEvent.Navigate) -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
         viewModel.loadData(context)
@@ -68,7 +81,7 @@ fun LibraryScreen(
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.Navigate -> {
-
+                    navigate.invoke(UiEvent.Navigate(event.route))
                 }
 
                 is UiEvent.ShowToast -> {
@@ -150,7 +163,7 @@ fun LibraryScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            viewModel.onEvent(LibraryUiEvent.SortTypeClick)
+                            viewModel.onEvent(LibraryUiEvent.ItemClick.SortTypeClick)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = MaterialTheme.colorScheme.primary
@@ -266,8 +279,15 @@ fun LibraryScreen(
                         modifier = Modifier
                             .fillMaxWidth(.2f)
                             .height(80.dp),
+                        onLongClick = {
+                            scope.launch {
+                                viewModel.onEvent(LibraryUiEvent.ItemClick.FavouriteLongClick)
+                            }
+                        },
                         onClick = {
-
+                            scope.launch {
+                                viewModel.onEvent(LibraryUiEvent.ItemClick.FavouriteClick)
+                            }
                         }
                     )
                 }
@@ -286,7 +306,9 @@ fun LibraryScreen(
                     heading = "Playlist",
                     isGrid = viewModel.state.isGrid,
                     onClick = {
-
+                        scope.launch {
+                            viewModel.onEvent(LibraryUiEvent.ItemClick.CreatePlaylistClick)
+                        }
                     }
                 )
 
@@ -297,28 +319,62 @@ fun LibraryScreen(
                         LibraryScreenPlaylistGridView(
                             modifier = Modifier
                                 .padding(MaterialTheme.dimens.small1)
-                                .size(if (isSmallPhone) 120.dp else 130.dp),
+                                .size(if (isSmallPhone) 120.dp else 130.dp)
+                                .combinedClickable(
+                                    onLongClick = {
+                                        scope.launch {
+                                            viewModel.onEvent(
+                                                LibraryUiEvent.ItemClick.PlaylistLongClick(
+                                                    name = viewModel.state.data.all.playlist[it].name
+                                                )
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        scope.launch {
+                                            viewModel.onEvent(
+                                                LibraryUiEvent.ItemClick.PlaylistClick(
+                                                    name = viewModel.state.data.all.playlist[it].name
+                                                )
+                                            )
+                                        }
+                                    }
+                                ),
                             isCookie = isCookie,
                             authHeader = headerValue,
                             name = viewModel.state.data.all.playlist[it].name,
-                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl,
-                            onClick = {
-
-                            }
+                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl
                         )
                     else
                         LibraryScreenPlaylistListView(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(MaterialTheme.dimens.small1)
-                                .height(80.dp),
+                                .height(80.dp)
+                                .combinedClickable(
+                                    onLongClick = {
+                                        scope.launch {
+                                            viewModel.onEvent(
+                                                LibraryUiEvent.ItemClick.PlaylistLongClick(
+                                                    name = viewModel.state.data.all.playlist[it].name
+                                                )
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        scope.launch {
+                                            viewModel.onEvent(
+                                                LibraryUiEvent.ItemClick.PlaylistClick(
+                                                    name = viewModel.state.data.all.playlist[it].name
+                                                )
+                                            )
+                                        }
+                                    }
+                                ),
                             isCookie = isCookie,
                             authHeader = headerValue,
                             name = viewModel.state.data.all.playlist[it].name,
-                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl,
-                            onClick = {
-
-                            }
+                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl
                         )
                 }
             }
@@ -337,7 +393,9 @@ fun LibraryScreen(
                     heading = "Artist",
                     isGrid = viewModel.state.isGrid,
                     onClick = {
-
+                        scope.launch {
+                            viewModel.onEvent(LibraryUiEvent.ItemClick.AddArtistClick)
+                        }
                     }
                 )
 
@@ -353,8 +411,25 @@ fun LibraryScreen(
                             imageUrl = viewModel.state.data.all.artist[it].imageUrl,
                             isCookie = isCookie,
                             headerValue = headerValue,
+                            onLongClick = {
+                                scope.launch {
+                                    viewModel.onEvent(
+                                        LibraryUiEvent.ItemClick.ArtistLongClick(
+                                            id = viewModel.state.data.all.artist[it].id,
+                                            name = viewModel.state.data.all.artist[it].name
+                                        )
+                                    )
+                                }
+                            },
                             onClick = {
-
+                                scope.launch {
+                                    viewModel.onEvent(
+                                        LibraryUiEvent.ItemClick.ArtistClick(
+                                            id = viewModel.state.data.all.artist[it].id,
+                                            name = viewModel.state.data.all.artist[it].name
+                                        )
+                                    )
+                                }
                             }
                         )
                     else
@@ -366,14 +441,44 @@ fun LibraryScreen(
                             imageUrl = viewModel.state.data.all.artist[it].imageUrl,
                             isCookie = isCookie,
                             headerValue = headerValue,
+                            onLongClick = {
+                                scope.launch {
+                                    viewModel.onEvent(
+                                        LibraryUiEvent.ItemClick.ArtistLongClick(
+                                            id = viewModel.state.data.all.artist[it].id,
+                                            name = viewModel.state.data.all.artist[it].name
+                                        )
+                                    )
+                                }
+                            },
                             onClick = {
-
+                                scope.launch {
+                                    viewModel.onEvent(
+                                        LibraryUiEvent.ItemClick.ArtistClick(
+                                            id = viewModel.state.data.all.artist[it].id,
+                                            name = viewModel.state.data.all.artist[it].name
+                                        )
+                                    )
+                                }
                             }
                         )
                 }
             }
         }
     }
+
+    if (viewModel.state.isBottomSheetOpen)
+        LibraryScreenBottomSheet(
+            sheetState = sheetState,
+            pinnedData = viewModel.state.pinnedData,
+            onClick = viewModel::onEvent
+        ) {
+            scope.launch {
+                sheetState.hide()
+            }.invokeOnCompletion {
+                viewModel.onEvent(LibraryUiEvent.HideBottomSheet)
+            }
+        }
 }
 
 

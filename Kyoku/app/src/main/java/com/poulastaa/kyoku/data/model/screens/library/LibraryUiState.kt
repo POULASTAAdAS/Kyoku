@@ -5,12 +5,14 @@ import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 data class LibraryUiState(
     val isInternetAvailable: Boolean = false,
     val isLoading: Boolean = true,
+    val isInternetError: Boolean = false,
+    val errorMessage: String = "Please Check Your Internet Connection.",
     val isGrid: Boolean = true,
     val maxGridSize: Int = 3,
     val minGridSize: Int = 1,
-    val isInternetError: Boolean = false,
-    val errorMessage: String = "Please Check Your Internet Connection.",
-    val data: Data = Data()
+    val isBottomSheetOpen: Boolean = false,
+    val data: Data = Data(),
+    val pinnedData: PinnedData = PinnedData()
 )
 
 data class Data(
@@ -29,3 +31,16 @@ data class Artist(
     val name: String,
     val imageUrl: String
 )
+
+data class PinnedData(
+    val name: String = "",
+    val type: String = "",
+    val isPinned: Boolean = false
+)
+
+enum class PinnedDataType {
+    ARTIST,
+    PLAYLIST,
+    FAVOURITE,
+    ALBUM
+}

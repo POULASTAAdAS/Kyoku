@@ -169,12 +169,6 @@ class HomeRootViewModel @Inject constructor(
                 }
             }
 
-            HomeRootUiEvent.CreatePlaylistClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(element = UiEvent.Navigate(Screens.CreatePlaylist.route))
-                }
-            }
-
             is HomeRootUiEvent.SearchClick -> {
                 when (event.type) {
                     SearchType.ALL_SEARCH -> { // todo send additional data on what kind of search

@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,9 +12,11 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiState
+import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -144,11 +147,138 @@ class LibraryViewModel @Inject constructor(
                 onEvent(LibraryUiEvent.EmitToast("Opp's Something went wrong."))
             }
 
-            LibraryUiEvent.SortTypeClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    ds.storeLibraryDataSortType(
-                        sortType = !state.isGrid
+            LibraryUiEvent.HideBottomSheet -> {
+                if (state.isBottomSheetOpen) {
+                    state = state.copy(
+                        isBottomSheetOpen = false
                     )
+                }
+            }
+
+            is LibraryUiEvent.ItemClick -> {
+                when (event) {
+                    LibraryUiEvent.ItemClick.SortTypeClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            ds.storeLibraryDataSortType(
+                                sortType = !state.isGrid
+                            )
+                        }
+                    }
+
+                    LibraryUiEvent.ItemClick.AddAlbumClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.AddAlbum.route))
+                        }
+                    }
+
+                    LibraryUiEvent.ItemClick.AddArtistClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.AddArtist.route))
+                        }
+                    }
+
+                    LibraryUiEvent.ItemClick.CreatePlaylistClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.CreatePlaylist.route))
+                        }
+                    }
+
+
+                    LibraryUiEvent.ItemClick.FavouriteLongClick -> {
+                        state = state.copy(
+                            isBottomSheetOpen = true
+                        )
+                    }
+
+                    LibraryUiEvent.ItemClick.FavouriteClick -> {
+                        Log.d("called", "FavouriteClick")
+                    }
+
+                    is LibraryUiEvent.ItemClick.PlaylistLongClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            async {
+                                state = state.copy(
+                                    pinnedData = state.pinnedData.copy(
+                                        name = event.name,
+                                        type = "playlist",
+                                        isPinned = db.checkIfPlaylistIdPinned(name = event.name)
+                                    )
+                                )
+                            }.await()
+
+                            state = state.copy(
+                                isBottomSheetOpen = true
+                            )
+                        }
+                    }
+
+                    is LibraryUiEvent.ItemClick.PlaylistClick -> {
+                        Log.d("called", "PlaylistClick ${event.name}")
+                    }
+
+                    is LibraryUiEvent.ItemClick.ArtistLongClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            async {
+                                state = state.copy(
+                                    pinnedData = state.pinnedData.copy(
+                                        name = event.name,
+                                        type = "artist",
+                                        isPinned = db.checkIfArtistPinned(name = event.name)
+                                    )
+                                )
+                            }.await()
+
+                            state = state.copy(
+                                isBottomSheetOpen = true
+                            )
+                        }
+                    }
+
+                    is LibraryUiEvent.ItemClick.ArtistClick -> {
+                        Log.d("called", "ArtistClick ${event.name}")
+                    }
+                }
+            }
+
+            is LibraryUiEvent.BottomSheetItemClick -> {
+                when (event) {
+                    is LibraryUiEvent.BottomSheetItemClick.AddClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            val result = db.addToPinnedTable(
+                                type = when (event.type) {
+                                    "artist" -> PinnedDataType.ARTIST
+                                    "playlist" -> PinnedDataType.PLAYLIST
+                                    "album" -> PinnedDataType.ALBUM
+                                    else -> PinnedDataType.FAVOURITE
+                                },
+                                name = event.name.trim(),
+                                ds = ds
+                            )
+
+                            if (!result)
+                                onEvent(LibraryUiEvent.SomethingWentWrong)
+                        }
+                    }
+
+                    LibraryUiEvent.BottomSheetItemClick.DeleteClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+                        }
+                    }
+
+                    LibraryUiEvent.BottomSheetItemClick.RemoveClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+                        }
+                    }
                 }
             }
         }
