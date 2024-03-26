@@ -196,7 +196,7 @@ fun HomeScreenCard(
         ),
         onClick = onClick
     ) {
-        HomeScreenImage(
+        CustomImageView(
             isDarkThem = isDarkThem,
             url = imageUrl,
             isCookie = isCookie,
@@ -271,7 +271,7 @@ fun HomeScreenCardWithText(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            HomeScreenImage(
+            CustomImageView(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(1f / 3),
@@ -336,7 +336,7 @@ fun HomeScreenCardPlaylistPrev(
                         .fillMaxWidth()
                         .fillMaxHeight(1f / 2)
                 ) {
-                    HomeScreenImage(
+                    CustomImageView(
                         modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth(1f / 2),
@@ -347,7 +347,7 @@ fun HomeScreenCardPlaylistPrev(
                     )
 
                     if (imageUrls.size >= 2)
-                        HomeScreenImage(
+                        CustomImageView(
                             modifier = Modifier
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
@@ -361,7 +361,7 @@ fun HomeScreenCardPlaylistPrev(
                         .fillMaxSize()
                 ) {
                     if (imageUrls.size >= 3)
-                        HomeScreenImage(
+                        CustomImageView(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(1f / 2),
@@ -371,7 +371,7 @@ fun HomeScreenCardPlaylistPrev(
                             headerValue = headerValue
                         )
                     if (imageUrls.size >= 4)
-                        HomeScreenImage(
+                        CustomImageView(
                             modifier = Modifier
                                 .fillMaxSize(),
                             isDarkThem = isDarkThem,
@@ -396,7 +396,7 @@ fun HomeScreenCardPlaylistPrev(
 }
 
 @Composable
-fun HomeScreenImage(
+fun CustomImageView(
     modifier: Modifier = Modifier,
     isDarkThem: Boolean,
     isCookie: Boolean,

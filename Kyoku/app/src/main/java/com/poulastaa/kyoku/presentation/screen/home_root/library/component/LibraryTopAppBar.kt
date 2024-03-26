@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -99,13 +98,6 @@ fun LibraryTopAppBar(
             IconButton(onClick = onSearchClick) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
-                    contentDescription = null
-                )
-            }
-
-            IconButton(onClick = createPlaylistClick) {
-                Icon(
-                    imageVector = Icons.Rounded.Add,
                     contentDescription = null
                 )
             }

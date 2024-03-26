@@ -8,7 +8,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,12 +18,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +32,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
-import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenImage
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenListItem
-import com.poulastaa.kyoku.ui.theme.background
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistGridView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistListView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistListView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.headLineSeparator
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.largeSpace
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
@@ -75,9 +80,11 @@ fun LibraryScreen(
         }
     }
 
-    if (!viewModel.state.data.all.isFavourite &&
-        viewModel.state.data.all.playlist.isEmpty() &&
-        viewModel.state.data.all.artist.isEmpty()
+    if (
+        (!viewModel.state.data.all.isFavourite &&
+                viewModel.state.data.all.playlist.isEmpty() &&
+                viewModel.state.data.all.artist.isEmpty()) ||
+        viewModel.state.isLoading
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -87,7 +94,8 @@ fun LibraryScreen(
             CircularProgressIndicator()
         }
     } else {
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(if (viewModel.state.isGrid) 3 else 1),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -97,27 +105,76 @@ fun LibraryScreen(
             contentPadding = PaddingValues(
                 start = MaterialTheme.dimens.medium1,
                 end = MaterialTheme.dimens.medium1
-            )
+            ),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {
-            item {
+
+            // sort types : playlist , artist , album
+            item(
+                span = {
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                }
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(1f / 3)
                     ) {
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
                         // todo sort types :: playlist , artist , album
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
                     }
                 }
             }
 
+            // list , grid sort icon
+            item(
+                span = {
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    IconButton(
+                        onClick = {
+                            viewModel.onEvent(LibraryUiEvent.SortTypeClick)
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (viewModel.state.isGrid) R.drawable.list
+                                else R.drawable.grid
+                            ),
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+
+
             // Toast
-            item {
+            item(
+                span = {
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                }
+            ) {
                 AnimatedVisibility(
                     visible = viewModel.state.isInternetError,
                     enter = fadeIn(animationSpec = tween(durationMillis = 1000)) + expandIn(),
@@ -136,7 +193,16 @@ fun LibraryScreen(
                 }
             }
 
-            item {
+
+            // pinned heading
+            item(
+                span = {
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                }
+            ) {
                 Text(
                     text = "Pinned",
                     modifier = Modifier.fillMaxWidth(),
@@ -144,11 +210,19 @@ fun LibraryScreen(
                     fontWeight = FontWeight.Black,
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize
                 )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
             }
 
-            item {
+            headLineSeparator(viewModel.state.isGrid)
+
+            // pinned items
+            item(
+                span = {
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                }
+            ) {
                 if (
                     !viewModel.state.data.pinned.isFavourite ||
                     viewModel.state.data.pinned.playlist.isEmpty() ||
@@ -162,34 +236,58 @@ fun LibraryScreen(
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         color = MaterialTheme.colorScheme.primary
                     )
+
                 } else {
-                    Text( // todo place holder
-                        text = "Data",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    // todo
                 }
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-
             }
 
+
+            largeSpace(
+                GridItemSpan(
+                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                    else viewModel.state.minGridSize
+                )
+            )
+
+            // favourite
             if (viewModel.state.data.all.isFavourite) {
-                item {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+                item(
+                    span = {
+                        GridItemSpan(
+                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                            else viewModel.state.minGridSize
+                        )
+                    }
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
 
-                    // todo favourite preview
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+                        // todo favourite preview
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+                    }
                 }
             }
 
+            largeSpace(
+                GridItemSpan(
+                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                    else viewModel.state.minGridSize
+                )
+            )
+
+            // playlist
             if (viewModel.state.data.all.playlist.isNotEmpty()) {
-                item {
+                item(
+                    span = {
+                        GridItemSpan(
+                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                            else viewModel.state.minGridSize
+                        )
+                    }
+                ) {
                     Text(
                         text = "Playlist",
                         modifier = Modifier.fillMaxWidth(),
@@ -197,31 +295,59 @@ fun LibraryScreen(
                         fontWeight = FontWeight.Black,
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize
                     )
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
                 }
 
+                headLineSeparator(viewModel.state.isGrid)
 
                 items(viewModel.state.data.all.playlist.size) {
-                    LibraryScreenListItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        isCookie = isCookie,
-                        authHeader = headerValue,
-                        name = viewModel.state.data.all.playlist[it].name,
-                        imageUrls = viewModel.state.data.all.playlist[it].listOfUrl,
-                        onClick = {
+                    if (viewModel.state.isGrid)
+                        LibraryScreenPlaylistGridView(
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.small1)
+                                .size(if (isSmallPhone) 120.dp else 130.dp),
+                            isCookie = isCookie,
+                            authHeader = headerValue,
+                            name = viewModel.state.data.all.playlist[it].name,
+                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl,
+                            onClick = {
 
-                        }
-                    )
+                            }
+                        )
+                    else
+                        LibraryScreenPlaylistListView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(MaterialTheme.dimens.small1)
+                                .height(80.dp),
+                            isCookie = isCookie,
+                            authHeader = headerValue,
+                            name = viewModel.state.data.all.playlist[it].name,
+                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl,
+                            onClick = {
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+                            }
+                        )
                 }
             }
 
+            largeSpace(
+                GridItemSpan(
+                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                    else viewModel.state.minGridSize
+                )
+            )
+
+
+            // artist
             if (viewModel.state.data.all.artist.isNotEmpty()) {
-                item {
+                item(
+                    span = {
+                        GridItemSpan(
+                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                            else viewModel.state.minGridSize
+                        )
+                    }
+                ) {
                     Text(
                         text = "Artist",
                         modifier = Modifier.fillMaxWidth(),
@@ -229,49 +355,44 @@ fun LibraryScreen(
                         fontWeight = FontWeight.Black,
                         fontSize = MaterialTheme.typography.headlineSmall.fontSize
                     )
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
                 }
 
+                headLineSeparator(viewModel.state.isGrid)
+
                 items(viewModel.state.data.all.artist.size) {
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Card(
+                    // todo separate to fun
+
+                    if (viewModel.state.isGrid)
+                        LibraryScreenArtistGridView(
                             modifier = Modifier
-                                .size(120.dp),
-                            shape = CircleShape,
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 10.dp
-                            ),
-                            colors = CardDefaults.cardColors(
-                                containerColor = background
-                            )
-                        ) {
-                            HomeScreenImage(
-                                isDarkThem = isSystemInDarkTheme(),
-                                url = viewModel.state.data.all.artist[it].imageUrl,
-                                isCookie = isCookie,
-                                headerValue = headerValue,
-                                contentScale = ContentScale.Fit
-                            )
-                        }
+                                .padding(MaterialTheme.dimens.small3)
+                                .size(90.dp),
+                            name = viewModel.state.data.all.artist[it].name,
+                            imageUrl = viewModel.state.data.all.artist[it].imageUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue,
+                            onClick = {
 
-                        Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
-
-                        Text(
-                            text = viewModel.state.data.all.artist[it].name,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            }
                         )
-                    }
+                    else
+                        LibraryScreenArtistListView(
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.small3)
+                                .size(90.dp),
+                            name = viewModel.state.data.all.artist[it].name,
+                            imageUrl = viewModel.state.data.all.artist[it].imageUrl,
+                            isCookie = isCookie,
+                            headerValue = headerValue,
+                            onClick = {
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+                            }
+                        )
                 }
             }
         }
     }
 }
+
+
+

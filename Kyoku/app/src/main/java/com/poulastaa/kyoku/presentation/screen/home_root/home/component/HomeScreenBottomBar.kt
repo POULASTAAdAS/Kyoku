@@ -9,6 +9,7 @@ import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,15 +45,17 @@ fun HomeScreenBottomBar(
                 modifier = Modifier.fillMaxWidth(1f / 2),
                 onClick = {
                     onClick.invoke(HomeScreenBottomNavigation.HOME_SCREEN)
-                }
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = if (isHome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                )
             ) {
                 Icon(
                     painter = painterResource(
                         id =
                         if (isHome) R.drawable.home else R.drawable.home_empty_2
                     ),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
+                    contentDescription = null
                 )
             }
 
@@ -60,15 +63,17 @@ fun HomeScreenBottomBar(
                 modifier = Modifier.fillMaxWidth(1f),
                 onClick = {
                     onClick.invoke(HomeScreenBottomNavigation.LIBRARY_SCREEN)
-                }
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = if (isHome) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary
+                )
             ) {
                 Icon(
                     painter = painterResource(
                         id = if (isHome) R.drawable.libary_empty
                         else R.drawable.libary
                     ),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
+                    contentDescription = null
                 )
             }
         }

@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.Random
@@ -55,10 +56,26 @@ class LibraryViewModel @Inject constructor(
         private set
 
     fun loadData(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            delay(800)
+            state = state.copy(
+                isLoading = false
+            )
+        }
+
         if (!state.data.all.isFavourite &&
             state.data.all.playlist.isEmpty() &&
             state.data.all.artist.isEmpty()
         ) {
+            // read sort type
+            viewModelScope.launch(Dispatchers.IO) {
+                ds.readLibraryDataSortType().collect {
+                    state = state.copy(
+                        isGrid = it
+                    )
+                }
+            }
+
             // read All Data
             viewModelScope.launch(Dispatchers.IO) {
                 val allPlaylist = async {
@@ -125,6 +142,14 @@ class LibraryViewModel @Inject constructor(
 
             LibraryUiEvent.SomethingWentWrong -> {
                 onEvent(LibraryUiEvent.EmitToast("Opp's Something went wrong."))
+            }
+
+            LibraryUiEvent.SortTypeClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    ds.storeLibraryDataSortType(
+                        sortType = !state.isGrid
+                    )
+                }
             }
         }
     }

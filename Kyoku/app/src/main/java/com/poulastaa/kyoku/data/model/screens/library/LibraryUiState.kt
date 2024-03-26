@@ -4,7 +4,10 @@ import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 
 data class LibraryUiState(
     val isInternetAvailable: Boolean = false,
-    val isLoadData: Boolean = true,
+    val isLoading: Boolean = true,
+    val isGrid: Boolean = true,
+    val maxGridSize: Int = 3,
+    val minGridSize: Int = 1,
     val isInternetError: Boolean = false,
     val errorMessage: String = "Please Check Your Internet Connection.",
     val data: Data = Data()
