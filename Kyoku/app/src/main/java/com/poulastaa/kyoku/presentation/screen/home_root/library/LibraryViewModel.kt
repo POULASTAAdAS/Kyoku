@@ -62,6 +62,7 @@ class LibraryViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             delay(800)
             state = state.copy(
+                isInternetError = network.value != NetworkObserver.STATUS.AVAILABLE,
                 isLoading = false
             )
         }
@@ -129,7 +130,45 @@ class LibraryViewModel @Inject constructor(
 
             // read Pinned Data
             viewModelScope.launch(Dispatchers.IO) {
+                val playlist = async {
+                    db.readPinnedPlaylist().collect {
+                        state = state.copy(
+                            data = state.data.copy(
+                                pinned = state.data.pinned.copy(
+                                    playlist = it.groupBy { result -> result.name }
+                                        .map { map ->
+                                            UiPlaylistPrev(
+                                                name = map.key,
+                                                listOfUrl = map.value.map { playlist ->
+                                                    playlist.coverImage
+                                                }.shuffled(Random()).take(4)
+                                            )
+                                        }
+                                )
+                            )
+                        )
+                    }
+                }
 
+                val isFavourite = async {
+
+                }
+
+                val artist = async {
+                    db.readPinnedArtist().collect {
+                        state = state.copy(
+                            data = state.data.copy(
+                                pinned = state.data.pinned.copy(
+                                    artist = it
+                                )
+                            )
+                        )
+                    }
+                }
+
+                playlist.await()
+                isFavourite.await()
+                artist.await()
             }
         }
     }
@@ -152,6 +191,34 @@ class LibraryViewModel @Inject constructor(
                     state = state.copy(
                         isBottomSheetOpen = false
                     )
+                }
+            }
+
+            is LibraryUiEvent.FilterChipClick -> {
+                when (event) {
+                    LibraryUiEvent.FilterChipClick.PlaylistType -> {
+                        state = state.copy(
+                            filterChip = state.filterChip.copy(
+                                isPlaylist = !state.filterChip.isPlaylist
+                            )
+                        )
+                    }
+
+                    LibraryUiEvent.FilterChipClick.ArtistType -> {
+                        state = state.copy(
+                            filterChip = state.filterChip.copy(
+                                isArtist = !state.filterChip.isArtist
+                            )
+                        )
+                    }
+
+                    LibraryUiEvent.FilterChipClick.AlbumType -> {
+                        state = state.copy(
+                            filterChip = state.filterChip.copy(
+                                isAlbum = !state.filterChip.isAlbum
+                            )
+                        )
+                    }
                 }
             }
 

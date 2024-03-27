@@ -6,6 +6,12 @@ sealed class LibraryUiEvent {
 
     data object HideBottomSheet : LibraryUiEvent()
 
+    sealed class FilterChipClick : LibraryUiEvent() {
+        data object PlaylistType : FilterChipClick()
+        data object ArtistType : FilterChipClick()
+        data object AlbumType : FilterChipClick()
+    }
+
     sealed class ItemClick : LibraryUiEvent() {
         data object SortTypeClick : ItemClick()
 
@@ -24,7 +30,7 @@ sealed class LibraryUiEvent {
     }
 
     sealed class BottomSheetItemClick : LibraryUiEvent() {
-        data class AddClick(val type: String , val name:String) : BottomSheetItemClick()
+        data class AddClick(val type: String, val name: String) : BottomSheetItemClick()
         data object RemoveClick : BottomSheetItemClick()
         data object DeleteClick : BottomSheetItemClick()
     }

@@ -9,25 +9,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -38,24 +30,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.FavouritePrev
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistGridView
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenArtistListView
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenBottomSheet
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistListView
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.artist
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.favourite
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.filterChips
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.headLineSeparator
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.largeSpace
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemArtist
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemHeading
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemPlaylist
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.playlist
 import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -95,6 +86,8 @@ fun LibraryScreen(
         }
     }
 
+
+
     if (
         (!viewModel.state.data.all.isFavourite &&
                 viewModel.state.data.all.playlist.isEmpty() &&
@@ -110,7 +103,10 @@ fun LibraryScreen(
         }
     } else {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if (viewModel.state.isGrid) 3 else 1),
+            columns = GridCells.Fixed(
+                if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                else viewModel.state.minGridSize
+            ),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
@@ -123,63 +119,19 @@ fun LibraryScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {
-
-            // sort types : playlist , artist , album
-            item(
-                span = {
-                    GridItemSpan(
-                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                        else viewModel.state.minGridSize
-                    )
-                }
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(1f / 3)
-                    ) {
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                        // todo sort types :: playlist , artist , album
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-                    }
-                }
-            }
-
-            // list , grid sort icon
-            item(
-                span = {
-                    GridItemSpan(
-                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                        else viewModel.state.minGridSize
-                    )
-                }
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(
-                        onClick = {
-                            viewModel.onEvent(LibraryUiEvent.ItemClick.SortTypeClick)
-                        },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(
-                            painter = painterResource(
-                                id = if (viewModel.state.isGrid) R.drawable.list
-                                else R.drawable.grid
-                            ),
-                            contentDescription = null
-                        )
-                    }
-                }
-            }
-
+            // filter chips type: playlist , artist , album || sort types: list , grid
+            filterChips(
+                span = GridItemSpan(
+                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                    else viewModel.state.minGridSize
+                ),
+                isGrid = viewModel.state.isGrid,
+                filterChip = viewModel.state.filterChip,
+                filterByAlbum = viewModel::onEvent,
+                filterByArtist = viewModel::onEvent,
+                filterByPlaylist = viewModel::onEvent,
+                sortOrderClick = viewModel::onEvent
+            )
 
             // Toast
             item(
@@ -208,65 +160,45 @@ fun LibraryScreen(
                 }
             }
 
-
-            // pinned heading
-            item(
-                span = {
-                    GridItemSpan(
-                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                        else viewModel.state.minGridSize
-                    )
-                }
-            ) {
-                Text(
-                    text = "Pinned",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Black,
-                    fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                )
-            }
-
-            headLineSeparator(viewModel.state.isGrid)
-
-            // pinned items
-            item(
-                span = {
-                    GridItemSpan(
-                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                        else viewModel.state.minGridSize
-                    )
-                }
-            ) {
-                if (
-                    !viewModel.state.data.pinned.isFavourite ||
-                    viewModel.state.data.pinned.playlist.isEmpty() ||
-                    viewModel.state.data.pinned.artist.isEmpty()
-                ) {
-                    Text(
-                        text = "Long press to pin",
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Light,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                } else {
-                    // todo
-                }
-            }
-
-
-            largeSpace(
-                GridItemSpan(
-                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                    else viewModel.state.minGridSize
-                )
+            if (viewModel.state.filterChip.isPlaylist &&
+                viewModel.state.data.all.playlist.isNotEmpty()
+            ) libraryScreenItemPlaylist(
+                playlistPrev = viewModel.state.data.all.playlist,
+                sizeIfGrid = if (isSmallPhone) 120.dp else 130.dp,
+                sizeIfList = 80.dp,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                isGrid = viewModel.state.isGrid,
+                scope = scope,
+                onLongClick = {},
+                onClick = viewModel::onEvent
             )
 
-            // favourite
-            if (viewModel.state.data.all.isFavourite) {
+            if (viewModel.state.filterChip.isAlbum)
+                item {
+                    // todo album
+                    Text(text = "Album")
+                }
+
+            if (viewModel.state.filterChip.isArtist &&
+                viewModel.state.data.all.artist.isNotEmpty()
+            ) libraryScreenItemArtist(
+                artistPrev = viewModel.state.data.all.artist,
+                sizeIfGrid = 90.dp,
+                sizeIfList = 80.dp,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                isGrid = viewModel.state.isGrid,
+                scope = scope,
+                onLongClick = {},
+                onClick = viewModel::onEvent
+            )
+
+            if (!viewModel.state.filterChip.isAlbum &&
+                !viewModel.state.filterChip.isArtist &&
+                !viewModel.state.filterChip.isPlaylist
+            ) {
+                // pinned heading
                 item(
                     span = {
                         GridItemSpan(
@@ -275,193 +207,158 @@ fun LibraryScreen(
                         )
                     }
                 ) {
-                    FavouritePrev(
-                        modifier = Modifier
-                            .fillMaxWidth(.2f)
-                            .height(80.dp),
-                        onLongClick = {
-                            scope.launch {
-                                viewModel.onEvent(LibraryUiEvent.ItemClick.FavouriteLongClick)
-                            }
-                        },
+                    Text(
+                        text = "Pinned",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.Black,
+                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
+                    )
+                }
+
+                headLineSeparator(viewModel.state.isGrid)
+
+                // pinned items if empty
+                if (
+                    !viewModel.state.data.pinned.isFavourite &&
+                    viewModel.state.data.pinned.playlist.isEmpty() &&
+                    viewModel.state.data.pinned.artist.isEmpty()
+                ) {
+                    item(
+                        span = {
+                            GridItemSpan(
+                                if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                                else viewModel.state.minGridSize
+                            )
+                        }
+                    ) {
+
+                        Text(
+                            text = "Long press to pin",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Light,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+
+
+                // pinned items
+                if (viewModel.state.data.pinned.playlist.isNotEmpty())
+                    libraryScreenItemPlaylist(
+                        playlistPrev = viewModel.state.data.pinned.playlist,
+                        sizeIfGrid = 90.dp,
+                        sizeIfList = 80.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
+                        isGrid = viewModel.state.isGrid,
+                        scope = scope,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+
+                if (viewModel.state.data.pinned.artist.isNotEmpty())
+                    libraryScreenItemArtist(
+                        artistPrev = viewModel.state.data.pinned.artist,
+                        sizeIfGrid = 90.dp,
+                        sizeIfList = 80.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
+                        isGrid = viewModel.state.isGrid,
+                        scope = scope,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+
+
+                largeSpace(
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                )
+
+                // favourite
+                if (viewModel.state.data.all.isFavourite)
+                    favourite(
+                        span = GridItemSpan(
+                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                            else viewModel.state.minGridSize
+                        ),
+                        scope = scope,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+
+                largeSpace(
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                )
+
+                // playlist
+                if (viewModel.state.data.all.playlist.isNotEmpty())
+                    playlist(
+                        playlistPrev = viewModel.state.data.all.playlist,
+                        sizeIfGrid = if (isSmallPhone) 120.dp else 130.dp,
+                        sizeIfList = 80.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
+                        isGrid = viewModel.state.isGrid,
+                        scope = scope,
+                        onCreatePlaylistClick = viewModel::onEvent,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+
+                largeSpace(
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
+                )
+
+                // album
+                if (viewModel.state.data.all.album.isNotEmpty()) {
+                    libraryScreenItemHeading(
+                        heading = "Album",
+                        isGrid = viewModel.state.isGrid,
                         onClick = {
                             scope.launch {
-                                viewModel.onEvent(LibraryUiEvent.ItemClick.FavouriteClick)
+                                viewModel.onEvent(LibraryUiEvent.ItemClick.AddAlbumClick)
                             }
                         }
                     )
+
+                    headLineSeparator(viewModel.state.isGrid)
+
+                    // todo album view
                 }
-            }
 
-            largeSpace(
-                GridItemSpan(
-                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                    else viewModel.state.minGridSize
-                )
-            )
 
-            // playlist
-            if (viewModel.state.data.all.playlist.isNotEmpty()) {
-                libraryScreenItemHeading(
-                    heading = "Playlist",
-                    isGrid = viewModel.state.isGrid,
-                    onClick = {
-                        scope.launch {
-                            viewModel.onEvent(LibraryUiEvent.ItemClick.CreatePlaylistClick)
-                        }
-                    }
+                largeSpace(
+                    GridItemSpan(
+                        if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                        else viewModel.state.minGridSize
+                    )
                 )
 
-                headLineSeparator(viewModel.state.isGrid)
-
-                items(viewModel.state.data.all.playlist.size) {
-                    if (viewModel.state.isGrid)
-                        LibraryScreenPlaylistGridView(
-                            modifier = Modifier
-                                .padding(MaterialTheme.dimens.small1)
-                                .size(if (isSmallPhone) 120.dp else 130.dp)
-                                .combinedClickable(
-                                    onLongClick = {
-                                        scope.launch {
-                                            viewModel.onEvent(
-                                                LibraryUiEvent.ItemClick.PlaylistLongClick(
-                                                    name = viewModel.state.data.all.playlist[it].name
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        scope.launch {
-                                            viewModel.onEvent(
-                                                LibraryUiEvent.ItemClick.PlaylistClick(
-                                                    name = viewModel.state.data.all.playlist[it].name
-                                                )
-                                            )
-                                        }
-                                    }
-                                ),
-                            isCookie = isCookie,
-                            authHeader = headerValue,
-                            name = viewModel.state.data.all.playlist[it].name,
-                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl
-                        )
-                    else
-                        LibraryScreenPlaylistListView(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(MaterialTheme.dimens.small1)
-                                .height(80.dp)
-                                .combinedClickable(
-                                    onLongClick = {
-                                        scope.launch {
-                                            viewModel.onEvent(
-                                                LibraryUiEvent.ItemClick.PlaylistLongClick(
-                                                    name = viewModel.state.data.all.playlist[it].name
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        scope.launch {
-                                            viewModel.onEvent(
-                                                LibraryUiEvent.ItemClick.PlaylistClick(
-                                                    name = viewModel.state.data.all.playlist[it].name
-                                                )
-                                            )
-                                        }
-                                    }
-                                ),
-                            isCookie = isCookie,
-                            authHeader = headerValue,
-                            name = viewModel.state.data.all.playlist[it].name,
-                            imageUrls = viewModel.state.data.all.playlist[it].listOfUrl
-                        )
-                }
-            }
-
-            largeSpace(
-                GridItemSpan(
-                    if (viewModel.state.isGrid) viewModel.state.maxGridSize
-                    else viewModel.state.minGridSize
-                )
-            )
-
-
-            // artist
-            if (viewModel.state.data.all.artist.isNotEmpty()) {
-                libraryScreenItemHeading(
-                    heading = "Artist",
-                    isGrid = viewModel.state.isGrid,
-                    onClick = {
-                        scope.launch {
-                            viewModel.onEvent(LibraryUiEvent.ItemClick.AddArtistClick)
-                        }
-                    }
-                )
-
-                headLineSeparator(viewModel.state.isGrid)
-
-                items(viewModel.state.data.all.artist.size) {
-                    if (viewModel.state.isGrid)
-                        LibraryScreenArtistGridView(
-                            modifier = Modifier
-                                .padding(MaterialTheme.dimens.small3)
-                                .size(90.dp),
-                            name = viewModel.state.data.all.artist[it].name,
-                            imageUrl = viewModel.state.data.all.artist[it].imageUrl,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onLongClick = {
-                                scope.launch {
-                                    viewModel.onEvent(
-                                        LibraryUiEvent.ItemClick.ArtistLongClick(
-                                            id = viewModel.state.data.all.artist[it].id,
-                                            name = viewModel.state.data.all.artist[it].name
-                                        )
-                                    )
-                                }
-                            },
-                            onClick = {
-                                scope.launch {
-                                    viewModel.onEvent(
-                                        LibraryUiEvent.ItemClick.ArtistClick(
-                                            id = viewModel.state.data.all.artist[it].id,
-                                            name = viewModel.state.data.all.artist[it].name
-                                        )
-                                    )
-                                }
-                            }
-                        )
-                    else
-                        LibraryScreenArtistListView(
-                            modifier = Modifier
-                                .padding(MaterialTheme.dimens.small3)
-                                .size(90.dp),
-                            name = viewModel.state.data.all.artist[it].name,
-                            imageUrl = viewModel.state.data.all.artist[it].imageUrl,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onLongClick = {
-                                scope.launch {
-                                    viewModel.onEvent(
-                                        LibraryUiEvent.ItemClick.ArtistLongClick(
-                                            id = viewModel.state.data.all.artist[it].id,
-                                            name = viewModel.state.data.all.artist[it].name
-                                        )
-                                    )
-                                }
-                            },
-                            onClick = {
-                                scope.launch {
-                                    viewModel.onEvent(
-                                        LibraryUiEvent.ItemClick.ArtistClick(
-                                            id = viewModel.state.data.all.artist[it].id,
-                                            name = viewModel.state.data.all.artist[it].name
-                                        )
-                                    )
-                                }
-                            }
-                        )
+                // artist
+                if (viewModel.state.data.all.artist.isNotEmpty()) {
+                    artist(
+                        artists = viewModel.state.data.all.artist,
+                        size = 90.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
+                        isGrid = viewModel.state.isGrid,
+                        scope = scope,
+                        onCreatePlaylistClick = viewModel::onEvent,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
                 }
             }
         }

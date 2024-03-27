@@ -1,6 +1,8 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library.component
 
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -28,6 +31,8 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -39,6 +44,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,13 +60,432 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
+import com.poulastaa.kyoku.data.model.screens.library.Artist
+import com.poulastaa.kyoku.data.model.screens.library.FilterChip
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.PinnedData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.background
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+fun LazyGridScope.filterChips(
+    span: GridItemSpan,
+    isGrid: Boolean,
+    filterChip: FilterChip,
+    filterByPlaylist: (LibraryUiEvent.FilterChipClick.PlaylistType) -> Unit,
+    filterByAlbum: (LibraryUiEvent.FilterChipClick.AlbumType) -> Unit,
+    filterByArtist: (LibraryUiEvent.FilterChipClick.ArtistType) -> Unit,
+    sortOrderClick: (LibraryUiEvent.ItemClick.SortTypeClick) -> Unit
+) {
+    item(
+        span = { span }
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(.7f)
+                    .wrapContentHeight(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                CustomFilterChip(
+                    isSelected = filterChip.isPlaylist,
+                    icon = R.drawable.ic_filter_playlist,
+                    type = "playlist"
+                ) {
+                    filterByPlaylist.invoke(LibraryUiEvent.FilterChipClick.PlaylistType)
+                }
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                CustomFilterChip(
+                    isSelected = filterChip.isAlbum,
+                    icon = R.drawable.ic_filter_album,
+                    type = "album"
+                ) {
+                    filterByAlbum.invoke(LibraryUiEvent.FilterChipClick.AlbumType)
+                }
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                CustomFilterChip(
+                    isSelected = filterChip.isArtist,
+                    icon = R.drawable.ic_filter_artist,
+                    type = "artist"
+                ) {
+                    filterByArtist.invoke(LibraryUiEvent.FilterChipClick.ArtistType)
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AnimatedVisibility(
+                    visible = !filterChip.isAlbum &&
+                            !filterChip.isArtist &&
+                            !filterChip.isPlaylist
+                ) {
+                    val temp = remember {
+                        !filterChip.isAlbum &&
+                                !filterChip.isArtist &&
+                                !filterChip.isPlaylist
+                    }
+
+                    if (temp)
+                        IconButton(
+                            onClick = {
+                                sortOrderClick.invoke(LibraryUiEvent.ItemClick.SortTypeClick)
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    id = if (isGrid) R.drawable.list
+                                    else R.drawable.grid
+                                ),
+                                contentDescription = null
+                            )
+                        }
+                }
+            }
+        }
+    }
+}
+
+
+fun LazyGridScope.playlist(
+    playlistPrev: List<UiPlaylistPrev>,
+    isGrid: Boolean,
+    sizeIfGrid: Dp,
+    sizeIfList: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    scope: CoroutineScope,
+    onCreatePlaylistClick: (LibraryUiEvent.ItemClick.CreatePlaylistClick) -> Unit,
+    onLongClick: (LibraryUiEvent.ItemClick.PlaylistLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.PlaylistClick) -> Unit
+) {
+    libraryScreenItemHeading(
+        heading = "Playlist",
+        isGrid = isGrid,
+        onClick = {
+            scope.launch {
+                onCreatePlaylistClick.invoke(LibraryUiEvent.ItemClick.CreatePlaylistClick)
+            }
+        }
+    )
+
+    headLineSeparator(isGrid)
+
+    libraryScreenItemPlaylist(
+        playlistPrev = playlistPrev,
+        sizeIfGrid = sizeIfGrid, // if (isSmallPhone) 120.dp else 130.dp,
+        sizeIfList = sizeIfList, //80.dp,
+        isCookie = isCookie,
+        headerValue = headerValue,
+        isGrid = isGrid,
+        scope = scope,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
+}
+
+
+fun LazyGridScope.artist(
+    artists: List<Artist>,
+    isGrid: Boolean,
+    size: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    scope: CoroutineScope,
+    onCreatePlaylistClick: (LibraryUiEvent.ItemClick.AddArtistClick) -> Unit,
+    onLongClick: (LibraryUiEvent.ItemClick.ArtistLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.ArtistClick) -> Unit
+) {
+    libraryScreenItemHeading(
+        heading = "Artist",
+        isGrid = isGrid,
+        onClick = {
+            scope.launch {
+                onCreatePlaylistClick.invoke(LibraryUiEvent.ItemClick.AddArtistClick)
+            }
+        }
+    )
+
+    headLineSeparator(isGrid)
+
+    libraryScreenItemArtist(
+        artistPrev = artists,
+        sizeIfGrid = size,
+        sizeIfList = size,
+        isCookie = isCookie,
+        headerValue = headerValue,
+        isGrid = isGrid,
+        scope = scope,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
+}
+
+
+fun LazyGridScope.favourite(
+    span: GridItemSpan,
+    scope: CoroutineScope,
+    onLongClick: (LibraryUiEvent.ItemClick.FavouriteLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.FavouriteClick) -> Unit
+) {
+    item(
+        span = {
+            span
+        }
+    ) {
+        FavouritePrev(
+            modifier = Modifier
+                .fillMaxWidth(.2f)
+                .height(80.dp),
+            onLongClick = {
+                scope.launch {
+                    onLongClick.invoke(LibraryUiEvent.ItemClick.FavouriteLongClick)
+                }
+            },
+            onClick = {
+                scope.launch {
+                    onClick.invoke(LibraryUiEvent.ItemClick.FavouriteClick)
+                }
+            }
+        )
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+fun LazyGridScope.libraryScreenItemPlaylist(
+    playlistPrev: List<UiPlaylistPrev>,
+    sizeIfGrid: Dp,
+    sizeIfList: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    isGrid: Boolean,
+    scope: CoroutineScope,
+    onLongClick: (LibraryUiEvent.ItemClick.PlaylistLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.PlaylistClick) -> Unit
+) {
+    items(playlistPrev.size) {
+        if (isGrid)
+            LibraryScreenPlaylistGridView(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.small1)
+                    .size(sizeIfGrid)
+                    .combinedClickable(
+                        onLongClick = {
+                            scope.launch {
+                                onLongClick.invoke(
+                                    LibraryUiEvent.ItemClick.PlaylistLongClick(
+                                        playlistPrev[it].name
+                                    )
+                                )
+                            }
+                        },
+                        onClick = {
+                            scope.launch {
+                                onClick.invoke(
+                                    LibraryUiEvent.ItemClick.PlaylistClick(
+                                        playlistPrev[it].name
+                                    )
+                                )
+                            }
+                        }
+                    ),
+                isCookie = isCookie,
+                authHeader = headerValue,
+                name = playlistPrev[it].name,
+                imageUrls = playlistPrev[it].listOfUrl
+            )
+        else
+            LibraryScreenPlaylistListView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.dimens.small1)
+                    .height(sizeIfList)
+                    .combinedClickable(
+                        onLongClick = {
+                            scope.launch {
+                                onLongClick.invoke(
+                                    LibraryUiEvent.ItemClick.PlaylistLongClick(
+                                        playlistPrev[it].name
+                                    )
+                                )
+                            }
+                        },
+                        onClick = {
+                            scope.launch {
+                                onClick.invoke(
+                                    LibraryUiEvent.ItemClick.PlaylistClick(
+                                        playlistPrev[it].name
+                                    )
+                                )
+                            }
+                        }
+                    ),
+                isCookie = isCookie,
+                authHeader = headerValue,
+                name = playlistPrev[it].name,
+                imageUrls = playlistPrev[it].listOfUrl
+            )
+    }
+}
+
+
+fun LazyGridScope.libraryScreenItemArtist(
+    artistPrev: List<Artist>,
+    sizeIfGrid: Dp,
+    sizeIfList: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    isGrid: Boolean,
+    scope: CoroutineScope,
+    onLongClick: (LibraryUiEvent.ItemClick.ArtistLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.ArtistClick) -> Unit
+) {
+    items(artistPrev.size) {
+        if (isGrid)
+            LibraryScreenArtistGridView(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.small3)
+                    .size(sizeIfGrid),
+                name = artistPrev[it].name,
+                imageUrl = artistPrev[it].imageUrl,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                onLongClick = {
+                    scope.launch {
+                        onLongClick.invoke(
+                            LibraryUiEvent.ItemClick.ArtistLongClick(
+                                id = artistPrev[it].id,
+                                name = artistPrev[it].name
+                            )
+                        )
+                    }
+                },
+                onClick = {
+                    scope.launch {
+                        onClick.invoke(
+                            LibraryUiEvent.ItemClick.ArtistClick(
+                                id = artistPrev[it].id,
+                                name = artistPrev[it].name
+                            )
+                        )
+                    }
+                }
+            )
+        else
+            LibraryScreenArtistListView(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.small3)
+                    .size(sizeIfList),
+                name = artistPrev[it].name,
+                imageUrl = artistPrev[it].imageUrl,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                onLongClick = {
+                    scope.launch {
+                        onLongClick.invoke(
+                            LibraryUiEvent.ItemClick.ArtistLongClick(
+                                id = artistPrev[it].id,
+                                name = artistPrev[it].name
+                            )
+                        )
+                    }
+                },
+                onClick = {
+                    scope.launch {
+                        onClick.invoke(
+                            LibraryUiEvent.ItemClick.ArtistClick(
+                                id = artistPrev[it].id,
+                                name = artistPrev[it].name
+                            )
+                        )
+                    }
+                }
+            )
+    }
+}
+
+
+fun LazyGridScope.libraryScreenItemHeading(
+    heading: String = "Playlist",
+    isGrid: Boolean,
+    gridSpan: GridItemSpan = GridItemSpan(if (isGrid) 3 else 1),
+    onClick: () -> Unit
+) {
+    item(
+        span = { gridSpan }
+    ) {
+        Row {
+            Row(
+                modifier = Modifier.fillMaxWidth(.7f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = heading,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    fontWeight = FontWeight.Black,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                LibraryScreenAddButton(
+                    onClick = onClick
+                )
+            }
+        }
+    }
+}
+
+
+fun LazyGridScope.headLineSeparator(
+    isGrid: Boolean,
+    gridSpan: GridItemSpan = GridItemSpan(if (isGrid) 3 else 1)
+) {
+    item(
+        span = { gridSpan }
+    ) {
+        LibraryScreenItemSeparationLine()
+    }
+
+    item(
+        span = { gridSpan }
+    ) {
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+    }
+}
+
+fun LazyGridScope.largeSpace(
+    gridSpan: GridItemSpan
+) {
+    item(
+        span = { gridSpan }
+    ) {
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+    }
+}
 
 @Composable
 fun LibraryScreenPlaylistGridView(
@@ -544,44 +969,6 @@ fun LibraryScreenBottomSheet(
 }
 
 
-fun LazyGridScope.libraryScreenItemHeading(
-    heading: String = "Playlist",
-    isGrid: Boolean,
-    gridSpan: GridItemSpan = GridItemSpan(if (isGrid) 3 else 1),
-    onClick: () -> Unit
-) {
-    item(
-        span = { gridSpan }
-    ) {
-        Row {
-            Row(
-                modifier = Modifier.fillMaxWidth(.7f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    text = heading,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Black,
-                    fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                LibraryScreenAddButton(
-                    onClick = onClick
-                )
-            }
-        }
-    }
-}
-
-
 @Composable
 fun LibraryScreenItemSeparationLine(
     weight: Float = .97f,
@@ -611,34 +998,6 @@ fun LibraryScreenItemSeparationLine(
 }
 
 
-fun LazyGridScope.headLineSeparator(
-    isGrid: Boolean,
-    gridSpan: GridItemSpan = GridItemSpan(if (isGrid) 3 else 1)
-) {
-    item(
-        span = { gridSpan }
-    ) {
-        LibraryScreenItemSeparationLine()
-    }
-
-    item(
-        span = { gridSpan }
-    ) {
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
-    }
-}
-
-fun LazyGridScope.largeSpace(
-    gridSpan: GridItemSpan
-) {
-    item(
-        span = { gridSpan }
-    ) {
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-    }
-}
-
-
 @Composable
 fun LibraryScreenAddButton(
     onClick: () -> Unit
@@ -654,6 +1013,30 @@ fun LibraryScreenAddButton(
             contentDescription = null
         )
     }
+}
+
+
+@Composable
+fun CustomFilterChip(
+    isSelected: Boolean,
+    @DrawableRes
+    icon: Int,
+    type: String,
+    onClick: () -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = onClick,
+        label = { Text(text = type) },
+        leadingIcon = {
+            if (isSelected)
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+        }
+    )
 }
 
 

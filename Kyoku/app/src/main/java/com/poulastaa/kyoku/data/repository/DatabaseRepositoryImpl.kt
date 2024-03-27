@@ -344,4 +344,7 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    fun readPinnedPlaylist() = dao.readPinnedPlaylist()
+    fun readPinnedArtist() = dao.readPinnedArtist()
 }

@@ -206,6 +206,31 @@ interface AppDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToPinnedTable(data: PinnedTable)
+
+    @Transaction
+    @Query(
+        """
+        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
+        join SongTable on SongTable.id = SongPlaylistRelationTable.songId
+        where PlaylistTable.id in (
+            select playlistId from PinnedTable
+        ) order by PlaylistTable.points desc
+    """
+    )
+    fun readPinnedPlaylist(): Flow<List<PlaylistPrevResult>>
+
+
+    @Transaction
+    @Query(
+        """
+        select ArtistPrevTable.id , ArtistPrevTable.name , ArtistPrevTable.imageUrl 
+        from ArtistPrevTable 
+        join PinnedTable on ArtistPrevTable.id = PinnedTable.artistId
+        where PinnedTable.artistId
+    """
+    )
+    fun readPinnedArtist(): Flow<List<Artist>>
 }
 
 
