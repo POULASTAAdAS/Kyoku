@@ -13,19 +13,25 @@ sealed class Screens(val route: String) {
     data object SuggestGenre : Screens("/setup/suggestGenre")
     data object SuggestArtist : Screens("/setup/suggestArtist")
 
+    // todo try to design for any type of list of song
+    data object SongView : Screens("/app/songView")
+
+    // todo try to design by taking half of songView :: use drawer
+    data object Player : Screens("/app/songView/player")
+
     data object HomeRoot : Screens("/app/homeRoot")
 
     data object Home : Screens("/app/homeRoot/home")
     data object Library : Screens("/app/homeRoot/library")
-    data object Favourite : Screens("/app/homeRoot/addAlbum")
 
-    data object CreatePlaylist : Screens("/app/homeRoot/library/createPlaylist")
-    data object AddArtist : Screens("/app/homeRoot/library/addArtist")
-    data object AddAlbum : Screens("/app/homeRoot/library/addAlbum")
 
-    data object Profile : Screens("/app/homeRoot/profile")
-    data object History : Screens("/app/homeRoot/history")
-    data object Settings : Screens("/app/homeRoot/settings")
+    data object CreatePlaylist : Screens("/app/createPlaylist")
+    data object AddArtist : Screens("/app/addArtist")
+    data object AddAlbum : Screens("/app/addAlbum")
 
-    data object Search : Screens("/route/homeRoot/search")
+    data object Profile : Screens("/app/profile")
+    data object History : Screens("/app/history")
+    data object Settings : Screens("/app/settings")
+
+    data object Search : Screens("/route/search")
 }

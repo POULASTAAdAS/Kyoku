@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,9 +28,9 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
@@ -48,7 +47,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 import com.poulastaa.kyoku.utils.BitmapConverter
@@ -59,10 +60,21 @@ fun LazyListScope.homeScreenArtistList(
     isSmallPhone: Boolean,
     isCookie: Boolean,
     headerValue: String,
+    onClick: (HomeUiEvent.ItemClick) -> Unit
 ) {
     items(artistPrev.size) { artistIndex ->
         Row(
-            modifier = Modifier.height(if (isSmallPhone) 60.dp else 70.dp),
+            modifier = Modifier
+                .height(if (isSmallPhone) 60.dp else 70.dp)
+                .clip(MaterialTheme.shapes.small)
+                .clickable {
+                    onClick.invoke(
+                        HomeUiEvent.ItemClick(
+                            type = HomeScreenItemType.ARTIST,
+                            name = artistPrev[artistIndex].name
+                        )
+                    )
+                },
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
         ) {
             HomeScreenCard(
@@ -71,23 +83,12 @@ fun LazyListScope.homeScreenArtistList(
                 shape = CircleShape,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                onClick = {
-
-                }
+                onClick = {}
             )
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .clickable(
-                        onClick = {
-
-                        },
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        },
-                        indication = null
-                    ),
+                    .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(text = "More from")
@@ -113,10 +114,17 @@ fun LazyListScope.homeScreenArtistList(
                         imageUrl = artistPrev[artistIndex]
                             .lisOfPrevSong[songIndex].coverImage,
                         isCookie = isCookie,
-                        headerValue = headerValue
-                    ) {
-
-                    }
+                        headerValue = headerValue,
+                        onClick = {
+                            onClick.invoke(
+                                HomeUiEvent.ItemClick(
+                                    type = HomeScreenItemType.SONG,
+                                    id = artistPrev[artistIndex]
+                                        .lisOfPrevSong[songIndex].id
+                                )
+                            )
+                        }
+                    )
 
                     Text(
                         modifier = Modifier
@@ -140,7 +148,12 @@ fun LazyListScope.homeScreenArtistList(
             }
             item {
                 HomeScreenCardMore {
-
+                    onClick.invoke(
+                        HomeUiEvent.ItemClick(
+                            type = HomeScreenItemType.ARTIST,
+                            name = artistPrev[artistIndex].name
+                        )
+                    )
                 }
             }
         }

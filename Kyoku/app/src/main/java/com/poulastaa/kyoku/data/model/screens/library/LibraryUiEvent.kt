@@ -29,9 +29,14 @@ sealed class LibraryUiEvent {
         data object FavouriteClick : ItemClick()
     }
 
-    sealed class BottomSheetItemClick : LibraryUiEvent() {
+    sealed class BottomSheetItemClick : ItemClick() {
         data class AddClick(val type: String, val name: String) : BottomSheetItemClick()
         data object RemoveClick : BottomSheetItemClick()
         data object DeleteClick : BottomSheetItemClick()
+    }
+
+    sealed class DeleteDialogClick: ItemClick(){
+        data object DeleteYes: DeleteDialogClick()
+        data object DeleteNo: DeleteDialogClick()
     }
 }

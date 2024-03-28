@@ -129,13 +129,13 @@ fun SetupNavGraph(
             }
         }
 
-        composable(Screens.Favourite.route) {
+        composable(Screens.SongView.route) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Favourite")
+                Text(text = "SongView")
             }
         }
 

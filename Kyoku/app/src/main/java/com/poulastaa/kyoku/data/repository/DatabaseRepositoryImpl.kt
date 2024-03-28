@@ -286,7 +286,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun readAllArtist() = dao.readAllArtist()
 
     suspend fun checkIfPlaylistIdPinned(name: String) =
-        dao.checkIfPlaylistIdPinned(name)?.let { true } ?: false
+        dao.checkIfPlaylistIsPinned(name)?.let { true } ?: false
 
     suspend fun checkIfArtistPinned(name: String) =
         dao.checkIfArtistPinned(name)?.let { true } ?: false
@@ -337,6 +337,94 @@ class DatabaseRepositoryImpl @Inject constructor(
                 )
 
                 true
+            }
+
+            PinnedDataType.FAVOURITE -> {
+                false
+            }
+        }
+    }
+
+    suspend fun removeFromPinnedTable(
+        type: PinnedDataType,
+        name: String,
+        ds: DataStoreOperation
+    ) = withContext(Dispatchers.IO) {
+        when (type) {
+            PinnedDataType.PLAYLIST -> {
+                val playlistId = dao.getIdOfPlaylist(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removePlaylistIdFromPinnedTable(playlistId).let { true }
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            PinnedDataType.ARTIST -> {
+                val artistId = dao.getIdOfArtist(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removeArtistIdFromPinnedTable(artistId).let { true }
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            PinnedDataType.ALBUM -> {
+                val albumId = dao.getIdOfAlbum(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removeAlbumIdFromPinnedTable(albumId).let { true }
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            PinnedDataType.FAVOURITE -> {
+                false
+            }
+        }
+    }
+
+
+    suspend fun removePlaylistArtistAlbumFavouriteEntry(
+        type: PinnedDataType,
+        name: String,
+        ds: DataStoreOperation
+    ) = withContext(Dispatchers.IO) {
+        when (type) {
+            PinnedDataType.PLAYLIST -> {
+                val playlistId = dao.getIdOfPlaylist(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removePlaylist(playlistId)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            PinnedDataType.ALBUM -> {
+                val albumId = dao.getIdOfAlbum(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removeAlbum(albumId)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            PinnedDataType.ARTIST -> {
+                val artistId = dao.getIdOfArtist(name) ?: return@withContext false
+
+                return@withContext try {
+                    dao.removeArtist(artistId)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
             }
 
             PinnedDataType.FAVOURITE -> {

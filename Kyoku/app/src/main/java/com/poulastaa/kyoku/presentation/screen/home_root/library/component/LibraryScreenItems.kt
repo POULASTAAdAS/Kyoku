@@ -42,7 +42,6 @@ import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -65,6 +64,7 @@ import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.library.FilterChip
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.PinnedData
+import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.background
@@ -1040,7 +1040,8 @@ fun CustomFilterChip(
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
@@ -1048,17 +1049,14 @@ fun CustomFilterChip(
 @Composable
 private fun Preview() {
     TestThem {
-        val state = rememberModalBottomSheetState()
-
-        Column {
-            LibraryScreenBottomSheet(
-                sheetState = state,
-                pinnedData = PinnedData(
-                    name = "Playlist #9892",
-                    isPinned = true
-                ),
-                onClick = {}
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = MaterialTheme.colorScheme.surface),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ItemDeleteDialog(text = "Name", onYesClick = {}) {
 
             }
         }

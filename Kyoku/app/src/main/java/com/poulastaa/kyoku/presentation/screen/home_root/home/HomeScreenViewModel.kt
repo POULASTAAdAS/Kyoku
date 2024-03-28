@@ -14,12 +14,14 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.getHomeReqTimeType
 import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
 import com.poulastaa.kyoku.utils.toHomeUiSongPrev
@@ -188,7 +190,7 @@ class HomeScreenViewModel @Inject constructor(
                                         name = entry.key,
                                         listOfUrl = entry.value.map { url ->
                                             url.coverImage
-                                        }.shuffled(Random()).take(4)
+                                        }.shuffled(Random()).take(6)
                                     )
                                 }
                         )
@@ -257,8 +259,67 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             is HomeUiEvent.ItemClick -> {
+                when (event.type) {
+                    HomeScreenItemType.PLAYLIST -> {
 
+                    }
+
+                    HomeScreenItemType.ALBUM -> {
+
+                    }
+
+                    HomeScreenItemType.ALBUM_PREV -> {
+
+                    }
+
+                    HomeScreenItemType.ARTIST -> {
+
+                    }
+
+                    HomeScreenItemType.ARTIST_MIX -> {
+
+                    }
+
+                    HomeScreenItemType.FAVOURITE -> {
+
+                    }
+
+                    HomeScreenItemType.SONG -> {
+
+                    }
+
+                    HomeScreenItemType.ARTIST_MORE -> {
+
+                    }
+
+                    HomeScreenItemType.HISTORY -> {
+
+                    }
+                }.let {
+                    viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
+                        _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                    }
+                }
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

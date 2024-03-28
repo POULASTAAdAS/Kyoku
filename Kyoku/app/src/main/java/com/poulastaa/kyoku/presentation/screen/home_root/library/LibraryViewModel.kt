@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -252,13 +251,17 @@ class LibraryViewModel @Inject constructor(
 
 
                     LibraryUiEvent.ItemClick.FavouriteLongClick -> {
+                        // todo check if favourite pinned
+
                         state = state.copy(
                             isBottomSheetOpen = true
                         )
                     }
 
                     LibraryUiEvent.ItemClick.FavouriteClick -> {
-                        Log.d("called", "FavouriteClick")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                        }
                     }
 
                     is LibraryUiEvent.ItemClick.PlaylistLongClick -> {
@@ -280,7 +283,9 @@ class LibraryViewModel @Inject constructor(
                     }
 
                     is LibraryUiEvent.ItemClick.PlaylistClick -> {
-                        Log.d("called", "PlaylistClick ${event.name}")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                        }
                     }
 
                     is LibraryUiEvent.ItemClick.ArtistLongClick -> {
@@ -302,48 +307,123 @@ class LibraryViewModel @Inject constructor(
                     }
 
                     is LibraryUiEvent.ItemClick.ArtistClick -> {
-                        Log.d("called", "ArtistClick ${event.name}")
-                    }
-                }
-            }
-
-            is LibraryUiEvent.BottomSheetItemClick -> {
-                when (event) {
-                    is LibraryUiEvent.BottomSheetItemClick.AddClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            state = state.copy(
-                                isBottomSheetOpen = false
-                            )
-
-                            val result = db.addToPinnedTable(
-                                type = when (event.type) {
-                                    "artist" -> PinnedDataType.ARTIST
-                                    "playlist" -> PinnedDataType.PLAYLIST
-                                    "album" -> PinnedDataType.ALBUM
-                                    else -> PinnedDataType.FAVOURITE
-                                },
-                                name = event.name.trim(),
-                                ds = ds
-                            )
-
-                            if (!result)
-                                onEvent(LibraryUiEvent.SomethingWentWrong)
+                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
                         }
                     }
 
-                    LibraryUiEvent.BottomSheetItemClick.DeleteClick -> {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            state = state.copy(
-                                isBottomSheetOpen = false
-                            )
+                    is LibraryUiEvent.BottomSheetItemClick -> {
+                        when (event) {
+                            is LibraryUiEvent.BottomSheetItemClick.AddClick -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    state = state.copy(
+                                        isBottomSheetOpen = false
+                                    )
+
+                                    val result = db.addToPinnedTable(
+                                        type = when (event.type) {
+                                            "artist" -> PinnedDataType.ARTIST
+                                            "playlist" -> PinnedDataType.PLAYLIST
+                                            "album" -> PinnedDataType.ALBUM
+                                            else -> PinnedDataType.FAVOURITE
+                                        },
+                                        name = event.name,
+                                        ds = ds
+                                    )
+
+                                    if (!result)
+                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+                                }
+                            }
+
+                            LibraryUiEvent.BottomSheetItemClick.RemoveClick -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    if (
+                                        state.pinnedData.name.isNotEmpty() &&
+                                        state.pinnedData.type.isNotEmpty()
+                                    ) {
+                                        val result = db.removeFromPinnedTable(
+                                            type = when (state.pinnedData.type) {
+                                                "artist" -> PinnedDataType.ARTIST
+                                                "playlist" -> PinnedDataType.PLAYLIST
+                                                "album" -> PinnedDataType.ALBUM
+                                                else -> PinnedDataType.FAVOURITE
+                                            },
+                                            name = state.pinnedData.name,
+                                            ds = ds
+                                        )
+
+                                        if (!result) onEvent(LibraryUiEvent.SomethingWentWrong)
+                                    } else {
+                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+                                    }
+
+                                    state = state.copy(
+                                        isBottomSheetOpen = false
+                                    )
+                                }
+                            }
+
+                            LibraryUiEvent.BottomSheetItemClick.DeleteClick -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    if (state.pinnedData.name.isEmpty()) {
+                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+
+                                        state = state.copy(
+                                            isBottomSheetOpen = false
+                                        )
+
+                                        return@launch
+                                    }
+
+                                    if (!state.isDialogOpen) state =
+                                        state.copy(isDialogOpen = true) // open dialog
+                                }
+                            }
                         }
                     }
 
-                    LibraryUiEvent.BottomSheetItemClick.RemoveClick -> {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            state = state.copy(
-                                isBottomSheetOpen = false
-                            )
+                    is LibraryUiEvent.DeleteDialogClick -> {
+                        when (event) {
+                            LibraryUiEvent.DeleteDialogClick.DeleteYes -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    state = state.copy(
+                                        isDialogOpen = false,
+                                        isBottomSheetOpen = false
+                                    )
+
+                                    if (state.pinnedData.name.isEmpty()) {
+                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+
+                                        return@launch
+                                    }
+
+                                    val type = when (state.pinnedData.type) {
+                                        "artist" -> PinnedDataType.ARTIST
+                                        "playlist" -> PinnedDataType.PLAYLIST
+                                        "album" -> PinnedDataType.ALBUM
+                                        else -> PinnedDataType.FAVOURITE
+                                    }
+
+                                    val result = db.removePlaylistArtistAlbumFavouriteEntry(
+                                        type = type,
+                                        name = state.pinnedData.name,
+                                        ds = ds
+                                    )
+
+                                    // todo make api call
+                                    // todo if internet is not available store in internal database
+
+                                    if (!result) onEvent(LibraryUiEvent.SomethingWentWrong)
+                                }
+                            }
+
+                            LibraryUiEvent.DeleteDialogClick.DeleteNo -> {
+                                state = state.copy(
+                                    isDialogOpen = false,
+                                    isBottomSheetOpen = false
+                                )
+                            }
                         }
                     }
                 }

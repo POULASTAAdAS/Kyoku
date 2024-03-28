@@ -80,7 +80,6 @@ fun HomeScreen(
                         paddingValues = paddingValues,
                         isSmallPhone = isSmallPhone,
                         data = viewModel.state.data,
-
                         isInternetError = viewModel.state.isInternetError,
                         errorMessage = viewModel.state.errorMessage,
                         isCookie = isCookie,

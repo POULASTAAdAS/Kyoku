@@ -29,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
@@ -44,7 +46,8 @@ fun HomeScreenContentNewUser(
     headerValue: String,
     data: HomeUiData,
     isInternetError: Boolean,
-    errorMessage: String
+    errorMessage: String,
+    onClick: (HomeUiEvent.ItemClick) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -76,10 +79,16 @@ fun HomeScreenContentNewUser(
                         name = data.playlist[0].name,
                         imageUrls = data.playlist[0].listOfUrl,
                         isCookie = isCookie,
-                        headerValue = headerValue
-                    ) {
-
-                    }
+                        headerValue = headerValue,
+                        onClick = {
+                            onClick.invoke(
+                                HomeUiEvent.ItemClick(
+                                    type = HomeScreenItemType.PLAYLIST,
+                                    name = data.playlist[0].name
+                                )
+                            )
+                        }
+                    )
 
 
                     // saved playlist
@@ -90,10 +99,16 @@ fun HomeScreenContentNewUser(
                             name = data.playlist[1].name,
                             imageUrls = data.playlist[1].listOfUrl,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.PLAYLIST,
+                                        name = data.playlist[1].name
+                                    )
+                                )
+                            }
+                        )
                 }
 
                 Row(
@@ -112,10 +127,16 @@ fun HomeScreenContentNewUser(
                             name = data.playlist[2].name,
                             imageUrls = data.playlist[2].listOfUrl,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.PLAYLIST,
+                                        name = data.playlist[2].name
+                                    )
+                                )
+                            }
+                        )
 
 
                     // saved playlist
@@ -126,10 +147,16 @@ fun HomeScreenContentNewUser(
                             name = data.playlist[3].name,
                             imageUrls = data.playlist[3].listOfUrl,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.PLAYLIST,
+                                        name = data.playlist[3].name
+                                    )
+                                )
+                            }
+                        )
                 }
             }
         }
@@ -150,7 +177,11 @@ fun HomeScreenContentNewUser(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 onClick = {
-
+                    onClick.invoke(
+                        HomeUiEvent.ItemClick(
+                            type = HomeScreenItemType.ARTIST_MIX
+                        )
+                    )
                 }
             )
 
@@ -219,7 +250,11 @@ fun HomeScreenContentNewUser(
                             isCookie = isCookie,
                             headerValue = headerValue,
                             onClick = {
-
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.ALBUM_PREV
+                                    )
+                                )
                             }
                         )
 
@@ -237,6 +272,7 @@ fun HomeScreenContentNewUser(
             isSmallPhone = isSmallPhone,
             isCookie = isCookie,
             headerValue = headerValue,
+            onClick = onClick
         )
     }
 }

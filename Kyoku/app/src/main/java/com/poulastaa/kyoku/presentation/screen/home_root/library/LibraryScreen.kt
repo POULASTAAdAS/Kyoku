@@ -8,7 +8,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
+import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.artist
@@ -51,7 +51,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryScreen(
     sheetState: SheetState = rememberModalBottomSheetState(),
@@ -376,6 +376,17 @@ fun LibraryScreen(
                 viewModel.onEvent(LibraryUiEvent.HideBottomSheet)
             }
         }
+
+    if (viewModel.state.isDialogOpen)
+        ItemDeleteDialog(
+            text = viewModel.state.pinnedData.name,
+            onYesClick = {
+                viewModel.onEvent(LibraryUiEvent.DeleteDialogClick.DeleteYes)
+            },
+            onNoClick = {
+                viewModel.onEvent(LibraryUiEvent.DeleteDialogClick.DeleteNo)
+            }
+        )
 }
 
 

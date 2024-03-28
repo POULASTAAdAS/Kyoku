@@ -180,7 +180,7 @@ interface AppDao {
         )
     """
     )
-    suspend fun checkIfPlaylistIdPinned(name: String): Long?
+    suspend fun checkIfPlaylistIsPinned(name: String): Long?
 
     @Query(
         """
@@ -208,6 +208,18 @@ interface AppDao {
     suspend fun addToPinnedTable(data: PinnedTable)
 
     @Transaction
+    @Query("delete from PinnedTable where playlistId = :id")
+    suspend fun removePlaylistIdFromPinnedTable(id: Long)
+
+    @Transaction
+    @Query("delete from PinnedTable where artistId = :id")
+    suspend fun removeArtistIdFromPinnedTable(id: Long)
+
+    @Transaction
+    @Query("delete from PinnedTable where albumId = :id")
+    suspend fun removeAlbumIdFromPinnedTable(id: Long)
+
+    @Transaction
     @Query(
         """
         select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
@@ -220,6 +232,17 @@ interface AppDao {
     )
     fun readPinnedPlaylist(): Flow<List<PlaylistPrevResult>>
 
+    @Transaction
+    @Query("delete from PlaylistTable where id = :id")
+    fun removePlaylist(id: Long)
+
+    @Transaction
+    @Query("delete from AlbumTable where id = :id")
+    fun removeAlbum(id: Long)
+
+    @Transaction
+    @Query("delete from ArtistPrevTable where id = :id")
+    fun removeArtist(id: Long)
 
     @Transaction
     @Query(
