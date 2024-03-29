@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,6 +54,8 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 import com.poulastaa.kyoku.utils.BitmapConverter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 fun LazyListScope.homeScreenArtistList(
@@ -60,6 +63,7 @@ fun LazyListScope.homeScreenArtistList(
     isSmallPhone: Boolean,
     isCookie: Boolean,
     headerValue: String,
+    scope: CoroutineScope,
     onClick: (HomeUiEvent.ItemClick) -> Unit
 ) {
     items(artistPrev.size) { artistIndex ->
@@ -68,12 +72,14 @@ fun LazyListScope.homeScreenArtistList(
                 .height(if (isSmallPhone) 60.dp else 70.dp)
                 .clip(MaterialTheme.shapes.small)
                 .clickable {
-                    onClick.invoke(
-                        HomeUiEvent.ItemClick(
-                            type = HomeScreenItemType.ARTIST,
-                            name = artistPrev[artistIndex].name
+                    scope.launch {
+                        onClick.invoke(
+                            HomeUiEvent.ItemClick(
+                                type = HomeScreenItemType.ARTIST,
+                                name = artistPrev[artistIndex].name
+                            )
                         )
-                    )
+                    }
                 },
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
         ) {
@@ -83,7 +89,16 @@ fun LazyListScope.homeScreenArtistList(
                 shape = CircleShape,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                onClick = {}
+                onClick = {
+                    scope.launch {
+                        onClick.invoke(
+                            HomeUiEvent.ItemClick(
+                                type = HomeScreenItemType.ARTIST,
+                                name = artistPrev[artistIndex].name
+                            )
+                        )
+                    }
+                }
             )
 
             Column(
@@ -116,13 +131,15 @@ fun LazyListScope.homeScreenArtistList(
                         isCookie = isCookie,
                         headerValue = headerValue,
                         onClick = {
-                            onClick.invoke(
-                                HomeUiEvent.ItemClick(
-                                    type = HomeScreenItemType.SONG,
-                                    id = artistPrev[artistIndex]
-                                        .lisOfPrevSong[songIndex].id
+                            scope.launch {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.SONG,
+                                        id = artistPrev[artistIndex]
+                                            .lisOfPrevSong[songIndex].id
+                                    )
                                 )
-                            )
+                            }
                         }
                     )
 
@@ -148,12 +165,14 @@ fun LazyListScope.homeScreenArtistList(
             }
             item {
                 HomeScreenCardMore {
-                    onClick.invoke(
-                        HomeUiEvent.ItemClick(
-                            type = HomeScreenItemType.ARTIST,
-                            name = artistPrev[artistIndex].name
+                    scope.launch {
+                        onClick.invoke(
+                            HomeUiEvent.ItemClick(
+                                type = HomeScreenItemType.ARTIST,
+                                name = artistPrev[artistIndex].name
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -415,13 +434,14 @@ fun CustomImageView(
     isCookie: Boolean,
     headerValue: String,
     url: String,
+    context: Context = LocalContext.current,
     contentScale: ContentScale = ContentScale.Crop
 ) {
     BitmapConverter.decodeToBitmap(url).let {
         if (it == null)
             AsyncImage(
                 modifier = modifier,
-                model = ImageRequest.Builder(LocalContext.current)
+                model = ImageRequest.Builder(context)
                     .data(url)
                     .addHeader(
                         name = if (isCookie) "Cookie" else "Authorization",

@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StartViewModel @Inject constructor(
-    private val dataStore: DataStoreOperation
+    private val dataStore: DataStoreOperation,
 ) : ViewModel() {
     private val _startDestination = MutableStateFlow<String?>(null)
     val startDestination get() = _startDestination.asStateFlow()

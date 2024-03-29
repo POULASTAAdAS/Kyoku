@@ -139,6 +139,16 @@ fun SetupNavGraph(
             }
         }
 
+        composable(Screens.Player.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Player")
+            }
+        }
+
         composable(Screens.CreatePlaylist.route) {
             Column(
                 modifier = Modifier.fillMaxSize(),

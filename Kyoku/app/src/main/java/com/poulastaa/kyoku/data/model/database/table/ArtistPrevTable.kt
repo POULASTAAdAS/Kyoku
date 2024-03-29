@@ -8,5 +8,5 @@ data class ArtistPrevTable(
     @PrimaryKey
     val id: Int = 0,
     val name: String = "",
-    val imageUrl: String = ""
+    val coverImage: String = ""
 )

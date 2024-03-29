@@ -59,12 +59,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.library.FilterChip
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.PinnedData
-import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.background
@@ -89,7 +89,7 @@ fun LazyGridScope.filterChips(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(.7f)
+                    .fillMaxWidth(.9f)
                     .wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
@@ -201,6 +201,45 @@ fun LazyGridScope.playlist(
 }
 
 
+fun LazyGridScope.album(
+    albums: List<UiAlbum>,
+    isGrid: Boolean,
+    sizeIfList: Dp,
+    sizeIfGrid: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    scope: CoroutineScope,
+    onCreateAlbumClick: (LibraryUiEvent.ItemClick.AddAlbumClick) -> Unit,
+    onLongClick: (LibraryUiEvent.ItemClick.AlbumLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.AlbumClick) -> Unit
+) {
+    libraryScreenItemHeading(
+        heading = "Album",
+        isGrid = isGrid,
+        onClick = {
+            scope.launch {
+                onCreateAlbumClick.invoke(LibraryUiEvent.ItemClick.AddAlbumClick)
+            }
+        }
+    )
+
+    headLineSeparator(isGrid)
+
+
+    libraryScreenItemAlbum(
+        albums = albums,
+        sizeIfGrid = sizeIfGrid,
+        sizeIfList = sizeIfList,
+        isCookie = isCookie,
+        headerValue = headerValue,
+        isGrid = isGrid,
+        scope = scope,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
+}
+
+
 fun LazyGridScope.artist(
     artists: List<Artist>,
     isGrid: Boolean,
@@ -208,7 +247,7 @@ fun LazyGridScope.artist(
     isCookie: Boolean,
     headerValue: String,
     scope: CoroutineScope,
-    onCreatePlaylistClick: (LibraryUiEvent.ItemClick.AddArtistClick) -> Unit,
+    onAddArtistClick: (LibraryUiEvent.ItemClick.AddArtistClick) -> Unit,
     onLongClick: (LibraryUiEvent.ItemClick.ArtistLongClick) -> Unit,
     onClick: (LibraryUiEvent.ItemClick.ArtistClick) -> Unit
 ) {
@@ -217,7 +256,7 @@ fun LazyGridScope.artist(
         isGrid = isGrid,
         onClick = {
             scope.launch {
-                onCreatePlaylistClick.invoke(LibraryUiEvent.ItemClick.AddArtistClick)
+                onAddArtistClick.invoke(LibraryUiEvent.ItemClick.AddArtistClick)
             }
         }
     )
@@ -346,6 +385,80 @@ fun LazyGridScope.libraryScreenItemPlaylist(
 }
 
 
+fun LazyGridScope.libraryScreenItemAlbum(
+    albums: List<UiAlbum>,
+    sizeIfGrid: Dp,
+    sizeIfList: Dp,
+    isCookie: Boolean,
+    headerValue: String,
+    isGrid: Boolean,
+    scope: CoroutineScope,
+    onLongClick: (LibraryUiEvent.ItemClick.AlbumLongClick) -> Unit,
+    onClick: (LibraryUiEvent.ItemClick.AlbumClick) -> Unit
+) {
+    items(albums.size) {
+        if (isGrid)
+            LibraryScreenAlbumAndArtistGridView(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.small3)
+                    .size(sizeIfGrid),
+                isAlbum = true,
+                name = albums[it].name,
+                imageUrl = albums[it].coverImage,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                onLongClick = {
+                    scope.launch {
+                        onLongClick.invoke(
+                            LibraryUiEvent.ItemClick.AlbumLongClick(
+                                name = albums[it].name
+                            )
+                        )
+                    }
+                },
+                onClick = {
+                    scope.launch {
+                        onClick.invoke(
+                            LibraryUiEvent.ItemClick.AlbumClick(
+                                name = albums[it].name
+                            )
+                        )
+                    }
+                }
+            )
+        else
+            LibraryScreenAlbumAndArtistListView(
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.small3)
+                    .size(sizeIfList),
+                isAlbum = true,
+                name = albums[it].name,
+                imageUrl = albums[it].coverImage,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                onLongClick = {
+                    scope.launch {
+                        onLongClick.invoke(
+                            LibraryUiEvent.ItemClick.AlbumLongClick(
+                                name = albums[it].name
+                            )
+                        )
+                    }
+                },
+                onClick = {
+                    scope.launch {
+                        onClick.invoke(
+                            LibraryUiEvent.ItemClick.AlbumClick(
+                                name = albums[it].name
+                            )
+                        )
+                    }
+                }
+            )
+    }
+}
+
+
 fun LazyGridScope.libraryScreenItemArtist(
     artistPrev: List<Artist>,
     sizeIfGrid: Dp,
@@ -359,12 +472,13 @@ fun LazyGridScope.libraryScreenItemArtist(
 ) {
     items(artistPrev.size) {
         if (isGrid)
-            LibraryScreenArtistGridView(
+            LibraryScreenAlbumAndArtistGridView(
                 modifier = Modifier
                     .padding(MaterialTheme.dimens.small3)
                     .size(sizeIfGrid),
+                isAlbum = false,
                 name = artistPrev[it].name,
-                imageUrl = artistPrev[it].imageUrl,
+                imageUrl = artistPrev[it].coverImage,
                 isCookie = isCookie,
                 headerValue = headerValue,
                 onLongClick = {
@@ -389,12 +503,13 @@ fun LazyGridScope.libraryScreenItemArtist(
                 }
             )
         else
-            LibraryScreenArtistListView(
+            LibraryScreenAlbumAndArtistListView(
                 modifier = Modifier
                     .padding(MaterialTheme.dimens.small3)
                     .size(sizeIfList),
+                isAlbum = false,
                 name = artistPrev[it].name,
-                imageUrl = artistPrev[it].imageUrl,
+                imageUrl = artistPrev[it].coverImage,
                 isCookie = isCookie,
                 headerValue = headerValue,
                 onLongClick = {
@@ -703,13 +818,15 @@ fun LibraryScreenPlaylistListView(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LibraryScreenArtistGridView(
+fun LibraryScreenAlbumAndArtistGridView(
     modifier: Modifier,
+    isAlbum: Boolean,
     name: String,
     imageUrl: String,
     isCookie: Boolean,
     headerValue: String,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    shape: Shape = if (isAlbum) MaterialTheme.shapes.small else CircleShape,
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
@@ -725,7 +842,7 @@ fun LibraryScreenArtistGridView(
     ) {
         Card(
             modifier = modifier,
-            shape = CircleShape,
+            shape = shape,
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 10.dp
             ),
@@ -757,13 +874,15 @@ fun LibraryScreenArtistGridView(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LibraryScreenArtistListView(
+fun LibraryScreenAlbumAndArtistListView(
     modifier: Modifier,
+    isAlbum: Boolean,
     name: String,
     imageUrl: String,
     isCookie: Boolean,
     headerValue: String,
     isDarkThem: Boolean = isSystemInDarkTheme(),
+    shape: Shape = if (isAlbum) MaterialTheme.shapes.small else CircleShape,
     onLongClick: () -> Unit,
     onClick: () -> Unit
 ) {
@@ -779,7 +898,7 @@ fun LibraryScreenArtistListView(
     ) {
         Card(
             modifier = modifier,
-            shape = CircleShape,
+            shape = shape,
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 10.dp
             ),
@@ -962,7 +1081,8 @@ fun LibraryScreenBottomSheet(
 
                 Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
-                Text(text = "Delete ${pinnedData.type}  [${pinnedData.name.uppercase()}]")
+                if (pinnedData.type == "favourite") Text(text = "Delete [${pinnedData.name.uppercase()}]")
+                else Text(text = "Delete ${pinnedData.type}  [${pinnedData.name.uppercase()}]")
             }
         }
     }
@@ -1040,8 +1160,6 @@ fun CustomFilterChip(
 }
 
 
-
-
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
@@ -1056,9 +1174,7 @@ private fun Preview() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ItemDeleteDialog(text = "Name", onYesClick = {}) {
 
-            }
         }
     }
 }

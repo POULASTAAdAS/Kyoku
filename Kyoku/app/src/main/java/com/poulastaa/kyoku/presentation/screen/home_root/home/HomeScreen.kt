@@ -59,7 +59,8 @@ fun HomeScreen(
                     isInternetError = viewModel.state.isInternetError,
                     errorMessage = viewModel.state.errorMessage,
                     isCookie = isCookie,
-                    headerValue = authHeader
+                    headerValue = authHeader,
+                    onClick = viewModel::onEvent
                 )
             }
 
@@ -74,7 +75,8 @@ fun HomeScreen(
                     isInternetError = viewModel.state.isInternetError,
                     errorMessage = viewModel.state.errorMessage,
                     isCookie = isCookie,
-                    headerValue = authHeader
+                    headerValue = authHeader,
+                    onClick = viewModel::onEvent
                 ) else
                     HomeScreenContentOldUser(
                         paddingValues = paddingValues,
@@ -83,7 +85,8 @@ fun HomeScreen(
                         isInternetError = viewModel.state.isInternetError,
                         errorMessage = viewModel.state.errorMessage,
                         isCookie = isCookie,
-                        headerValue = authHeader
+                        headerValue = authHeader,
+                        onClick = viewModel::onEvent
                     )
             }
         }

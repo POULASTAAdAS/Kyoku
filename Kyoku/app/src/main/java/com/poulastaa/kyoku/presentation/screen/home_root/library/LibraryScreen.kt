@@ -38,13 +38,14 @@ import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenBottomSheet
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.album
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.artist
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.favourite
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.filterChips
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.headLineSeparator
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.largeSpace
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemAlbum
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemArtist
-import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemHeading
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemPlaylist
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.playlist
 import com.poulastaa.kyoku.ui.theme.dimens
@@ -65,7 +66,7 @@ fun LibraryScreen(
     navigate: (UiEvent.Navigate) -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
-        viewModel.loadData(context)
+        viewModel.loadData()
     }
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
@@ -85,7 +86,6 @@ fun LibraryScreen(
             }
         }
     }
-
 
 
     if (
@@ -119,7 +119,7 @@ fun LibraryScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {
-            // filter chips type: playlist , artist , album || sort types: list , grid
+            // filter chips
             filterChips(
                 span = GridItemSpan(
                     if (viewModel.state.isGrid) viewModel.state.maxGridSize
@@ -133,7 +133,7 @@ fun LibraryScreen(
                 sortOrderClick = viewModel::onEvent
             )
 
-            // Toast
+            // no internet toast
             item(
                 span = {
                     GridItemSpan(
@@ -160,6 +160,7 @@ fun LibraryScreen(
                 }
             }
 
+            // filtered items
             if (viewModel.state.filterChip.isPlaylist &&
                 viewModel.state.data.all.playlist.isNotEmpty()
             ) libraryScreenItemPlaylist(
@@ -174,11 +175,19 @@ fun LibraryScreen(
                 onClick = viewModel::onEvent
             )
 
-            if (viewModel.state.filterChip.isAlbum)
-                item {
-                    // todo album
-                    Text(text = "Album")
-                }
+            if (viewModel.state.filterChip.isAlbum &&
+                viewModel.state.data.all.album.isNotEmpty()
+            ) libraryScreenItemAlbum(
+                albums = viewModel.state.data.all.album,
+                sizeIfGrid = 90.dp,
+                sizeIfList = 80.dp,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                isGrid = viewModel.state.isGrid,
+                scope = scope,
+                onLongClick = viewModel::onEvent,
+                onClick = viewModel::onEvent
+            )
 
             if (viewModel.state.filterChip.isArtist &&
                 viewModel.state.data.all.artist.isNotEmpty()
@@ -246,9 +255,33 @@ fun LibraryScreen(
 
 
                 // pinned items
+                if (viewModel.state.data.pinned.isFavourite)
+                    favourite(
+                        span = GridItemSpan(
+                            if (viewModel.state.isGrid) viewModel.state.maxGridSize
+                            else viewModel.state.minGridSize
+                        ),
+                        scope = scope,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+                
                 if (viewModel.state.data.pinned.playlist.isNotEmpty())
                     libraryScreenItemPlaylist(
                         playlistPrev = viewModel.state.data.pinned.playlist,
+                        sizeIfGrid = 90.dp,
+                        sizeIfList = 80.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
+                        isGrid = viewModel.state.isGrid,
+                        scope = scope,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
+                    )
+
+                if (viewModel.state.data.pinned.album.isNotEmpty())
+                    libraryScreenItemAlbum(
+                        albums = viewModel.state.data.pinned.album,
                         sizeIfGrid = 90.dp,
                         sizeIfList = 80.dp,
                         isCookie = isCookie,
@@ -322,21 +355,19 @@ fun LibraryScreen(
                 )
 
                 // album
-                if (viewModel.state.data.all.album.isNotEmpty()) {
-                    libraryScreenItemHeading(
-                        heading = "Album",
+                if (viewModel.state.data.all.album.isNotEmpty())
+                    album(
+                        albums = viewModel.state.data.all.album,
+                        sizeIfGrid = if (isSmallPhone) 120.dp else 130.dp,
+                        sizeIfList = 80.dp,
+                        isCookie = isCookie,
+                        headerValue = headerValue,
                         isGrid = viewModel.state.isGrid,
-                        onClick = {
-                            scope.launch {
-                                viewModel.onEvent(LibraryUiEvent.ItemClick.AddAlbumClick)
-                            }
-                        }
+                        scope = scope,
+                        onCreateAlbumClick = viewModel::onEvent,
+                        onLongClick = viewModel::onEvent,
+                        onClick = viewModel::onEvent
                     )
-
-                    headLineSeparator(viewModel.state.isGrid)
-
-                    // todo album view
-                }
 
 
                 largeSpace(
@@ -355,7 +386,7 @@ fun LibraryScreen(
                         headerValue = headerValue,
                         isGrid = viewModel.state.isGrid,
                         scope = scope,
-                        onCreatePlaylistClick = viewModel::onEvent,
+                        onAddArtistClick = viewModel::onEvent,
                         onLongClick = viewModel::onEvent,
                         onClick = viewModel::onEvent
                     )
@@ -388,6 +419,3 @@ fun LibraryScreen(
             }
         )
 }
-
-
-

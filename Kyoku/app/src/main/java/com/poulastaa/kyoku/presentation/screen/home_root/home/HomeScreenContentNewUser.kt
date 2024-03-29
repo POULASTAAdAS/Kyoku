@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,7 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScre
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun HomeScreenContentNewUser(
@@ -47,6 +49,7 @@ fun HomeScreenContentNewUser(
     data: HomeUiData,
     isInternetError: Boolean,
     errorMessage: String,
+    scope: CoroutineScope = rememberCoroutineScope(),
     onClick: (HomeUiEvent.ItemClick) -> Unit
 ) {
     LazyColumn(
@@ -272,6 +275,7 @@ fun HomeScreenContentNewUser(
             isSmallPhone = isSmallPhone,
             isCookie = isCookie,
             headerValue = headerValue,
+            scope = scope,
             onClick = onClick
         )
     }

@@ -3,7 +3,8 @@ package com.poulastaa.kyoku.data.model.screens.common
 import androidx.compose.runtime.Stable
 
 @Stable
-data class UiPlaylistPrev(
+data class UiAlbum(
+    val id: Long,
     val name: String,
-    val listOfUrl: List<String>
+    val coverImage: String
 )

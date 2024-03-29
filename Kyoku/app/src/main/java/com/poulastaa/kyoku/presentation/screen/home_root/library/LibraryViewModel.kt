@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiState
@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.Random
@@ -57,7 +58,7 @@ class LibraryViewModel @Inject constructor(
     var state by mutableStateOf(LibraryUiState())
         private set
 
-    fun loadData(context: Context) {
+    fun loadData() {
         viewModelScope.launch(Dispatchers.IO) {
             delay(800)
             state = state.copy(
@@ -100,6 +101,26 @@ class LibraryViewModel @Inject constructor(
                     }
                 }
 
+                val allAlbum = async {
+                    db.readAllAlbum().collect {
+                        state = state.copy(
+                            data = state.data.copy(
+                                all = state.data.all.copy(
+                                    album = it.groupBy { album ->
+                                        album.id
+                                    }.map { entry ->
+                                        UiAlbum(
+                                            id = entry.key,
+                                            name = entry.value[0].name,
+                                            coverImage = entry.value[0].coverImage
+                                        )
+                                    }
+                                )
+                            )
+                        )
+                    }
+                }
+
                 val allArtist = async {
                     db.readAllArtist().collect {
                         state = state.copy(
@@ -124,6 +145,7 @@ class LibraryViewModel @Inject constructor(
 
                 allPlaylist.await()
                 allArtist.await()
+                allAlbum.await()
                 allFavourite.await()
             }
 
@@ -149,8 +171,36 @@ class LibraryViewModel @Inject constructor(
                     }
                 }
 
-                val isFavourite = async {
+                val album = async {
+                    db.readPinnedAlbum().collect {
+                        state = state.copy(
+                            data = state.data.copy(
+                                pinned = state.data.pinned.copy(
+                                    album = it.groupBy { album ->
+                                        album.name
+                                    }.map { entry ->
+                                        UiAlbum(
+                                            id = entry.value[0].id,
+                                            name = entry.key,
+                                            coverImage = entry.value[0].coverImage
+                                        )
+                                    }
+                                )
+                            )
+                        )
+                    }
+                }
 
+                val isFavourite = async {
+                    ds.readFavouritePinnedState().collect {
+                        state = state.copy(
+                            data = state.data.copy(
+                                pinned = state.data.pinned.copy(
+                                    isFavourite = it
+                                )
+                            )
+                        )
+                    }
                 }
 
                 val artist = async {
@@ -166,6 +216,7 @@ class LibraryViewModel @Inject constructor(
                 }
 
                 playlist.await()
+                album.await()
                 isFavourite.await()
                 artist.await()
             }
@@ -251,11 +302,21 @@ class LibraryViewModel @Inject constructor(
 
 
                     LibraryUiEvent.ItemClick.FavouriteLongClick -> {
-                        // todo check if favourite pinned
+                        viewModelScope.launch(Dispatchers.IO) {
+                            async {
+                                state = state.copy(
+                                    pinnedData = state.pinnedData.copy(
+                                        name = "favourite",
+                                        type = "favourite",
+                                        isPinned = ds.readFavouritePinnedState().first()
+                                    )
+                                )
+                            }.await()
 
-                        state = state.copy(
-                            isBottomSheetOpen = true
-                        )
+                            state = state.copy(
+                                isBottomSheetOpen = true
+                            )
+                        }
                     }
 
                     LibraryUiEvent.ItemClick.FavouriteClick -> {
@@ -287,6 +348,32 @@ class LibraryViewModel @Inject constructor(
                             _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
                         }
                     }
+
+
+                    is LibraryUiEvent.ItemClick.AlbumLongClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            async {
+                                state = state.copy(
+                                    pinnedData = state.pinnedData.copy(
+                                        name = event.name,
+                                        type = "album",
+                                        isPinned = db.checkIfAlbumPinned(name = event.name)
+                                    )
+                                )
+                            }.await()
+
+                            state = state.copy(
+                                isBottomSheetOpen = true
+                            )
+                        }
+                    }
+
+                    is LibraryUiEvent.ItemClick.AlbumClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                        }
+                    }
+
 
                     is LibraryUiEvent.ItemClick.ArtistLongClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
@@ -405,11 +492,23 @@ class LibraryViewModel @Inject constructor(
                                         else -> PinnedDataType.FAVOURITE
                                     }
 
-                                    val result = db.removePlaylistArtistAlbumFavouriteEntry(
+                                    val result = db.deletePlaylistArtistAlbumFavouriteEntry(
                                         type = type,
                                         name = state.pinnedData.name,
                                         ds = ds
                                     )
+
+                                    if (state.pinnedData.type == "favourite") {
+                                        state = state.copy(
+                                            data = state.data.copy(
+                                                pinned = state.data.pinned.copy(
+                                                    isFavourite = false
+                                                )
+                                            )
+                                        )
+
+                                        db.removeFromPinnedTable(PinnedDataType.FAVOURITE, "", ds)
+                                    }
 
                                     // todo make api call
                                     // todo if internet is not available store in internal database

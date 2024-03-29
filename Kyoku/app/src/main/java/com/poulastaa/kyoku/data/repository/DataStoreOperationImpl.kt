@@ -12,8 +12,10 @@ import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_AUTH_TYPE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_B_DATE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_EMAIL_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_IS_FAVOURITE_PINNED
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_ACCESS_TOKEN_OR_SESSION_COOKIE_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_JWT_REFRESH_TOKEN_KEY
+import com.poulastaa.kyoku.utils.Constants.PREFERENCES_LIBRARY_SORT_TYPE
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PASSWORD_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_PROFILE_PIC_KEY
 import com.poulastaa.kyoku.utils.Constants.PREFERENCES_SIGNED_IN_KEY
@@ -44,7 +46,8 @@ class DataStoreOperationImpl @Inject constructor(
 
         val bDateKey = stringPreferencesKey(name = PREFERENCES_B_DATE_KEY)
 
-        val librarySortType = booleanPreferencesKey(name = "")
+        val librarySortType = booleanPreferencesKey(name = PREFERENCES_LIBRARY_SORT_TYPE)
+        val isFavouritePinned = booleanPreferencesKey(name = PREFERENCES_IS_FAVOURITE_PINNED)
     }
 
     override suspend fun storeSignedInState(signedInState: String) {
@@ -238,5 +241,25 @@ class DataStoreOperationImpl @Inject constructor(
         }.map {
             val sortType = it[PreferencesKey.librarySortType] ?: true
             sortType
+        }
+
+
+    override suspend fun storeFavouritePinnedState(data: Boolean) {
+        dataStore.edit {
+            it[PreferencesKey.isFavouritePinned] = data
+        }
+    }
+
+    override fun readFavouritePinnedState(): Flow<Boolean> = dataStore
+        .data
+        .catch { e ->
+            if (e is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw e
+            }
+        }.map {
+            val isPinned = it[PreferencesKey.isFavouritePinned] ?: false
+            isPinned
         }
 }

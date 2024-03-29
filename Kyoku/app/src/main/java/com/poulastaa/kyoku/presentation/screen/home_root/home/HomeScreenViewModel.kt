@@ -285,7 +285,11 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     HomeScreenItemType.SONG -> {
+                        viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
+                            _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
+                        }
 
+                        return
                     }
 
                     HomeScreenItemType.ARTIST_MORE -> {

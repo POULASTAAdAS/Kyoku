@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.data.model.screens.library
 
 import androidx.compose.runtime.Stable
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 
 @Stable
@@ -34,17 +35,10 @@ data class LibraryUiData(
 )
 
 @Stable
-data class UiAlbum(
-    val id: Long,
-    val name: String,
-    val points: Int
-)
-
-@Stable
 data class Artist(
     val id: Long,
     val name: String,
-    val imageUrl: String
+    val coverImage: String
 )
 
 @Stable

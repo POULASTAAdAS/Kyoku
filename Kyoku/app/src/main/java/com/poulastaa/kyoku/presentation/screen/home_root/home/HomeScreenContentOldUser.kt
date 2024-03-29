@@ -27,20 +27,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
+import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardMore
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardWithText
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.FavouritePrev
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreenContentOldUser(
@@ -52,6 +58,8 @@ fun HomeScreenContentOldUser(
     headerValue: String,
     isInternetError: Boolean,
     errorMessage: String,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    onClick: (HomeUiEvent.ItemClick) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -88,10 +96,18 @@ fun HomeScreenContentOldUser(
                         name = data.playlist[0].name,
                         imageUrls = data.playlist[0].listOfUrl,
                         isCookie = isCookie,
-                        headerValue = headerValue
-                    ) {
-
-                    }
+                        headerValue = headerValue,
+                        onClick = {
+                            scope.launch {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = HomeScreenItemType.PLAYLIST,
+                                        name = data.playlist[0].name
+                                    )
+                                )
+                            }
+                        }
+                    )
 
 
                     // saved playlist
@@ -102,10 +118,18 @@ fun HomeScreenContentOldUser(
                             name = data.playlist[1].name,
                             imageUrls = data.playlist[1].listOfUrl,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = HomeScreenItemType.PLAYLIST,
+                                            name = data.playlist[1].name
+                                        )
+                                    )
+                                }
+                            }
+                        )
                 }
                 Row(
                     modifier = Modifier
@@ -123,34 +147,56 @@ fun HomeScreenContentOldUser(
                             name = data.savedAlbumPrev[0].album,
                             imageUrl = data.savedAlbumPrev[0].coverImage,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = HomeScreenItemType.ALBUM_PREV,
+                                            name = data.savedAlbumPrev[0].album
+                                        )
+                                    )
+                                }
+                            }
+                        )
 
                     // favourites or album
                     if (data.favourites)
-                        HomeScreenCardPlaylistPrev(
+                        FavouritePrev(
                             modifier = Modifier
-                                .fillMaxSize(),
-                            name = data.playlist[1].name,
-                            imageUrls = data.playlist[1].listOfUrl,
-                            isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                                .fillMaxWidth(.5f)
+                                .fillMaxHeight(),
+                            onLongClick = {},
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = HomeScreenItemType.FAVOURITE
+                                        )
+                                    )
+                                }
+                            }
+                        )
                     else if (data.savedAlbumPrev.size >= 2)
                         HomeScreenCardWithText(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .fillMaxHeight(),
                             name = data.savedAlbumPrev[1].album,
                             imageUrl = data.savedAlbumPrev[1].coverImage,
                             isCookie = isCookie,
-                            headerValue = headerValue
-                        ) {
-
-                        }
+                            headerValue = headerValue,
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = HomeScreenItemType.ALBUM_PREV,
+                                            name = data.savedAlbumPrev[0].album
+                                        )
+                                    )
+                                }
+                            }
+                        )
                 }
             }
         }
@@ -217,10 +263,18 @@ fun HomeScreenContentOldUser(
                                 size = if (isSmallPhone) 120.dp else 130.dp,
                                 imageUrl = data.historyPrev[historySongIndex].coverImage,
                                 isCookie = isCookie,
-                                headerValue = headerValue
-                            ) {
-
-                            }
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = HomeScreenItemType.SONG,
+                                                id = data.historyPrev[historySongIndex].id
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                             Text(
                                 modifier = Modifier
@@ -247,10 +301,17 @@ fun HomeScreenContentOldUser(
                             text = "View All",
                             fontWeight = FontWeight.Black,
                             maxLine = 2,
-                            size = if (isSmallPhone) 120.dp else 130.dp
-                        ) {
-
-                        }
+                            size = if (isSmallPhone) 120.dp else 130.dp,
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = HomeScreenItemType.HISTORY
+                                        )
+                                    )
+                                }
+                            }
+                        )
                     }
                 }
 
@@ -263,7 +324,9 @@ fun HomeScreenContentOldUser(
             artistPrev = data.artistPrev,
             isSmallPhone = isSmallPhone,
             isCookie = isCookie,
-            headerValue = headerValue
+            headerValue = headerValue,
+            scope = scope,
+            onClick = onClick
         )
     }
 }

@@ -32,4 +32,7 @@ interface DataStoreOperation {
 
     suspend fun storeLibraryDataSortType(sortType: Boolean)
     fun readLibraryDataSortType(): Flow<Boolean>
+
+    suspend fun storeFavouritePinnedState(data:Boolean)
+    fun readFavouritePinnedState(): Flow<Boolean>
 }

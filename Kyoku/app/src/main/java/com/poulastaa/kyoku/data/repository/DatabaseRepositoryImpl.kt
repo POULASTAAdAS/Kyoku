@@ -86,76 +86,124 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                dao.insertIntoFevArtistMixPrev(
-                    data = it.toFevArtistMixPrevTable(
-                        context = context!!,
-                        isCookie = !header!!.startsWith("B"),
-                        header = header!!
+            async {
+                list.forEach {
+                    dao.insertIntoFevArtistMixPrev(
+                        data = it.toFevArtistMixPrevTable()
                     )
-                )
-            }
+                }
+            }.await()
+
+//            async {
+//                dao.getAllFevArtistMixPrev().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updateArtistCoverImage(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }.await()
         }
     }
 
     fun insertIntoAlbumPrev(list: List<AlbumPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                val albumId = dao.insertIntoAlbumPrev(data = it.toAlbumTablePrevEntry())
+            async {
+                list.forEach {
+                    val albumId = dao.insertIntoAlbumPrev(data = it.toAlbumTablePrevEntry())
 
-                it.listOfSongs.forEach { song ->
-                    val songId = dao.insertIntoSongPrev(
-                        data = song.toSongPrevTableEntry(
-                            context = context!!,
-                            isCookie = !header!!.startsWith("B"),
-                            header = header!!
-                        )
-                    )
-
-                    dao.insertIntoAlbumPrevSongRelationTable(
-                        data = AlbumPreviewSongRelationTable(
-                            albumId = albumId,
-                            songId = songId
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                try {
-                    dao.insertIntoArtist(
-                        it.artist.toArtistTableEntry(
-                            context = context!!,
-                            isCookie = !header!!.startsWith("B"),
-                            header = header!!
-                        )
-                    )
-                } catch (e: Exception) {
-                    null
-                }?.let { id ->
-                    it.listOfSongs.forEach { previewSong ->
+                    it.listOfSongs.forEach { song ->
                         val songId = dao.insertIntoSongPrev(
-                            previewSong.toSongPrevTableEntry(
-                                context = context!!,
-                                isCookie = !header!!.startsWith("B"),
-                                header = header!!
-                            )
+                            data = song.toSongPrevTableEntry()
                         )
 
-                        dao.insertIntoArtistPrevSongRelationTable(
-                            data = ArtistPreviewSongRelation(
-                                artistId = id,
+                        dao.insertIntoAlbumPrevSongRelationTable(
+                            data = AlbumPreviewSongRelationTable(
+                                albumId = albumId,
                                 songId = songId
                             )
                         )
                     }
                 }
+            }.await()
 
-            }
+//            async {
+//                dao.getAllPrevSong().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updatePrevSong(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }.await()
+        }
+    }
+
+    fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            async {
+                list.forEach {
+                    try {
+                        dao.insertIntoArtist(
+                            it.artist.toArtistTableEntry()
+                        )
+                    } catch (e: Exception) {
+                        null
+                    }?.let { id ->
+                        it.listOfSongs.forEach { previewSong ->
+                            val songId = dao.insertIntoSongPrev(
+                                previewSong.toSongPrevTableEntry()
+                            )
+
+                            dao.insertIntoArtistPrevSongRelationTable(
+                                data = ArtistPreviewSongRelation(
+                                    artistId = id,
+                                    songId = songId
+                                )
+                            )
+                        }
+                    }
+                }
+            }.await()
+
+//            val artist = async {
+//                dao.getAllFromArtist().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updatePrevArtist(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }
+//
+//            val prevSong = async {
+//                dao.getAllPrevSong().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updatePrevSong(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }
+//
+//            artist.await()
+//            prevSong.await()
         }
     }
 
@@ -165,11 +213,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 dao.insertIntoDailyMixPrevTable(
                     data = DailyMixPrevTable(
                         id = dao.insertIntoSongPrev(
-                            data = it.toSongPrevTableEntry(
-                                context = context!!,
-                                isCookie = !header!!.startsWith("B"),
-                                header = header!!
-                            )
+                            data = it.toSongPrevTableEntry()
                         )
                     )
                 )
@@ -188,31 +232,47 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoPlaylistHome(list: List<ResponsePlaylist>) {
         CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                val playlistId = async {
-                    dao.insertPlaylist(
-                        playlist = PlaylistTable(
-                            playlistId = it.id,
-                            name = it.name
-                        )
-                    )
-                }.await()
-
-                it.listOfSongs.forEach { song ->
-                    val songId = async {
-                        dao.insertSong(
-                            song = song.toSongTable()
+            async {
+                list.forEach {
+                    val playlistId = async {
+                        dao.insertPlaylist(
+                            playlist = PlaylistTable(
+                                playlistId = it.id,
+                                name = it.name
+                            )
                         )
                     }.await()
 
-                    dao.insertSongPlaylistRelation(
-                        data = SongPlaylistRelationTable(
-                            playlistId = playlistId,
-                            songId = songId
+                    it.listOfSongs.forEach { song ->
+                        val songId = async {
+                            dao.insertSong(
+                                song = song.toSongTable()
+                            )
+                        }.await()
+
+                        dao.insertSongPlaylistRelation(
+                            data = SongPlaylistRelationTable(
+                                playlistId = playlistId,
+                                songId = songId
+                            )
                         )
-                    )
+                    }
                 }
-            }
+            }.await()
+
+//            async {
+//                dao.getAllFromSongTable().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updateSong(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }.await()
         }
     }
 
@@ -262,31 +322,47 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoRecentlyPlayedPrev(list: List<SongPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                val songId = async {
-                    dao.insertIntoSongPrev(
-                        data = it.toSongPrevTableEntry(
-                            context = context!!,
-                            isCookie = !header!!.startsWith("B"),
-                            header = header!!
+            async {
+                list.forEach {
+                    val songId = async {
+                        dao.insertIntoSongPrev(
+                            data = it.toSongPrevTableEntry()
+                        )
+                    }.await()
+
+
+                    dao.insertIntoRecentlyPlayedPrevTable(
+                        data = RecentlyPlayedPrevTable(
+                            songId = songId
                         )
                     )
-                }.await()
+                }
+            }.await()
 
-
-                dao.insertIntoRecentlyPlayedPrevTable(
-                    data = RecentlyPlayedPrevTable(
-                        songId = songId
-                    )
-                )
-            }
+//            async {
+//                dao.getAllPrevSong().forEach {
+//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
+//                        dao.updatePrevSong(
+//                            coverImage = it.coverImage.encodeImage(
+//                                context = context!!,
+//                                header = header!!,
+//                                isCookie = !header!!.startsWith("B")
+//                            ),
+//                            id = it.id
+//                        )
+//                }
+//            }.await()
         }
     }
 
+    fun readAllAlbum() = dao.readAllAlbum()
     fun readAllArtist() = dao.readAllArtist()
 
     suspend fun checkIfPlaylistIdPinned(name: String) =
         dao.checkIfPlaylistIsPinned(name)?.let { true } ?: false
+
+    suspend fun checkIfAlbumPinned(name: String) =
+        dao.checkIfAlbumIsPinned(name)?.let { true } ?: false
 
     suspend fun checkIfArtistPinned(name: String) =
         dao.checkIfArtistPinned(name)?.let { true } ?: false
@@ -340,7 +416,9 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             PinnedDataType.FAVOURITE -> {
-                false
+                ds.storeFavouritePinnedState(true)
+
+                true
             }
         }
     }
@@ -382,13 +460,14 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             PinnedDataType.FAVOURITE -> {
-                false
+                ds.storeFavouritePinnedState(false)
+                true
             }
         }
     }
 
 
-    suspend fun removePlaylistArtistAlbumFavouriteEntry(
+    suspend fun deletePlaylistArtistAlbumFavouriteEntry(
         type: PinnedDataType,
         name: String,
         ds: DataStoreOperation
@@ -398,7 +477,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val playlistId = dao.getIdOfPlaylist(name) ?: return@withContext false
 
                 return@withContext try {
-                    dao.removePlaylist(playlistId)
+                    dao.deletePlaylist(playlistId)
                     true
                 } catch (e: Exception) {
                     false
@@ -409,7 +488,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val albumId = dao.getIdOfAlbum(name) ?: return@withContext false
 
                 return@withContext try {
-                    dao.removeAlbum(albumId)
+                    dao.deleteAlbum(albumId)
                     true
                 } catch (e: Exception) {
                     false
@@ -420,7 +499,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val artistId = dao.getIdOfArtist(name) ?: return@withContext false
 
                 return@withContext try {
-                    dao.removeArtist(artistId)
+                    dao.deleteArtist(artistId)
                     true
                 } catch (e: Exception) {
                     false
@@ -428,11 +507,13 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             PinnedDataType.FAVOURITE -> {
-                false
+                dao.deleteFavourites()
+                true
             }
         }
     }
 
     fun readPinnedPlaylist() = dao.readPinnedPlaylist()
+    fun readPinnedAlbum() = dao.readPinnedAlbum()
     fun readPinnedArtist() = dao.readPinnedArtist()
 }

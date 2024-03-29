@@ -22,6 +22,9 @@ sealed class LibraryUiEvent {
         data class PlaylistLongClick(val name: String) : ItemClick()
         data class PlaylistClick(val name: String) : ItemClick()
 
+        data class AlbumLongClick(val name: String) : ItemClick()
+        data class AlbumClick(val name: String) : ItemClick()
+
         data class ArtistLongClick(val id: Long, val name: String) : ItemClick()
         data class ArtistClick(val id: Long, val name: String) : ItemClick()
 
@@ -35,8 +38,8 @@ sealed class LibraryUiEvent {
         data object DeleteClick : BottomSheetItemClick()
     }
 
-    sealed class DeleteDialogClick: ItemClick(){
-        data object DeleteYes: DeleteDialogClick()
-        data object DeleteNo: DeleteDialogClick()
+    sealed class DeleteDialogClick : ItemClick() {
+        data object DeleteYes : DeleteDialogClick()
+        data object DeleteNo : DeleteDialogClick()
     }
 }

@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.utils
 
 import android.content.Context
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.google.gson.JsonParser
@@ -202,45 +201,22 @@ fun AlbumPreview.toAlbumTablePrevEntry() = AlbumPrevTable(
     name = this.name
 )
 
-fun FevArtistsMixPreview.toFevArtistMixPrevTable(
-    context: Context,
-    isCookie: Boolean,
-    header: String,
-) = FevArtistsMixPreviewTable(
+fun FevArtistsMixPreview.toFevArtistMixPrevTable() = FevArtistsMixPreviewTable(
     artist = this.artist,
-    coverImage = this.coverImage.encodeImage(
-        context,
-        isCookie,
-        header
-    )
+    coverImage = this.coverImage
 )
 
-fun ResponseArtist.toArtistTableEntry(
-    context: Context,
-    isCookie: Boolean,
-    header: String,
-) = ArtistPrevTable(
+fun ResponseArtist.toArtistTableEntry() = ArtistPrevTable(
     id = this.id,
     name = this.name,
-    imageUrl = this.imageUrl.encodeImage(
-        context,
-        isCookie,
-        header
-    )
+    coverImage = this.imageUrl
 )
 
 fun SongPreview.toSongPrevTableEntry(
-    context: Context,
-    isCookie: Boolean,
-    header: String,
 ) = SongPreviewTable(
     songId = this.id.toLong(),
     title = this.title,
-    coverImage = this.coverImage.encodeImage(
-        context,
-        isCookie,
-        header
-    ),
+    coverImage = this.coverImage,
     artist = this.artist,
     album = this.album
 )
@@ -268,7 +244,7 @@ fun ArtistPrevResult.toHomeUiSongPrev() = HomeUiSongPrev(
 )
 
 
-private fun String.encodeImage(
+fun String.encodeImage(
     context: Context,
     isCookie: Boolean,
     header: String,
