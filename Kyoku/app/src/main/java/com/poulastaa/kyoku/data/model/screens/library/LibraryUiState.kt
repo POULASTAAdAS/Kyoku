@@ -44,7 +44,7 @@ data class Artist(
 @Stable
 data class PinnedData(
     val name: String = "",
-    val type: String = "",
+    val type: PinnedDataType = PinnedDataType.PLAYLIST,
     val isPinned: Boolean = false
 )
 
@@ -56,9 +56,10 @@ data class FilterChip(
 )
 
 @Stable
-enum class PinnedDataType {
-    ARTIST,
-    PLAYLIST,
-    FAVOURITE,
-    ALBUM
+enum class PinnedDataType(val title: String) {
+    ARTIST(title = "Artist"),
+    PLAYLIST(title = "Playlist"),
+    FAVOURITE(title = "Favourite"),
+    ALBUM(title = "Album"),
+    NON(title = "Non")
 }

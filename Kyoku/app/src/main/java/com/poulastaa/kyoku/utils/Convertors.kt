@@ -1,9 +1,5 @@
 package com.poulastaa.kyoku.utils
 
-import android.content.Context
-import android.graphics.drawable.BitmapDrawable
-import coil.ImageLoader
-import coil.request.ImageRequest
 import com.google.gson.JsonParser
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
@@ -37,7 +33,9 @@ import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiFevArtistMix
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
-import com.poulastaa.kyoku.data.model.ui.UiPlaylist
+import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -46,7 +44,6 @@ import com.poulastaa.kyoku.utils.Constants.TYPE_EMAIL_LOG_IN_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_EMAIL_SIGN_UP_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_GOOGLE_AUTH_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_PASSKEY_AUTH_REQ
-import kotlinx.coroutines.runBlocking
 
 fun RootAuthScreenState.toPasskeyAuthRequest() = PasskeyAuthReq(
     type = TYPE_PASSKEY_AUTH_REQ,
@@ -140,7 +137,7 @@ fun ResponseSong.toSongTable() = SongTable(
     date = this.date
 )
 
-fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
+fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<SpotifyUiPlaylist> {
     val map = HashMap<String, ArrayList<SongInfo>>()
 
     this.forEach {
@@ -149,7 +146,7 @@ fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<UiPlaylist> {
     }
 
     return map.map {
-        UiPlaylist(
+        SpotifyUiPlaylist(
             name = it.key,
             songs = it.value
         )
@@ -242,25 +239,3 @@ fun ArtistPrevResult.toHomeUiSongPrev() = HomeUiSongPrev(
     coverImage = this.coverImage,
     artist = this.name
 )
-
-
-fun String.encodeImage(
-    context: Context,
-    isCookie: Boolean,
-    header: String,
-): String = runBlocking {
-    val req = ImageRequest.Builder(context)
-        .addHeader(if (isCookie) "Cookie" else "Authorization", header)
-        .data(this@encodeImage)
-        .build()
-
-    try {
-        (ImageLoader(context).execute(req).drawable as BitmapDrawable).bitmap.let {
-            BitmapConverter.encodeToSting(it)
-        }
-    } catch (e: Exception) {
-        this@encodeImage
-    }
-}
-
-

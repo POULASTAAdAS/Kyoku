@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
+import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
@@ -86,7 +86,7 @@ fun HomeScreenContentNewUser(
                         onClick = {
                             onClick.invoke(
                                 HomeUiEvent.ItemClick(
-                                    type = HomeScreenItemType.PLAYLIST,
+                                    type = ItemsType.PLAYLIST,
                                     name = data.playlist[0].name
                                 )
                             )
@@ -106,7 +106,7 @@ fun HomeScreenContentNewUser(
                             onClick = {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.PLAYLIST,
+                                        type = ItemsType.PLAYLIST,
                                         name = data.playlist[1].name
                                     )
                                 )
@@ -134,7 +134,7 @@ fun HomeScreenContentNewUser(
                             onClick = {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.PLAYLIST,
+                                        type = ItemsType.PLAYLIST,
                                         name = data.playlist[2].name
                                     )
                                 )
@@ -154,7 +154,7 @@ fun HomeScreenContentNewUser(
                             onClick = {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.PLAYLIST,
+                                        type = ItemsType.PLAYLIST,
                                         name = data.playlist[3].name
                                     )
                                 )
@@ -182,7 +182,7 @@ fun HomeScreenContentNewUser(
                 onClick = {
                     onClick.invoke(
                         HomeUiEvent.ItemClick(
-                            type = HomeScreenItemType.ARTIST_MIX
+                            type = ItemsType.ARTIST_MIX
                         )
                     )
                 }
@@ -255,7 +255,7 @@ fun HomeScreenContentNewUser(
                             onClick = {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.ALBUM_PREV
+                                        type = ItemsType.ALBUM_PREV
                                     )
                                 )
                             }

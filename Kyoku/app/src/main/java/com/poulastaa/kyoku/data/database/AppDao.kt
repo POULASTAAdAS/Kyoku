@@ -29,6 +29,7 @@ import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -335,6 +336,19 @@ interface AppDao {
     @Transaction
     @Query("delete from FavouriteTable")
     fun deleteFavourites()
+
+
+    // songView screen query
+
+    @Query(
+        """
+        select PlaylistTable.name , SongTable.id, SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable 
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = SongTable.id
+        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
+        where PlaylistTable.id = :id
+    """
+    )
+    fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
 }
 
 

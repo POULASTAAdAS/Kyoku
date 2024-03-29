@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,20 +34,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.data.model.database.SongInfo
-import com.poulastaa.kyoku.data.model.ui.UiPlaylist
+import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
 import com.poulastaa.kyoku.presentation.screen.auth.common.CustomTextFiled
 import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.components.SpotifyPlaylistSongCard
-import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun SpotifyPlaylistScreenContent(
     paddingValues: PaddingValues,
-    uiPlaylist: List<UiPlaylist>,
+    uiPlaylist: List<SpotifyUiPlaylist>,
     isCookie: Boolean,
     headerValue: String,
     link: String,

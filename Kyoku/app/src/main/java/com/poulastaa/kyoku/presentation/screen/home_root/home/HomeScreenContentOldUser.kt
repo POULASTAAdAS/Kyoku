@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
+import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
@@ -101,7 +101,7 @@ fun HomeScreenContentOldUser(
                             scope.launch {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.PLAYLIST,
+                                        type = ItemsType.PLAYLIST,
                                         name = data.playlist[0].name
                                     )
                                 )
@@ -123,7 +123,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = HomeScreenItemType.PLAYLIST,
+                                            type = ItemsType.PLAYLIST,
                                             name = data.playlist[1].name
                                         )
                                     )
@@ -152,7 +152,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = HomeScreenItemType.ALBUM_PREV,
+                                            type = ItemsType.ALBUM_PREV,
                                             name = data.savedAlbumPrev[0].album
                                         )
                                     )
@@ -171,7 +171,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = HomeScreenItemType.FAVOURITE
+                                            type = ItemsType.FAVOURITE
                                         )
                                     )
                                 }
@@ -190,7 +190,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = HomeScreenItemType.ALBUM_PREV,
+                                            type = ItemsType.ALBUM_PREV,
                                             name = data.savedAlbumPrev[0].album
                                         )
                                     )
@@ -268,7 +268,7 @@ fun HomeScreenContentOldUser(
                                     scope.launch {
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
-                                                type = HomeScreenItemType.SONG,
+                                                type = ItemsType.SONG,
                                                 id = data.historyPrev[historySongIndex].id
                                             )
                                         )
@@ -306,7 +306,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = HomeScreenItemType.HISTORY
+                                            type = ItemsType.HISTORY
                                         )
                                     )
                                 }

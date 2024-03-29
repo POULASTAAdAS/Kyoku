@@ -23,7 +23,7 @@ fun HomeRootDrawer(
     viewModel: HomeRootViewModel = hiltViewModel(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     homeNavController: NavHostController = rememberNavController(),
-    navigate: (UiEvent.Navigate) -> Unit
+    navigate: (UiEvent) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
@@ -37,12 +37,12 @@ fun HomeRootDrawer(
                     ) {
                         homeNavController.popBackStack()
                         homeNavController.navigate(event.route)
-                    } else navigate.invoke(UiEvent.Navigate(event.route))
+                    } else navigate.invoke(event)
 
                     drawerState.close()
                 }
 
-                is UiEvent.ShowToast -> Unit
+                else -> Unit
             }
         }
     }
@@ -74,7 +74,8 @@ fun HomeRootDrawer(
                     }
                 },
                 state = viewModel.state,
-                navigate = viewModel::onEvent
+                navigateWithUiEvent = navigate,
+                navigateWithHomeRoot = viewModel::onEvent
             )
         }
     )

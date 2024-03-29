@@ -46,6 +46,7 @@ fun SuggestArtistScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                else -> Unit
             }
         }
     }

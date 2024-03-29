@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
+import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -75,7 +75,7 @@ fun LazyListScope.homeScreenArtistList(
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
-                                type = HomeScreenItemType.ARTIST,
+                                type = ItemsType.ARTIST,
                                 name = artistPrev[artistIndex].name
                             )
                         )
@@ -93,7 +93,7 @@ fun LazyListScope.homeScreenArtistList(
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
-                                type = HomeScreenItemType.ARTIST,
+                                type = ItemsType.ARTIST,
                                 name = artistPrev[artistIndex].name
                             )
                         )
@@ -134,7 +134,7 @@ fun LazyListScope.homeScreenArtistList(
                             scope.launch {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = HomeScreenItemType.SONG,
+                                        type = ItemsType.SONG,
                                         id = artistPrev[artistIndex]
                                             .lisOfPrevSong[songIndex].id
                                     )
@@ -168,7 +168,7 @@ fun LazyListScope.homeScreenArtistList(
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
-                                type = HomeScreenItemType.ARTIST,
+                                type = ItemsType.ARTIST,
                                 name = artistPrev[artistIndex].name
                             )
                         )

@@ -12,9 +12,9 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
-import com.poulastaa.kyoku.data.model.screens.home.HomeScreenItemType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
@@ -187,6 +187,7 @@ class HomeScreenViewModel @Inject constructor(
                             playlist = it.groupBy { result -> result.name }
                                 .map { entry ->
                                     UiPlaylistPrev(
+                                        id = entry.value[0].id,
                                         name = entry.key,
                                         listOfUrl = entry.value.map { url ->
                                             url.coverImage
@@ -260,31 +261,31 @@ class HomeScreenViewModel @Inject constructor(
 
             is HomeUiEvent.ItemClick -> {
                 when (event.type) {
-                    HomeScreenItemType.PLAYLIST -> {
+                    ItemsType.PLAYLIST -> {
 
                     }
 
-                    HomeScreenItemType.ALBUM -> {
+                    ItemsType.ALBUM -> {
 
                     }
 
-                    HomeScreenItemType.ALBUM_PREV -> {
+                    ItemsType.ALBUM_PREV -> {
 
                     }
 
-                    HomeScreenItemType.ARTIST -> {
+                    ItemsType.ARTIST -> {
 
                     }
 
-                    HomeScreenItemType.ARTIST_MIX -> {
+                    ItemsType.ARTIST_MIX -> {
 
                     }
 
-                    HomeScreenItemType.FAVOURITE -> {
+                    ItemsType.FAVOURITE -> {
 
                     }
 
-                    HomeScreenItemType.SONG -> {
+                    ItemsType.SONG -> {
                         viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
                             _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
                         }
@@ -292,13 +293,14 @@ class HomeScreenViewModel @Inject constructor(
                         return
                     }
 
-                    HomeScreenItemType.ARTIST_MORE -> {
+                    ItemsType.ARTIST_MORE -> {
 
                     }
 
-                    HomeScreenItemType.HISTORY -> {
+                    ItemsType.HISTORY -> {
 
                     }
+                    else -> return
                 }.let {
                     viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
                         _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))

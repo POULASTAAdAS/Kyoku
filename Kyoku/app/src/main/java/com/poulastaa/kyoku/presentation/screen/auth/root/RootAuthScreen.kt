@@ -39,6 +39,7 @@ fun RootAuthScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                else -> Unit
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist
 
-import com.poulastaa.kyoku.data.model.ui.UiPlaylist
+import com.poulastaa.kyoku.data.model.database.SongInfo
 
 data class GetSpotifyPlaylistUiState(
     val link: String = "",
@@ -11,6 +11,13 @@ data class GetSpotifyPlaylistUiState(
 
     val isMakingApiCall: Boolean = false,
     val isInternetAvailable: Boolean = false,
-    val listOfPlaylist: List<UiPlaylist> = emptyList(),
+    val listOfPlaylist: List<SpotifyUiPlaylist> = emptyList(),
     val canSkip: Boolean = true
+)
+
+
+data class SpotifyUiPlaylist(
+    val name: String = "",
+    val songs: List<SongInfo> = emptyList(),
+    var isExpanded: Boolean = false
 )

@@ -420,6 +420,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
                 true
             }
+            else -> false
         }
     }
 
@@ -463,6 +464,8 @@ class DatabaseRepositoryImpl @Inject constructor(
                 ds.storeFavouritePinnedState(false)
                 true
             }
+
+            else -> false
         }
     }
 
@@ -510,10 +513,15 @@ class DatabaseRepositoryImpl @Inject constructor(
                 dao.deleteFavourites()
                 true
             }
+            else -> false
         }
     }
 
     fun readPinnedPlaylist() = dao.readPinnedPlaylist()
     fun readPinnedAlbum() = dao.readPinnedAlbum()
     fun readPinnedArtist() = dao.readPinnedArtist()
+
+
+    // songView screen query
+    fun getPlaylist(id: Long) = dao.getPlaylist(id)
 }

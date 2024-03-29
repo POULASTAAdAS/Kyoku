@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ fun HomeScreenContentLoading(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(
                 top = paddingValues.calculateTopPadding() + MaterialTheme.dimens.small3,
                 bottom = paddingValues.calculateBottomPadding()

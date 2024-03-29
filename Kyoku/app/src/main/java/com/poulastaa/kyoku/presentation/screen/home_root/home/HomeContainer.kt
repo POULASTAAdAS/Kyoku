@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
+import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomBar
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeTopAppBar
@@ -45,7 +46,8 @@ fun HomeContainer(
     context: Context = LocalContext.current,
     state: HomeRootUiState,
     opnDrawer: () -> Unit,
-    navigate: (HomeRootUiEvent) -> Unit
+    navigateWithUiEvent: (UiEvent) -> Unit,
+    navigateWithHomeRoot: (HomeRootUiEvent) -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -62,7 +64,7 @@ fun HomeContainer(
                     isSmallPhone = isSmallPhone,
                     onProfileClick = opnDrawer,
                     onSearchClick = {
-                        navigate.invoke(HomeRootUiEvent.SearchClick(SearchType.ALL_SEARCH))
+                        navigateWithHomeRoot.invoke(HomeRootUiEvent.SearchClick(SearchType.ALL_SEARCH))
                     }
                 )
             else
@@ -75,7 +77,7 @@ fun HomeContainer(
                     scrollBehavior = topAppBarScrollBehavior,
                     onProfileClick = opnDrawer,
                     onSearchClick = {
-                        navigate.invoke(HomeRootUiEvent.SearchClick(SearchType.LIBRARY_SEARCH))
+                        navigateWithHomeRoot.invoke(HomeRootUiEvent.SearchClick(SearchType.LIBRARY_SEARCH))
                     }
                 )
         },
@@ -84,7 +86,7 @@ fun HomeContainer(
                 scrollBehavior = bottomAppBarScrollBehavior,
                 isHome = state.isHome
             ) {
-                navigate.invoke(HomeRootUiEvent.BottomNavClick(it))
+                navigateWithHomeRoot.invoke(HomeRootUiEvent.BottomNavClick(it))
             }
         }
     ) { paddingValue ->
@@ -99,7 +101,7 @@ fun HomeContainer(
                     isSmallPhone = isSmallPhone,
                     context = context,
                     paddingValues = paddingValue,
-                    navigate = navigate
+                    navigate = navigateWithHomeRoot
                 )
             }
 
@@ -109,10 +111,9 @@ fun HomeContainer(
                     context = context,
                     paddingValues = paddingValue,
                     isCookie = isCookie,
-                    headerValue = authHeader
-                ) {
-                    navigate.invoke(HomeRootUiEvent.Navigate(it.route))
-                }
+                    headerValue = authHeader,
+                    navigate = navigateWithUiEvent
+                )
             }
         }
     }

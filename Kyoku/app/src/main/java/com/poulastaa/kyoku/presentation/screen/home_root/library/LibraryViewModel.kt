@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
@@ -89,6 +90,7 @@ class LibraryViewModel @Inject constructor(
                                 all = state.data.all.copy(
                                     playlist = it.groupBy { result -> result.name }.map { entry ->
                                         UiPlaylistPrev(
+                                            id = entry.value[0].id,
                                             name = entry.key,
                                             listOfUrl = entry.value.map { url ->
                                                 url.coverImage
@@ -159,6 +161,7 @@ class LibraryViewModel @Inject constructor(
                                     playlist = it.groupBy { result -> result.name }
                                         .map { map ->
                                             UiPlaylistPrev(
+                                                id = map.value[0].id,
                                                 name = map.key,
                                                 listOfUrl = map.value.map { playlist ->
                                                     playlist.coverImage
@@ -306,8 +309,8 @@ class LibraryViewModel @Inject constructor(
                             async {
                                 state = state.copy(
                                     pinnedData = state.pinnedData.copy(
-                                        name = "favourite",
-                                        type = "favourite",
+                                        name = PinnedDataType.FAVOURITE.title,
+                                        type = PinnedDataType.FAVOURITE,
                                         isPinned = ds.readFavouritePinnedState().first()
                                     )
                                 )
@@ -331,7 +334,7 @@ class LibraryViewModel @Inject constructor(
                                 state = state.copy(
                                     pinnedData = state.pinnedData.copy(
                                         name = event.name,
-                                        type = "playlist",
+                                        type = PinnedDataType.PLAYLIST,
                                         isPinned = db.checkIfPlaylistIdPinned(name = event.name)
                                     )
                                 )
@@ -345,7 +348,13 @@ class LibraryViewModel @Inject constructor(
 
                     is LibraryUiEvent.ItemClick.PlaylistClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    route = Screens.SongView.route,
+                                    type = ItemsType.PLAYLIST,
+                                    id = event.id
+                                )
+                            )
                         }
                     }
 
@@ -356,7 +365,7 @@ class LibraryViewModel @Inject constructor(
                                 state = state.copy(
                                     pinnedData = state.pinnedData.copy(
                                         name = event.name,
-                                        type = "album",
+                                        type = PinnedDataType.ALBUM,
                                         isPinned = db.checkIfAlbumPinned(name = event.name)
                                     )
                                 )
@@ -381,7 +390,7 @@ class LibraryViewModel @Inject constructor(
                                 state = state.copy(
                                     pinnedData = state.pinnedData.copy(
                                         name = event.name,
-                                        type = "artist",
+                                        type = PinnedDataType.ARTIST,
                                         isPinned = db.checkIfArtistPinned(name = event.name)
                                     )
                                 )
@@ -408,12 +417,7 @@ class LibraryViewModel @Inject constructor(
                                     )
 
                                     val result = db.addToPinnedTable(
-                                        type = when (event.type) {
-                                            "artist" -> PinnedDataType.ARTIST
-                                            "playlist" -> PinnedDataType.PLAYLIST
-                                            "album" -> PinnedDataType.ALBUM
-                                            else -> PinnedDataType.FAVOURITE
-                                        },
+                                        type = event.type,
                                         name = event.name,
                                         ds = ds
                                     )
@@ -427,15 +431,10 @@ class LibraryViewModel @Inject constructor(
                                 viewModelScope.launch(Dispatchers.IO) {
                                     if (
                                         state.pinnedData.name.isNotEmpty() &&
-                                        state.pinnedData.type.isNotEmpty()
+                                        state.pinnedData.type != PinnedDataType.NON
                                     ) {
                                         val result = db.removeFromPinnedTable(
-                                            type = when (state.pinnedData.type) {
-                                                "artist" -> PinnedDataType.ARTIST
-                                                "playlist" -> PinnedDataType.PLAYLIST
-                                                "album" -> PinnedDataType.ALBUM
-                                                else -> PinnedDataType.FAVOURITE
-                                            },
+                                            type = state.pinnedData.type,
                                             name = state.pinnedData.name,
                                             ds = ds
                                         )
@@ -485,20 +484,13 @@ class LibraryViewModel @Inject constructor(
                                         return@launch
                                     }
 
-                                    val type = when (state.pinnedData.type) {
-                                        "artist" -> PinnedDataType.ARTIST
-                                        "playlist" -> PinnedDataType.PLAYLIST
-                                        "album" -> PinnedDataType.ALBUM
-                                        else -> PinnedDataType.FAVOURITE
-                                    }
-
                                     val result = db.deletePlaylistArtistAlbumFavouriteEntry(
-                                        type = type,
+                                        type = state.pinnedData.type,
                                         name = state.pinnedData.name,
                                         ds = ds
                                     )
 
-                                    if (state.pinnedData.type == "favourite") {
+                                    if (state.pinnedData.type == PinnedDataType.FAVOURITE) {
                                         state = state.copy(
                                             data = state.data.copy(
                                                 pinned = state.data.pinned.copy(

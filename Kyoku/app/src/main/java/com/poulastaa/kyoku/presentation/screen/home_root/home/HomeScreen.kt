@@ -38,6 +38,7 @@ fun HomeScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                else -> Unit
             }
         }
     }

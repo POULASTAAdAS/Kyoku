@@ -34,6 +34,7 @@ fun EmailLoginScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                else -> Unit
             }
         }
     }

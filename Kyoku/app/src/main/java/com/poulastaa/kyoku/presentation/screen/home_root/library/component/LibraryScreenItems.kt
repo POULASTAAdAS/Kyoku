@@ -65,6 +65,7 @@ import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.library.FilterChip
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.PinnedData
+import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.background
@@ -97,7 +98,7 @@ fun LazyGridScope.filterChips(
                 CustomFilterChip(
                     isSelected = filterChip.isPlaylist,
                     icon = R.drawable.ic_filter_playlist,
-                    type = "playlist"
+                    type = PinnedDataType.PLAYLIST.title
                 ) {
                     filterByPlaylist.invoke(LibraryUiEvent.FilterChipClick.PlaylistType)
                 }
@@ -107,7 +108,7 @@ fun LazyGridScope.filterChips(
                 CustomFilterChip(
                     isSelected = filterChip.isAlbum,
                     icon = R.drawable.ic_filter_album,
-                    type = "album"
+                    type = PinnedDataType.ALBUM.title
                 ) {
                     filterByAlbum.invoke(LibraryUiEvent.FilterChipClick.AlbumType)
                 }
@@ -117,7 +118,7 @@ fun LazyGridScope.filterChips(
                 CustomFilterChip(
                     isSelected = filterChip.isArtist,
                     icon = R.drawable.ic_filter_artist,
-                    type = "artist"
+                    type = PinnedDataType.ARTIST.title
                 ) {
                     filterByArtist.invoke(LibraryUiEvent.FilterChipClick.ArtistType)
                 }
@@ -339,7 +340,8 @@ fun LazyGridScope.libraryScreenItemPlaylist(
                             scope.launch {
                                 onClick.invoke(
                                     LibraryUiEvent.ItemClick.PlaylistClick(
-                                        playlistPrev[it].name
+                                        id = playlistPrev[it].id,
+                                        name = playlistPrev[it].name
                                     )
                                 )
                             }
@@ -370,7 +372,8 @@ fun LazyGridScope.libraryScreenItemPlaylist(
                             scope.launch {
                                 onClick.invoke(
                                     LibraryUiEvent.ItemClick.PlaylistClick(
-                                        playlistPrev[it].name
+                                        playlistPrev[it].id,
+                                        name = playlistPrev[it].name
                                     )
                                 )
                             }
@@ -1081,8 +1084,8 @@ fun LibraryScreenBottomSheet(
 
                 Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
-                if (pinnedData.type == "favourite") Text(text = "Delete [${pinnedData.name.uppercase()}]")
-                else Text(text = "Delete ${pinnedData.type}  [${pinnedData.name.uppercase()}]")
+                if (pinnedData.type == PinnedDataType.FAVOURITE) Text(text = "Delete [${pinnedData.name.uppercase()}]")
+                else Text(text = "Delete ${pinnedData.type.title}  [${pinnedData.name.uppercase()}]")
             }
         }
     }

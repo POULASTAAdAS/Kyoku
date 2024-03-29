@@ -63,7 +63,7 @@ fun LibraryScreen(
     context: Context,
     scope: CoroutineScope = rememberCoroutineScope(),
     paddingValues: PaddingValues,
-    navigate: (UiEvent.Navigate) -> Unit
+    navigate: (UiEvent) -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
         viewModel.loadData()
@@ -73,7 +73,11 @@ fun LibraryScreen(
         viewModel.uiEvent.collect { event ->
             when (event) {
                 is UiEvent.Navigate -> {
-                    navigate.invoke(UiEvent.Navigate(event.route))
+                    navigate.invoke(event)
+                }
+
+                is UiEvent.NavigateWithData -> {
+                    navigate.invoke(event)
                 }
 
                 is UiEvent.ShowToast -> {
@@ -265,7 +269,7 @@ fun LibraryScreen(
                         onLongClick = viewModel::onEvent,
                         onClick = viewModel::onEvent
                     )
-                
+
                 if (viewModel.state.data.pinned.playlist.isNotEmpty())
                     libraryScreenItemPlaylist(
                         playlistPrev = viewModel.state.data.pinned.playlist,

@@ -20,7 +20,7 @@ sealed class LibraryUiEvent {
         data object AddArtistClick : ItemClick()
 
         data class PlaylistLongClick(val name: String) : ItemClick()
-        data class PlaylistClick(val name: String) : ItemClick()
+        data class PlaylistClick(val id: Long , val name:String) : ItemClick()
 
         data class AlbumLongClick(val name: String) : ItemClick()
         data class AlbumClick(val name: String) : ItemClick()
@@ -33,7 +33,7 @@ sealed class LibraryUiEvent {
     }
 
     sealed class BottomSheetItemClick : ItemClick() {
-        data class AddClick(val type: String, val name: String) : BottomSheetItemClick()
+        data class AddClick(val type: PinnedDataType, val name: String) : BottomSheetItemClick()
         data object RemoveClick : BottomSheetItemClick()
         data object DeleteClick : BottomSheetItemClick()
     }

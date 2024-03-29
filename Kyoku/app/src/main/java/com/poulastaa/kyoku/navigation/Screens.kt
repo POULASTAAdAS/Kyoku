@@ -1,6 +1,12 @@
 package com.poulastaa.kyoku.navigation
 
 sealed class Screens(val route: String) {
+    enum class Args(val title: String) {
+        TYPE("type"),
+        ID("id"),
+        NAME("name")
+    }
+
     data object Auth : Screens("/auth")
 
     data object AuthEmailLogin : Screens("/auth/emailLogin")
@@ -14,7 +20,8 @@ sealed class Screens(val route: String) {
     data object SuggestArtist : Screens("/setup/suggestArtist")
 
     // todo try to design for any type of list of song
-    data object SongView : Screens("/app/songView")
+    data object SongView :
+        Screens("/app/songView/{type}/{id}/{name}")
 
     // todo try to design by taking half of songView :: use drawer
     data object Player : Screens("/app/songView/player")
