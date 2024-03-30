@@ -1,5 +1,9 @@
 package com.poulastaa.domain.repository
 
+import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
+import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
+import com.poulastaa.data.model.artist.ArtistPageReq
+import com.poulastaa.data.model.artist.ArtistPageResponse
 import com.poulastaa.data.model.home.HomeReq
 import com.poulastaa.data.model.home.HomeResponse
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
@@ -26,4 +30,8 @@ interface UserServiceRepository {
     suspend fun storeArtist(req: StoreArtistReq, helper: UserTypeHelper): StoreArtistResponse
 
     suspend fun generateHomeResponse(req: HomeReq, helper: UserTypeHelper): HomeResponse
+
+    suspend fun getMostPopularSongOfArtist(req: ArtistMostPopularSongReq): ArtistMostPopularSongRes
+
+    suspend fun getArtistPageResponse(req: ArtistPageReq, helper: UserTypeHelper): ArtistPageResponse
 }

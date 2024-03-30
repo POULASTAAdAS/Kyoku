@@ -358,22 +358,29 @@ select * from songartistrelation where artistId = 204;
 
 select * from song 
 join songartistrelation on songartistrelation.songId = Song.id
-where songartistrelation.artistId = 204 order by points desc;
+where songartistrelation.artistId = 3 order by points desc;
+
+-- artist pagination response album 
+
+select Song.id ,Song.album , Song.coverImage from Song
+where Song.artist like '%Arijit Singh%';
+
+
+select Song.id , Song.title , Song.album , Song.coverImage from Song
+where artist like '%Arijit Singh%' order by points desc
+;
+
+select songalbumartistrelation.albumId ,Song.album , Song.coverImage from Song
+join songalbumartistrelation on songalbumartistrelation.songId = Song.id
+where songalbumartistrelation.artistId = 3;
 
 
 
+select * from passkeyauthuser;
 
+select points from song where artist like '%Arijit Singh%';
 
-
-
-
-
-
-
-
-
-
-
+update Song set points = 1000 where artist like '%Arijit Singh%';
 
 
 

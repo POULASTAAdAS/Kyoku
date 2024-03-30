@@ -3,11 +3,8 @@ package com.poulastaa.plugins
 import com.poulastaa.data.model.auth.GoogleUserSession
 import com.poulastaa.data.model.auth.PasskeyUserSession
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.routes.getMasterPlaylist
-import com.poulastaa.routes.getSongCover
-import com.poulastaa.routes.home
+import com.poulastaa.routes.*
 import com.poulastaa.routes.sertup.*
-import com.poulastaa.routes.unauthorized
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -34,6 +31,8 @@ fun Application.configureRouting() {
         storeArtist(service)
 
         home(service)
+        artist(service)
+        artistPage(service)
 
         getMasterPlaylist(service)
 

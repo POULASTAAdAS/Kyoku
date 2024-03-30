@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.domain.repository
 
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
@@ -26,4 +28,6 @@ interface ServiceRepository {
     suspend fun storeArtist(req: StoreArtistReq): StoreArtistResponse
 
     suspend fun homeReq(req: HomeReq): HomeResponse
+
+    suspend fun artistMostPopularReq(req: ArtistMostPopularSongReq): ArtistMostPopularSongRes
 }

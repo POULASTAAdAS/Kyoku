@@ -67,7 +67,12 @@ fun SongViewRootScreen(
         }
 
         ItemsType.ARTIST -> {
-
+            if (viewModel.state.isLoading ||
+                viewModel.state.data.artist.listOfSong.isEmpty()
+            ) SongViewContentLoading(isSmallPhone = isSmallPhone)
+            else {
+                
+            }
         }
 
         ItemsType.ARTIST_MIX -> {

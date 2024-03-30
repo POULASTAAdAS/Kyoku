@@ -537,4 +537,6 @@ class DatabaseRepositoryImpl @Inject constructor(
     }.firstOrNull() ?: UiAlbum()
 
     suspend fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
+
+    suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
 }

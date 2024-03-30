@@ -367,6 +367,9 @@ interface AppDao {
         where FavouriteTable.songId
     """)
     suspend fun getAllFavouriteSongs(): List<UiSong>
+
+    @Query("select coverImage from ArtistPrevTable where id = :id")
+    suspend fun getArtistCoverImage(id: Long): String
 }
 
 

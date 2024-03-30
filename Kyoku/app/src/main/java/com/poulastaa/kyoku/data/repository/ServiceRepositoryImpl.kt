@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.repository
 
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
@@ -89,6 +91,14 @@ class ServiceRepositoryImpl @Inject constructor(
             api.homeReq(req)
         } catch (e: Exception) {
             HomeResponse()
+        }
+    }
+
+    override suspend fun artistMostPopularReq(req: ArtistMostPopularSongReq): ArtistMostPopularSongRes {
+        return try {
+            api.artistMostPopularReq(req)
+        } catch (e: Exception) {
+            ArtistMostPopularSongRes()
         }
     }
 }

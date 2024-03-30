@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.data.model.screens.song_view
 
 import androidx.compose.runtime.Stable
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 
 @Stable
@@ -19,6 +20,7 @@ data class SongViewData(
     val playlist: UiPlaylist = UiPlaylist(),
     val album: UiAlbum = UiAlbum(),
     val favourites: List<UiSong> = emptyList(),
+    val artist: UiArtist = UiArtist()
 )
 
 @Stable
@@ -32,6 +34,15 @@ data class UiAlbum(
     val name: String = "",
     val listOfSong: List<UiSong> = emptyList()
 )
+
+@Stable
+data class UiArtist(
+    val name: String = "",
+    val coverImage: String = "",
+    val points: Long = 0,
+    val listOfSong: List<SongPreview> = emptyList()
+)
+
 
 @Stable
 data class UiPlaylistSong(

@@ -9,4 +9,5 @@ data class SongPreview(
     val coverImage: String = "",
     val artist: String = "",
     val album: String = "",
+    val points: Long = 0
 )

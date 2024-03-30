@@ -1,9 +1,7 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.db_table.ArtistTable
-import com.poulastaa.data.model.db_table.GenreTable
-import com.poulastaa.data.model.db_table.SongArtistRelationTable
-import com.poulastaa.data.model.db_table.SongGenreRelationTable
+import com.poulastaa.data.model.artist.*
+import com.poulastaa.data.model.db_table.*
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
@@ -18,6 +16,7 @@ import com.poulastaa.data.model.utils.CreatePlaylistHelper
 import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
@@ -28,6 +27,7 @@ import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.getAlbum
 import com.poulastaa.utils.removeAlbum
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
@@ -36,6 +36,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 
 class UserServiceRepositoryImpl(
@@ -236,6 +237,125 @@ class UserServiceRepositoryImpl(
         }
     }
 
+
+    override suspend fun getMostPopularSongOfArtist(
+        req: ArtistMostPopularSongReq
+    ): ArtistMostPopularSongRes = withContext(Dispatchers.IO) {
+
+        val points = async {
+            dbQuery {
+                Artist.find {
+                    ArtistTable.name eq req.name
+                }.firstOrNull()?.points ?: 0
+            }
+        }
+
+        async {
+            dbQuery {
+                SongTable
+                    .slice(
+                        SongTable.id,
+                        SongTable.title,
+                        SongTable.album,
+                        SongTable.coverImage,
+                        SongTable.points
+                    ).select {
+                        SongTable.artist like "%${req.name}%"
+                    }.orderBy(SongTable.points, SortOrder.DESC)
+                    .limit(10)
+                    .map {
+                        SongPreview(
+                            id = it[SongTable.id].value.toString(),
+                            title = it[SongTable.title],
+                            album = it[SongTable.album],
+                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            points = it[SongTable.points]
+                        )
+                    }.let {
+                        ArtistMostPopularSongRes(
+                            status = HomeResponseStatus.SUCCESS,
+                            listOfSong = it,
+                            points = points.await()
+                        )
+                    }
+            }
+        }.await()
+    }
+
+    override suspend fun getArtistPageResponse(
+        req: ArtistPageReq,
+        helper: UserTypeHelper
+    ): ArtistPageResponse {
+        dbUsers.getDbUser(helper) ?: return ArtistPageResponse()
+
+        return withContext(Dispatchers.IO) {
+            val albums = async {
+                dbQuery {
+                    SongTable
+                        .join(
+                            otherTable = SongAlbumArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumArtistRelationTable.songId as Column<*> eq SongTable.id
+                            }
+                        ).slice(
+                            SongAlbumArtistRelationTable.albumId,
+                            SongTable.album,
+                            SongTable.coverImage
+                        ).select {
+                            SongAlbumArtistRelationTable.artistId eq req.artistId.toInt()
+                        }.map {
+                            ArtistAlbum(
+                                id = it[SongAlbumArtistRelationTable.albumId],
+                                name = it[SongTable.album],
+                                coverImage = it[SongTable.coverImage].constructCoverPhotoUrl()
+                            )
+                        }.drop(
+                            if (req.page == 1) 0 else req.page * req.pageSize
+                        ).take(req.pageSize)
+                }
+            }
+
+            val songs = async {
+                dbQuery {
+                    SongTable.slice(
+                        SongTable.id,
+                        SongTable.title,
+                        SongTable.album,
+                        SongTable.coverImage
+                    ).select {
+                        SongTable.artist like "%${req.name}%"
+                    }.map {
+                        SongPreview(
+                            id = it[SongTable.id].value.toString(),
+                            title = it[SongTable.title],
+                            album = it[SongTable.album],
+                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl()
+                        )
+                    }.drop(
+                        if (req.page == 1) 0 else req.page * req.pageSize
+                    ).take(req.pageSize)
+                }
+            }
+
+            val albumResponse = albums.await()
+            val songResponse = songs.await()
+
+
+            ArtistPageResponse(
+                status = HomeResponseStatus.SUCCESS,
+                albums = albumResponse,
+                songs = if (albumResponse.size == 20) emptyList() else
+                    songResponse.take(req.pageSize - albumResponse.size)
+            )
+        }
+    }
+
+
+    //
+
+
+    // private functions
     private suspend fun createPlaylist(
         playlistHelper: CreatePlaylistHelper
     ) {

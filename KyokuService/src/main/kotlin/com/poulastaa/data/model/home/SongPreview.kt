@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 data class SongPreview(
     val id: String = "",
     val title: String = "",
-    val coverImage: String = "",
     val artist: String = "",
     val album: String = "",
+    val coverImage: String = "",
+    val points: Long = 0
 )

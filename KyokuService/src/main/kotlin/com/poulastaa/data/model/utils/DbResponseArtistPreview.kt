@@ -17,7 +17,7 @@ data class DbResponseArtistPreview(
                 id = it.songId,
                 title = it.songTitle,
                 coverImage = it.songCover,
-                it.artist,
+                artist = it.artist,
                 album = it.album
             )
         }

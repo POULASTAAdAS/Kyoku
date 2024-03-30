@@ -7,15 +7,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
+import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
+import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -124,7 +128,44 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ARTIST -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        // todo api call
+                        val responseDiffered = async {
+                            api.artistMostPopularReq(
+                                req = ArtistMostPopularSongReq(
+                                    id = id,
+                                    name = name
+                                )
+                            )
+                        }
+
+                        val coverImageDiffered = async {
+                            db.getArtistCoverImage(id)
+                        }
+
+                        val response = responseDiffered.await()
+                        val cover = coverImageDiffered.await()
+
+
+                        when (response.status) {
+                            HomeResponseStatus.SUCCESS -> {
+                                state = state.copy(
+                                    type = ItemsType.ARTIST,
+                                    data = state.data.copy(
+                                        artist = UiArtist(
+                                            name = name,
+                                            coverImage = cover,
+                                            points = response.points,
+                                            listOfSong = response.listOfSong
+                                        )
+                                    )
+                                )
+                            }
+
+                            HomeResponseStatus.FAILURE -> {
+                                state = state.copy(
+                                    type = ItemsType.ERR
+                                )
+                            }
+                        }
                     }
                 }
 

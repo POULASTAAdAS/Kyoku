@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.remote
 
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
@@ -52,4 +54,9 @@ interface ServiceApi {
     suspend fun homeReq(
         @Body request: HomeReq
     ): HomeResponse
+
+    @POST("/api/authorised/artist")
+    suspend fun artistMostPopularReq(
+        @Body request: ArtistMostPopularSongReq
+    ): ArtistMostPopularSongRes
 }

@@ -3,7 +3,7 @@ package com.poulastaa.data.model.common
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseSong(
+data class ResponseSong( // todo add id to response song also fix auth api
     val coverImage: String = "",
     val masterPlaylistUrl: String = "",
     val totalTime: String = "",
