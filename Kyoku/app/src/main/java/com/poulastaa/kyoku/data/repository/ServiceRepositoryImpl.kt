@@ -1,7 +1,10 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageResponse
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
@@ -99,6 +102,15 @@ class ServiceRepositoryImpl @Inject constructor(
             api.artistMostPopularReq(req)
         } catch (e: Exception) {
             ArtistMostPopularSongRes()
+        }
+    }
+
+    override suspend fun getArtistAsPage(req: ArtistPageReq): ArtistPageResponse {
+        return try {
+            api.getArtistAsPage(req)
+        } catch (e: Exception) {
+            Log.d("error", e.message.toString())
+            ArtistPageResponse()
         }
     }
 }

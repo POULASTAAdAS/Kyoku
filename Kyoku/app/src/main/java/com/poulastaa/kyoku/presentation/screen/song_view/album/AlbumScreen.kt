@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,7 +50,9 @@ fun AlbumScreen(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding()
                 ),
-
+            contentPadding = PaddingValues(
+                bottom = MaterialTheme.dimens.medium1
+            ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

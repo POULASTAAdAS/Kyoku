@@ -1,6 +1,5 @@
 package com.poulastaa.data.model.artist
 
-import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.HomeResponseStatus
 import com.poulastaa.data.model.home.SongPreview
 import kotlinx.serialization.Serializable

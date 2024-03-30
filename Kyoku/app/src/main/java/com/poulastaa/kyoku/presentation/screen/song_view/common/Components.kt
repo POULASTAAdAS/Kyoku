@@ -131,7 +131,7 @@ fun SongCard(
 
                         }
                     ),
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_song_card_add),
@@ -150,7 +150,7 @@ fun SongCard(
 
                         }
                     ),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_more),
@@ -164,10 +164,91 @@ fun SongCard(
 }
 
 @Composable
+fun ArtistSongCard(
+    modifier: Modifier,
+    isDarkThem: Boolean,
+    isCookie: Boolean,
+    headerValue: String,
+    title: String,
+    artist: String,
+    coverImage: String
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(.8f)
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+        ) {
+            CustomImageView(
+                modifier = Modifier
+                    .fillMaxWidth(.2f)
+                    .clip(MaterialTheme.shapes.extraSmall),
+                isDarkThem = isDarkThem,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                url = coverImage,
+                contentScale = ContentScale.Fit
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Text(
+                    text = artist,
+                    fontWeight = FontWeight.Light,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.extraSmall)
+                .clickable(
+                    onClick = {
+
+                    }
+                ),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_more),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(34.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun SongCardDragButton(
     modifier: Modifier,
-    radius: Float = 2.4f,
-    padding: Dp = 3.dp,
+    radius: Float = 3f,
+    padding: Dp = 2.5.dp,
     color: Color = MaterialTheme.colorScheme.onBackground
 ) {
     Row(
@@ -175,12 +256,13 @@ fun SongCardDragButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-
-        Column {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.End
+        ) {
             repeat(5) {
                 Canvas(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(
                             bottom = padding,
                             top = padding
@@ -193,7 +275,10 @@ fun SongCardDragButton(
                 }
             }
         }
-        Column {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
+        ) {
             repeat(5) {
                 Canvas(
                     modifier = Modifier
@@ -216,7 +301,7 @@ fun SongCardDragButton(
 
 fun LazyListScope.navigateBackButton(
     navigateBack: () -> Unit
-){
+) {
     item {
         Row(
             modifier = Modifier
@@ -382,9 +467,6 @@ fun LazyListScope.playControl(
         }
     }
 }
-
-
-
 
 
 @Preview(

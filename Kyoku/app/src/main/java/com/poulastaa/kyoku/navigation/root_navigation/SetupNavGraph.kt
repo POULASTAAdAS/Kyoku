@@ -27,6 +27,7 @@ import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.Spotif
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_artist.SuggestArtistScreen
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.SongViewRootScreen
+import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistAllScreen
 
 @Composable
 fun SetupNavGraph(
@@ -139,7 +140,7 @@ fun SetupNavGraph(
         }
 
         composable(
-            Screens.SongView.route,
+            route = Screens.SongView.route + Screens.SongView.PARAMS,
             arguments = listOf(
                 navArgument(Screens.Args.TYPE.title) {
                     type = NavType.StringType
@@ -164,10 +165,28 @@ fun SetupNavGraph(
                     navController.popBackStack()
                 },
                 navigate = {
-
+                    when (it) {
+                        is UiEvent.Navigate -> navController.navigate(it)
+                        is UiEvent.NavigateWithData -> navController.navigateWithData(it)
+                        else -> Unit
+                    }
                 }
             )
         }
+
+        composable(
+            route = Screens.AllFromArtist.route + Screens.AllFromArtist.PARAMS,
+            arguments = listOf(
+                navArgument(Screens.Args.NAME.title) {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val name = backStackEntry.arguments?.getString(Screens.Args.NAME.title, "") ?: ""
+
+            ArtistAllScreen(name = name)
+        }
+
 
         composable(Screens.Player.route) {
             Column(

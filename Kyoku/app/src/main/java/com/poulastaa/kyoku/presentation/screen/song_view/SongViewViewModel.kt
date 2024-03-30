@@ -11,12 +11,14 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRe
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -102,7 +104,7 @@ class SongViewViewModel @Inject constructor(
                                             name = entry.key,
                                             listOfSong = entry.value
                                         )
-                                    }.first()
+                                    }.firstOrNull() ?: UiPlaylist()
                                 )
                             )
                         }
@@ -208,6 +210,34 @@ class SongViewViewModel @Inject constructor(
                 state = state.copy(
                     isLoading = false
                 )
+            }
+        }
+    }
+
+    fun onEvent(event: SongViewUiEvent) {
+        when (event) {
+            is SongViewUiEvent.EmitToast -> {
+
+            }
+
+
+            SongViewUiEvent.SomethingWentWrong -> {
+
+            }
+
+            is SongViewUiEvent.ItemClick -> {
+                when (event) {
+                    is SongViewUiEvent.ItemClick.ViewAllFromArtist -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    route = Screens.AllFromArtist.route,
+                                    name = event.name
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }

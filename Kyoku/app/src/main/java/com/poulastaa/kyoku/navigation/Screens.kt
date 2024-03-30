@@ -20,10 +20,14 @@ sealed class Screens(val route: String) {
     data object SuggestArtist : Screens("/setup/suggestArtist")
 
     // todo try to design for any type of list of song
-    data object SongView :
-        Screens("/app/songView/{type}/{id}/{name}")
+    data object SongView : Screens("/app/songView/") {
+        const val PARAMS: String = "{type}/{id}/{name}"
+    }
 
-    // todo try to design by taking half of songView :: use drawer
+    data object AllFromArtist : Screens("/app/songView/allFromArtist/") {
+        const val PARAMS: String = "{name}"
+    }
+
     data object Player : Screens("/app/songView/player")
 
     data object HomeRoot : Screens("/app/homeRoot")
