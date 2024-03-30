@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.presentation.screen.song_view.playlist
+package com.poulastaa.kyoku.presentation.screen.song_view.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -19,7 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.twotone.AddCircle
 import androidx.compose.material3.Icon
@@ -31,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,8 +41,9 @@ import com.poulastaa.kyoku.ui.theme.dimens
 import com.poulastaa.kyoku.utils.shimmerEffect
 
 @Composable
-fun PlaylistContentLoading(
-    isSmallPhone: Boolean = LocalConfiguration.current.screenWidthDp <= 411
+fun SongViewContentLoading(
+    isFavourite: Boolean = false,
+    isSmallPhone: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -58,20 +59,35 @@ fun PlaylistContentLoading(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Rounded.KeyboardArrowDown,
-                contentDescription = null,
-                tint = Color(0xFF393E46),
-                modifier = Modifier.size(40.dp)
-            )
+            IconButton(
+                onClick = { },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .shimmerEffect()
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = null
+                )
+            }
         }
 
         Box(
             modifier = Modifier
                 .size(if (isSmallPhone) 200.dp else 240.dp)
                 .clip(MaterialTheme.shapes.medium)
-                .shimmerEffect()
-        )
+                .shimmerEffect(),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isFavourite)
+                Icon(
+                    imageVector = Icons.Rounded.Favorite, contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(MaterialTheme.dimens.large1),
+                    tint = Color(0xFF222831)
+                )
+        }
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
@@ -165,6 +181,10 @@ private fun LoadingSongCard() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
     ) {
+        SongCardDragButton(
+            modifier = Modifier.fillMaxWidth(.04f)
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth(.2f)
@@ -231,6 +251,7 @@ private fun LoadingSongCard() {
     }
 }
 
+
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
@@ -238,7 +259,7 @@ private fun LoadingSongCard() {
 @Composable
 private fun Preview() {
     TestThem {
-        PlaylistContentLoading(
+        SongViewContentLoading(
             isSmallPhone = false
         )
     }

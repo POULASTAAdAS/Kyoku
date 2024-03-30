@@ -24,6 +24,8 @@ class StartViewModel @Inject constructor(
 
     init { // read sign in state
         viewModelScope.launch {
+//            _startDestination.value = Screens.SongView.route
+
             dataStore.readSignedInState().collect {
                 when (it) {
                     SignInStatus.AUTH.name -> _startDestination.value = Screens.Auth.route

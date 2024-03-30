@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.presentation.screen.song_view.playlist
+package com.poulastaa.kyoku.presentation.screen.song_view.album
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
+import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
 import com.poulastaa.kyoku.presentation.screen.song_view.common.navigateBackButton
@@ -31,8 +31,8 @@ import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
-fun PlaylistScreen(
-    data: UiPlaylist,
+fun AlbumScreen(
+    album: UiAlbum,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -74,8 +74,8 @@ fun PlaylistScreen(
             }
 
             info(
-                name = data.name,
-                size = data.listOfSong.size
+                name = album.name,
+                size = album.listOfSong.size
             )
 
             playControl(
@@ -95,12 +95,11 @@ fun PlaylistScreen(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
             }
 
-
-            playlistSongs(
+            albumSongs(
                 isDarkThem = isDarkThem,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                data = data.listOfSong,
+                data = album.listOfSong,
                 onSongClick = { id, name ->
 
                 }
@@ -109,11 +108,11 @@ fun PlaylistScreen(
     }
 }
 
-private fun LazyListScope.playlistSongs(
+private fun LazyListScope.albumSongs(
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
-    data: List<UiPlaylistSong>,
+    data: List<UiSong>,
     onSongClick: (id: Long, name: String) -> Unit
 ) {
     items(data.size) {
@@ -141,26 +140,25 @@ private fun LazyListScope.playlistSongs(
 @Preview
 @Composable
 private fun Preview() {
-    val list = ArrayList<UiPlaylistSong>()
-
-    for (i in 1..10) {
-        list.add(
-            UiPlaylistSong(
-                id = 1,
-                name = "Name $i",
-                title = "Title $i",
-                artist = "Artist $i",
-                album = "Album $i",
-                coverImage = ""
-            )
-        )
-    }
-
     TestThem {
-        PlaylistScreen(
-            data = UiPlaylist(
-                name = "Playlist",
-                listOfSong = list
+        val listOfSong = ArrayList<UiSong>()
+
+        for (i in 1..10) {
+            listOfSong.add(
+                UiSong(
+                    id = i.toLong(),
+                    title = "Title $i",
+                    artist = "Artist $i",
+                    album = "Album $i",
+                    coverImage = ""
+                )
+            )
+        }
+
+        AlbumScreen(
+            album = UiAlbum(
+                name = "Album",
+                listOfSong = listOfSong
             ),
             isSmallPhone = false,
             isDarkThem = isSystemInDarkTheme(),

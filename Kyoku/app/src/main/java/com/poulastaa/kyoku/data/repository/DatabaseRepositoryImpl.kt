@@ -22,6 +22,7 @@ import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
+import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
@@ -420,6 +421,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
                 true
             }
+
             else -> false
         }
     }
@@ -513,6 +515,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 dao.deleteFavourites()
                 true
             }
+
             else -> false
         }
     }
@@ -524,4 +527,14 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     // songView screen query
     fun getPlaylist(id: Long) = dao.getPlaylist(id)
+    suspend fun getAlbum(name: String) = dao.getAlbum(name).groupBy {
+        it.album
+    }.map {
+        UiAlbum(
+            name = it.key,
+            listOfSong = it.value
+        )
+    }.firstOrNull() ?: UiAlbum()
+
+    suspend fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 }

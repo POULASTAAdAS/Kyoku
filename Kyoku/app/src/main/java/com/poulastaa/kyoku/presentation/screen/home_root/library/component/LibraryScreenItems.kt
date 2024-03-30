@@ -59,7 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
-import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.library.FilterChip
@@ -203,7 +203,7 @@ fun LazyGridScope.playlist(
 
 
 fun LazyGridScope.album(
-    albums: List<UiAlbum>,
+    albums: List<UiAlbumPrev>,
     isGrid: Boolean,
     sizeIfList: Dp,
     sizeIfGrid: Dp,
@@ -389,7 +389,7 @@ fun LazyGridScope.libraryScreenItemPlaylist(
 
 
 fun LazyGridScope.libraryScreenItemAlbum(
-    albums: List<UiAlbum>,
+    albums: List<UiAlbumPrev>,
     sizeIfGrid: Dp,
     sizeIfList: Dp,
     isCookie: Boolean,
@@ -423,6 +423,7 @@ fun LazyGridScope.libraryScreenItemAlbum(
                     scope.launch {
                         onClick.invoke(
                             LibraryUiEvent.ItemClick.AlbumClick(
+                                id = albums[it].id,
                                 name = albums[it].name
                             )
                         )
@@ -452,6 +453,7 @@ fun LazyGridScope.libraryScreenItemAlbum(
                     scope.launch {
                         onClick.invoke(
                             LibraryUiEvent.ItemClick.AlbumClick(
+                                id = albums[it].id,
                                 name = albums[it].name
                             )
                         )

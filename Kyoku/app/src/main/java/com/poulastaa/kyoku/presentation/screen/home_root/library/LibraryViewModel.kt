@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
-import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiState
@@ -111,7 +111,7 @@ class LibraryViewModel @Inject constructor(
                                     album = it.groupBy { album ->
                                         album.id
                                     }.map { entry ->
-                                        UiAlbum(
+                                        UiAlbumPrev(
                                             id = entry.key,
                                             name = entry.value[0].name,
                                             coverImage = entry.value[0].coverImage
@@ -182,7 +182,7 @@ class LibraryViewModel @Inject constructor(
                                     album = it.groupBy { album ->
                                         album.name
                                     }.map { entry ->
-                                        UiAlbum(
+                                        UiAlbumPrev(
                                             id = entry.value[0].id,
                                             name = entry.key,
                                             coverImage = entry.value[0].coverImage
@@ -324,7 +324,12 @@ class LibraryViewModel @Inject constructor(
 
                     LibraryUiEvent.ItemClick.FavouriteClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    type = ItemsType.FAVOURITE,
+                                    route = Screens.SongView.route
+                                )
+                            )
                         }
                     }
 
@@ -358,7 +363,6 @@ class LibraryViewModel @Inject constructor(
                         }
                     }
 
-
                     is LibraryUiEvent.ItemClick.AlbumLongClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
                             async {
@@ -379,7 +383,13 @@ class LibraryViewModel @Inject constructor(
 
                     is LibraryUiEvent.ItemClick.AlbumClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    route = Screens.SongView.route,
+                                    type = ItemsType.ALBUM,
+                                    name = event.name
+                                )
+                            )
                         }
                     }
 
@@ -404,7 +414,14 @@ class LibraryViewModel @Inject constructor(
 
                     is LibraryUiEvent.ItemClick.ArtistClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    route = Screens.SongView.route,
+                                    type = ItemsType.ARTIST,
+                                    id = event.id,
+                                    name = event.name
+                                )
+                            )
                         }
                     }
 

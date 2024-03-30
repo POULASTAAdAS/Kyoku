@@ -20,10 +20,10 @@ sealed class LibraryUiEvent {
         data object AddArtistClick : ItemClick()
 
         data class PlaylistLongClick(val name: String) : ItemClick()
-        data class PlaylistClick(val id: Long , val name:String) : ItemClick()
+        data class PlaylistClick(val id: Long, val name: String) : ItemClick()
 
         data class AlbumLongClick(val name: String) : ItemClick()
-        data class AlbumClick(val name: String) : ItemClick()
+        data class AlbumClick(val id: Long, val name: String) : ItemClick()
 
         data class ArtistLongClick(val id: Long, val name: String) : ItemClick()
         data class ArtistClick(val id: Long, val name: String) : ItemClick()

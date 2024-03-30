@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.data.model.screens.library
 
 import androidx.compose.runtime.Stable
-import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 
 @Stable
@@ -30,7 +30,7 @@ data class Data(
 data class LibraryUiData(
     val isFavourite: Boolean = false,
     val playlist: List<UiPlaylistPrev> = emptyList(),
-    val album: List<UiAlbum> = emptyList(),
+    val album: List<UiAlbumPrev> = emptyList(),
     val artist: List<Artist> = emptyList()
 )
 

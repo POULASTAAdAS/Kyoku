@@ -160,6 +160,9 @@ fun SetupNavGraph(
                 type = type,
                 id = id,
                 name = name,
+                navigateBack = {
+                    navController.popBackStack()
+                },
                 navigate = {
 
                 }

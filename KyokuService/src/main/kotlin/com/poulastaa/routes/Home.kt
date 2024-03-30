@@ -1,4 +1,4 @@
-package com.poulastaa.routes.home
+package com.poulastaa.routes
 
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.home.HomeReq

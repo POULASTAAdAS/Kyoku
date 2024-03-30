@@ -25,11 +25,12 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
-import com.poulastaa.kyoku.data.model.screens.common.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
+import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -219,7 +220,7 @@ interface AppDao {
         where AlbumTable.id order by AlbumTable.points desc
     """
     )
-    fun readAllAlbum(): Flow<List<UiAlbum>>
+    fun readAllAlbum(): Flow<List<UiAlbumPrev>>
 
     @Transaction
     @Query("select * from ArtistPrevTable")
@@ -305,7 +306,7 @@ interface AppDao {
         where PinnedTable.albumId
     """
     )
-    fun readPinnedAlbum(): Flow<List<UiAlbum>>
+    fun readPinnedAlbum(): Flow<List<UiAlbumPrev>>
 
     @Transaction
     @Query(
@@ -342,13 +343,30 @@ interface AppDao {
 
     @Query(
         """
-        select PlaylistTable.name , SongTable.id, SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable 
+        select SongTable.id , PlaylistTable.name , SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable 
         join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = SongTable.id
         join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
         where PlaylistTable.id = :id
     """
     )
     fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
+
+    @Query(
+        """
+        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
+        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
+        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
+        where AlbumTable.name = :name
+    """
+    )
+    suspend fun getAlbum(name: String): List<UiSong>
+
+    @Query("""
+        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
+        join FavouriteTable on FavouriteTable.songId = SongTable.id
+        where FavouriteTable.songId
+    """)
+    suspend fun getAllFavouriteSongs(): List<UiSong>
 }
 
 

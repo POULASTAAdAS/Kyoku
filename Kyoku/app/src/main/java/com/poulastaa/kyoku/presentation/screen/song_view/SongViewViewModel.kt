@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
@@ -17,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,13 +55,37 @@ class SongViewViewModel @Inject constructor(
     var state by mutableStateOf(SongViewUiState())
         private set
 
+    init {
+        viewModelScope.launch {
+            ds.readTokenOrCookie().collect {
+                state = state.copy(
+                    headerValue = it
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            state = state.copy(
+                isCooke = when (ds.readAuthType().first()) {
+                    AuthType.SESSION_AUTH.name -> true
+                    AuthType.JWT_AUTH.name -> false
+                    else -> {
+                        state = state.copy(
+                            type = ItemsType.ERR
+                        )
+                        false
+                    }
+                }
+            )
+        }
+    }
 
     fun loadData(
         typeString: String,
         id: Long,
         name: String
     ) {
-        if (state.isLoading)
+        if (state.isLoading) {
             when (getItemType(typeString)) {
                 ItemsType.PLAYLIST -> {
                     viewModelScope.launch(Dispatchers.IO) {
@@ -77,17 +103,19 @@ class SongViewViewModel @Inject constructor(
                             )
                         }
                     }
-
-                    viewModelScope.launch(Dispatchers.IO) {
-                        delay(600)
-                        state = state.copy(
-                            isLoading = false
-                        )
-                    }
                 }
 
                 ItemsType.ALBUM -> {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val album = db.getAlbum(name)
 
+                        state = state.copy(
+                            type = if (album.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
+                            data = state.data.copy(
+                                album = album
+                            )
+                        )
+                    }
                 }
 
                 ItemsType.ALBUM_PREV -> {
@@ -95,7 +123,9 @@ class SongViewViewModel @Inject constructor(
                 }
 
                 ItemsType.ARTIST -> {
-
+                    viewModelScope.launch(Dispatchers.IO) {
+                        // todo api call
+                    }
                 }
 
                 ItemsType.ARTIST_MIX -> {
@@ -107,7 +137,16 @@ class SongViewViewModel @Inject constructor(
                 }
 
                 ItemsType.FAVOURITE -> {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val favourites = db.getAllFavouriteSongs()
 
+                        state = state.copy(
+                            type = if (favourites.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
+                            data = state.data.copy(
+                                favourites = favourites
+                            )
+                        )
+                    }
                 }
 
                 ItemsType.SONG -> {
@@ -122,6 +161,14 @@ class SongViewViewModel @Inject constructor(
 
                 }
             }
+
+            viewModelScope.launch(Dispatchers.IO) {
+                delay(600)
+                state = state.copy(
+                    isLoading = false
+                )
+            }
+        }
     }
 
 

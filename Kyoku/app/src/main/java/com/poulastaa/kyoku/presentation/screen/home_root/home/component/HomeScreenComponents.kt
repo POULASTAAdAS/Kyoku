@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -53,7 +52,6 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
-import com.poulastaa.kyoku.utils.BitmapConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -437,8 +435,8 @@ fun CustomImageView(
     context: Context = LocalContext.current,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    BitmapConverter.decodeToBitmap(url).let {
-        if (it == null)
+//    BitmapConverter.decodeToBitmap(url).let {
+//        if (it == null)
             AsyncImage(
                 modifier = modifier,
                 model = ImageRequest.Builder(context)
@@ -464,12 +462,12 @@ fun CustomImageView(
                 ),
                 contentScale = contentScale
             )
-        else Image(
-            modifier = modifier,
-            bitmap = it,
-            contentDescription = null
-        )
-    }
+//        else Image(
+//            modifier = modifier,
+//            bitmap = it,
+//            contentDescription = null
+//        )
+//    }
 }
 
 

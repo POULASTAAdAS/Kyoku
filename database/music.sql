@@ -351,11 +351,14 @@ select Album.id from Song
 
 select * from songalbumartistrelation;
 
+select * from artist order by points desc;
 
 
+select * from songartistrelation where artistId = 204;
 
-
-
+select * from song 
+join songartistrelation on songartistrelation.songId = Song.id
+where songartistrelation.artistId = 204 order by points desc;
 
 
 
