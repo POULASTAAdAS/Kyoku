@@ -5,7 +5,8 @@ sealed class Screens(val route: String) {
         TYPE("type"),
         ID("id"),
         NAME("name"),
-        IS_API_CALL("isApiCall")
+        IS_API_CALL("isApiCall"),
+        IS_FOR_MORE("isForMore")
     }
 
     data object Auth : Screens("/auth")
@@ -25,7 +26,7 @@ sealed class Screens(val route: String) {
     }
 
     data object AllFromArtist : Screens("/app/songView/allFromArtist/") {
-        const val PARAMS: String = "{name}"
+        const val PARAMS: String = "{name}/{isForMore}"
     }
 
     data object Player : Screens("/app/songView/player")
@@ -33,6 +34,7 @@ sealed class Screens(val route: String) {
     data object HomeRoot : Screens("/app/homeRoot")
 
     data object Home : Screens("/app/homeRoot/home")
+
     data object Library : Screens("/app/homeRoot/library")
 
 

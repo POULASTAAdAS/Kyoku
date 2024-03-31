@@ -106,7 +106,7 @@ class HomeScreenViewModel @Inject constructor(
                         db.insertDailyMixPrev(response.dailyMixPreview)
 
                         // load from db
-                        delay(6000)
+                        delay(3000)
                         loadFromDb()
                     }
 
@@ -115,11 +115,12 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
             } else {
-                if (isLogin) delay(8000)
+                if (isLogin) delay(3000)
 
                 state = state.copy(
                     dataType = HomeType.ALREADY_USER_REQ
                 )
+                delay(800)
                 loadFromDb()
             }
         }
@@ -144,10 +145,11 @@ class HomeScreenViewModel @Inject constructor(
                     state = state.copy(
                         data = state.data.copy(
                             albumPrev = it.groupBy { result ->
-                                result.name
+                                result.albumId
                             }.map { entry ->
                                 HomeAlbumUiPrev(
-                                    name = entry.key,
+                                    id = entry.key,
+                                    name = entry.value[0].name,
                                     listOfSong = entry.value.map { song ->
                                         song.toSongPrev()
                                     }
@@ -163,10 +165,11 @@ class HomeScreenViewModel @Inject constructor(
                     state = state.copy(
                         data = state.data.copy(
                             artistPrev = it.groupBy { result ->
-                                result.name
+                                result.artistId
                             }.map { entry ->
                                 HomeUiArtistPrev(
-                                    name = entry.key,
+                                    id = entry.key,
+                                    name = entry.value[0].name,
                                     artistCover = entry.value[0].imageUrl,
                                     lisOfPrevSong = entry.value.map { song -> song.toHomeUiSongPrev() }
                                 )
@@ -260,52 +263,73 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             is HomeUiEvent.ItemClick -> {
-                when (event.type) {
-                    ItemsType.PLAYLIST -> {
-
-                    }
-
-                    ItemsType.ALBUM -> {
-
-                    }
-
-                    ItemsType.ALBUM_PREV -> {
-
-                    }
-
-                    ItemsType.ARTIST -> {
-
-                    }
-
-                    ItemsType.ARTIST_MIX -> {
-
-                    }
-
-                    ItemsType.FAVOURITE -> {
-
-                    }
-
-                    ItemsType.SONG -> {
-                        viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
-                            _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
+                if (!state.isLoading)
+                    when (event.type) {
+                        ItemsType.PLAYLIST -> {
+                            event
                         }
 
-                        return
-                    }
+                        ItemsType.ALBUM -> {
+                            event
+                        }
 
-                    ItemsType.ARTIST_MORE -> {
+                        ItemsType.ALBUM_PREV -> {
+                            event
+                        }
 
-                    }
+                        ItemsType.ARTIST -> {
+                            event
+                        }
 
-                    ItemsType.HISTORY -> {
+                        ItemsType.ARTIST_MIX -> {
+                            event
+                        }
 
+                        ItemsType.FAVOURITE -> {
+                            event
+                        }
+
+                        ItemsType.SONG -> {
+                            viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
+                                _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
+                            }
+
+                            return
+                        }
+
+                        ItemsType.ARTIST_MORE -> {
+                            event
+                        }
+
+                        ItemsType.HISTORY -> {
+                            event
+                        }
+
+                        ItemsType.ERR -> {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                _uiEvent.send(
+                                    UiEvent.NavigateWithData(
+                                        route = Screens.AllFromArtist.route,
+                                        name = event.name,
+                                        isApiCall = true
+                                    )
+                                )
+                            }
+                            return
+                        }
+                    }.let {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(
+                                UiEvent.NavigateWithData(
+                                    route = Screens.SongView.route,
+                                    type = it.type,
+                                    name = it.name,
+                                    id = it.id,
+                                    isApiCall = it.isApiCall
+                                )
+                            )
+                        }
                     }
-                    else -> return
-                }.let {
-                    viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
-                        _uiEvent.send(UiEvent.Navigate(Screens.SongView.route))
-                    }
-                }
             }
         }
     }

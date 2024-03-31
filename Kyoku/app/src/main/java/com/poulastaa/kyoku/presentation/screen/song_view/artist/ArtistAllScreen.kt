@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,7 +39,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.ArtistAllUiEvent
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.components.ArtistAllItem
@@ -49,6 +53,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 @Composable
 fun ArtistAllScreen(
     name: String,
+    isFromMore: Boolean,
     isDarkThem: Boolean = isSystemInDarkTheme(),
     scrollBehavior: TopAppBarScrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -137,85 +142,94 @@ fun ArtistAllScreen(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item {
-                    Header(modifier = Modifier.fillMaxWidth(), text = "Albums")
+                if (!isFromMore)
+                    album(album, viewModel, isDarkThem, false)
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-                }
+                song(song, viewModel, isDarkThem, isFromMore)
 
-
-                items(album.itemCount) {
-                    if (album[it]?.name != null)
-                        ArtistAllItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(70.dp)
-                                .clip(MaterialTheme.shapes.extraSmall)
-                                .background(color = MaterialTheme.colorScheme.background)
-                                .clickable {
-                                    viewModel.onEvent(
-                                        ArtistAllUiEvent
-                                            .ItemClick
-                                            .AlbumClick(id = album[it]!!.id)
-                                    )
-                                },
-                            isDarkThem = isDarkThem,
-                            title = album[it]!!.name,
-                            year = album[it]!!.year,
-                            coverImage = album[it]!!.coverImage,
-                            isCookie = viewModel.state.isCooke,
-                            headerValue = viewModel.state.headerValue
-                        )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                    Header(modifier = Modifier.fillMaxWidth(), text = "Songs")
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-                }
-
-                items(song.itemCount) {
-                    if (song[it]?.coverImage != null)
-                        ArtistAllItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(70.dp)
-                                .clip(MaterialTheme.shapes.extraSmall)
-                                .background(color = MaterialTheme.colorScheme.background)
-                                .clickable {
-                                    viewModel.onEvent(
-                                        ArtistAllUiEvent
-                                            .ItemClick
-                                            .SongClick(id = song[it]!!.id.toLong())
-                                    )
-                                },
-                            isDarkThem = isDarkThem,
-                            title = song[it]!!.title,
-                            year = song[it]!!.year,
-                            coverImage = song[it]!!.coverImage,
-                            isCookie = viewModel.state.isCooke,
-                            headerValue = viewModel.state.headerValue
-                        )
-                }
-
-                if (album.loadState.refresh.endOfPaginationReached ||
-                    album.loadState.append.endOfPaginationReached ||
-
-                    song.loadState.refresh.endOfPaginationReached ||
-                    song.loadState.append.endOfPaginationReached
-                ) {
-                    item {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
+                if (isFromMore)
+                    album(album, viewModel, isDarkThem, true)
             }
         }
+}
+
+private fun LazyListScope.album(
+    album: LazyPagingItems<ArtistAlbum>,
+    viewModel: ArtistAllViewModel,
+    isDarkThem: Boolean,
+    isFromMore: Boolean
+) {
+    item {
+        if (!isFromMore) Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+        else Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+        Header(modifier = Modifier.fillMaxWidth(), text = "Albums")
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+    }
+
+
+    items(album.itemCount) {
+        if (album[it]?.name != null)
+            ArtistAllItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .clickable {
+                        viewModel.onEvent(
+                            ArtistAllUiEvent
+                                .ItemClick
+                                .AlbumClick(id = album[it]!!.id)
+                        )
+                    },
+                isDarkThem = isDarkThem,
+                title = album[it]!!.name,
+                year = album[it]!!.year,
+                coverImage = album[it]!!.coverImage,
+                isCookie = viewModel.state.isCooke,
+                headerValue = viewModel.state.headerValue
+            )
+    }
+}
+
+private fun LazyListScope.song(
+    song: LazyPagingItems<SongPreview>,
+    viewModel: ArtistAllViewModel,
+    isDarkThem: Boolean,
+    isFromMore: Boolean
+) {
+    item {
+        if (isFromMore) Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+        else Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+        Header(modifier = Modifier.fillMaxWidth(), text = "Songs")
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+    }
+
+    items(song.itemCount) {
+        if (song[it]?.coverImage != null)
+            ArtistAllItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .clickable {
+                        viewModel.onEvent(
+                            ArtistAllUiEvent
+                                .ItemClick
+                                .SongClick(id = song[it]!!.id.toLong())
+                        )
+                    },
+                isDarkThem = isDarkThem,
+                title = song[it]!!.title,
+                year = song[it]!!.year,
+                coverImage = song[it]!!.coverImage,
+                isCookie = viewModel.state.isCooke,
+                headerValue = viewModel.state.headerValue
+            )
+    }
 }

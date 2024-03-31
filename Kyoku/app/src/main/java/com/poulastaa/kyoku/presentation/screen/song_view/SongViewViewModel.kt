@@ -156,16 +156,20 @@ class SongViewViewModel @Inject constructor(
 
                         when (response.status) {
                             HomeResponseStatus.SUCCESS -> {
-                                state = state.copy(
-                                    type = ItemsType.ARTIST,
-                                    data = state.data.copy(
-                                        artist = UiArtist(
-                                            name = name,
-                                            coverImage = cover,
-                                            points = response.points,
-                                            listOfSong = response.listOfSong
+                                state = if (response.listOfSong.isNotEmpty())
+                                    state.copy(
+                                        type = ItemsType.ARTIST,
+                                        data = state.data.copy(
+                                            artist = UiArtist(
+                                                name = name,
+                                                coverImage = cover,
+                                                points = response.points,
+                                                listOfSong = response.listOfSong
+                                            )
                                         )
                                     )
+                                else state.copy(
+                                    type = ItemsType.ERR
                                 )
                             }
 

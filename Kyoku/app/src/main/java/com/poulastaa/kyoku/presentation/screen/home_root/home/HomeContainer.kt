@@ -94,8 +94,11 @@ fun HomeContainer(
             navController = navController,
             startDestination = state.startDestination
         ) {
-            composable(Screens.Home.route) {
+            composable(
+                route = Screens.Home.route
+            ) {
                 HomeScreen(
+                    isLogin = false,
                     isCookie = isCookie,
                     authHeader = authHeader,
                     isSmallPhone = isSmallPhone,

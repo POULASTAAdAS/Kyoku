@@ -255,7 +255,10 @@ fun HomeScreenContentNewUser(
                             onClick = {
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
-                                        type = ItemsType.ALBUM_PREV
+                                        type = ItemsType.ALBUM_PREV,
+                                        id = it.id,
+                                        name = it.name,
+                                        isApiCall = true
                                     )
                                 )
                             }

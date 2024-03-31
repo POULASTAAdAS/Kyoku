@@ -68,13 +68,15 @@ fun LazyListScope.homeScreenArtistList(
         Row(
             modifier = Modifier
                 .height(if (isSmallPhone) 60.dp else 70.dp)
-                .clip(MaterialTheme.shapes.small)
+                .clip(MaterialTheme.shapes.extraSmall)
                 .clickable {
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
                                 type = ItemsType.ARTIST,
-                                name = artistPrev[artistIndex].name
+                                name = artistPrev[artistIndex].name,
+                                id = artistPrev[artistIndex].id,
+                                isApiCall = true
                             )
                         )
                     }
@@ -92,7 +94,9 @@ fun LazyListScope.homeScreenArtistList(
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
                                 type = ItemsType.ARTIST,
-                                name = artistPrev[artistIndex].name
+                                name = artistPrev[artistIndex].name,
+                                id = artistPrev[artistIndex].id,
+                                isApiCall = true
                             )
                         )
                     }
@@ -166,8 +170,9 @@ fun LazyListScope.homeScreenArtistList(
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
-                                type = ItemsType.ARTIST,
-                                name = artistPrev[artistIndex].name
+                                type = ItemsType.ERR, // using err as Screens.AllFromArtist.route check viewmodel
+                                name = artistPrev[artistIndex].name,
+                                isApiCall = true // using isApiCall to load song first
                             )
                         )
                     }
@@ -437,31 +442,31 @@ fun CustomImageView(
 ) {
 //    BitmapConverter.decodeToBitmap(url).let {
 //        if (it == null)
-            AsyncImage(
-                modifier = modifier,
-                model = ImageRequest.Builder(context)
-                    .data(url)
-                    .addHeader(
-                        name = if (isCookie) "Cookie" else "Authorization",
-                        value = headerValue
-                    )
-                    .fallback(
-                        drawableResId = if (isDarkThem) R.drawable.night_logo
-                        else R.drawable.light_logo
-                    )
-                    .error(
-                        drawableResId = if (isDarkThem) R.drawable.night_logo
-                        else R.drawable.light_logo
-                    )
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                placeholder = painterResource(
-                    id = if (isDarkThem) R.drawable.night_logo
-                    else R.drawable.light_logo
-                ),
-                contentScale = contentScale
+    AsyncImage(
+        modifier = modifier,
+        model = ImageRequest.Builder(context)
+            .data(url)
+            .addHeader(
+                name = if (isCookie) "Cookie" else "Authorization",
+                value = headerValue
             )
+            .fallback(
+                drawableResId = if (isDarkThem) R.drawable.night_logo
+                else R.drawable.light_logo
+            )
+            .error(
+                drawableResId = if (isDarkThem) R.drawable.night_logo
+                else R.drawable.light_logo
+            )
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        placeholder = painterResource(
+            id = if (isDarkThem) R.drawable.night_logo
+            else R.drawable.light_logo
+        ),
+        contentScale = contentScale
+    )
 //        else Image(
 //            modifier = modifier,
 //            bitmap = it,

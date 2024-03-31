@@ -187,13 +187,18 @@ fun SetupNavGraph(
             arguments = listOf(
                 navArgument(Screens.Args.NAME.title) {
                     type = NavType.StringType
+                },
+                navArgument(Screens.Args.IS_FOR_MORE.title) {
+                    type = NavType.BoolType
                 }
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString(Screens.Args.NAME.title, "") ?: ""
-
+            val isForMore = backStackEntry
+                .arguments?.getBoolean(Screens.Args.IS_FOR_MORE.title, false) ?: false
             ArtistAllScreen(
                 name = name,
+                isFromMore = isForMore,
                 navigateBack = {
                     navController.popBackStack()
                 },

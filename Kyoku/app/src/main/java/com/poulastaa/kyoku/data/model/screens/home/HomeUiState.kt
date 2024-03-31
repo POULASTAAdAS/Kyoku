@@ -36,12 +36,14 @@ data class HomeUiFevArtistMix(
 
 @Stable
 data class HomeAlbumUiPrev(
+    val id: Long,
     val name: String,
     val listOfSong: List<HomeUiSongPrev> = emptyList()
 )
 
 @Stable
 data class HomeUiArtistPrev(
+    val id: Long,
     val name: String,
     val artistCover: String,
     val lisOfPrevSong: List<HomeUiSongPrev> = emptyList()
@@ -62,7 +64,7 @@ data class HomeUiDailyMixPrev(
 
 @Stable
 data class HomeUiSavedAlbumPrev(
+    val album: String,
     val coverImage: String,
-    val album: String
 )
 

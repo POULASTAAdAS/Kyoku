@@ -111,15 +111,17 @@ fun Artist.toResponseArtist() = ResponseArtist(
 
 
 fun Iterable<AlbumResult>.toPreviewSong() = this.map {
-    SongPreview(
-        id = it.songId.toString(),
-        title = it.title,
-        artist = it.artist,
-        coverImage = it.cover,
-        points = it.points,
-        year = it.year
-    )
+    it.toPreviewSong()
 }
+
+fun AlbumResult.toPreviewSong() = SongPreview(
+    id = this.songId.toString(),
+    title = this.title,
+    artist = this.artist,
+    coverImage = this.cover,
+    points = this.points,
+    year = this.year
+)
 
 
 

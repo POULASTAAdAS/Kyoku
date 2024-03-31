@@ -1,17 +1,18 @@
 package com.poulastaa.utils
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
-import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.auth_response.HomeResponse
 import com.poulastaa.data.model.auth.auth_response.ResponseSong
+import com.poulastaa.data.model.auth.auth_response.SongPreview
 import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
 import com.poulastaa.data.model.db_table.PlaylistResult
 import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.song.SongTable
+import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
 import com.poulastaa.utils.Constants.PROFILE_PIC_URL
@@ -100,4 +101,18 @@ fun PlaylistResult.toResponseSong() = ResponseSong(
     description = this.description,
     track = this.track,
     date = this.date
+)
+
+
+fun Iterable<AlbumResult>.toPreviewSong() = this.map {
+    it.toPreviewSong()
+}
+
+fun AlbumResult.toPreviewSong() = SongPreview(
+    id = this.songId.toString(),
+    title = this.title,
+    artist = this.artist,
+    coverImage = this.cover,
+    points = this.points,
+    year = this.year
 )

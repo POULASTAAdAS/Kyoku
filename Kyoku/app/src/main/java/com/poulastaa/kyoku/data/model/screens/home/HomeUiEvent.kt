@@ -7,7 +7,8 @@ sealed class HomeUiEvent {
     data object SomethingWentWrong : HomeUiEvent()
     data class ItemClick(
         val type: ItemsType,
-        val id: Long? = null,
-        val name: String? = null
+        val id: Long = 0,
+        val name: String = "name",
+        val isApiCall: Boolean = false
     ) : HomeUiEvent()
 }

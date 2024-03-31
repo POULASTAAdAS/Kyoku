@@ -9,11 +9,13 @@ import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
 import com.poulastaa.data.model.home.AlbumPreview
 import com.poulastaa.data.model.home.ResponseAlbumPreview
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Album
 import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.toPreviewSong
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
@@ -38,6 +40,7 @@ class AlbumRepositoryImpl : AlbumRepository {
                             SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
                         }
                     ).slice(
+                        AlbumTable.id,
                         SongTable.id,
                         SongTable.title,
                         SongTable.coverImage,
@@ -56,19 +59,24 @@ class AlbumRepositoryImpl : AlbumRepository {
                     .limit(30)
                     .asSequence()
                     .map {
-                        SongPreview(
-                            id = it[SongTable.id].value.toString(),
+                        AlbumResult(
+                            albumId = it[AlbumTable.id].value,
+                            name = it[SongTable.album],
+                            albumPoints = 0,
+                            songId = it[SongTable.id].value,
                             title = it[SongTable.title],
-                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
                             artist = it[SongTable.artist],
-                            album = it[SongTable.album]
+                            cover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            points = 0,
+                            year = "0"
                         )
-                    }.groupBy {
-                        it.album
-                    }.map {
+                    }
+                    .groupBy { it.albumId }
+                    .map {
                         AlbumPreview(
-                            name = it.key,
-                            listOfSongs = it.value.take(4)
+                            id = it.key,
+                            name = it.value[0].name,
+                            listOfSongs = it.value.toPreviewSong().take(4)
                         )
                     }
                     .take(5)

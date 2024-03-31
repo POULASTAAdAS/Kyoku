@@ -39,7 +39,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
 
         PinnedTable::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

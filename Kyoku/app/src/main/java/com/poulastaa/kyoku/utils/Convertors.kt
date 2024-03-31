@@ -34,8 +34,6 @@ import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiFevArtistMix
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -195,6 +193,7 @@ fun List<String>.toStoreArtistReq() = StoreArtistReq(
 
 
 fun AlbumPreview.toAlbumTablePrevEntry() = AlbumPrevTable(
+    albumId = this.id,
     name = this.name
 )
 

@@ -94,20 +94,6 @@ class DatabaseRepositoryImpl @Inject constructor(
                     )
                 }
             }.await()
-
-//            async {
-//                dao.getAllFevArtistMixPrev().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updateArtistCoverImage(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }.await()
         }
     }
 
@@ -131,20 +117,6 @@ class DatabaseRepositoryImpl @Inject constructor(
                     }
                 }
             }.await()
-
-//            async {
-//                dao.getAllPrevSong().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updatePrevSong(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }.await()
         }
     }
 
@@ -174,37 +146,6 @@ class DatabaseRepositoryImpl @Inject constructor(
                     }
                 }
             }.await()
-
-//            val artist = async {
-//                dao.getAllFromArtist().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updatePrevArtist(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }
-//
-//            val prevSong = async {
-//                dao.getAllPrevSong().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updatePrevSong(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }
-//
-//            artist.await()
-//            prevSong.await()
         }
     }
 
@@ -260,20 +201,6 @@ class DatabaseRepositoryImpl @Inject constructor(
                     }
                 }
             }.await()
-
-//            async {
-//                dao.getAllFromSongTable().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updateSong(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }.await()
         }
     }
 
@@ -339,20 +266,6 @@ class DatabaseRepositoryImpl @Inject constructor(
                     )
                 }
             }.await()
-
-//            async {
-//                dao.getAllPrevSong().forEach {
-//                    if (it.coverImage.startsWith(SERVICE_BASE_URL))
-//                        dao.updatePrevSong(
-//                            coverImage = it.coverImage.encodeImage(
-//                                context = context!!,
-//                                header = header!!,
-//                                isCookie = !header!!.startsWith("B")
-//                            ),
-//                            id = it.id
-//                        )
-//                }
-//            }.await()
         }
     }
 

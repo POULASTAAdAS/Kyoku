@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 
 @Composable
 fun HomeScreen(
+    isLogin: Boolean,
     isCookie: Boolean,
     authHeader: String,
     viewModel: HomeScreenViewModel = hiltViewModel(),
@@ -21,7 +22,7 @@ fun HomeScreen(
     navigate: (HomeRootUiEvent) -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
-        viewModel.loadStartupData(context)
+        viewModel.loadStartupData(context, isLogin = isLogin)
     }
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
@@ -31,6 +32,18 @@ fun HomeScreen(
                     navigate.invoke(HomeRootUiEvent.Navigate(event.route))
                 }
 
+                is UiEvent.NavigateWithData -> {
+                    navigate.invoke(
+                        HomeRootUiEvent.NavigateWithData(
+                            route = event.route,
+                            type = event.type,
+                            id = event.id,
+                            name = event.name,
+                            isApiCall = event.isApiCall
+                        )
+                    )
+                }
+
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
@@ -38,7 +51,6 @@ fun HomeScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                else -> Unit
             }
         }
     }

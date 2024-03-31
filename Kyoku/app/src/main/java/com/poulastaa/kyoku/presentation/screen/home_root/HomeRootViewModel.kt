@@ -137,6 +137,20 @@ class HomeRootViewModel @Inject constructor(
                 }
             }
 
+            is HomeRootUiEvent.NavigateWithData -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(
+                        UiEvent.NavigateWithData(
+                            route = event.route,
+                            type = event.type,
+                            id = event.id,
+                            name = event.name,
+                            isApiCall = event.isApiCall
+                        )
+                    )
+                }
+            }
+
             HomeRootUiEvent.LogOut -> {
                 storeSignInState(SignInStatus.AUTH, ds)
             }

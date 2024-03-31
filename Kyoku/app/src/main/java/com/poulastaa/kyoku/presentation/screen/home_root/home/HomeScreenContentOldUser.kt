@@ -102,7 +102,7 @@ fun HomeScreenContentOldUser(
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
                                         type = ItemsType.PLAYLIST,
-                                        name = data.playlist[0].name
+                                        id = data.playlist[0].id
                                     )
                                 )
                             }
@@ -124,7 +124,7 @@ fun HomeScreenContentOldUser(
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
                                             type = ItemsType.PLAYLIST,
-                                            name = data.playlist[1].name
+                                            id = data.playlist[0].id
                                         )
                                     )
                                 }
@@ -152,7 +152,7 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = ItemsType.ALBUM_PREV,
+                                            type = ItemsType.ALBUM,
                                             name = data.savedAlbumPrev[0].album
                                         )
                                     )
@@ -190,8 +190,8 @@ fun HomeScreenContentOldUser(
                                 scope.launch {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = ItemsType.ALBUM_PREV,
-                                            name = data.savedAlbumPrev[0].album
+                                            type = ItemsType.ALBUM,
+                                            name = data.savedAlbumPrev[1].album
                                         )
                                     )
                                 }

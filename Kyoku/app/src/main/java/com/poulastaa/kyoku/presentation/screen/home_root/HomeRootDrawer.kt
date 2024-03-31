@@ -42,6 +42,8 @@ fun HomeRootDrawer(
                     drawerState.close()
                 }
 
+                is UiEvent.NavigateWithData -> navigate.invoke(event)
+
                 else -> Unit
             }
         }

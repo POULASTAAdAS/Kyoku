@@ -130,7 +130,8 @@ interface AppDao {
 
     @Transaction
     @Query(
-        """select SongPreviewTable.id ,SongPreviewTable.title , SongPreviewTable.artist ,  SongPreviewTable.coverImage ,  AlbumPrevTable.name from SongPreviewTable 
+        """select SongPreviewTable.id ,SongPreviewTable.title , SongPreviewTable.artist ,  SongPreviewTable.coverImage ,
+              AlbumPrevTable.name , AlbumPrevTable.albumId  from SongPreviewTable 
             join albumpreviewsongrelationtable on albumpreviewsongrelationtable.songId = SongPreviewTable.id
             join AlbumPrevTable on AlbumPrevTable.id = albumpreviewsongrelationtable.albumId
             where AlbumPrevTable.id in ( 
@@ -144,7 +145,7 @@ interface AppDao {
     @Query(
         """
         select SongPreviewTable.id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , 
-            ArtistPrevTable.name , ArtistPrevTable.coverImage as imageUrl  from SongPreviewTable
+            ArtistPrevTable.name , ArtistPrevTable.id as artistId , ArtistPrevTable.coverImage as imageUrl  from SongPreviewTable
             join ArtistPreviewSongRelation on ArtistPreviewSongRelation.songId = SongPreviewTable.id
             join ArtistPrevTable on ArtistPrevTable.id = ArtistPreviewSongRelation.artistId
             where ArtistPrevTable.id in (

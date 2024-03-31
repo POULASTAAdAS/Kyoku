@@ -9,5 +9,5 @@ fun NavHostController.navigateWithData(event: UiEvent.NavigateWithData) = when (
         route = "${event.route}${event.type.title}/${event.id}/${event.name}/${event.isApiCall}"
     )
 
-    else -> navigate(route = "${event.route}${event.name}")
+    else -> navigate(route = "${event.route}${event.name}/${event.isApiCall}")
 }
