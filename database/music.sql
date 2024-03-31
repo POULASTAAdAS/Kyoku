@@ -366,30 +366,24 @@ select Song.id ,Song.album , Song.coverImage from Song
 where Song.artist like '%Arijit Singh%';
 
 
-select Song.id , Song.title , Song.album , Song.coverImage from Song
-where artist like '%Arijit Singh%' order by points desc
+select Song.id , Song.title , Song.album , Song.coverImage , Song.date from Song
+where artist like '%Arijit Singh%' order by date desc
 ;
 
-select songalbumartistrelation.albumId ,Song.album , Song.coverImage from Song
+select songalbumartistrelation.albumId ,Song.album , Song.coverImage  , Song.date from Song
 join songalbumartistrelation on songalbumartistrelation.songId = Song.id
-where songalbumartistrelation.artistId = 3;
+where songalbumartistrelation.artistId = 3 order by date desc;
+
+select * from Album where name like '%Kabir%';
 
 
-
-select * from passkeyauthuser;
-
-select points from song where artist like '%Arijit Singh%';
-
-update Song set points = 1000 where artist like '%Arijit Singh%';
+select * from song where album = 'Kabir Singh';
 
 
-
-
-
-
-
-
-
+select Song.id , Song.title , Song.album , Song.coverImage , Song.date from Song
+join songalbumartistrelation on songalbumartistrelation.songId = Song.id
+join album on album.id = songalbumartistrelation.albumId
+where album.id = 829;
 
 
 

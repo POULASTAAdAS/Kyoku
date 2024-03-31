@@ -3,6 +3,8 @@ package com.poulastaa.utils
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.common.ResponseArtist
 import com.poulastaa.data.model.common.ResponseSong
+import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.data.model.utils.User
 import com.poulastaa.data.model.utils.UserType
@@ -108,7 +110,16 @@ fun Artist.toResponseArtist() = ResponseArtist(
 )
 
 
-
+fun Iterable<AlbumResult>.toPreviewSong() = this.map {
+    SongPreview(
+        id = it.songId.toString(),
+        title = it.title,
+        artist = it.artist,
+        coverImage = it.cover,
+        points = it.points,
+        year = it.year
+    )
+}
 
 
 

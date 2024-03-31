@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.navigation.root_navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreS
 import com.poulastaa.kyoku.presentation.screen.song_view.SongViewRootScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistAllScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
@@ -150,17 +152,23 @@ fun SetupNavGraph(
                 },
                 navArgument(Screens.Args.NAME.title) {
                     type = NavType.StringType
+                },
+                navArgument(Screens.Args.IS_API_CALL.title) {
+                    type = NavType.BoolType
                 }
             )
         ) { backStackEntry ->
             val type = backStackEntry.arguments?.getString(Screens.Args.TYPE.title, "") ?: ""
             val id = backStackEntry.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
             val name = backStackEntry.arguments?.getString(Screens.Args.NAME.title, "") ?: ""
+            val isApiCall = backStackEntry
+                .arguments?.getBoolean(Screens.Args.IS_API_CALL.title, false) ?: false
 
             SongViewRootScreen(
                 type = type,
                 id = id,
                 name = name,
+                isApiCall = isApiCall,
                 navigateBack = {
                     navController.popBackStack()
                 },
@@ -184,7 +192,19 @@ fun SetupNavGraph(
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString(Screens.Args.NAME.title, "") ?: ""
 
-            ArtistAllScreen(name = name)
+            ArtistAllScreen(
+                name = name,
+                navigateBack = {
+                    navController.popBackStack()
+                },
+                navigate = {
+                    when (it) {
+                        is UiEvent.Navigate -> navController.navigate(it)
+                        is UiEvent.NavigateWithData -> navController.navigateWithData(it)
+                        else -> Unit
+                    }
+                }
+            )
         }
 
 

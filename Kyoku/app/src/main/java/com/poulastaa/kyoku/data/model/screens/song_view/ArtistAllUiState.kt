@@ -7,5 +7,7 @@ data class ArtistAllUiState(
     val isInternetAvailable: Boolean = false,
     val isLoading: Boolean = true,
     val isInternetError: Boolean = true,
-    val errorMessage: String = "Please Check Your Internet Connection."
+    val errorMessage: String = "Please Check Your Internet Connection.",
+    val isCooke: Boolean = false,
+    val headerValue: String = ""
 )

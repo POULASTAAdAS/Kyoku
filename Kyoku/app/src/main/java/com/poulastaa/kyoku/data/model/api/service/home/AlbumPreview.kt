@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AlbumPreview(
-    val name: String,
+    val name: String = "",
+    val points: Long = 0,
     val listOfSongs: List<SongPreview> = emptyList()
 )

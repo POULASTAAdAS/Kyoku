@@ -1,11 +1,11 @@
 package com.poulastaa.routes
 
+import com.poulastaa.data.model.artist.ArtistAlbum
 import com.poulastaa.data.model.artist.ArtistPageReq
-import com.poulastaa.data.model.artist.ArtistPageResponse
 import com.poulastaa.data.model.common.EndPoints
-import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.domain.repository.UserServiceRepository
-import com.poulastaa.utils.Constants.SECURITY_LIST
+import com.poulastaa.utils.Constants
 import com.poulastaa.utils.getUserType
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -14,23 +14,23 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.artistPage(
+fun Route.artistSongPage(
     service: UserServiceRepository
-) {
-    authenticate(configurations = SECURITY_LIST) {
-        route(EndPoints.ArtistPage.route) {
+){
+    authenticate(configurations = Constants.SECURITY_LIST) {
+        route(EndPoints.ArtistPageSongs.route) {
             post {
                 val req = call.receiveNullable<ArtistPageReq>() ?: return@post call.respond(
-                    message = ArtistPageResponse(),
+                    message = emptyList<SongPreview>(),
                     status = HttpStatusCode.OK
                 )
 
-                val helper = getUserType() ?: return@post call.respond(
-                    message = ArtistPageResponse(),
+                getUserType() ?: return@post call.respond(
+                    message = emptyList<SongPreview>(),
                     status = HttpStatusCode.OK
                 )
 
-                val response = service.getArtistPageResponse(req, helper)
+                val response = service.getArtistPageSongResponse(req)
 
                 call.respond(
                     message = response,

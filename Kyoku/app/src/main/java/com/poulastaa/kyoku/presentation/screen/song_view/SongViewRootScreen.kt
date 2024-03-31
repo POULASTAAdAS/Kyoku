@@ -23,6 +23,7 @@ fun SongViewRootScreen(
     type: String,
     id: Long,
     name: String,
+    isApiCall: Boolean,
     isSmallPhone: Boolean = LocalConfiguration.current.screenWidthDp <= 411,
     isDarkThem: Boolean = isSystemInDarkTheme(),
     context: Context = LocalContext.current,
@@ -30,7 +31,7 @@ fun SongViewRootScreen(
     navigate: (UiEvent) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadData(type, id, name)
+        viewModel.loadData(type, id, name , isApiCall)
     }
 
     LaunchedEffect(key1 = viewModel.uiEvent) {

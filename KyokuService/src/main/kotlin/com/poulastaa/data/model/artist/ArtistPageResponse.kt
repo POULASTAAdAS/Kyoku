@@ -16,5 +16,6 @@ data class ArtistPageResponse(
 data class ArtistAlbum(
     val id: Long = 0,
     val name: String = "",
-    val coverImage: String = ""
+    val coverImage: String = "",
+    val year: String = ""
 )

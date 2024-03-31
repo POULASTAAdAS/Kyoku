@@ -1,12 +1,13 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
-import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageResponse
+import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponseStatus
@@ -105,12 +106,27 @@ class ServiceRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getArtistAsPage(req: ArtistPageReq): ArtistPageResponse {
+    override suspend fun getArtistAlbumAsPage(req: ArtistPageReq): List<ArtistAlbum> {
         return try {
-            api.getArtistAsPage(req)
+            api.getArtistAlbumAsPage(req)
         } catch (e: Exception) {
-            Log.d("error", e.message.toString())
-            ArtistPageResponse()
+            emptyList()
+        }
+    }
+
+    override suspend fun getArtistSongAsPage(req: ArtistPageReq): List<SongPreview> {
+        return try {
+            api.getArtistSongAsPage(req)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getAlbum(id: Long): AlbumPreview {
+        return try {
+            api.getAlbum(id)
+        } catch (e: Exception) {
+            AlbumPreview()
         }
     }
 }

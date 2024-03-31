@@ -13,8 +13,10 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
+import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -23,7 +25,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -89,7 +90,8 @@ class SongViewViewModel @Inject constructor(
     fun loadData(
         typeString: String,
         id: Long,
-        name: String
+        name: String,
+        isApiCall: Boolean
     ) {
         if (state.isLoading) {
             when (getItemType(typeString)) {
@@ -113,19 +115,24 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        val album = db.getAlbum(name)
-
-                        state = state.copy(
-                            type = if (album.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
-                            data = state.data.copy(
-                                album = album
+                        when (isApiCall) {
+                            true -> getAlbumFromApi(id)
+                            false -> db.getAlbum(name)
+                        }.let {
+                            state = state.copy(
+                                type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
+                                data = state.data.copy(
+                                    album = it
+                                )
                             )
-                        )
+                        }
                     }
                 }
 
                 ItemsType.ALBUM_PREV -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
 
                 ItemsType.ARTIST -> {
@@ -172,11 +179,15 @@ class SongViewViewModel @Inject constructor(
                 }
 
                 ItemsType.ARTIST_MIX -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
 
                 ItemsType.ARTIST_MORE -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
 
                 ItemsType.FAVOURITE -> {
@@ -193,20 +204,23 @@ class SongViewViewModel @Inject constructor(
                 }
 
                 ItemsType.SONG -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
 
                 ItemsType.HISTORY -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
 
                 ItemsType.ERR -> {
+                    viewModelScope.launch(Dispatchers.IO) {
 
+                    }
                 }
-            }
-
-            viewModelScope.launch(Dispatchers.IO) {
-                delay(600)
+            }.let {
                 state = state.copy(
                     isLoading = false
                 )
@@ -261,4 +275,20 @@ class SongViewViewModel @Inject constructor(
 
         it
     }
+
+    private suspend fun getAlbumFromApi(id: Long) = api.getAlbum(id).let { album ->
+        UiAlbum(
+            name = album.name,
+            listOfSong = album.listOfSongs.map { song ->
+                UiSong(
+                    id = song.id.toLong(),
+                    title = song.title,
+                    artist = song.artist,
+                    album = album.name,
+                    coverImage = song.coverImage
+                )
+            }
+        )
+    }
+
 }

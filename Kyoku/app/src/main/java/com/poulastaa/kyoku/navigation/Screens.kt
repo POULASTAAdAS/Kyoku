@@ -4,7 +4,8 @@ sealed class Screens(val route: String) {
     enum class Args(val title: String) {
         TYPE("type"),
         ID("id"),
-        NAME("name")
+        NAME("name"),
+        IS_API_CALL("isApiCall")
     }
 
     data object Auth : Screens("/auth")
@@ -19,9 +20,8 @@ sealed class Screens(val route: String) {
     data object SuggestGenre : Screens("/setup/suggestGenre")
     data object SuggestArtist : Screens("/setup/suggestArtist")
 
-    // todo try to design for any type of list of song
     data object SongView : Screens("/app/songView/") {
-        const val PARAMS: String = "{type}/{id}/{name}"
+        const val PARAMS: String = "{type}/{id}/{name}/{isApiCall}"
     }
 
     data object AllFromArtist : Screens("/app/songView/allFromArtist/") {

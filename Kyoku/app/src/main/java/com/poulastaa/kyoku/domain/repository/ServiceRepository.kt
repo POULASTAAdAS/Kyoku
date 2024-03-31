@@ -1,11 +1,13 @@
 package com.poulastaa.kyoku.domain.repository
 
+import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
-import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageResponse
+import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyPlaylistResponse
@@ -33,5 +35,8 @@ interface ServiceRepository {
 
     suspend fun artistMostPopularReq(req: ArtistMostPopularSongReq): ArtistMostPopularSongRes
 
-    suspend fun getArtistAsPage(req: ArtistPageReq): ArtistPageResponse
+    suspend fun getArtistAlbumAsPage(req: ArtistPageReq): List<ArtistAlbum>
+    suspend fun getArtistSongAsPage(req: ArtistPageReq): List<SongPreview>
+
+    suspend fun getAlbum(id:Long): AlbumPreview
 }

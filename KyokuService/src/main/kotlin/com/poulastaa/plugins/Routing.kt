@@ -32,7 +32,10 @@ fun Application.configureRouting() {
 
         home(service)
         artist(service)
-        artistPage(service)
+        artistAlbumPage(service)
+        artistSongPage(service)
+
+        album(service)
 
         getMasterPlaylist(service)
 

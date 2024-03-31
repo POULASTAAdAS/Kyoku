@@ -10,7 +10,8 @@ sealed class UiEvent {
         val route: String = Screens.Home.route,
         val type: ItemsType = ItemsType.PLAYLIST,
         val id: Long = -1,
-        val name: String = "name"
+        val name: String = "name",
+        val isApiCall: Boolean = false
     ) : UiEvent()
 
     data class ShowToast(val message: String) : UiEvent()

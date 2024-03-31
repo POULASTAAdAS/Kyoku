@@ -1,6 +1,9 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.artist.*
+import com.poulastaa.data.model.artist.ArtistAlbum
+import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
+import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
+import com.poulastaa.data.model.artist.ArtistPageReq
 import com.poulastaa.data.model.db_table.*
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
@@ -12,10 +15,7 @@ import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.setup.spotify.SpotifySong
-import com.poulastaa.data.model.utils.CreatePlaylistHelper
-import com.poulastaa.data.model.utils.DbUsers
-import com.poulastaa.data.model.utils.UserType
-import com.poulastaa.data.model.utils.UserTypeHelper
+import com.poulastaa.data.model.utils.*
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
@@ -27,11 +27,8 @@ import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.constructCoverPhotoUrl
-import com.poulastaa.utils.getAlbum
-import com.poulastaa.utils.removeAlbum
+import com.poulastaa.utils.*
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
-import com.poulastaa.utils.toListOfPlaylistRow
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import org.jetbrains.exposed.sql.Column
@@ -282,78 +279,121 @@ class UserServiceRepositoryImpl(
         }.await()
     }
 
-    override suspend fun getArtistPageResponse(
-        req: ArtistPageReq,
-        helper: UserTypeHelper
-    ): ArtistPageResponse {
-        dbUsers.getDbUser(helper) ?: return ArtistPageResponse()
-
-        return withContext(Dispatchers.IO) {
-            val albums = async {
+    override suspend fun artistPageAlbumResponse(req: ArtistPageReq): List<ArtistAlbum> =
+        withContext(Dispatchers.IO) {
+            val artistId = async {
                 dbQuery {
-                    SongTable
-                        .join(
-                            otherTable = SongAlbumArtistRelationTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                SongAlbumArtistRelationTable.songId as Column<*> eq SongTable.id
-                            }
-                        ).slice(
-                            SongAlbumArtistRelationTable.albumId,
-                            SongTable.album,
-                            SongTable.coverImage
-                        ).select {
-                            SongAlbumArtistRelationTable.artistId eq req.artistId.toInt()
-                        }.map {
-                            ArtistAlbum(
-                                id = it[SongAlbumArtistRelationTable.albumId],
-                                name = it[SongTable.album],
-                                coverImage = it[SongTable.coverImage].constructCoverPhotoUrl()
-                            )
-                        }.drop(
-                            if (req.page == 1) 0 else req.page * req.pageSize
-                        ).take(req.pageSize)
+                    Artist.find {
+                        ArtistTable.name eq req.name
+                    }.firstOrNull()?.id?.value ?: 0
                 }
             }
 
-            val songs = async {
-                dbQuery {
-                    SongTable.slice(
-                        SongTable.id,
-                        SongTable.title,
+            dbQuery {
+                SongTable
+                    .join(
+                        otherTable = SongAlbumArtistRelationTable,
+                        joinType = JoinType.INNER,
+                        additionalConstraint = {
+                            SongAlbumArtistRelationTable.songId as Column<*> eq SongTable.id
+                        }
+                    ).slice(
+                        SongAlbumArtistRelationTable.albumId,
                         SongTable.album,
-                        SongTable.coverImage
+                        SongTable.coverImage,
+                        SongTable.date
                     ).select {
-                        SongTable.artist like "%${req.name}%"
-                    }.map {
-                        SongPreview(
-                            id = it[SongTable.id].value.toString(),
-                            title = it[SongTable.title],
-                            album = it[SongTable.album],
-                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl()
+                        SongAlbumArtistRelationTable.artistId eq artistId.await()
+                    }
+                    .orderBy(SongTable.date, SortOrder.DESC)
+                    .map {
+                        ArtistAlbum(
+                            id = it[SongAlbumArtistRelationTable.albumId],
+                            name = it[SongTable.album],
+                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            year = it[SongTable.date]
                         )
                     }.drop(
                         if (req.page == 1) 0 else req.page * req.pageSize
                     ).take(req.pageSize)
-                }
             }
-
-            val albumResponse = albums.await()
-            val songResponse = songs.await()
-
-
-            ArtistPageResponse(
-                status = HomeResponseStatus.SUCCESS,
-                albums = albumResponse,
-                songs = if (albumResponse.size == 20) emptyList() else
-                    songResponse.take(req.pageSize - albumResponse.size)
-            )
         }
-    }
 
+    override suspend fun getArtistPageSongResponse(req: ArtistPageReq): List<SongPreview> =
+        withContext(Dispatchers.IO) {
+            dbQuery {
+                SongTable.slice(
+                    SongTable.id,
+                    SongTable.title,
+                    SongTable.album,
+                    SongTable.coverImage,
+                    SongTable.date
+                ).select {
+                    SongTable.artist like "%${req.name}%"
+                }.orderBy(SongTable.date, SortOrder.DESC)
+                    .map {
+                        SongPreview(
+                            id = it[SongTable.id].value.toString(),
+                            title = it[SongTable.title],
+                            album = it[SongTable.album],
+                            coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            year = it[SongTable.date]
+                        )
+                    }.drop(
+                        if (req.page == 1) 0 else req.page * req.pageSize
+                    ).take(req.pageSize)
+            }
+        }
 
-    //
-
+    override suspend fun getAlbum(id: Long): AlbumPreview =
+        withContext(Dispatchers.IO) {
+            dbQuery {
+                SongTable
+                    .join(
+                        otherTable = SongAlbumArtistRelationTable,
+                        joinType = JoinType.INNER,
+                        additionalConstraint = {
+                            SongAlbumArtistRelationTable.songId as Column<*> eq SongTable.id
+                        }
+                    ).join(
+                        otherTable = AlbumTable,
+                        joinType = JoinType.INNER,
+                        additionalConstraint = {
+                            AlbumTable.id eq SongAlbumArtistRelationTable.albumId as Column<*>
+                        }
+                    ).slice(
+                        AlbumTable.name,
+                        AlbumTable.points,
+                        SongTable.id,
+                        SongTable.title,
+                        SongTable.artist,
+                        SongTable.coverImage,
+                        SongTable.points,
+                        SongTable.date
+                    ).select {
+                        AlbumTable.id eq id
+                    }.map {
+                        AlbumResult(
+                            name = it[AlbumTable.name],
+                            albumPoints = it[AlbumTable.points],
+                            songId = it[SongTable.id].value,
+                            title = it[SongTable.title],
+                            artist = it[SongTable.artist],
+                            cover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            points = it[SongTable.points],
+                            year = it[SongTable.date]
+                        )
+                    }.groupBy {
+                        it.name
+                    }.map {
+                        AlbumPreview(
+                            name = it.key,
+                            points = it.value[0].points,
+                            listOfSongs = it.value.toPreviewSong()
+                        )
+                    }.firstOrNull() ?: AlbumPreview()
+            }
+        }
 
     // private functions
     private suspend fun createPlaylist(
