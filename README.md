@@ -9,4 +9,4 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 
 
 
-<img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="48">
+<img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="300" height = '600'>
