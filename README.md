@@ -5,3 +5,4 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 <p>NOTE: Unfinished</p>
 <p>
 
+![Home Dark](https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg?raw=true)
