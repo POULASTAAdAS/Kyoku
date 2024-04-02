@@ -31,11 +31,14 @@ fun Application.configureRouting() {
         storeArtist(service)
 
         home(service)
+
         artist(service)
         artistAlbumPage(service)
         artistSongPage(service)
 
         album(service)
+
+        dailyMix(service)
 
         getMasterPlaylist(service)
 

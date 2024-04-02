@@ -45,6 +45,7 @@ import org.jetbrains.exposed.sql.*
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.Random
+import java.util.concurrent.TimeUnit
 
 class LogInResponseRepositoryImpl : LogInResponseRepository {
     override suspend fun getFevArtistMix(
@@ -101,12 +102,12 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 .getResponseArtistPreviewOnArtistIdList()
         }
 
+    // getDailyMixPrev
     override suspend fun getDailyMixPrev(userId: Long, userType: UserType): DailyMixPreview {
-        val historySongIdList = try { // get artistId from history
-            getHistorySongIdList(userType, userId)
-        } catch (e: Exception) {
-            return DailyMixPreview()
-        }
+        val historySongIdList = getHistorySongIdList(userType, userId) // get artistId from history
+
+        println(historySongIdList)
+
         val songsByTheArtistUnSorted = getPreviewSongsByTheArtists(historySongIdList)
 
         return DailyMixPreview(
@@ -686,18 +687,26 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
         )
     }
 
-    // getDailyMixPrev
     private suspend fun getHistorySongIdList(userType: UserType, userId: Long) = dbQuery {
         when (userType) {
             UserType.GOOGLE_USER -> {
+                val subQueryMaxDate = GoogleUserListenHistoryTable
+                    .slice(GoogleUserListenHistoryTable.date.max())
+                    .select {
+                        GoogleUserListenHistoryTable.userId eq userId
+                    }.single()[GoogleUserListenHistoryTable.date.max()]
+
+                if (subQueryMaxDate == null) return@dbQuery emptyList()
+
+
+                val threeDaysAgo = subQueryMaxDate.minus(3, TimeUnit.DAYS.toChronoUnit())
+
                 GoogleUserListenHistoryTable
                     .slice(
-                        EmailUserListenHistoryTable.songId
+                        GoogleUserListenHistoryTable.songId
                     ).select {
                         GoogleUserListenHistoryTable.userId eq userId and (
-                                GoogleUserListenHistoryTable.date greaterEq (
-                                        LocalDateTime.now().minus(3, ChronoUnit.DAYS)
-                                        )
+                                GoogleUserListenHistoryTable.date greaterEq threeDaysAgo
                                 )
                     }
                     .withDistinct()
@@ -709,14 +718,24 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
             }
 
             UserType.EMAIL_USER -> {
+                val subQueryMaxDate = EmailUserListenHistoryTable
+                    .slice(EmailUserListenHistoryTable.date.max())
+                    .select {
+                        EmailUserListenHistoryTable.userId eq userId
+                    }.single()[EmailUserListenHistoryTable.date.max()]
+
+                if (subQueryMaxDate == null) return@dbQuery emptyList()
+
+
+                val threeDaysAgo = subQueryMaxDate.minus(3, TimeUnit.DAYS.toChronoUnit())
+
+
                 EmailUserListenHistoryTable
                     .slice(
                         EmailUserListenHistoryTable.songId
                     ).select {
                         EmailUserListenHistoryTable.userId eq userId and (
-                                EmailUserListenHistoryTable.date greaterEq (
-                                        LocalDateTime.now().minus(3, ChronoUnit.DAYS)
-                                        )
+                                EmailUserListenHistoryTable.date greaterEq threeDaysAgo
                                 )
                     }
                     .withDistinct()
@@ -728,14 +747,24 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
             }
 
             UserType.PASSKEY_USER -> {
+                val subQueryMaxDate = PasskeyUserListenHistoryTable
+                    .slice(PasskeyUserListenHistoryTable.date.max())
+                    .select {
+                        PasskeyUserListenHistoryTable.userId eq userId
+                    }.single()[PasskeyUserListenHistoryTable.date.max()]
+
+                if (subQueryMaxDate == null) return@dbQuery emptyList()
+
+
+                val threeDaysAgo = subQueryMaxDate.minus(3, TimeUnit.DAYS.toChronoUnit())
+
+
                 PasskeyUserListenHistoryTable
                     .slice(
                         PasskeyUserListenHistoryTable.songId
                     ).select {
                         PasskeyUserListenHistoryTable.userId eq userId and (
-                                PasskeyUserListenHistoryTable.date greaterEq (
-                                        LocalDateTime.now().minus(3, ChronoUnit.DAYS)
-                                        )
+                                PasskeyUserListenHistoryTable.date greaterEq threeDaysAgo
                                 )
                     }
                     .withDistinct()
@@ -777,17 +806,20 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points
+                SongTable.points,
+                SongTable.date
             ).select {
                 sar2[SongArtistRelationTable.songId] inList songIdList
             }.orderBy(SongTable.points, SortOrder.DESC)
             .map {
                 SongPreview(
-                    it[SongTable.id].toString(),
-                    it[SongTable.title],
-                    it[SongTable.coverImage].constructCoverPhotoUrl(),
-                    it[SongTable.artist],
-                    it[SongTable.album]
+                    id = it[SongTable.id].toString(),
+                    title = it[SongTable.title],
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album],
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    points = it[SongTable.points],
+                    year = it[SongTable.date]
                 )
             }.groupBy {
                 it.artist

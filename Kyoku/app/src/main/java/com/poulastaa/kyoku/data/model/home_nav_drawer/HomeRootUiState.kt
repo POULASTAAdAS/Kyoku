@@ -4,6 +4,7 @@ import com.poulastaa.kyoku.navigation.Screens
 
 data class HomeRootUiState(
     val isCookie: Boolean = false,
+    val isLoading: Boolean = false,
     val headerValue: String = "",
     val homeTopBarTitle: String = "Good Morning",
     val libraryTopBarTitle: String = "Your Library",

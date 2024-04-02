@@ -43,6 +43,8 @@ fun SongViewErrScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start,
@@ -95,7 +97,7 @@ fun SongViewErrScreen(
 @Composable
 private fun Preview() {
     TestThem {
-        SongViewErrScreen{
+        SongViewErrScreen {
 
         }
     }

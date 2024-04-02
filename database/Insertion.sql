@@ -70,7 +70,7 @@ Insert into CountryGenreRelation (countryId, genreId) values
 
 
 
-insert ignore into GoogleUserListenHistory (userId , songId) values
+insert ignore into emailUserListenHistory (userId , songId) values
 (1,15019),
 (1,14400),
 (1,19373),
@@ -91,7 +91,7 @@ insert ignore into GoogleUserListenHistory (userId , songId) values
 (1,12262);
 
 
-insert into googleuserplaylist values
+insert into emailuserplaylist values
 (1 ,2 ,9175 , 6),
 (11,2 ,812 , 6),
 (111,2 ,8996 , 6),
@@ -102,7 +102,7 @@ insert into googleuserplaylist values
 (101,2 ,90 , 6),
 (110,2 ,891 , 6);
 
-insert into GoogleUserFavourite(userId , songId) values
+insert into emailUserFavourite(userId , songId) values
 (1,829),
 (1,118),
 (1,54),
@@ -112,7 +112,7 @@ insert into GoogleUserFavourite(userId , songId) values
 
 
 
-insert into GoogleUserAlbumRelation (userid , albumid) values 
+insert into emailUserAlbumRelation (userid , albumid) values 
 (1,829),
 (1,118),
 (1,54),

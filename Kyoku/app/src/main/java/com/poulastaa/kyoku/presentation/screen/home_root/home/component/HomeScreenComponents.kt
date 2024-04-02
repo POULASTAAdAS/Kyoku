@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -205,6 +206,48 @@ fun CustomToast(
         )
     }
 }
+
+
+@Composable
+fun ArtistMixCard(
+    coverImage: String,
+    label: String,
+    isCookie: Boolean,
+    headerValue: String,
+    isSmallPhone: Boolean,
+    onClick: (HomeUiEvent.ItemClick) -> Unit
+) {
+    Box(
+        modifier = Modifier.wrapContentSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        HomeScreenCard(
+            size = if (isSmallPhone) 120.dp else 130.dp,
+            imageUrl = coverImage,
+            isCookie = isCookie,
+            headerValue = headerValue,
+            onClick = {
+                onClick.invoke(
+                    HomeUiEvent.ItemClick(
+                        type = ItemsType.ARTIST_MIX
+                    )
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+        Text(
+            text = label,
+            maxLines = 2,
+            modifier = Modifier.width(if (isSmallPhone) 120.dp else 130.dp),
+            overflow = TextOverflow.Ellipsis,
+            fontSize = MaterialTheme.typography.bodySmall.fontSize
+        )
+    }
+}
+
+
 
 
 @Composable

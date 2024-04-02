@@ -21,6 +21,8 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.toDailyMixEntry
+import com.poulastaa.kyoku.utils.toListOfUiSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -184,7 +186,35 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ARTIST_MIX -> {
                     viewModelScope.launch(Dispatchers.IO) {
+                        // todo
+                    }
+                }
 
+                ItemsType.DAILY_MIX -> {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        if (db.checkIfDailyMixTableEmpty()) {
+                            val response = api.getDailyMix()
+                                .listOfSongs.toDailyMixEntry()
+
+                            if (response.isEmpty()) {
+                                state = state.copy(
+                                    type = ItemsType.ERR
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoDailyMix(response)
+                        }
+
+                        db.readAllDailyMix().collect {
+                            state = state.copy(
+                                type = ItemsType.DAILY_MIX,
+                                data = state.data.copy(
+                                    dailyMix = it.toListOfUiSong()
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -267,6 +297,7 @@ class SongViewViewModel @Inject constructor(
         ItemsType.ALBUM_PREV.title -> ItemsType.ALBUM_PREV
         ItemsType.ARTIST.title -> ItemsType.ARTIST
         ItemsType.ARTIST_MIX.title -> ItemsType.ARTIST_MIX
+        ItemsType.DAILY_MIX.title -> ItemsType.DAILY_MIX
         ItemsType.ARTIST_MORE.title -> ItemsType.ARTIST_MORE
         ItemsType.FAVOURITE.title -> ItemsType.FAVOURITE
         ItemsType.SONG.title -> ItemsType.SONG

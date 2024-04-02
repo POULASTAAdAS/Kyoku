@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +20,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,13 +49,13 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScre
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardWithText
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.FavouritePrev
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
 import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreenContentOldUser(
-
     paddingValues: PaddingValues,
     isSmallPhone: Boolean,
     data: HomeUiData,
@@ -81,42 +86,21 @@ fun HomeScreenContentOldUser(
                     .wrapContentHeight(),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(65.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-                ) {
-                    // saved playlist
-                    HomeScreenCardPlaylistPrev(
+                if (data.playlist.isNotEmpty())
+                    Row(
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(1f / 2),
-                        name = data.playlist[0].name,
-                        imageUrls = data.playlist[0].listOfUrl,
-                        isCookie = isCookie,
-                        headerValue = headerValue,
-                        onClick = {
-                            scope.launch {
-                                onClick.invoke(
-                                    HomeUiEvent.ItemClick(
-                                        type = ItemsType.PLAYLIST,
-                                        id = data.playlist[0].id
-                                    )
-                                )
-                            }
-                        }
-                    )
-
-
-                    // saved playlist
-                    if (data.playlist.size >= 2)
+                            .fillMaxWidth()
+                            .height(65.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                    ) {
+                        // saved playlist
                         HomeScreenCardPlaylistPrev(
                             modifier = Modifier
-                                .fillMaxSize(),
-                            name = data.playlist[1].name,
-                            imageUrls = data.playlist[1].listOfUrl,
+                                .fillMaxHeight()
+                                .fillMaxWidth(1f / 2),
+                            name = data.playlist[0].name,
+                            imageUrls = data.playlist[0].listOfUrl,
                             isCookie = isCookie,
                             headerValue = headerValue,
                             onClick = {
@@ -130,81 +114,103 @@ fun HomeScreenContentOldUser(
                                 }
                             }
                         )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(65.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-                ) {
-                    // saved album
-                    if (data.savedAlbumPrev.isNotEmpty())
-                        HomeScreenCardWithText(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(1f / 2),
-                            name = data.savedAlbumPrev[0].album,
-                            imageUrl = data.savedAlbumPrev[0].coverImage,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onClick = {
-                                scope.launch {
-                                    onClick.invoke(
-                                        HomeUiEvent.ItemClick(
-                                            type = ItemsType.ALBUM,
-                                            name = data.savedAlbumPrev[0].album
-                                        )
-                                    )
-                                }
-                            }
-                        )
 
-                    // favourites or album
-                    if (data.favourites)
-                        FavouritePrev(
-                            modifier = Modifier
-                                .fillMaxWidth(.5f)
-                                .fillMaxHeight(),
-                            onLongClick = {},
-                            onClick = {
-                                scope.launch {
-                                    onClick.invoke(
-                                        HomeUiEvent.ItemClick(
-                                            type = ItemsType.FAVOURITE
+
+                        // saved playlist
+                        if (data.playlist.size >= 2)
+                            HomeScreenCardPlaylistPrev(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                name = data.playlist[1].name,
+                                imageUrls = data.playlist[1].listOfUrl,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.PLAYLIST,
+                                                id = data.playlist[0].id
+                                            )
                                         )
-                                    )
+                                    }
                                 }
-                            }
-                        )
-                    else if (data.savedAlbumPrev.size >= 2)
-                        HomeScreenCardWithText(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            name = data.savedAlbumPrev[1].album,
-                            imageUrl = data.savedAlbumPrev[1].coverImage,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onClick = {
-                                scope.launch {
-                                    onClick.invoke(
-                                        HomeUiEvent.ItemClick(
-                                            type = ItemsType.ALBUM,
-                                            name = data.savedAlbumPrev[1].album
+                            )
+                    }
+
+                if (data.savedAlbumPrev.isNotEmpty() || data.favourites)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(65.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                    ) {
+                        // saved album
+                        if (data.savedAlbumPrev.isNotEmpty())
+                            HomeScreenCardWithText(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(1f / 2),
+                                name = data.savedAlbumPrev[0].album,
+                                imageUrl = data.savedAlbumPrev[0].coverImage,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.ALBUM,
+                                                name = data.savedAlbumPrev[0].album
+                                            )
                                         )
-                                    )
+                                    }
                                 }
-                            }
-                        )
-                }
+                            )
+
+                        // favourites or album
+                        if (data.favourites)
+                            FavouritePrev(
+                                modifier = Modifier
+                                    .fillMaxWidth(.5f)
+                                    .fillMaxHeight(),
+                                onLongClick = {},
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.FAVOURITE
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                        else if (data.savedAlbumPrev.size >= 2)
+                            HomeScreenCardWithText(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                name = data.savedAlbumPrev[1].album,
+                                imageUrl = data.savedAlbumPrev[1].coverImage,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.ALBUM,
+                                                name = data.savedAlbumPrev[1].album
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                    }
             }
         }
 
         // Toast
         item {
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium3))
-
             AnimatedVisibility(
                 visible = isInternetError,
                 enter = fadeIn(animationSpec = tween(durationMillis = 1000)) + expandIn(),
@@ -225,7 +231,7 @@ fun HomeScreenContentOldUser(
 
         // explore more
         item {
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium3))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
 
             Text(
                 text = "Explore More",
@@ -233,9 +239,97 @@ fun HomeScreenContentOldUser(
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
 
-            // todo content
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+            ) {
+                if (data.fevArtistMixPrev.isNotEmpty())
+                    Column(
+                        modifier = Modifier.wrapContentWidth(),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            HomeScreenCard(
+                                size = if (isSmallPhone) 120.dp else 130.dp,
+                                imageUrl = data.fevArtistMixPrev[0].coverImage,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.ARTIST_MIX,
+                                                isApiCall = true
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .width(if (isSmallPhone) 120.dp else 130.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.background.copy(.8f),
+                                        shape = RoundedCornerShape(
+                                            bottomEnd = MaterialTheme.dimens.small3,
+                                            bottomStart = MaterialTheme.dimens.small3
+                                        )
+                                    )
+                                    .clickable {
+
+                                    },
+                                text = data.fevArtistMixPrev.map {
+                                    it.name.trim()
+                                }.toString().trim().removePrefix("["),
+                                maxLines = 2,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+                        Text(
+                            text = "Artist Mix",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            fontWeight = FontWeight.Medium,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize
+                        )
+                    }
+
+
+                if (data.dailyMixPrevUrls.isNotEmpty())
+                    LibraryScreenPlaylistGridView(
+                        modifier = Modifier
+                            .size(if (isSmallPhone) 120.dp else 130.dp)
+                            .clickable {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.DAILY_MIX,
+                                            isApiCall = true
+                                        )
+                                    )
+                                }
+                            },
+                        isCookie = isCookie,
+                        authHeader = headerValue,
+                        name = "Daily Mix",
+                        imageUrls = data.dailyMixPrevUrls
+                    )
+            }
         }
 
 

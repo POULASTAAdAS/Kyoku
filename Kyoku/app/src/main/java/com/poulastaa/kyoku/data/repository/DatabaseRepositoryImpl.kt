@@ -14,7 +14,7 @@ import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
-import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
@@ -26,6 +26,7 @@ import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
+import com.poulastaa.kyoku.utils.toDailyMixPrevEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import com.poulastaa.kyoku.utils.toSongTable
@@ -82,7 +83,17 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun getAllPlaylist(): Flow<List<PlaylistWithSongs>> = dao.getAllPlaylist()
 
-    suspend fun checkIfNewUser() = dao.checkIfNewUser().isEmpty()
+    suspend fun isFirstOpen() = dao.isFirstOpen().isEmpty()
+
+    suspend fun checkIfNewUser() = withContext(Dispatchers.IO) {
+        val a = async { dao.ifNewUserCheck_1().isEmpty() }
+
+        val b = async { dao.ifNewUserCheck_2().isEmpty() }
+
+        val c = async { dao.isNewUserCheck_3().isEmpty() }
+
+        a.await() && b.await() && c.await()
+    }
 
 
     fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
@@ -151,21 +162,18 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertDailyMixPrev(data: DailyMixPreview) {
         CoroutineScope(Dispatchers.IO).launch {
-            data.listOfSongs.forEach {
-                dao.insertIntoDailyMixPrevTable(
-                    data = DailyMixPrevTable(
-                        id = dao.insertIntoSongPrev(
-                            data = it.toSongPrevTableEntry()
-                        )
-                    )
-                )
-            }
+            val idList = dao.insertBatchIntoSongPrev(data = data.listOfSongs.toSongPrevTableEntry())
+
+            dao.insertIntoDailyMixPrevTable(
+                data = idList.toDailyMixPrevEntry()
+            )
         }
     }
 
     fun readFevArtistMixPrev() = dao.readFevArtistPrev()
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
+    suspend fun readDailyMixPrevUrls() = dao.readDailyMixPrevUrls()
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
     fun redRecentlyPlayed() = dao.redRecentlyPlayed()
     fun radSavedAlbumPrev() = dao.radSavedAlbumPrev()
@@ -452,4 +460,48 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
+
+    suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
+
+    fun insertIntoDailyMix(entrys: List<DailyMixTable>) = CoroutineScope(Dispatchers.IO).launch {
+        dao.insertIntoDailyMix(entrys)
+    }
+
+    fun readAllDailyMix() = dao.readAllDailyMix()
+
+    fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
+        val alPrev = async { dao.dropAlbumPrevTable() }
+        val alPrevSong = async { dao.dropAlbumPrevSongTable() }
+        val al = async { dao.dropAlbumTable() }
+        val arPrev = async { dao.dropArtistPrevTable() }
+        val arPrevSong = async { dao.dropArtistPrevSongTable() }
+        val daiMixPrev = async { dao.dropDailyMixPrevTable() }
+        val daiMix = async { dao.dropDailyMixTable() }
+        val fav = async { dao.dropFavouriteTable() }
+        val favArMixPrev = async { dao.dropFavArtistMixPrevTable() }
+        val pin = async { dao.dropPinnedTable() }
+        val playlist = async { dao.dropPlaylistTable() }
+        val revPlaPrev = async { dao.dropRecentlyPlayedPrevTable() }
+        val songAl = async { dao.dropSongAlbumTable() }
+        val soPlay = async { dao.dropSongPlaylistTable() }
+        val soPrev = async { dao.dropSongPrevTable() }
+        val song = async { dao.dropSongTable() }
+
+        alPrev.await()
+        alPrevSong.await()
+        al.await()
+        arPrev.await()
+        arPrevSong.await()
+        daiMixPrev.await()
+        daiMix.await()
+        fav.await()
+        favArMixPrev.await()
+        pin.await()
+        playlist.await()
+        revPlaPrev.await()
+        songAl.await()
+        soPlay.await()
+        soPrev.await()
+        song.await()
+    }
 }

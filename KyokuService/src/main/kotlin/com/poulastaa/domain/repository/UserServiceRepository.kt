@@ -4,10 +4,7 @@ import com.poulastaa.data.model.artist.ArtistAlbum
 import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
 import com.poulastaa.data.model.artist.ArtistPageReq
-import com.poulastaa.data.model.home.AlbumPreview
-import com.poulastaa.data.model.home.HomeReq
-import com.poulastaa.data.model.home.HomeResponse
-import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -40,4 +37,6 @@ interface UserServiceRepository {
     suspend fun getArtistPageSongResponse(req: ArtistPageReq): List<SongPreview>
 
     suspend fun getAlbum(id: Long): AlbumPreview
+
+    suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
 }

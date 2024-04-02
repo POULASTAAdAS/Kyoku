@@ -1,10 +1,12 @@
 package com.poulastaa.kyoku.data.repository
 
+import android.util.Log
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
+import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
@@ -127,6 +129,19 @@ class ServiceRepositoryImpl @Inject constructor(
             api.getAlbum(id)
         } catch (e: Exception) {
             AlbumPreview()
+        }
+    }
+
+    override suspend fun getDailyMix(): DailyMixPreview {
+        return try {
+            val response = api.getDailyMix()
+
+            Log.d("called" , response.listOfSongs.toString())
+
+            response
+        } catch (e: Exception) {
+            Log.d("error", e.message.toString())
+            DailyMixPreview()
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
-import com.poulastaa.kyoku.data.model.database.CoverImageUpdateInfo
 import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
@@ -16,6 +15,7 @@ import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
@@ -62,6 +62,11 @@ interface AppDao {
     suspend fun insertIntoSongPrev(data: SongPreviewTable): Long
 
     @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertBatchIntoSongPrev(data: List<SongPreviewTable>): List<Long>
+
+
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoFevArtistMixPrev(data: FevArtistsMixPreviewTable)
 
@@ -82,47 +87,21 @@ interface AppDao {
     suspend fun insertIntoArtistPrevSongRelationTable(data: ArtistPreviewSongRelation)
 
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertIntoDailyMixPrevTable(data: DailyMixPrevTable)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoDailyMixPrevTable(data: List<DailyMixPrevTable>)
 
+    @Query("select * from AlbumPrevTable limit 1")
+    suspend fun isFirstOpen(): List<AlbumPrevTable>
 
-    // get coverImage and update it
-    @Transaction
-    @Query("select FevArtistsMixPreviewTable.id , FevArtistsMixPreviewTable.coverImage from FevArtistsMixPreviewTable")
-    suspend fun getAllFevArtistMixPrev(): List<CoverImageUpdateInfo>
+    @Query("select * from PlaylistTable limit 1")
+    suspend fun ifNewUserCheck_1(): List<PlaylistTable>
 
-    @Transaction
-    @Query("update FevArtistsMixPreviewTable set coverImage =:coverImage where id = :id")
-    suspend fun updateArtistCoverImage(coverImage: String, id: Long)
+    @Query("select * from ALBUMTABLE limit 1")
+    suspend fun ifNewUserCheck_2(): List<AlbumTable>
 
-    @Transaction
-    @Query("select SongPreviewTable.id , SongPreviewTable.coverImage from SongPreviewTable")
-    suspend fun getAllPrevSong(): List<CoverImageUpdateInfo>
+    @Query("select * from FavouriteTable limit 1")
+    suspend fun isNewUserCheck_3(): List<FavouriteTable>
 
-    @Transaction
-    @Query("update SongPreviewTable set coverImage =:coverImage where id = :id")
-    suspend fun updatePrevSong(coverImage: String, id: Long)
-
-    @Transaction
-    @Query("select ArtistPrevTable.id , ArtistPrevTable.coverImage from ArtistPrevTable")
-    suspend fun getAllFromArtist(): List<CoverImageUpdateInfo>
-
-    @Transaction
-    @Query("update ArtistPrevTable set coverImage =:coverImage where id = :id")
-    suspend fun updatePrevArtist(coverImage: String, id: Long)
-
-    @Transaction
-    @Query("select SongTable.id , SongTable.coverImage from SongTable")
-    suspend fun getAllFromSongTable(): List<CoverImageUpdateInfo>
-
-    @Transaction
-    @Query("update SongTable set coverImage = :coverImage where id = :id")
-    suspend fun updateSong(coverImage: String, id: Long)
-    // end
-
-
-    @Query("select * from AlbumPrevTable limit 1") // fetching all entry is un-necessary
-    suspend fun checkIfNewUser(): List<AlbumPrevTable> // could had any other table related to homeResponse
 
     @Transaction
     @Query("select * from fevartistsmixpreviewtable")
@@ -154,6 +133,16 @@ interface AppDao {
     """
     )
     fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
+
+
+    @Query(
+        """
+        select SongPreviewTable.coverImage  from SongPreviewTable 
+        join DailyMixPrevTable on DailyMixPrevTable.id = SongPreviewTable.id
+        where DailyMixPrevTable.id
+    """
+    )
+    suspend fun readDailyMixPrevUrls(): List<String>
 
     @Transaction
     @Query(
@@ -362,15 +351,77 @@ interface AppDao {
     )
     suspend fun getAlbum(name: String): List<UiSong>
 
-    @Query("""
+    @Query(
+        """
         select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
         join FavouriteTable on FavouriteTable.songId = SongTable.id
         where FavouriteTable.songId
-    """)
+    """
+    )
     suspend fun getAllFavouriteSongs(): List<UiSong>
 
     @Query("select coverImage from ArtistPrevTable where id = :id")
     suspend fun getArtistCoverImage(id: Long): String
+
+    @Query("select count(*) from DailyMixTable")
+    suspend fun checkIfDailyMixTableEmpty(): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoDailyMix(entrys: List<DailyMixTable>)
+
+    @Query("select * from DailyMixTable")
+    fun readAllDailyMix(): Flow<List<DailyMixTable>>
+
+
+
+    // remove all
+    @Query("delete from AlbumPrevTable")
+    suspend fun dropAlbumPrevTable()
+
+    @Query("delete from  AlbumPreviewSongRelationTable")
+    suspend fun dropAlbumPrevSongTable()
+
+    @Query("delete from  AlbumTable")
+    suspend fun dropAlbumTable()
+
+    @Query("delete from  ArtistPrevTable")
+    suspend fun dropArtistPrevTable()
+
+    @Query("delete from  ArtistPreviewSongRelation")
+    suspend fun dropArtistPrevSongTable()
+
+    @Query("delete from  DailyMixPrevTable")
+    suspend fun dropDailyMixPrevTable()
+
+    @Query("delete from  DailyMixTable")
+    suspend fun dropDailyMixTable()
+
+    @Query("delete from  FavouriteTable")
+    suspend fun dropFavouriteTable()
+
+    @Query("delete from  FevArtistsMixPreviewTable")
+    suspend fun dropFavArtistMixPrevTable()
+
+    @Query("delete from  PinnedTable")
+    suspend fun dropPinnedTable()
+
+    @Query("delete from  PlaylistTable")
+    suspend fun dropPlaylistTable()
+
+    @Query("delete from  RecentlyPlayedPrevTable")
+    suspend fun dropRecentlyPlayedPrevTable()
+
+    @Query("delete from  SongAlbumRelationTable")
+    suspend fun dropSongAlbumTable()
+
+    @Query("delete from  SongPlaylistRelationTable")
+    suspend fun dropSongPlaylistTable()
+
+    @Query("delete from  SongPreviewTable")
+    suspend fun dropSongPrevTable()
+
+    @Query("delete from  SongTable")
+    suspend fun dropSongTable()
 }
 
 

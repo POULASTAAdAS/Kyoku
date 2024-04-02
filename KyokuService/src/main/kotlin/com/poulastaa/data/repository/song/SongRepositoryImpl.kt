@@ -20,6 +20,7 @@ import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.dao.playlist.Playlist
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toResponseSongList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -28,6 +29,7 @@ import org.jetbrains.exposed.sql.*
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 import org.jetbrains.exposed.sql.Random as SqlRandom
 
@@ -104,15 +106,16 @@ class SongRepositoryImpl : SongRepository {
             // get songs based on artists of users last listened songs
             val songsByTheArtistUnSorted = getPreviewSongsByTheArtists(historySongIdList)
 
-            val songByArtistSorted = songsByTheArtistUnSorted.flatMap {
-                it.value.take(songsByTheArtistUnSorted.size / 30)
-            }.distinctBy {
-                it.id
-            }.filterNot { songByArtist -> // don't know if they are present so remove first if any
-                historySongList.any {
-                    it.id == songByArtist.id
-                }
-            }.shuffled(java.util.Random()).take(30)
+            val songByArtistSorted = songsByTheArtistUnSorted
+                .flatMap {
+                    it.value.take(songsByTheArtistUnSorted.size / 30)
+                }.distinctBy {
+                    it.id
+                }.filterNot { songByArtist -> // three may be repeats so remove if any
+                    historySongList.any {
+                        it.id == songByArtist.id
+                    }
+                }.shuffled(java.util.Random()).take(Random(10).nextInt(25, 30))
 
             songByArtistSorted + historySongList
         }
@@ -131,7 +134,7 @@ class SongRepositoryImpl : SongRepository {
             }.take(12)
 
         DailyMixPreview(
-            listOfSongs = (one + two).shuffled(java.util.Random())
+            listOfSongs = (one + two).shuffled(java.util.Random((one.size + two.size).toLong()))
         )
     }
 
@@ -152,18 +155,27 @@ class SongRepositoryImpl : SongRepository {
     private suspend fun getHistorySongIdList(userType: UserType, userId: Long) = dbQuery {
         when (userType) {
             UserType.GOOGLE_USER -> {
+                val subQueryMaxDate = GoogleUserListenHistoryTable
+                    .slice(GoogleUserListenHistoryTable.date.max())
+                    .select {
+                        GoogleUserListenHistoryTable.userId eq userId
+                    }.single()[GoogleUserListenHistoryTable.date.max()]
+
+                if (subQueryMaxDate == null) return@dbQuery emptyList()
+
+
+                val threeDaysAgo = subQueryMaxDate.minus(3, TimeUnit.DAYS.toChronoUnit())
+
                 GoogleUserListenHistoryTable
                     .slice(
-                        EmailUserListenHistoryTable.songId
+                        GoogleUserListenHistoryTable.songId
                     ).select {
                         GoogleUserListenHistoryTable.userId eq userId and (
-                                GoogleUserListenHistoryTable.date greaterEq (
-                                        LocalDateTime.now().minus(3, ChronoUnit.DAYS)
-                                        )
+                                GoogleUserListenHistoryTable.date greaterEq threeDaysAgo
                                 )
                     }
                     .withDistinct()
-                    .orderBy(SqlRandom())
+                    .orderBy(org.jetbrains.exposed.sql.Random())
                     .limit(8)
                     .map {
                         it[GoogleUserListenHistoryTable.songId]
@@ -217,9 +229,11 @@ class SongRepositoryImpl : SongRepository {
             SongPreview(
                 id = it.id.value.toString(),
                 title = it.title,
-                coverImage = it.coverImage,
                 artist = it.artist,
-                album = it.album
+                album = it.album,
+                coverImage = it.coverImage.constructCoverPhotoUrl(),
+                points = it.points,
+                year = it.date
             )
         }
     }
@@ -253,17 +267,20 @@ class SongRepositoryImpl : SongRepository {
                 SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points
+                SongTable.points,
+                SongTable.date
             ).select {
                 sar2[SongArtistRelationTable.songId] inList songIdList
             }.orderBy(SongTable.points, SortOrder.DESC)
             .map {
                 SongPreview(
-                    it[SongTable.id].toString(),
-                    it[SongTable.title],
-                    it[SongTable.coverImage],
-                    it[SongTable.artist],
-                    it[SongTable.album]
+                    id = it[SongTable.id].toString(),
+                    title = it[SongTable.title],
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album],
+                    points = it[SongTable.points],
+                    year = it[SongTable.date]
                 )
             }.groupBy {
                 it.artist
@@ -281,11 +298,13 @@ class SongRepositoryImpl : SongRepository {
             .orderBy(SongTable.points, SortOrder.DESC)
             .map {
                 SongPreview(
-                    it[SongTable.id].toString(),
-                    it[SongTable.title],
-                    it[SongTable.coverImage],
-                    it[SongTable.artist],
-                    it[SongTable.album]
+                    id = it[SongTable.id].toString(),
+                    title = it[SongTable.title],
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    artist = it[SongTable.artist],
+                    album = it[SongTable.album],
+                    points = it[SongTable.points],
+                    year = it[SongTable.date]
                 )
             }
     }
@@ -304,7 +323,8 @@ class SongRepositoryImpl : SongRepository {
                 SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points
+                SongTable.points,
+                SongTable.date
             ).select {
                 GoogleUserGenreRelationTable.userId eq userId
             }
@@ -323,7 +343,8 @@ class SongRepositoryImpl : SongRepository {
                 SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points
+                SongTable.points,
+                SongTable.date
             ).select {
                 EmailUserGenreRelationTable.userId eq userId
             }
@@ -342,7 +363,8 @@ class SongRepositoryImpl : SongRepository {
                 SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points
+                SongTable.points,
+                SongTable.date
             ).select {
                 PasskeyUserGenreRelationTable.userId eq userId
             }

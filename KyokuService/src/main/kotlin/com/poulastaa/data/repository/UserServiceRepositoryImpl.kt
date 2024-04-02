@@ -238,7 +238,6 @@ class UserServiceRepositoryImpl(
     override suspend fun getMostPopularSongOfArtist(
         req: ArtistMostPopularSongReq
     ): ArtistMostPopularSongRes = withContext(Dispatchers.IO) {
-
         val points = async {
             dbQuery {
                 Artist.find {
@@ -394,6 +393,17 @@ class UserServiceRepositoryImpl(
                     }.firstOrNull() ?: AlbumPreview()
             }
         }
+
+    override suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview {
+        val user = dbUsers.getDbUser(helper) ?: return DailyMixPreview()
+
+        return song.getDailyMix(
+            helper = UserTypeHelper(
+                userType = helper.userType,
+                id = user.id
+            )
+        )
+    }
 
     // private functions
     private suspend fun createPlaylist(

@@ -8,6 +8,7 @@ import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
@@ -37,9 +38,10 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         SongAlbumRelationTable::class,
         RecentlyPlayedPrevTable::class,
 
-        PinnedTable::class
+        PinnedTable::class,
+        DailyMixTable::class
     ],
-    version = 3,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

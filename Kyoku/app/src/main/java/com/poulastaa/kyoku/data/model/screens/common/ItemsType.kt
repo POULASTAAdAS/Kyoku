@@ -8,6 +8,7 @@ enum class ItemsType(val title: String) {
 
     ARTIST(title = "Artist"),
     ARTIST_MIX(title = "ArtistMix"),
+    DAILY_MIX(title = "DailyMix"),
     ARTIST_MORE(title = "ArtistMore"),
 
     FAVOURITE(title = "Favourite"),

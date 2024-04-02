@@ -12,12 +12,14 @@ import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeSignInState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -27,7 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeRootViewModel @Inject constructor(
-    private val ds: DataStoreOperation
+    private val ds: DataStoreOperation,
+    private val db: DatabaseRepositoryImpl
 ) : ViewModel() {
     private fun readAccessToken() {
         viewModelScope.launch {
@@ -152,7 +155,13 @@ class HomeRootViewModel @Inject constructor(
             }
 
             HomeRootUiEvent.LogOut -> {
-                storeSignInState(SignInStatus.AUTH, ds)
+                viewModelScope.launch(Dispatchers.IO) {
+                    storeSignInState(SignInStatus.AUTH, ds)
+
+                    delay(800)
+
+                    db.removeAllTable()
+                }
             }
 
             is HomeRootUiEvent.BottomNavClick -> {

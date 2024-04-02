@@ -1,18 +1,9 @@
 package com.example
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import kotlin.random.Random
 
 fun main() {
-    val current = System.currentTimeMillis()
+    val random = Random(10).nextInt(30,40)
 
-    val instant = Instant.ofEpochMilli(current)
-
-    val date = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-
-    println(date.year - 4)
-
-    println(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+    println(random)
 }

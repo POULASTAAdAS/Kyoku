@@ -68,18 +68,15 @@ class HomeScreenViewModel @Inject constructor(
     var state by mutableStateOf(HomeUiState())
         private set
 
-    private suspend fun isFirstReq() = db.checkIfNewUser()
+    private suspend fun isTillNewUser() = db.checkIfNewUser()
+    private suspend fun isFirstOpen() = db.isFirstOpen()
 
-    fun loadStartupData(
-        context: Context,
-        isLogin: Boolean = false // todo send info from which screen
-    ) {
+    fun loadStartupData(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val signInState = ds.readSignedInState().first()
 
-            if (
-                isFirstReq() &&
-                signInState == SignInStatus.HOME.name
+            if (signInState == SignInStatus.HOME.name
+                && isFirstOpen()
             ) {
                 // make api call
                 val response = api.homeReq(
@@ -115,9 +112,11 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
             } else {
-                if (isLogin) delay(3000)
-
-                state = state.copy(
+                state = if (isTillNewUser())
+                    state.copy(
+                        dataType = HomeType.NEW_USER_REQ
+                    )
+                else state.copy(
                     dataType = HomeType.ALREADY_USER_REQ
                 )
                 delay(800)
@@ -180,7 +179,11 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             val dailyMixPrev = async {
-
+                state = state.copy(
+                    data = state.data.copy(
+                        dailyMixPrevUrls = db.readDailyMixPrevUrls()
+                    )
+                )
             }
 
             val playlist = async {
@@ -282,6 +285,10 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         ItemsType.ARTIST_MIX -> {
+                            event
+                        }
+
+                        ItemsType.DAILY_MIX -> {
                             event
                         }
 

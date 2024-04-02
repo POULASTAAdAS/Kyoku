@@ -25,6 +25,8 @@ import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
+import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
+import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
@@ -34,6 +36,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiFevArtistMix
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -208,13 +211,25 @@ fun ResponseArtist.toArtistTableEntry() = ArtistPrevTable(
     coverImage = this.imageUrl
 )
 
-fun SongPreview.toSongPrevTableEntry(
-) = SongPreviewTable(
+fun List<SongPreview>.toSongPrevTableEntry() =
+    if (this.isEmpty()) emptyList()
+    else this.map {
+        it.toSongPrevTableEntry()
+    }
+
+fun List<Long>.toDailyMixPrevEntry() = this.map {
+    DailyMixPrevTable(
+        id = it
+    )
+}
+
+
+fun SongPreview.toSongPrevTableEntry() = SongPreviewTable(
     songId = this.id.toLong(),
     title = this.title,
-    coverImage = this.coverImage,
     artist = this.artist,
-    album = this.album
+    album = this.album,
+    coverImage = this.coverImage
 )
 
 
@@ -238,3 +253,24 @@ fun ArtistPrevResult.toHomeUiSongPrev() = HomeUiSongPrev(
     coverImage = this.coverImage,
     artist = this.name
 )
+
+fun List<SongPreview>.toDailyMixEntry() = this.map {
+    DailyMixTable(
+        songId = it.id.toLong(),
+        title = it.title,
+        artist = it.artist,
+        album = it.album,
+        coverImage = it.coverImage,
+        year = it.year
+    )
+}
+
+fun List<DailyMixTable>.toListOfUiSong() = this.map {
+    UiSong(
+        id = it.songId,
+        title = it.title,
+        artist = it.artist,
+        album = it.album,
+        coverImage = it.coverImage
+    )
+}

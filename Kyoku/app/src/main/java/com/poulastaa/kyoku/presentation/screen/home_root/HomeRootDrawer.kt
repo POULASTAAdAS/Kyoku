@@ -1,5 +1,9 @@
 package com.poulastaa.kyoku.presentation.screen.home_root
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -8,6 +12,8 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -65,20 +71,29 @@ fun HomeRootDrawer(
             )
         },
         content = {
-            HomeContainer(
-                profileUrl = viewModel.state.profilePicUrl,
-                isCookie = viewModel.state.isCookie,
-                authHeader = viewModel.state.headerValue,
-                navController = homeNavController,
-                opnDrawer = {
-                    scope.launch {
-                        drawerState.open()
-                    }
-                },
-                state = viewModel.state,
-                navigateWithUiEvent = navigate,
-                navigateWithHomeRoot = viewModel::onEvent
-            )
+            if (viewModel.state.isLoading)
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            else
+                HomeContainer(
+                    profileUrl = viewModel.state.profilePicUrl,
+                    isCookie = viewModel.state.isCookie,
+                    authHeader = viewModel.state.headerValue,
+                    navController = homeNavController,
+                    opnDrawer = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    },
+                    state = viewModel.state,
+                    navigateWithUiEvent = navigate,
+                    navigateWithHomeRoot = viewModel::onEvent
+                )
         }
     )
 }

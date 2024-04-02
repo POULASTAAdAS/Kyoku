@@ -12,7 +12,6 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 
 @Composable
 fun HomeScreen(
-    isLogin: Boolean,
     isCookie: Boolean,
     authHeader: String,
     viewModel: HomeScreenViewModel = hiltViewModel(),
@@ -22,7 +21,7 @@ fun HomeScreen(
     navigate: (HomeRootUiEvent) -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
-        viewModel.loadStartupData(context, isLogin = isLogin)
+        viewModel.loadStartupData(context)
     }
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
@@ -78,29 +77,16 @@ fun HomeScreen(
             }
 
             else -> {
-                if (!viewModel.state.data.favourites &&
-                    viewModel.state.data.playlist.isEmpty()
-                ) HomeScreenContentNewUser(
+                HomeScreenContentOldUser(
                     paddingValues = paddingValues,
                     isSmallPhone = isSmallPhone,
                     data = viewModel.state.data,
-
                     isInternetError = viewModel.state.isInternetError,
                     errorMessage = viewModel.state.errorMessage,
                     isCookie = isCookie,
                     headerValue = authHeader,
                     onClick = viewModel::onEvent
-                ) else
-                    HomeScreenContentOldUser(
-                        paddingValues = paddingValues,
-                        isSmallPhone = isSmallPhone,
-                        data = viewModel.state.data,
-                        isInternetError = viewModel.state.isInternetError,
-                        errorMessage = viewModel.state.errorMessage,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        onClick = viewModel::onEvent
-                    )
+                )
             }
         }
     }

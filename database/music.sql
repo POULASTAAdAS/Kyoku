@@ -387,13 +387,22 @@ where album.id = 829;
 
 
 
+select * from passkeyauthuser;
+select * from emailauthuser;
+
+select * from passkeyuserlistenhistory;
+
+select * from googleuserlistenhistory;
 
 
+select DISTINCT googleuserlistenhistory.songid FROM googleuserlistenhistory
+ WHERE (googleuserlistenhistory.userid = 1) AND (googleuserlistenhistory.`date` >= '2024-03-31T02:08:02.3295618')
+ ORDER BY RAND() ASC LIMIT 8;
 
-
-
-
-
+SELECT DISTINCT songId
+FROM GoogleUserListenHistory
+where googleuserlistenhistory.userid = 1 and date >= (SELECT MAX(date) - INTERVAL 3 DAY FROM GoogleUserListenHistory)
+order by rand() asc limit 8;
 
 
 

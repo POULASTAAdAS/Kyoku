@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
@@ -28,11 +27,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.ArtistMixCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
@@ -174,30 +173,15 @@ fun HomeScreenContentNewUser(
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-            HomeScreenCard(
-                size = if (isSmallPhone) 120.dp else 130.dp,
-                imageUrl = data.fevArtistMixPrev[0].coverImage,
+            ArtistMixCard(
+                coverImage = data.fevArtistMixPrev[0].coverImage,
+                label = data.fevArtistMixPrev.map {
+                    it.name.trim()
+                }.toString().trim().removePrefix("["),
                 isCookie = isCookie,
                 headerValue = headerValue,
-                onClick = {
-                    onClick.invoke(
-                        HomeUiEvent.ItemClick(
-                            type = ItemsType.ARTIST_MIX
-                        )
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
-
-            Text(
-                text = data.fevArtistMixPrev.map {
-                    it.name.trim()
-                }.toString().removePrefix("["),
-                maxLines = 2,
-                modifier = Modifier.width(if (isSmallPhone) 120.dp else 130.dp),
-                overflow = TextOverflow.Ellipsis,
-                fontSize = MaterialTheme.typography.bodySmall.fontSize
+                isSmallPhone = isSmallPhone,
+                onClick = onClick
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))

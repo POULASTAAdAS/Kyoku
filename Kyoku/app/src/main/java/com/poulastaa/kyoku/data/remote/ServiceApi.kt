@@ -5,6 +5,7 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRe
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
+import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
@@ -20,6 +21,7 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenre
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -78,4 +80,7 @@ interface ServiceApi {
     suspend fun getAlbum(
         @Query("id") id: Long
     ): AlbumPreview
+
+    @GET("/api/authorised/dailyMix")
+    suspend fun getDailyMix(): DailyMixPreview
 }
