@@ -7,6 +7,20 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 
 #  <h2 align="center">🖼 Preview</h2>
 
-<img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height = '600'>
-<img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height = '600'>
-<img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height = '600'>
+<table>
+  <tr>
+    <th>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height = '600'>
+    </th>
+  </tr>
+  <tr>
+    <th>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height = '600'>
+    </th>
+  </tr>
+  <tr>
+    <th>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height = '600'>
+    </th>
+  </tr>
+</table>
