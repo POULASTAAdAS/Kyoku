@@ -9,4 +9,4 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 ###  
   Auth Dark  | Home Dark  | 
 
-![Auth Dark](https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg?raw=true "Auth Dark") | ![Home Dark](https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg?raw=true "Home Dark")
+![](https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg?raw=true) | ![](https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg?raw=true)
