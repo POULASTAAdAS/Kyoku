@@ -9,18 +9,18 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 
 <table>
   <tr>
-    <th>
+    <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height = '600'>
-    </th>
+    </td>
   </tr>
   <tr>
-    <th>
+    <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height = '600'>
-    </th>
+    </td>
   </tr>
   <tr>
-    <th>
+    <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height = '600'>
-    </th>
+    </td>
   </tr>
 </table>
