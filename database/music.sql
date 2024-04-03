@@ -406,6 +406,55 @@ order by rand() asc limit 8;
 
 
 
+-- fav artist mix
+
+select * from googleuserartistrelation where userid = 1;
+
+
+select name from artist 
+join googleuserartistrelation on googleuserartistrelation.artistid = artist.id
+where googleuserartistrelation.userid = 1;
+
+
+select * from song where artist in (
+	select name from artist 
+	join googleuserartistrelation on googleuserartistrelation.artistid = artist.id
+	where googleuserartistrelation.userid = 1
+) order by points desc;
+
+
+
+-- -------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

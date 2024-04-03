@@ -39,4 +39,6 @@ interface UserServiceRepository {
     suspend fun getAlbum(id: Long): AlbumPreview
 
     suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
+
+    suspend fun getArtistMix(helper: UserTypeHelper): List<SongPreview>
 }

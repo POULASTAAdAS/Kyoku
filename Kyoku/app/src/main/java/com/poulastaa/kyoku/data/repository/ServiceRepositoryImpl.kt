@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.repository
 
-import android.util.Log
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -134,14 +133,17 @@ class ServiceRepositoryImpl @Inject constructor(
 
     override suspend fun getDailyMix(): DailyMixPreview {
         return try {
-            val response = api.getDailyMix()
-
-            Log.d("called" , response.listOfSongs.toString())
-
-            response
+            api.getDailyMix()
         } catch (e: Exception) {
-            Log.d("error", e.message.toString())
             DailyMixPreview()
+        }
+    }
+
+    override suspend fun getArtistMix(): List<SongPreview> {
+        return try {
+            api.getArtistMix()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

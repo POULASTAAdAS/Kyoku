@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
@@ -39,11 +40,15 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         RecentlyPlayedPrevTable::class,
 
         PinnedTable::class,
-        DailyMixTable::class
+        DailyMixTable::class,
+        ArtistMixTable::class,
+
+        // internal tables
     ],
     version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
+    abstract fun internalDao(): InternalDao
 }

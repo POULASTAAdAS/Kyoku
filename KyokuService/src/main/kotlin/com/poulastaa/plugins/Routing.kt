@@ -37,8 +37,8 @@ fun Application.configureRouting() {
         artistSongPage(service)
 
         album(service)
-
         dailyMix(service)
+        artistMix(service)
 
         getMasterPlaylist(service)
 

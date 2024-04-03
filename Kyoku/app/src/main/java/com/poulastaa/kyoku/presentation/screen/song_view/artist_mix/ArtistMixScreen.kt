@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.presentation.screen.song_view.daily_mix
+package com.poulastaa.kyoku.presentation.screen.song_view.artist_mix
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -31,8 +31,8 @@ import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
-fun DailyMixScreen(
-    dailyMix: List<UiSong>,
+fun ArtistMixScreen(
+    artistMix: List<UiSong>,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -77,7 +77,7 @@ fun DailyMixScreen(
 
             info(
                 name = "Daily Mix",
-                size = dailyMix.size
+                size = artistMix.size
             )
 
             playControl(
@@ -97,11 +97,11 @@ fun DailyMixScreen(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
             }
 
-            dailyMixSongs(
+            artistMixSongs(
                 isDarkThem = isDarkThem,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                data = dailyMix,
+                data = artistMix,
                 onSongClick = { id , name ->
 
                 }
@@ -110,7 +110,7 @@ fun DailyMixScreen(
     }
 }
 
-private fun LazyListScope.dailyMixSongs(
+private fun LazyListScope.artistMixSongs(
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -157,8 +157,8 @@ private fun Preview() {
             )
         }
 
-        DailyMixScreen(
-            dailyMix = listOfSong,
+        ArtistMixScreen(
+            artistMix = listOfSong,
             isDarkThem = isSystemInDarkTheme(),
             isCookie = false,
             headerValue = "",

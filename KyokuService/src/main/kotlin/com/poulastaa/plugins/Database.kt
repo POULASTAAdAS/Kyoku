@@ -1,9 +1,6 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.data.model.db_table.PlaylistTable
-import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
-import com.poulastaa.data.model.db_table.user.GoogleAuthUserTable
-import com.poulastaa.data.model.db_table.user.PasskeyAuthUserTable
 import com.poulastaa.data.model.db_table.user_album.EmailUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_album.GoogleUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
@@ -19,6 +16,15 @@ import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTabl
 import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_pinned_album.EmailUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.GoogleUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.EmailUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.GoogleUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.EmailUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.GoogleUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.PasskeyUserPinnedPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
@@ -68,6 +74,18 @@ fun Application.configureDatabase() {
         SchemaUtils.create(EmailUserFavouriteTable)
         SchemaUtils.create(GoogleUserFavouriteTable)
         SchemaUtils.create(PasskeyUserFavouriteTable)
+
+        SchemaUtils.create(EmailUserPinnedPlaylistTable)
+        SchemaUtils.create(GoogleUserPinnedPlaylistTable)
+        SchemaUtils.create(PasskeyUserPinnedPlaylistTable)
+
+        SchemaUtils.create(EmailUserPinnedAlbumTable)
+        SchemaUtils.create(GoogleUserPinnedAlbumTable)
+        SchemaUtils.create(PasskeyUserPinnedAlbumTable)
+
+        SchemaUtils.create(EmailUserPinnedArtistTable)
+        SchemaUtils.create(GoogleUserPinnedArtistTable)
+        SchemaUtils.create(PasskeyUserPinnedArtistTable)
     }
 }
 

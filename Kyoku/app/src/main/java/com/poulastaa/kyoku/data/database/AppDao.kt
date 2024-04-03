@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
@@ -330,7 +331,6 @@ interface AppDao {
 
 
     // songView screen query
-
     @Query(
         """
         select SongTable.id , PlaylistTable.name , SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable 
@@ -366,13 +366,22 @@ interface AppDao {
     @Query("select count(*) from DailyMixTable")
     suspend fun checkIfDailyMixTableEmpty(): Long
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoDailyMix(entrys: List<DailyMixTable>)
 
     @Query("select * from DailyMixTable")
     fun readAllDailyMix(): Flow<List<DailyMixTable>>
 
+    @Query("select count(*) from ArtistMixTable")
+    suspend fun checkIfArtistMixIsEmpty(): Long
 
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoArtistMix(entrys: List<ArtistMixTable>)
+
+    @Query("select * from ArtistMixTable")
+    fun readAllArtistMix(): Flow<List<ArtistMixTable>>
 
     // remove all
     @Query("delete from AlbumPrevTable")
@@ -395,6 +404,9 @@ interface AppDao {
 
     @Query("delete from  DailyMixTable")
     suspend fun dropDailyMixTable()
+
+    @Query("delete from ArtistMixTable")
+    suspend fun dropArtistMixTable()
 
     @Query("delete from  FavouriteTable")
     suspend fun dropFavouriteTable()
@@ -423,18 +435,3 @@ interface AppDao {
     @Query("delete from  SongTable")
     suspend fun dropSongTable()
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -156,6 +156,23 @@ create table PasskeyUserFavouriteTable(
     primary key (userid , songid)
 );
 
+create table GoogleUserPlaylistPinnedTable(
+	userId bigint references GoogleAuthUser(id) on delete cascade,
+    playlistId bigint references Playlist(id) on delete cascade
+);
+
+
+create Table PasskeyUserPlaylistPinnedTable(
+	userId bigint references PasskeyAuthUser(id) on delete cascade,
+    playlistId bigint references Playlist(id) on delete cascade
+);
+
+
+create Table EmailUserPlaylistPinnedTable(
+	userId bigint references EmailAugoogleuserpinnedplaylistthUser(id) on delete cascade,
+    playlistId bigint references Playlist(id) on delete cascade
+);
+
 
 
 

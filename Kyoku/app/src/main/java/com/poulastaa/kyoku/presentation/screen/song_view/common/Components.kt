@@ -48,6 +48,116 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomIm
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
+
+@Composable
+fun SongCardNonDraggable(
+    modifier: Modifier,
+    isDarkThem: Boolean,
+    isCookie: Boolean,
+    headerValue: String,
+    title: String,
+    artist: String,
+    coverImage: String
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(.8f)
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+        ) {
+            CustomImageView(
+                modifier = Modifier
+                    .fillMaxWidth(.2f)
+                    .clip(MaterialTheme.shapes.extraSmall),
+                isDarkThem = isDarkThem,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                url = coverImage,
+                contentScale = ContentScale.Fit
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Text(
+                    text = artist,
+                    fontWeight = FontWeight.Light,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(.5f)
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .clickable(
+                        onClick = {
+
+                        }
+                    ),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_song_card_add),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(34.dp)
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.extraSmall)
+                    .clickable(
+                        onClick = {
+
+                        }
+                    ),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_more),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(34.dp)
+                )
+            }
+        }
+    }
+}
+
+
 @Composable
 fun SongCard(
     modifier: Modifier,
@@ -476,7 +586,7 @@ fun LazyListScope.playControl(
 @Composable
 private fun Preview() {
     TestThem {
-        SongCard(
+        SongCardNonDraggable(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)

@@ -2,6 +2,7 @@ package com.poulastaa.domain.repository.aritst
 
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
@@ -14,23 +15,28 @@ interface ArtistRepository {
     ): SuggestArtistResponse
 
     suspend fun storeArtist(
-         usedId:Long,
+        usedId: Long,
         userType: UserType,
         artistNameList: List<String>
     ): StoreArtistResponse
 
     suspend fun getFevArtistMixPreview(
-        usedId:Long,
+        usedId: Long,
         userType: UserType
     ): List<FevArtistsMixPreview>
 
     suspend fun getResponseArtistPreviewForNewUser(
-        usedId:Long,
+        usedId: Long,
         userType: UserType
     ): List<ResponseArtistsPreview>
 
     suspend fun getResponseArtistPreviewDailyUser(
-        usedId:Long,
+        usedId: Long,
         userType: UserType
     ): List<ResponseArtistsPreview>
+
+    suspend fun getArtistMix(
+        userType: UserType,
+        userId: Long
+    ): List<SongPreview>
 }

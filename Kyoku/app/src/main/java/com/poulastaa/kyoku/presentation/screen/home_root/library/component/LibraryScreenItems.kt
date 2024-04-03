@@ -1172,14 +1172,6 @@ fun CustomFilterChip(
 @Composable
 private fun Preview() {
     TestThem {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
 
-        }
     }
 }

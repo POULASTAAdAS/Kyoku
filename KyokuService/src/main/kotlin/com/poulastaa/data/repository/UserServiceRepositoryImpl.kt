@@ -405,6 +405,12 @@ class UserServiceRepositoryImpl(
         )
     }
 
+    override suspend fun getArtistMix(helper: UserTypeHelper): List<SongPreview> {
+        val user = dbUsers.getDbUser(helper) ?: return emptyList()
+
+        return artist.getArtistMix(userType = helper.userType, userId = user.id)
+    }
+
     // private functions
     private suspend fun createPlaylist(
         playlistHelper: CreatePlaylistHelper

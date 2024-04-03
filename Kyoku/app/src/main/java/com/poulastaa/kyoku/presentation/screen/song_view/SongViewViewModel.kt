@@ -21,7 +21,6 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.utils.toDailyMixEntry
 import com.poulastaa.kyoku.utils.toListOfUiSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -186,15 +185,35 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ARTIST_MIX -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        // todo
+                        if (db.checkIfArtistMixIsEmpty()) {
+                            val response = api.getArtistMix()
+
+                            if (response.isEmpty()) {
+                                state = state.copy(
+                                    type = ItemsType.ERR
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoArtistMix(response)
+                        }
+
+                        db.readAllArtistMix().collect {
+                            state = state.copy(
+                                type = ItemsType.ARTIST_MIX,
+                                data = state.data.copy(
+                                    dailyMixOrArtistMix = it.toListOfUiSong()
+                                )
+                            )
+                        }
                     }
                 }
 
                 ItemsType.DAILY_MIX -> {
                     viewModelScope.launch(Dispatchers.IO) {
                         if (db.checkIfDailyMixTableEmpty()) {
-                            val response = api.getDailyMix()
-                                .listOfSongs.toDailyMixEntry()
+                            val response = api.getDailyMix().listOfSongs
 
                             if (response.isEmpty()) {
                                 state = state.copy(
@@ -211,7 +230,7 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = ItemsType.DAILY_MIX,
                                 data = state.data.copy(
-                                    dailyMix = it.toListOfUiSong()
+                                    dailyMixOrArtistMix = it.toListOfUiSong()
                                 )
                             )
                         }

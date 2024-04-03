@@ -21,7 +21,7 @@ data class SongViewData(
     val album: UiAlbum = UiAlbum(),
     val favourites: List<UiSong> = emptyList(),
     val artist: UiArtist = UiArtist(),
-    val dailyMix: List<UiSong> = emptyList()
+    val dailyMixOrArtistMix: List<UiSong> = emptyList()
 )
 
 @Stable

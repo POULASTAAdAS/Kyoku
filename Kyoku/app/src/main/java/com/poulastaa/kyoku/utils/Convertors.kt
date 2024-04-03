@@ -24,6 +24,7 @@ import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.SongInfo
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
@@ -265,7 +266,30 @@ fun List<SongPreview>.toDailyMixEntry() = this.map {
     )
 }
 
+@JvmName(name = "toListOfUiSongFromDailyMix")
 fun List<DailyMixTable>.toListOfUiSong() = this.map {
+    UiSong(
+        id = it.songId,
+        title = it.title,
+        artist = it.artist,
+        album = it.album,
+        coverImage = it.coverImage
+    )
+}
+
+fun List<SongPreview>.toArtistMixEntry() = this.map {
+    ArtistMixTable(
+        songId = it.id.toLong(),
+        title = it.title,
+        artist = it.artist,
+        album = it.album,
+        coverImage = it.coverImage,
+        year = it.year
+    )
+}
+
+@JvmName(name = "toListOfUiSongFromArtistMix")
+fun List<ArtistMixTable>.toListOfUiSong() = this.map {
     UiSong(
         id = it.songId,
         title = it.title,

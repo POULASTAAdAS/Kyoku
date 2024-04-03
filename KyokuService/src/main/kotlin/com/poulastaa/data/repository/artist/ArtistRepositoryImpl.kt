@@ -12,6 +12,7 @@ import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHis
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
+import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -31,9 +32,9 @@ import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toResponseArtist
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
-import java.io.File
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.random.Random
 
 class ArtistRepositoryImpl : ArtistRepository {
     override suspend fun suggestArtist(
@@ -158,6 +159,19 @@ class ArtistRepositoryImpl : ArtistRepository {
         return filteredResult.take(if (isSelectedReq) 3 else 5)
     }
 
+
+    override suspend fun getArtistMix(userType: UserType, userId: Long): List<SongPreview> {
+        val favArtist = getFavArtist(userType, userId)
+
+        val original = favArtist.getOriginal()
+        val all = favArtist.getAll().filterNot {
+            original.map { preview -> preview.id }.contains(it.id)
+        }
+
+        return (original + all).shuffled(
+            Random(seed = original.size + all.size)
+        ).take(Random.nextInt(50, 60))
+    }
 
     private suspend fun List<Int>.storeArtistForEmailUser(id: Long) {
         dbQuery {
@@ -479,9 +493,7 @@ class ArtistRepositoryImpl : ArtistRepository {
             artistId = it[ArtistTable.id].value,
             artistImage = it[ArtistTable.profilePicUrl]
         )
-    }.groupBy {
-        it.artist
-    }.map {
+    }.groupBy { it.artist }.map {
         ResponseArtistsPreview(
             artist = ResponseArtist(
                 id = it.value[0].artistId,
@@ -490,5 +502,97 @@ class ArtistRepositoryImpl : ArtistRepository {
             ),
             listOfSongs = it.value.toListOfSongPreview().take(5)
         )
+    }
+
+    private suspend fun getFavArtist(userType: UserType, userId: Long) = withContext(Dispatchers.IO) {
+        dbQuery {
+            when (userType) {
+                UserType.GOOGLE_USER -> {
+                    ArtistTable
+                        .join(
+                            otherTable = GoogleUserArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                GoogleUserArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+                            }
+                        ).select {
+                            GoogleUserArtistRelationTable.userId eq userId
+                        }.map {
+                            it[ArtistTable.name]
+                        }
+                }
+
+                UserType.EMAIL_USER -> {
+                    ArtistTable
+                        .join(
+                            otherTable = EmailUserArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                EmailUserArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+                            }
+                        ).select {
+                            EmailUserArtistRelationTable.userId eq userId
+                        }.map {
+                            it[ArtistTable.name]
+                        }
+                }
+
+                UserType.PASSKEY_USER -> {
+                    ArtistTable
+                        .join(
+                            otherTable = PasskeyUserArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                PasskeyUserArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+                            }
+                        ).select {
+                            PasskeyUserArtistRelationTable.userId eq userId
+                        }.map {
+                            it[ArtistTable.name]
+                        }
+                }
+            }
+        }
+    }
+
+    private suspend fun List<String>.getOriginal() = withContext(Dispatchers.IO) {
+        dbQuery {
+            Song.find {
+                SongTable.artist inList this@getOriginal
+            }.orderBy(org.jetbrains.exposed.sql.Random() to SortOrder.ASC)
+                .map {
+                    SongPreview(
+                        id = it.id.value.toString(),
+                        title = it.title,
+                        artist = it.artist,
+                        album = it.album,
+                        coverImage = it.coverImage.constructCoverPhotoUrl(),
+                        points = it.points,
+                        year = it.date
+                    )
+                }.groupBy { it.artist }
+                .map {
+                    it.value.take(35)
+                }.flatten()
+        }
+    }
+
+    private suspend fun List<String>.getAll() = dbQuery {
+        this.map {
+            Song.find {
+                SongTable.artist like "%$it%"
+            }.orderBy(SongTable.points to SortOrder.DESC)
+                .map {
+                    SongPreview(
+                        id = it.id.value.toString(),
+                        title = it.title,
+                        artist = it.artist,
+                        album = it.album,
+                        coverImage = it.coverImage.constructCoverPhotoUrl(),
+                        points = it.points,
+                        year = it.date
+                    )
+                }.take(50).shuffled(Random)
+        }.flatten()
     }
 }

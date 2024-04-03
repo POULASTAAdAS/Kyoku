@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.presentation.screen.song_view.album.AlbumScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistScreen
+import com.poulastaa.kyoku.presentation.screen.song_view.artist_mix.ArtistMixScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongViewContentLoading
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongViewErrScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.daily_mix.DailyMixScreen
@@ -105,22 +106,36 @@ fun SongViewRootScreen(
         }
 
         ItemsType.ARTIST_MIX -> {
-
+            if (viewModel.state.isLoading ||
+                viewModel.state.data.dailyMixOrArtistMix.isEmpty()
+            ) SongViewContentLoading(
+                isFavourite = false,
+                isSmallPhone = isSmallPhone
+            )
+            else ArtistMixScreen(
+                artistMix = viewModel.state.data.dailyMixOrArtistMix,
+                isDarkThem = isDarkThem,
+                isCookie = viewModel.state.isCooke,
+                headerValue = viewModel.state.headerValue,
+                poster = viewModel.state.data.dailyMixOrArtistMix[0].coverImage,
+                isSmallPhone = isSmallPhone,
+                navigateBack = navigateBack
+            )
         }
 
         ItemsType.DAILY_MIX -> {
             if (viewModel.state.isLoading ||
-                viewModel.state.data.dailyMix.isEmpty()
+                viewModel.state.data.dailyMixOrArtistMix.isEmpty()
             ) SongViewContentLoading(
                 isFavourite = false,
                 isSmallPhone = isSmallPhone
             )
             else DailyMixScreen(
-                dailyMix = viewModel.state.data.dailyMix,
+                dailyMix = viewModel.state.data.dailyMixOrArtistMix,
                 isDarkThem = isDarkThem,
                 isCookie = viewModel.state.isCooke,
                 headerValue = viewModel.state.headerValue,
-                poster = viewModel.state.data.dailyMix[0].coverImage,
+                poster = viewModel.state.data.dailyMixOrArtistMix[0].coverImage,
                 isSmallPhone = isSmallPhone,
                 navigateBack = navigateBack
             )

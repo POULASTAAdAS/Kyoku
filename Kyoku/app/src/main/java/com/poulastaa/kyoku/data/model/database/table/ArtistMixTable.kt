@@ -3,11 +3,10 @@ package com.poulastaa.kyoku.data.model.database.table
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
-@Entity(tableName = "DailyMixTable")
-data class DailyMixTable(
+@Entity(tableName = "ArtistMixTable")
+data class ArtistMixTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val songId: Long = 0,
     val title: String = "",
     val artist: String = "",

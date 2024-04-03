@@ -14,7 +14,6 @@ import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
-import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
@@ -25,7 +24,9 @@ import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
+import com.poulastaa.kyoku.utils.toArtistMixEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
+import com.poulastaa.kyoku.utils.toDailyMixEntry
 import com.poulastaa.kyoku.utils.toDailyMixPrevEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
@@ -463,11 +464,25 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
 
-    fun insertIntoDailyMix(entrys: List<DailyMixTable>) = CoroutineScope(Dispatchers.IO).launch {
-        dao.insertIntoDailyMix(entrys)
+    fun insertIntoDailyMix(entrys: List<SongPreview>) = CoroutineScope(Dispatchers.IO).launch {
+        entrys.toDailyMixEntry().let {
+            dao.insertIntoDailyMix(it)
+        }
     }
 
     fun readAllDailyMix() = dao.readAllDailyMix()
+
+
+    suspend fun checkIfArtistMixIsEmpty() = dao.checkIfArtistMixIsEmpty().toInt() == 0
+
+    fun insertIntoArtistMix(entrys: List<SongPreview>) = CoroutineScope(Dispatchers.IO).launch {
+        entrys.toArtistMixEntry().let {
+            dao.insertIntoArtistMix(it)
+        }
+    }
+
+    fun readAllArtistMix() = dao.readAllArtistMix()
+
 
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
         val alPrev = async { dao.dropAlbumPrevTable() }
@@ -477,6 +492,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         val arPrevSong = async { dao.dropArtistPrevSongTable() }
         val daiMixPrev = async { dao.dropDailyMixPrevTable() }
         val daiMix = async { dao.dropDailyMixTable() }
+        val arMix = async { dao.dropArtistMixTable() }
         val fav = async { dao.dropFavouriteTable() }
         val favArMixPrev = async { dao.dropFavArtistMixPrevTable() }
         val pin = async { dao.dropPinnedTable() }
@@ -494,6 +510,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         arPrevSong.await()
         daiMixPrev.await()
         daiMix.await()
+        arMix.await()
         fav.await()
         favArMixPrev.await()
         pin.await()
@@ -504,4 +521,8 @@ class DatabaseRepositoryImpl @Inject constructor(
         soPrev.await()
         song.await()
     }
+
+
+    // internal database
+
 }

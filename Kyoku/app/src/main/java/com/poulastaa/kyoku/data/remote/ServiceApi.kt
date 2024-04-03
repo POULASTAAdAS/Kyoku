@@ -83,4 +83,7 @@ interface ServiceApi {
 
     @GET("/api/authorised/dailyMix")
     suspend fun getDailyMix(): DailyMixPreview
+
+    @GET("/api/authorised/artistMix")
+    suspend fun getArtistMix(): List<SongPreview>
 }

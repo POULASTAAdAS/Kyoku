@@ -189,7 +189,7 @@ fun LibraryScreen(
                 headerValue = headerValue,
                 isGrid = viewModel.state.isGrid,
                 scope = scope,
-                onLongClick = viewModel::onEvent,
+                onLongClick = {},
                 onClick = viewModel::onEvent
             )
 

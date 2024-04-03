@@ -39,7 +39,8 @@ interface ServiceRepository {
     suspend fun getArtistAlbumAsPage(req: ArtistPageReq): List<ArtistAlbum>
     suspend fun getArtistSongAsPage(req: ArtistPageReq): List<SongPreview>
 
-    suspend fun getAlbum(id:Long): AlbumPreview
+    suspend fun getAlbum(id: Long): AlbumPreview
 
     suspend fun getDailyMix(): DailyMixPreview
+    suspend fun getArtistMix(): List<SongPreview>
 }
