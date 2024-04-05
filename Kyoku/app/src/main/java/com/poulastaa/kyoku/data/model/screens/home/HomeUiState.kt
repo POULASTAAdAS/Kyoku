@@ -14,7 +14,8 @@ data class HomeUiState(
     val isBottomSheetLoading: Boolean = true,
 
     val dataType: HomeType = HomeType.NEW_USER_REQ,
-    val data: HomeUiData = HomeUiData()
+    val data: HomeUiData = HomeUiData(),
+    val bottomSheetData: BottomSheetData = BottomSheetData()
 )
 
 @Stable
@@ -65,3 +66,9 @@ data class HomeUiSavedAlbumPrev(
     val coverImage: String,
 )
 
+@Stable
+data class BottomSheetData(
+    val name: String = "",
+    val urls: List<String> = emptyList(),
+    val type: HomeLongClickType = HomeLongClickType.HISTORY_SONG
+)

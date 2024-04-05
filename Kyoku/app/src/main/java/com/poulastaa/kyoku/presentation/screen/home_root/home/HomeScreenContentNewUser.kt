@@ -6,6 +6,8 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
+import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
+import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.ArtistMixCard
@@ -46,7 +50,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreenContentNewUser(
     paddingValues: PaddingValues,
@@ -59,8 +63,10 @@ fun HomeScreenContentNewUser(
     bottomSheetState: Boolean,
     isBottomSheetLoading: Boolean,
     data: HomeUiData,
+    bottomSheetData: BottomSheetData,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onClick: (HomeUiEvent) -> Unit
+    onClick: (HomeUiEvent) -> Unit,
+    onLongClick: (HomeUiEvent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -99,6 +105,7 @@ fun HomeScreenContentNewUser(
                             onClick.invoke(
                                 HomeUiEvent.ItemClick(
                                     type = ItemsType.PLAYLIST,
+                                    id = data.playlist[0].id,
                                     name = data.playlist[0].name
                                 )
                             )
@@ -119,6 +126,7 @@ fun HomeScreenContentNewUser(
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
                                         type = ItemsType.PLAYLIST,
+                                        id = data.playlist[1].id,
                                         name = data.playlist[1].name
                                     )
                                 )
@@ -157,6 +165,7 @@ fun HomeScreenContentNewUser(
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
                                         type = ItemsType.PLAYLIST,
+                                        id = data.playlist[2].id,
                                         name = data.playlist[2].name
                                     )
                                 )
@@ -177,6 +186,7 @@ fun HomeScreenContentNewUser(
                                 onClick.invoke(
                                     HomeUiEvent.ItemClick(
                                         type = ItemsType.PLAYLIST,
+                                        id = data.playlist[3].id,
                                         name = data.playlist[3].name
                                     )
                                 )
@@ -214,6 +224,7 @@ fun HomeScreenContentNewUser(
                     isCookie = isCookie,
                     headerValue = headerValue,
                     isSmallPhone = isSmallPhone,
+                    onLongClick = onLongClick,
                     onClick = onClick
                 )
 
@@ -273,20 +284,31 @@ fun HomeScreenContentNewUser(
                         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
                     ) {
                         HomeScreenCard(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.ALBUM_PREV,
+                                            id = it.id,
+                                            name = it.name,
+                                            isApiCall = true
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onLongClick.invoke(
+                                        HomeUiEvent.ItemLongClick(
+                                            type = HomeLongClickType.ALBUM_PREV,
+                                            id = it.id,
+                                            name = it.name
+                                        )
+                                    )
+                                }
+                            ),
                             size = if (isSmallPhone) 120.dp else 130.dp,
                             imageUrl = it.listOfSong[0].coverImage,
                             isCookie = isCookie,
-                            headerValue = headerValue,
-                            onClick = {
-                                onClick.invoke(
-                                    HomeUiEvent.ItemClick(
-                                        type = ItemsType.ALBUM_PREV,
-                                        id = it.id,
-                                        name = it.name,
-                                        isApiCall = true
-                                    )
-                                )
-                            }
+                            headerValue = headerValue
                         )
 
                         Text(text = it.name)
@@ -304,7 +326,8 @@ fun HomeScreenContentNewUser(
             isCookie = isCookie,
             headerValue = headerValue,
             scope = scope,
-            onClick = onClick
+            onClick = onClick,
+            onLongClick = onLongClick
         )
     }
 
@@ -314,6 +337,9 @@ fun HomeScreenContentNewUser(
             sheetState = sheetState,
             isBottomSheetLoading = isBottomSheetLoading,
             onClick = onClick,
+            isCookie = isCookie,
+            headerValue = headerValue,
+            data = bottomSheetData,
             cancelClick = {
                 scope.launch {
                     sheetState.hide()

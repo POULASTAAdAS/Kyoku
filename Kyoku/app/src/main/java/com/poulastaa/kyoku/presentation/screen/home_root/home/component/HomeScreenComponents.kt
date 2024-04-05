@@ -2,8 +2,10 @@ package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +54,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
+import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -60,13 +63,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.homeScreenArtistList(
     artistPrev: List<HomeUiArtistPrev>,
     isSmallPhone: Boolean,
     isCookie: Boolean,
     headerValue: String,
     scope: CoroutineScope,
-    onClick: (HomeUiEvent.ItemClick) -> Unit
+    onClick: (HomeUiEvent) -> Unit,
+    onLongClick: (HomeUiEvent) -> Unit
 ) {
     items(artistPrev.size) { artistIndex ->
         Row(
@@ -98,19 +103,7 @@ fun LazyListScope.homeScreenArtistList(
                 imageUrl = artistPrev[artistIndex].artistCover,
                 shape = CircleShape,
                 isCookie = isCookie,
-                headerValue = headerValue,
-                onClick = {
-                    scope.launch {
-                        onClick.invoke(
-                            HomeUiEvent.ItemClick(
-                                type = ItemsType.ARTIST,
-                                name = artistPrev[artistIndex].name,
-                                id = artistPrev[artistIndex].id,
-                                isApiCall = true
-                            )
-                        )
-                    }
-                }
+                headerValue = headerValue
             )
 
             Column(
@@ -139,6 +132,34 @@ fun LazyListScope.homeScreenArtistList(
         ) {
             items(artistPrev[artistIndex].lisOfPrevSong.size) { songIndex ->
                 Box(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .combinedClickable(
+                            onClick = {
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.SONG,
+                                            id = artistPrev[artistIndex]
+                                                .lisOfPrevSong[songIndex].id
+                                        )
+                                    )
+                                }
+                            },
+                            onLongClick = {
+                                scope.launch {
+                                    onLongClick.invoke(
+                                        HomeUiEvent.ItemLongClick(
+                                            type = HomeLongClickType.ARTIST_SONG,
+                                            id = artistPrev[artistIndex]
+                                                .lisOfPrevSong[songIndex].id,
+                                            name = artistPrev[artistIndex]
+                                                .lisOfPrevSong[songIndex].title
+                                        )
+                                    )
+                                }
+                            }
+                        ),
                     contentAlignment = Alignment.BottomCenter
                 ) {
                     HomeScreenCard(
@@ -146,18 +167,7 @@ fun LazyListScope.homeScreenArtistList(
                         imageUrl = artistPrev[artistIndex]
                             .lisOfPrevSong[songIndex].coverImage,
                         isCookie = isCookie,
-                        headerValue = headerValue,
-                        onClick = {
-                            scope.launch {
-                                onClick.invoke(
-                                    HomeUiEvent.ItemClick(
-                                        type = ItemsType.SONG,
-                                        id = artistPrev[artistIndex]
-                                            .lisOfPrevSong[songIndex].id
-                                    )
-                                )
-                            }
-                        }
+                        headerValue = headerValue
                     )
 
                     Text(
@@ -222,6 +232,7 @@ fun CustomToast(
 }
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArtistMixCard(
     coverImage: String,
@@ -229,24 +240,35 @@ fun ArtistMixCard(
     isCookie: Boolean,
     headerValue: String,
     isSmallPhone: Boolean,
-    onClick: (HomeUiEvent.ItemClick) -> Unit
+    onLongClick: (HomeUiEvent) -> Unit,
+    onClick: (HomeUiEvent) -> Unit
 ) {
     Box(
-        modifier = Modifier.wrapContentSize(),
+        modifier = Modifier
+            .wrapContentSize()
+            .combinedClickable(
+                onClick = {
+                    onClick.invoke(
+                        HomeUiEvent.ItemClick(
+                            type = ItemsType.ARTIST_MIX
+                        )
+                    )
+                },
+                onLongClick = {
+                    onLongClick.invoke(
+                        HomeUiEvent.ItemLongClick(
+                            type = HomeLongClickType.ARTIST_MIX
+                        )
+                    )
+                }
+            ),
         contentAlignment = Alignment.BottomCenter
     ) {
         HomeScreenCard(
             size = if (isSmallPhone) 120.dp else 130.dp,
             imageUrl = coverImage,
             isCookie = isCookie,
-            headerValue = headerValue,
-            onClick = {
-                onClick.invoke(
-                    HomeUiEvent.ItemClick(
-                        type = ItemsType.ARTIST_MIX
-                    )
-                )
-            }
+            headerValue = headerValue
         )
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
@@ -274,8 +296,7 @@ fun HomeScreenCard(
     isCookie: Boolean,
     headerValue: String,
     shape: CornerBasedShape = MaterialTheme.shapes.small,
-    imageUrl: String,
-    onClick: () -> Unit
+    imageUrl: String
 ) {
     Card(
         modifier = modifier
@@ -286,8 +307,7 @@ fun HomeScreenCard(
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
-        ),
-        onClick = onClick
+        )
     ) {
         CustomImageView(
             isDarkThem = isDarkThem,

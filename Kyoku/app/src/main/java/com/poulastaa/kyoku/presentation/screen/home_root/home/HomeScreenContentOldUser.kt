@@ -6,8 +6,9 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +31,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,9 +46,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
+import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
+import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardMore
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
@@ -56,17 +63,23 @@ import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContentOldUser(
     paddingValues: PaddingValues,
+    sheetState: SheetState = rememberModalBottomSheetState(),
     isSmallPhone: Boolean,
     data: HomeUiData,
+    bottomSheetData: BottomSheetData,
     isCookie: Boolean,
     headerValue: String,
     isInternetError: Boolean,
     errorMessage: String,
+    bottomSheetState: Boolean,
+    isBottomSheetLoading: Boolean,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onClick: (HomeUiEvent.ItemClick) -> Unit
+    onClick: (HomeUiEvent) -> Unit,
+    onLongClick: (HomeUiEvent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -291,28 +304,35 @@ fun HomeScreenContentOldUser(
             ) {
                 if (data.fevArtistMixPrev.isNotEmpty())
                     Column(
-                        modifier = Modifier.wrapContentWidth(),
+                        modifier = Modifier
+                            .wrapContentWidth(),
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.ARTIST_MIX
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onLongClick.invoke(
+                                        HomeUiEvent.ItemLongClick(
+                                            type = HomeLongClickType.ARTIST_MIX
+                                        )
+                                    )
+                                }
+                            ),
                             contentAlignment = Alignment.BottomCenter
                         ) {
                             HomeScreenCard(
                                 size = if (isSmallPhone) 120.dp else 130.dp,
                                 imageUrl = data.fevArtistMixPrev[0].coverImage,
                                 isCookie = isCookie,
-                                headerValue = headerValue,
-                                onClick = {
-                                    scope.launch {
-                                        onClick.invoke(
-                                            HomeUiEvent.ItemClick(
-                                                type = ItemsType.ARTIST_MIX,
-                                                isApiCall = true
-                                            )
-                                        )
-                                    }
-                                }
+                                headerValue = headerValue
                             )
 
                             Text(
@@ -324,10 +344,7 @@ fun HomeScreenContentOldUser(
                                             bottomEnd = MaterialTheme.dimens.small3,
                                             bottomStart = MaterialTheme.dimens.small3
                                         )
-                                    )
-                                    .clickable {
-
-                                    },
+                                    ),
                                 text = data.fevArtistMixPrev.map {
                                     it.name.trim()
                                 }.toString().trim().removePrefix("["),
@@ -355,16 +372,22 @@ fun HomeScreenContentOldUser(
                     LibraryScreenPlaylistGridView(
                         modifier = Modifier
                             .size(if (isSmallPhone) 120.dp else 130.dp)
-                            .clickable {
-                                scope.launch {
+                            .combinedClickable(
+                                onClick = {
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
-                                            type = ItemsType.DAILY_MIX,
-                                            isApiCall = true
+                                            type = ItemsType.DAILY_MIX
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onLongClick.invoke(
+                                        HomeUiEvent.ItemLongClick(
+                                            type = HomeLongClickType.DAILY_MIX
                                         )
                                     )
                                 }
-                            },
+                            ),
                         isCookie = isCookie,
                         authHeader = headerValue,
                         name = "Daily Mix",
@@ -399,13 +422,7 @@ fun HomeScreenContentOldUser(
                 ) {
                     items(data.historyPrev.size) { historySongIndex ->
                         Box(
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            HomeScreenCard(
-                                size = if (isSmallPhone) 120.dp else 130.dp,
-                                imageUrl = data.historyPrev[historySongIndex].coverImage,
-                                isCookie = isCookie,
-                                headerValue = headerValue,
+                            modifier = Modifier.combinedClickable(
                                 onClick = {
                                     scope.launch {
                                         onClick.invoke(
@@ -415,7 +432,26 @@ fun HomeScreenContentOldUser(
                                             )
                                         )
                                     }
+                                },
+                                onLongClick = {
+                                    scope.launch {
+                                        onLongClick.invoke(
+                                            HomeUiEvent.ItemLongClick(
+                                                type = HomeLongClickType.HISTORY_SONG,
+                                                id = data.historyPrev[historySongIndex].id,
+                                                name = data.historyPrev[historySongIndex].title
+                                            )
+                                        )
+                                    }
                                 }
+                            ),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            HomeScreenCard(
+                                size = if (isSmallPhone) 120.dp else 130.dp,
+                                imageUrl = data.historyPrev[historySongIndex].coverImage,
+                                isCookie = isCookie,
+                                headerValue = headerValue
                             )
 
                             Text(
@@ -469,7 +505,23 @@ fun HomeScreenContentOldUser(
             isCookie = isCookie,
             headerValue = headerValue,
             scope = scope,
-            onClick = onClick
+            onClick = onClick,
+            onLongClick = onLongClick
         )
     }
+
+    if (bottomSheetState)
+        HomeScreenBottomSheet(
+            sheetState = sheetState,
+            isBottomSheetLoading = isBottomSheetLoading,
+            isCookie = isCookie,
+            headerValue = headerValue,
+            data = bottomSheetData,
+            onClick = onClick,
+            cancelClick = {
+                scope.launch {
+                    sheetState.hide()
+                }
+            }
+        )
 }

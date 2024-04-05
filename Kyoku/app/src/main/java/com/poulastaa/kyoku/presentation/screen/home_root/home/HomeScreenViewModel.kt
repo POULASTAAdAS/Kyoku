@@ -15,6 +15,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
+import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
@@ -300,6 +301,7 @@ class HomeScreenViewModel @Inject constructor(
                             }
                             return
                         }
+
                         else -> event
                     }.let {
                         viewModelScope.launch(Dispatchers.IO) {
@@ -317,7 +319,161 @@ class HomeScreenViewModel @Inject constructor(
             }
 
             is HomeUiEvent.ItemLongClick -> {
+                state = state.copy(
+                    isBottomSheetOpen = true
+                )
 
+                when (event.type) {
+                    HomeLongClickType.ALBUM_PREV -> {
+                        val album = state.data.albumPrev.firstOrNull {
+                            it.id == event.id
+                        }
+
+                        if (album == null) {
+                            onEvent(HomeUiEvent.SomethingWentWrong)
+
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            return
+                        }
+
+                        state = state.copy(
+                            isBottomSheetLoading = false,
+                            bottomSheetData = state.bottomSheetData.copy(
+                                name = album.name,
+                                urls = album.listOfSong.map {
+                                    it.coverImage
+                                },
+                                type = HomeLongClickType.ALBUM_PREV
+                            )
+                        )
+                    }
+
+                    HomeLongClickType.ARTIST_MIX -> {
+                        val urls = state.data.fevArtistMixPrev.map {
+                            it.coverImage
+                        }
+
+                        if (urls.isEmpty()) {
+                            onEvent(HomeUiEvent.SomethingWentWrong)
+
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            return
+                        }
+
+                        state = state.copy(
+                            isBottomSheetLoading = false,
+                            bottomSheetData = state.bottomSheetData.copy(
+                                name = "Artist Mix",
+                                urls = urls,
+                                type = HomeLongClickType.ARTIST_MIX
+                            )
+                        )
+                    }
+
+                    HomeLongClickType.DAILY_MIX -> {
+                        val urls = state.data.dailyMixPrevUrls
+
+                        if (urls.isEmpty()) {
+                            onEvent(HomeUiEvent.SomethingWentWrong)
+
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            return
+                        }
+
+                        state = state.copy(
+                            isBottomSheetLoading = false,
+                            bottomSheetData = state.bottomSheetData.copy(
+                                name = "Daily Mix",
+                                urls = urls,
+                                type = HomeLongClickType.DAILY_MIX
+                            )
+                        )
+                    }
+
+                    HomeLongClickType.HISTORY_SONG -> {
+                        val song = state.data.historyPrev.firstOrNull {
+                            it.id == event.id
+                        }
+
+                        if (song == null) {
+                            onEvent(HomeUiEvent.SomethingWentWrong)
+
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            return
+                        }
+
+                        state = state.copy(
+                            isBottomSheetLoading = false,
+                            bottomSheetData = state.bottomSheetData.copy(
+                                name = song.title,
+                                urls = listOf(song.coverImage),
+                                type = HomeLongClickType.HISTORY_SONG
+                            )
+                        )
+                    }
+
+                    HomeLongClickType.ARTIST_SONG -> {
+                        val song = state.data.artistPrev.firstNotNullOfOrNull {
+                            it.lisOfPrevSong.firstOrNull { song ->
+                                song.id == event.id
+                            }
+                        }
+
+
+
+                        if (song == null) {
+                            onEvent(HomeUiEvent.SomethingWentWrong)
+
+                            state = state.copy(
+                                isBottomSheetOpen = false
+                            )
+
+                            return
+                        }
+
+                        state = state.copy(
+                            isBottomSheetLoading = false,
+                            bottomSheetData = state.bottomSheetData.copy(
+                                name = song.title,
+                                urls = listOf(song.coverImage),
+                                type = HomeLongClickType.ARTIST_SONG
+                            )
+                        )
+                    }
+                }
+            }
+
+            is HomeUiEvent.BottomSheetItemClick -> {
+                when (event) {
+                    is HomeUiEvent.BottomSheetItemClick.AddClick -> {
+
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.DeleteClick -> {
+
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.RemoveClick -> {
+
+                    }
+                }.let {
+                    state = state.copy(
+                        isBottomSheetOpen = false,
+                        isBottomSheetLoading = true
+                    )
+                }
             }
         }
     }

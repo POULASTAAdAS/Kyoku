@@ -75,7 +75,9 @@ fun HomeScreen(
                     bottomSheetState = viewModel.state.isBottomSheetOpen,
                     isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
                     data = viewModel.state.data,
-                    onClick = viewModel::onEvent
+                    bottomSheetData = viewModel.state.bottomSheetData,
+                    onClick = viewModel::onEvent,
+                    onLongClick = viewModel::onEvent
                 )
             }
 
@@ -89,20 +91,26 @@ fun HomeScreen(
                         errorMessage = viewModel.state.errorMessage,
                         isInternetError = viewModel.state.isInternetError,
                         data = viewModel.state.data,
+                        bottomSheetData = viewModel.state.bottomSheetData,
                         bottomSheetState = viewModel.state.isBottomSheetOpen,
                         isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
-                        onClick = viewModel::onEvent
+                        onClick = viewModel::onEvent,
+                        onLongClick = viewModel::onEvent
                     )
                 else
                     HomeScreenContentOldUser(
                         paddingValues = paddingValues,
                         isSmallPhone = isSmallPhone,
                         data = viewModel.state.data,
+                        bottomSheetData = viewModel.state.bottomSheetData,
                         isInternetError = viewModel.state.isInternetError,
                         errorMessage = viewModel.state.errorMessage,
                         isCookie = isCookie,
                         headerValue = authHeader,
-                        onClick = viewModel::onEvent
+                        bottomSheetState = viewModel.state.isBottomSheetOpen,
+                        isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
+                        onClick = viewModel::onEvent,
+                        onLongClick = viewModel::onEvent
                     )
             }
         }
