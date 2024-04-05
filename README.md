@@ -2,7 +2,7 @@
 
 Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&node-id=0%3A1&mode=design&t=JoyALAENu5toU3PO-1
 
-#  <h2 align="center">Preview Dark</h2>
+# <h2 align="center">Preview Dark</h2>
 
 <table>
   <tr>
@@ -10,31 +10,55 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height="600">
     </td>
     <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/adding%20spotify%20playlist.jpg" width="250" height="600">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/set%20b'date.jpg" width="250" height="600">
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20genre.jpg" width="250" height="600">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20artist.jpg" width="250" height="600">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Navigation.jpg" width="250" height="600">
+    </td>
+    
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height="600">
     </td>
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height="600">
     </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Daily%20Mix.jpg" width="250" height="600">
+    </td>
   </tr>
 </table>
-
 
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Navigation.jpg" width="250" height="600">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Daily%20Mix.jpg" width="250" height="600">
-    </td>
-    <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Artist.jpg" width="250" height="600">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/All%20from%20Artist.jpg" width="250" height="600">
     </td>
   </tr>
 </table>
 
-
-#  <h2 align="center">Technology Used</h2>
+# <h2 align="center">Technology Used</h2>
 
 - Retrofit
 - Paging3
@@ -47,6 +71,7 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 - todo more to add
 
 # License
+
 ```xml
 Designed and developed by 2023 Poulastaa Das
 
@@ -61,3 +86,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
