@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.poulastaa.kyoku.data.database.AppDao
 import com.poulastaa.kyoku.data.database.AppDatabase
+import com.poulastaa.kyoku.data.database.InternalDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,4 +30,10 @@ object DatabaseModule {
     fun provideDao(
         database: AppDatabase
     ): AppDao = database.appDao()
+
+    @Provides
+    @Singleton
+    fun provideInternalDao(
+        database: AppDatabase
+    ): InternalDao = database.internalDao()
 }

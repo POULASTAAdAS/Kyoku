@@ -6,6 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.api.service.pinned.IdType
+import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
+import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
+import com.poulastaa.kyoku.data.model.database.table.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
@@ -433,36 +437,95 @@ class LibraryViewModel @Inject constructor(
                                         isBottomSheetOpen = false
                                     )
 
-                                    val result = db.addToPinnedTable(
+                                    val id = db.addToPinnedTable(
                                         type = event.type,
                                         name = event.name,
                                         ds = ds
                                     )
 
-                                    if (!result)
-                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+
+
+                                    if (event.type != PinnedDataType.NON && id != -1L) {
+                                        val response = api.handlePin(
+                                            req = PinnedReq(
+                                                type = when (event.type) {
+                                                    PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                    PinnedDataType.ALBUM -> IdType.ALBUM
+                                                    PinnedDataType.ARTIST -> IdType.ARTIST
+                                                    else -> return@launch
+                                                },
+                                                id = id,
+                                                operation = PinnedOperation.ADD
+                                            )
+                                        )
+
+                                        if (!response) {
+                                            db.addToInternalPinnedTable(
+                                                data = InternalPinnedTable(
+                                                    pinnedId = id,
+                                                    type = when (event.type) {
+                                                        PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                        PinnedDataType.ALBUM -> IdType.ALBUM
+                                                        PinnedDataType.ARTIST -> IdType.ARTIST
+                                                        else -> return@launch
+                                                    },
+                                                    operation = PinnedOperation.ADD
+                                                )
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
                             LibraryUiEvent.BottomSheetItemClick.RemoveClick -> {
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    if (
-                                        state.pinnedData.name.isNotEmpty() &&
-                                        state.pinnedData.type != PinnedDataType.NON
-                                    ) {
-                                        val result = db.removeFromPinnedTable(
-                                            type = state.pinnedData.type,
-                                            name = state.pinnedData.name,
-                                            ds = ds
-                                        )
+                                state = state.copy(
+                                    isBottomSheetOpen = false
+                                )
 
-                                        if (!result) onEvent(LibraryUiEvent.SomethingWentWrong)
-                                    } else {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    if (state.pinnedData.type == PinnedDataType.NON ||
+                                        state.pinnedData.name.isEmpty()
+                                    ) {
                                         onEvent(LibraryUiEvent.SomethingWentWrong)
+                                        return@launch
                                     }
 
-                                    state = state.copy(
-                                        isBottomSheetOpen = false
+                                    val id = db.removeFromPinnedTable(
+                                        type = state.pinnedData.type,
+                                        name = state.pinnedData.name,
+                                        ds = ds
+                                    )
+
+                                    if (id == -1L) {
+                                        onEvent(LibraryUiEvent.SomethingWentWrong)
+                                        return@launch
+                                    }
+
+                                    val response = api.handlePin(
+                                        req = PinnedReq(
+                                            type = when (state.pinnedData.type) {
+                                                PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                PinnedDataType.ALBUM -> IdType.ALBUM
+                                                PinnedDataType.ARTIST -> IdType.ARTIST
+                                                else -> return@launch
+                                            },
+                                            id = id,
+                                            operation = PinnedOperation.REMOVE
+                                        )
+                                    )
+
+                                    db.removeFromPinnedTable(
+                                        data = InternalPinnedTable(
+                                            pinnedId = id,
+                                            type = when (state.pinnedData.type) {
+                                                PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                PinnedDataType.ALBUM -> IdType.ALBUM
+                                                PinnedDataType.ARTIST -> IdType.ARTIST
+                                                else -> return@launch
+                                            },
+                                            operation = PinnedOperation.REMOVE
+                                        ),
+                                        response = response
                                     )
                                 }
                             }

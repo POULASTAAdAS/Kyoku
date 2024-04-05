@@ -5,6 +5,7 @@ import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
 import com.poulastaa.data.model.artist.ArtistPageReq
 import com.poulastaa.data.model.home.*
+import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -41,4 +42,6 @@ interface UserServiceRepository {
     suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
 
     suspend fun getArtistMix(helper: UserTypeHelper): List<SongPreview>
+
+    suspend fun handlePinnedOperation(helper: UserTypeHelper, req: PinnedReq): Boolean
 }

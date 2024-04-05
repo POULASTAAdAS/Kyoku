@@ -9,6 +9,7 @@ import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTabl
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.home.*
+import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
@@ -409,6 +410,16 @@ class UserServiceRepositoryImpl(
         val user = dbUsers.getDbUser(helper) ?: return emptyList()
 
         return artist.getArtistMix(userType = helper.userType, userId = user.id)
+    }
+
+    override suspend fun handlePinnedOperation(helper: UserTypeHelper, req: PinnedReq): Boolean {
+        val user = dbUsers.getDbUser(helper) ?: return false
+
+        return song.handlePinnedOperation(
+            userId = user.id,
+            userType = helper.userType,
+            req = req
+        )
     }
 
     // private functions

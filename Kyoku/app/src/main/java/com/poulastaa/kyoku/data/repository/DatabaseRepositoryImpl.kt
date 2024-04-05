@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.data.repository
 
 import android.content.Context
 import com.poulastaa.kyoku.data.database.AppDao
+import com.poulastaa.kyoku.data.database.InternalDao
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
@@ -10,11 +11,13 @@ import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseArtistsPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
+import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
+import com.poulastaa.kyoku.data.model.database.table.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
@@ -42,7 +45,8 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class DatabaseRepositoryImpl @Inject constructor(
-    private val dao: AppDao
+    private val dao: AppDao,
+    private val intDao: InternalDao
 ) {
     private var context: Context? = null
     private var header: String? = null
@@ -233,6 +237,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val albumId = async {
                     dao.insertIntoAlbum(
                         data = AlbumTable(
+                            albumId = it.id,
                             name = it.name
                         )
                     )
@@ -297,23 +302,23 @@ class DatabaseRepositoryImpl @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         when (type) {
             PinnedDataType.PLAYLIST -> {
-                val id = async {
+                val pair = async {
                     dao.getIdOfPlaylist(name)
-                }.await() ?: return@withContext false
+                }.await()
 
                 dao.addToPinnedTable(
                     data = PinnedTable(
-                        playlistId = id
+                        playlistId = pair.id
                     )
                 )
 
-                true
+                pair.originalId
             }
 
             PinnedDataType.ARTIST -> {
                 val id = async {
                     dao.getIdOfArtist(name)
-                }.await() ?: return@withContext false
+                }.await()
 
                 dao.addToPinnedTable(
                     data = PinnedTable(
@@ -321,30 +326,30 @@ class DatabaseRepositoryImpl @Inject constructor(
                     )
                 )
 
-                true
+                id
             }
 
             PinnedDataType.ALBUM -> {
-                val id = async {
+                val pair = async {
                     dao.getIdOfAlbum(name)
-                }.await() ?: return@withContext false
+                }.await()
 
                 dao.addToPinnedTable(
                     data = PinnedTable(
-                        albumId = id
+                        albumId = pair.id
                     )
                 )
 
-                true
+                pair.originalId
             }
 
             PinnedDataType.FAVOURITE -> {
                 ds.storeFavouritePinnedState(true)
 
-                true
+                -1L
             }
 
-            else -> false
+            else -> -1L
         }
     }
 
@@ -355,41 +360,41 @@ class DatabaseRepositoryImpl @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         when (type) {
             PinnedDataType.PLAYLIST -> {
-                val playlistId = dao.getIdOfPlaylist(name) ?: return@withContext false
+                val pair = dao.getIdOfPlaylist(name)
 
                 return@withContext try {
-                    dao.removePlaylistIdFromPinnedTable(playlistId).let { true }
+                    dao.removePlaylistIdFromPinnedTable(pair.id).let { pair.originalId }
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
             PinnedDataType.ARTIST -> {
-                val artistId = dao.getIdOfArtist(name) ?: return@withContext false
+                val artistId = dao.getIdOfArtist(name)
 
                 return@withContext try {
-                    dao.removeArtistIdFromPinnedTable(artistId).let { true }
+                    dao.removeArtistIdFromPinnedTable(artistId).let { artistId }
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
             PinnedDataType.ALBUM -> {
-                val albumId = dao.getIdOfAlbum(name) ?: return@withContext false
+                val pair = dao.getIdOfAlbum(name)
 
                 return@withContext try {
-                    dao.removeAlbumIdFromPinnedTable(albumId).let { true }
+                    dao.removeAlbumIdFromPinnedTable(pair.id).let { pair.originalId }
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
             PinnedDataType.FAVOURITE -> {
                 ds.storeFavouritePinnedState(false)
-                true
+                -1L
             }
 
-            else -> false
+            else -> -1L
         }
     }
 
@@ -401,10 +406,10 @@ class DatabaseRepositoryImpl @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         when (type) {
             PinnedDataType.PLAYLIST -> {
-                val playlistId = dao.getIdOfPlaylist(name) ?: return@withContext false
+                val pair = dao.getIdOfPlaylist(name)
 
                 return@withContext try {
-                    dao.deletePlaylist(playlistId)
+                    dao.deletePlaylist(pair.id)
                     true
                 } catch (e: Exception) {
                     false
@@ -412,10 +417,10 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             PinnedDataType.ALBUM -> {
-                val albumId = dao.getIdOfAlbum(name) ?: return@withContext false
+                val pair = dao.getIdOfAlbum(name)
 
                 return@withContext try {
-                    dao.deleteAlbum(albumId)
+                    dao.deleteAlbum(pair.id)
                     true
                 } catch (e: Exception) {
                     false
@@ -524,5 +529,28 @@ class DatabaseRepositoryImpl @Inject constructor(
 
 
     // internal database
+    fun addToInternalPinnedTable(data: InternalPinnedTable) {
+        CoroutineScope(Dispatchers.IO).launch {
+            intDao.addToPinnedTable(data)
+        }
+    }
 
+    fun removeFromPinnedTable(data: InternalPinnedTable, response: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            intDao.checkIfPresent(
+                pinnedId = data.pinnedId,
+                type = data.type
+            )?.let {
+                intDao.removeFromPinnedTable(
+                    pinnedId = data.pinnedId,
+                    type = data.type,
+                    operation = PinnedOperation.ADD
+                )
+
+                return@launch
+            }
+
+            if (!response) intDao.addToPinnedTable(data)
+        }
+    }
 }

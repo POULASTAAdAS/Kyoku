@@ -40,6 +40,8 @@ fun Application.configureRouting() {
         dailyMix(service)
         artistMix(service)
 
+        handlePinned(service)
+
         getMasterPlaylist(service)
 
         unauthorized()

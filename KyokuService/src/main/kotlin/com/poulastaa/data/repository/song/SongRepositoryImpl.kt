@@ -11,8 +11,20 @@ import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTabl
 import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_pinned_album.EmailUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.GoogleUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.EmailUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.GoogleUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.EmailUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.GoogleUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.PasskeyUserPinnedPlaylistTable
 import com.poulastaa.data.model.home.DailyMixPreview
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.pinned.IdType
+import com.poulastaa.data.model.pinned.PinnedOperation
+import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.spotify.*
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
@@ -26,6 +38,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.sql.SQLException
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.ConcurrentHashMap
@@ -138,6 +152,311 @@ class SongRepositoryImpl : SongRepository {
         )
     }
 
+
+    override suspend fun handlePinnedOperation(
+        userId: Long,
+        userType: UserType,
+        req: PinnedReq
+    ): Boolean = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                when (req.type) {
+                    IdType.PLAYLIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    GoogleUserPinnedPlaylistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.playlistId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062 // duplicate entry
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    GoogleUserPinnedPlaylistTable.deleteWhere {
+                                        this.playlistId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ALBUM -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    GoogleUserPinnedAlbumTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.albumId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    GoogleUserPinnedAlbumTable.deleteWhere {
+                                        this.albumId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ARTIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    GoogleUserPinnedArtistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.artistId] = req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    GoogleUserPinnedArtistTable.deleteWhere {
+                                        this.artistId eq req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ERR -> return@dbQuery false
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                when (req.type) {
+                    IdType.PLAYLIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    EmailUserPinnedPlaylistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.playlistId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    EmailUserPinnedPlaylistTable.deleteWhere {
+                                        this.playlistId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ALBUM -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    EmailUserPinnedAlbumTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.albumId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    EmailUserPinnedAlbumTable.deleteWhere {
+                                        this.albumId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ARTIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    EmailUserPinnedArtistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.artistId] = req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    EmailUserPinnedArtistTable.deleteWhere {
+                                        this.artistId eq req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ERR -> return@dbQuery false
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                when (req.type) {
+                    IdType.PLAYLIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    PasskeyUserPinnedPlaylistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.playlistId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    PasskeyUserPinnedPlaylistTable.deleteWhere {
+                                        this.playlistId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ALBUM -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    PasskeyUserPinnedAlbumTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.albumId] = req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    PasskeyUserPinnedAlbumTable.deleteWhere {
+                                        this.albumId eq req.id
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ARTIST -> {
+                        when (req.operation) {
+                            PinnedOperation.ADD -> {
+                                try {
+                                    PasskeyUserPinnedArtistTable.insert {
+                                        it[this.userId] = userId
+                                        it[this.artistId] = req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: SQLException) {
+                                    return@dbQuery e.errorCode == 1062
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.REMOVE -> {
+                                try {
+                                    PasskeyUserPinnedArtistTable.deleteWhere {
+                                        this.artistId eq req.id.toInt()
+                                    }
+                                    return@dbQuery true
+                                } catch (e: Exception) {
+                                    return@dbQuery false
+                                }
+                            }
+
+                            PinnedOperation.ERR -> return@dbQuery false
+                        }
+                    }
+
+                    IdType.ERR -> return@dbQuery false
+                }
+            }
+        }
+    }
 
     private fun notFoundSongs(
         list: List<SpotifySong>,

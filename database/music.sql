@@ -427,12 +427,15 @@ select * from song where artist in (
 -- -------------------
 
 
+select * from googleuserpinnedplaylist;
+select * from googleuserpinnedalbum;
+select * from googleuserpinnedartist;
 
 
 
+select * from song;
 
-
-
+select * from artist;
 
 
 

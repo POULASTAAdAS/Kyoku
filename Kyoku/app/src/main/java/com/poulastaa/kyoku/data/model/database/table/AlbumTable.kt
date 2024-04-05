@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class AlbumTable(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val albumId: Long,
     val name: String,
     val points: Int = 0
 )

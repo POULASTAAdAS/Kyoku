@@ -34,10 +34,7 @@ import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.login.LogInResponseRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.constructCoverPhotoUrl
-import com.poulastaa.utils.toPlaylistResult
-import com.poulastaa.utils.toPreviewSong
-import com.poulastaa.utils.toResponseSong
+import com.poulastaa.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -253,7 +250,12 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 SongTable.album_artist,
                 SongTable.description,
                 SongTable.track,
-                SongTable.date
+                SongTable.date,
+                when (userType) {
+                    UserType.GOOGLE_USER -> GoogleUserAlbumRelation.albumId
+                    UserType.EMAIL_USER -> EmailUserAlbumRelation.albumId
+                    UserType.PASSKEY_USER -> PasskeyUserAlbumRelation.albumId
+                }
             ).select {
                 when (userType) {
                     UserType.GOOGLE_USER -> GoogleUserAlbumRelation.albumId inList albumIdList
@@ -261,13 +263,16 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                     UserType.PASSKEY_USER -> PasskeyUserAlbumRelation.albumId inList albumIdList
                 }
             }.map {
-                it.toResponseSong()
+                it.toAlbumResponse(userType)
             }.groupBy {
-                it.album
+                it.name
             }.map {
                 ResponseAlbum(
+                    id = it.value[0].id,
                     name = it.key,
-                    listOfSongs = it.value
+                    listOfSongs = it.value.map { response ->
+                        response.song
+                    }
                 )
             }
     }

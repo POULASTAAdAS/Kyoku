@@ -9,6 +9,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
+import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponseStatus
@@ -144,6 +145,14 @@ class ServiceRepositoryImpl @Inject constructor(
             api.getArtistMix()
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    override suspend fun handlePin(req: PinnedReq): Boolean {
+        return try {
+            api.handlePin(req)
+        } catch (e: Exception) {
+            false
         }
     }
 }

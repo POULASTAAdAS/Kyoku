@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseAlbum(
+    val id: Long,
     val name: String,
     val listOfSongs: List<ResponseSong>
 )

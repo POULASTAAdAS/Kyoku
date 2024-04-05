@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
+import com.poulastaa.kyoku.data.model.database.PinnedId
 import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
@@ -246,16 +247,16 @@ interface AppDao {
     suspend fun checkIfArtistPinned(name: String): Long?
 
     @Transaction
-    @Query("select id from PlaylistTable where name = :name")
-    suspend fun getIdOfPlaylist(name: String): Long?
+    @Query("select id, playlistId as originalId from PlaylistTable where name = :name")
+    suspend fun getIdOfPlaylist(name: String): PinnedId
 
     @Transaction
     @Query("select id from ArtistPrevTable where name = :name")
-    suspend fun getIdOfArtist(name: String): Long?
+    suspend fun getIdOfArtist(name: String): Long
 
     @Transaction
-    @Query("select id from AlbumTable where name = :name")
-    suspend fun getIdOfAlbum(name: String): Long?
+    @Query("select id , albumId as originalId from AlbumTable where name = :name")
+    suspend fun getIdOfAlbum(name: String): PinnedId
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -2,6 +2,7 @@ package com.poulastaa.utils
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.auth.UserCreationStatus
 import com.poulastaa.data.model.auth.auth_response.HomeResponse
 import com.poulastaa.data.model.auth.auth_response.ResponseSong
@@ -9,9 +10,13 @@ import com.poulastaa.data.model.auth.auth_response.SongPreview
 import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.google.Payload
 import com.poulastaa.data.model.auth.passkey.PasskeyAuthResponse
+import com.poulastaa.data.model.db_table.AlbumResponse
 import com.poulastaa.data.model.db_table.PlaylistResult
 import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.song.SongTable
+import com.poulastaa.data.model.db_table.user_album.EmailUserAlbumRelation
+import com.poulastaa.data.model.db_table.user_album.GoogleUserAlbumRelation
+import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.domain.dao.user.GoogleAuthUser
 import com.poulastaa.domain.dao.user.PasskeyAuthUser
@@ -53,7 +58,20 @@ fun GoogleIdToken.toPayload() = Payload(
 )
 
 
-fun ResultRow.toResponseSong(): ResponseSong = ResponseSong(
+fun ResultRow.toAlbumResponse(userType: UserType) = AlbumResponse(
+    id = this[
+        when (userType) {
+            UserType.GOOGLE_USER -> GoogleUserAlbumRelation.albumId
+            UserType.EMAIL_USER -> EmailUserAlbumRelation.albumId
+            UserType.PASSKEY_USER -> PasskeyUserAlbumRelation.albumId
+        }
+    ],
+    name = this[SongTable.album],
+    song = this.toResponseSong()
+)
+
+
+fun ResultRow.toResponseSong() = ResponseSong(
     coverImage = this[SongTable.coverImage].constructCoverPhotoUrl(),
     masterPlaylistUrl = this[SongTable.masterPlaylistPath].constructMasterPlaylistUrl(),
     totalTime = this[SongTable.totalTime],

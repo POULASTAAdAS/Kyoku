@@ -28,11 +28,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,6 +64,14 @@ fun HomeDrawerContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.primary,
+                        )
+                    )
+                )
                 .padding(MaterialTheme.dimens.medium1),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
@@ -147,7 +158,7 @@ private fun TopPart(
                 .clip(CircleShape)
                 .border(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.inversePrimary,
                     shape = CircleShape
                 )
         )
@@ -198,7 +209,7 @@ private fun MidPart(
                 label = {
                     Text(
                         text = it.label,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                         fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
                 },
@@ -211,7 +222,11 @@ private fun MidPart(
                         imageVector = it.icon,
                         contentDescription = null
                     )
-                }
+                },
+                colors = NavigationDrawerItemDefaults.colors(
+                    unselectedContainerColor = Color.Transparent,
+                    selectedContainerColor = Color.Transparent
+                )
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
@@ -227,7 +242,7 @@ private fun EndPart(
         label = {
             Text(
                 text = "L O G O U T",
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize
             )
         },
@@ -248,6 +263,7 @@ private fun EndPart(
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
+@Preview
 @Composable
 private fun Preview() {
     TestThem {
