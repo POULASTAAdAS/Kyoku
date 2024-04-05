@@ -8,8 +8,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -70,6 +73,12 @@ fun LazyListScope.homeScreenArtistList(
             modifier = Modifier
                 .height(if (isSmallPhone) 60.dp else 70.dp)
                 .clip(MaterialTheme.shapes.extraSmall)
+                .windowInsetsPadding(
+                    insets = WindowInsets(
+                        left = MaterialTheme.dimens.medium1,
+                        right = MaterialTheme.dimens.medium1
+                    )
+                )
                 .clickable {
                     scope.launch {
                         onClick.invoke(
@@ -121,7 +130,12 @@ fun LazyListScope.homeScreenArtistList(
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
+            contentPadding = PaddingValues(
+                start = MaterialTheme.dimens.medium1,
+                end = MaterialTheme.dimens.medium1
+            )
         ) {
             items(artistPrev[artistIndex].lisOfPrevSong.size) { songIndex ->
                 Box(
@@ -219,7 +233,7 @@ fun ArtistMixCard(
 ) {
     Box(
         modifier = Modifier.wrapContentSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.BottomCenter
     ) {
         HomeScreenCard(
             size = if (isSmallPhone) 120.dp else 130.dp,
@@ -240,14 +254,15 @@ fun ArtistMixCard(
         Text(
             text = label,
             maxLines = 2,
-            modifier = Modifier.width(if (isSmallPhone) 120.dp else 130.dp),
+            modifier = Modifier
+                .width(if (isSmallPhone) 120.dp else 130.dp)
+                .background(color = MaterialTheme.colorScheme.background.copy(.8f)),
             overflow = TextOverflow.Ellipsis,
-            fontSize = MaterialTheme.typography.bodySmall.fontSize
+            fontSize = MaterialTheme.typography.bodySmall.fontSize,
+            textAlign = TextAlign.Center
         )
     }
 }
-
-
 
 
 @Composable

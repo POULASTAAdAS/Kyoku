@@ -10,3 +10,4 @@ class Country(id: EntityID<Int>) : IntEntity(id) {
 
     val name by CountryTable.name
 }
+

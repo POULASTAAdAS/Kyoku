@@ -9,6 +9,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
+import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
@@ -46,4 +47,6 @@ interface ServiceRepository {
     suspend fun getArtistMix(): List<SongPreview>
 
     suspend fun handlePin(req: PinnedReq): Boolean
+
+    suspend fun handleItem(req: ItemReq): Boolean
 }

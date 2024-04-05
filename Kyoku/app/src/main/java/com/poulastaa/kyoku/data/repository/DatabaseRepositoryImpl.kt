@@ -17,12 +17,13 @@ import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTab
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
-import com.poulastaa.kyoku.data.model.database.table.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -408,11 +409,13 @@ class DatabaseRepositoryImpl @Inject constructor(
             PinnedDataType.PLAYLIST -> {
                 val pair = dao.getIdOfPlaylist(name)
 
+
+
                 return@withContext try {
                     dao.deletePlaylist(pair.id)
-                    true
+                    pair.originalId
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
@@ -421,29 +424,30 @@ class DatabaseRepositoryImpl @Inject constructor(
 
                 return@withContext try {
                     dao.deleteAlbum(pair.id)
-                    true
+                    pair.originalId
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
             PinnedDataType.ARTIST -> {
-                val artistId = dao.getIdOfArtist(name) ?: return@withContext false
+                val artistId = dao.getIdOfArtist(name)
 
                 return@withContext try {
                     dao.deleteArtist(artistId)
-                    true
+                    artistId
                 } catch (e: Exception) {
-                    false
+                    -1L
                 }
             }
 
             PinnedDataType.FAVOURITE -> {
                 dao.deleteFavourites()
-                true
+                ds.storeFavouritePinnedState(false)
+                -1L
             }
 
-            else -> false
+            else -> -1L
         }
     }
 
@@ -537,7 +541,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun removeFromPinnedTable(data: InternalPinnedTable, response: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            intDao.checkIfPresent(
+            intDao.checkIfPinnedIdPresent(
                 pinnedId = data.pinnedId,
                 type = data.type
             )?.let {
@@ -551,6 +555,12 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             if (!response) intDao.addToPinnedTable(data)
+        }
+    }
+
+    fun addToInternalItemTable(data: InternalItemTable) {
+        CoroutineScope(Dispatchers.IO).launch {
+            intDao.addTopItemTable(data)
         }
     }
 }

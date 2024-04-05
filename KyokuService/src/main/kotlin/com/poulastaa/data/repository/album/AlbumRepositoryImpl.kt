@@ -6,9 +6,13 @@ import com.poulastaa.data.model.db_table.SongTable
 import com.poulastaa.data.model.db_table.user_album.EmailUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_album.GoogleUserAlbumRelation
 import com.poulastaa.data.model.db_table.user_album.PasskeyUserAlbumRelation
+import com.poulastaa.data.model.db_table.user_pinned_album.EmailUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.GoogleUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbumTable
 import com.poulastaa.data.model.home.AlbumPreview
 import com.poulastaa.data.model.home.ResponseAlbumPreview
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Album
@@ -16,11 +20,12 @@ import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toPreviewSong
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.select
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.util.Random
 
 class AlbumRepositoryImpl : AlbumRepository {
     override suspend fun getResponseAlbumPreviewForNewUser(artistIdList: List<Int>) =
@@ -99,6 +104,25 @@ class AlbumRepositoryImpl : AlbumRepository {
         return ResponseAlbumPreview(
             listOfPreviewAlbum = albumIdList.getAlbumOnAlbumIdList()
         )
+    }
+
+
+    override suspend fun handleAlbum(
+        userId: Long,
+        userType: UserType,
+        albumId: Long,
+        operation: ItemOperation
+    ): Boolean = withContext(Dispatchers.IO) {
+        when (operation) {
+            ItemOperation.ADD -> addAlbum(albumId = albumId, userId = userId, userType = userType)
+
+            ItemOperation.DELETE -> {
+                async { deleteUserAlbum(albumId = albumId, userId = userId, userType = userType) }.await()
+                async { deletePinnedAlbum(albumId = albumId, userId = userId, userType = userType) }.await()
+            }
+
+            ItemOperation.ERR -> false
+        }
     }
 
     private suspend fun getFevAlbumIdList(userType: UserType, userId: Long) = dbQuery {
@@ -190,4 +214,86 @@ class AlbumRepositoryImpl : AlbumRepository {
                 )
             }
     }
+
+
+    private suspend fun addAlbum(
+        albumId: Long,
+        userId: Long,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserAlbumRelation.insertIgnore {
+                    it[GoogleUserAlbumRelation.albumId] = albumId
+                    it[GoogleUserAlbumRelation.userId] = userId
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserAlbumRelation.insertIgnore {
+                    it[EmailUserAlbumRelation.albumId] = albumId
+                    it[EmailUserAlbumRelation.userId] = userId
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserAlbumRelation.insertIgnore {
+                    it[PasskeyUserAlbumRelation.albumId] = albumId
+                    it[PasskeyUserAlbumRelation.userId] = userId
+                }
+            }
+        }
+    }.let { true }
+
+    private suspend fun deleteUserAlbum(
+        albumId: Long,
+        userId: Long,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserAlbumRelation.deleteWhere {
+                    GoogleUserAlbumRelation.albumId eq albumId and (GoogleUserAlbumRelation.userId eq userId)
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserAlbumRelation.deleteWhere {
+                    EmailUserAlbumRelation.albumId eq albumId and (EmailUserAlbumRelation.userId eq userId)
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserAlbumRelation.deleteWhere {
+                    PasskeyUserAlbumRelation.albumId eq albumId and (PasskeyUserAlbumRelation.userId eq userId)
+                }
+            }
+        }
+    }.let { true }
+
+    private suspend fun deletePinnedAlbum(
+        albumId: Long,
+        userId: Long,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserPinnedAlbumTable.deleteWhere {
+                    GoogleUserPinnedAlbumTable.albumId eq albumId and (GoogleUserPinnedAlbumTable.userId eq userId)
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserPinnedAlbumTable.deleteWhere {
+                    EmailUserPinnedAlbumTable.albumId eq albumId and (EmailUserPinnedAlbumTable.userId eq userId)
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserPinnedAlbumTable.deleteWhere {
+                    PasskeyUserPinnedAlbumTable.albumId eq albumId and (PasskeyUserPinnedAlbumTable.userId eq userId)
+                }
+            }
+        }
+    }.let { true }
 }

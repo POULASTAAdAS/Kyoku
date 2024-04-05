@@ -10,6 +10,8 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val isInternetError: Boolean = true,
     val errorMessage: String = "Please Check Your Internet Connection.",
+    val isBottomSheetOpen: Boolean = false,
+    val isBottomSheetLoading: Boolean = true,
 
     val dataType: HomeType = HomeType.NEW_USER_REQ,
     val data: HomeUiData = HomeUiData()

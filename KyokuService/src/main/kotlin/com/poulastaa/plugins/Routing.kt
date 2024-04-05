@@ -41,6 +41,7 @@ fun Application.configureRouting() {
         artistMix(service)
 
         handlePinned(service)
+        handleItems(service)
 
         getMasterPlaylist(service)
 

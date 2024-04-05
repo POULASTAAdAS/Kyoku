@@ -1,5 +1,5 @@
 
-package com.poulastaa.data.model.pinned
+package com.poulastaa.data.model.common
 
 import kotlinx.serialization.Serializable
 

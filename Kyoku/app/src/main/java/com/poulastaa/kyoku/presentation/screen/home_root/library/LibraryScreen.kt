@@ -245,7 +245,6 @@ fun LibraryScreen(
                             )
                         }
                     ) {
-
                         Text(
                             text = "Long press to pin",
                             modifier = Modifier.fillMaxWidth(),

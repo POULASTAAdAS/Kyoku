@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.presentation.screen.home_root.home
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -10,6 +11,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     isCookie: Boolean,
@@ -66,27 +68,42 @@ fun HomeScreen(
                 HomeScreenContentNewUser(
                     paddingValues = paddingValues,
                     isSmallPhone = isSmallPhone,
-                    data = viewModel.state.data,
-
                     isInternetError = viewModel.state.isInternetError,
                     errorMessage = viewModel.state.errorMessage,
                     isCookie = isCookie,
                     headerValue = authHeader,
+                    bottomSheetState = viewModel.state.isBottomSheetOpen,
+                    isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
+                    data = viewModel.state.data,
                     onClick = viewModel::onEvent
                 )
             }
 
             else -> {
-                HomeScreenContentOldUser(
-                    paddingValues = paddingValues,
-                    isSmallPhone = isSmallPhone,
-                    data = viewModel.state.data,
-                    isInternetError = viewModel.state.isInternetError,
-                    errorMessage = viewModel.state.errorMessage,
-                    isCookie = isCookie,
-                    headerValue = authHeader,
-                    onClick = viewModel::onEvent
-                )
+                if (viewModel.state.data.dailyMixPrevUrls.isEmpty())
+                    HomeScreenContentNewUser(
+                        paddingValues = paddingValues,
+                        isSmallPhone = isSmallPhone,
+                        isCookie = isCookie,
+                        headerValue = authHeader,
+                        errorMessage = viewModel.state.errorMessage,
+                        isInternetError = viewModel.state.isInternetError,
+                        data = viewModel.state.data,
+                        bottomSheetState = viewModel.state.isBottomSheetOpen,
+                        isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
+                        onClick = viewModel::onEvent
+                    )
+                else
+                    HomeScreenContentOldUser(
+                        paddingValues = paddingValues,
+                        isSmallPhone = isSmallPhone,
+                        data = viewModel.state.data,
+                        isInternetError = viewModel.state.isInternetError,
+                        errorMessage = viewModel.state.errorMessage,
+                        isCookie = isCookie,
+                        headerValue = authHeader,
+                        onClick = viewModel::onEvent
+                    )
             }
         }
     }

@@ -10,9 +10,13 @@ import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTa
 import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.EmailUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.GoogleUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArtistTable
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -32,6 +36,7 @@ import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toResponseArtist
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.random.Random
@@ -171,6 +176,24 @@ class ArtistRepositoryImpl : ArtistRepository {
         return (original + all).shuffled(
             Random(seed = original.size + all.size)
         ).take(Random.nextInt(50, 60))
+    }
+
+    override suspend fun handleArtist(
+        userId: Long,
+        userType: UserType,
+        artistId: Long,
+        operation: ItemOperation
+    ): Boolean = withContext(Dispatchers.IO) {
+        when (operation) {
+            ItemOperation.ADD -> addArtist(userId = userId, artistId = artistId.toInt(), userType = userType)
+
+            ItemOperation.DELETE -> {
+                async { deleteUserArtist(userId = userId, artistId = artistId.toInt(), userType = userType) }.await()
+                async { deletePinnedArtist(userId = userId, artistId = artistId.toInt(), userType = userType) }.await()
+            }
+
+            ItemOperation.ERR -> false
+        }
     }
 
     private suspend fun List<Int>.storeArtistForEmailUser(id: Long) {
@@ -595,4 +618,110 @@ class ArtistRepositoryImpl : ArtistRepository {
                 }.take(50).shuffled(Random)
         }.flatten()
     }
+
+
+    private suspend fun addArtist(
+        userId: Long,
+        artistId: Int,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                val response = GoogleUserArtistRelation.find {
+                    GoogleUserArtistRelationTable.artistId eq artistId and
+                            (GoogleUserArtistRelationTable.userId eq userId)
+                }.firstOrNull()
+
+                if (response == null)
+                    GoogleUserArtistRelation.new {
+                        this.artistId = artistId
+                        this.userId = userId
+                    }
+            }
+
+            UserType.EMAIL_USER -> {
+                val response = EmailUserArtistRelation.find {
+                    EmailUserArtistRelationTable.artistId eq artistId and
+                            (EmailUserArtistRelationTable.userId eq userId)
+                }.firstOrNull()
+
+                if (response == null)
+                    EmailUserArtistRelation.new {
+                        this.artistId = artistId
+                        this.userId = userId
+                    }
+            }
+
+            UserType.PASSKEY_USER -> {
+                val response = PasskeyUserArtistRelation.find {
+                    PasskeyUserArtistRelationTable.artistId eq artistId and
+                            (PasskeyUserArtistRelationTable.userId eq userId)
+                }.firstOrNull()
+
+                if (response == null)
+                    PasskeyUserArtistRelation.new {
+                        this.artistId = artistId
+                        this.userId = userId
+                    }
+            }
+        }
+    }.let { true }
+
+    private suspend fun deleteUserArtist(
+        userId: Long,
+        artistId: Int,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserArtistRelation.find {
+                    GoogleUserArtistRelationTable.userId eq userId and
+                            (GoogleUserArtistRelationTable.artistId eq artistId)
+                }.firstOrNull()?.delete()
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserArtistRelation.find {
+                    EmailUserArtistRelationTable.userId eq userId and
+                            (EmailUserArtistRelationTable.artistId eq artistId)
+                }.firstOrNull()?.delete()
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserArtistRelation.find {
+                    PasskeyUserArtistRelationTable.userId eq userId and
+                            (PasskeyUserArtistRelationTable.artistId eq artistId)
+                }.firstOrNull()?.delete()
+            }
+        }
+    }.let { true }
+
+    private suspend fun deletePinnedArtist(
+        userId: Long,
+        artistId: Int,
+        userType: UserType
+    ) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserPinnedArtistTable.deleteWhere {
+                    GoogleUserPinnedArtistTable.artistId eq artistId and
+                            (GoogleUserPinnedArtistTable.userId eq userId)
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserPinnedArtistTable.deleteWhere {
+                    EmailUserPinnedArtistTable.artistId eq artistId and
+                            (EmailUserPinnedArtistTable.userId eq userId)
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserPinnedArtistTable.deleteWhere {
+                    PasskeyUserPinnedArtistTable.artistId eq artistId and
+                            (PasskeyUserPinnedArtistTable.userId eq userId)
+                }
+            }
+        }
+    }.let { true }
 }

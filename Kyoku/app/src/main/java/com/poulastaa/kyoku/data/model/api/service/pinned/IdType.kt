@@ -8,5 +8,6 @@ enum class IdType {
     PLAYLIST,
     ALBUM,
     ARTIST,
+    FAVOURITE,
     ERR
 }

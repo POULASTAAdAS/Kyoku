@@ -438,23 +438,39 @@ select * from song;
 select * from artist;
 
 
+select * from googleuserplaylist order by playlistid ;
+
+select * from passkeyuserplaylist order by playlistid;
+
+select * from emailuserplaylist order by playlistId;
+
+select * from playlist;
+
+select * from googleuserpinnedplaylist;
+
+select * from GoogleUserPinnedAlbum;
+
+select * from passkeyuseralbumrelation;
+
+select * from passkeyuserartistrelation;
+
+select * from googleuserartistrelation;
+
+select * from googleauthuser;
 
 
 
+select artistId from googleuserartistrelation;
+
+select * from artist 
+join googleuserartistrelation on googleuserartistrelation.artistid = artist.id
+where googleuserartistrelation.artistid and googleuserartistrelation.userid = 1;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+select * from album 
+join googleuseralbumrelation on googleuseralbumrelation.albumid = album.id
+where googleuseralbumrelation.userid = 1;
 
 
 

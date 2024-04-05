@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.data.model.database.table
+package com.poulastaa.kyoku.data.model.database.table.internal
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

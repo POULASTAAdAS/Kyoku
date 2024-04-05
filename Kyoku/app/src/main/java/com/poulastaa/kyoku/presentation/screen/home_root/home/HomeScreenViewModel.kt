@@ -268,27 +268,7 @@ class HomeScreenViewModel @Inject constructor(
             is HomeUiEvent.ItemClick -> {
                 if (!state.isLoading)
                     when (event.type) {
-                        ItemsType.PLAYLIST -> {
-                            event
-                        }
-
-                        ItemsType.ALBUM -> {
-                            event
-                        }
-
                         ItemsType.ALBUM_PREV -> {
-                            event
-                        }
-
-                        ItemsType.ARTIST -> {
-                            event
-                        }
-
-                        ItemsType.ARTIST_MIX -> {
-                            event
-                        }
-
-                        ItemsType.DAILY_MIX -> {
                             event
                         }
 
@@ -302,10 +282,6 @@ class HomeScreenViewModel @Inject constructor(
                             }
 
                             return
-                        }
-
-                        ItemsType.ARTIST_MORE -> {
-                            event
                         }
 
                         ItemsType.HISTORY -> {
@@ -324,6 +300,7 @@ class HomeScreenViewModel @Inject constructor(
                             }
                             return
                         }
+                        else -> event
                     }.let {
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(
@@ -337,6 +314,10 @@ class HomeScreenViewModel @Inject constructor(
                             )
                         }
                     }
+            }
+
+            is HomeUiEvent.ItemLongClick -> {
+
             }
         }
     }

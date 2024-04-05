@@ -6,10 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.api.service.item.ItemOperation
+import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.IdType
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
-import com.poulastaa.kyoku.data.model.database.table.InternalPinnedTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
@@ -564,28 +567,37 @@ class LibraryViewModel @Inject constructor(
                                         return@launch
                                     }
 
-                                    val result = db.deletePlaylistArtistAlbumFavouriteEntry(
+                                    val id = db.deletePlaylistArtistAlbumFavouriteEntry(
                                         type = state.pinnedData.type,
                                         name = state.pinnedData.name,
                                         ds = ds
                                     )
 
-                                    if (state.pinnedData.type == PinnedDataType.FAVOURITE) {
-                                        state = state.copy(
-                                            data = state.data.copy(
-                                                pinned = state.data.pinned.copy(
-                                                    isFavourite = false
-                                                )
-                                            )
+                                    val response = api.handleItem(
+                                        req = ItemReq(
+                                            id = id,
+                                            type = when (state.pinnedData.type) {
+                                                PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                PinnedDataType.ALBUM -> IdType.ALBUM
+                                                PinnedDataType.ARTIST -> IdType.ARTIST
+                                                else -> return@launch
+                                            },
+                                            operation = ItemOperation.DELETE
                                         )
+                                    )
 
-                                        db.removeFromPinnedTable(PinnedDataType.FAVOURITE, "", ds)
-                                    }
-
-                                    // todo make api call
-                                    // todo if internet is not available store in internal database
-
-                                    if (!result) onEvent(LibraryUiEvent.SomethingWentWrong)
+                                    if (!response) db.addToInternalItemTable(
+                                        data = InternalItemTable(
+                                            itemId = id,
+                                            type = when (state.pinnedData.type) {
+                                                PinnedDataType.PLAYLIST -> IdType.PLAYLIST
+                                                PinnedDataType.ALBUM -> IdType.ALBUM
+                                                PinnedDataType.ARTIST -> IdType.ARTIST
+                                                else -> return@launch
+                                            },
+                                            operation = ItemOperation.DELETE
+                                        )
+                                    )
                                 }
                             }
 

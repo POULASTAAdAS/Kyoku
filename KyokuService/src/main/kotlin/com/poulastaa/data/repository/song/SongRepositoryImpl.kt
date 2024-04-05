@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository.song
 
+import com.poulastaa.data.model.common.IdType
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.ArtistTable
 import com.poulastaa.data.model.db_table.SongArtistRelationTable
@@ -22,7 +23,6 @@ import com.poulastaa.data.model.db_table.user_pinned_playlist.GoogleUserPinnedPl
 import com.poulastaa.data.model.db_table.user_pinned_playlist.PasskeyUserPinnedPlaylistTable
 import com.poulastaa.data.model.home.DailyMixPreview
 import com.poulastaa.data.model.home.SongPreview
-import com.poulastaa.data.model.pinned.IdType
 import com.poulastaa.data.model.pinned.PinnedOperation
 import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.spotify.*

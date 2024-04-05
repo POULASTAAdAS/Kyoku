@@ -70,7 +70,7 @@ Insert into CountryGenreRelation (countryId, genreId) values
 
 
 
-insert ignore into emailUserListenHistory (userId , songId) values
+insert ignore into googleUserListenHistory (userId , songId) values
 (1,15019),
 (1,14400),
 (1,19373),
@@ -88,21 +88,26 @@ insert ignore into emailUserListenHistory (userId , songId) values
 (1,18169),
 (1,16624),
 (1,15018),
+(1,100),
+(1,15718),
+(1,18818),
 (1,12262);
 
 
-insert into emailuserplaylist values
-(1 ,2 ,9175 , 6),
-(11,2 ,812 , 6),
-(111,2 ,8996 , 6),
-(1111,2 ,8 , 6),
-(11111,2 ,5680 , 6),
-(111111,2 ,175 , 6),
-(100000,2 ,32 , 6),
-(101,2 ,90 , 6),
-(110,2 ,891 , 6);
+select * from googleuserplaylist;
 
-insert into emailUserFavourite(userId , songId) values
+insert into googleuserplaylist values
+(1 ,2 ,9175 , 1),
+(11,2 ,812 , 1),
+(111,2 ,8996 , 1),
+(1111,2 ,8 , 1),
+(11111,2 ,5680 , 1),
+(111111,2 ,175 , 1),
+(100000,2 ,32 , 1),
+(101,2 ,90 , 1),
+(110,2 ,891 , 1);
+
+insert into googleUserFavourite(userId , songId) values
 (1,829),
 (1,118),
 (1,54),
@@ -112,7 +117,7 @@ insert into emailUserFavourite(userId , songId) values
 
 
 
-insert into emailUserAlbumRelation (userid , albumid) values 
+insert into googleUserAlbumRelation (userid , albumid) values 
 (1,829),
 (1,118),
 (1,54),
@@ -120,7 +125,24 @@ insert into emailUserAlbumRelation (userid , albumid) values
 (1,130);
 
 
-
+insert into googleuserartistrelation values
+(1,3,1),
+(2,326,1),
+(3,172,1),
+(4,222,1),
+(5,22,1),
+(6,170,1),
+(7,155,1),
+(8,289,1),
+(9,204,1),
+(10,17,1),
+(11,96,1),
+(12,323,1),
+(13,108,1),
+(14,31,1),
+(15,40,1),
+(16,6,1),
+(17,89,1);
 
 
 

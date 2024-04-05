@@ -12,7 +12,6 @@ import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
-import com.poulastaa.kyoku.data.model.database.table.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
@@ -20,6 +19,8 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
+import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 
 @Database(
     entities = [
@@ -45,9 +46,10 @@ import com.poulastaa.kyoku.data.model.database.table.SongTable
         ArtistMixTable::class,
 
         // internal tables
-        InternalPinnedTable::class
+        InternalPinnedTable::class,
+        InternalItemTable::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

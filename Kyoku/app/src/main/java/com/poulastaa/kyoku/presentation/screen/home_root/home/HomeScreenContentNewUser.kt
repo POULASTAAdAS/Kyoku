@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,23 +38,29 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.ArtistMixCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
+import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContentNewUser(
     paddingValues: PaddingValues,
+    sheetState: SheetState = rememberModalBottomSheetState(),
     isSmallPhone: Boolean,
     isCookie: Boolean,
     headerValue: String,
-    data: HomeUiData,
     isInternetError: Boolean,
     errorMessage: String,
+    bottomSheetState: Boolean,
+    isBottomSheetLoading: Boolean,
+    data: HomeUiData,
     scope: CoroutineScope = rememberCoroutineScope(),
-    onClick: (HomeUiEvent.ItemClick) -> Unit
+    onClick: (HomeUiEvent) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -59,9 +70,7 @@ fun HomeScreenContentNewUser(
                 bottom = paddingValues.calculateBottomPadding(),
             ),
         contentPadding = PaddingValues(
-            start = MaterialTheme.dimens.medium1,
-            end = MaterialTheme.dimens.medium1,
-            top = MaterialTheme.dimens.medium1
+            bottom = MaterialTheme.dimens.medium1,
         )
     ) {
         if (data.playlist.isNotEmpty()) {
@@ -69,7 +78,11 @@ fun HomeScreenContentNewUser(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(65.dp),
+                        .height(65.dp)
+                        .padding(
+                            start = MaterialTheme.dimens.medium1,
+                            end = MaterialTheme.dimens.medium1
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
                 ) {
@@ -113,10 +126,20 @@ fun HomeScreenContentNewUser(
                         )
                 }
 
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(MaterialTheme.dimens.medium1)
+                )
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(65.dp),
+                        .height(65.dp)
+                        .padding(
+                            start = MaterialTheme.dimens.medium1,
+                            end = MaterialTheme.dimens.medium1
+                        ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
                 ) {
@@ -165,26 +188,37 @@ fun HomeScreenContentNewUser(
 
         // Artist Mix
         item {
-            Text(
-                text = "Your Favourite Artist Mix",
-                fontWeight = FontWeight.Black,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = MaterialTheme.dimens.medium1
+                    )
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        top = MaterialTheme.dimens.large1
+                    ),
+                    text = "Your Favourite Artist Mix",
+                    fontWeight = FontWeight.Black,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-            ArtistMixCard(
-                coverImage = data.fevArtistMixPrev[0].coverImage,
-                label = data.fevArtistMixPrev.map {
-                    it.name.trim()
-                }.toString().trim().removePrefix("["),
-                isCookie = isCookie,
-                headerValue = headerValue,
-                isSmallPhone = isSmallPhone,
-                onClick = onClick
-            )
+                ArtistMixCard(
+                    coverImage = data.fevArtistMixPrev[0].coverImage,
+                    label = data.fevArtistMixPrev.map {
+                        it.name.trim()
+                    }.toString().trim().removePrefix("["),
+                    isCookie = isCookie,
+                    headerValue = headerValue,
+                    isSmallPhone = isSmallPhone,
+                    onClick = onClick
+                )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+            }
         }
 
 
@@ -211,6 +245,7 @@ fun HomeScreenContentNewUser(
         // Album
         item {
             Text(
+                modifier = Modifier.padding(start = MaterialTheme.dimens.medium1),
                 text = "Some Album You May Like",
                 fontWeight = FontWeight.Black,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
@@ -223,6 +258,12 @@ fun HomeScreenContentNewUser(
                     .fillMaxWidth()
                     .horizontalScroll(
                         state = rememberScrollState()
+                    )
+                    .windowInsetsPadding(
+                        insets = WindowInsets(
+                            left = MaterialTheme.dimens.medium1,
+                            right = MaterialTheme.dimens.medium1
+                        )
                     ),
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
@@ -266,4 +307,17 @@ fun HomeScreenContentNewUser(
             onClick = onClick
         )
     }
+
+
+    if (bottomSheetState)
+        HomeScreenBottomSheet(
+            sheetState = sheetState,
+            isBottomSheetLoading = isBottomSheetLoading,
+            onClick = onClick,
+            cancelClick = {
+                scope.launch {
+                    sheetState.hide()
+                }
+            }
+        )
 }

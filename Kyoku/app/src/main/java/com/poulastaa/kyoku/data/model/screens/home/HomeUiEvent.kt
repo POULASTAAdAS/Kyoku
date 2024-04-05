@@ -11,4 +11,10 @@ sealed class HomeUiEvent {
         val name: String = "name",
         val isApiCall: Boolean = false
     ) : HomeUiEvent()
+
+    data class ItemLongClick(
+        val type: ItemsType,
+        val id: Long,
+        val name: String
+    ) : HomeUiEvent()
 }

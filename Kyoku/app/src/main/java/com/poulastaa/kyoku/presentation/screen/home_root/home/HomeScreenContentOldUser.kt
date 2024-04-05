@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -74,16 +76,20 @@ fun HomeScreenContentOldUser(
                 bottom = paddingValues.calculateBottomPadding(),
             ),
         contentPadding = PaddingValues(
-            start = MaterialTheme.dimens.medium1,
-            end = MaterialTheme.dimens.medium1,
-            top = MaterialTheme.dimens.medium1
+            bottom = MaterialTheme.dimens.medium1
         )
     ) {
         item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .windowInsetsPadding(
+                        insets = WindowInsets(
+                            left = MaterialTheme.dimens.medium1,
+                            right = MaterialTheme.dimens.medium1
+                        )
+                    ),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
                 if (data.playlist.isNotEmpty())
@@ -130,7 +136,7 @@ fun HomeScreenContentOldUser(
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
                                                 type = ItemsType.PLAYLIST,
-                                                id = data.playlist[0].id
+                                                id = data.playlist[1].id
                                             )
                                         )
                                     }
@@ -138,7 +144,7 @@ fun HomeScreenContentOldUser(
                             )
                     }
 
-                if (data.savedAlbumPrev.isNotEmpty() || data.favourites)
+                if (data.savedAlbumPrev.isNotEmpty() || data.favourites || data.playlist.size >= 3)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -167,13 +173,32 @@ fun HomeScreenContentOldUser(
                                     }
                                 }
                             )
+                        else if (data.playlist.size >= 3)
+                            HomeScreenCardPlaylistPrev(
+                                modifier = Modifier
+                                    .fillMaxWidth(.5f)
+                                    .fillMaxHeight(),
+                                name = data.playlist[2].name,
+                                imageUrls = data.playlist[2].listOfUrl,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.PLAYLIST,
+                                                id = data.playlist[2].id
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                         // favourites or album
                         if (data.favourites)
                             FavouritePrev(
                                 modifier = Modifier
-                                    .fillMaxWidth(.5f)
-                                    .fillMaxHeight(),
+                                    .fillMaxSize(),
                                 onLongClick = {},
                                 onClick = {
                                     scope.launch {
@@ -188,8 +213,7 @@ fun HomeScreenContentOldUser(
                         else if (data.savedAlbumPrev.size >= 2)
                             HomeScreenCardWithText(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(),
+                                    .fillMaxSize(),
                                 name = data.savedAlbumPrev[1].album,
                                 imageUrl = data.savedAlbumPrev[1].coverImage,
                                 isCookie = isCookie,
@@ -221,19 +245,30 @@ fun HomeScreenContentOldUser(
                 }
 
                 if (temp) {
-                    CustomToast(
-                        message = errorMessage,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column {
+                        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+
+                        CustomToast(
+                            message = errorMessage,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
 
-        // explore more
         item {
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+        }
 
+        // explore more
+        item {
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = MaterialTheme.dimens.medium1
+                    ),
                 text = "Explore More",
                 fontWeight = FontWeight.Black,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
@@ -244,7 +279,13 @@ fun HomeScreenContentOldUser(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
+                    .horizontalScroll(rememberScrollState())
+                    .windowInsetsPadding(
+                        insets = WindowInsets(
+                            left = MaterialTheme.dimens.medium1,
+                            right = MaterialTheme.dimens.medium1
+                        )
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
@@ -336,9 +377,12 @@ fun HomeScreenContentOldUser(
         // recently played
         if (data.historyPrev.isNotEmpty())
             item {
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
 
                 Text(
+                    modifier = Modifier.padding(
+                        start = MaterialTheme.dimens.medium1
+                    ),
                     text = "Recently Played",
                     fontWeight = FontWeight.Black,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
@@ -347,7 +391,11 @@ fun HomeScreenContentOldUser(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
+                    contentPadding = PaddingValues(
+                        start = MaterialTheme.dimens.medium1,
+                        end = MaterialTheme.dimens.medium1
+                    )
                 ) {
                     items(data.historyPrev.size) { historySongIndex ->
                         Box(
@@ -408,10 +456,11 @@ fun HomeScreenContentOldUser(
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
             }
 
+        item {
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+        }
 
         // ArtistS
         homeScreenArtistList(

@@ -3,6 +3,7 @@ package com.poulastaa.domain.repository.aritst
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
@@ -39,4 +40,11 @@ interface ArtistRepository {
         userType: UserType,
         userId: Long
     ): List<SongPreview>
+
+    suspend fun handleArtist(
+        userId: Long,
+        userType: UserType,
+        artistId: Long,
+        operation: ItemOperation
+    ): Boolean
 }

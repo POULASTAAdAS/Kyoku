@@ -28,6 +28,22 @@ drop table EmailUserFavourite;
 drop table googleuserfavourite;
 drop table PasskeyUserFavourite;
 
+drop table emailuserpinnedplaylist;
+drop table googleuserpinnedplaylist;
+drop table passkeyuserpinnedplaylist;
+
+drop table emailuserpinnedalbum;
+drop table googleuserpinnedalbum;
+drop table passkeyuserpinnedalbum;
+
+drop table emailuserpinnedartist;
+drop table googleuserpinnedartist;
+drop table passkeyuserpinnedartist;
+
 drop table emailAuthUser;
 drop table googleAuthUser;
 drop table passkeyAuthUser;
+
+
+
+

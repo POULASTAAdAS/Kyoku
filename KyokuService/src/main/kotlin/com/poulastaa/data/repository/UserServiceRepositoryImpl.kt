@@ -4,11 +4,13 @@ import com.poulastaa.data.model.artist.ArtistAlbum
 import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
 import com.poulastaa.data.model.artist.ArtistPageReq
+import com.poulastaa.data.model.common.IdType
 import com.poulastaa.data.model.db_table.*
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.home.*
+import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
@@ -420,6 +422,35 @@ class UserServiceRepositoryImpl(
             userType = helper.userType,
             req = req
         )
+    }
+
+    override suspend fun handleItemOperations(helper: UserTypeHelper, req: ItemReq): Boolean {
+        val user = dbUsers.getDbUser(helper) ?: return false
+
+        return when (req.type) {
+            IdType.PLAYLIST -> playlist.handlePlaylist(
+                userId = user.id,
+                userType = helper.userType,
+                playlistId = req.id,
+                operation = req.operation
+            )
+
+            IdType.ALBUM -> album.handleAlbum(
+                userId = user.id,
+                userType = helper.userType,
+                albumId = req.id,
+                operation = req.operation
+            )
+
+            IdType.ARTIST -> artist.handleArtist(
+                userId = user.id,
+                userType = helper.userType,
+                artistId = req.id,
+                operation = req.operation
+            )
+
+            IdType.ERR -> false
+        }
     }
 
     // private functions
