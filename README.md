@@ -7,13 +7,13 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Auth.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/adding%20spotify%20playlist.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/adding%20spotify%20playlist.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/set%20b'date.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/set%20b'date.jpg" width="250" height="500">
     </td>
   </tr>
 </table>
@@ -21,13 +21,13 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20genre.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20genre.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20artist.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/select%20artist.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Navigation.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Navigation.jpg" width="250" height="500">
     </td>
     
   </tr>
@@ -36,13 +36,13 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Home.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Library.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Daily%20Mix.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Daily%20Mix.jpg" width="250" height="500">
     </td>
   </tr>
 </table>
@@ -50,10 +50,10 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Artist.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Artist.jpg" width="250" height="500">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/All%20from%20Artist.jpg" width="250" height="600">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/All%20from%20Artist.jpg" width="250" height="500">
     </td>
   </tr>
 </table>
