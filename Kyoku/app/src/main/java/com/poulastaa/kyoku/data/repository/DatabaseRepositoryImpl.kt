@@ -493,6 +493,13 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun readAllArtistMix() = dao.readAllArtistMix()
 
 
+    suspend fun checkIfSongAlreadyInFavourite(songId: Long) =
+        dao.checkIfSongAlreadyInFavourite(songId)?.let { true } ?: false
+
+    suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long) =
+        dao.checkIfAlbumAlreadyInLibrary(albumId)?.let { true } ?: false
+
+    // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
         val alPrev = async { dao.dropAlbumPrevTable() }
         val alPrevSong = async { dao.dropAlbumPrevSongTable() }

@@ -68,7 +68,9 @@ data class HomeUiSavedAlbumPrev(
 
 @Stable
 data class BottomSheetData(
+    val id: Long = 0,
     val name: String = "",
     val urls: List<String> = emptyList(),
-    val type: HomeLongClickType = HomeLongClickType.HISTORY_SONG
+    val type: HomeLongClickType = HomeLongClickType.HISTORY_SONG,
+    val isAlreadySaved: Boolean = false // used only for songs
 )

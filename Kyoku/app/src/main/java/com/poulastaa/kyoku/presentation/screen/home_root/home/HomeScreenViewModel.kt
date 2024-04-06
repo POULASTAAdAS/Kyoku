@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -320,35 +321,49 @@ class HomeScreenViewModel @Inject constructor(
 
             is HomeUiEvent.ItemLongClick -> {
                 state = state.copy(
-                    isBottomSheetOpen = true
+                    isBottomSheetOpen = true,
+                    isBottomSheetLoading = true
                 )
 
                 when (event.type) {
                     HomeLongClickType.ALBUM_PREV -> {
-                        val album = state.data.albumPrev.firstOrNull {
-                            it.id == event.id
-                        }
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val albumDef = async {
+                                state.data.albumPrev.firstOrNull {
+                                    it.id == event.id
+                                }
+                            }
 
-                        if (album == null) {
-                            onEvent(HomeUiEvent.SomethingWentWrong)
+                            val isAlreadySavedDef = async {
+                                db.checkIfAlbumAlreadyInLibrary(event.id)
+                            }
+
+                            val album = albumDef.await()
+                            val isAlreadySaved = isAlreadySavedDef.await()
+
+                            if (album == null) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    isBottomSheetOpen = false
+                                )
+
+                                return@launch
+                            }
 
                             state = state.copy(
-                                isBottomSheetOpen = false
+                                isBottomSheetLoading = false,
+                                bottomSheetData = state.bottomSheetData.copy(
+                                    id = album.id,
+                                    name = album.name,
+                                    urls = album.listOfSong.map {
+                                        it.coverImage
+                                    },
+                                    type = HomeLongClickType.ALBUM_PREV,
+                                    isAlreadySaved = isAlreadySaved
+                                )
                             )
-
-                            return
                         }
-
-                        state = state.copy(
-                            isBottomSheetLoading = false,
-                            bottomSheetData = state.bottomSheetData.copy(
-                                name = album.name,
-                                urls = album.listOfSong.map {
-                                    it.coverImage
-                                },
-                                type = HomeLongClickType.ALBUM_PREV
-                            )
-                        )
                     }
 
                     HomeLongClickType.ARTIST_MIX -> {
@@ -400,79 +415,151 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     HomeLongClickType.HISTORY_SONG -> {
-                        val song = state.data.historyPrev.firstOrNull {
-                            it.id == event.id
-                        }
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val songDef = async {
+                                state.data.historyPrev.firstOrNull {
+                                    it.id == event.id
 
-                        if (song == null) {
-                            onEvent(HomeUiEvent.SomethingWentWrong)
+                                }
+                            }
+
+                            val isOnFavouriteDef = async {
+                                db.checkIfSongAlreadyInFavourite(event.id)
+                            }
+
+                            val song = songDef.await()
+                            val isOnFavourite = isOnFavouriteDef.await()
+
+                            if (song == null) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    isBottomSheetOpen = false
+                                )
+
+                                return@launch
+                            }
 
                             state = state.copy(
-                                isBottomSheetOpen = false
+                                isBottomSheetLoading = false,
+                                bottomSheetData = state.bottomSheetData.copy(
+                                    id = song.id,
+                                    name = song.title,
+                                    urls = listOf(song.coverImage),
+                                    type = HomeLongClickType.HISTORY_SONG,
+                                    isAlreadySaved = isOnFavourite
+                                )
                             )
-
-                            return
                         }
-
-                        state = state.copy(
-                            isBottomSheetLoading = false,
-                            bottomSheetData = state.bottomSheetData.copy(
-                                name = song.title,
-                                urls = listOf(song.coverImage),
-                                type = HomeLongClickType.HISTORY_SONG
-                            )
-                        )
                     }
 
                     HomeLongClickType.ARTIST_SONG -> {
-                        val song = state.data.artistPrev.firstNotNullOfOrNull {
-                            it.lisOfPrevSong.firstOrNull { song ->
-                                song.id == event.id
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val songDef = async {
+                                state.data.artistPrev.firstNotNullOfOrNull {
+                                    it.lisOfPrevSong.firstOrNull { song ->
+                                        song.id == event.id
+                                    }
+                                }
                             }
-                        }
 
+                            val isOnFavouriteDef = async {
+                                db.checkIfSongAlreadyInFavourite(event.id)
+                            }
 
+                            val song = songDef.await()
+                            val isOnFavourite = isOnFavouriteDef.await()
 
-                        if (song == null) {
-                            onEvent(HomeUiEvent.SomethingWentWrong)
+                            if (song == null) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    isBottomSheetOpen = false
+                                )
+
+                                return@launch
+                            }
+
 
                             state = state.copy(
-                                isBottomSheetOpen = false
+                                isBottomSheetLoading = false,
+                                bottomSheetData = state.bottomSheetData.copy(
+                                    id = song.id,
+                                    name = song.title,
+                                    urls = listOf(song.coverImage),
+                                    type = HomeLongClickType.ARTIST_SONG,
+                                    isAlreadySaved = isOnFavourite
+                                )
                             )
-
-                            return
                         }
-
-                        state = state.copy(
-                            isBottomSheetLoading = false,
-                            bottomSheetData = state.bottomSheetData.copy(
-                                name = song.title,
-                                urls = listOf(song.coverImage),
-                                type = HomeLongClickType.ARTIST_SONG
-                            )
-                        )
                     }
                 }
             }
 
             is HomeUiEvent.BottomSheetItemClick -> {
+                state = state.copy(
+                    isBottomSheetOpen = false,
+                    isBottomSheetLoading = true
+                )
+
                 when (event) {
-                    is HomeUiEvent.BottomSheetItemClick.AddClick -> {
+                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> Unit
 
+                    is HomeUiEvent.BottomSheetItemClick.PlaySong -> {
+                        Log.d("data", "PlaySong: ${event.id} , ${event.type}")
                     }
 
-                    HomeUiEvent.BottomSheetItemClick.DeleteClick -> {
-
+                    is HomeUiEvent.BottomSheetItemClick.ViewArtist -> {
+                        Log.d("data", "ViewArtist: ${event.id} , ${event.type}")
                     }
 
-                    HomeUiEvent.BottomSheetItemClick.RemoveClick -> {
-
+                    is HomeUiEvent.BottomSheetItemClick.AddToFavourite -> {
+                        Log.d("data", "AddToFavourite: ${event.id} , ${event.type}")
                     }
-                }.let {
-                    state = state.copy(
-                        isBottomSheetOpen = false,
-                        isBottomSheetLoading = true
-                    )
+
+                    is HomeUiEvent.BottomSheetItemClick.RemoveFromFavourite -> {
+                        Log.d("data", "RemoveFromFavourite: ${event.id}")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.RemoveFromListenHistory -> {
+                        Log.d("data", "RemoveFromListenHistory: ${event.id}")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.HideSong -> {
+                        Log.d("data", "HideSong: ${event.id}")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.PlayAlbum -> {
+                        Log.d("data", "PlayAlbum: ${event.id}")
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.PlayArtistMix -> {
+                        Log.d("data", "PlayArtistMix")
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.PlayDailyMix -> {
+                        Log.d("data", "PlayDailyMix")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum -> {
+                        Log.d("data", "AddToLibraryAlbum: ${event.id}")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.AddToPlaylist -> {
+                        Log.d("data", "AddToPlaylist: ${event.id} , ${event.type}")
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.DownloadAlbum -> {
+                        Log.d("data", "DownloadAlbum: ${event.id}")
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.DownloadArtistMix -> {
+                        Log.d("data", "DownloadArtistMix")
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.DownloadDailyMix -> {
+                        Log.d("data", "DownloadDailyMix")
+                    }
                 }
             }
         }

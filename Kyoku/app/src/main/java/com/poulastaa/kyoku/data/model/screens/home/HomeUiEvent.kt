@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.data.model.screens.home
 
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
-import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 
 sealed class HomeUiEvent {
     data class EmitToast(val message: String) : HomeUiEvent()
@@ -16,12 +15,41 @@ sealed class HomeUiEvent {
     data class ItemLongClick(
         val type: HomeLongClickType,
         val id: Long = 0,
-        val name: String = "name"
+        val name: String = "name",
     ) : HomeUiEvent()
 
     sealed class BottomSheetItemClick : HomeUiEvent() {
-        data class AddClick(val type: PinnedDataType, val name: String) : BottomSheetItemClick()
-        data object RemoveClick : BottomSheetItemClick()
-        data object DeleteClick : BottomSheetItemClick()
+        data class PlaySong(val id: Long, val type: SongType) : BottomSheetItemClick()
+
+        data class AddToFavourite(val id: Long, val type: SongType) : BottomSheetItemClick()
+        data class RemoveFromFavourite(val id: Long) : BottomSheetItemClick()
+
+        data class ViewArtist(
+            val id: Long,
+            val type: SongType
+        ) : BottomSheetItemClick()
+
+        data class RemoveFromListenHistory(val id: Long) : BottomSheetItemClick()
+        data class HideSong(val id: Long) : BottomSheetItemClick()
+
+        data class AddToPlaylist(val id: Long, val type: HomeLongClickType) : BottomSheetItemClick()
+
+        data class PlayAlbum(val id: Long) : BottomSheetItemClick()
+        data class AddToLibraryAlbum(val id: Long) : BottomSheetItemClick()
+        data class DownloadAlbum(val id: Long) : BottomSheetItemClick()
+
+        data object PlayArtistMix : BottomSheetItemClick()
+        data object DownloadArtistMix : BottomSheetItemClick()
+
+        data object PlayDailyMix : BottomSheetItemClick()
+        data object DownloadDailyMix : BottomSheetItemClick()
+
+        data object CancelClicked : BottomSheetItemClick()
     }
+}
+
+
+enum class SongType {
+    HISTORY_SONG,
+    ARTIST_SONG
 }

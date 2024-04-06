@@ -44,14 +44,17 @@ import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenBottomSheet(
     sheetState: SheetState,
+    scope: CoroutineScope,
     isBottomSheetLoading: Boolean,
     isDarkThem: Boolean = isSystemInDarkTheme(),
     isCookie: Boolean,
@@ -66,7 +69,7 @@ fun HomeScreenBottomSheet(
         properties = ModalBottomSheetDefaults.properties(
             isFocusable = false
         ),
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
         if (isBottomSheetLoading)
             Column(
@@ -123,7 +126,13 @@ fun HomeScreenBottomSheet(
                             text = "Play album",
                             icon = R.drawable.ic_play,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.PlayAlbum(
+                                            id = data.id
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -131,23 +140,57 @@ fun HomeScreenBottomSheet(
                             text = "Add to Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToPlaylist(
+                                            id = data.id,
+                                            type = HomeLongClickType.ALBUM_PREV
+                                        )
+                                    )
+                                }
                             }
                         )
 
-                        ClickableItemWithDrawableImage(
-                            text = "Add to Library Albums",
-                            icon = R.drawable.ic_add_to_library,
-                            onClick = {
-
-                            }
-                        )
+                        if (data.isAlreadySaved)
+                            ClickableItemWithDrawableImage(
+                                text = "Remove From Library Albums",
+                                icon = R.drawable.ic_remove_from_library,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum(
+                                                id = data.id
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                        else
+                            ClickableItemWithDrawableImage(
+                                text = "Add to Library Albums",
+                                icon = R.drawable.ic_add_to_library,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum(
+                                                id = data.id
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                         ClickableItemWithDrawableImage(
                             text = "Download Album",
                             icon = R.drawable.ic_download,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.DownloadAlbum(
+                                            id = data.id
+                                        )
+                                    )
+                                }
                             }
                         )
                     }
@@ -157,7 +200,11 @@ fun HomeScreenBottomSheet(
                             text = "Play Artist Mix",
                             icon = R.drawable.ic_play,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.PlayArtistMix
+                                    )
+                                }
                             }
                         )
 
@@ -165,7 +212,14 @@ fun HomeScreenBottomSheet(
                             text = "Add to Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToPlaylist(
+                                            id = -1L,
+                                            type = HomeLongClickType.ARTIST_MIX
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -173,7 +227,11 @@ fun HomeScreenBottomSheet(
                             text = "Download Artist Mix",
                             icon = R.drawable.ic_download,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.DownloadArtistMix
+                                    )
+                                }
                             }
                         )
                     }
@@ -183,7 +241,11 @@ fun HomeScreenBottomSheet(
                             text = "Play Daily Mix",
                             icon = R.drawable.ic_play,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.PlayDailyMix
+                                    )
+                                }
                             }
                         )
 
@@ -191,7 +253,14 @@ fun HomeScreenBottomSheet(
                             text = "Add to Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToPlaylist(
+                                            id = -1L,
+                                            type = HomeLongClickType.DAILY_MIX
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -199,7 +268,11 @@ fun HomeScreenBottomSheet(
                             text = "Download Daily Mix",
                             icon = R.drawable.ic_download,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.DownloadDailyMix
+                                    )
+                                }
                             }
                         )
                     }
@@ -209,23 +282,60 @@ fun HomeScreenBottomSheet(
                             text = "Play Song",
                             icon = R.drawable.ic_play,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.PlaySong(
+                                            id = data.id,
+                                            type = SongType.HISTORY_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
-                        ClickableItemWithVectorImage(
-                            text = "Add to Favourite",
-                            icon = Icons.Rounded.Favorite,
-                            onClick = {
-
-                            }
-                        )
+                        if (data.isAlreadySaved)
+                            ClickableItemWithDrawableImage(
+                                text = "Remove form favourite",
+                                icon = R.drawable.ic_remove_favourite,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.AddToFavourite(
+                                                id = data.id,
+                                                type = SongType.HISTORY_SONG
+                                            )
+                                        )
+                                    }
+                                }
+                            )
+                        else
+                            ClickableItemWithVectorImage(
+                                text = "Add to favourite",
+                                icon = Icons.Rounded.Favorite,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.AddToFavourite(
+                                                id = data.id,
+                                                type = SongType.HISTORY_SONG
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                         ClickableItemWithDrawableImage(
                             text = "Add to Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToPlaylist(
+                                            id = data.id,
+                                            type = HomeLongClickType.HISTORY_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -233,7 +343,14 @@ fun HomeScreenBottomSheet(
                             text = "View Artist",
                             icon = R.drawable.ic_filter_artist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.ViewArtist(
+                                            id = data.id,
+                                            type = SongType.HISTORY_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -241,7 +358,13 @@ fun HomeScreenBottomSheet(
                             text = "Remove From Listen History",
                             icon = Icons.Rounded.Clear,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.RemoveFromListenHistory(
+                                            id = data.id
+                                        )
+                                    )
+                                }
                             }
                         )
                     }
@@ -251,7 +374,14 @@ fun HomeScreenBottomSheet(
                             text = "Play Song",
                             icon = R.drawable.ic_play,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.PlaySong(
+                                            id = data.id,
+                                            type = SongType.ARTIST_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -259,7 +389,14 @@ fun HomeScreenBottomSheet(
                             text = "Add to Favourite",
                             icon = Icons.Rounded.Favorite,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToFavourite(
+                                            id = data.id,
+                                            type = SongType.ARTIST_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -267,7 +404,14 @@ fun HomeScreenBottomSheet(
                             text = "Add to Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.AddToPlaylist(
+                                            id = data.id,
+                                            type = HomeLongClickType.ARTIST_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -275,7 +419,14 @@ fun HomeScreenBottomSheet(
                             text = "View Artist",
                             icon = R.drawable.ic_filter_artist,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.ViewArtist(
+                                            id = data.id,
+                                            type = SongType.ARTIST_SONG
+                                        )
+                                    )
+                                }
                             }
                         )
 
@@ -283,7 +434,13 @@ fun HomeScreenBottomSheet(
                             text = "Hide this song",
                             icon = R.drawable.ic_remove,
                             onClick = {
-
+                                scope.launch {
+                                    onClick.invoke(
+                                        HomeUiEvent.BottomSheetItemClick.HideSong(
+                                            id = data.id
+                                        )
+                                    )
+                                }
                             }
                         )
                     }
@@ -302,7 +459,9 @@ private fun ItemImage(
 ) {
     if (urls.size < 4) {
         CustomImageView(
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier
+                .size(60.dp)
+                .clip(MaterialTheme.shapes.extraSmall),
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,
@@ -312,7 +471,7 @@ private fun ItemImage(
         Column(
             modifier = Modifier
                 .size(60.dp)
-                .clip(MaterialTheme.shapes.small)
+                .clip(MaterialTheme.shapes.extraSmall)
         ) {
             Row(
                 modifier = Modifier
@@ -440,10 +599,12 @@ private fun ClickableItemWithVectorImage(
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
+@Preview
 @Composable
 private fun Preview() {
     TestThem {
@@ -470,6 +631,7 @@ private fun Preview() {
             if (sheetState.isVisible) {
                 HomeScreenBottomSheet(
                     sheetState = sheetState,
+                    scope = scope,
                     isBottomSheetLoading = false,
                     data = BottomSheetData(
                         name = "Tum Hi Ho",

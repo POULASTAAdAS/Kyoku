@@ -498,7 +498,7 @@ fun HomeScreenContentOldUser(
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
         }
 
-        // ArtistS
+        // Artists
         homeScreenArtistList(
             artistPrev = data.artistPrev,
             isSmallPhone = isSmallPhone,
@@ -508,11 +508,85 @@ fun HomeScreenContentOldUser(
             onClick = onClick,
             onLongClick = onLongClick
         )
+
+        item {
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+        }
+
+        // Album
+        if (data.albumPrev.isNotEmpty())
+            item {
+                Text(
+                    modifier = Modifier.padding(start = MaterialTheme.dimens.medium1),
+                    text = "Some Album You May Like",
+                    fontWeight = FontWeight.Black,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(
+                            state = rememberScrollState()
+                        )
+                        .windowInsetsPadding(
+                            insets = WindowInsets(
+                                left = MaterialTheme.dimens.medium1,
+                                right = MaterialTheme.dimens.medium1
+                            )
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                ) {
+                    data.albumPrev.forEach {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+                        ) {
+                            HomeScreenCard(
+                                modifier = Modifier.combinedClickable(
+                                    onClick = {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.ALBUM_PREV,
+                                                id = it.id,
+                                                name = it.name,
+                                                isApiCall = true
+                                            )
+                                        )
+                                    },
+                                    onLongClick = {
+                                        onLongClick.invoke(
+                                            HomeUiEvent.ItemLongClick(
+                                                type = HomeLongClickType.ALBUM_PREV,
+                                                id = it.id,
+                                                name = it.name
+                                            )
+                                        )
+                                    }
+                                ),
+                                size = if (isSmallPhone) 120.dp else 130.dp,
+                                imageUrl = it.listOfSong[0].coverImage,
+                                isCookie = isCookie,
+                                headerValue = headerValue
+                            )
+
+                            Text(text = it.name)
+                        }
+                    }
+                }
+            }
+
+        item {
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+        }
     }
 
     if (bottomSheetState)
         HomeScreenBottomSheet(
             sheetState = sheetState,
+            scope = scope,
             isBottomSheetLoading = isBottomSheetLoading,
             isCookie = isCookie,
             headerValue = headerValue,
@@ -521,6 +595,10 @@ fun HomeScreenContentOldUser(
             cancelClick = {
                 scope.launch {
                     sheetState.hide()
+                }.invokeOnCompletion {
+                    onClick.invoke(
+                        HomeUiEvent.BottomSheetItemClick.CancelClicked
+                    )
                 }
             }
         )

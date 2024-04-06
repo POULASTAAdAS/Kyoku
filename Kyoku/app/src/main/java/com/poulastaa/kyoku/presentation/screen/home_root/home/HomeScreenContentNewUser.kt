@@ -335,6 +335,7 @@ fun HomeScreenContentNewUser(
     if (bottomSheetState)
         HomeScreenBottomSheet(
             sheetState = sheetState,
+            scope = scope,
             isBottomSheetLoading = isBottomSheetLoading,
             onClick = onClick,
             isCookie = isCookie,
