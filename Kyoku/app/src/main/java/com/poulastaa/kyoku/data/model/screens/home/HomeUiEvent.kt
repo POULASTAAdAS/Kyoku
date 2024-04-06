@@ -5,6 +5,7 @@ import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 sealed class HomeUiEvent {
     data class EmitToast(val message: String) : HomeUiEvent()
     data object SomethingWentWrong : HomeUiEvent()
+
     data class ItemClick(
         val type: ItemsType,
         val id: Long = 0,
@@ -45,6 +46,10 @@ sealed class HomeUiEvent {
         data object DownloadDailyMix : BottomSheetItemClick()
 
         data object CancelClicked : BottomSheetItemClick()
+
+        data class CreatePlaylistText(val text: String) : BottomSheetItemClick()
+        data object CreatePlaylistSave : BottomSheetItemClick()
+        data object CreatePlaylistCancel : BottomSheetItemClick()
     }
 }
 

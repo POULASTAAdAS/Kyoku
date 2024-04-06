@@ -36,6 +36,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Random
 import javax.inject.Inject
 
@@ -503,7 +505,9 @@ class HomeScreenViewModel @Inject constructor(
                 )
 
                 when (event) {
-                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> Unit
+                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> {
+                        Unit
+                    }
 
                     is HomeUiEvent.BottomSheetItemClick.PlaySong -> {
                         Log.d("data", "PlaySong: ${event.id} , ${event.type}")
@@ -546,8 +550,54 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToPlaylist -> {
-                        Log.d("data", "AddToPlaylist: ${event.id} , ${event.type}")
+                        when (event.type) {
+                            HomeLongClickType.ALBUM_PREV -> {
+
+                            }
+
+                            HomeLongClickType.ARTIST_MIX -> {
+
+                            }
+
+                            HomeLongClickType.DAILY_MIX -> {
+                                val local = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+
+                                state = state.copy(
+                                    isCreatePlaylist = true,
+                                    createPlaylistText = "Daily Mix [$local]"
+                                )
+                            }
+
+                            HomeLongClickType.HISTORY_SONG -> {
+
+                            }
+
+                            HomeLongClickType.ARTIST_SONG -> {
+
+                            }
+                        }
                     }
+
+                    is HomeUiEvent.BottomSheetItemClick.CreatePlaylistText -> {
+                        state = state.copy(
+                            createPlaylistText = event.text
+                        )
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.CreatePlaylistSave -> {
+                        state = state.copy(
+                            isCreatePlaylist = false,
+                            createPlaylistText = ""
+                        )
+                    }
+
+                    HomeUiEvent.BottomSheetItemClick.CreatePlaylistCancel -> {
+                        state = state.copy(
+                            isCreatePlaylist = false,
+                            createPlaylistText = ""
+                        )
+                    }
+
 
                     is HomeUiEvent.BottomSheetItemClick.DownloadAlbum -> {
                         Log.d("data", "DownloadAlbum: ${event.id}")

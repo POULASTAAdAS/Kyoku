@@ -109,6 +109,8 @@ fun HomeScreen(
                         headerValue = authHeader,
                         bottomSheetState = viewModel.state.isBottomSheetOpen,
                         isBottomSheetLoading = viewModel.state.isBottomSheetLoading,
+                        isCreatePlaylist = viewModel.state.isCreatePlaylist,
+                        createPlaylistText = viewModel.state.createPlaylistText,
                         onClick = viewModel::onEvent,
                         onLongClick = viewModel::onEvent
                     )

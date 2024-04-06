@@ -13,6 +13,9 @@ data class HomeUiState(
     val isBottomSheetOpen: Boolean = false,
     val isBottomSheetLoading: Boolean = true,
 
+    val isCreatePlaylist: Boolean = false,
+    val createPlaylistText: String = "",
+
     val dataType: HomeType = HomeType.NEW_USER_REQ,
     val data: HomeUiData = HomeUiData(),
     val bottomSheetData: BottomSheetData = BottomSheetData()
