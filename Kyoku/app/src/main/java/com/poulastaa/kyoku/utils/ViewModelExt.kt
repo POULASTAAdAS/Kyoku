@@ -84,7 +84,7 @@ fun ViewModel.storeData(
 
         db.insertDailyMixPrev(data = response.dailyMixPreview)
 
-        db.insertIntoPlaylistHome(list = response.playlist)
+        db.insertIntoPlaylist(list = response.playlist)
         db.insertIntoFavourite(list = response.favourites.listOfSongs)
         db.insertIntoAlbum(list = response.albums)
         db.insertIntoRecentlyPlayedPrev(list = response.historyPreview)

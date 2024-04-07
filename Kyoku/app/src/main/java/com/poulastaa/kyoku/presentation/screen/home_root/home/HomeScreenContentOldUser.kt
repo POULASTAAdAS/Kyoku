@@ -6,8 +6,6 @@ import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -52,7 +50,6 @@ import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
-import com.poulastaa.kyoku.presentation.common.CreatePlaylistScreen
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
@@ -608,32 +605,32 @@ fun HomeScreenContentOldUser(
             }
         )
 
-    AnimatedVisibility(
-        visible = isCreatePlaylist,
-        enter = fadeIn(
-            animationSpec = tween(durationMillis = 400)
-        ) + slideInVertically(
-            animationSpec = tween(durationMillis = 400),
-            initialOffsetY = { it / 2 }
-        ),
-        exit = fadeOut(
-            animationSpec = tween(400)
-        ) + slideOutVertically(
-            animationSpec = tween(durationMillis = 400),
-            targetOffsetY = { it / 2 }
-        )
-    ) {
-        CreatePlaylistScreen(
-            onDoneClick = {
-                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistSave)
-            },
-            onCancelClick = {
-                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistCancel)
-            },
-            text = createPlaylistText,
-            onValueChange = {
-                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistText(it))
-            }
-        )
-    }
+//    AnimatedVisibility(
+//        visible = isCreatePlaylist,
+//        enter = fadeIn(
+//            animationSpec = tween(durationMillis = 400)
+//        ) + slideInVertically(
+//            animationSpec = tween(durationMillis = 400),
+//            initialOffsetY = { it / 2 }
+//        ),
+//        exit = fadeOut(
+//            animationSpec = tween(400)
+//        ) + slideOutVertically(
+//            animationSpec = tween(durationMillis = 400),
+//            targetOffsetY = { it / 2 }
+//        )
+//    ) {
+//        CreatePlaylistScreen(
+//            onDoneClick = {
+//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistSave)
+//            },
+//            onCancelClick = {
+//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistCancel)
+//            },
+//            text = createPlaylistText,
+//            onValueChange = {
+//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistText(it))
+//            }
+//        )
+//    }
 }

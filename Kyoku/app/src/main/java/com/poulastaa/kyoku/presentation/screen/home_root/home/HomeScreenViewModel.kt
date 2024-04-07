@@ -560,12 +560,18 @@ class HomeScreenViewModel @Inject constructor(
                             }
 
                             HomeLongClickType.DAILY_MIX -> {
-                                val local = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                                val date =
+                                    LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
 
-                                state = state.copy(
-                                    isCreatePlaylist = true,
-                                    createPlaylistText = "Daily Mix [$local]"
-                                )
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.CreatePlaylist.route,
+                                            name = "Daily Mix [$date]",
+                                            longClickType = HomeLongClickType.DAILY_MIX.name
+                                        )
+                                    )
+                                }
                             }
 
                             HomeLongClickType.HISTORY_SONG -> {

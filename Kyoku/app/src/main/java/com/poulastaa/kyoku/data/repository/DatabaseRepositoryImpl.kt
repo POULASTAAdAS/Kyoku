@@ -186,7 +186,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun readFavouritePrev() = dao.readFavouritePrev()
 
 
-    fun insertIntoPlaylistHome(list: List<ResponsePlaylist>) {
+    fun insertIntoPlaylist(list: List<ResponsePlaylist>) {
         CoroutineScope(Dispatchers.IO).launch {
             async {
                 list.forEach {
@@ -498,6 +498,10 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long) =
         dao.checkIfAlbumAlreadyInLibrary(albumId)?.let { true } ?: false
+
+    suspend fun isDailyMixDownloaded() = dao.isDailyMixDownloaded().isNotEmpty()
+
+    suspend fun getSongIdListOfDailyMix() = dao.getSongIdListOfDailyMix()
 
     // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {

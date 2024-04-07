@@ -390,6 +390,12 @@ interface AppDao {
     @Query("select id from AlbumTable where albumId = :albumId")
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long): Long?
 
+    @Query("select id from DailyMixTable limit 1")
+    suspend fun isDailyMixDownloaded(): List<Int>
+
+    @Query("select songId from DailyMixTable")
+    suspend fun getSongIdListOfDailyMix(): List<Long>
+
     // remove all
     @Query("delete from AlbumPrevTable")
     suspend fun dropAlbumPrevTable()

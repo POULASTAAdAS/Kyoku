@@ -1,10 +1,10 @@
 package com.example
 
-import java.sql.SQLIntegrityConstraintViolationException
-import kotlin.random.Random
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 fun main() {
-    val random = SQLIntegrityConstraintViolationException().errorCode
+    val date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
 
-    println(random)
+    println(date)
 }

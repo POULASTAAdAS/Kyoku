@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.remote
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -98,4 +99,9 @@ interface ServiceApi {
     suspend fun handleItemReq(
         @Body request: ItemReq
     ): Boolean
+
+    @POST("/api/authorised/song")
+    suspend fun getSongOnId(
+        @Body request: List<Long>
+    ): List<ResponseSong>
 }

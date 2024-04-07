@@ -16,11 +16,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,11 +51,12 @@ import androidx.compose.ui.unit.sp
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
-
 @Composable
-fun CreatePlaylistScreen(
+fun CreatePlaylistScreenContent(
+    modifier: Modifier = Modifier,
     text: String,
     onValueChange: (String) -> Unit,
+    isLoading: Boolean = true,
     focusRequester: FocusRequester = FocusRequester(),
     onDoneClick: () -> Unit,
     onCancelClick: () -> Unit
@@ -72,7 +76,8 @@ fun CreatePlaylistScreen(
                     )
                 )
             )
-            .padding(MaterialTheme.dimens.medium1),
+            .padding(MaterialTheme.dimens.medium1)
+            .then(modifier),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -141,12 +146,12 @@ fun CreatePlaylistScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CustomButton(text = "C A N C E L") {
+            CustomButton(text = "C A N C E L", isLoading = false) {
                 focusRequester.freeFocus()
                 onCancelClick.invoke()
             }
 
-            CustomButton(text = "S A V E") {
+            CustomButton(text = "S A V E", isLoading = isLoading) {
                 focusRequester.freeFocus()
                 onDoneClick.invoke()
             }
@@ -157,12 +162,27 @@ fun CreatePlaylistScreen(
 @Composable
 private fun CustomButton(
     text: String,
+    isLoading: Boolean,
     onClick: () -> Unit
 ) {
     FilledTonalButton(
-        onClick = onClick
+        onClick = onClick,
+        enabled = !isLoading,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer
+        )
     ) {
-        Text(text = text)
+        if (isLoading) CircularProgressIndicator(
+            modifier = Modifier
+                .padding(
+                    start = MaterialTheme.dimens.medium1,
+                    end = MaterialTheme.dimens.medium1
+                )
+                .size(20.dp),
+            strokeWidth = 2.dp
+        )
+        else Text(text = text)
     }
 }
 
@@ -213,7 +233,7 @@ private fun Preview() {
                 targetOffsetY = { it / 2 }
             )
         ) {
-            CreatePlaylistScreen(
+            CreatePlaylistScreenContent(
                 onDoneClick = {
                     state.value = false
                 },

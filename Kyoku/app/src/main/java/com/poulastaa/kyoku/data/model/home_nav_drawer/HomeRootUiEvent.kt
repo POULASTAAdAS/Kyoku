@@ -12,6 +12,7 @@ sealed class HomeRootUiEvent {
         val type: ItemsType = ItemsType.PLAYLIST,
         val id: Long = -1,
         val name: String = "name",
+        val longClickType: String = "longClickType",
         val isApiCall: Boolean = false
     ) : HomeRootUiEvent()
 

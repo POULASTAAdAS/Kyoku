@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.repository
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -162,6 +163,14 @@ class ServiceRepositoryImpl @Inject constructor(
             api.handleItemReq(req)
         } catch (e: Exception) {
             false
+        }
+    }
+
+    override suspend fun getSongOnId(req: List<Long>): List<ResponseSong> {
+        return try {
+            api.getSongOnId(req)
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

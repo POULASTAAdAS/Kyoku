@@ -306,7 +306,7 @@ class LibraryViewModel @Inject constructor(
 
                     LibraryUiEvent.ItemClick.CreatePlaylistClick -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(UiEvent.Navigate(Screens.CreatePlaylist.route))
+
                         }
                     }
 

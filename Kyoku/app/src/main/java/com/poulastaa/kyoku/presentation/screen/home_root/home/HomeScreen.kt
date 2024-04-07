@@ -40,6 +40,7 @@ fun HomeScreen(
                             type = event.type,
                             id = event.id,
                             name = event.name,
+                            longClickType = event.longClickType,
                             isApiCall = event.isApiCall
                         )
                     )

@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.domain.repository
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -49,4 +50,6 @@ interface ServiceRepository {
     suspend fun handlePin(req: PinnedReq): Boolean
 
     suspend fun handleItem(req: ItemReq): Boolean
+
+    suspend fun getSongOnId(req: List<Long>): List<ResponseSong>
 }
