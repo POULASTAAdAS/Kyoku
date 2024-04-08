@@ -188,33 +188,31 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoPlaylist(list: List<ResponsePlaylist>) {
         CoroutineScope(Dispatchers.IO).launch {
-            async {
-                list.forEach {
-                    val playlistId = async {
-                        dao.insertPlaylist(
-                            playlist = PlaylistTable(
-                                playlistId = it.id,
-                                name = it.name
-                            )
+            list.forEach {
+                val playlistId = async {
+                    dao.insertPlaylist(
+                        playlist = PlaylistTable(
+                            playlistId = it.id,
+                            name = it.name
+                        )
+                    )
+                }.await()
+
+                it.listOfSongs.forEach { song ->
+                    val songId = async {
+                        dao.insertSong(
+                            song = song.toSongTable()
                         )
                     }.await()
 
-                    it.listOfSongs.forEach { song ->
-                        val songId = async {
-                            dao.insertSong(
-                                song = song.toSongTable()
-                            )
-                        }.await()
-
-                        dao.insertSongPlaylistRelation(
-                            data = SongPlaylistRelationTable(
-                                playlistId = playlistId,
-                                songId = songId
-                            )
+                    dao.insertSongPlaylistRelation(
+                        data = SongPlaylistRelationTable(
+                            playlistId = playlistId,
+                            songId = songId
                         )
-                    }
+                    )
                 }
-            }.await()
+            }
         }
     }
 
@@ -502,6 +500,43 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun isDailyMixDownloaded() = dao.isDailyMixDownloaded().isNotEmpty()
 
     suspend fun getSongIdListOfDailyMix() = dao.getSongIdListOfDailyMix()
+
+    suspend fun isPlaylistNameDuplicate(name: String) =
+        dao.playlistNameDuplicityCheck(name).isNotEmpty()
+
+    suspend fun insertIntoPlaylist(response: ResponsePlaylist) {
+        withContext(Dispatchers.IO) {
+            val playlistId = async {
+                dao.insertPlaylist(
+                    playlist = PlaylistTable(
+                        playlistId = response.id,
+                        name = response.name
+                    )
+                )
+            }.await()
+
+            response.listOfSongs.forEach { song ->
+                val songId = async {
+                    dao.insertSong(
+                        song = song.toSongTable()
+                    )
+                }.await()
+
+                dao.insertSongPlaylistRelation(
+                    data = SongPlaylistRelationTable(
+                        playlistId = playlistId,
+                        songId = songId
+                    )
+                )
+            }
+        }
+    }
+
+    suspend fun isArtistMixDownloaded() = dao.isArtistMixDownloaded().isNotEmpty()
+
+    suspend fun getSongIdListOfArtistMix() = dao.getSongIdListOfArtistMix()
+
+    suspend fun isAlbumSaved(albumId: Long) = dao.isAlbumSaved(albumId)?.let { true } ?: false
 
     // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {

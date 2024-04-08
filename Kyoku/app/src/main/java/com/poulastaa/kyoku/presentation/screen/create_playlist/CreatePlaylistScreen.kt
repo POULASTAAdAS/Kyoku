@@ -17,13 +17,18 @@ import com.poulastaa.kyoku.ui.theme.dimens
 @Composable
 fun CreatePlaylistScreen(
     viewModel: CreatePlaylistViewModel = hiltViewModel(),
+    id: Long,
     name: String,
     type: String,
     context: Context,
     navigateBack: () -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadData(name = name, typeString = type)
+        viewModel.loadData(
+            id = id,
+            name = name,
+            typeString = type
+        )
     }
 
     LaunchedEffect(key1 = viewModel.state.isCriticalErr) {
@@ -32,7 +37,7 @@ fun CreatePlaylistScreen(
 
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
-            when(event){
+            when (event) {
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
@@ -56,7 +61,9 @@ fun CreatePlaylistScreen(
         onDoneClick = {
             viewModel.onEvent(CreatePlaylistUiEvent.SaveClicked)
         },
-        onCancelClick = navigateBack
+        onCancelClick = {
+            navigateBack.invoke()
+        }
     )
 
     BackHandler {

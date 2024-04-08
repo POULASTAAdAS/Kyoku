@@ -4,7 +4,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 fun main() {
-    val date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
+    val input = "232Playlist 3923"
 
-    println(date)
+    println(!(input.matches(Regex("^\\W.*")) ||
+                input.matches(Regex("^\\d.*"))))
 }

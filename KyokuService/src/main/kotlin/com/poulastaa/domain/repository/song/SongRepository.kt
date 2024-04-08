@@ -1,5 +1,6 @@
 package com.poulastaa.domain.repository.song
 
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.DailyMixPreview
 import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylist
@@ -17,4 +18,6 @@ interface SongRepository {
         userType: UserType,
         req: PinnedReq
     ): Boolean
+
+    suspend fun getResponseSongOnId(listOfId: List<Long>): List<ResponseSong>
 }

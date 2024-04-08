@@ -505,9 +505,7 @@ class HomeScreenViewModel @Inject constructor(
                 )
 
                 when (event) {
-                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> {
-                        Unit
-                    }
+                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> Unit
 
                     is HomeUiEvent.BottomSheetItemClick.PlaySong -> {
                         Log.d("data", "PlaySong: ${event.id} , ${event.type}")
@@ -552,11 +550,36 @@ class HomeScreenViewModel @Inject constructor(
                     is HomeUiEvent.BottomSheetItemClick.AddToPlaylist -> {
                         when (event.type) {
                             HomeLongClickType.ALBUM_PREV -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val album = state.data.albumPrev.firstOrNull {
+                                        it.id == event.id
+                                    } ?: return@launch onEvent(HomeUiEvent.SomethingWentWrong)
 
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.CreatePlaylist.route,
+                                            id = album.id,
+                                            name = album.name,
+                                            longClickType = HomeLongClickType.ALBUM_PREV.name
+                                        )
+                                    )
+                                }
                             }
 
                             HomeLongClickType.ARTIST_MIX -> {
+                                val date =
+                                    LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
 
+
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.CreatePlaylist.route,
+                                            name = "Artist Mix [$date]",
+                                            longClickType = HomeLongClickType.ARTIST_MIX.name
+                                        )
+                                    )
+                                }
                             }
 
                             HomeLongClickType.DAILY_MIX -> {
@@ -583,27 +606,6 @@ class HomeScreenViewModel @Inject constructor(
                             }
                         }
                     }
-
-                    is HomeUiEvent.BottomSheetItemClick.CreatePlaylistText -> {
-                        state = state.copy(
-                            createPlaylistText = event.text
-                        )
-                    }
-
-                    HomeUiEvent.BottomSheetItemClick.CreatePlaylistSave -> {
-                        state = state.copy(
-                            isCreatePlaylist = false,
-                            createPlaylistText = ""
-                        )
-                    }
-
-                    HomeUiEvent.BottomSheetItemClick.CreatePlaylistCancel -> {
-                        state = state.copy(
-                            isCreatePlaylist = false,
-                            createPlaylistText = ""
-                        )
-                    }
-
 
                     is HomeUiEvent.BottomSheetItemClick.DownloadAlbum -> {
                         Log.d("data", "DownloadAlbum: ${event.id}")

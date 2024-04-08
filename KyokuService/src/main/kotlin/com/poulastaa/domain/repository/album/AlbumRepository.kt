@@ -1,5 +1,6 @@
 package com.poulastaa.domain.repository.album
 
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.ResponseAlbumPreview
 import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.utils.UserType
@@ -18,4 +19,6 @@ interface AlbumRepository {
         albumId: Long,
         operation: ItemOperation
     ): Boolean
+
+    suspend fun getResponseSongOnAlbumId(albumId: Long): List<ResponseSong>
 }

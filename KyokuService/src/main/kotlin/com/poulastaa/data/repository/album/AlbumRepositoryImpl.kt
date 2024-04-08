@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository.album
 
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.AlbumTable
 import com.poulastaa.data.model.db_table.SongAlbumArtistRelationTable
 import com.poulastaa.data.model.db_table.SongTable
@@ -16,10 +17,12 @@ import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Album
+import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.toPreviewSong
+import com.poulastaa.utils.toResponseSongList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -123,6 +126,18 @@ class AlbumRepositoryImpl : AlbumRepository {
 
             ItemOperation.ERR -> false
         }
+    }
+
+    override suspend fun getResponseSongOnAlbumId(albumId: Long): List<ResponseSong> = dbQuery {
+        Song.find {
+            SongTable.id inList SongAlbumArtistRelationTable.slice(
+                SongAlbumArtistRelationTable.songId
+            ).select {
+                SongAlbumArtistRelationTable.albumId eq albumId
+            }.map {
+                it[SongAlbumArtistRelationTable.songId]
+            }
+        }.toResponseSongList()
     }
 
     private suspend fun getFevAlbumIdList(userType: UserType, userId: Long) = dbQuery {

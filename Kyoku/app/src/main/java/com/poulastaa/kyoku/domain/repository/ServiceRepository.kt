@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.domain.repository
 
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -9,9 +8,11 @@ import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
+import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyPlaylistResponse
@@ -51,5 +52,7 @@ interface ServiceRepository {
 
     suspend fun handleItem(req: ItemReq): Boolean
 
-    suspend fun getSongOnId(req: List<Long>): List<ResponseSong>
+    suspend fun getPlaylistOnSongId(req: CreatePlaylistReq): ResponsePlaylist
+
+    suspend fun getPlaylistOnAlbumId(req: CreatePlaylistReq): ResponsePlaylist
 }

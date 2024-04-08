@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class SongTable(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val songId: Long,
     val coverImage: String,
     val masterPlaylistUrl: String,
     val totalTime: String,

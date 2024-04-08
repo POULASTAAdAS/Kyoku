@@ -29,6 +29,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -68,6 +69,12 @@ fun HomeScreenContentNewUser(
     onClick: (HomeUiEvent) -> Unit,
     onLongClick: (HomeUiEvent) -> Unit
 ) {
+    LaunchedEffect(key1 = bottomSheetState) {
+        if (bottomSheetState) scope.launch {
+            sheetState.show()
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

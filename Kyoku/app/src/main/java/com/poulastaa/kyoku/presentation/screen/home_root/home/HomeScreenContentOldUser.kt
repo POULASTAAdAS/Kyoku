@@ -37,6 +37,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -77,12 +78,16 @@ fun HomeScreenContentOldUser(
     errorMessage: String,
     bottomSheetState: Boolean,
     isBottomSheetLoading: Boolean,
-    isCreatePlaylist: Boolean,
-    createPlaylistText: String,
     scope: CoroutineScope = rememberCoroutineScope(),
     onClick: (HomeUiEvent) -> Unit,
     onLongClick: (HomeUiEvent) -> Unit
 ) {
+    LaunchedEffect(key1 = bottomSheetState) {
+        if (bottomSheetState) scope.launch {
+            sheetState.show()
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -604,33 +609,4 @@ fun HomeScreenContentOldUser(
                 }
             }
         )
-
-//    AnimatedVisibility(
-//        visible = isCreatePlaylist,
-//        enter = fadeIn(
-//            animationSpec = tween(durationMillis = 400)
-//        ) + slideInVertically(
-//            animationSpec = tween(durationMillis = 400),
-//            initialOffsetY = { it / 2 }
-//        ),
-//        exit = fadeOut(
-//            animationSpec = tween(400)
-//        ) + slideOutVertically(
-//            animationSpec = tween(durationMillis = 400),
-//            targetOffsetY = { it / 2 }
-//        )
-//    ) {
-//        CreatePlaylistScreen(
-//            onDoneClick = {
-//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistSave)
-//            },
-//            onCancelClick = {
-//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistCancel)
-//            },
-//            text = createPlaylistText,
-//            onValueChange = {
-//                onClick.invoke(HomeUiEvent.BottomSheetItemClick.CreatePlaylistText(it))
-//            }
-//        )
-//    }
 }

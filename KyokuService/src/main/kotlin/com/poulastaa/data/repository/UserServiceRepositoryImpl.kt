@@ -12,6 +12,7 @@ import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTa
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
+import com.poulastaa.data.model.playlist.CreatePlaylistReq
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
@@ -450,6 +451,41 @@ class UserServiceRepositoryImpl(
             )
 
             IdType.ERR -> false
+        }
+    }
+
+    override suspend fun createPlaylist(
+        helper: UserTypeHelper,
+        req: CreatePlaylistReq
+    ): ResponsePlaylist = withContext(Dispatchers.IO) {
+        val user = async { dbUsers.getDbUser(helper) }.await() ?: return@withContext ResponsePlaylist()
+
+        val id = async {
+            playlist.cretePlaylist(
+                helper = UserTypeHelper(
+                    userType = helper.userType,
+                    id = user.id
+                ),
+                req = req
+            )
+        }
+
+        if (req.albumId == -1L) {
+            val responseSongDef = async { song.getResponseSongOnId(req.listOfSongId) }
+
+            ResponsePlaylist(
+                id = id.await(),
+                name = req.name,
+                listOfSongs = responseSongDef.await()
+            )
+        } else {
+            val responseSongDef = async { album.getResponseSongOnAlbumId(req.albumId) }
+
+            ResponsePlaylist(
+                id = id.await(),
+                name = req.name,
+                listOfSongs = responseSongDef.await()
+            )
         }
     }
 

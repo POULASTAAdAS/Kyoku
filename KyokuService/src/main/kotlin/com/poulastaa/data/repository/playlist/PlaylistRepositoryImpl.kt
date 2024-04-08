@@ -8,17 +8,18 @@ import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
 import com.poulastaa.data.model.item.ItemOperation
+import com.poulastaa.data.model.playlist.CreatePlaylistReq
 import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.playlist.EmailUserPlaylist
 import com.poulastaa.domain.dao.playlist.GoogleUserPlaylist
 import com.poulastaa.domain.dao.playlist.PasskeyUserPlaylist
 import com.poulastaa.domain.dao.playlist.Playlist
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.plugins.dbQuery
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -70,7 +71,7 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         return when (userType) {
             UserType.GOOGLE_USER -> {
                 when (operation) {
-                    ItemOperation.ADD -> {
+                    ItemOperation.ADD -> { // todo add
                         false
                     }
 
@@ -91,25 +92,48 @@ class PlaylistRepositoryImpl : PlaylistRepository {
                             )
 
                             CoroutineScope(Dispatchers.IO).launch {
-                                if (
+                                val passkeyUserDef = async {
                                     dbQuery {
                                         findPlaylistForPasskeyUser(
                                             playlistId = playlistId,
                                             userId = userId
-                                        ).empty() && findPlaylistForEmailUser(
-                                            playlistId = playlistId,
-                                            userId = userId
-                                        ).empty() && findPinnedPlaylistForPasskeyUser(
-                                            playlistId = playlistId,
-                                            userId = userId
-                                        ).empty() && findPinnedPlaylistForEmailUser(
+                                        ).empty()
+                                    }
+                                }
+
+                                val emailUserDef = async {
+                                    dbQuery {
+                                        findPlaylistForEmailUser(
                                             playlistId = playlistId,
                                             userId = userId
                                         ).empty()
                                     }
+                                }
+
+                                val pinnedPasskeyUserDef = async {
+                                    dbQuery {
+                                        findPinnedPlaylistForPasskeyUser(
+                                            playlistId = playlistId,
+                                            userId = userId
+                                        ).empty()
+                                    }
+                                }
+
+                                val pinnedEmailUseDef = async {
+                                    dbQuery {
+                                        findPinnedPlaylistForEmailUser(
+                                            playlistId = playlistId,
+                                            userId = userId
+                                        ).empty()
+                                    }
+                                }
+
+                                if (passkeyUserDef.await() &&
+                                    emailUserDef.await() &&
+                                    pinnedPasskeyUserDef.await() &&
+                                    pinnedEmailUseDef.await()
                                 ) deletePlaylist(playlistId)
                             }
-
 
                             true
                         } catch (e: Exception) {
@@ -145,7 +169,7 @@ class PlaylistRepositoryImpl : PlaylistRepository {
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 if (
-                                    dbQuery {
+                                    dbQuery { // todo fix if does not work
                                         findPlaylistForPasskeyUser(
                                             playlistId = playlistId,
                                             userId = userId
@@ -198,7 +222,7 @@ class PlaylistRepositoryImpl : PlaylistRepository {
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 if (
-                                    dbQuery {
+                                    dbQuery { // todo fix if does not work
                                         findPlaylistForGoogleUser(
                                             playlistId = playlistId,
                                             userId = userId
@@ -229,6 +253,54 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         }
     }
 
+    override suspend fun cretePlaylist(
+        helper: UserTypeHelper,
+        req: CreatePlaylistReq
+    ): Long = withContext(Dispatchers.IO) {
+        val playlistId = async { createPlaylist(req.name) }.await()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            when (helper.userType) {
+                UserType.GOOGLE_USER -> cretePlaylistForGoogleUser(
+                    list = req.listOfSongId.map {
+                        PlaylistRow(
+                            songId = it,
+                            userId = helper.id
+                        )
+                    },
+                    playlist = Playlist(
+                        id = EntityID(id = playlistId, table = PlaylistTable)
+                    )
+                )
+
+                UserType.EMAIL_USER -> cretePlaylistForEmailUser(
+                    list = req.listOfSongId.map {
+                        PlaylistRow(
+                            songId = it,
+                            userId = helper.id
+                        )
+                    },
+                    playlist = Playlist(
+                        id = EntityID(id = playlistId, table = PlaylistTable)
+                    )
+                )
+
+                UserType.PASSKEY_USER -> cretePlaylistForPasskeyUser(
+                    list = req.listOfSongId.map {
+                        PlaylistRow(
+                            songId = it,
+                            userId = helper.id
+                        )
+                    },
+                    playlist = Playlist(
+                        id = EntityID(id = playlistId, table = PlaylistTable)
+                    )
+                )
+            }
+        }
+
+        playlistId
+    }
 
     private fun findPlaylistForGoogleUser(
         playlistId: Long,
@@ -315,12 +387,19 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         }
     }
 
-    private fun deletePlaylist(
+    private suspend fun deletePlaylist(
         playlistId: Long
     ) {
-        Playlist.find {
-            PlaylistTable.id eq playlistId
-        }.firstOrNull()?.delete()
+        dbQuery {
+            Playlist.find {
+                PlaylistTable.id eq playlistId
+            }.firstOrNull()?.delete()
+        }
+    }
+
+    private suspend fun createPlaylist(name: String) = dbQuery {
+        Playlist.new {
+            this.name = name
+        }.id.value
     }
 }
-

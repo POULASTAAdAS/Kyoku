@@ -124,6 +124,7 @@ fun EmailLogInState.toEmailLogInReq(email: String, password: String) = EmailLogI
 )
 
 fun ResponseSong.toSongTable() = SongTable(
+    songId = this.id,
     coverImage = this.coverImage,
     masterPlaylistUrl = this.masterPlaylistUrl,
     totalTime = this.totalTime,

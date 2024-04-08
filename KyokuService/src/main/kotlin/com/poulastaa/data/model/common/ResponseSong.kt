@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseSong( // todo add id to response song also fix auth api
+    val id: Long = 0,
     val coverImage: String = "",
     val masterPlaylistUrl: String = "",
     val totalTime: String = "",

@@ -1,6 +1,7 @@
 package com.poulastaa.data.model.db_table
 
 data class PlaylistResult(
+    val songId: Long,
     val playlistId: Long,
     val playlistName: String,
     val coverImage: String = "",

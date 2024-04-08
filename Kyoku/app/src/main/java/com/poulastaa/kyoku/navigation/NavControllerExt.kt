@@ -9,9 +9,8 @@ fun NavHostController.navigateWithData(event: UiEvent.NavigateWithData) = when (
         route = "${event.route}${event.type.title}/${event.id}/${event.name}/${event.isApiCall}"
     )
 
-
     Screens.CreatePlaylist.route -> navigate(
-        route = "${event.route}${event.name}/${event.longClickType}"
+        route = "${event.route}${event.id}/${event.name}/${event.longClickType}"
     )
 
     else -> navigate(route = "${event.route}${event.name}/${event.isApiCall}")

@@ -19,6 +19,7 @@ import com.poulastaa.utils.Constants.MASTER_PLAYLIST_ROOT_DIR
 import org.jetbrains.exposed.dao.LongEntity
 
 fun Song.toResponseSong(): ResponseSong = ResponseSong(
+    id = this.id.value,
     coverImage = this.coverImage.constructCoverPhotoUrl(),
     masterPlaylistUrl = this.masterPlaylistPath.constructMasterPlaylistUrl(),
     totalTime = this.totalTime,

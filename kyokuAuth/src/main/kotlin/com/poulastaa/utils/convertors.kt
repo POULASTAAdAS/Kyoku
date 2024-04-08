@@ -72,6 +72,7 @@ fun ResultRow.toAlbumResponse(userType: UserType) = AlbumResponse(
 
 
 fun ResultRow.toResponseSong() = ResponseSong(
+    id = this[SongTable.id].value,
     coverImage = this[SongTable.coverImage].constructCoverPhotoUrl(),
     masterPlaylistUrl = this[SongTable.masterPlaylistPath].constructMasterPlaylistUrl(),
     totalTime = this[SongTable.totalTime],
@@ -88,6 +89,7 @@ fun ResultRow.toResponseSong() = ResponseSong(
 )
 
 fun ResultRow.toPlaylistResult() = PlaylistResult(
+    songId = this[SongTable.id].value,
     playlistId = this[PlaylistTable.id].value,
     playlistName = this[PlaylistTable.name],
     coverImage = this[SongTable.coverImage].constructCoverPhotoUrl(),
@@ -106,6 +108,7 @@ fun ResultRow.toPlaylistResult() = PlaylistResult(
 )
 
 fun PlaylistResult.toResponseSong() = ResponseSong(
+    id = this.songId,
     coverImage = this.coverImage,
     masterPlaylistUrl = this.masterPlaylistUrl,
     totalTime = this.totalTime,

@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.remote
 
-import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -9,9 +8,11 @@ import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
+import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyPlaylistResponse
@@ -100,8 +101,13 @@ interface ServiceApi {
         @Body request: ItemReq
     ): Boolean
 
-    @POST("/api/authorised/song")
-    suspend fun getSongOnId(
-        @Body request: List<Long>
-    ): List<ResponseSong>
+    @POST("/api/authorised/playlistOnSongId")
+    suspend fun getPlaylistOnSongId(
+        @Body request: CreatePlaylistReq
+    ): ResponsePlaylist
+
+    @POST("/api/authorised/playlistOnAlbumId")
+    suspend fun getPlaylistOnAlbumId(
+        @Body request: CreatePlaylistReq
+    ): ResponsePlaylist
 }

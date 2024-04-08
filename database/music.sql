@@ -472,6 +472,30 @@ select * from album
 join googleuseralbumrelation on googleuseralbumrelation.albumid = album.id
 where googleuseralbumrelation.userid = 1;
 
+select* from passkeyauthuser;
+
+select * from passkeyuserplaylist where playlistId = 8;
+
+
+select * from song where id = 100;
+
+
+select * from playlist;
+
+select * from googleuserplaylist order by playlistId desc;
+
+
+
+select songId from songalbumartistrelation where albumid = 829;
+
+select * from song
+join songalbumartistrelation on songalbumartistrelation.songId = song.id
+where songalbumartistrelation.albumId = 829;
+
+
+select * from playlist;
+
+
 
 
 

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseSong(
+    val id: Long,
     val coverImage: String = "",
     val masterPlaylistUrl: String = "",
     val totalTime: String = "",

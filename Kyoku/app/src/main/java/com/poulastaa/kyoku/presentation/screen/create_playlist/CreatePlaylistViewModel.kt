@@ -1,12 +1,12 @@
 package com.poulastaa.kyoku.presentation.screen.create_playlist
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiState
@@ -16,6 +16,7 @@ import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -50,28 +51,31 @@ class CreatePlaylistViewModel @Inject constructor(
 
     var state by mutableStateOf(CreatePlaylistUiState())
 
-    private suspend fun isDailyMixDownloaded() = db.isDailyMixDownloaded()
-
     fun loadData(
+        id: Long,
         name: String,
         typeString: String,
     ) {
-        state = state.copy(
-            text = name
-        )
-
         val type = getType(typeString)
 
+        state = state.copy(
+            id = id,
+            text = name,
+            type = type
+        )
+
         when (type) {
-            HomeLongClickType.ARTIST_MIX -> {
-
+            HomeLongClickType.ARTIST_MIX -> viewModelScope.launch(Dispatchers.IO) {
+                initialSetupForArtistMix()
             }
 
-            HomeLongClickType.DAILY_MIX -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    initialSetUp()
-                }
+            HomeLongClickType.DAILY_MIX -> viewModelScope.launch(Dispatchers.IO) {
+                initialSetUpForDailyMix()
             }
+
+            HomeLongClickType.ALBUM_PREV -> state = state.copy(
+                isLoading = false
+            )
 
             else -> {
 
@@ -87,24 +91,236 @@ class CreatePlaylistViewModel @Inject constructor(
         else -> HomeLongClickType.ARTIST_SONG
     }
 
-    private suspend fun initialSetUp() {
+    fun onEvent(event: CreatePlaylistUiEvent) {
+        when (event) {
+            is CreatePlaylistUiEvent.EmitToast -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(UiEvent.ShowToast(event.message))
+                }
+            }
+
+            is CreatePlaylistUiEvent.EnterName -> {
+                state = state.copy(
+                    text = event.text
+                )
+            }
+
+            CreatePlaylistUiEvent.SomethingWentWrong -> {
+                onEvent(CreatePlaylistUiEvent.EmitToast("Opp's something went wrong"))
+            }
+
+            CreatePlaylistUiEvent.SaveClicked -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (state.type) {
+                        HomeLongClickType.ALBUM_PREV -> {
+                            state = state.copy(
+                                isLoading = false
+                            )
+
+                            if (network.value != NetworkObserver.STATUS.AVAILABLE) return@launch onEvent(
+                                CreatePlaylistUiEvent.EmitToast("Please check your Internet connection")
+                            )
+
+                            if (!playlistNameValidation()) return@launch onEvent(
+                                CreatePlaylistUiEvent.EmitToast(
+                                    message = "Playlist name can't start with number or spatial character"
+                                )
+                            )
+
+                            if (db.isPlaylistNameDuplicate(state.text.trim())) return@launch onEvent(
+                                CreatePlaylistUiEvent.EmitToast(
+                                    message = "A playlist with this name already exists"
+                                )
+                            )
+
+
+                            downloadPlaylistFromAlbum()
+                        }
+
+                        HomeLongClickType.ARTIST_MIX -> {
+                            if (state.songIdList.isEmpty()) return@launch initialSetupForArtistMix()
+
+                            downloadPlaylistFromMix()
+                        }
+
+                        HomeLongClickType.DAILY_MIX -> {
+                            if (state.songIdList.isEmpty()) return@launch initialSetUpForDailyMix()
+
+                            downloadPlaylistFromMix()
+                        }
+
+                        HomeLongClickType.HISTORY_SONG -> {
+
+                        }
+
+                        HomeLongClickType.ARTIST_SONG -> {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun downloadPlaylistFromMix() {
         state = state.copy(
             isLoading = true
         )
 
-        if (!isDailyMixDownloaded()) { // if daily mix table is empty
+        // name validation check
+        if (!playlistNameValidation()) {
+            onEvent(
+                CreatePlaylistUiEvent.EmitToast(
+                    message = "Playlist name can't start with number or spatial character"
+                )
+            )
 
-            // check if internet is available
-            if (!state.isInternetAvailable) {
-                onEvent(CreatePlaylistUiEvent.EmitToast("Please check your Internet connection"))
+            state = state.copy(
+                isLoading = false
+            )
+
+            return
+        }
+
+        // name duplicity check
+        if (db.isPlaylistNameDuplicate(state.text.trim())) {
+            onEvent(
+                CreatePlaylistUiEvent.EmitToast(
+                    message = "A playlist with this name already exists"
+                )
+            )
+
+            state = state.copy(
+                isLoading = false
+            )
+
+            return
+        }
+
+
+        val playlist = api.getPlaylistOnSongId(
+            req = CreatePlaylistReq(
+                name = state.text.trim(),
+                listOfSongId = state.songIdList
+            )
+        )
+
+        if (playlist.listOfSongs.isEmpty()) {
+            onEvent(CreatePlaylistUiEvent.SomethingWentWrong)
+
+            state = state.copy(
+                isCriticalErr = true
+            )
+
+            return
+        }
+
+        db.insertIntoPlaylist(response = playlist)
+
+        onEvent(CreatePlaylistUiEvent.EmitToast("${state.text} saved"))
+
+        state = state.copy(
+            isLoading = false,
+            isCriticalErr = true // using field to exit out of screen on successful response
+        )
+    }
+
+    private fun downloadPlaylistFromAlbum() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playlist = api.getPlaylistOnAlbumId(
+                req = CreatePlaylistReq(
+                    albumId = state.id,
+                    name = state.text.trim()
+                )
+            )
+
+            if (playlist.listOfSongs.isEmpty()) {
+                onEvent(CreatePlaylistUiEvent.SomethingWentWrong)
 
                 state = state.copy(
-                    isLoading = false
+                    isCriticalErr = true
+                )
+
+                return@launch
+            }
+
+            db.insertIntoPlaylist(response = playlist)
+
+            onEvent(CreatePlaylistUiEvent.EmitToast("${playlist.name} saved"))
+
+            state = state.copy(
+                isLoading = false,
+                isCriticalErr = true // using field to exit out of screen on successful response
+            )
+        }
+    }
+
+    private suspend fun initialSetupForArtistMix() {
+        delay(500)
+
+        // check if internet is available
+        if (network.value != NetworkObserver.STATUS.AVAILABLE) {
+            onEvent(CreatePlaylistUiEvent.EmitToast("Please check your Internet connection"))
+
+            state = state.copy(
+                isLoading = false
+            )
+
+            return
+        }
+
+        state = state.copy(
+            isLoading = true
+        )
+
+        if (!db.isArtistMixDownloaded()) {
+            val artistMix = api.getArtistMix()
+
+            if (artistMix.isEmpty()) {
+                onEvent(CreatePlaylistUiEvent.SomethingWentWrong)
+
+                state = state.copy(
+                    isCriticalErr = true
                 )
 
                 return
             }
 
+            db.insertIntoArtistMix(artistMix)
+
+            state = state.copy(
+                isLoading = false,
+                songIdList = artistMix.map {
+                    it.id.toLong()
+                }
+            )
+        } else {
+            state = state.copy(
+                songIdList = db.getSongIdListOfArtistMix(),
+                isLoading = false
+            )
+        }
+    }
+
+    private suspend fun initialSetUpForDailyMix() {
+        delay(500)
+
+        // check if internet is available
+        if (network.value != NetworkObserver.STATUS.AVAILABLE) {
+            onEvent(CreatePlaylistUiEvent.EmitToast("Please check your Internet connection"))
+
+            state = state.copy(
+                isLoading = false
+            )
+
+            return
+        }
+
+        state = state.copy(
+            isLoading = true
+        )
+
+        if (!db.isDailyMixDownloaded()) { // if daily mix table is empty
             // make api call
             val dailyMix = api.getDailyMix().listOfSongs
 
@@ -132,61 +348,10 @@ class CreatePlaylistViewModel @Inject constructor(
                 songIdList = db.getSongIdListOfDailyMix(),
                 isLoading = false
             )
-
-            Log.d("called", "called ${state.isLoading}")
         }
     }
 
-    fun onEvent(event: CreatePlaylistUiEvent) {
-        when (event) {
-            is CreatePlaylistUiEvent.EmitToast -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(UiEvent.ShowToast(event.message))
-                }
-            }
-
-            is CreatePlaylistUiEvent.EnterName -> {
-                state = state.copy(
-                    text = event.text
-                )
-            }
-
-            CreatePlaylistUiEvent.SomethingWentWrong -> {
-                onEvent(CreatePlaylistUiEvent.EmitToast("Opp's something went wrong"))
-            }
-
-            CreatePlaylistUiEvent.SaveClicked -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    if (state.songIdList.isEmpty()) return@launch initialSetUp()
-
-                    // todo check if name has any conflict with other playlist name
-
-                    // todo make api call to create playlist with listOf songId
-
-//                    val playlist = api
-//
-//                    if (false) { // if api response is empty exiting from screen
-//                        onEvent(CreatePlaylistUiEvent.EmitToast("Please check your Internet connection"))
-//
-//                        state = state.copy(
-//                            isLoading = false
-//                        )
-//
-//                        return@launch
-//                    }
-//
-//                    db.insertIntoPlaylist(
-//                        list = emptyList() // todo
-//                    )
-
-                    onEvent(CreatePlaylistUiEvent.EmitToast("${state.text} saved"))
-
-                    state = state.copy(
-                        isLoading = false,
-                        isCriticalErr = true // using field to exit out of screen on successful response
-                    )
-                }
-            }
-        }
-    }
+    private fun playlistNameValidation() =
+        !(state.text.trim().matches(Regex("^\\W.*")) || // spatial char check
+                state.text.trim().matches(Regex("^\\d.*"))) // number check
 }

@@ -46,10 +46,6 @@ sealed class HomeUiEvent {
         data object DownloadDailyMix : BottomSheetItemClick()
 
         data object CancelClicked : BottomSheetItemClick()
-
-        data class CreatePlaylistText(val text: String) : BottomSheetItemClick()
-        data object CreatePlaylistSave : BottomSheetItemClick()
-        data object CreatePlaylistCancel : BottomSheetItemClick()
     }
 }
 

@@ -33,6 +33,7 @@ import com.poulastaa.domain.dao.playlist.Playlist
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.toResponseSong
 import com.poulastaa.utils.toResponseSongList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -455,6 +456,14 @@ class SongRepositoryImpl : SongRepository {
                     IdType.ERR -> return@dbQuery false
                 }
             }
+        }
+    }
+
+    override suspend fun getResponseSongOnId(listOfId: List<Long>): List<ResponseSong> = dbQuery {
+        Song.find {
+            SongTable.id inList listOfId
+        }.map {
+            it.toResponseSong()
         }
     }
 

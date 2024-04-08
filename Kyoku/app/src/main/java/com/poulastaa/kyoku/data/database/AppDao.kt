@@ -396,6 +396,18 @@ interface AppDao {
     @Query("select songId from DailyMixTable")
     suspend fun getSongIdListOfDailyMix(): List<Long>
 
+    @Query("select id from playlisttable where name = :name")
+    suspend fun playlistNameDuplicityCheck(name: String): List<Long>
+
+    @Query("select id from ArtistMixTable limit 1")
+    suspend fun isArtistMixDownloaded(): List<Long>
+
+    @Query("select songId from ArtistMixTable")
+    suspend fun getSongIdListOfArtistMix(): List<Long>
+
+    @Query("select id from AlbumTable where albumId = :albumId")
+    suspend fun isAlbumSaved(albumId: Long): Long?
+
     // remove all
     @Query("delete from AlbumPrevTable")
     suspend fun dropAlbumPrevTable()

@@ -1,8 +1,10 @@
 package com.poulastaa.domain.repository.playlist
 
 import com.poulastaa.data.model.item.ItemOperation
+import com.poulastaa.data.model.playlist.CreatePlaylistReq
 import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.data.model.utils.UserType
+import com.poulastaa.data.model.utils.UserTypeHelper
 import com.poulastaa.domain.dao.playlist.Playlist
 
 interface PlaylistRepository {
@@ -16,4 +18,6 @@ interface PlaylistRepository {
         playlistId: Long,
         operation: ItemOperation
     ): Boolean
+
+    suspend fun cretePlaylist(helper: UserTypeHelper, req: CreatePlaylistReq): Long
 }

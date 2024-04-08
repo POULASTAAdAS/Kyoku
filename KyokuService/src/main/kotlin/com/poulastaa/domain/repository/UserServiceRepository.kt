@@ -7,6 +7,7 @@ import com.poulastaa.data.model.artist.ArtistPageReq
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
+import com.poulastaa.data.model.playlist.CreatePlaylistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistReq
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
@@ -47,4 +48,6 @@ interface UserServiceRepository {
     suspend fun handlePinnedOperation(helper: UserTypeHelper, req: PinnedReq): Boolean
 
     suspend fun handleItemOperations(helper: UserTypeHelper, req: ItemReq): Boolean
+
+    suspend fun createPlaylist(helper: UserTypeHelper, req: CreatePlaylistReq): ResponsePlaylist
 }

@@ -237,18 +237,23 @@ fun SetupNavGraph(
             }
         }
 
-        composable(Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
+        composable(
+            Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
             arguments = listOf(
                 navArgument(Screens.Args.NAME.title) {
                     type = NavType.StringType
                 },
                 navArgument(Screens.Args.TYPE.title) {
                     type = NavType.StringType
+                },
+                navArgument(Screens.Args.ID.title) {
+                    type = NavType.LongType
                 }
             )
         ) { navBackStackEntry ->
             val name = navBackStackEntry.arguments?.getString(Screens.Args.NAME.title) ?: ""
             val type = navBackStackEntry.arguments?.getString(Screens.Args.TYPE.title) ?: ""
+            val id = navBackStackEntry.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
 
             val show = remember {
                 mutableStateOf(false)
@@ -288,6 +293,7 @@ fun SetupNavGraph(
                 )
             ) {
                 CreatePlaylistScreen(
+                    id = id,
                     name = name,
                     type = type,
                     context = context,

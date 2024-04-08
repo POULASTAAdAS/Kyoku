@@ -8,8 +8,8 @@ object Constants {
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
-    const val BASE_URL = "https://04f7-115-187-49-209.ngrok-free.app"
-    const val SERVICE_URL = "https://b97c-115-187-49-209.ngrok-free.app"
+    const val BASE_URL = "https://b1bc-115-187-49-209.ngrok-free.app"
+    const val SERVICE_URL = "https://958e-115-187-49-209.ngrok-free.app"
 
     const val PROFILE_PIC_URL = "$SERVICE_URL/api/authorised/user/profilePic"
 

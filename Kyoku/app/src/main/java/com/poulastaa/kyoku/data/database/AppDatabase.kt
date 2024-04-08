@@ -49,7 +49,7 @@ import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTabl
         InternalPinnedTable::class,
         InternalItemTable::class
     ],
-    version = 4,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

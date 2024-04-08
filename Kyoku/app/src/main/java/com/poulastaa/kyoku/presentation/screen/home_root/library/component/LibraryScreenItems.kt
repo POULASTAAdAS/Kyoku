@@ -632,7 +632,7 @@ fun LibraryScreenPlaylistGridView(
                         url = imageUrls[0],
                         contentScale = ContentScale.FillBounds
                     )
-                else
+                else {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -659,29 +659,30 @@ fun LibraryScreenPlaylistGridView(
                         )
                     }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    CustomImageView(
+                    Row(
                         modifier = Modifier
-                            .fillMaxWidth(.5f)
-                            .fillMaxHeight(),
-                        isDarkThem = isDarkThem,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        url = imageUrls[2],
-                        contentScale = ContentScale.FillBounds
-                    )
+                            .fillMaxSize()
+                    ) {
+                        CustomImageView(
+                            modifier = Modifier
+                                .fillMaxWidth(.5f)
+                                .fillMaxHeight(),
+                            isDarkThem = isDarkThem,
+                            isCookie = isCookie,
+                            headerValue = authHeader,
+                            url = imageUrls[2],
+                            contentScale = ContentScale.FillBounds
+                        )
 
-                    CustomImageView(
-                        modifier = Modifier.fillMaxSize(),
-                        isDarkThem = isDarkThem,
-                        isCookie = isCookie,
-                        headerValue = authHeader,
-                        url = imageUrls[3],
-                        contentScale = ContentScale.FillBounds
-                    )
+                        CustomImageView(
+                            modifier = Modifier.fillMaxSize(),
+                            isDarkThem = isDarkThem,
+                            isCookie = isCookie,
+                            headerValue = authHeader,
+                            url = imageUrls[3],
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
                 }
             }
         }

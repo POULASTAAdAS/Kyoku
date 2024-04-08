@@ -40,6 +40,9 @@ fun Application.configureRouting() {
         dailyMix(service)
         artistMix(service)
 
+        getPlaylistOnSongId(service)
+        getPlaylistOnfAlbumId(service)
+
         handlePinned(service)
         handleItems(service)
 
