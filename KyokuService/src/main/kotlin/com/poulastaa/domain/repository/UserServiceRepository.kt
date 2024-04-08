@@ -4,6 +4,7 @@ import com.poulastaa.data.model.artist.ArtistAlbum
 import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
 import com.poulastaa.data.model.artist.ArtistPageReq
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
@@ -50,4 +51,7 @@ interface UserServiceRepository {
     suspend fun handleItemOperations(helper: UserTypeHelper, req: ItemReq): Boolean
 
     suspend fun createPlaylist(helper: UserTypeHelper, req: CreatePlaylistReq): ResponsePlaylist
+
+    suspend fun insertIntoFavourite(helper: UserTypeHelper, songId: Long): ResponseSong
+    suspend fun removeFromFavourite(helper: UserTypeHelper, songId: Long): Boolean
 }

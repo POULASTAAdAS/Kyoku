@@ -6,6 +6,9 @@ import com.poulastaa.data.model.db_table.ArtistTable
 import com.poulastaa.data.model.db_table.SongArtistRelationTable
 import com.poulastaa.data.model.db_table.SongGenreRelationTable
 import com.poulastaa.data.model.db_table.SongTable
+import com.poulastaa.data.model.db_table.user_fev.EmailUserFavouriteTable
+import com.poulastaa.data.model.db_table.user_fev.GoogleUserFavouriteTable
+import com.poulastaa.data.model.db_table.user_fev.PasskeyUserFavouriteTable
 import com.poulastaa.data.model.db_table.user_genre.EmailUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.GoogleUserGenreRelationTable
 import com.poulastaa.data.model.db_table.user_genre.PasskeyUserGenreRelationTable
@@ -464,6 +467,75 @@ class SongRepositoryImpl : SongRepository {
             SongTable.id inList listOfId
         }.map {
             it.toResponseSong()
+        }
+    }
+
+    override suspend fun getResponseSong(songId: Long): ResponseSong = dbQuery {
+        Song.find {
+            SongTable.id eq songId
+        }.firstOrNull()?.toResponseSong() ?: ResponseSong()
+    }
+
+    override suspend fun handleFavouriteOperation(
+        userType: UserType,
+        userId: Long,
+        songId: Long,
+        operation: SongRepository.FavouriteOperation
+    ) {
+        withContext(Dispatchers.IO) {
+            when (operation) {
+                SongRepository.FavouriteOperation.ADD -> dbQuery {
+                    when (userType) {
+                        UserType.GOOGLE_USER -> {
+                            GoogleUserFavouriteTable.insertIgnore {
+                                it[this.userId] = userId
+                                it[this.songId] = songId
+                            }
+                        }
+
+                        UserType.EMAIL_USER -> {
+                            EmailUserFavouriteTable.insertIgnore {
+                                it[this.userId] = userId
+                                it[this.songId] = songId
+                            }
+                        }
+
+                        UserType.PASSKEY_USER -> {
+                            PasskeyUserFavouriteTable.insertIgnore {
+                                it[this.userId] = userId
+                                it[this.songId] = songId
+                            }
+                        }
+                    }
+
+                    return@dbQuery
+                }
+
+                SongRepository.FavouriteOperation.REMOVE -> dbQuery {
+                    when (userType) {
+                        UserType.GOOGLE_USER -> {
+                            GoogleUserFavouriteTable.deleteWhere {
+                                GoogleUserFavouriteTable.songId eq songId and
+                                        (GoogleUserFavouriteTable.userId eq userId)
+                            }
+                        }
+
+                        UserType.EMAIL_USER -> {
+                            EmailUserFavouriteTable.deleteWhere {
+                                EmailUserFavouriteTable.userId eq userId and
+                                        (EmailUserFavouriteTable.songId eq songId)
+                            }
+                        }
+
+                        UserType.PASSKEY_USER -> {
+                            PasskeyUserFavouriteTable.deleteWhere {
+                                PasskeyUserFavouriteTable.userId eq userId and
+                                        (PasskeyUserFavouriteTable.songId eq songId)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

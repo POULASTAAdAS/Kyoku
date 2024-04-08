@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.domain.repository
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -55,4 +56,7 @@ interface ServiceRepository {
     suspend fun getPlaylistOnSongId(req: CreatePlaylistReq): ResponsePlaylist
 
     suspend fun getPlaylistOnAlbumId(req: CreatePlaylistReq): ResponsePlaylist
+
+    suspend fun addSongToFavourite(songId: Long): ResponseSong
+    suspend fun removeFromFavourite(songId: Long): Boolean
 }

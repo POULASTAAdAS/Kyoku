@@ -421,7 +421,6 @@ class HomeScreenViewModel @Inject constructor(
                             val songDef = async {
                                 state.data.historyPrev.firstOrNull {
                                     it.id == event.id
-
                                 }
                             }
 
@@ -505,7 +504,9 @@ class HomeScreenViewModel @Inject constructor(
                 )
 
                 when (event) {
-                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> Unit
+                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> {
+                        Unit
+                    }
 
                     is HomeUiEvent.BottomSheetItemClick.PlaySong -> {
                         Log.d("data", "PlaySong: ${event.id} , ${event.type}")
@@ -516,11 +517,44 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToFavourite -> {
-                        Log.d("data", "AddToFavourite: ${event.id} , ${event.type}")
+                        if (!state.isInternetAvailable) {
+                            onEvent(HomeUiEvent.EmitToast("Please check your Internet connection"))
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val responseSong = api.addSongToFavourite(event.id)
+
+                            if (responseSong.id == -1L) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+                            db.insertIntoFavourite(list = listOf(responseSong))
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.RemoveFromFavourite -> {
-                        Log.d("data", "RemoveFromFavourite: ${event.id}")
+                        if (!state.isInternetAvailable) {
+                            onEvent(HomeUiEvent.EmitToast("Please check your Internet connection"))
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val responseSong = api.removeFromFavourite(event.id)
+
+                            if (!responseSong) {
+                                // todo add to internal database to delete
+
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+
+                            db.removeFromFavourite(event.id)
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.RemoveFromListenHistory -> {

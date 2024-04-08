@@ -43,6 +43,9 @@ fun Application.configureRouting() {
         getPlaylistOnSongId(service)
         getPlaylistOnfAlbumId(service)
 
+        insertIntoFavourite(service)
+        removeFromFavourite(service)
+
         handlePinned(service)
         handleItems(service)
 

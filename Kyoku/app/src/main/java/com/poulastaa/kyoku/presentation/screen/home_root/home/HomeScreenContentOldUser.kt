@@ -598,7 +598,12 @@ fun HomeScreenContentOldUser(
             isCookie = isCookie,
             headerValue = headerValue,
             data = bottomSheetData,
-            onClick = onClick,
+            onClick = {
+                scope.launch {
+                    sheetState.hide()
+                }
+                onClick.invoke(it)
+            },
             cancelClick = {
                 scope.launch {
                     sheetState.hide()

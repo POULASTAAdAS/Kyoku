@@ -230,6 +230,19 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    suspend fun checkIfSongAlreadyInFavourite(songId: Long) =
+        dao.getAllFavouriteSongId().firstOrNull {
+            it == songId
+        }?.let { true } ?: false
+
+    fun removeFromFavourite(songId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.deleteFromFavourite(
+                listOfId = dao.getAllIdOnSongId(songId)
+            )
+        }
+    }
+
     fun insertIntoAlbum(list: List<ResponseAlbum>) {
         CoroutineScope(Dispatchers.IO).launch {
             list.forEach {
@@ -491,9 +504,6 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun readAllArtistMix() = dao.readAllArtistMix()
 
 
-    suspend fun checkIfSongAlreadyInFavourite(songId: Long) =
-        dao.checkIfSongAlreadyInFavourite(songId)?.let { true } ?: false
-
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long) =
         dao.checkIfAlbumAlreadyInLibrary(albumId)?.let { true } ?: false
 
@@ -536,7 +546,6 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getSongIdListOfArtistMix() = dao.getSongIdListOfArtistMix()
 
-    suspend fun isAlbumSaved(albumId: Long) = dao.isAlbumSaved(albumId)?.let { true } ?: false
 
     // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {

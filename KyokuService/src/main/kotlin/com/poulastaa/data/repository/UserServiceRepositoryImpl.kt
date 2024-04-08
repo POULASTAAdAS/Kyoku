@@ -5,6 +5,7 @@ import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
 import com.poulastaa.data.model.artist.ArtistPageReq
 import com.poulastaa.data.model.common.IdType
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.*
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
@@ -487,6 +488,34 @@ class UserServiceRepositoryImpl(
                 listOfSongs = responseSongDef.await()
             )
         }
+    }
+
+    override suspend fun insertIntoFavourite(helper: UserTypeHelper, songId: Long): ResponseSong {
+        val user = dbUsers.getDbUser(helper) ?: return ResponseSong()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            song.handleFavouriteOperation(
+                userType = helper.userType,
+                userId = user.id,
+                songId = songId,
+                operation = SongRepository.FavouriteOperation.ADD
+            )
+        }
+
+        return song.getResponseSong(songId)
+    }
+
+    override suspend fun removeFromFavourite(helper: UserTypeHelper, songId: Long): Boolean {
+        val user = dbUsers.getDbUser(helper) ?: return false
+
+        song.handleFavouriteOperation(
+            userType = helper.userType,
+            userId = user.id,
+            songId = songId,
+            operation = SongRepository.FavouriteOperation.REMOVE
+        )
+
+        return true
     }
 
     // private functions

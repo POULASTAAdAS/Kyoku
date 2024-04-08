@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.remote
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -110,4 +111,14 @@ interface ServiceApi {
     suspend fun getPlaylistOnAlbumId(
         @Body request: CreatePlaylistReq
     ): ResponsePlaylist
+
+    @GET("/api/authorised/addSongToFavourite")
+    suspend fun addSongToFavourite(
+        @Query("songId") id: Long
+    ): ResponseSong
+
+    @GET("/api/authorised/removeSongFromFavourite")
+    suspend fun removeFromFavourite(
+        @Query("songId") id: Long
+    ): Boolean
 }

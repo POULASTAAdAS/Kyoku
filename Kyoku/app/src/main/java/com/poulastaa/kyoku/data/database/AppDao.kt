@@ -384,8 +384,17 @@ interface AppDao {
     @Query("select * from ArtistMixTable")
     fun readAllArtistMix(): Flow<List<ArtistMixTable>>
 
-    @Query("select id from FavouriteTable where songId = :songId")
-    suspend fun checkIfSongAlreadyInFavourite(songId: Long): Long?
+    @Query(
+        """
+        select SongTable.songId from SongTable 
+        join FavouriteTable on  FavouriteTable.songId = SongTable.id
+        where FavouriteTable.songId
+    """
+    )
+    suspend fun getAllFavouriteSongId(): List<Long>
+
+    @Query("select id from SongTable where songId = :songId")
+    suspend fun getAllIdOnSongId(songId: Long): List<Long>
 
     @Query("select id from AlbumTable where albumId = :albumId")
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long): Long?
@@ -405,8 +414,8 @@ interface AppDao {
     @Query("select songId from ArtistMixTable")
     suspend fun getSongIdListOfArtistMix(): List<Long>
 
-    @Query("select id from AlbumTable where albumId = :albumId")
-    suspend fun isAlbumSaved(albumId: Long): Long?
+    @Query("delete from FavouriteTable where songId in (:listOfId)")
+    suspend fun deleteFromFavourite(listOfId: List<Long>)
 
     // remove all
     @Query("delete from AlbumPrevTable")

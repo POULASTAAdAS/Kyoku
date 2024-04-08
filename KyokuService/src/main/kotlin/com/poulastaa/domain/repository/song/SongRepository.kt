@@ -9,6 +9,11 @@ import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.data.model.utils.UserTypeHelper
 
 interface SongRepository {
+    enum class FavouriteOperation {
+        ADD,
+        REMOVE
+    }
+
     suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist
     suspend fun getDailyMixPreview(helper: UserTypeHelper): DailyMixPreview
     suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
@@ -20,4 +25,13 @@ interface SongRepository {
     ): Boolean
 
     suspend fun getResponseSongOnId(listOfId: List<Long>): List<ResponseSong>
+
+    suspend fun getResponseSong(songId: Long): ResponseSong
+
+    suspend fun handleFavouriteOperation(
+        userType: UserType,
+        userId: Long,
+        songId: Long,
+        operation: FavouriteOperation
+    )
 }

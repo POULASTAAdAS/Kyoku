@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.repository
 
+import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
@@ -180,6 +181,22 @@ class ServiceRepositoryImpl @Inject constructor(
             api.getPlaylistOnAlbumId(req)
         } catch (e: Exception) {
             ResponsePlaylist()
+        }
+    }
+
+    override suspend fun addSongToFavourite(songId: Long): ResponseSong {
+        return try {
+            api.addSongToFavourite(songId)
+        } catch (e: Exception) {
+            ResponseSong()
+        }
+    }
+
+    override suspend fun removeFromFavourite(songId: Long): Boolean {
+        return try {
+            api.removeFromFavourite(songId)
+        } catch (e: Exception) {
+            false
         }
     }
 }

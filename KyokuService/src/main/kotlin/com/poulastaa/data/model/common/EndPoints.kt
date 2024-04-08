@@ -32,6 +32,9 @@ sealed class EndPoints(val route: String) {
     data object PlaylistOnSongId : EndPoints("/api/authorised/playlistOnSongId")
     data object PlaylistOnAlbumId : EndPoints("/api/authorised/playlistOnAlbumId")
 
+    data object AddSongToFavourite : EndPoints("/api/authorised/addSongToFavourite")
+    data object RemoveSongFromFavourite : EndPoints("/api/authorised/removeSongFromFavourite")
+
     data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
     data object PlaySongPlaylist : EndPoints(route = "/api/authorised/playSong/playlist")
     data object PlaySong : EndPoints(route = "/api/authorised/playSong/song")

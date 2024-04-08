@@ -496,8 +496,9 @@ where songalbumartistrelation.albumId = 829;
 select * from playlist;
 
 
+select * from passkeyuserfavourite;
 
-
+select * from googleuserfavourite;
 
 
 

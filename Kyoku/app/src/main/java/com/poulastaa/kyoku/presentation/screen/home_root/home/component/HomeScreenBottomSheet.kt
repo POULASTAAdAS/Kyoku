@@ -300,9 +300,8 @@ fun HomeScreenBottomSheet(
                                 onClick = {
                                     scope.launch {
                                         onClick.invoke(
-                                            HomeUiEvent.BottomSheetItemClick.AddToFavourite(
-                                                id = data.id,
-                                                type = SongType.HISTORY_SONG
+                                            HomeUiEvent.BottomSheetItemClick.RemoveFromFavourite(
+                                                id = data.id
                                             )
                                         )
                                     }
