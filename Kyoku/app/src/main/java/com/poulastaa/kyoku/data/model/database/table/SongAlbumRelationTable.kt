@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.data.model.database.table
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 
@@ -8,7 +7,7 @@ import androidx.room.ForeignKey
     tableName = "SongAlbumRelationTable",
     foreignKeys = [
         ForeignKey(
-            entity = SongTable::class,
+            entity = AlbumSongTable::class,
             parentColumns = ["id"],
             childColumns = ["songId"],
             onDelete = ForeignKey.CASCADE
@@ -23,8 +22,6 @@ import androidx.room.ForeignKey
     primaryKeys = ["songId", "albumId"]
 )
 data class SongAlbumRelationTable(
-    @ColumnInfo(index = true)
     val songId: Long,
-    @ColumnInfo(index = true)
     val albumId: Long
 )

@@ -514,12 +514,14 @@ select * from googleAuthUser;
 select * from artist order by points desc;
 
 
+select * from album where id = 54;
+
+select * from SongAlbumArtistRelation where albumid = 54;
+
+select * from artist where id in (170 , 222 , 223);
 
 
-
-
-
-
+select * from googleuserpinnedalbum;
 
 
 

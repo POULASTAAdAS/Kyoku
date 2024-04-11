@@ -178,7 +178,7 @@ fun HomeScreenContentOldUser(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .fillMaxWidth(1f / 2),
-                                name = data.savedAlbumPrev[0].album,
+                                name = data.savedAlbumPrev[0].name,
                                 imageUrl = data.savedAlbumPrev[0].coverImage,
                                 isCookie = isCookie,
                                 headerValue = headerValue,
@@ -187,7 +187,7 @@ fun HomeScreenContentOldUser(
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
                                                 type = ItemsType.ALBUM,
-                                                name = data.savedAlbumPrev[0].album
+                                                name = data.savedAlbumPrev[0].name
                                             )
                                         )
                                     }
@@ -234,7 +234,7 @@ fun HomeScreenContentOldUser(
                             HomeScreenCardWithText(
                                 modifier = Modifier
                                     .fillMaxSize(),
-                                name = data.savedAlbumPrev[1].album,
+                                name = data.savedAlbumPrev[1].name,
                                 imageUrl = data.savedAlbumPrev[1].coverImage,
                                 isCookie = isCookie,
                                 headerValue = headerValue,
@@ -243,7 +243,7 @@ fun HomeScreenContentOldUser(
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
                                                 type = ItemsType.ALBUM,
-                                                name = data.savedAlbumPrev[1].album
+                                                name = data.savedAlbumPrev[1].name
                                             )
                                         )
                                     }

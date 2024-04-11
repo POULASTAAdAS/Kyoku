@@ -13,9 +13,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
-import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -97,35 +95,35 @@ class SongViewViewModel @Inject constructor(
             when (getItemType(typeString)) {
                 ItemsType.PLAYLIST -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        db.getPlaylist(id).collect {
-                            state = state.copy(
-                                type = if (it.isEmpty()) ItemsType.ERR else ItemsType.PLAYLIST,
-                                data = state.data.copy(
-                                    playlist = it.groupBy { song -> song.name }.map { entry ->
-                                        UiPlaylist(
-                                            name = entry.key,
-                                            listOfSong = entry.value
-                                        )
-                                    }.firstOrNull() ?: UiPlaylist()
-                                )
-                            )
-                        }
+//                        db.getPlaylist(id).collect {
+//                            state = state.copy(
+//                                type = if (it.isEmpty()) ItemsType.ERR else ItemsType.PLAYLIST,
+//                                data = state.data.copy(
+//                                    playlist = it.groupBy { song -> song.name }.map { entry ->
+//                                        UiPlaylist(
+//                                            name = entry.key,
+//                                            listOfSong = entry.value
+//                                        )
+//                                    }.firstOrNull() ?: UiPlaylist()
+//                                )
+//                            )
+//                        }
                     }
                 }
 
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        when (isApiCall) {
-                            true -> UiAlbum() /*getAlbumFromApi(id)*/
-                            false -> db.getAlbum(name)
-                        }.let {
-                            state = state.copy(
-                                type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
-                                data = state.data.copy(
-                                    album = it
-                                )
-                            )
-                        }
+//                        when (isApiCall) {
+//                            true -> UiAlbum() /*getAlbumFromApi(id)*/
+//                            false -> db.getAlbum(name)
+//                        }.let {
+//                            state = state.copy(
+//                                type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
+//                                data = state.data.copy(
+//                                    album = it
+//                                )
+//                            )
+//                        }
                     }
                 }
 
@@ -244,14 +242,14 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.FAVOURITE -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        val favourites = db.getAllFavouriteSongs()
-
-                        state = state.copy(
-                            type = if (favourites.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
-                            data = state.data.copy(
-                                favourites = favourites
-                            )
-                        )
+//                        val favourites = db.getAllFavouriteSongs()
+//
+//                        state = state.copy(
+//                            type = if (favourites.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
+//                            data = state.data.copy(
+//                                favourites = favourites
+//                            )
+//                        )
                     }
                 }
 

@@ -62,7 +62,8 @@ data class HomeUiSongPrev(
 
 @Stable
 data class HomeUiSavedAlbumPrev(
-    val album: String,
+    val albumId: Long,
+    val name: String,
     val coverImage: String,
 )
 

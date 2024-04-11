@@ -192,7 +192,7 @@ class SpotifyPlaylistViewModel @Inject constructor(
                         isFirstPlaylist = false
                     )
 
-                    db.insertIntoPlaylistSpotify(
+                    db.insertIntoPlaylist(
                         data = response.listOfResponseSong,
                         id = response.id,
                         playlistName = response.name

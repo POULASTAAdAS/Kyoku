@@ -1,4 +1,4 @@
-insert ignore into passkeyUserListenHistory (userId , songId) values
+insert ignore into GoogleUserListenHistory (userId , songId) values
 (1,15019),
 (1,14400),
 (1,19373),
@@ -22,9 +22,7 @@ insert ignore into passkeyUserListenHistory (userId , songId) values
 (1,12262);
 
 
-select * from googleuserplaylist;
-
-insert into passkeyuserplaylist values
+insert into Googleuserplaylist values
 (1 ,2 ,9175 , 1),
 (11,2 ,812 , 1),
 (111,2 ,8996 , 1),
@@ -35,7 +33,7 @@ insert into passkeyuserplaylist values
 (101,2 ,90 , 1),
 (110,2 ,891 , 1);
 
-insert into passkeyUserFavourite(userId , songId) values
+insert into GoogleUserFavourite(userId , songId) values
 (1,829),
 (1,118),
 (1,54),
@@ -45,7 +43,7 @@ insert into passkeyUserFavourite(userId , songId) values
 
 
 
-insert into passkeyUserAlbumRelation (userid , albumid) values 
+insert into GoogleUserAlbumRelation (userid , albumid) values 
 (1,829),
 (1,118),
 (1,54),
@@ -53,7 +51,7 @@ insert into passkeyUserAlbumRelation (userid , albumid) values
 (1,130);
 
 
-insert into passkeyuserartistrelation values
+insert into Googleuserartistrelation values
 (1,3,1),
 (2,326,1),
 (3,172,1),

@@ -9,14 +9,14 @@ import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.PinnedId
 import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.SongInfo
-import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
+import com.poulastaa.kyoku.data.model.database.table.AlbumSongTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
-import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
+import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
@@ -25,22 +25,19 @@ import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
-import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDao {
-    @Transaction
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSong(song: SongTable): Long
+//    @Transaction
+//    @Insert(onConflict = OnConflictStrategy.IGNORE)
+//    suspend fun insertSong(song: SongTable): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPlaylistSongTable(entrys: List<PlaylistSongTable>): List<Long>
@@ -113,17 +110,17 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoDailyMixPrevTable(data: List<DailyMixPrevTable>)
 
-    @Query("select * from AlbumPrevTable limit 1")
-    suspend fun isFirstOpen(): List<AlbumPrevTable>
+    @Query("select * from PreviewAlbumTable limit 1")
+    suspend fun isFirstOpen(): List<PreviewAlbumTable>
 
     @Query("select * from PlaylistTable limit 1")
     suspend fun ifNewUserCheck_1(): List<PlaylistTable>
 
-    @Query("select * from ALBUMTABLE limit 1")
+    @Query("select * from AlbumTable limit 1")
     suspend fun ifNewUserCheck_2(): List<AlbumTable>
 
-    @Query("select * from FavouriteTable limit 1")
-    suspend fun isNewUserCheck_3(): List<FavouriteTable>
+    @Query("select * from FavouriteSongTable limit 1")
+    suspend fun isNewUserCheck_3(): List<FavouriteSongTable>
 
 
     @Transaction
@@ -142,7 +139,7 @@ interface AppDao {
         ArtistSongTable.songId , ArtistSongTable.title , ArtistSongTable.coverImage 
         from ArtistPreviewSongRelation
         join ArtistTable on ArtistTable.artistId = ArtistPreviewSongRelation.artistId
-        join ArtistSongTable on ArtistSongTable.id = ArtistPreviewSongRelation.songId
+        join ArtistSongTable on ArtistSongTable.id = ArtistPreviewSongRelation.songId order by ArtistTable.artistId
     """
     )
     fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
@@ -179,29 +176,29 @@ interface AppDao {
     )
     fun redRecentlyPlayed(): Flow<List<HomeUiSongPrev>>
 
-    @Query("select count(*) from FavouriteTable")
+    @Query("select count(*) from FavouriteSongTable")
     suspend fun readFavouritePrev(): Long
 
-    @Transaction
     @Query(
         """
-        select SongTable.coverImage  , SongTable.album  from SongTable
-        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
-        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
-        where SongAlbumRelationTable.albumId in (
-            select id from AlbumTable
-        ) group by AlbumTable.name order by AlbumTable.points desc limit 2
+        select AlbumTable.albumId , AlbumTable.name , AlbumSongTable.coverImage 
+        from AlbumSongTable
+        join SongAlbumRelationTable on SongAlbumRelationTable.songId =  AlbumSongTable.id
+        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId group by AlbumTable.id 
     """
     )
     fun radSavedAlbumPrev(): Flow<List<HomeUiSavedAlbumPrev>>
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoFavourite(data: FavouriteTable)
+    suspend fun insertIntoFavourite(entrys: List<FavouriteSongTable>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoAlbum(data: AlbumTable): Long
+    suspend fun insertIntoAlbum(data: AlbumTable): Long?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insetIntoAlbumSongTable(data: AlbumSongTable): Long?
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
@@ -209,18 +206,18 @@ interface AppDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun insertIntoRecentlyPlayedPrevTable(data: RecentlyPlayedPrevTable)
+    suspend fun insertIntoRecentlyPlayedPrevTable(entrys: List<RecentlyPlayedPrevTable>)
 
-    @Transaction
     @Query(
         """
-        select AlbumTable.id , AlbumTable.name , SongTable.coverImage from SongTable
-        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
-        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
-        where AlbumTable.id order by AlbumTable.points desc
+        SELECT  AlbumTable.albumId as id, AlbumTable.name, AlbumSongTable.coverImage
+        FROM  SongAlbumRelationTable
+        JOIN  AlbumTable ON AlbumTable.id = SongAlbumRelationTable.albumId
+        JOIN AlbumSongTable ON AlbumSongTable.id = SongAlbumRelationTable.songId 
+        group by AlbumTable.albumId order by AlbumTable.points desc
     """
     )
-    fun readAllAlbum(): Flow<List<UiAlbumPrev>>
+    fun readAllAlbumPreview(): Flow<List<UiAlbumPrev>>
 
     @Transaction
     @Query("select * from ArtistTable")
@@ -284,26 +281,24 @@ interface AppDao {
 
 
     // read from pinned table
-//    @Transaction
-//    @Query(
-//        """
-//        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage ,SongTable.songId  from PlaylistTable
-//        join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
-//        join SongTable on SongTable.id = SongPlaylistRelationTable.songId
-//        where PlaylistTable.id in (
-//            select playlistId from PinnedTable
-//        ) order by PlaylistTable.points desc
-//    """
-//    )
-//    fun readPinnedPlaylist(): Flow<List<PlaylistPrevResult>>
-
-    @Transaction
     @Query(
         """
-        select SongTable.id, SongTable.album as name , SongTable.coverImage from SongTable 
-        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
-        join PinnedTable on  PinnedTable.albumId = SongAlbumRelationTable.albumId
-        where PinnedTable.albumId
+        select  PlaylistTable.playlistId ,  PlaylistTable.name , PlaylistSongTable.coverImage 
+        from PlaylistSongTable
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = PlaylistSongTable.songId
+        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
+        join PinnedTable on PinnedTable.playlistId = PlaylistTable.id
+    """
+    )
+    fun readPinnedPlaylist(): Flow<List<PlaylistPrevResult>>
+
+    @Query(
+        """
+        select AlbumTable.albumId as id, AlbumTable.name, AlbumSongTable.coverImage from AlbumSongTable
+        join SongAlbumRelationTable on SongAlbumRelationTable.songId = AlbumSongTable.id
+        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId 
+        join PinnedTable on PinnedTable.albumId = AlbumTable.id
+        group by AlbumTable.albumId order by AlbumTable.points desc
     """
     )
     fun readPinnedAlbum(): Flow<List<UiAlbumPrev>>
@@ -322,52 +317,47 @@ interface AppDao {
 
 
     // remove playlist album , artists
-    @Transaction
     @Query("delete from PlaylistTable where id = :id")
     fun deletePlaylist(id: Long)
 
-    @Transaction
     @Query("delete from AlbumTable where id = :id")
     fun deleteAlbum(id: Long)
 
-    @Transaction
     @Query("delete from ArtistTable where artistId = :id")
     fun deleteArtist(id: Long)
 
-    @Transaction
-    @Query("delete from FavouriteTable")
+    @Query("delete from FavouriteSongTable")
     fun deleteFavourites()
 
-
     // songView screen query
-    @Query(
-        """
-        select SongTable.id , PlaylistTable.name , SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable 
-        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = SongTable.id
-        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
-        where PlaylistTable.id = :id
-    """
-    )
-    fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
+//    @Query(
+//        """
+//        select SongTable.id , PlaylistTable.name , SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable
+//        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = SongTable.id
+//        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
+//        where PlaylistTable.id = :id
+//    """
+//    )
+//    fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
 
-    @Query(
-        """
-        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
-        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
-        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
-        where AlbumTable.name = :name
-    """
-    )
-    suspend fun getAlbum(name: String): List<UiSong>
+//    @Query(
+//        """
+//        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
+//        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
+//        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
+//        where AlbumTable.name = :name
+//    """
+//    )
+//    suspend fun getAlbum(name: String): List<UiSong>
 
-    @Query(
-        """
-        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
-        join FavouriteTable on FavouriteTable.songId = SongTable.id
-        where FavouriteTable.songId
-    """
-    )
-    suspend fun getAllFavouriteSongs(): List<UiSong>
+//    @Query(
+//        """
+//        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
+//        join FavouriteTable on FavouriteTable.songId = SongTable.id
+//        where FavouriteTable.songId
+//    """
+//    )
+//    suspend fun getAllFavouriteSongs(): List<UiSong>
 
     @Query("select coverImage from ArtistTable where artistId = :id")
     suspend fun getArtistCoverImage(id: Long): String
@@ -392,17 +382,17 @@ interface AppDao {
     @Query("select * from ArtistMixTable")
     fun readAllArtistMix(): Flow<List<ArtistMixTable>>
 
-    @Query(
-        """
-        select SongTable.songId from SongTable 
-        join FavouriteTable on  FavouriteTable.songId = SongTable.id
-        where FavouriteTable.songId
-    """
-    )
-    suspend fun getAllFavouriteSongId(): List<Long>
+//    @Query(
+//        """
+//        select SongTable.songId from SongTable
+//        join FavouriteTable on  FavouriteTable.songId = SongTable.id
+//        where FavouriteTable.songId
+//    """
+//    )
+//    suspend fun getAllFavouriteSongId(): List<Long>
 
-    @Query("select id from SongTable where songId = :songId")
-    suspend fun getAllIdOnSongId(songId: Long): List<Long>
+//    @Query("select id from SongTable where songId = :songId")
+//    suspend fun getAllIdOnSongId(songId: Long): List<Long>
 
     @Query("select id from AlbumTable where albumId = :albumId")
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long): Long?
@@ -422,15 +412,11 @@ interface AppDao {
     @Query("select songId from ArtistMixTable")
     suspend fun getSongIdListOfArtistMix(): List<Long>
 
-    @Query("delete from FavouriteTable where songId in (:listOfId)")
-    suspend fun deleteFromFavourite(listOfId: List<Long>)
+//    @Query("delete from FavouriteTable where songId in (:listOfId)")
+//    suspend fun deleteFromFavourite(listOfId: List<Long>)
 
 
     // remove all
-    @Query("delete from AlbumPrevTable")
-    suspend fun dropAlbumPrevTable()
-
-
     @Query("delete from  AlbumTable")
     suspend fun dropAlbumTable()
 
@@ -448,9 +434,6 @@ interface AppDao {
 
     @Query("delete from ArtistMixTable")
     suspend fun dropArtistMixTable()
-
-    @Query("delete from  FavouriteTable")
-    suspend fun dropFavouriteTable()
 
     @Query("delete from  FevArtistsMixPreviewTable")
     suspend fun dropFavArtistMixPrevTable()
@@ -473,6 +456,6 @@ interface AppDao {
     @Query("delete from  SongPreviewTable")
     suspend fun dropSongPrevTable()
 
-    @Query("delete from  SongTable")
-    suspend fun dropSongTable()
+//    @Query("delete from  SongTable")
+//    suspend fun dropSongTable()
 }

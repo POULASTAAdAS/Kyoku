@@ -5,7 +5,6 @@ import com.poulastaa.data.model.auth.auth_response.*
 import com.poulastaa.data.model.db_table.AlbumTable
 import com.poulastaa.data.model.db_table.ArtistTable
 import com.poulastaa.data.model.db_table.DbResponseArtistPreview
-import com.poulastaa.data.model.db_table.DbResponseArtistPreview.Companion.toListOfSongPreview
 import com.poulastaa.data.model.db_table.PlaylistTable
 import com.poulastaa.data.model.db_table.song.SongAlbumArtistRelationTable
 import com.poulastaa.data.model.db_table.song.SongArtistRelationTable
@@ -43,7 +42,10 @@ import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.login.LogInResponseRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.*
+import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.toAlbumResponse
+import com.poulastaa.utils.toPlaylistResult
+import com.poulastaa.utils.toResponseSong
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -548,7 +550,7 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 AlbumPreview(
                     id = it.key,
                     name = it.value[0].name,
-                    listOfSongs = it.value.toPreviewSong()
+                    coverImage = it.value[0].cover
                 )
             }
     }
@@ -708,7 +710,13 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 name = it.key,
                 imageUrl = ResponseArtist.getArtistImageUrl(it.value[0].artistImage)
             ),
-            listOfSongs = it.value.toListOfSongPreview().take(5)
+            listOfSongs =  it.value.map { result ->
+                ArtistSong(
+                    songId = result.songId.toLong(),
+                    title = result.songTitle,
+                    coverImage = result.songCover
+                )
+            }.take(6)
         )
     }
 

@@ -22,12 +22,15 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGen
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
 import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
+import com.poulastaa.kyoku.data.model.database.table.AlbumSongTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
+import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
+import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
@@ -152,6 +155,17 @@ fun ResponseSong.toPlaylistSongTable() = PlaylistSongTable(
     date = this.date
 )
 
+fun ResponseSong.toAlbumTableEntry() = AlbumSongTable(
+    songId = this.id,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    totalTime = this.totalTime,
+    title = this.title,
+    artist = this.artist,
+    album = this.album,
+    date = this.date
+)
+
 fun SuggestGenreResponse.toUiGenreList(): List<UiGenre> = this.genreList.map {
     UiGenre(
         name = it,
@@ -220,6 +234,20 @@ fun ResponseArtist.toArtistTableEntry() = ArtistTable(
     coverImage = this.imageUrl
 )
 
+fun List<ResponseSong>.toFavouriteTableEntry() = this.map {
+    FavouriteSongTable(
+        songId = it.id,
+        coverImage = it.coverImage,
+        masterPlaylistUrl = it.masterPlaylistUrl,
+        totalTime = it.totalTime,
+        title = it.title,
+        artist = it.artist,
+        album = it.album,
+        date = it.date
+    )
+}
+
+
 fun ArtistSong.toArtistSongEntry() = ArtistSongTable(
     songId = this.songId,
     title = this.title,
@@ -235,6 +263,14 @@ fun List<SongPreview>.toSongPrevTableEntry() =
 fun List<Long>.toDailyMixPrevEntry() = this.map {
     DailyMixPrevTable(
         id = it
+    )
+}
+
+fun List<SongPreview>.toHistoryPrevSongEntry() = this.map {
+    RecentlyPlayedPrevTable(
+        songId = it.id.toLong(),
+        title = it.title,
+        coverImage = it.coverImage
     )
 }
 
