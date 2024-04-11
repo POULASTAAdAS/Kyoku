@@ -3,12 +3,14 @@ package com.poulastaa.data.repository.user_db
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.auth.UserCreationStatus
-import com.poulastaa.data.model.auth.auth_response.*
+import com.poulastaa.data.model.auth.auth_response.HomeResponse
+import com.poulastaa.data.model.auth.auth_response.HomeResponseStatus
+import com.poulastaa.data.model.auth.auth_response.HomeType
 import com.poulastaa.data.model.auth.jwt.*
-import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.data.model.db_table.InvalidRefreshTokenTable
-import com.poulastaa.domain.dao.user.EmailAuthUser
+import com.poulastaa.data.model.db_table.user.EmailAuthUserTable
 import com.poulastaa.domain.dao.InvalidRefreshToken
+import com.poulastaa.domain.dao.user.EmailAuthUser
 import com.poulastaa.domain.repository.login.LogInResponseRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
 import com.poulastaa.plugins.dbQuery
@@ -252,6 +254,10 @@ class EmailAuthUserRepositoryImpl(
             loginRepository.getArtistPrev(userId, userType)
         }
 
+        val getPinnedDeferred = async {
+            loginRepository.getPinnedData(userId, userType)
+        }
+
         val getDailyMixPrevDeferred = async {
             loginRepository.getDailyMixPrev(userId, userType)
         }
@@ -279,6 +285,7 @@ class EmailAuthUserRepositoryImpl(
             fevArtistsMixPreview = getFevArtistMixDeferred.await(),
             albumPreview = getAlbumPrevDeferred.await(),
             artistsPreview = getArtistPrevDeferred.await(),
+            pinned = getPinnedDeferred.await(),
             dailyMixPreview = getDailyMixPrevDeferred.await(),
             albums = getAlbumsDeferred.await(),
             playlist = getPlaylistsDeferred.await(),

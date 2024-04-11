@@ -10,6 +10,8 @@ interface LogInResponseRepository {
     suspend fun getDailyMixPrev(userId: Long, userType: UserType): DailyMixPreview
     suspend fun getHistoryPrev(userId: Long, userType: UserType): List<SongPreview>
 
+    suspend fun getPinnedData(userId: Long, userType: UserType): List<Pinned>
+
     suspend fun isOldEnough(userId: Long, userType: UserType): Boolean
 
     suspend fun getAlbums(userId: Long, userType: UserType): List<ResponseAlbum>

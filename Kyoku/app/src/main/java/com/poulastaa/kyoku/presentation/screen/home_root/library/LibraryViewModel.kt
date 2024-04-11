@@ -333,7 +333,7 @@ class LibraryViewModel @Inject constructor(
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
-                                    type = ItemsType.FAVOURITE,
+                                    itemsType = ItemsType.FAVOURITE,
                                     route = Screens.SongView.route
                                 )
                             )
@@ -363,7 +363,7 @@ class LibraryViewModel @Inject constructor(
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
-                                    type = ItemsType.PLAYLIST,
+                                    itemsType = ItemsType.PLAYLIST,
                                     id = event.id
                                 )
                             )
@@ -393,7 +393,7 @@ class LibraryViewModel @Inject constructor(
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
-                                    type = ItemsType.ALBUM,
+                                    itemsType = ItemsType.ALBUM,
                                     name = event.name
                                 )
                             )
@@ -424,7 +424,7 @@ class LibraryViewModel @Inject constructor(
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
-                                    type = ItemsType.ARTIST,
+                                    itemsType = ItemsType.ARTIST,
                                     id = event.id,
                                     name = event.name
                                 )

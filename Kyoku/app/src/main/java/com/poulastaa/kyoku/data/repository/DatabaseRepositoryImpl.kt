@@ -7,10 +7,12 @@ import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
+import com.poulastaa.kyoku.data.model.api.service.home.Pinned
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseArtistsPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
+import com.poulastaa.kyoku.data.model.api.service.pinned.IdType
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
 import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
 import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
@@ -163,6 +165,48 @@ class DatabaseRepositoryImpl @Inject constructor(
                     }
                 }
             }.await()
+        }
+    }
+
+    fun insertIntoPinned(list: List<Pinned>) {
+        if (list.isEmpty()) return
+
+        CoroutineScope(Dispatchers.IO).launch {
+            list.forEach { pinned ->
+                when (pinned.type) {
+                    IdType.PLAYLIST -> {
+                        dao.getPlaylistInternalId(pinned.id)?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    playlistId = id
+                                )
+                            )
+                        }
+                    }
+
+                    IdType.ALBUM -> {
+                        dao.getAlbumInternalId(pinned.id)?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    albumId = id
+                                )
+                            )
+                        }
+                    }
+
+                    IdType.ARTIST -> {
+                        dao.getArtistInternalId(pinned.id.toInt())?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    artistId = id
+                                )
+                            )
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
         }
     }
 
@@ -546,6 +590,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getSongIdListOfArtistMix() = dao.getSongIdListOfArtistMix()
 
+    // ---------------------------------------------------------------------------------------------
 
     // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
@@ -586,6 +631,8 @@ class DatabaseRepositoryImpl @Inject constructor(
         song.await()
     }
 
+
+    // ---------------------------------------------------------------------------------------------
 
     // internal database
     fun addToInternalPinnedTable(data: InternalPinnedTable) {

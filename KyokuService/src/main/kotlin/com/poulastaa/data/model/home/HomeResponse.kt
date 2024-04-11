@@ -10,6 +10,7 @@ data class HomeResponse(
     val fevArtistsMixPreview: List<FevArtistsMixPreview> = emptyList(), //for new user
     val albumPreview: ResponseAlbumPreview = ResponseAlbumPreview(),
     val artistsPreview: List<ResponseArtistsPreview> = emptyList(),
+    val pinned: List<Pinned> = emptyList(),
 
     /** Send when there are enough songs to calculate.
      ** Dependent on isOldEnough from HomeReq */

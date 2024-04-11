@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.edit_playlist
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +10,10 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiEvent
+import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiPlaylist
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiState
+import com.poulastaa.kyoku.data.model.screens.edit_playlist.LoadingStatus
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +56,6 @@ class EditPlaylistViewModel @Inject constructor(
     init {
         readAccessToken()
         readAuthType()
-        loadData()
     }
 
     private fun readAccessToken() {
@@ -75,12 +78,59 @@ class EditPlaylistViewModel @Inject constructor(
         }
     }
 
-    private fun loadData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            db.getAllPlaylist().collect {
+    fun loadData(
+        typeString: String,
+        id: Long
+    ) {
+        Log.d("playlistId", id.toString())
 
+        viewModelScope.launch(Dispatchers.IO) {
+            db.readPlaylistPreview().collect { results ->
+                results.groupBy {
+                    it.id
+                }.map {
+                    EditPlaylistUiPlaylist(
+                        id = it.key,
+                        name = it.value[0].name,
+                        totalSongs = it.value.size,
+                        isSelected = it.value.map { song ->
+                            if (song.id == id) true else null
+                        }.firstOrNull() ?: false,
+                        urls = it.value.map { song ->
+                            song.coverImage
+                        }.take(4)
+                    )
+                }.forEach {
+                    Log.d("playlist", it.toString())
+                }
             }
         }
+    }
+
+    private fun load(typeString: String) = when (typeString) {
+        SongType.HISTORY_SONG.name -> SongType.HISTORY_SONG
+        SongType.ARTIST_SONG.name -> SongType.ARTIST_SONG
+        else -> {
+            onEvent(EditPlaylistUiEvent.EmitToast("opp's something went wrong"))
+            null
+        }
+    }.let {
+        if (it == null) {
+            state = state.copy(
+                loadingStatus = LoadingStatus.ERR
+            )
+
+            return@let
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+        }
+    }
+
+
+    private fun getSong() {
+
     }
 
     fun onEvent(event: EditPlaylistUiEvent) {

@@ -145,7 +145,7 @@ class HomeRootViewModel @Inject constructor(
                     _uiEvent.send(
                         UiEvent.NavigateWithData(
                             route = event.route,
-                            type = event.type,
+                            itemsType = event.type,
                             id = event.id,
                             name = event.name,
                             longClickType = event.longClickType,

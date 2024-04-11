@@ -4,6 +4,8 @@ import androidx.compose.runtime.Stable
 
 @Stable
 data class EditPlaylistUiState(
+    val loadingStatus: LoadingStatus = LoadingStatus.LOADING,
+
     val searchText: String = "",
     val isSearchEnable: Boolean = false,
 
@@ -26,3 +28,9 @@ data class EditPlaylistUiPlaylist(
     val isSelected: Boolean = false,
     val urls: List<String> = emptyList(),
 )
+
+enum class LoadingStatus {
+    LOADING,
+    NOT_LOADING,
+    ERR
+}

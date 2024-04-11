@@ -74,6 +74,10 @@ class GoogleAuthUserRepositoryImpl(
             loginRepository.getArtistPrev(userId, userType)
         }
 
+        val getPinnedDeferred = async {
+            loginRepository.getPinnedData(userId, userType)
+        }
+
         val getDailyMixPrevDeferred = async {
             loginRepository.getDailyMixPrev(userId, userType)
         }
@@ -103,7 +107,7 @@ class GoogleAuthUserRepositoryImpl(
             albumPreview = getAlbumPrevDeferred.await(),
             artistsPreview = getArtistPrevDeferred.await(),
             dailyMixPreview = getDailyMixPrevDeferred.await(),
-
+            pinned = getPinnedDeferred.await(),
             albums = getAlbumsDeferred.await(),
             playlist = getPlaylistsDeferred.await(),
             favourites = getFavouritesDeferred.await(),

@@ -150,7 +150,7 @@ class ArtistAllViewModel @Inject constructor(
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
-                                    type = ItemsType.ALBUM,
+                                    itemsType = ItemsType.ALBUM,
                                     id = event.id,
                                     isApiCall = true
                                 )

@@ -22,6 +22,15 @@ import com.poulastaa.data.model.db_table.user_fev.PasskeyUserFavouriteTable
 import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
 import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_pinned_album.EmailUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.GoogleUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbumTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.EmailUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.GoogleUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArtistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.EmailUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.GoogleUserPinnedPlaylistTable
+import com.poulastaa.data.model.db_table.user_pinned_playlist.PasskeyUserPinnedPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.EmailUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.GoogleUserPlaylistTable
 import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
@@ -173,6 +182,17 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 )
             }
         }
+    }
+
+    override suspend fun getPinnedData(
+        userId: Long,
+        userType: UserType
+    ): List<Pinned> = withContext(Dispatchers.IO) {
+        val artist = async { getPinnedArtist(userType, userId) }
+        val album = async { getPinnedAlbum(userType, userId) }
+        val playlist = async { getPinnedPlaylist(userId, userType) }
+
+        artist.await() + album.await() + playlist.await()
     }
 
     override suspend fun getAlbums(userId: Long, userType: UserType): List<ResponseAlbum> = dbQuery {
@@ -829,5 +849,140 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
             }.groupBy {
                 it.artist
             }
+    }
+
+    private suspend fun getPinnedPlaylist(userId: Long, userType: UserType) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserPinnedPlaylistTable.slice(
+                    GoogleUserPinnedPlaylistTable.playlistId
+                ).select {
+                    GoogleUserPinnedPlaylistTable.userId eq userId
+                }.map {
+                    it[GoogleUserPinnedPlaylistTable.playlistId]
+                }.map {
+                    Pinned(
+                        id = it,
+                        type = IdType.PLAYLIST
+                    )
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserPinnedPlaylistTable.slice(
+                    EmailUserPinnedPlaylistTable.playlistId
+                ).select {
+                    EmailUserPinnedPlaylistTable.userId eq userId
+                }.map {
+                    it[EmailUserPinnedPlaylistTable.playlistId]
+                }.map {
+                    Pinned(
+                        id = it,
+                        type = IdType.PLAYLIST
+                    )
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserPinnedPlaylistTable.slice(
+                    PasskeyUserPinnedPlaylistTable.playlistId
+                ).select {
+                    PasskeyUserPinnedPlaylistTable.userId eq userId
+                }.map {
+                    it[PasskeyUserPinnedPlaylistTable.playlistId]
+                }.map {
+                    Pinned(
+                        id = it,
+                        type = IdType.PLAYLIST
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun getPinnedAlbum(userType: UserType, userId: Long) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserPinnedAlbumTable.slice(
+                    GoogleUserPinnedAlbumTable.albumId
+                ).select {
+                    GoogleUserPinnedAlbumTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[GoogleUserPinnedAlbumTable.albumId],
+                        type = IdType.ALBUM
+                    )
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserPinnedAlbumTable.slice(
+                    EmailUserPinnedAlbumTable.albumId
+                ).select {
+                    EmailUserPinnedAlbumTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[EmailUserPinnedAlbumTable.albumId],
+                        type = IdType.ALBUM
+                    )
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserPinnedAlbumTable.slice(
+                    PasskeyUserPinnedAlbumTable.albumId
+                ).select {
+                    PasskeyUserPinnedAlbumTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[PasskeyUserPinnedAlbumTable.albumId],
+                        type = IdType.ALBUM
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun getPinnedArtist(userType: UserType, userId: Long) = dbQuery {
+        when (userType) {
+            UserType.GOOGLE_USER -> {
+                GoogleUserPinnedArtistTable.slice(
+                    GoogleUserPinnedArtistTable.artistId
+                ).select {
+                    GoogleUserPinnedArtistTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[GoogleUserPinnedArtistTable.artistId].toLong(),
+                        type = IdType.ARTIST
+                    )
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                EmailUserPinnedArtistTable.slice(
+                    EmailUserPinnedArtistTable.artistId
+                ).select {
+                    EmailUserPinnedArtistTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[EmailUserPinnedArtistTable.artistId].toLong(),
+                        type = IdType.ARTIST
+                    )
+                }
+            }
+
+            UserType.PASSKEY_USER -> {
+                PasskeyUserPinnedArtistTable.slice(
+                    PasskeyUserPinnedArtistTable.artistId
+                ).select {
+                    PasskeyUserPinnedArtistTable.userId eq userId
+                }.map {
+                    Pinned(
+                        id = it[PasskeyUserPinnedArtistTable.artistId].toLong(),
+                        type = IdType.ARTIST
+                    )
+                }
+            }
+        }
     }
 }

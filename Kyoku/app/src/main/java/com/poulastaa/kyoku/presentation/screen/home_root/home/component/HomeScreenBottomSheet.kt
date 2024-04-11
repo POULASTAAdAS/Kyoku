@@ -301,7 +301,8 @@ fun HomeScreenBottomSheet(
                                     scope.launch {
                                         onClick.invoke(
                                             HomeUiEvent.BottomSheetItemClick.RemoveFromFavourite(
-                                                id = data.id
+                                                id = data.id,
+                                                title = data.name
                                             )
                                         )
                                     }

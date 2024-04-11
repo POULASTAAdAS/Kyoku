@@ -8,7 +8,9 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 fun ViewModel.storeCookieOrAccessToken(data: String, ds: DataStoreOperation) {
@@ -66,13 +68,13 @@ fun ViewModel.storeAuthType(data: AuthType, ds: DataStoreOperation) {
     }
 }
 
-fun ViewModel.storeData(
+fun storeData(
     context: Context,
     tokenOrCookie: String,
     response: HomeResponse,
     db: DatabaseRepositoryImpl
 ) {
-    viewModelScope.launch(Dispatchers.IO) {
+    CoroutineScope(Dispatchers.IO).launch {
         db.setValues(
             context,
             tokenOrCookie
@@ -88,6 +90,9 @@ fun ViewModel.storeData(
         db.insertIntoFavourite(list = response.favourites.listOfSongs)
         db.insertIntoAlbum(list = response.albums)
         db.insertIntoRecentlyPlayedPrev(list = response.historyPreview)
+
+        delay(2000)
+        db.insertIntoPinned(list = response.pinned)
     }
 }
 

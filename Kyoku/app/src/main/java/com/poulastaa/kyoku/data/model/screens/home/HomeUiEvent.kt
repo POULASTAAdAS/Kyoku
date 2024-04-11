@@ -23,7 +23,7 @@ sealed class HomeUiEvent {
         data class PlaySong(val id: Long, val type: SongType) : BottomSheetItemClick()
 
         data class AddToFavourite(val id: Long, val type: SongType) : BottomSheetItemClick()
-        data class RemoveFromFavourite(val id: Long) : BottomSheetItemClick()
+        data class RemoveFromFavourite(val id: Long, val title: String) : BottomSheetItemClick()
 
         data class ViewArtist(
             val id: Long,

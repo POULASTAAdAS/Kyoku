@@ -35,6 +35,7 @@ import com.poulastaa.kyoku.presentation.screen.auth.email.login.EmailLoginScreen
 import com.poulastaa.kyoku.presentation.screen.auth.email.signup.EmailSignUpScreen
 import com.poulastaa.kyoku.presentation.screen.auth.root.RootAuthScreen
 import com.poulastaa.kyoku.presentation.screen.create_playlist.CreatePlaylistScreen
+import com.poulastaa.kyoku.presentation.screen.edit_playlist.EditPlaylistScreen
 import com.poulastaa.kyoku.presentation.screen.home_root.HomeRootDrawer
 import com.poulastaa.kyoku.presentation.screen.setup.birth_date.SetBirthDateScreen
 import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.SpotifyPlaylistScreen
@@ -227,15 +228,7 @@ fun SetupNavGraph(
         }
 
 
-        composable(Screens.Player.route) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Player")
-            }
-        }
+
 
         composable(
             Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
@@ -304,6 +297,83 @@ fun SetupNavGraph(
                         }
                     }
                 )
+            }
+        }
+
+
+        composable(Screens.EditPlaylist.route + Screens.EditPlaylist.PARAMS,
+            arguments = listOf(
+                navArgument(Screens.Args.ID.title) {
+                    type = NavType.LongType
+                },
+                navArgument(Screens.Args.TYPE.title) {
+                    type = NavType.StringType
+                }
+            )
+        ) { navBackStackEntry ->
+            val type = navBackStackEntry.arguments?.getString(Screens.Args.TYPE.title) ?: ""
+            val id = navBackStackEntry.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
+
+            val show = remember {
+                mutableStateOf(false)
+            }
+
+            val scope = rememberCoroutineScope()
+            val context = LocalContext.current
+
+            LaunchedEffect(key1 = id) {
+                if (id != -1L) show.value = true
+                else {
+                    Toast.makeText(
+                        context,
+                        "Opp's Something went wrong",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    navController.popBackStack()
+                }
+            }
+
+            AnimatedVisibility(
+                visible = show.value,
+                enter = fadeIn(
+                    animationSpec = tween(durationMillis = 400)
+                ) + slideInVertically(
+                    animationSpec = tween(durationMillis = 400),
+                    initialOffsetY = { it / 2 }
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(400)
+                ) + slideOutVertically(
+                    animationSpec = tween(durationMillis = 400),
+                    targetOffsetY = { it / 2 }
+                )
+            ) {
+                EditPlaylistScreen(
+                    id = id,
+                    type = type,
+                    context = context,
+                    scope = scope,
+                    navigate = {
+
+                    },
+                    navigateBack = {
+                        scope.launch {
+                            show.value = false
+                            navController.popBackStack()
+                        }
+                    }
+                )
+            }
+        }
+
+        composable(Screens.Player.route) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Player")
             }
         }
 

@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.data.model.screens.auth
 
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.navigation.Screens
 
 sealed class UiEvent {
@@ -8,7 +9,8 @@ sealed class UiEvent {
 
     data class NavigateWithData(
         val route: String = Screens.Home.route,
-        val type: ItemsType = ItemsType.PLAYLIST,
+        val itemsType: ItemsType = ItemsType.PLAYLIST,
+        val songType: SongType = SongType.HISTORY_SONG,
         val id: Long = -1,
         val name: String = "name",
         val longClickType: String = "longClickType",

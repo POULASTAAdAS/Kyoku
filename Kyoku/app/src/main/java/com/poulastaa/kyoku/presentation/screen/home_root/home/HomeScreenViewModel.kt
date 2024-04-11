@@ -20,6 +20,7 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiState
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -79,7 +80,7 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val signInState = ds.readSignedInState().first()
 
-            if (signInState == SignInStatus.HOME.name
+            if (signInState == SignInStatus.HOME.name  // NEW USER
                 && isFirstOpen()
             ) {
                 // make api call
@@ -311,7 +312,7 @@ class HomeScreenViewModel @Inject constructor(
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
-                                    type = it.type,
+                                    itemsType = it.type,
                                     name = it.name,
                                     id = it.id,
                                     isApiCall = it.isApiCall
@@ -504,9 +505,7 @@ class HomeScreenViewModel @Inject constructor(
                 )
 
                 when (event) {
-                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> {
-                        Unit
-                    }
+                    HomeUiEvent.BottomSheetItemClick.CancelClicked -> Unit
 
                     is HomeUiEvent.BottomSheetItemClick.PlaySong -> {
                         Log.d("data", "PlaySong: ${event.id} , ${event.type}")
@@ -532,6 +531,8 @@ class HomeScreenViewModel @Inject constructor(
                                 return@launch
                             }
                             db.insertIntoFavourite(list = listOf(responseSong))
+
+                            onEvent(HomeUiEvent.EmitToast("${responseSong.title} added to favourite"))
                         }
                     }
 
@@ -546,14 +547,14 @@ class HomeScreenViewModel @Inject constructor(
                             val responseSong = api.removeFromFavourite(event.id)
 
                             if (!responseSong) {
-                                // todo add to internal database to delete
-
                                 onEvent(HomeUiEvent.SomethingWentWrong)
 
                                 return@launch
                             }
 
                             db.removeFromFavourite(event.id)
+
+                            onEvent(HomeUiEvent.EmitToast("${event.title} removed from favourite"))
                         }
                     }
 
@@ -632,11 +633,27 @@ class HomeScreenViewModel @Inject constructor(
                             }
 
                             HomeLongClickType.HISTORY_SONG -> {
-
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.EditPlaylist.route,
+                                            songType = SongType.HISTORY_SONG,
+                                            id = event.id
+                                        )
+                                    )
+                                }
                             }
 
                             HomeLongClickType.ARTIST_SONG -> {
-
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.EditPlaylist.route,
+                                            songType = SongType.ARTIST_SONG,
+                                            id = event.id
+                                        )
+                                    )
+                                }
                             }
                         }
                     }

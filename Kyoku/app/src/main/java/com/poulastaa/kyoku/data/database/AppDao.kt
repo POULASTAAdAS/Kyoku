@@ -63,6 +63,15 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIntoSongPrev(data: SongPreviewTable): Long
 
+    @Query("select id from PlaylistTable where playlistId = :playlistId")
+    suspend fun getPlaylistInternalId(playlistId: Long): Long?
+
+    @Query("select id from AlbumTable where albumId = :albumId")
+    suspend fun getAlbumInternalId(albumId: Long): Long?
+
+    @Query("select id from ArtistPrevTable where id = :artistId")
+    suspend fun getArtistInternalId(artistId: Int): Long?
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBatchIntoSongPrev(data: List<SongPreviewTable>): List<Long>
@@ -125,7 +134,7 @@ interface AppDao {
     @Transaction
     @Query(
         """
-        select SongPreviewTable.id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , 
+        select SongPreviewTable.songId as id ,SongPreviewTable.title ,  SongPreviewTable.coverImage , 
             ArtistPrevTable.name , ArtistPrevTable.id as artistId , ArtistPrevTable.coverImage as imageUrl  from SongPreviewTable
             join ArtistPreviewSongRelation on ArtistPreviewSongRelation.songId = SongPreviewTable.id
             join ArtistPrevTable on ArtistPrevTable.id = ArtistPreviewSongRelation.artistId
@@ -149,7 +158,7 @@ interface AppDao {
     @Transaction
     @Query(
         """
-        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
+        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage , SongTable.songId  from PlaylistTable
         join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
         join SongTable on SongTable.id = SongPlaylistRelationTable.songId
         where PlaylistTable.id in (
@@ -162,7 +171,7 @@ interface AppDao {
     @Transaction
     @Query(
         """
-        select songpreviewtable.id , songpreviewtable.title , songpreviewtable.artist , songpreviewtable.coverImage from songpreviewtable
+        select songpreviewtable.songId as id , songpreviewtable.title , songpreviewtable.artist , songpreviewtable.coverImage from songpreviewtable
         join RecentlyPlayedPrevTable on RecentlyPlayedPrevTable.songId = songpreviewtable.id
         where RecentlyPlayedPrevTable.songId in (
             select songId from RecentlyPlayedPrevTable order by id desc
@@ -279,7 +288,7 @@ interface AppDao {
     @Transaction
     @Query(
         """
-        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage  from PlaylistTable
+        select PlaylistTable.id , PlaylistTable.name , SongTable.coverImage ,SongTable.songId  from PlaylistTable
         join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
         join SongTable on SongTable.id = SongPlaylistRelationTable.songId
         where PlaylistTable.id in (
@@ -416,6 +425,10 @@ interface AppDao {
 
     @Query("delete from FavouriteTable where songId in (:listOfId)")
     suspend fun deleteFromFavourite(listOfId: List<Long>)
+
+
+
+
 
     // remove all
     @Query("delete from AlbumPrevTable")

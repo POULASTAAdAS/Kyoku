@@ -37,7 +37,7 @@ fun HomeScreen(
                     navigate.invoke(
                         HomeRootUiEvent.NavigateWithData(
                             route = event.route,
-                            type = event.type,
+                            type = event.itemsType,
                             id = event.id,
                             name = event.name,
                             longClickType = event.longClickType,
