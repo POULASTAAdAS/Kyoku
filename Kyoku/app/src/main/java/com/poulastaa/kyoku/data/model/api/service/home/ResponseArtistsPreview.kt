@@ -6,5 +6,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseArtistsPreview(
     val artist: ResponseArtist,
-    val listOfSongs:List<SongPreview>
+    val listOfSongs: List<ArtistSong> = emptyList()
+)
+
+
+@Serializable
+data class ArtistSong(
+    val songId: Long,
+    val title: String,
+    val coverImage: String
 )

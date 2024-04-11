@@ -84,7 +84,11 @@ class HomeRootViewModel @Inject constructor(
             val status = localTime.format(DateTimeFormatter.ofPattern("a"))
 
             if (status.uppercase() == "AM") {
-                state = if (currentTime >= 4) {
+                state = if (currentTime == 12) {
+                    state.copy(
+                        homeTopBarTitle = "Mid Night"
+                    )
+                } else if (currentTime >= 4) {
                     state.copy(
                         homeTopBarTitle = "Good Morning"
                     )

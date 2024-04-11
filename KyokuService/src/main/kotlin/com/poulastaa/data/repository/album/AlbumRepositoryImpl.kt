@@ -12,7 +12,6 @@ import com.poulastaa.data.model.db_table.user_pinned_album.GoogleUserPinnedAlbum
 import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbumTable
 import com.poulastaa.data.model.home.AlbumPreview
 import com.poulastaa.data.model.home.ResponseAlbumPreview
-import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.UserType
@@ -21,7 +20,6 @@ import com.poulastaa.domain.dao.Song
 import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
-import com.poulastaa.utils.toPreviewSong
 import com.poulastaa.utils.toResponseSongList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -84,7 +82,7 @@ class AlbumRepositoryImpl : AlbumRepository {
                         AlbumPreview(
                             id = it.key,
                             name = it.value[0].name,
-                            listOfSongs = it.value.toPreviewSong().take(4)
+                            coverImage = it.value[0].cover
                         )
                     }
                     .take(5)
@@ -204,6 +202,7 @@ class AlbumRepositoryImpl : AlbumRepository {
                     SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
                 }
             ).slice(
+                AlbumTable.id,
                 SongTable.id,
                 SongTable.title,
                 SongTable.coverImage,
@@ -213,19 +212,24 @@ class AlbumRepositoryImpl : AlbumRepository {
                 AlbumTable.id inList this@getAlbumOnAlbumIdList
             }.orderBy(AlbumTable.points, SortOrder.ASC)
             .map {
-                SongPreview(
-                    id = it[SongTable.id].value.toString(),
+                AlbumResult(
+                    albumId = it[AlbumTable.id].value,
+                    name = it[SongTable.album],
+                    albumPoints = 0,
+                    songId = -1,
                     title = it[SongTable.title],
-                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
                     artist = it[SongTable.artist],
-                    album = it[SongTable.album]
+                    cover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    points = 0,
+                    year = "0"
                 )
             }.groupBy {
-                it.album
+                it.albumId
             }.map {
                 AlbumPreview(
-                    name = it.key,
-                    listOfSongs = it.value.take(4)
+                    id = it.key,
+                    name = it.value[0].name,
+                    coverImage = it.value[0].cover
                 )
             }
     }

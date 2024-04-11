@@ -3,7 +3,6 @@ package com.poulastaa.routes
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.home.HomeReq
 import com.poulastaa.data.model.home.HomeResponse
-import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import com.poulastaa.utils.getUserType
@@ -26,7 +25,7 @@ fun Route.home(
                 )
 
                 val helper = getUserType() ?: return@post call.respond(
-                    message = SuggestArtistResponse(),
+                    message = HomeResponse(),
                     status = HttpStatusCode.OK
                 )
 

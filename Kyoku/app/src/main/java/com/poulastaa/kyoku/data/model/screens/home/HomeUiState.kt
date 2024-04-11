@@ -41,7 +41,7 @@ data class HomeUiFevArtistMix(
 data class HomeAlbumUiPrev(
     val id: Long,
     val name: String,
-    val listOfSong: List<HomeUiSongPrev> = emptyList()
+    val coverImage: String
 )
 
 @Stable

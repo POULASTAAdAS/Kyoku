@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "AlbumPrevTable")
 data class AlbumPrevTable(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val albumId: Long = 0,
+    @PrimaryKey
+    val albumId: Long,
     val name: String = ""
 )

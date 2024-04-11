@@ -223,7 +223,7 @@ fun HomeScreenContentNewUser(
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-                ArtistMixCard(
+                ArtistMixCard( // todo fix show all 4 coverImage
                     coverImage = data.fevArtistMixPrev[0].coverImage,
                     label = data.fevArtistMixPrev.map {
                         it.name.trim()
@@ -313,7 +313,7 @@ fun HomeScreenContentNewUser(
                                 }
                             ),
                             size = if (isSmallPhone) 120.dp else 130.dp,
-                            imageUrl = it.listOfSong[0].coverImage,
+                            imageUrl = it.coverImage,
                             isCookie = isCookie,
                             headerValue = headerValue
                         )
@@ -344,13 +344,23 @@ fun HomeScreenContentNewUser(
             sheetState = sheetState,
             scope = scope,
             isBottomSheetLoading = isBottomSheetLoading,
-            onClick = onClick,
             isCookie = isCookie,
             headerValue = headerValue,
             data = bottomSheetData,
+            onClick = { event ->
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    onClick.invoke(event)
+                }
+            },
             cancelClick = {
                 scope.launch {
                     sheetState.hide()
+                }.invokeOnCompletion {
+                    onClick.invoke(
+                        HomeUiEvent.BottomSheetItemClick.CancelClicked
+                    )
                 }
             }
         )

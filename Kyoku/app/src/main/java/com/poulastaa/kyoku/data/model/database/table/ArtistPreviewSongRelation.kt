@@ -1,21 +1,21 @@
 package com.poulastaa.kyoku.data.model.database.table
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 
 
 @Entity(
     tableName = "ArtistPreviewSongRelation",
     foreignKeys = [
         ForeignKey(
-            entity = ArtistPrevTable::class,
-            parentColumns = ["id"],
+            entity = ArtistTable::class,
+            parentColumns = ["artistId"],
             childColumns = ["artistId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = SongPreviewTable::class,
+            entity = ArtistSongTable::class,
             parentColumns = ["id"],
             childColumns = ["songId"],
             onDelete = ForeignKey.CASCADE
@@ -24,8 +24,6 @@ import androidx.room.ForeignKey
     primaryKeys = ["artistId", "songId"]
 )
 data class ArtistPreviewSongRelation(
-    @ColumnInfo(index = true)
     val artistId: Long,
-    @ColumnInfo(index = true)
     val songId: Long
 )

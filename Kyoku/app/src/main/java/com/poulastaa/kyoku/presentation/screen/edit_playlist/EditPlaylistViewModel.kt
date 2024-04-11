@@ -87,14 +87,14 @@ class EditPlaylistViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             db.readPlaylistPreview().collect { results ->
                 results.groupBy {
-                    it.id
+                    it.playlistId
                 }.map {
                     EditPlaylistUiPlaylist(
                         id = it.key,
                         name = it.value[0].name,
                         totalSongs = it.value.size,
                         isSelected = it.value.map { song ->
-                            if (song.id == id) true else null
+                            if (song.playlistId == id) true else null
                         }.firstOrNull() ?: false,
                         urls = it.value.map { song ->
                             song.coverImage

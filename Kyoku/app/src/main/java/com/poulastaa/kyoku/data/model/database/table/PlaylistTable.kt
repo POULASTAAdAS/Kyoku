@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class PlaylistTable(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val playlistId: Long,
+    val playlistId: Long = 0,
     val points: Int = 0,
     val name: String = "",
 )

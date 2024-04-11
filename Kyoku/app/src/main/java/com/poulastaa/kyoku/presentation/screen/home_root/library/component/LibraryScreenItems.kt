@@ -481,7 +481,7 @@ fun LazyGridScope.libraryScreenItemArtist(
                     scope.launch {
                         onLongClick.invoke(
                             LibraryUiEvent.ItemClick.ArtistLongClick(
-                                id = artistPrev[it].id,
+                                id = artistPrev[it].artistId,
                                 name = artistPrev[it].name
                             )
                         )
@@ -491,7 +491,7 @@ fun LazyGridScope.libraryScreenItemArtist(
                     scope.launch {
                         onClick.invoke(
                             LibraryUiEvent.ItemClick.ArtistClick(
-                                id = artistPrev[it].id,
+                                id = artistPrev[it].artistId,
                                 name = artistPrev[it].name
                             )
                         )
@@ -512,7 +512,7 @@ fun LazyGridScope.libraryScreenItemArtist(
                     scope.launch {
                         onLongClick.invoke(
                             LibraryUiEvent.ItemClick.ArtistLongClick(
-                                id = artistPrev[it].id,
+                                id = artistPrev[it].artistId,
                                 name = artistPrev[it].name
                             )
                         )
@@ -522,7 +522,7 @@ fun LazyGridScope.libraryScreenItemArtist(
                     scope.launch {
                         onClick.invoke(
                             LibraryUiEvent.ItemClick.ArtistClick(
-                                id = artistPrev[it].id,
+                                id = artistPrev[it].artistId,
                                 name = artistPrev[it].name
                             )
                         )

@@ -20,8 +20,8 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = ArtistPrevTable::class,
-            parentColumns = ["id"],
+            entity = ArtistTable::class,
+            parentColumns = ["artistId"],
             childColumns = ["artistId"],
             onDelete = ForeignKey.CASCADE
         )

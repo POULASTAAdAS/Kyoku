@@ -3,16 +3,16 @@ package com.poulastaa.kyoku.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
-import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
-import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
+import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
+import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
@@ -21,18 +21,23 @@ import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
+import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 
 @Database(
     entities = [
         SongTable::class,
         PlaylistTable::class,
+        PlaylistSongTable::class,
         SongPlaylistRelationTable::class,
+
+        PreviewAlbumTable::class,
+        ArtistSongTable::class,
 
         SongPreviewTable::class,
         AlbumPrevTable::class,
-        AlbumPreviewSongRelationTable::class,
         FevArtistsMixPreviewTable::class,
-        ArtistPrevTable::class,
+        ArtistTable::class,
         ArtistPreviewSongRelation::class,
         DailyMixPrevTable::class,
 

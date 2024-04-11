@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.setup.suggest_genre
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

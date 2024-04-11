@@ -105,7 +105,7 @@ fun Iterable<Artist>.toResponseArtist() = this.map {
 }
 
 fun Artist.toResponseArtist() = ResponseArtist(
-    id = this.id.value,
+    id = this.id.value.toLong(),
     name = this.name,
     imageUrl = ResponseArtist.getArtistImageUrl(this.profilePicUrl)
 )

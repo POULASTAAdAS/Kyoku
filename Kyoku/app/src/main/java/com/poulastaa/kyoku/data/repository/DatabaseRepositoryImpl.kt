@@ -14,8 +14,6 @@ import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.pinned.IdType
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
-import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
-import com.poulastaa.kyoku.data.model.database.table.AlbumPreviewSongRelationTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.FavouriteTable
@@ -31,17 +29,18 @@ import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistMixEntry
+import com.poulastaa.kyoku.utils.toArtistSongEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toDailyMixEntry
 import com.poulastaa.kyoku.utils.toDailyMixPrevEntry
 import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
+import com.poulastaa.kyoku.utils.toPlaylistSongTable
 import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import com.poulastaa.kyoku.utils.toSongTable
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -74,22 +73,31 @@ class DatabaseRepositoryImpl @Inject constructor(
                 )
             }.await()
 
-            data.forEach {
-                dao.insertSongPlaylistRelation(
-                    data = SongPlaylistRelationTable(
-                        playlistId = playlistId,
-                        songId = async {
-                            dao.insertSong(
-                                song = it.toSongTable()
-                            )
-                        }.await()
-                    )
+            async {
+                dao.insertIntoPlaylistSongTable(
+                    entrys = data.map {
+                        it.toPlaylistSongTable()
+                    }
                 )
-            }
+            }.await()
+
+            async {
+                dao.insertIntoSongPlaylistRelation(
+                    entrys = data.map {
+                        it.id
+                    }.map {
+                        SongPlaylistRelationTable(
+                            playlistId = playlistId,
+                            songId = it
+                        )
+                    }
+                )
+            }.await()
         }
     }
 
-    fun getAllPlaylist(): Flow<List<PlaylistWithSongs>> = dao.getAllPlaylist()
+    fun getAllPlaylist() = dao.getAllPlaylist()
+
 
     suspend fun isFirstOpen() = dao.isFirstOpen().isEmpty()
 
@@ -118,53 +126,33 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoAlbumPrev(list: List<AlbumPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
-            async {
-                list.forEach {
-                    val albumId = dao.insertIntoAlbumPrev(data = it.toAlbumTablePrevEntry())
-
-                    it.listOfSongs.forEach { song ->
-                        val songId = dao.insertIntoSongPrev(
-                            data = song.toSongPrevTableEntry()
-                        )
-
-                        dao.insertIntoAlbumPrevSongRelationTable(
-                            data = AlbumPreviewSongRelationTable(
-                                albumId = albumId,
-                                songId = songId
-                            )
-                        )
-                    }
-                }
-            }.await()
+            dao.insertIntoPrevAlbum(entrys = list.toAlbumTablePrevEntry())
         }
     }
 
     fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
-            async {
-                list.forEach {
-                    try {
-                        dao.insertIntoArtist(
-                            it.artist.toArtistTableEntry()
-                        )
-                    } catch (e: Exception) {
-                        null
-                    }?.let { id ->
-                        it.listOfSongs.forEach { previewSong ->
-                            val songId = dao.insertIntoSongPrev(
-                                previewSong.toSongPrevTableEntry()
-                            )
+            list.forEach { entry ->
+                dao.insertIntoArtist(
+                    entry = entry.artist.toArtistTableEntry()
+                )?.let { artistId ->
+                    if (artistId != -1L) // bal r bug
+                        entry.listOfSongs.forEach { song ->
+                            val songId = async {
+                                dao.insertIntoArtistSong(entry = song.toArtistSongEntry())
+                            }.await()
 
-                            dao.insertIntoArtistPrevSongRelationTable(
-                                data = ArtistPreviewSongRelation(
-                                    artistId = id,
-                                    songId = songId
+                            songId?.let {
+                                dao.insertIntoArtistPrevSongRelationTable(
+                                    data = ArtistPreviewSongRelation(
+                                        artistId = artistId,
+                                        songId = songId
+                                    )
                                 )
-                            )
+                            }
                         }
-                    }
                 }
-            }.await()
+            }
         }
     }
 
@@ -221,6 +209,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
     fun readFevArtistMixPrev() = dao.readFevArtistPrev()
+
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
     suspend fun readDailyMixPrevUrls() = dao.readDailyMixPrevUrls()
@@ -249,12 +238,12 @@ class DatabaseRepositoryImpl @Inject constructor(
                         )
                     }.await()
 
-                    dao.insertSongPlaylistRelation(
-                        data = SongPlaylistRelationTable(
-                            playlistId = playlistId,
-                            songId = songId
-                        )
-                    )
+//                    dao.insertSongPlaylistRelation(
+//                        data = SongPlaylistRelationTable(
+//                            playlistId = playlistId,
+//                            songId = songId
+//                        )
+//                    )
                 }
             }
         }
@@ -506,7 +495,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun readPinnedPlaylist() = dao.readPinnedPlaylist()
+//    fun readPinnedPlaylist() = dao.readPinnedPlaylist()
     fun readPinnedAlbum() = dao.readPinnedAlbum()
     fun readPinnedArtist() = dao.readPinnedArtist()
 
@@ -575,13 +564,13 @@ class DatabaseRepositoryImpl @Inject constructor(
                         song = song.toSongTable()
                     )
                 }.await()
-
-                dao.insertSongPlaylistRelation(
-                    data = SongPlaylistRelationTable(
-                        playlistId = playlistId,
-                        songId = songId
-                    )
-                )
+//
+//                dao.insertSongPlaylistRelation(
+//                    data = SongPlaylistRelationTable(
+//                        playlistId = playlistId,
+//                        songId = songId
+//                    )
+//                )
             }
         }
     }
@@ -590,14 +579,12 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getSongIdListOfArtistMix() = dao.getSongIdListOfArtistMix()
 
-    // ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 
     // remove tables
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
         val alPrev = async { dao.dropAlbumPrevTable() }
-        val alPrevSong = async { dao.dropAlbumPrevSongTable() }
         val al = async { dao.dropAlbumTable() }
-        val arPrev = async { dao.dropArtistPrevTable() }
         val arPrevSong = async { dao.dropArtistPrevSongTable() }
         val daiMixPrev = async { dao.dropDailyMixPrevTable() }
         val daiMix = async { dao.dropDailyMixTable() }
@@ -613,9 +600,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         val song = async { dao.dropSongTable() }
 
         alPrev.await()
-        alPrevSong.await()
         al.await()
-        arPrev.await()
         arPrevSong.await()
         daiMixPrev.await()
         daiMix.await()
@@ -632,7 +617,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
 
-    // ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 
     // internal database
     fun addToInternalPinnedTable(data: InternalPinnedTable) {

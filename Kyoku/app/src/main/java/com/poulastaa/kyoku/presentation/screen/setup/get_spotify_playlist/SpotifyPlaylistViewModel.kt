@@ -13,11 +13,11 @@ import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.Spotify
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiState
+import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.utils.storeSignInState
-import com.poulastaa.kyoku.utils.toListOfUiPlaylist
 import com.poulastaa.kyoku.utils.toSpotifyPlaylistId
 import com.poulastaa.kyoku.utils.validateSpotifyLink
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -93,13 +93,19 @@ class SpotifyPlaylistViewModel @Inject constructor(
         }
     }
 
-
     private fun loadPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
-            db.getAllPlaylist().collect {
+            db.getAllPlaylist().collect { dataFlow ->
                 state = state.copy(
-                    listOfPlaylist = it.toListOfUiPlaylist(),
-                    canSkip = it.isEmpty()
+                    listOfPlaylist = dataFlow.groupBy { result ->
+                        result.playlistName
+                    }.map { entry ->
+                        SpotifyUiPlaylist(
+                            name = entry.key,
+                            songs = entry.value
+                        )
+                    },
+                    canSkip = dataFlow.isEmpty()
                 )
             }
         }
@@ -112,11 +118,9 @@ class SpotifyPlaylistViewModel @Inject constructor(
         private set
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            readAccessToken()
-            readAuthType()
-            loadPlaylist()
-        }
+        readAccessToken()
+        readAuthType()
+        loadPlaylist()
     }
 
     fun onEvent(event: GetSpotifyPlaylistUiEvent) {
@@ -193,6 +197,8 @@ class SpotifyPlaylistViewModel @Inject constructor(
                         id = response.id,
                         playlistName = response.name
                     )
+
+                    onEvent(GetSpotifyPlaylistUiEvent.EmitToast("${response.name} added"))
                 }
 
                 HandleSpotifyPlaylistStatus.FAILURE -> {

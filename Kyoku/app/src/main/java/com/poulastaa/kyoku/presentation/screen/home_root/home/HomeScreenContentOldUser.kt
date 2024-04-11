@@ -574,7 +574,7 @@ fun HomeScreenContentOldUser(
                                     }
                                 ),
                                 size = if (isSmallPhone) 120.dp else 130.dp,
-                                imageUrl = it.listOfSong[0].coverImage,
+                                imageUrl = it.coverImage,
                                 isCookie = isCookie,
                                 headerValue = headerValue
                             )

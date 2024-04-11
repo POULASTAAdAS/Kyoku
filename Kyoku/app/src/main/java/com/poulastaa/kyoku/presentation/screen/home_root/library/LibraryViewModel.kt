@@ -97,7 +97,7 @@ class LibraryViewModel @Inject constructor(
                                 all = state.data.all.copy(
                                     playlist = it.groupBy { result -> result.name }.map { entry ->
                                         UiPlaylistPrev(
-                                            id = entry.value[0].id,
+                                            id = entry.value[0].playlistId,
                                             name = entry.key,
                                             listOfUrl = entry.value.map { url ->
                                                 url.coverImage
@@ -160,26 +160,26 @@ class LibraryViewModel @Inject constructor(
 
             // read Pinned Data
             viewModelScope.launch(Dispatchers.IO) {
-                val playlist = async {
-                    db.readPinnedPlaylist().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                pinned = state.data.pinned.copy(
-                                    playlist = it.groupBy { result -> result.name }
-                                        .map { map ->
-                                            UiPlaylistPrev(
-                                                id = map.value[0].id,
-                                                name = map.key,
-                                                listOfUrl = map.value.map { playlist ->
-                                                    playlist.coverImage
-                                                }.shuffled(Random()).take(4)
-                                            )
-                                        }
-                                )
-                            )
-                        )
-                    }
-                }
+//                val playlist = async {
+//                    db.readPinnedPlaylist().collect {
+//                        state = state.copy(
+//                            data = state.data.copy(
+//                                pinned = state.data.pinned.copy(
+//                                    playlist = it.groupBy { result -> result.name }
+//                                        .map { map ->
+//                                            UiPlaylistPrev(
+//                                                id = map.value[0].playlistId,
+//                                                name = map.key,
+//                                                listOfUrl = map.value.map { playlist ->
+//                                                    playlist.coverImage
+//                                                }.shuffled(Random()).take(4)
+//                                            )
+//                                        }
+//                                )
+//                            )
+//                        )
+//                    }
+//                }
 
                 val album = async {
                     db.readPinnedAlbum().collect {
@@ -225,7 +225,7 @@ class LibraryViewModel @Inject constructor(
                     }
                 }
 
-                playlist.await()
+//                playlist.await()
                 album.await()
                 isFavourite.await()
                 artist.await()

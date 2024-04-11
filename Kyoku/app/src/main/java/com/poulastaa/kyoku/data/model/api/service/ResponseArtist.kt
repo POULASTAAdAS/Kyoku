@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseArtist(
-    val id: Int,
+    val id: Long,
     val name: String,
     val imageUrl: String
 )

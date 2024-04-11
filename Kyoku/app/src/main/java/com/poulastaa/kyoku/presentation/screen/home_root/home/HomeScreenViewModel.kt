@@ -15,7 +15,6 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
-import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
@@ -26,9 +25,9 @@ import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.getHomeReqTimeType
+import com.poulastaa.kyoku.utils.toHomeAlbumUiPrev
 import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
 import com.poulastaa.kyoku.utils.toHomeUiSongPrev
-import com.poulastaa.kyoku.utils.toSongPrev
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -39,7 +38,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Random
 import javax.inject.Inject
 
 @HiltViewModel
@@ -148,17 +146,7 @@ class HomeScreenViewModel @Inject constructor(
                 db.readAllAlbumPrev().collect {
                     state = state.copy(
                         data = state.data.copy(
-                            albumPrev = it.groupBy { result ->
-                                result.albumId
-                            }.map { entry ->
-                                HomeAlbumUiPrev(
-                                    id = entry.key,
-                                    name = entry.value[0].name,
-                                    listOfSong = entry.value.map { song ->
-                                        song.toSongPrev()
-                                    }
-                                )
-                            }
+                            albumPrev = it.toHomeAlbumUiPrev()
                         )
                     )
                 }
@@ -167,15 +155,17 @@ class HomeScreenViewModel @Inject constructor(
             val artistPrev = async {
                 db.readAllArtistPrev().collect {
                     state = state.copy(
-                        data = state.data.copy(
+                        data = state.data.copy( // todo check taking to long to map
                             artistPrev = it.groupBy { result ->
                                 result.artistId
                             }.map { entry ->
                                 HomeUiArtistPrev(
                                     id = entry.key,
                                     name = entry.value[0].name,
-                                    artistCover = entry.value[0].imageUrl,
-                                    lisOfPrevSong = entry.value.map { song -> song.toHomeUiSongPrev() }
+                                    artistCover = entry.value[0].artisUrl,
+                                    lisOfPrevSong = entry.value.map { song ->
+                                        song.toHomeUiSongPrev()
+                                    }
                                 )
                             }
                         )
@@ -195,14 +185,14 @@ class HomeScreenViewModel @Inject constructor(
                 db.readPlaylistPreview().collect {
                     state = state.copy(
                         data = state.data.copy(
-                            playlist = it.groupBy { result -> result.name }
+                            playlist = it.groupBy { result -> result.playlistId }
                                 .map { entry ->
                                     UiPlaylistPrev(
-                                        id = entry.value[0].id,
-                                        name = entry.key,
+                                        id = entry.key,
+                                        name = entry.value[0].name,
                                         listOfUrl = entry.value.map { url ->
                                             url.coverImage
-                                        }.shuffled(Random()).take(6)
+                                        }.take(4)
                                     )
                                 }
                         )
@@ -359,9 +349,7 @@ class HomeScreenViewModel @Inject constructor(
                                 bottomSheetData = state.bottomSheetData.copy(
                                     id = album.id,
                                     name = album.name,
-                                    urls = album.listOfSong.map {
-                                        it.coverImage
-                                    },
+                                    urls = listOf(album.coverImage),
                                     type = HomeLongClickType.ALBUM_PREV,
                                     isAlreadySaved = isAlreadySaved
                                 )

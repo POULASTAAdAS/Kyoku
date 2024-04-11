@@ -16,7 +16,6 @@ import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
 import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -117,7 +116,7 @@ class SongViewViewModel @Inject constructor(
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
                         when (isApiCall) {
-                            true -> getAlbumFromApi(id)
+                            true -> UiAlbum() /*getAlbumFromApi(id)*/
                             false -> db.getAlbum(name)
                         }.let {
                             state = state.copy(
@@ -330,19 +329,19 @@ class SongViewViewModel @Inject constructor(
         it
     }
 
-    private suspend fun getAlbumFromApi(id: Long) = api.getAlbum(id).let { album ->
-        UiAlbum(
-            name = album.name,
-            listOfSong = album.listOfSongs.map { song ->
-                UiSong(
-                    id = song.id.toLong(),
-                    title = song.title,
-                    artist = song.artist,
-                    album = album.name,
-                    coverImage = song.coverImage
-                )
-            }
-        )
-    }
+//    private suspend fun getAlbumFromApi(id: Long) = api.getAlbum(id).let { album ->
+//        UiAlbum(
+//            name = album.name,
+//            listOfSong = album.listOfSongs.map { song ->
+//                UiSong(
+//                    id = song.id.toLong(),
+//                    title = song.title,
+//                    artist = song.artist,
+//                    album = album.name,
+//                    coverImage = song.coverImage
+//                )
+//            }
+//        )
+//    }
 
 }

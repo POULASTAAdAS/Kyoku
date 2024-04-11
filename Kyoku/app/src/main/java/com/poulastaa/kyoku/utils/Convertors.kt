@@ -11,6 +11,7 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.service.ResponseArtist
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
+import com.poulastaa.kyoku.data.model.api.service.home.ArtistSong
 import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistReq
@@ -21,22 +22,22 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGen
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
 import com.poulastaa.kyoku.data.model.database.AlbumPrevResult
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
-import com.poulastaa.kyoku.data.model.database.PlaylistWithSongs
-import com.poulastaa.kyoku.data.model.database.SongInfo
-import com.poulastaa.kyoku.data.model.database.table.AlbumPrevTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
-import com.poulastaa.kyoku.data.model.database.table.ArtistPrevTable
+import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.SongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
+import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiFevArtistMix
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
-import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
 import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
@@ -140,22 +141,16 @@ fun ResponseSong.toSongTable() = SongTable(
     date = this.date
 )
 
-fun Iterable<PlaylistWithSongs>.toListOfUiPlaylist(): List<SpotifyUiPlaylist> {
-    val map = HashMap<String, ArrayList<SongInfo>>()
-
-    this.forEach {
-        if (!map.containsKey(it.song.name)) map[it.song.name] = arrayListOf(it.song.song)
-        else if (map.containsKey(it.song.name)) map[it.song.name]?.add(it.song.song)
-    }
-
-    return map.map {
-        SpotifyUiPlaylist(
-            name = it.key,
-            songs = it.value
-        )
-    }
-}
-
+fun ResponseSong.toPlaylistSongTable() = PlaylistSongTable(
+    songId = this.id,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    totalTime = this.totalTime,
+    title = this.title,
+    artist = this.artist,
+    album = this.album,
+    date = this.date
+)
 
 fun SuggestGenreResponse.toUiGenreList(): List<UiGenre> = this.genreList.map {
     UiGenre(
@@ -197,20 +192,38 @@ fun List<String>.toStoreArtistReq() = StoreArtistReq(
 )
 
 
-fun AlbumPreview.toAlbumTablePrevEntry() = AlbumPrevTable(
-    albumId = this.id,
-    name = this.name
-)
+fun List<PreviewAlbumTable>.toHomeAlbumUiPrev() = this.map {
+    HomeAlbumUiPrev(
+        id = it.albumId,
+        name = it.name,
+        coverImage = it.coverImage
+    )
+}
+
+
+fun List<AlbumPreview>.toAlbumTablePrevEntry() = this.map {
+    PreviewAlbumTable(
+        albumId = it.id,
+        name = it.name,
+        coverImage = it.coverImage
+    )
+}
 
 fun FevArtistsMixPreview.toFevArtistMixPrevTable() = FevArtistsMixPreviewTable(
     artist = this.artist,
     coverImage = this.coverImage
 )
 
-fun ResponseArtist.toArtistTableEntry() = ArtistPrevTable(
-    id = this.id,
+fun ResponseArtist.toArtistTableEntry() = ArtistTable(
+    artistId = this.id,
     name = this.name,
     coverImage = this.imageUrl
+)
+
+fun ArtistSong.toArtistSongEntry() = ArtistSongTable(
+    songId = this.songId,
+    title = this.title,
+    coverImage = this.coverImage
 )
 
 fun List<SongPreview>.toSongPrevTableEntry() =
@@ -250,7 +263,7 @@ fun FevArtistsMixPreviewTable.toHomeUiFevArtistMix() = HomeUiFevArtistMix(
 )
 
 fun ArtistPrevResult.toHomeUiSongPrev() = HomeUiSongPrev(
-    id = this.id,
+    id = this.songId,
     title = this.title,
     coverImage = this.coverImage,
     artist = this.name

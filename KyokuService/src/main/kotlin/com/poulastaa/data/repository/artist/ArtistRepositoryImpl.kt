@@ -13,6 +13,7 @@ import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHi
 import com.poulastaa.data.model.db_table.user_pinned_artist.EmailUserPinnedArtistTable
 import com.poulastaa.data.model.db_table.user_pinned_artist.GoogleUserPinnedArtistTable
 import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArtistTable
+import com.poulastaa.data.model.home.ArtistSong
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
 import com.poulastaa.data.model.home.SongPreview
@@ -22,7 +23,6 @@ import com.poulastaa.data.model.setup.artist.StoreArtistResponse
 import com.poulastaa.data.model.setup.artist.SuggestArtistReq
 import com.poulastaa.data.model.setup.artist.SuggestArtistResponse
 import com.poulastaa.data.model.utils.DbResponseArtistPreview
-import com.poulastaa.data.model.utils.DbResponseArtistPreview.Companion.toListOfSongPreview
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
@@ -519,11 +519,17 @@ class ArtistRepositoryImpl : ArtistRepository {
     }.groupBy { it.artist }.map {
         ResponseArtistsPreview(
             artist = ResponseArtist(
-                id = it.value[0].artistId,
+                id = it.value[0].artistId.toLong(),
                 name = it.key,
                 imageUrl = ResponseArtist.getArtistImageUrl(it.value[0].artistImage)
             ),
-            listOfSongs = it.value.toListOfSongPreview().take(5)
+            listOfSongs = it.value.map { result ->
+                ArtistSong(
+                    songId = result.songId.toLong(),
+                    title = result.songTitle,
+                    coverImage = result.songCover
+                )
+            }.take(6)
         )
     }
 

@@ -36,7 +36,7 @@ data class LibraryUiData(
 
 @Stable
 data class Artist(
-    val id: Long,
+    val artistId: Long,
     val name: String,
     val coverImage: String
 )

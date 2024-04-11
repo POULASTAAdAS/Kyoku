@@ -32,8 +32,11 @@ import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.*
+import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.getAlbum
+import com.poulastaa.utils.removeAlbum
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
+import com.poulastaa.utils.toListOfPlaylistRow
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import org.jetbrains.exposed.sql.Column
@@ -187,7 +190,6 @@ class UserServiceRepositoryImpl(
                             userType = helper.userType
                         )
                     }
-
 
                     HomeResponse(
                         status = HomeResponseStatus.SUCCESS,
@@ -366,6 +368,7 @@ class UserServiceRepositoryImpl(
                             AlbumTable.id eq SongAlbumArtistRelationTable.albumId as Column<*>
                         }
                     ).slice(
+                        AlbumTable.id,
                         AlbumTable.name,
                         AlbumTable.points,
                         SongTable.id,
@@ -378,6 +381,7 @@ class UserServiceRepositoryImpl(
                         AlbumTable.id eq id
                     }.map {
                         AlbumResult(
+                            albumId = it[AlbumTable.id].value,
                             name = it[AlbumTable.name],
                             albumPoints = it[AlbumTable.points],
                             songId = it[SongTable.id].value,
@@ -392,8 +396,7 @@ class UserServiceRepositoryImpl(
                     }.map {
                         AlbumPreview(
                             name = it.key,
-                            points = it.value[0].points,
-                            listOfSongs = it.value.toPreviewSong()
+// todo will break
                         )
                     }.firstOrNull() ?: AlbumPreview()
             }
