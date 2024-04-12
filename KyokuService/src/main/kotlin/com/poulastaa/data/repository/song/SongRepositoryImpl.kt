@@ -36,6 +36,7 @@ import com.poulastaa.domain.dao.playlist.Playlist
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.constructMasterPlaylistUrl
 import com.poulastaa.utils.toResponseSong
 import com.poulastaa.utils.toResponseSongList
 import kotlinx.coroutines.Dispatchers
@@ -111,7 +112,16 @@ class SongRepositoryImpl : SongRepository {
                 it.value.take(10)
             }.distinctBy {
                 it.id
-            }.shuffled(java.util.Random()).take(4)
+            }.shuffled(java.util.Random()).take(4).map {
+                SongPreview(
+                    id = it.id.toString(),
+                    title = it.title,
+                    artist = it.artist,
+                    album = it.album,
+                    coverImage = it.coverImage,
+                    year = it.date
+                )
+            }
         )
     }
 
@@ -151,9 +161,7 @@ class SongRepositoryImpl : SongRepository {
                 }
             }.take(12)
 
-        DailyMixPreview(
-            listOfSongs = (one + two).shuffled(java.util.Random((one.size + two.size).toLong()))
-        )
+        (one + two).shuffled(java.util.Random((one.size + two.size).toLong()))
     }
 
 
@@ -626,14 +634,15 @@ class SongRepositoryImpl : SongRepository {
         Song.find {
             SongTable.id inList this@getHistorySongList
         }.map {
-            SongPreview(
-                id = it.id.value.toString(),
+            ResponseSong(
+                id = it.id.value,
                 title = it.title,
                 artist = it.artist,
                 album = it.album,
                 coverImage = it.coverImage.constructCoverPhotoUrl(),
-                points = it.points,
-                year = it.date
+                masterPlaylistUrl = it.masterPlaylistPath.constructMasterPlaylistUrl(),
+                totalTime = it.totalTime,
+                date = it.date
             )
         }
     }
@@ -664,23 +673,25 @@ class SongRepositoryImpl : SongRepository {
             ).slice(
                 SongTable.id,
                 SongTable.title,
-                SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points,
+                SongTable.coverImage,
+                SongTable.masterPlaylistPath,
+                SongTable.totalTime,
                 SongTable.date
             ).select {
                 sar2[SongArtistRelationTable.songId] inList songIdList
             }.orderBy(SongTable.points, SortOrder.DESC)
             .map {
-                SongPreview(
-                    id = it[SongTable.id].toString(),
+                ResponseSong(
+                    id = it[SongTable.id].value,
                     title = it[SongTable.title],
-                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
                     artist = it[SongTable.artist],
                     album = it[SongTable.album],
-                    points = it[SongTable.points],
-                    year = it[SongTable.date]
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    masterPlaylistUrl = it[SongTable.masterPlaylistPath].constructMasterPlaylistUrl(),
+                    totalTime = it[SongTable.totalTime],
+                    date = it[SongTable.date]
                 )
             }.groupBy {
                 it.artist
@@ -697,14 +708,15 @@ class SongRepositoryImpl : SongRepository {
         ).join(userType, this)
             .orderBy(SongTable.points, SortOrder.DESC)
             .map {
-                SongPreview(
-                    id = it[SongTable.id].toString(),
+                ResponseSong(
+                    id = it[SongTable.id].value,
                     title = it[SongTable.title],
-                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
                     artist = it[SongTable.artist],
                     album = it[SongTable.album],
-                    points = it[SongTable.points],
-                    year = it[SongTable.date]
+                    coverImage = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                    masterPlaylistUrl = it[SongTable.masterPlaylistPath].constructMasterPlaylistUrl(),
+                    totalTime = it[SongTable.totalTime],
+                    date = it[SongTable.date]
                 )
             }
     }
@@ -720,10 +732,11 @@ class SongRepositoryImpl : SongRepository {
             ).slice(
                 SongTable.id,
                 SongTable.title,
-                SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points,
+                SongTable.coverImage,
+                SongTable.masterPlaylistPath,
+                SongTable.totalTime,
                 SongTable.date
             ).select {
                 GoogleUserGenreRelationTable.userId eq userId
@@ -740,10 +753,11 @@ class SongRepositoryImpl : SongRepository {
             ).slice(
                 SongTable.id,
                 SongTable.title,
-                SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points,
+                SongTable.coverImage,
+                SongTable.masterPlaylistPath,
+                SongTable.totalTime,
                 SongTable.date
             ).select {
                 EmailUserGenreRelationTable.userId eq userId
@@ -760,10 +774,11 @@ class SongRepositoryImpl : SongRepository {
             ).slice(
                 SongTable.id,
                 SongTable.title,
-                SongTable.coverImage,
                 SongTable.artist,
                 SongTable.album,
-                SongTable.points,
+                SongTable.coverImage,
+                SongTable.masterPlaylistPath,
+                SongTable.totalTime,
                 SongTable.date
             ).select {
                 PasskeyUserGenreRelationTable.userId eq userId

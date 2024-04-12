@@ -149,12 +149,12 @@ private fun Preview() {
     for (i in 1..10) {
         list.add(
             UiPlaylistSong(
-                id = 1,
-                name = "Name $i",
+                songId = 1,
                 title = "Title $i",
                 artist = "Artist $i",
-                album = "Album $i",
-                coverImage = ""
+                masterPlaylistUrl = "",
+                coverImage = "",
+                totalTime = ""
             )
         )
     }

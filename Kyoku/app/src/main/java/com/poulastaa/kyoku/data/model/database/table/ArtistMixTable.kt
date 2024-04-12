@@ -12,5 +12,7 @@ data class ArtistMixTable(
     val artist: String = "",
     val album: String = "",
     val coverImage: String = "",
+    val masterPlaylistUrl: String = "",
+    val totalTime: String = "",
     val year: String = ""
 )

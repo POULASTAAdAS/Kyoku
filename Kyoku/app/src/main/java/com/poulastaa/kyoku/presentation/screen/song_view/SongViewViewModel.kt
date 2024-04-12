@@ -13,12 +13,15 @@ import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
+import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiDailyMixOrArtistMix
+import com.poulastaa.kyoku.data.model.screens.song_view.UiFavourite
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.utils.toListOfUiSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -95,35 +98,38 @@ class SongViewViewModel @Inject constructor(
             when (getItemType(typeString)) {
                 ItemsType.PLAYLIST -> {
                     viewModelScope.launch(Dispatchers.IO) {
-//                        db.getPlaylist(id).collect {
-//                            state = state.copy(
-//                                type = if (it.isEmpty()) ItemsType.ERR else ItemsType.PLAYLIST,
-//                                data = state.data.copy(
-//                                    playlist = it.groupBy { song -> song.name }.map { entry ->
-//                                        UiPlaylist(
-//                                            name = entry.key,
-//                                            listOfSong = entry.value
-//                                        )
-//                                    }.firstOrNull() ?: UiPlaylist()
-//                                )
-//                            )
-//                        }
+                        db.getPlaylist(id).collect {
+                            state = state.copy(
+                                type = if (it.isEmpty()) ItemsType.ERR else ItemsType.PLAYLIST,
+                                data = state.data.copy(
+                                    playlist = UiPlaylist(
+                                        name = db.getPlaylistName(id),
+                                        totalTime = async {
+                                            it.map { single ->
+                                                (single.totalTime.toFloatOrNull() ?: 0F) / 1000 / 60
+                                            }.sum().toInt().toString()
+                                        }.await(),
+                                        listOfSong = it
+                                    )
+                                )
+                            )
+                        }
                     }
                 }
 
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
-//                        when (isApiCall) {
-//                            true -> UiAlbum() /*getAlbumFromApi(id)*/
-//                            false -> db.getAlbum(name)
-//                        }.let {
-//                            state = state.copy(
-//                                type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
-//                                data = state.data.copy(
-//                                    album = it
-//                                )
-//                            )
-//                        }
+                        when (isApiCall) {
+                            true -> UiAlbum() /*getAlbumFromApi(id)*/
+                            false -> async { db.getAlbum(id) }.await()
+                        }.let {
+                            state = state.copy(
+                                type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
+                                data = state.data.copy(
+                                    album = it
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -200,7 +206,15 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = ItemsType.ARTIST_MIX,
                                 data = state.data.copy(
-                                    dailyMixOrArtistMix = it.toListOfUiSong()
+                                    dailyMixOrArtistMix = UiDailyMixOrArtistMix(
+                                        name = "Artist Mix",
+                                        totalTime = async {
+                                            it.map { single ->
+                                                (single.totalTime.toFloatOrNull() ?: 0F) / 1000 / 60
+                                            }.sum().toInt().toString()
+                                        }.await(),
+                                        listOfSong = it
+                                    )
                                 )
                             )
                         }
@@ -210,7 +224,7 @@ class SongViewViewModel @Inject constructor(
                 ItemsType.DAILY_MIX -> {
                     viewModelScope.launch(Dispatchers.IO) {
                         if (db.checkIfDailyMixTableEmpty()) {
-                            val response = api.getDailyMix().listOfSongs
+                            val response = api.getDailyMix()
 
                             if (response.isEmpty()) {
                                 state = state.copy(
@@ -227,7 +241,15 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = ItemsType.DAILY_MIX,
                                 data = state.data.copy(
-                                    dailyMixOrArtistMix = it.toListOfUiSong()
+                                    dailyMixOrArtistMix = UiDailyMixOrArtistMix(
+                                        name = "Daily Mix",
+                                        totalTime = async {
+                                            it.map { single ->
+                                                (single.totalTime.toFloatOrNull() ?: 0F) / 1000 / 60
+                                            }.sum().toInt().toString()
+                                        }.await(),
+                                        listOfSong = it
+                                    )
                                 )
                             )
                         }
@@ -242,14 +264,22 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.FAVOURITE -> {
                     viewModelScope.launch(Dispatchers.IO) {
-//                        val favourites = db.getAllFavouriteSongs()
-//
-//                        state = state.copy(
-//                            type = if (favourites.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
-//                            data = state.data.copy(
-//                                favourites = favourites
-//                            )
-//                        )
+                        db.getAllFavouriteSongs().collect {
+                            state = state.copy(
+                                type = if (it.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
+                                data = state.data.copy(
+                                    favourites = UiFavourite(
+                                        name = "Favourites",
+                                        totalTime = async {
+                                            it.map { single ->
+                                                (single.totalTime.toFloatOrNull() ?: 0F) / 1000 / 60
+                                            }.sum().toInt().toString()
+                                        }.await(),
+                                        listOfSong = it
+                                    )
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -327,6 +357,7 @@ class SongViewViewModel @Inject constructor(
         it
     }
 
+    // todo store to temporary album table optimising fucking sucks
 //    private suspend fun getAlbumFromApi(id: Long) = api.getAlbum(id).let { album ->
 //        UiAlbum(
 //            name = album.name,

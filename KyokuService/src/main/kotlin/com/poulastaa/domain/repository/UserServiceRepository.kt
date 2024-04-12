@@ -42,9 +42,9 @@ interface UserServiceRepository {
 
     suspend fun getAlbum(id: Long): AlbumPreview
 
-    suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
+    suspend fun getDailyMix(helper: UserTypeHelper): List<ResponseSong>
 
-    suspend fun getArtistMix(helper: UserTypeHelper): List<SongPreview>
+    suspend fun getArtistMix(helper: UserTypeHelper): List<ResponseSong>
 
     suspend fun handlePinnedOperation(helper: UserTypeHelper, req: PinnedReq): Boolean
 

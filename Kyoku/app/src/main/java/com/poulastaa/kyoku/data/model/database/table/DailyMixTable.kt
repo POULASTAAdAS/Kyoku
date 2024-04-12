@@ -7,11 +7,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "DailyMixTable")
 data class DailyMixTable(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val songId: Long = 0,
     val title: String = "",
     val artist: String = "",
     val album: String = "",
     val coverImage: String = "",
+    val masterPlaylistUrl: String = "",
+    val totalTime: String = "",
     val year: String = ""
 )

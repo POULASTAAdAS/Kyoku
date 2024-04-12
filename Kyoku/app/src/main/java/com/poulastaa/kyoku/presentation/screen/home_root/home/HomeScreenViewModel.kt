@@ -26,7 +26,6 @@ import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.getHomeReqTimeType
 import com.poulastaa.kyoku.utils.toHomeAlbumUiPrev
-import com.poulastaa.kyoku.utils.toHomeUiFevArtistMix
 import com.poulastaa.kyoku.utils.toHomeUiSongPrev
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -131,16 +130,21 @@ class HomeScreenViewModel @Inject constructor(
     private fun loadFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
             val fevArtistMixPrev = async {
-                db.readFevArtistMixPrev().collect {
-                    state = state.copy(
-                        data = state.data.copy(
-                            fevArtistMixPrev = it.map { entry ->
-                                entry.toHomeUiFevArtistMix()
-                            }
-                        )
+                state = state.copy(
+                    data = state.data.copy(
+                        fevArtistMixPrevUrls = db.readFevArtistMixPrev()
                     )
-                }
+                )
             }
+
+            val dailyMixPrev = async {
+                state = state.copy(
+                    data = state.data.copy(
+                        dailyMixPrevUrls = db.readDailyMixPrevUrls()
+                    )
+                )
+            }
+
 
             val albumPrev = async {
                 db.readAllAlbumPrev().collect {
@@ -173,13 +177,6 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-            val dailyMixPrev = async {
-                state = state.copy(
-                    data = state.data.copy(
-                        dailyMixPrevUrls = db.readDailyMixPrevUrls()
-                    )
-                )
-            }
 
             val playlist = async {
                 db.readPlaylistPreview().collect {
@@ -239,11 +236,11 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 )
             }
+        }.let {
+            state = state.copy(
+                isLoading = false
+            )
         }
-
-        state = state.copy(
-            isLoading = false
-        )
     }
 
     fun onEvent(event: HomeUiEvent) {
@@ -272,9 +269,9 @@ class HomeScreenViewModel @Inject constructor(
                         }
 
                         ItemsType.SONG -> {
-                            viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
-                                _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
-                            }
+//                            viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
+//                                _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
+//                            }
 
                             return
                         }
@@ -298,6 +295,8 @@ class HomeScreenViewModel @Inject constructor(
 
                         else -> event
                     }.let {
+                        Log.d("item", it.toString())
+
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
@@ -358,9 +357,7 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     HomeLongClickType.ARTIST_MIX -> {
-                        val urls = state.data.fevArtistMixPrev.map {
-                            it.coverImage
-                        }
+                        val urls = state.data.fevArtistMixPrevUrls
 
                         if (urls.isEmpty()) {
                             onEvent(HomeUiEvent.SomethingWentWrong)

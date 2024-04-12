@@ -20,10 +20,10 @@ data class HomeUiState(
 
 @Stable
 data class HomeUiData(
-    val fevArtistMixPrev: List<HomeUiFevArtistMix> = emptyList(),
+    val fevArtistMixPrevUrls: List<String> = emptyList(),
+    val dailyMixPrevUrls: List<String> = emptyList(),
     val albumPrev: List<HomeAlbumUiPrev> = emptyList(),
     val artistPrev: List<HomeUiArtistPrev> = emptyList(),
-    val dailyMixPrevUrls: List<String> = emptyList(),
     val playlist: List<UiPlaylistPrev> = emptyList(),
     val historyPrev: List<HomeUiSongPrev> = emptyList(),
     val savedAlbumPrev: List<HomeUiSavedAlbumPrev> = emptyList(),

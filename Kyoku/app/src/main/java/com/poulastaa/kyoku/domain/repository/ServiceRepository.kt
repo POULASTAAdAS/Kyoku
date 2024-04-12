@@ -6,7 +6,6 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRe
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
-import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
@@ -46,8 +45,8 @@ interface ServiceRepository {
 
     suspend fun getAlbum(id: Long): AlbumPreview
 
-    suspend fun getDailyMix(): DailyMixPreview
-    suspend fun getArtistMix(): List<SongPreview>
+    suspend fun getDailyMix(): List<ResponseSong>
+    suspend fun getArtistMix(): List<ResponseSong>
 
     suspend fun handlePin(req: PinnedReq): Boolean
 

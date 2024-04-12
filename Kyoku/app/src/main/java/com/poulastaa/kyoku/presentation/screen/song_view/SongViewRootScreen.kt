@@ -107,7 +107,7 @@ fun SongViewRootScreen(
 
         ItemsType.ARTIST_MIX -> {
             if (viewModel.state.isLoading ||
-                viewModel.state.data.dailyMixOrArtistMix.isEmpty()
+                viewModel.state.data.dailyMixOrArtistMix.listOfSong.isEmpty()
             ) SongViewContentLoading(
                 isFavourite = false,
                 isSmallPhone = isSmallPhone
@@ -117,7 +117,7 @@ fun SongViewRootScreen(
                 isDarkThem = isDarkThem,
                 isCookie = viewModel.state.isCooke,
                 headerValue = viewModel.state.headerValue,
-                poster = viewModel.state.data.dailyMixOrArtistMix[0].coverImage,
+                poster = viewModel.state.data.dailyMixOrArtistMix.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
                 navigateBack = navigateBack
             )
@@ -125,7 +125,7 @@ fun SongViewRootScreen(
 
         ItemsType.DAILY_MIX -> {
             if (viewModel.state.isLoading ||
-                viewModel.state.data.dailyMixOrArtistMix.isEmpty()
+                viewModel.state.data.dailyMixOrArtistMix.listOfSong.isEmpty()
             ) SongViewContentLoading(
                 isFavourite = false,
                 isSmallPhone = isSmallPhone
@@ -135,7 +135,7 @@ fun SongViewRootScreen(
                 isDarkThem = isDarkThem,
                 isCookie = viewModel.state.isCooke,
                 headerValue = viewModel.state.headerValue,
-                poster = viewModel.state.data.dailyMixOrArtistMix[0].coverImage,
+                poster = viewModel.state.data.dailyMixOrArtistMix.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
                 navigateBack = navigateBack
             )
@@ -147,7 +147,7 @@ fun SongViewRootScreen(
 
         ItemsType.FAVOURITE -> {
             if (viewModel.state.isLoading ||
-                viewModel.state.data.favourites.isEmpty()
+                viewModel.state.data.favourites.listOfSong.isEmpty()
             ) SongViewContentLoading(
                 isFavourite = true,
                 isSmallPhone = isSmallPhone

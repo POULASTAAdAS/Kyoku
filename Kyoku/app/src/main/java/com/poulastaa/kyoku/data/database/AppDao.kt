@@ -17,7 +17,8 @@ import com.poulastaa.kyoku.data.model.database.table.ArtistTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
-import com.poulastaa.kyoku.data.model.database.table.FevArtistsMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.MixType
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
@@ -31,6 +32,7 @@ import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.library.Artist
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -79,12 +81,7 @@ interface AppDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertBatchIntoSongPrev(data: List<SongPreviewTable>): List<Long>
-
-
-    @Transaction
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoFevArtistMixPrev(data: FevArtistsMixPreviewTable)
+    suspend fun insertIntoFevArtistOrDailyMixPrev(entrys: List<FevArtistOrDailyMixPreviewTable>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPrevAlbum(entrys: List<PreviewAlbumTable>)
@@ -123,9 +120,11 @@ interface AppDao {
     suspend fun isNewUserCheck_3(): List<FavouriteSongTable>
 
 
-    @Transaction
-    @Query("select * from FevArtistsMixPreviewTable order by random() limit 4")
-    fun readFevArtistPrev(): Flow<List<FevArtistsMixPreviewTable>>
+    @Query("select coverImage from FevArtistOrDailyMixPreviewTable where type = :type  order by random() limit 4")
+    fun readFevArtistMixPrev(type: MixType = MixType.ARTIST_MIX): List<String>
+
+    @Query("select coverImage from FevArtistOrDailyMixPreviewTable where type = :type  order by random() limit 4")
+    suspend fun readDailyMixPrevUrls(type: MixType = MixType.DAILY_MIX): List<String>
 
     @Transaction
     @Query("select * from PreviewAlbumTable")
@@ -144,15 +143,6 @@ interface AppDao {
     )
     fun readAllArtistPrev(): Flow<List<ArtistPrevResult>>
 
-
-    @Query(
-        """
-        select SongPreviewTable.coverImage  from SongPreviewTable 
-        join DailyMixPrevTable on DailyMixPrevTable.id = SongPreviewTable.id
-        where DailyMixPrevTable.id
-    """
-    )
-    suspend fun readDailyMixPrevUrls(): List<String>
 
     @Transaction
     @Query(
@@ -330,34 +320,39 @@ interface AppDao {
     fun deleteFavourites()
 
     // songView screen query
-//    @Query(
-//        """
-//        select SongTable.id , PlaylistTable.name , SongTable.title , SongTable.artist, SongTable.album , SongTable.coverImage from SongTable
-//        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = SongTable.id
-//        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
-//        where PlaylistTable.id = :id
-//    """
-//    )
-//    fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
 
-//    @Query(
-//        """
-//        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
-//        join SongAlbumRelationTable on SongAlbumRelationTable.songId = SongTable.id
-//        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
-//        where AlbumTable.name = :name
-//    """
-//    )
-//    suspend fun getAlbum(name: String): List<UiSong>
+    @Query("select name from PlaylistTable where playlistId = :id")
+    fun getPlaylistName(id: Long): String
 
-//    @Query(
-//        """
-//        select SongTable.id , SongTable.title , SongTable.artist , SongTable.album , SongTable.coverImage from SongTable
-//        join FavouriteTable on FavouriteTable.songId = SongTable.id
-//        where FavouriteTable.songId
-//    """
-//    )
-//    suspend fun getAllFavouriteSongs(): List<UiSong>
+    @Query(
+        """
+        select PlaylistSongTable.songId , PlaylistSongTable.title , PlaylistSongTable.artist , 
+        PlaylistSongTable.coverImage , PlaylistSongTable.masterPlaylistUrl , PlaylistSongTable.totalTime
+        from PlaylistSongTable
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.songId = PlaylistSongTable.songId
+        join PlaylistTable on PlaylistTable.id = SongPlaylistRelationTable.playlistId
+        where PlaylistTable.playlistId  = :id
+    """
+    )
+    fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
+
+
+    @Query("select name from AlbumTable where albumId = :id")
+    suspend fun getAlbumName(id: Long): String
+
+    @Query(
+        """
+        select AlbumSongTable.songId , AlbumSongTable.title , AlbumSongTable.artist , 
+        AlbumSongTable.coverImage , AlbumSongTable.masterPlaylistUrl , AlbumSongTable.totalTime from AlbumSongTable
+        join SongAlbumRelationTable on SongAlbumRelationTable.songId = AlbumSongTable.id
+        join AlbumTable on AlbumTable.id = SongAlbumRelationTable.albumId
+        where AlbumTable.albumId = :id
+    """
+    )
+    suspend fun getAlbum(id: Long): List<UiPlaylistSong>
+
+    @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from FavouriteSongTable")
+    fun getAllFavouriteSongs(): Flow<List<UiPlaylistSong>>
 
     @Query("select coverImage from ArtistTable where artistId = :id")
     suspend fun getArtistCoverImage(id: Long): String
@@ -369,8 +364,8 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoDailyMix(entrys: List<DailyMixTable>)
 
-    @Query("select * from DailyMixTable")
-    fun readAllDailyMix(): Flow<List<DailyMixTable>>
+    @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from DailyMixTable")
+    fun readAllDailyMix(): Flow<List<UiPlaylistSong>>
 
     @Query("select count(*) from ArtistMixTable")
     suspend fun checkIfArtistMixIsEmpty(): Long
@@ -379,8 +374,8 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoArtistMix(entrys: List<ArtistMixTable>)
 
-    @Query("select * from ArtistMixTable")
-    fun readAllArtistMix(): Flow<List<ArtistMixTable>>
+    @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from ArtistMixTable")
+    fun readAllArtistMix(): Flow<List<UiPlaylistSong>>
 
 //    @Query(
 //        """
@@ -435,7 +430,7 @@ interface AppDao {
     @Query("delete from ArtistMixTable")
     suspend fun dropArtistMixTable()
 
-    @Query("delete from  FevArtistsMixPreviewTable")
+    @Query("delete from  FevArtistOrDailyMixPreviewTable")
     suspend fun dropFavArtistMixPrevTable()
 
     @Query("delete from  PinnedTable")
@@ -455,7 +450,4 @@ interface AppDao {
 
     @Query("delete from  SongPreviewTable")
     suspend fun dropSongPrevTable()
-
-//    @Query("delete from  SongTable")
-//    suspend fun dropSongTable()
 }

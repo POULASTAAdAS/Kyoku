@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
 import com.poulastaa.kyoku.presentation.screen.song_view.common.navigateBackButton
@@ -115,7 +115,7 @@ private fun LazyListScope.albumSongs(
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
-    data: List<UiSong>,
+    data: List<UiPlaylistSong>,
     onSongClick: (id: Long, name: String) -> Unit
 ) {
     items(data.size) {
@@ -144,15 +144,14 @@ private fun LazyListScope.albumSongs(
 @Composable
 private fun Preview() {
     TestThem {
-        val listOfSong = ArrayList<UiSong>()
+        val listOfSong = ArrayList<UiPlaylistSong>()
 
         for (i in 1..10) {
             listOfSong.add(
-                UiSong(
-                    id = i.toLong(),
+                UiPlaylistSong(
+                    songId = i.toLong(),
                     title = "Title $i",
                     artist = "Artist $i",
-                    album = "Album $i",
                     coverImage = ""
                 )
             )

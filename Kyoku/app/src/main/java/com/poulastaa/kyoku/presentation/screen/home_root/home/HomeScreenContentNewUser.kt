@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -41,12 +42,12 @@ import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
-import com.poulastaa.kyoku.presentation.screen.home_root.home.component.ArtistMixCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCardPlaylistPrev
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
+import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
 import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -223,16 +224,29 @@ fun HomeScreenContentNewUser(
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
-                ArtistMixCard( // todo fix show all 4 coverImage
-                    coverImage = data.fevArtistMixPrev[0].coverImage,
-                    label = data.fevArtistMixPrev.map {
-                        it.name.trim()
-                    }.toString().trim().removePrefix("["),
+                LibraryScreenPlaylistGridView(
+                    modifier = Modifier
+                        .size(if (isSmallPhone) 120.dp else 130.dp)
+                        .combinedClickable(
+                            onClick = {
+                                onClick.invoke(
+                                    HomeUiEvent.ItemClick(
+                                        type = ItemsType.ARTIST_MIX
+                                    )
+                                )
+                            },
+                            onLongClick = {
+                                onLongClick.invoke(
+                                    HomeUiEvent.ItemLongClick(
+                                        type = HomeLongClickType.ARTIST_MIX
+                                    )
+                                )
+                            }
+                        ),
                     isCookie = isCookie,
-                    headerValue = headerValue,
-                    isSmallPhone = isSmallPhone,
-                    onLongClick = onLongClick,
-                    onClick = onClick
+                    authHeader = headerValue,
+                    name = "",
+                    imageUrls = data.fevArtistMixPrevUrls
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))

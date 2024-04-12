@@ -19,22 +19,32 @@ data class SongViewUiState(
 data class SongViewData(
     val playlist: UiPlaylist = UiPlaylist(),
     val album: UiAlbum = UiAlbum(),
-    val favourites: List<UiSong> = emptyList(),
+    val favourites: UiFavourite = UiFavourite(),
     val artist: UiArtist = UiArtist(),
-    val dailyMixOrArtistMix: List<UiSong> = emptyList()
+    val dailyMixOrArtistMix: UiDailyMixOrArtistMix = UiDailyMixOrArtistMix()
 )
 
 @Stable
 data class UiPlaylist(
     val name: String = "",
+    val totalTime: String = "",
     val listOfSong: List<UiPlaylistSong> = emptyList()
 )
 
 @Stable
 data class UiAlbum(
     val name: String = "",
-    val listOfSong: List<UiSong> = emptyList()
+    val totalTime: String = "",
+    val listOfSong: List<UiPlaylistSong> = emptyList()
 )
+
+@Stable
+data class UiFavourite(
+    val name: String = "",
+    val totalTime: String = "",
+    val listOfSong: List<UiPlaylistSong> = emptyList()
+)
+
 
 @Stable
 data class UiArtist(
@@ -44,15 +54,21 @@ data class UiArtist(
     val listOfSong: List<SongPreview> = emptyList()
 )
 
+data class UiDailyMixOrArtistMix(
+    val name: String = "",
+    val totalTime: String = "",
+    val listOfSong: List<UiPlaylistSong> = emptyList()
+)
+
 
 @Stable
 data class UiPlaylistSong(
-    val id: Long = 0,
-    val name: String = "",
+    val songId: Long = 0,
     val title: String = "",
     val artist: String = "",
-    val album: String = "",
-    val coverImage: String = ""
+    val coverImage: String = "",
+    val masterPlaylistUrl: String = "",
+    val totalTime: String = ""
 )
 
 

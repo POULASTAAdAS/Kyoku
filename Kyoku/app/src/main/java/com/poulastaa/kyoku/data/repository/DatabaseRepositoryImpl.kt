@@ -12,9 +12,12 @@ import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponseArtistsPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
+import com.poulastaa.kyoku.data.model.api.service.pinned.IdType
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
+import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
+import com.poulastaa.kyoku.data.model.database.table.MixType
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
@@ -22,6 +25,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
+import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
@@ -29,12 +33,9 @@ import com.poulastaa.kyoku.utils.toArtistMixEntry
 import com.poulastaa.kyoku.utils.toArtistSongEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toDailyMixEntry
-import com.poulastaa.kyoku.utils.toDailyMixPrevEntry
 import com.poulastaa.kyoku.utils.toFavouriteTableEntry
-import com.poulastaa.kyoku.utils.toFevArtistMixPrevTable
 import com.poulastaa.kyoku.utils.toHistoryPrevSongEntry
 import com.poulastaa.kyoku.utils.toPlaylistSongTable
-import com.poulastaa.kyoku.utils.toSongPrevTableEntry
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,16 +110,38 @@ class DatabaseRepositoryImpl @Inject constructor(
         a.await() && b.await() && c.await()
     }
 
-
     fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
         CoroutineScope(Dispatchers.IO).launch {
             async {
-                list.forEach {
-                    dao.insertIntoFevArtistMixPrev(
-                        data = it.toFevArtistMixPrevTable()
+                list.map {
+                    FevArtistOrDailyMixPreviewTable(
+                        artist = it.artist,
+                        coverImage = it.coverImage,
+                        type = MixType.ARTIST_MIX
+                    )
+                }.let {
+                    dao.insertIntoFevArtistOrDailyMixPrev(
+                        entrys = it
                     )
                 }
             }.await()
+        }
+    }
+
+
+    fun insertDailyMixPrev(data: DailyMixPreview) {
+        CoroutineScope(Dispatchers.IO).launch {
+            data.listOfSongs.map {
+                FevArtistOrDailyMixPreviewTable(
+                    artist = it.artist,
+                    coverImage = it.coverImage,
+                    type = MixType.DAILY_MIX
+                )
+            }.let {
+                dao.insertIntoFevArtistOrDailyMixPrev(
+                    entrys = it
+                )
+            }
         }
     }
 
@@ -157,60 +180,51 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun insertIntoPinned(list: List<Pinned>) {
         if (list.isEmpty()) return
 
-//        CoroutineScope(Dispatchers.IO).launch {
-//            list.forEach { pinned ->
-//                when (pinned.type) {
-//                    IdType.PLAYLIST -> {
-//                        dao.getPlaylistInternalId(pinned.id)?.let { id ->
-//                            dao.addToPinnedTable(
-//                                data = PinnedTable(
-//                                    playlistId = id
-//                                )
-//                            )
-//                        }
-//                    }
-//
-//                    IdType.ALBUM -> {
-//                        dao.getAlbumInternalId(pinned.id)?.let { id ->
-//                            dao.addToPinnedTable(
-//                                data = PinnedTable(
-//                                    albumId = id
-//                                )
-//                            )
-//                        }
-//                    }
-//
-//                    IdType.ARTIST -> {
-//                        dao.getArtistInternalId(pinned.id.toInt())?.let { id ->
-//                            dao.addToPinnedTable(
-//                                data = PinnedTable(
-//                                    artistId = id
-//                                )
-//                            )
-//                        }
-//                    }
-//
-//                    else -> Unit
-//                }
-//            }
-//        }
-    }
-
-    fun insertDailyMixPrev(data: DailyMixPreview) {
         CoroutineScope(Dispatchers.IO).launch {
-            val idList = dao.insertBatchIntoSongPrev(data = data.listOfSongs.toSongPrevTableEntry())
+            list.forEach { pinned ->
+                when (pinned.type) {
+                    IdType.PLAYLIST -> {
+                        dao.getPlaylistInternalId(pinned.id)?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    playlistId = id
+                                )
+                            )
+                        }
+                    }
 
-            dao.insertIntoDailyMixPrevTable(
-                data = idList.toDailyMixPrevEntry()
-            )
+                    IdType.ALBUM -> {
+                        dao.getAlbumInternalId(pinned.id)?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    albumId = id
+                                )
+                            )
+                        }
+                    }
+
+                    IdType.ARTIST -> {
+                        dao.getArtistInternalId(pinned.id.toInt())?.let { id ->
+                            dao.addToPinnedTable(
+                                data = PinnedTable(
+                                    artistId = id
+                                )
+                            )
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
         }
     }
 
-    fun readFevArtistMixPrev() = dao.readFevArtistPrev()
+
+    fun readFevArtistMixPrev() = dao.readFevArtistMixPrev()
+    suspend fun readDailyMixPrevUrls() = dao.readDailyMixPrevUrls()
 
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
-    suspend fun readDailyMixPrevUrls() = dao.readDailyMixPrevUrls()
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
     fun redRecentlyPlayed() = dao.redRecentlyPlayed()
 
@@ -459,23 +473,31 @@ class DatabaseRepositoryImpl @Inject constructor(
 
 
     // songView screen query
-//    fun getPlaylist(id: Long) = dao.getPlaylist(id)
-//    suspend fun getAlbum(name: String) = dao.getAlbum(name).groupBy {
-//        it.album
-//    }.map {
-//        UiAlbum(
-//            name = it.key,
-//            listOfSong = it.value
-//        )
-//    }.firstOrNull() ?: UiAlbum()
+    fun getPlaylistName(id: Long) = dao.getPlaylistName(id)
+    fun getPlaylist(id: Long) = dao.getPlaylist(id)
 
-//    suspend fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
+
+    suspend fun getAlbum(id: Long) = withContext(Dispatchers.IO) {
+        dao.getAlbum(id).let { songs ->
+            UiAlbum(
+                name = async { dao.getAlbumName(id) }.await(),
+                totalTime = async {
+                    songs.map { single ->
+                        (single.totalTime.toFloatOrNull() ?: 0F) / 1000 / 60
+                    }.sum().toInt().toString()
+                }.await(),
+                listOfSong = songs
+            )
+        }
+    }
+
+    fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
 
     suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
 
-    fun insertIntoDailyMix(entrys: List<SongPreview>) = CoroutineScope(Dispatchers.IO).launch {
+    fun insertIntoDailyMix(entrys: List<ResponseSong>) = CoroutineScope(Dispatchers.IO).launch {
         entrys.toDailyMixEntry().let {
             dao.insertIntoDailyMix(it)
         }
@@ -483,10 +505,9 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun readAllDailyMix() = dao.readAllDailyMix()
 
-
     suspend fun checkIfArtistMixIsEmpty() = dao.checkIfArtistMixIsEmpty().toInt() == 0
 
-    fun insertIntoArtistMix(entrys: List<SongPreview>) = CoroutineScope(Dispatchers.IO).launch {
+    fun insertIntoArtistMix(entrys: List<ResponseSong>) = CoroutineScope(Dispatchers.IO).launch {
         entrys.toArtistMixEntry().let {
             dao.insertIntoArtistMix(it)
         }

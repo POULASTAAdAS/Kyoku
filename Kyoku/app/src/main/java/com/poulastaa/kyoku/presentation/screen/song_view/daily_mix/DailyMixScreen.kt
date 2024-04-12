@@ -3,7 +3,6 @@ package com.poulastaa.kyoku.presentation.screen.song_view.daily_mix
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
+import com.poulastaa.kyoku.data.model.screens.song_view.UiDailyMixOrArtistMix
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCardNonDraggable
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
 import com.poulastaa.kyoku.presentation.screen.song_view.common.navigateBackButton
@@ -32,7 +32,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun DailyMixScreen(
-    dailyMix: List<UiSong>,
+    dailyMix: UiDailyMixOrArtistMix,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -76,8 +76,8 @@ fun DailyMixScreen(
             }
 
             info(
-                name = "Daily Mix",
-                size = dailyMix.size
+                name = dailyMix.name,
+                size = dailyMix.listOfSong.size
             )
 
             playControl(
@@ -101,8 +101,8 @@ fun DailyMixScreen(
                 isDarkThem = isDarkThem,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                data = dailyMix,
-                onSongClick = { id , name ->
+                data = dailyMix.listOfSong,
+                onSongClick = { id, name ->
 
                 }
             )
@@ -114,7 +114,7 @@ private fun LazyListScope.dailyMixSongs(
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
-    data: List<UiSong>,
+    data: List<UiPlaylistSong>,
     onSongClick: (id: Long, name: String) -> Unit
 ) {
     items(data.size) {
@@ -143,29 +143,29 @@ private fun LazyListScope.dailyMixSongs(
 @Composable
 private fun Preview() {
     TestThem {
-        val listOfSong = ArrayList<UiSong>()
-
-        for (i in 1..10) {
-            listOfSong.add(
-                UiSong(
-                    id = i.toLong(),
-                    title = "Title $i",
-                    artist = "Artist $i",
-                    album = "Album $i",
-                    coverImage = ""
-                )
-            )
-        }
-
-        DailyMixScreen(
-            dailyMix = listOfSong,
-            isDarkThem = isSystemInDarkTheme(),
-            isCookie = false,
-            headerValue = "",
-            poster = "",
-            isSmallPhone = false
-        ) {
-
-        }
+//        val listOfSong = ArrayList<UiSong>()
+//
+//        for (i in 1..10) {
+//            listOfSong.add(
+//                UiSong(
+//                    id = i.toLong(),
+//                    title = "Title $i",
+//                    artist = "Artist $i",
+//                    album = "Album $i",
+//                    coverImage = ""
+//                )
+//            )
+//        }
+//
+//        DailyMixScreen(
+//            dailyMix = listOfSong,
+//            isDarkThem = isSystemInDarkTheme(),
+//            isCookie = false,
+//            headerValue = "",
+//            poster = "",
+//            isSmallPhone = false
+//        ) {
+//
+//        }
     }
 }

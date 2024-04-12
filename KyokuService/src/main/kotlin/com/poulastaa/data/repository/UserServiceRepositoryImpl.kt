@@ -402,8 +402,8 @@ class UserServiceRepositoryImpl(
             }
         }
 
-    override suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview {
-        val user = dbUsers.getDbUser(helper) ?: return DailyMixPreview()
+    override suspend fun getDailyMix(helper: UserTypeHelper): List<ResponseSong> {
+        val user = dbUsers.getDbUser(helper) ?: return emptyList()
 
         return song.getDailyMix(
             helper = UserTypeHelper(
@@ -413,7 +413,7 @@ class UserServiceRepositoryImpl(
         )
     }
 
-    override suspend fun getArtistMix(helper: UserTypeHelper): List<SongPreview> {
+    override suspend fun getArtistMix(helper: UserTypeHelper): List<ResponseSong> {
         val user = dbUsers.getDbUser(helper) ?: return emptyList()
 
         return artist.getArtistMix(userType = helper.userType, userId = user.id)

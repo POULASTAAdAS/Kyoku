@@ -286,7 +286,7 @@ class CreatePlaylistViewModel @Inject constructor(
                 return
             }
 
-            db.insertIntoArtistMix(artistMix)
+//            db.insertIntoArtistMix(artistMix)
 
             state = state.copy(
                 isLoading = false,
@@ -320,35 +320,35 @@ class CreatePlaylistViewModel @Inject constructor(
             isLoading = true
         )
 
-        if (!db.isDailyMixDownloaded()) { // if daily mix table is empty
-            // make api call
-            val dailyMix = api.getDailyMix().listOfSongs
-
-            if (dailyMix.isEmpty()) { // if empty return and exit out of screen
-                onEvent(CreatePlaylistUiEvent.SomethingWentWrong)
-
-                state = state.copy(
-                    isCriticalErr = true
-                )
-
-                return
-            }
-
-            db.insertIntoDailyMix(dailyMix)
-
-            state = state.copy(
-                isLoading = false,  // make save button clickable
-                songIdList = dailyMix.map {  // store listOf id to make api call
-                    it.id.toLong()
-                }
-            )
-
-        } else { // if daily mix table is not empty
-            state = state.copy( // get dailyMix songs songId
-                songIdList = db.getSongIdListOfDailyMix(),
-                isLoading = false
-            )
-        }
+//        if (!db.isDailyMixDownloaded()) { // if daily mix table is empty
+//            // make api call
+//            val dailyMix = api.getDailyMix().listOfSongs
+//
+//            if (dailyMix.isEmpty()) { // if empty return and exit out of screen
+//                onEvent(CreatePlaylistUiEvent.SomethingWentWrong)
+//
+//                state = state.copy(
+//                    isCriticalErr = true
+//                )
+//
+//                return
+//            }
+//
+//            db.insertIntoDailyMix(dailyMix)
+//
+//            state = state.copy(
+//                isLoading = false,  // make save button clickable
+//                songIdList = dailyMix.map {  // store listOf id to make api call
+//                    it.id.toLong()
+//                }
+//            )
+//
+//        } else { // if daily mix table is not empty
+//            state = state.copy( // get dailyMix songs songId
+//                songIdList = db.getSongIdListOfDailyMix(),
+//                isLoading = false
+//            )
+//        }
     }
 
     private fun playlistNameValidation() =

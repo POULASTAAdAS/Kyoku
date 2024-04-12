@@ -16,7 +16,7 @@ interface SongRepository {
 
     suspend fun handleSpotifyPlaylist(list: List<SpotifySong>): HandleSpotifyPlaylist
     suspend fun getDailyMixPreview(helper: UserTypeHelper): DailyMixPreview
-    suspend fun getDailyMix(helper: UserTypeHelper): DailyMixPreview
+    suspend fun getDailyMix(helper: UserTypeHelper): List<ResponseSong>
 
     suspend fun handlePinnedOperation(
         userId: Long,

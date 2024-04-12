@@ -3,7 +3,6 @@ package com.poulastaa.kyoku.presentation.screen.song_view.favourites
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +27,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
+import com.poulastaa.kyoku.data.model.screens.song_view.UiFavourite
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
 import com.poulastaa.kyoku.presentation.screen.song_view.common.navigateBackButton
@@ -39,7 +39,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun FavouriteScreen(
-    data: List<UiSong>,
+    data: UiFavourite,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -108,7 +108,7 @@ fun FavouriteScreen(
 
             info(
                 name = "Favourites",
-                size = data.size
+                size = data.listOfSong.size
             )
 
             playControl(
@@ -132,7 +132,7 @@ fun FavouriteScreen(
                 isDarkThem = isDarkThem,
                 isCookie = isCookie,
                 headerValue = headerValue,
-                data = data,
+                data = data.listOfSong,
                 onSongClick = { id, name ->
 
                 }
@@ -142,7 +142,7 @@ fun FavouriteScreen(
 }
 
 private fun LazyListScope.favouriteSongs(
-    data: List<UiSong>,
+    data: List<UiPlaylistSong>,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -174,28 +174,28 @@ private fun LazyListScope.favouriteSongs(
 @Composable
 private fun Preview() {
     TestThem {
-        val data = ArrayList<UiSong>()
-
-        for (i in 1..10) {
-            data.add(
-                UiSong(
-                    id = i.toLong(),
-                    title = "Title $i",
-                    artist = "Artist $i",
-                    album = "Album $i",
-                    coverImage = ""
-                )
-            )
-        }
-
-        FavouriteScreen(
-            data = data,
-            isDarkThem = isSystemInDarkTheme(),
-            isCookie = false,
-            headerValue = "",
-            isSmallPhone = false
-        ) {
-
-        }
+//        val data = ArrayList<UiSong>()
+//
+//        for (i in 1..10) {
+//            data.add(
+//                UiSong(
+//                    id = i.toLong(),
+//                    title = "Title $i",
+//                    artist = "Artist $i",
+//                    album = "Album $i",
+//                    coverImage = ""
+//                )
+//            )
+//        }
+//
+//        FavouriteScreen(
+//            data = data,
+//            isDarkThem = isSystemInDarkTheme(),
+//            isCookie = false,
+//            headerValue = "",
+//            isSmallPhone = false
+//        ) {
+//
+//        }
     }
 }

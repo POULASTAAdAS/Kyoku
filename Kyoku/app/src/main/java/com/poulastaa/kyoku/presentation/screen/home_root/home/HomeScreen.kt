@@ -60,7 +60,7 @@ fun HomeScreen(
     if (
         viewModel.state.isLoading ||
         viewModel.state.data.albumPrev.isEmpty() ||
-        viewModel.state.data.fevArtistMixPrev.isEmpty() ||
+        viewModel.state.data.fevArtistMixPrevUrls.isEmpty() ||
         viewModel.state.data.artistPrev.isEmpty()
     ) HomeScreenContentLoading(paddingValues, isSmallPhone)
     else {

@@ -1,6 +1,7 @@
 package com.poulastaa.data.repository.artist
 
 import com.poulastaa.data.model.common.ResponseArtist
+import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.ArtistTable
 import com.poulastaa.data.model.db_table.SongArtistRelationTable
 import com.poulastaa.data.model.db_table.SongTable
@@ -16,7 +17,6 @@ import com.poulastaa.data.model.db_table.user_pinned_artist.PasskeyUserPinnedArt
 import com.poulastaa.data.model.home.ArtistSong
 import com.poulastaa.data.model.home.FevArtistsMixPreview
 import com.poulastaa.data.model.home.ResponseArtistsPreview
-import com.poulastaa.data.model.home.SongPreview
 import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.setup.artist.ArtistResponseStatus
 import com.poulastaa.data.model.setup.artist.StoreArtistResponse
@@ -33,6 +33,7 @@ import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.aritst.ArtistRepository
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
+import com.poulastaa.utils.constructMasterPlaylistUrl
 import com.poulastaa.utils.toResponseArtist
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
@@ -165,7 +166,7 @@ class ArtistRepositoryImpl : ArtistRepository {
     }
 
 
-    override suspend fun getArtistMix(userType: UserType, userId: Long): List<SongPreview> {
+    override suspend fun getArtistMix(userType: UserType, userId: Long): List<ResponseSong> {
         val favArtist = getFavArtist(userType, userId)
 
         val original = favArtist.getOriginal()
@@ -590,14 +591,15 @@ class ArtistRepositoryImpl : ArtistRepository {
                 SongTable.artist inList this@getOriginal
             }.orderBy(org.jetbrains.exposed.sql.Random() to SortOrder.ASC)
                 .map {
-                    SongPreview(
-                        id = it.id.value.toString(),
+                    ResponseSong(
+                        id = it.id.value,
                         title = it.title,
                         artist = it.artist,
                         album = it.album,
                         coverImage = it.coverImage.constructCoverPhotoUrl(),
-                        points = it.points,
-                        year = it.date
+                        masterPlaylistUrl = it.masterPlaylistPath.constructMasterPlaylistUrl(),
+                        totalTime = it.totalTime,
+                        date = it.date
                     )
                 }.groupBy { it.artist }
                 .map {
@@ -612,14 +614,15 @@ class ArtistRepositoryImpl : ArtistRepository {
                 SongTable.artist like "%$it%"
             }.orderBy(SongTable.points to SortOrder.DESC)
                 .map {
-                    SongPreview(
-                        id = it.id.value.toString(),
+                    ResponseSong(
+                        id = it.id.value,
                         title = it.title,
                         artist = it.artist,
                         album = it.album,
                         coverImage = it.coverImage.constructCoverPhotoUrl(),
-                        points = it.points,
-                        year = it.date
+                        masterPlaylistUrl = it.masterPlaylistPath.constructMasterPlaylistUrl(),
+                        totalTime = it.totalTime,
+                        date = it.date
                     )
                 }.take(50).shuffled(Random)
         }.flatten()
