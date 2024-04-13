@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,6 +57,13 @@ fun HomeScreen(
             }
         }
     }
+
+    Log.d(
+        "tagagggggg", "${viewModel.state.data.albumPrev.isEmpty()}," +
+                " ${viewModel.state.data.fevArtistMixPrevUrls.isEmpty()} , " +
+                "${viewModel.state.data.artistPrev.isEmpty()} , " +
+                "${viewModel.state.isLoading}"
+    )
 
     if (
         viewModel.state.isLoading ||

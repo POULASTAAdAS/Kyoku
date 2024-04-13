@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.edit_playlist
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,12 +12,16 @@ import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiPlaylist
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.LoadingStatus
-import com.poulastaa.kyoku.data.model.screens.home.SongType
+import com.poulastaa.kyoku.data.model.screens.edit_playlist.UiFav
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -28,7 +31,8 @@ import javax.inject.Inject
 class EditPlaylistViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
     private val ds: DataStoreOperation,
-    private val db: DatabaseRepositoryImpl
+    private val db: DatabaseRepositoryImpl,
+    private val api: ServiceRepository,
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
@@ -52,6 +56,8 @@ class EditPlaylistViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var state by mutableStateOf(EditPlaylistUiState())
+
+    private var searchJob: Job? = null
 
     init {
         readAccessToken()
@@ -78,59 +84,55 @@ class EditPlaylistViewModel @Inject constructor(
         }
     }
 
-    fun loadData(
-        typeString: String,
-        id: Long
-    ) {
-        Log.d("playlistId", id.toString())
+    fun loadData(id: Long) {
+        state = state.copy(
+            songId = id
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
-            db.readPlaylistPreview().collect { results ->
-                results.groupBy {
-                    it.playlistId
-                }.map {
-                    EditPlaylistUiPlaylist(
-                        id = it.key,
-                        name = it.value[0].name,
-                        totalSongs = it.value.size,
-                        isSelected = it.value.map { song ->
-                            if (song.playlistId == id) true else null
-                        }.firstOrNull() ?: false,
-                        urls = it.value.map { song ->
-                            song.coverImage
-                        }.take(4)
+            val playlist = async {
+                db.readPlaylistPreview().collect { results ->
+                    state = state.copy(
+                        playlist = async {
+                            results.groupBy {
+                                it.playlistId
+                            }.map {
+                                EditPlaylistUiPlaylist(
+                                    id = it.key,
+                                    name = it.value[0].name,
+                                    totalSongs = it.value.size,
+                                    isSelected = it.value.map { song ->
+                                        if (song.playlistId == id) true else null
+                                    }.firstOrNull() ?: false,
+                                    urls = it.value.map { song ->
+                                        song.coverImage
+                                    }.take(4)
+                                )
+                            }
+                        }.await(),
+                        loadingStatus = LoadingStatus.NOT_LOADING
                     )
-                }.forEach {
-                    Log.d("playlist", it.toString())
                 }
             }
+
+            val fav = async {
+                val temp = db.isInFavourite(id)
+
+                db.countFavouriteSong().collect {
+                    state = state.copy(
+                        fav = UiFav(
+                            totalSongs = it.sumOf { count ->
+                                count.toInt()
+                            },
+                            isSelected = temp
+                        )
+                    )
+                }
+            }
+
+            playlist.await()
+            fav.await()
         }
-    }
-
-    private fun load(typeString: String) = when (typeString) {
-        SongType.HISTORY_SONG.name -> SongType.HISTORY_SONG
-        SongType.ARTIST_SONG.name -> SongType.ARTIST_SONG
-        else -> {
-            onEvent(EditPlaylistUiEvent.EmitToast("opp's something went wrong"))
-            null
-        }
-    }.let {
-        if (it == null) {
-            state = state.copy(
-                loadingStatus = LoadingStatus.ERR
-            )
-
-            return@let
-        }
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-        }
-    }
-
-
-    private fun getSong() {
-
     }
 
     fun onEvent(event: EditPlaylistUiEvent) {
@@ -145,6 +147,34 @@ class EditPlaylistViewModel @Inject constructor(
                 onEvent(EditPlaylistUiEvent.EmitToast("Opp's something went wrong"))
             }
 
+            is EditPlaylistUiEvent.NewPlaylist -> {
+                when (event) {
+                    EditPlaylistUiEvent.NewPlaylist.NewPlaylistOpen -> {
+                        state = state.copy(
+                            isNewPlaylist = true
+                        )
+                    }
+
+                    is EditPlaylistUiEvent.NewPlaylist.NewPlaylistNameEnter -> {
+                        state = state.copy(
+                            newPlaylistText = event.text
+                        )
+                    }
+
+                    EditPlaylistUiEvent.NewPlaylist.NewPlaylistYes -> {
+
+                    }
+
+
+                    EditPlaylistUiEvent.NewPlaylist.NewPlaylistNo -> {
+                        state = state.copy(
+                            isNewPlaylist = false,
+                            newPlaylistText = ""
+                        )
+                    }
+                }
+            }
+
             EditPlaylistUiEvent.SearchClick -> {
                 state = state.copy(
                     isSearchEnable = true
@@ -156,7 +186,8 @@ class EditPlaylistViewModel @Inject constructor(
                     searchText = event.text
                 )
 
-                // todo search job
+                searchJob?.cancel()
+                searchJob = search(event.text)
             }
 
             EditPlaylistUiEvent.CancelSearch -> {
@@ -164,36 +195,126 @@ class EditPlaylistViewModel @Inject constructor(
                     isSearchEnable = false,
                     searchText = ""
                 )
+
+                search("")
             }
 
             is EditPlaylistUiEvent.PlaylistClick -> {
                 state = state.copy(
-                    data = state.data.map {
-                        if (it.id == event.id) it.copy(isSelected = !it.isSelected)
+                    playlist = state.playlist.map {
+                        if (it.id == event.id) it.copy(
+                            totalSongs = if (!it.isSelected) it.totalSongs + 1 else it.totalSongs - 1,
+                            isSelected = !it.isSelected,
+                        )
                         else it
                     }
                 )
             }
 
+            is EditPlaylistUiEvent.FavClick -> {
+                val temp = state.fav.isSelected
+
+                state = state.copy(
+                    fav = state.fav.copy(
+                        isSelected = !state.fav.isSelected,
+                        totalSongs = if (!temp) state.fav.totalSongs + 1
+                        else state.fav.totalSongs - 1
+                    )
+                )
+            }
+
             EditPlaylistUiEvent.DoneClick -> {
+                if (
+                    state.playlist.mapNotNull {
+                        if (it.isSelected) it.id else null
+                    }.isEmpty()
+                ) state = state.copy(
+                    isNavigateBack = true
+                )
 
-            }
 
-            EditPlaylistUiEvent.NewPlaylistClick -> {
+                // todo delete
+                viewModelScope.launch(Dispatchers.IO) {
+                    state = state.copy(
+                        isMakingApiCall = true
+                    )
 
-            }
+                    delay(1500)
 
-            is EditPlaylistUiEvent.BottomSheetClick -> {
-                when (event) {
-                    is EditPlaylistUiEvent.BottomSheetClick.YesClick -> {
-
-                    }
-
-                    EditPlaylistUiEvent.BottomSheetClick.NoClick -> {
-
-                    }
+                    state = state.copy(
+                        isMakingApiCall = false,
+                        isNavigateBack = true
+                    )
                 }
+
+//                if (!state.isInternetAvailable) {
+//                    onEvent(EditPlaylistUiEvent.EmitToast("Please check your Internet connection"))
+//
+//                    return
+//                }
+//
+//                state = state.copy(
+//                    isMakingApiCall = true
+//                )
+//
+//                viewModelScope.launch(Dispatchers.IO) {
+//                    val playlistId = async {
+//                        state.playlist.mapNotNull {
+//                            if (it.isSelected) it.id else null
+//                        }
+//                    }.await()
+//
+//                    val song = api.addSongToPlaylist(
+//                        req = AddSongToPlaylistReq(
+//                            songId = state.songId,
+//                            isAddToFavourite = state.fav.isSelected,
+//                            listOfPlaylistId = playlistId
+//                        )
+//                    )
+//
+//                    if (song.id == -1L) {
+//                        onEvent(EditPlaylistUiEvent.SomethingWentWrong)
+//
+//                        state = state.copy(
+//                            isMakingApiCall = false
+//                        )
+//
+//                        return@launch
+//                    }
+//
+//                    db.addToPlaylist(
+//                        entry = song.toPlaylistSongTable(),
+//                        playlistId = playlistId
+//                    )
+//
+//                    state = state.copy(
+//                        isMakingApiCall = false,
+//                        isNavigateBack = true
+//                    )
+//                }
             }
         }
+    }
+
+    private fun search(query: String) = viewModelScope.launch(Dispatchers.IO) {
+        val result = db.searchPlaylist(query).groupBy {
+            it.playlistId
+        }.map {
+            EditPlaylistUiPlaylist(
+                id = it.key,
+                name = it.value[0].name,
+                totalSongs = it.value.size,
+                isSelected = it.value.map { song ->
+                    if (song.playlistId == state.songId) true else null
+                }.firstOrNull() ?: false,
+                urls = it.value.map { song ->
+                    song.coverImage
+                }.take(4)
+            )
+        }
+
+        state = state.copy(
+            playlist = result
+        )
     }
 }

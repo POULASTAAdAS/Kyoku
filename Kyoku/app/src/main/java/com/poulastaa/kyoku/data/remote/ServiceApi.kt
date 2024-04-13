@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
+import com.poulastaa.kyoku.data.model.api.service.playlist.AddSongToPlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
@@ -120,4 +121,9 @@ interface ServiceApi {
     suspend fun removeFromFavourite(
         @Query("songId") id: Long
     ): Boolean
+
+    @POST("/api/authorised/addSongToPlaylist")
+    suspend fun addSongToPlaylist(
+        @Body request: AddSongToPlaylistReq
+    ): ResponseSong
 }

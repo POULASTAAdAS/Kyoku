@@ -7,7 +7,6 @@ import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
-import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
 import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
@@ -17,7 +16,6 @@ import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
-import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
@@ -35,11 +33,9 @@ import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
         FavouriteSongTable::class,
         AlbumSongTable::class,
 
-        SongPreviewTable::class,
         FevArtistOrDailyMixPreviewTable::class,
         ArtistTable::class,
         ArtistPreviewSongRelation::class,
-        DailyMixPrevTable::class,
 
         AlbumTable::class,
         SongAlbumRelationTable::class,

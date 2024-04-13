@@ -1,22 +1,17 @@
 package com.poulastaa.kyoku.navigation.root_navigation
 
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +38,6 @@ import com.poulastaa.kyoku.presentation.screen.setup.suggest_artist.SuggestArtis
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.SongViewRootScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistAllScreen
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -231,7 +225,7 @@ fun SetupNavGraph(
 
 
         composable(
-            Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
+            route = Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
             arguments = listOf(
                 navArgument(Screens.Args.NAME.title) {
                     type = NavType.StringType
@@ -242,129 +236,117 @@ fun SetupNavGraph(
                 navArgument(Screens.Args.ID.title) {
                     type = NavType.LongType
                 }
-            )
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(400, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            popEnterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(400, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(400)
+                ) + slideOutOfContainer(
+                    animationSpec = tween(400),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            },
+            popExitTransition = {
+                fadeOut(
+                    animationSpec = tween(400)
+                ) + slideOutOfContainer(
+                    animationSpec = tween(400),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            }
         ) { navBackStackEntry ->
             val name = navBackStackEntry.arguments?.getString(Screens.Args.NAME.title) ?: ""
             val type = navBackStackEntry.arguments?.getString(Screens.Args.TYPE.title) ?: ""
             val id = navBackStackEntry.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
 
-            val show = remember {
-                mutableStateOf(false)
-            }
-
-            val scope = rememberCoroutineScope()
             val context = LocalContext.current
 
-            LaunchedEffect(key1 = name) {
-                if (name.isNotEmpty()) show.value = true
-                else {
-                    Toast.makeText(
-                        context,
-                        "Opp's Something went wrong",
-                        Toast.LENGTH_LONG
-                    ).show()
-
+            CreatePlaylistScreen(
+                id = id,
+                name = name,
+                type = type,
+                context = context,
+                navigateBack = {
                     navController.popBackStack()
                 }
-            }
-
-
-
-            AnimatedVisibility(
-                visible = show.value,
-                enter = fadeIn(
-                    animationSpec = tween(durationMillis = 400)
-                ) + slideInVertically(
-                    animationSpec = tween(durationMillis = 400),
-                    initialOffsetY = { it / 2 }
-                ),
-                exit = fadeOut(
-                    animationSpec = tween(400)
-                ) + slideOutVertically(
-                    animationSpec = tween(durationMillis = 400),
-                    targetOffsetY = { it / 2 }
-                )
-            ) {
-                CreatePlaylistScreen(
-                    id = id,
-                    name = name,
-                    type = type,
-                    context = context,
-                    navigateBack = {
-                        scope.launch {
-                            show.value = false
-                            navController.popBackStack()
-                        }
-                    }
-                )
-            }
+            )
         }
 
 
-        composable(Screens.EditPlaylist.route + Screens.EditPlaylist.PARAMS,
+        composable(
+            route = Screens.EditPlaylist.route + Screens.EditPlaylist.PARAMS,
             arguments = listOf(
                 navArgument(Screens.Args.ID.title) {
                     type = NavType.LongType
-                },
-                navArgument(Screens.Args.TYPE.title) {
-                    type = NavType.StringType
                 }
-            )
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(400, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            popEnterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        400, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(400, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(400)
+                ) + slideOutOfContainer(
+                    animationSpec = tween(400),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            },
+            popExitTransition = {
+                fadeOut(
+                    animationSpec = tween(400)
+                ) + slideOutOfContainer(
+                    animationSpec = tween(400),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            }
         ) { navBackStackEntry ->
-            val type = navBackStackEntry.arguments?.getString(Screens.Args.TYPE.title) ?: ""
             val id = navBackStackEntry.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
 
-            val show = remember {
-                mutableStateOf(false)
-            }
-
-            val scope = rememberCoroutineScope()
             val context = LocalContext.current
 
-            LaunchedEffect(key1 = id) {
-                if (id != -1L) show.value = true
-                else {
-                    Toast.makeText(
-                        context,
-                        "Opp's Something went wrong",
-                        Toast.LENGTH_LONG
-                    ).show()
-
+            EditPlaylistScreen(
+                id = id,
+                context = context,
+                navigateBack = {
                     navController.popBackStack()
                 }
-            }
-
-            AnimatedVisibility(
-                visible = show.value,
-                enter = fadeIn(
-                    animationSpec = tween(durationMillis = 400)
-                ) + slideInVertically(
-                    animationSpec = tween(durationMillis = 400),
-                    initialOffsetY = { it / 2 }
-                ),
-                exit = fadeOut(
-                    animationSpec = tween(400)
-                ) + slideOutVertically(
-                    animationSpec = tween(durationMillis = 400),
-                    targetOffsetY = { it / 2 }
-                )
-            ) {
-                EditPlaylistScreen(
-                    id = id,
-                    type = type,
-                    context = context,
-                    scope = scope,
-                    navigate = {
-
-                    },
-                    navigateBack = {
-                        scope.launch {
-                            show.value = false
-                            navController.popBackStack()
-                        }
-                    }
-                )
-            }
+            )
         }
 
         composable(Screens.Player.route) {

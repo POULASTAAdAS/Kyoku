@@ -192,26 +192,26 @@ fun HomeScreenContentOldUser(
                                     }
                                 }
                             )
-//                        else if (data.playlist.size >= 3)
-//                            HomeScreenCardPlaylistPrev(
-//                                modifier = Modifier
-//                                    .fillMaxWidth(.5f)
-//                                    .fillMaxHeight(),
-//                                name = data.playlist[2].name,
-//                                imageUrls = data.playlist[2].listOfUrl,
-//                                isCookie = isCookie,
-//                                headerValue = headerValue,
-//                                onClick = {
-//                                    scope.launch {
-//                                        onClick.invoke(
-//                                            HomeUiEvent.ItemClick(
-//                                                type = ItemsType.PLAYLIST,
-//                                                id = data.playlist[2].id
-//                                            )
-//                                        )
-//                                    }
-//                                }
-//                            )
+                        else if (data.playlist.size >= 3)
+                            HomeScreenCardPlaylistPrev(
+                                modifier = Modifier
+                                    .fillMaxWidth(.5f)
+                                    .fillMaxHeight(),
+                                name = data.playlist[2].name,
+                                imageUrls = data.playlist[2].listOfUrl,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.ItemClick(
+                                                type = ItemsType.PLAYLIST,
+                                                id = data.playlist[2].id
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                         // favourites or album
                         if (data.favourites)

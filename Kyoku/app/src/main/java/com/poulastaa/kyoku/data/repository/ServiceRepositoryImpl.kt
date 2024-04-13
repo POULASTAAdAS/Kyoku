@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
+import com.poulastaa.kyoku.data.model.api.service.playlist.AddSongToPlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponse
@@ -196,6 +197,14 @@ class ServiceRepositoryImpl @Inject constructor(
             api.removeFromFavourite(songId)
         } catch (e: Exception) {
             false
+        }
+    }
+
+    override suspend fun addSongToPlaylist(req: AddSongToPlaylistReq): ResponseSong {
+        return try {
+            api.addSongToPlaylist(req)
+        } catch (e: Exception) {
+            ResponseSong()
         }
     }
 }

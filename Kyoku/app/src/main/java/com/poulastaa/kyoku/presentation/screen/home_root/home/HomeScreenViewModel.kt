@@ -129,13 +129,11 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun loadFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
-            val fevArtistMixPrev = async {
-                state = state.copy(
-                    data = state.data.copy(
-                        fevArtistMixPrevUrls = db.readFevArtistMixPrev()
-                    )
+            state = state.copy(
+                data = state.data.copy(
+                    fevArtistMixPrevUrls = async { db.readFevArtistMixPrev() }.await()
                 )
-            }
+            )
 
             val dailyMixPrev = async {
                 state = state.copy(
@@ -159,7 +157,7 @@ class HomeScreenViewModel @Inject constructor(
             val artistPrev = async {
                 db.readAllArtistPrev().collect {
                     state = state.copy(
-                        data = state.data.copy( // todo check taking to long to map
+                        data = state.data.copy(
                             artistPrev = it.groupBy { result ->
                                 result.artistId
                             }.map { entry ->
@@ -221,7 +219,6 @@ class HomeScreenViewModel @Inject constructor(
                 db.readFavouritePrev()
             }
 
-            fevArtistMixPrev.await()
             albumPrev.await()
             artistPrev.await()
             dailyMixPrev.await()
@@ -569,6 +566,37 @@ class HomeScreenViewModel @Inject constructor(
 
                     is HomeUiEvent.BottomSheetItemClick.AddToPlaylist -> {
                         when (event.type) {
+                            HomeLongClickType.ARTIST_MIX -> {
+                                val date = LocalDate.now()
+                                    .format(DateTimeFormatter.ofPattern("dd:MM:yy"))
+
+
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.CreatePlaylist.route,
+                                            name = "Artist Mix [$date]",
+                                            longClickType = HomeLongClickType.ARTIST_MIX.name
+                                        )
+                                    )
+                                }
+                            }
+
+                            HomeLongClickType.DAILY_MIX -> {
+                                val date = LocalDate.now()
+                                    .format(DateTimeFormatter.ofPattern("dd:MM:yy"))
+
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.NavigateWithData(
+                                            route = Screens.CreatePlaylist.route,
+                                            name = "Daily Mix [$date]",
+                                            longClickType = HomeLongClickType.DAILY_MIX.name
+                                        )
+                                    )
+                                }
+                            }
+
                             HomeLongClickType.ALBUM_PREV -> {
                                 viewModelScope.launch(Dispatchers.IO) {
                                     val album = state.data.albumPrev.firstOrNull {
@@ -586,36 +614,6 @@ class HomeScreenViewModel @Inject constructor(
                                 }
                             }
 
-                            HomeLongClickType.ARTIST_MIX -> {
-                                val date =
-                                    LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
-
-
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    _uiEvent.send(
-                                        UiEvent.NavigateWithData(
-                                            route = Screens.CreatePlaylist.route,
-                                            name = "Artist Mix [$date]",
-                                            longClickType = HomeLongClickType.ARTIST_MIX.name
-                                        )
-                                    )
-                                }
-                            }
-
-                            HomeLongClickType.DAILY_MIX -> {
-                                val date =
-                                    LocalDate.now().format(DateTimeFormatter.ofPattern("dd:MM:yy"))
-
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    _uiEvent.send(
-                                        UiEvent.NavigateWithData(
-                                            route = Screens.CreatePlaylist.route,
-                                            name = "Daily Mix [$date]",
-                                            longClickType = HomeLongClickType.DAILY_MIX.name
-                                        )
-                                    )
-                                }
-                            }
 
                             HomeLongClickType.HISTORY_SONG -> {
                                 viewModelScope.launch(Dispatchers.IO) {

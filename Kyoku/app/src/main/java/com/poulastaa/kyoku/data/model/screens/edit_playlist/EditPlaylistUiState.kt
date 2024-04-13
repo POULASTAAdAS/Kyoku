@@ -4,6 +4,8 @@ import androidx.compose.runtime.Stable
 
 @Stable
 data class EditPlaylistUiState(
+    val songId: Long = -1L,
+
     val loadingStatus: LoadingStatus = LoadingStatus.LOADING,
 
     val searchText: String = "",
@@ -16,8 +18,14 @@ data class EditPlaylistUiState(
     val headerValue: String = "",
 
     val isNewPlaylist: Boolean = false,
+    val newPlaylistText: String = "",
 
-    val data: List<EditPlaylistUiPlaylist> = emptyList()
+    val isMakingApiCall: Boolean = false,
+
+    val isNavigateBack: Boolean = false,
+
+    val playlist: List<EditPlaylistUiPlaylist> = emptyList(),
+    val fav: UiFav = UiFav()
 )
 
 @Stable
@@ -29,8 +37,15 @@ data class EditPlaylistUiPlaylist(
     val urls: List<String> = emptyList(),
 )
 
+@Stable
 enum class LoadingStatus {
     LOADING,
     NOT_LOADING,
     ERR
 }
+
+@Stable
+data class UiFav(
+    val isSelected: Boolean = false,
+    val totalSongs: Int = 0
+)

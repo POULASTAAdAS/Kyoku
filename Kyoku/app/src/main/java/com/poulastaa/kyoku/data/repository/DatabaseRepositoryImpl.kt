@@ -19,6 +19,7 @@ import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.MixType
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
+import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
@@ -220,13 +221,16 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
 
-    fun readFevArtistMixPrev() = dao.readFevArtistMixPrev()
+    suspend fun readFevArtistMixPrev() = dao.readFevArtistMixPrev()
     suspend fun readDailyMixPrevUrls() = dao.readDailyMixPrevUrls()
 
     fun readAllAlbumPrev() = dao.readAllAlbumPrev()
     fun readAllArtistPrev() = dao.readAllArtistPrev()
     fun readPlaylistPreview() = dao.readPreviewPlaylist()
     fun redRecentlyPlayed() = dao.redRecentlyPlayed()
+
+    suspend fun isInFavourite(id: Long) = dao.isInFavourite(id)?.let { true } ?: false
+    fun countFavouriteSong() = dao.countFavouriteSong()
 
     fun radSavedAlbumPrev() = dao.radSavedAlbumPrev()
     suspend fun readFavouritePrev() = dao.readFavouritePrev()
@@ -519,7 +523,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long) =
         dao.checkIfAlbumAlreadyInLibrary(albumId)?.let { true } ?: false
 
-    suspend fun isDailyMixDownloaded() = dao.isDailyMixDownloaded().isNotEmpty()
+    suspend fun isDailyMixEmpty() = dao.isDailyMixEmpty().isEmpty()
 
     suspend fun getSongIdListOfDailyMix() = dao.getSongIdListOfDailyMix()
 
@@ -534,9 +538,26 @@ class DatabaseRepositoryImpl @Inject constructor(
         )
     }
 
-    suspend fun isArtistMixDownloaded() = dao.isArtistMixDownloaded().isNotEmpty()
+    suspend fun isArtistMixEmpty() = dao.isArtistMixEmpty().isEmpty()
 
     suspend fun getSongIdListOfArtistMix() = dao.getSongIdListOfArtistMix()
+
+    suspend fun searchPlaylist(query: String) = dao.searchPlaylist(query)
+
+    fun addToPlaylist(entry: PlaylistSongTable, playlistId: List<Long>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            async { dao.insertIntoPlaylistSongTable(listOf(entry)) }.await()
+
+            dao.insertIntoSongPlaylistRelation(
+                entrys = playlistId.map {
+                    SongPlaylistRelationTable(
+                        playlistId = it,
+                        songId = entry.songId
+                    )
+                }
+            )
+        }
+    }
 
 // ---------------------------------------------------------------------------------------------
 
@@ -544,7 +565,6 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun removeAllTable() = CoroutineScope(Dispatchers.IO).launch {
         val al = async { dao.dropAlbumTable() }
         val arPrevSong = async { dao.dropArtistPrevSongTable() }
-        val daiMixPrev = async { dao.dropDailyMixPrevTable() }
         val daiMix = async { dao.dropDailyMixTable() }
         val arMix = async { dao.dropArtistMixTable() }
         val favArMixPrev = async { dao.dropFavArtistMixPrevTable() }
@@ -553,11 +573,9 @@ class DatabaseRepositoryImpl @Inject constructor(
         val revPlaPrev = async { dao.dropRecentlyPlayedPrevTable() }
         val songAl = async { dao.dropSongAlbumTable() }
         val soPlay = async { dao.dropSongPlaylistTable() }
-        val soPrev = async { dao.dropSongPrevTable() }
 
         al.await()
         arPrevSong.await()
-        daiMixPrev.await()
         daiMix.await()
         arMix.await()
         favArMixPrev.await()
@@ -566,7 +584,6 @@ class DatabaseRepositoryImpl @Inject constructor(
         revPlaPrev.await()
         songAl.await()
         soPlay.await()
-        soPrev.await()
     }
 
 
