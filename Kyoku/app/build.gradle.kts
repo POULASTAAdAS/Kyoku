@@ -73,7 +73,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2024.03.00"))
+    implementation(platform("androidx.compose:compose-bom:2024.04.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -83,7 +83,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -122,7 +122,7 @@ dependencies {
     // DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    val media3Version = "1.3.0"
+    val media3Version = "1.3.1"
 
     // For media playback using ExoPlayer
     implementation("androidx.media3:media3-exoplayer:$media3Version")
@@ -133,11 +133,11 @@ dependencies {
     // For building media playback UIs
     implementation("androidx.media3:media3-ui:$media3Version")
 
-    implementation("androidx.credentials:credentials:1.3.0-alpha01")
+    implementation("androidx.credentials:credentials:1.3.0-alpha02")
 
     // optional - needed for credentials support from play services, for devices running
     // Android 13 and below.
-    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha02")
 
     // coil
     implementation("io.coil-kt:coil-compose:2.5.0")
@@ -150,7 +150,7 @@ dependencies {
     val pagingVersion = "3.2.1"
 
     implementation ("androidx.paging:paging-runtime-ktx:$pagingVersion")
-    implementation ("androidx.paging:paging-compose:3.3.0-alpha05")
+    implementation ("androidx.paging:paging-compose:3.3.0-beta01")
 
     // implementation ("com.google.accompanist:accompanist-permissions:0.25.0")
 

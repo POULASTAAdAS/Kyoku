@@ -60,11 +60,20 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 
 # <h2 align="center">Technology Used</h2>
 
+- MEDIA 3
 - Retrofit
+- okhttp
 - Paging3
+- Room
 - Navigation
 - Flows
 - Coil
+- Splash API
+  AUTH
+- Credentials
+- DataStore
+- play Service
+- window size
 - Dagger Hilt
 - Coroutines
 - KotlinX Serialization
