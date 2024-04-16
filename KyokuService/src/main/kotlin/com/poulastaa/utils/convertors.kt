@@ -1,5 +1,6 @@
 package com.poulastaa.utils
 
+import com.poulastaa.data.model.artist.ViewArtist
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.common.ResponseArtist
 import com.poulastaa.data.model.common.ResponseSong
@@ -97,6 +98,16 @@ fun LongEntity.toUser(userType: UserType) = when (userType) {
 fun Iterable<Artist>.toResponseArtist() = this.map {
     it.toResponseArtist()
 }
+
+fun Iterable<Artist>.toViewArtist() = this.map {
+    ViewArtist(
+        id = it.id.value.toLong(),
+        name = it.name,
+        coverImage = ViewArtist.getArtistImageUrl(it.profilePicUrl),
+        points = it.points
+    )
+}
+
 
 fun Artist.toResponseArtist() = ResponseArtist(
     id = this.id.value.toLong(),

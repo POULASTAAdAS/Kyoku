@@ -36,7 +36,6 @@ import com.poulastaa.data.model.db_table.user_playlist.PasskeyUserPlaylistTable
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.domain.dao.Album
 import com.poulastaa.domain.dao.song.Song
-import com.poulastaa.domain.dao.song.SongArtistRelation
 import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
@@ -425,10 +424,12 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
     // getFevArtistMixPrev
     private suspend fun List<Int>.getListOfFevArtistMixPreview() = dbQuery {
         Song.find {
-            SongTable.id inList SongArtistRelation.find {
+            SongTable.id inList SongArtistRelationTable.slice(
+                SongArtistRelationTable.songId
+            ).select {
                 SongArtistRelationTable.artistId inList this@getListOfFevArtistMixPreview
             }.map {
-                it.songId
+                it[SongArtistRelationTable.songId]
             }
         }.orderBy(SongTable.points to SortOrder.DESC)
             .limit(4).map {
@@ -611,10 +612,12 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
         }.take(2)
             .map { it.first }
             .let {
-                SongArtistRelation.find {
+                 SongArtistRelationTable.slice(
+                    SongArtistRelationTable.artistId
+                ).select {
                     SongArtistRelationTable.songId inList it
                 }.map {
-                    it.artistId
+                    it[SongArtistRelationTable.artistId]
                 }
             }
     }

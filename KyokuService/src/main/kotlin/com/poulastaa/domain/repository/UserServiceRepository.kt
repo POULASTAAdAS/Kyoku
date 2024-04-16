@@ -1,9 +1,6 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.artist.ArtistAlbum
-import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
-import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
-import com.poulastaa.data.model.artist.ArtistPageReq
+import com.poulastaa.data.model.artist.*
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemReq
@@ -57,4 +54,6 @@ interface UserServiceRepository {
     suspend fun removeFromFavourite(helper: UserTypeHelper, songId: Long): Boolean
 
     suspend fun editSongAndPlaylist(helper: UserTypeHelper, req: AddSongToPlaylistReq): ResponseSong
+
+    suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist>
 }

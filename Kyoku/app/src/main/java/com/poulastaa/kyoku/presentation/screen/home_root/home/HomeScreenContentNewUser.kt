@@ -92,7 +92,7 @@ fun HomeScreenContentNewUser(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(65.dp)
+                        .height(70.dp)
                         .padding(
                             start = MaterialTheme.dimens.medium1,
                             end = MaterialTheme.dimens.medium1
@@ -148,59 +148,60 @@ fun HomeScreenContentNewUser(
                         .height(MaterialTheme.dimens.medium1)
                 )
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(65.dp)
-                        .padding(
-                            start = MaterialTheme.dimens.medium1,
-                            end = MaterialTheme.dimens.medium1
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-                ) {
-                    // saved playlist
-                    if (data.playlist.size >= 3)
-                        HomeScreenCardPlaylistPrev(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(1f / 2),
-                            name = data.playlist[2].name,
-                            imageUrls = data.playlist[2].listOfUrl,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onClick = {
-                                onClick.invoke(
-                                    HomeUiEvent.ItemClick(
-                                        type = ItemsType.PLAYLIST,
-                                        id = data.playlist[2].id,
-                                        name = data.playlist[2].name
+                if (data.playlist.size >= 3)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                            .padding(
+                                start = MaterialTheme.dimens.medium1,
+                                end = MaterialTheme.dimens.medium1
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                    ) {
+                        // saved playlist
+                        if (data.playlist.size >= 3)
+                            HomeScreenCardPlaylistPrev(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(1f / 2),
+                                name = data.playlist[2].name,
+                                imageUrls = data.playlist[2].listOfUrl,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.PLAYLIST,
+                                            id = data.playlist[2].id,
+                                            name = data.playlist[2].name
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
 
 
-                    // saved playlist
-                    if (data.playlist.size >= 4)
-                        HomeScreenCardPlaylistPrev(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            name = data.playlist[3].name,
-                            imageUrls = data.playlist[3].listOfUrl,
-                            isCookie = isCookie,
-                            headerValue = headerValue,
-                            onClick = {
-                                onClick.invoke(
-                                    HomeUiEvent.ItemClick(
-                                        type = ItemsType.PLAYLIST,
-                                        id = data.playlist[3].id,
-                                        name = data.playlist[3].name
+                        // saved playlist
+                        if (data.playlist.size >= 4)
+                            HomeScreenCardPlaylistPrev(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                name = data.playlist[3].name,
+                                imageUrls = data.playlist[3].listOfUrl,
+                                isCookie = isCookie,
+                                headerValue = headerValue,
+                                onClick = {
+                                    onClick.invoke(
+                                        HomeUiEvent.ItemClick(
+                                            type = ItemsType.PLAYLIST,
+                                            id = data.playlist[3].id,
+                                            name = data.playlist[3].name
+                                        )
                                     )
-                                )
-                            }
-                        )
-                }
+                                }
+                            )
+                    }
             }
         }
 
@@ -211,7 +212,9 @@ fun HomeScreenContentNewUser(
                     .fillMaxWidth()
                     .padding(
                         start = MaterialTheme.dimens.medium1
-                    )
+                    ),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
                     modifier = Modifier.padding(
@@ -227,6 +230,7 @@ fun HomeScreenContentNewUser(
                 LibraryScreenPlaylistGridView(
                     modifier = Modifier
                         .size(if (isSmallPhone) 120.dp else 130.dp)
+                        .align(Alignment.Start)
                         .combinedClickable(
                             onClick = {
                                 onClick.invoke(

@@ -2,6 +2,7 @@ package com.poulastaa.routes
 
 import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
 import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
+import com.poulastaa.data.model.artist.ViewArtist
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants
@@ -15,7 +16,7 @@ import io.ktor.server.routing.*
 
 fun Route.artist(
     service: UserServiceRepository
-){
+) {
     authenticate(configurations = Constants.SECURITY_LIST) {
         route(EndPoints.Artist.route) {
             post {
@@ -30,6 +31,33 @@ fun Route.artist(
                 )
 
                 val response = service.getMostPopularSongOfArtist(req)
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
+
+fun Route.getSongArtist(
+    service: UserServiceRepository
+) {
+    authenticate(configurations = Constants.SECURITY_LIST) {
+        route(EndPoints.SongArtist.route) {
+            get {
+                val songId = call.parameters["songId"] ?: return@get call.respond(
+                    message = emptyList<ViewArtist>(),
+                    status = HttpStatusCode.OK
+                )
+
+                getUserType() ?: return@get call.respond(
+                    message = emptyList<ViewArtist>(),
+                    status = HttpStatusCode.OK
+                )
+
+                val response = service.getResponseArtistOnSongId(songId.toLong())
 
                 call.respond(
                     message = response,

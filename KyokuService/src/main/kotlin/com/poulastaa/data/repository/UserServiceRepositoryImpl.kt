@@ -1,9 +1,6 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.model.artist.ArtistAlbum
-import com.poulastaa.data.model.artist.ArtistMostPopularSongReq
-import com.poulastaa.data.model.artist.ArtistMostPopularSongRes
-import com.poulastaa.data.model.artist.ArtistPageReq
+import com.poulastaa.data.model.artist.*
 import com.poulastaa.data.model.common.IdType
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.*
@@ -564,6 +561,11 @@ class UserServiceRepositoryImpl(
         }
 
         song.getSongOnId(req.songId)
+    }
+
+
+    override suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist> {
+        return artist.getResponseArtistOnSongId(songId)
     }
 
     // private functions

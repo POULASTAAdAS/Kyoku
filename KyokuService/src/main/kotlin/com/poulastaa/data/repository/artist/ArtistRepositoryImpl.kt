@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository.artist
 
+import com.poulastaa.data.model.artist.ViewArtist
 import com.poulastaa.data.model.common.ResponseArtist
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.db_table.ArtistTable
@@ -26,7 +27,6 @@ import com.poulastaa.data.model.utils.DbResponseArtistPreview
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.Song
-import com.poulastaa.domain.dao.SongArtistRelation
 import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.GoogleUserArtistRelation
 import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
@@ -35,6 +35,7 @@ import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.constructCoverPhotoUrl
 import com.poulastaa.utils.constructMasterPlaylistUrl
 import com.poulastaa.utils.toResponseArtist
+import com.poulastaa.utils.toViewArtist
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -197,6 +198,22 @@ class ArtistRepositoryImpl : ArtistRepository {
         }
     }
 
+    override suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist> = withContext(Dispatchers.IO) {
+        dbQuery {
+            val artistIdList = SongArtistRelationTable.slice(
+                SongArtistRelationTable.artistId
+            ).select {
+                SongArtistRelationTable.songId eq songId
+            }.map {
+                it[SongArtistRelationTable.artistId]
+            }
+
+            Artist.find {
+                ArtistTable.id inList artistIdList
+            }.toViewArtist()
+        }
+    }
+
     private suspend fun List<Int>.storeArtistForEmailUser(id: Long) {
         dbQuery {
             this.forEach {
@@ -269,10 +286,12 @@ class ArtistRepositoryImpl : ArtistRepository {
 
     private suspend fun List<Int>.getListOfFevArtistMixPreview() = dbQuery {
         Song.find {
-            SongTable.id inList SongArtistRelation.find {
+            SongTable.id inList SongArtistRelationTable.slice(
+                SongArtistRelationTable.songId
+            ).select {
                 SongArtistRelationTable.artistId inList this@getListOfFevArtistMixPreview
             }.map {
-                it.songId
+                it[SongArtistRelationTable.songId]
             }
         }.orderBy(SongTable.points to SortOrder.DESC)
             .limit(4).map {
@@ -446,10 +465,12 @@ class ArtistRepositoryImpl : ArtistRepository {
         }.take(2)
             .map { it.first }
             .let {
-                SongArtistRelation.find {
+                SongArtistRelationTable.slice(
+                    SongArtistRelationTable.artistId
+                ).select {
                     SongArtistRelationTable.songId inList it
                 }.map {
-                    it.artistId
+                    it[SongArtistRelationTable.artistId]
                 }
             }
     }

@@ -49,12 +49,13 @@ create table artist(
 );
 
 create table SongArtistRelation(
-	id bigint primary key auto_increment,
     songId bigInt,
     artistId int,
     foreign key (songId) references Song(id),
-    foreign key (artistId) references artist(id)
+    foreign key (artistId) references artist(id),
+    primary key (songid , artistId)
 );
+
 
 create table album(
 	id bigint primary key auto_increment,

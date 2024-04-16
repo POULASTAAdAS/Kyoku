@@ -22,7 +22,7 @@ insert ignore into GoogleUserListenHistory (userId , songId) values
 (1,12262);
 
 
-insert into Googleuserplaylist values
+insert ignore into Googleuserplaylist values
 (1 ,2 ,9175 , 1),
 (11,2 ,812 , 1),
 (111,2 ,8996 , 1),
@@ -49,27 +49,6 @@ insert into GoogleUserAlbumRelation (userid , albumid) values
 (1,54),
 (1,1441),
 (1,130);
-
-
-insert into Googleuserartistrelation values
-(1,3,1),
-(2,326,1),
-(3,172,1),
-(4,222,1),
-(5,22,1),
-(6,170,1),
-(7,155,1),
-(8,289,1),
-(9,204,1),
-(10,17,1),
-(11,96,1),
-(12,323,1),
-(13,108,1),
-(14,31,1),
-(15,40,1),
-(16,6,1),
-(17,89,1);
-
 
 
 

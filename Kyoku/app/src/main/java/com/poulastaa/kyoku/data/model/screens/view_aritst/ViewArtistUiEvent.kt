@@ -4,5 +4,5 @@ sealed class ViewArtistUiEvent {
     data class EmitToast(val message: String) : ViewArtistUiEvent()
     data object SomethingWentWrong : ViewArtistUiEvent()
 
-    data class ArtistClick(val id: Long) : ViewArtistUiEvent()
+    data class ArtistClick(val name: String) : ViewArtistUiEvent()
 }
