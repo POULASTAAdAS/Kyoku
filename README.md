@@ -69,7 +69,7 @@ Design https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/MusicApp?type=design&no
 - Flows
 - Coil
 - Splash API
-<h2 align = 'start'> AUTH </h2>
+-
 - Credentials
 - DataStore
 - play Service
