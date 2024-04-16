@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.data.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -35,13 +36,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AppDao {
-//    @Transaction
-//    @Insert(onConflict = OnConflictStrategy.IGNORE)
-//    suspend fun insertSong(song: SongTable): Long
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPlaylistSongTable(entrys: List<PlaylistSongTable>): List<Long>
 
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoPlaylistSongTable(entry: PlaylistSongTable): Long
+
+    @Query("delete from SongPlaylistRelationTable where songId = :songId and playlistId = :playlistId")
+    suspend fun removeFromPlaylist(songId: Long, playlistId: Long)
+
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoSongPlaylistRelation(entrys: List<SongPlaylistRelationTable>)
 
@@ -171,6 +176,9 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoFavourite(entrys: List<FavouriteSongTable>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOneIntoFavourite(entry: FavouriteSongTable)
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoAlbum(data: AlbumTable): Long?
@@ -231,7 +239,10 @@ interface AppDao {
 
     @Transaction
     @Query("select id, playlistId as originalId from PlaylistTable where name = :name")
-    suspend fun getIdOfPlaylist(name: String): PinnedId
+    suspend fun getPlaylistIds(name: String): PinnedId
+
+    @Query("select id from PlaylistTable where playlistId in (:id)")
+    suspend fun getPlaylistId(id: List<Long>): List<Long>
 
     @Transaction
     @Query("select artistId from ArtistTable where name = :name")
@@ -342,6 +353,9 @@ interface AppDao {
     @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from FavouriteSongTable")
     fun getAllFavouriteSongs(): Flow<List<UiPlaylistSong>>
 
+    @Query("select * from FavouriteSongTable where songId = :songId")
+    suspend fun getFavouriteSong(songId: Long): FavouriteSongTable?
+
     @Query("select coverImage from ArtistTable where artistId = :id")
     suspend fun getArtistCoverImage(id: Long): String
 
@@ -406,12 +420,26 @@ interface AppDao {
     )
     suspend fun searchPlaylist(query: String): List<PlaylistPrevResult>
 
-//    @Query("delete from FavouriteTable where songId in (:listOfId)")
-//    suspend fun deleteFromFavourite(listOfId: List<Long>)
+    @Query(
+        """
+        select PlaylistTable.playlistId from PlaylistTable 
+        join SongPlaylistRelationTable on SongPlaylistRelationTable.playlistId = PlaylistTable.id
+        where SongPlaylistRelationTable.songId = :songId
+    """
+    )
+    suspend fun getPlaylistIdOnSongId(songId: Long): List<Long>
 
+    @Query("delete from FavouriteSongTable where songId in (:listOfId)")
+    suspend fun deleteFromFavourite(listOfId: List<Long>)
+
+    @Query("delete from FavouriteSongTable where songId = :songId")
+    suspend fun deleteFromFavourite(songId: Long)
+
+    @Delete
+    suspend fun deleteFromFavourite(entry: FavouriteSongTable)
 
     // remove all
-    @Query("delete from  AlbumTable")
+    @Query("delete from AlbumTable")
     suspend fun dropAlbumTable()
 
     @Query("delete from  ArtistTable")

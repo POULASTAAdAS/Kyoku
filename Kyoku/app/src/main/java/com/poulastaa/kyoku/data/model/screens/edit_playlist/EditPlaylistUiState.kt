@@ -24,6 +24,7 @@ data class EditPlaylistUiState(
 
     val isNavigateBack: Boolean = false,
 
+    val addList: List<Long> = emptyList(),
     val playlist: List<EditPlaylistUiPlaylist> = emptyList(),
     val fav: UiFav = UiFav()
 )

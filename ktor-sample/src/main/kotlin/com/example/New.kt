@@ -1,11 +1,8 @@
 package com.example
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 fun main() {
-    val input = "232Playlist 3923"
+    val list = listOf(1, 2, 4)
+    val a = ArrayList(list)
 
-    println(!(input.matches(Regex("^\\W.*")) ||
-                input.matches(Regex("^\\d.*"))))
+    println(a)
 }

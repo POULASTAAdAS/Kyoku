@@ -547,6 +547,12 @@ class SongRepositoryImpl : SongRepository {
         }
     }
 
+    override suspend fun getSongOnId(songId: Long): ResponseSong = dbQuery {
+        Song.find {
+            SongTable.id eq songId
+        }.firstOrNull()
+    }?.toResponseSong() ?: ResponseSong()
+
     private fun notFoundSongs(
         list: List<SpotifySong>,
         responseSong: List<ResponseSong>

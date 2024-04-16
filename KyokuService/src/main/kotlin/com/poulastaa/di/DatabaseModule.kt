@@ -4,6 +4,7 @@ import com.poulastaa.data.model.utils.DbUsers
 import com.poulastaa.data.repository.UserServiceRepositoryImpl
 import com.poulastaa.data.repository.album.AlbumRepositoryImpl
 import com.poulastaa.data.repository.artist.ArtistRepositoryImpl
+import com.poulastaa.data.repository.faourite.FavouriteRepositoryImpl
 import com.poulastaa.data.repository.genre.GenreRepositoryImpl
 import com.poulastaa.data.repository.jwt.JWTRepositoryImpl
 import com.poulastaa.data.repository.playlist.PlaylistRepositoryImpl
@@ -14,6 +15,7 @@ import com.poulastaa.data.repository.users.PasskeyAuthUserRepositoryImpl
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
+import com.poulastaa.domain.repository.favourite.FavouriteRepository
 import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
@@ -55,6 +57,9 @@ fun provideDatabaseRepo() = module {
     single<AlbumRepository> {
         AlbumRepositoryImpl()
     }
+    single<FavouriteRepository> {
+        FavouriteRepositoryImpl()
+    }
 }
 
 fun provideDbUsers() = module {
@@ -76,7 +81,8 @@ fun provideService() = module {
             dbUsers = get(),
             genre = get(),
             artist = get(),
-            album = get()
+            album = get(),
+            fav = get()
         )
     }
 }

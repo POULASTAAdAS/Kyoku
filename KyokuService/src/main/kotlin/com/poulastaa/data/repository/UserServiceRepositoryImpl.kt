@@ -13,6 +13,7 @@ import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTa
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
+import com.poulastaa.data.model.playlist.AddSongToPlaylistReq
 import com.poulastaa.data.model.playlist.CreatePlaylistReq
 import com.poulastaa.data.model.setup.artist.*
 import com.poulastaa.data.model.setup.genre.*
@@ -28,6 +29,7 @@ import com.poulastaa.domain.dao.user_artist.PasskeyUserArtistRelation
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.album.AlbumRepository
 import com.poulastaa.domain.repository.aritst.ArtistRepository
+import com.poulastaa.domain.repository.favourite.FavouriteRepository
 import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
@@ -50,8 +52,10 @@ class UserServiceRepositoryImpl(
     private val dbUsers: DbUsers,
     private val genre: GenreRepository,
     private val artist: ArtistRepository,
-    private val album: AlbumRepository
+    private val album: AlbumRepository,
+    private val fav: FavouriteRepository
 ) : UserServiceRepository {
+
     override suspend fun getFoundSpotifySongs(
         json: String,
         helper: UserTypeHelper
@@ -519,6 +523,47 @@ class UserServiceRepositoryImpl(
         )
 
         return true
+    }
+
+    override suspend fun editSongAndPlaylist(
+        helper: UserTypeHelper,
+        req: AddSongToPlaylistReq
+    ): ResponseSong = withContext(Dispatchers.IO) {
+        val user = dbUsers.getDbUser(helper) ?: return@withContext ResponseSong()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            fav.handelFavourite(
+                songId = req.songId,
+                helper = UserTypeHelper(
+                    userType = helper.userType,
+                    id = user.id
+                ),
+                operation = req.isAddToFavourite
+            )
+
+            if (req.remove.isNotEmpty())
+                async {
+                    playlist.removeFromPlaylist(
+                        songId = req.songId,
+                        playlistIdList = req.remove,
+                        helper = UserTypeHelper(
+                            userType = helper.userType,
+                            id = user.id
+                        )
+                    )
+                }.await()
+
+            playlist.addToPlaylist(
+                songId = req.songId,
+                playlistIdList = req.add,
+                helper = UserTypeHelper(
+                    userType = helper.userType,
+                    id = user.id
+                )
+            )
+        }
+
+        song.getSongOnId(req.songId)
     }
 
     // private functions

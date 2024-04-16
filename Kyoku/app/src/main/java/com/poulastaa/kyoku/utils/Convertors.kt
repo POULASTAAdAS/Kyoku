@@ -12,7 +12,6 @@ import com.poulastaa.kyoku.data.model.api.service.ResponseArtist
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ArtistSong
-import com.poulastaa.kyoku.data.model.api.service.home.FevArtistsMixPreview
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.StoreArtistReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistResponse
@@ -24,14 +23,10 @@ import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.table.AlbumSongTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistTable
-import com.poulastaa.kyoku.data.model.database.table.DailyMixPrevTable
 import com.poulastaa.kyoku.data.model.database.table.DailyMixTable
 import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
-import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
-import com.poulastaa.kyoku.data.model.database.table.SongPreviewTable
-import com.poulastaa.kyoku.data.model.database.table.SongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
@@ -39,7 +34,6 @@ import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
-import com.poulastaa.kyoku.data.model.screens.song_view.UiSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -125,23 +119,6 @@ fun EmailLogInState.toEmailLogInReq(email: String, password: String) = EmailLogI
     password = password
 )
 
-fun ResponseSong.toSongTable() = SongTable(
-    songId = this.id,
-    coverImage = this.coverImage,
-    masterPlaylistUrl = this.masterPlaylistUrl,
-    totalTime = this.totalTime,
-    title = this.title,
-    artist = this.artist,
-    album = this.album,
-    genre = this.genre,
-    composer = this.composer,
-    publisher = this.publisher,
-    albumArtist = this.albumArtist,
-    description = this.description,
-    track = this.track,
-    date = this.date
-)
-
 fun ResponseSong.toPlaylistSongTable() = PlaylistSongTable(
     songId = this.id,
     coverImage = this.coverImage,
@@ -221,18 +198,13 @@ fun List<AlbumPreview>.toAlbumTablePrevEntry() = this.map {
     )
 }
 
-fun FevArtistsMixPreview.toFevArtistMixPrevTable() = FevArtistOrDailyMixPreviewTable(
-    artist = this.artist,
-    coverImage = this.coverImage
-)
-
 fun ResponseArtist.toArtistTableEntry() = ArtistTable(
     artistId = this.id,
     name = this.name,
     coverImage = this.imageUrl
 )
 
-fun List<ResponseSong>.toFavouriteTableEntry() = this.map {
+fun List<ResponseSong>.toFavouriteTableEntryList() = this.map {
     FavouriteSongTable(
         songId = it.id,
         coverImage = it.coverImage,
@@ -245,24 +217,23 @@ fun List<ResponseSong>.toFavouriteTableEntry() = this.map {
     )
 }
 
+fun ResponseSong.toFavouriteTableEntry() = FavouriteSongTable(
+    songId = this.id,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    totalTime = this.totalTime,
+    title = this.title,
+    artist = this.artist,
+    album = this.album,
+    date = this.date
+)
+
 
 fun ArtistSong.toArtistSongEntry() = ArtistSongTable(
     songId = this.songId,
     title = this.title,
     coverImage = this.coverImage
 )
-
-fun List<SongPreview>.toSongPrevTableEntry() =
-    if (this.isEmpty()) emptyList()
-    else this.map {
-        it.toSongPrevTableEntry()
-    }
-
-fun List<Long>.toDailyMixPrevEntry() = this.map {
-    DailyMixPrevTable(
-        id = it
-    )
-}
 
 fun List<SongPreview>.toHistoryPrevSongEntry() = this.map {
     RecentlyPlayedPrevTable(
@@ -272,14 +243,6 @@ fun List<SongPreview>.toHistoryPrevSongEntry() = this.map {
     )
 }
 
-
-fun SongPreview.toSongPrevTableEntry() = SongPreviewTable(
-    songId = this.id.toLong(),
-    title = this.title,
-    artist = this.artist,
-    album = this.album,
-    coverImage = this.coverImage
-)
 
 fun ArtistPrevResult.toHomeUiSongPrev() = HomeUiSongPrev(
     id = this.songId,
@@ -311,27 +274,5 @@ fun List<ResponseSong>.toArtistMixEntry() = this.map {
         masterPlaylistUrl = it.masterPlaylistUrl,
         totalTime = it.totalTime,
         year = it.date
-    )
-}
-
-@JvmName(name = "toListOfUiSongFromDailyMix")
-fun List<DailyMixTable>.toListOfUiSong() = this.map {
-    UiSong(
-        id = it.songId,
-        title = it.title,
-        artist = it.artist,
-        album = it.album,
-        coverImage = it.coverImage
-    )
-}
-
-@JvmName(name = "toListOfUiSongFromArtistMix")
-fun List<ArtistMixTable>.toListOfUiSong() = this.map {
-    UiSong(
-        id = it.songId,
-        title = it.title,
-        artist = it.artist,
-        album = it.album,
-        coverImage = it.coverImage
     )
 }

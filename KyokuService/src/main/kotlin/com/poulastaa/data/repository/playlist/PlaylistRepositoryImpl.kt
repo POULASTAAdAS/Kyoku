@@ -255,7 +255,7 @@ class PlaylistRepositoryImpl : PlaylistRepository {
 
     override suspend fun cretePlaylist(
         helper: UserTypeHelper,
-        req: CreatePlaylistReq
+        req: CreatePlaylistReq,
     ): Long = withContext(Dispatchers.IO) {
         val playlistId = async { createPlaylist(req.name) }.await()
 
@@ -300,6 +300,104 @@ class PlaylistRepositoryImpl : PlaylistRepository {
         }
 
         playlistId
+    }
+
+
+    override fun addToPlaylist(
+        songId: Long,
+        playlistIdList: List<Long>,
+        helper: UserTypeHelper
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dbQuery {
+                when (helper.userType) {
+                    UserType.GOOGLE_USER -> {
+                        playlistIdList.forEach {
+                            val entry = GoogleUserPlaylist.find {
+                                GoogleUserPlaylistTable.userId eq helper.id and
+                                        (GoogleUserPlaylistTable.songId eq songId) and
+                                        (GoogleUserPlaylistTable.playlistId eq it)
+                            }.firstOrNull()
+
+                            if (entry == null)
+                                GoogleUserPlaylist.new {
+                                    this.userId = helper.id
+                                    this.playlistId = it
+                                    this.songId = songId
+                                }
+                        }
+                    }
+
+                    UserType.EMAIL_USER -> {
+                        playlistIdList.forEach {
+                            val entry = EmailUserPlaylist.find {
+                                EmailUserPlaylistTable.userId eq helper.id and
+                                        (EmailUserPlaylistTable.songId eq songId) and
+                                        (EmailUserPlaylistTable.playlistId eq it)
+                            }.firstOrNull()
+
+                            if (entry == null)
+                                EmailUserPlaylist.new {
+                                    this.userId = helper.id
+                                    this.playlistId = it
+                                    this.songId = songId
+                                }
+                        }
+                    }
+
+                    UserType.PASSKEY_USER -> {
+                        playlistIdList.forEach {
+                            val entry = PasskeyUserPlaylist.find {
+                                PasskeyUserPlaylistTable.userId eq helper.id and
+                                        (PasskeyUserPlaylistTable.songId eq songId) and
+                                        (PasskeyUserPlaylistTable.playlistId eq it)
+                            }.firstOrNull()
+
+                            if (entry == null)
+                                PasskeyUserPlaylist.new {
+                                    this.userId = helper.id
+                                    this.playlistId = it
+                                    this.songId = songId
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override suspend fun removeFromPlaylist(
+        songId: Long,
+        playlistIdList: List<Long>,
+        helper: UserTypeHelper
+    ) {
+        dbQuery {
+            when (helper.userType) {
+                UserType.GOOGLE_USER -> {
+                    playlistIdList.forEach {
+                        GoogleUserPlaylist.find {
+                            GoogleUserPlaylistTable.userId eq helper.id and (GoogleUserPlaylistTable.playlistId eq it)
+                        }.firstOrNull()?.delete()
+                    }
+                }
+
+                UserType.EMAIL_USER -> {
+                    playlistIdList.forEach {
+                        EmailUserPlaylist.find {
+                            EmailUserPlaylistTable.userId eq helper.id and (EmailUserPlaylistTable.playlistId eq it)
+                        }.firstOrNull()?.delete()
+                    }
+                }
+
+                UserType.PASSKEY_USER -> {
+                    playlistIdList.forEach {
+                        PasskeyUserPlaylist.find {
+                            PasskeyUserPlaylistTable.userId eq helper.id and (PasskeyUserPlaylistTable.playlistId eq it)
+                        }.firstOrNull()?.delete()
+                    }
+                }
+            }
+        }
     }
 
     private fun findPlaylistForGoogleUser(

@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class AddSongToPlaylistReq(
     val songId: Long = 0,
     val isAddToFavourite: Boolean = false,
-    val listOfPlaylistId: List<Long> = emptyList()
+    val add: List<Long> = emptyList(),
+    val remove: List<Long> = emptyList(),
 )

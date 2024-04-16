@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
+import com.poulastaa.kyoku.data.model.api.service.playlist.AddSongToPlaylistReq
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiPlaylist
@@ -21,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -58,6 +58,7 @@ class EditPlaylistViewModel @Inject constructor(
     var state by mutableStateOf(EditPlaylistUiState())
 
     private var searchJob: Job? = null
+    private var removeList = ArrayList<Pair<Long, Boolean>>()
 
     init {
         readAccessToken()
@@ -90,6 +91,18 @@ class EditPlaylistViewModel @Inject constructor(
         )
 
         viewModelScope.launch(Dispatchers.IO) {
+            async {
+                val list = db.getPlaylistIdOnSongId(id)
+
+                list.forEach {
+                    removeList.add(Pair(it, false))
+                }
+
+                state = state.copy(
+                    addList = list
+                )
+            }.await()
+
             val playlist = async {
                 db.readPlaylistPreview().collect { results ->
                     state = state.copy(
@@ -101,16 +114,13 @@ class EditPlaylistViewModel @Inject constructor(
                                     id = it.key,
                                     name = it.value[0].name,
                                     totalSongs = it.value.size,
-                                    isSelected = it.value.map { song ->
-                                        if (song.playlistId == id) true else null
-                                    }.firstOrNull() ?: false,
+                                    isSelected = state.addList.contains(it.key),
                                     urls = it.value.map { song ->
                                         song.coverImage
                                     }.take(4)
                                 )
                             }
-                        }.await(),
-                        loadingStatus = LoadingStatus.NOT_LOADING
+                        }.await()
                     )
                 }
             }
@@ -132,6 +142,11 @@ class EditPlaylistViewModel @Inject constructor(
 
             playlist.await()
             fav.await()
+        }.let {
+
+            state = state.copy(
+                loadingStatus = LoadingStatus.NOT_LOADING
+            )
         }
     }
 
@@ -196,22 +211,51 @@ class EditPlaylistViewModel @Inject constructor(
                     searchText = ""
                 )
 
-                search("")
+                searchJob?.cancel()
+                restoreAfterSearch()
             }
 
             is EditPlaylistUiEvent.PlaylistClick -> {
-                state = state.copy(
-                    playlist = state.playlist.map {
-                        if (it.id == event.id) it.copy(
-                            totalSongs = if (!it.isSelected) it.totalSongs + 1 else it.totalSongs - 1,
-                            isSelected = !it.isSelected,
+                if (state.isMakingApiCall) return
+
+                state = if (state.addList.contains(event.id)) {
+                    val list = ArrayList(state.addList)
+
+                    list.remove(event.id)
+
+                    removeList = removeList.map {
+                        if (it.first == event.id) it.copy(
+                            second = true
                         )
                         else it
+                    } as ArrayList<Pair<Long, Boolean>>
+
+                    state.copy(
+                        addList = list.toList()
+                    )
+                } else {
+                    val list = ArrayList<Long>()
+                    list.add(event.id)
+
+                    state.copy(
+                        addList = list.toList()
+                    )
+                }
+
+                state = state.copy(
+                    playlist = state.playlist.map {
+                        if (it.id == event.id) {
+                            it.copy(
+                                isSelected = state.addList.contains(it.id)
+                            )
+                        } else it
                     }
                 )
             }
 
             is EditPlaylistUiEvent.FavClick -> {
+                if (state.isMakingApiCall) return
+
                 val temp = state.fav.isSelected
 
                 state = state.copy(
@@ -224,6 +268,8 @@ class EditPlaylistViewModel @Inject constructor(
             }
 
             EditPlaylistUiEvent.DoneClick -> {
+                if (state.isMakingApiCall) return
+
                 if (
                     state.playlist.mapNotNull {
                         if (it.isSelected) it.id else null
@@ -232,66 +278,52 @@ class EditPlaylistViewModel @Inject constructor(
                     isNavigateBack = true
                 )
 
+                if (!state.isInternetAvailable) {
+                    onEvent(EditPlaylistUiEvent.EmitToast("Please check your Internet connection"))
 
-                // todo delete
+                    return
+                }
+
+                state = state.copy(
+                    isMakingApiCall = true
+                )
+
                 viewModelScope.launch(Dispatchers.IO) {
-                    state = state.copy(
-                        isMakingApiCall = true
+                    val song = api.addSongToPlaylist(
+                        req = AddSongToPlaylistReq(
+                            songId = state.songId,
+                            isAddToFavourite = state.fav.isSelected,
+                            add = state.addList,
+                            remove = removeList.mapNotNull {
+                                if (it.second) it.first else null
+                            }
+                        )
                     )
 
-                    delay(1500)
+                    if (song.id == -1L) {
+                        onEvent(EditPlaylistUiEvent.SomethingWentWrong)
+
+                        state = state.copy(
+                            isMakingApiCall = false
+                        )
+
+                        return@launch
+                    }
+
+                    db.editPlaylist(
+                        song = song,
+                        isFavourite = state.fav.isSelected,
+                        addList = state.addList,
+                        removeList = removeList.mapNotNull {
+                            if (it.second) it.first else null
+                        }
+                    )
 
                     state = state.copy(
                         isMakingApiCall = false,
                         isNavigateBack = true
                     )
                 }
-
-//                if (!state.isInternetAvailable) {
-//                    onEvent(EditPlaylistUiEvent.EmitToast("Please check your Internet connection"))
-//
-//                    return
-//                }
-//
-//                state = state.copy(
-//                    isMakingApiCall = true
-//                )
-//
-//                viewModelScope.launch(Dispatchers.IO) {
-//                    val playlistId = async {
-//                        state.playlist.mapNotNull {
-//                            if (it.isSelected) it.id else null
-//                        }
-//                    }.await()
-//
-//                    val song = api.addSongToPlaylist(
-//                        req = AddSongToPlaylistReq(
-//                            songId = state.songId,
-//                            isAddToFavourite = state.fav.isSelected,
-//                            listOfPlaylistId = playlistId
-//                        )
-//                    )
-//
-//                    if (song.id == -1L) {
-//                        onEvent(EditPlaylistUiEvent.SomethingWentWrong)
-//
-//                        state = state.copy(
-//                            isMakingApiCall = false
-//                        )
-//
-//                        return@launch
-//                    }
-//
-//                    db.addToPlaylist(
-//                        entry = song.toPlaylistSongTable(),
-//                        playlistId = playlistId
-//                    )
-//
-//                    state = state.copy(
-//                        isMakingApiCall = false,
-//                        isNavigateBack = true
-//                    )
-//                }
             }
         }
     }
@@ -304,9 +336,7 @@ class EditPlaylistViewModel @Inject constructor(
                 id = it.key,
                 name = it.value[0].name,
                 totalSongs = it.value.size,
-                isSelected = it.value.map { song ->
-                    if (song.playlistId == state.songId) true else null
-                }.firstOrNull() ?: false,
+                isSelected = state.addList.contains(it.key),
                 urls = it.value.map { song ->
                     song.coverImage
                 }.take(4)
@@ -316,5 +346,10 @@ class EditPlaylistViewModel @Inject constructor(
         state = state.copy(
             playlist = result
         )
+    }
+
+    private fun restoreAfterSearch() {
+        searchJob?.cancel()
+        search("")
     }
 }

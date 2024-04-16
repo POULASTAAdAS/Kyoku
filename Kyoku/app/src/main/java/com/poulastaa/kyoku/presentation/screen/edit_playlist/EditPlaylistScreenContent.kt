@@ -219,7 +219,8 @@ fun EditPlaylistScreenContent(
         },
         floatingActionButton = {
             OutlinedButton(
-                modifier = Modifier.height(42.dp),
+                modifier = Modifier
+                    .height(42.dp),
                 onClick = onDoneClick,
                 shape = MaterialTheme.shapes.small,
                 enabled = !state.isMakingApiCall,
@@ -316,29 +317,18 @@ fun EditPlaylistScreenContent(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
             }
 
-            if (state.playlist.isEmpty())
-                item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator()
-                    }
+            items(state.playlist.size) { index ->
+                PlaylistCard(
+                    data = state.playlist[index],
+                    isDarkThem = isDarkThem,
+                    isCookie = state.isCookie,
+                    headerValue = state.headerValue
+                ) {
+                    onPlaylistClick.invoke(state.playlist[index].id)
                 }
-            else
-                items(state.playlist.size) { index ->
-                    PlaylistCard(
-                        data = state.playlist[index],
-                        isDarkThem = isDarkThem,
-                        isCookie = state.isCookie,
-                        headerValue = state.headerValue
-                    ) {
-                        onPlaylistClick.invoke(state.playlist[index].id)
-                    }
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-                }
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+            }
         }
     }
 }

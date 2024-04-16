@@ -91,7 +91,7 @@ fun Route.addSongToPlaylist(
                     status = HttpStatusCode.OK
                 )
 
-                if (req.songId == -1L || req.listOfPlaylistId.isEmpty()) call.respond(
+                if (req.songId == -1L) call.respond(
                     message = ResponseSong(),
                     status = HttpStatusCode.OK
                 )
@@ -101,9 +101,7 @@ fun Route.addSongToPlaylist(
                     status = HttpStatusCode.OK
                 )
 
-                // todo
-
-                val response = service
+                val response = service.editSongAndPlaylist(helper, req)
 
                 call.respond(
                     message = response,

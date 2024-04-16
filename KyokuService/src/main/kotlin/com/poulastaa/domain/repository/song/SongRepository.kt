@@ -34,4 +34,6 @@ interface SongRepository {
         songId: Long,
         operation: FavouriteOperation
     )
+
+    suspend fun getSongOnId(songId: Long): ResponseSong
 }

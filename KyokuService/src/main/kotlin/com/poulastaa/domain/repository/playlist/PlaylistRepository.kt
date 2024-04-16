@@ -20,4 +20,7 @@ interface PlaylistRepository {
     ): Boolean
 
     suspend fun cretePlaylist(helper: UserTypeHelper, req: CreatePlaylistReq): Long
+
+    fun addToPlaylist(songId: Long, playlistIdList: List<Long>, helper: UserTypeHelper)
+    suspend fun removeFromPlaylist(songId: Long, playlistIdList: List<Long>, helper: UserTypeHelper)
 }

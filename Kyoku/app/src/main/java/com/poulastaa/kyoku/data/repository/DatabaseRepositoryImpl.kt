@@ -19,7 +19,6 @@ import com.poulastaa.kyoku.data.model.database.table.ArtistPreviewSongRelation
 import com.poulastaa.kyoku.data.model.database.table.FevArtistOrDailyMixPreviewTable
 import com.poulastaa.kyoku.data.model.database.table.MixType
 import com.poulastaa.kyoku.data.model.database.table.PinnedTable
-import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
@@ -35,6 +34,7 @@ import com.poulastaa.kyoku.utils.toArtistSongEntry
 import com.poulastaa.kyoku.utils.toArtistTableEntry
 import com.poulastaa.kyoku.utils.toDailyMixEntry
 import com.poulastaa.kyoku.utils.toFavouriteTableEntry
+import com.poulastaa.kyoku.utils.toFavouriteTableEntryList
 import com.poulastaa.kyoku.utils.toHistoryPrevSongEntry
 import com.poulastaa.kyoku.utils.toPlaylistSongTable
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -250,22 +250,16 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun insertIntoFavourite(list: List<ResponseSong>) {
         CoroutineScope(Dispatchers.IO).launch {
-            dao.insertIntoFavourite(
-                entrys = list.toFavouriteTableEntry()
-            )
+            dao.insertIntoFavourite(entrys = list.toFavouriteTableEntryList())
         }
     }
 
-    suspend fun checkIfSongAlreadyInFavourite(songId: Long) = false
-//        dao.getAllFavouriteSongId().firstOrNull {
-//            it == songId
-//        }?.let { true } ?: false
+    suspend fun checkIfSongAlreadyInFavourite(songId: Long) =
+        dao.getFavouriteSong(songId)?.let { true } ?: false
 
     fun removeFromFavourite(songId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-//            dao.deleteFromFavourite(
-//                listOfId = dao.getAllIdOnSongId(songId)
-//            )
+            dao.deleteFromFavourite(songId = songId)
         }
     }
 
@@ -326,7 +320,7 @@ class DatabaseRepositoryImpl @Inject constructor(
         when (type) {
             PinnedDataType.PLAYLIST -> {
                 val pair = async {
-                    dao.getIdOfPlaylist(name)
+                    dao.getPlaylistIds(name)
                 }.await()
 
                 dao.addToPinnedTable(
@@ -383,7 +377,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         when (type) {
             PinnedDataType.PLAYLIST -> {
-                val pair = dao.getIdOfPlaylist(name)
+                val pair = dao.getPlaylistIds(name)
 
                 return@withContext try {
                     dao.removePlaylistIdFromPinnedTable(pair.id).let { pair.originalId }
@@ -429,7 +423,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     ) = withContext(Dispatchers.IO) {
         when (type) {
             PinnedDataType.PLAYLIST -> {
-                val pair = dao.getIdOfPlaylist(name)
+                val pair = dao.getPlaylistIds(name)
 
                 return@withContext try {
                     dao.deletePlaylist(pair.id)
@@ -544,18 +538,50 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun searchPlaylist(query: String) = dao.searchPlaylist(query)
 
-    fun addToPlaylist(entry: PlaylistSongTable, playlistId: List<Long>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            async { dao.insertIntoPlaylistSongTable(listOf(entry)) }.await()
+    suspend fun getPlaylistIdOnSongId(songId: Long) = dao.getPlaylistIdOnSongId(songId)
 
-            dao.insertIntoSongPlaylistRelation(
-                entrys = playlistId.map {
-                    SongPlaylistRelationTable(
-                        playlistId = it,
-                        songId = entry.songId
+    fun editPlaylist(
+        song: ResponseSong,
+        isFavourite: Boolean,
+        addList: List<Long>,
+        removeList: List<Long>
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isFavourite) dao.insertOneIntoFavourite(song.toFavouriteTableEntry())
+            else removeFromFavourite(song.id)
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            if (removeList.isNotEmpty())
+                async {
+                    val playlistIdList = dao.getPlaylistId(removeList)
+
+                    playlistIdList.forEach {
+                        dao.removeFromPlaylist(
+                            songId = song.id,
+                            playlistId = it
+                        )
+                    }
+                }.await()
+
+            if (addList.isNotEmpty()) {
+                val playlistIdList = dao.getPlaylistId(addList)
+
+                async {
+                    dao.insertIntoPlaylistSongTable(
+                        entry = song.toPlaylistSongTable()
                     )
-                }
-            )
+                }.await()
+
+                dao.insertIntoSongPlaylistRelation(
+                    entrys = playlistIdList.map {
+                        SongPlaylistRelationTable(
+                            playlistId = it,
+                            songId = song.id
+                        )
+                    }
+                )
+            }
         }
     }
 
