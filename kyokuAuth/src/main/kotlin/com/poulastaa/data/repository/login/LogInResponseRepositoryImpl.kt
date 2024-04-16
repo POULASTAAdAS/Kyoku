@@ -266,12 +266,6 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 SongTable.coverImage,
                 SongTable.masterPlaylistPath,
                 SongTable.totalTime,
-                SongTable.genre,
-                SongTable.publisher,
-                SongTable.composer,
-                SongTable.album_artist,
-                SongTable.description,
-                SongTable.track,
                 SongTable.date,
                 when (userType) {
                     UserType.GOOGLE_USER -> GoogleUserAlbumRelation.albumId
@@ -334,14 +328,7 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                 SongTable.coverImage,
                 SongTable.masterPlaylistPath,
                 SongTable.totalTime,
-                SongTable.genre,
-                SongTable.publisher,
-                SongTable.composer,
-                SongTable.album_artist,
-                SongTable.description,
-                SongTable.track,
                 SongTable.date,
-
                 PlaylistTable.id,
                 PlaylistTable.name
             )
@@ -393,13 +380,7 @@ class LogInResponseRepositoryImpl : LogInResponseRepository {
                     SongTable.coverImage,
                     SongTable.masterPlaylistPath,
                     SongTable.totalTime,
-                    SongTable.genre,
-                    SongTable.publisher,
-                    SongTable.composer,
-                    SongTable.album_artist,
-                    SongTable.description,
-                    SongTable.track,
-                    SongTable.date,
+                    SongTable.date
                 )
                 .select {
                     when (userType) {

@@ -190,6 +190,12 @@ fun LazyGridScope.playlist(
         onLongClick = onLongClick,
         onClick = onClick
     )
+
+    item(
+        span = { GridItemSpan(if (isGrid) 3 else 1) }
+    ) {
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+    }
 }
 
 

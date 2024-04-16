@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -92,10 +93,21 @@ fun LibraryScreen(
     }
 
 
+    Log.d(
+        "Load", "${viewModel.state.data.all.isFavourite} ," +
+                "${viewModel.state.data.all.playlist.isEmpty()} ," +
+                "${viewModel.state.data.all.artist.isEmpty()} , " +
+                "${viewModel.state.data.all.album.isEmpty()} , " +
+                "${viewModel.state.isLoading}" +
+                "\n" +
+                "Pinned: " +
+                "${viewModel.state.data.pinned.artist.isEmpty()} , " +
+                "${viewModel.state.data.pinned.playlist.isEmpty()} , " +
+                "${viewModel.state.data.pinned.album.isEmpty()} , " +
+                "${viewModel.state.data.pinned.isFavourite}"
+    )
+
     if (
-        (!viewModel.state.data.all.isFavourite &&
-                viewModel.state.data.all.playlist.isEmpty() &&
-                viewModel.state.data.all.artist.isEmpty()) ||
         viewModel.state.isLoading
     ) {
         Column(

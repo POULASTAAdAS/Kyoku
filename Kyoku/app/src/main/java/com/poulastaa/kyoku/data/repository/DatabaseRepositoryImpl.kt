@@ -25,7 +25,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
-import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
@@ -477,7 +477,9 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getAlbum(id: Long) = withContext(Dispatchers.IO) {
         dao.getAlbum(id).let { songs ->
-            UiAlbum(
+            if (songs.isEmpty()) return@let SongViewUiModel()
+
+            SongViewUiModel(
                 name = async { dao.getAlbumName(id) }.await(),
                 totalTime = async {
                     songs.map { single ->

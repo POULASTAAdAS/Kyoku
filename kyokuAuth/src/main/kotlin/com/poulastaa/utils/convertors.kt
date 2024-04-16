@@ -79,12 +79,6 @@ fun ResultRow.toResponseSong() = ResponseSong(
     title = this[SongTable.title],
     artist = this[SongTable.artist],
     album = this[SongTable.album],
-    genre = this[SongTable.genre],
-    composer = this[SongTable.composer],
-    publisher = this[SongTable.publisher],
-    albumArtist = this[SongTable.album_artist],
-    description = this[SongTable.description],
-    track = this[SongTable.track],
     date = this[SongTable.date]
 )
 
@@ -98,12 +92,6 @@ fun ResultRow.toPlaylistResult() = PlaylistResult(
     title = this[SongTable.title],
     artist = this[SongTable.artist],
     album = this[SongTable.album],
-    genre = this[SongTable.genre],
-    composer = this[SongTable.composer],
-    publisher = this[SongTable.publisher],
-    albumArtist = this[SongTable.album_artist],
-    description = this[SongTable.description],
-    track = this[SongTable.track],
     date = this[SongTable.date]
 )
 
@@ -115,12 +103,6 @@ fun PlaylistResult.toResponseSong() = ResponseSong(
     title = this.title,
     artist = this.artist,
     album = this.album,
-    genre = this.genre,
-    composer = this.composer,
-    publisher = this.publisher,
-    albumArtist = this.albumArtist,
-    description = this.description,
-    track = this.track,
     date = this.date
 )
 

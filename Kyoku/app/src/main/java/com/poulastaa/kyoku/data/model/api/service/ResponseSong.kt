@@ -11,11 +11,5 @@ data class ResponseSong(
     val title: String = "",
     val artist: String = "",
     val album: String = "",
-    val genre: String = "",
-    val composer: String = "",
-    val publisher: String = "",
-    val albumArtist: String = "",
-    val description: String = "",
-    val track: String = "",
     val date: String = ""
 )

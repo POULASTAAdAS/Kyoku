@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.song_view.UiFavourite
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
@@ -39,7 +39,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun FavouriteScreen(
-    data: UiFavourite,
+    data: SongViewUiModel,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,

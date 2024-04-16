@@ -1,14 +1,9 @@
 package com.poulastaa.data.repository
 
 
-import com.poulastaa.domain.repository.user_db.GoogleAuthUserRepository
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.User
-import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.auth.UserCreationStatus
-import com.poulastaa.data.model.auth.auth_response.HomeResponse
-import com.poulastaa.data.model.auth.auth_response.HomeResponseStatus
-import com.poulastaa.data.model.auth.auth_response.HomeType
 import com.poulastaa.data.model.auth.google.GoogleAuthResponse
 import com.poulastaa.data.model.auth.jwt.*
 import com.poulastaa.data.model.auth.passkey.CreatePasskeyJson
@@ -18,8 +13,8 @@ import com.poulastaa.data.model.db_table.CountryTable
 import com.poulastaa.domain.dao.Country
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.domain.repository.jwt.JWTRepository
-import com.poulastaa.domain.repository.login.LogInResponseRepository
 import com.poulastaa.domain.repository.user_db.EmailAuthUserRepository
+import com.poulastaa.domain.repository.user_db.GoogleAuthUserRepository
 import com.poulastaa.domain.repository.user_db.PasskeyAuthUserRepository
 import com.poulastaa.invalidTokenList
 import com.poulastaa.plugins.dbQuery
@@ -32,7 +27,9 @@ import com.poulastaa.utils.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.upperCase
 import java.io.File
 

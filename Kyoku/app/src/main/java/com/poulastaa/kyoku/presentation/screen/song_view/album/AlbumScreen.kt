@@ -3,7 +3,6 @@ package com.poulastaa.kyoku.presentation.screen.song_view.album
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
 import com.poulastaa.kyoku.presentation.screen.song_view.common.info
@@ -33,7 +32,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun AlbumScreen(
-    album: UiAlbum,
+    album: SongViewUiModel,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -144,30 +143,6 @@ private fun LazyListScope.albumSongs(
 @Composable
 private fun Preview() {
     TestThem {
-        val listOfSong = ArrayList<UiPlaylistSong>()
 
-        for (i in 1..10) {
-            listOfSong.add(
-                UiPlaylistSong(
-                    songId = i.toLong(),
-                    title = "Title $i",
-                    artist = "Artist $i",
-                    coverImage = ""
-                )
-            )
-        }
-
-        AlbumScreen(
-            album = UiAlbum(
-                name = "Album",
-                listOfSong = listOfSong
-            ),
-            isSmallPhone = false,
-            isDarkThem = isSystemInDarkTheme(),
-            isCookie = false,
-            headerValue = "",
-            poster = "",
-            navigateBack = {}
-        )
     }
 }

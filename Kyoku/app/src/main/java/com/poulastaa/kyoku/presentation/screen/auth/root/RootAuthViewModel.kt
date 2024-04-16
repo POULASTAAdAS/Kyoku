@@ -367,6 +367,8 @@ class RootAuthViewModel @Inject constructor(
 
     private fun startGoogleAuth(req: GoogleAuthReq, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("token", req.tokenId)
+
             api.googleAuth(req)?.let { response ->
                 val cookie = cookieManager.extractTokenOrCookie()
 

@@ -12,12 +12,9 @@ import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiState
-import com.poulastaa.kyoku.data.model.screens.song_view.UiAlbum
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
-import com.poulastaa.kyoku.data.model.screens.song_view.UiDailyMixOrArtistMix
-import com.poulastaa.kyoku.data.model.screens.song_view.UiFavourite
-import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylist
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
@@ -102,7 +99,7 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = if (it.isEmpty()) ItemsType.ERR else ItemsType.PLAYLIST,
                                 data = state.data.copy(
-                                    playlist = UiPlaylist(
+                                    playlist = SongViewUiModel(
                                         name = db.getPlaylistName(id),
                                         totalTime = async {
                                             it.map { single ->
@@ -120,7 +117,7 @@ class SongViewViewModel @Inject constructor(
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
                         when (isApiCall) {
-                            true -> UiAlbum() /*getAlbumFromApi(id)*/
+                            true -> SongViewUiModel() /*getAlbumFromApi(id)*/
                             false -> async { db.getAlbum(id) }.await()
                         }.let {
                             state = state.copy(
@@ -206,7 +203,7 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = ItemsType.ARTIST_MIX,
                                 data = state.data.copy(
-                                    dailyMixOrArtistMix = UiDailyMixOrArtistMix(
+                                    dailyMixOrArtistMix = SongViewUiModel(
                                         name = "Artist Mix",
                                         totalTime = async {
                                             it.map { single ->
@@ -241,7 +238,7 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = ItemsType.DAILY_MIX,
                                 data = state.data.copy(
-                                    dailyMixOrArtistMix = UiDailyMixOrArtistMix(
+                                    dailyMixOrArtistMix = SongViewUiModel(
                                         name = "Daily Mix",
                                         totalTime = async {
                                             it.map { single ->
@@ -268,7 +265,7 @@ class SongViewViewModel @Inject constructor(
                             state = state.copy(
                                 type = if (it.isEmpty()) ItemsType.ERR else ItemsType.FAVOURITE,
                                 data = state.data.copy(
-                                    favourites = UiFavourite(
+                                    favourites = SongViewUiModel(
                                         name = "Favourites",
                                         totalTime = async {
                                             it.map { single ->

@@ -67,8 +67,7 @@ class LibraryViewModel @Inject constructor(
         private set
 
     fun loadData() {
-        if (!state.data.all.isFavourite &&
-            state.data.all.playlist.isEmpty() &&
+        if (state.data.all.playlist.isEmpty() &&
             state.data.all.artist.isEmpty()
         ) {
             // read sort type
@@ -79,157 +78,161 @@ class LibraryViewModel @Inject constructor(
                     )
                 }
             }
+            loadAll()
+            loadPinned()
+        }
+    }
 
-            // read All Data
-            viewModelScope.launch(Dispatchers.IO) {
-                val allPlaylist = async {
-                    db.readPlaylistPreview().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                all = state.data.all.copy(
-                                    playlist = it.groupBy { result -> result.name }.map { entry ->
-                                        UiPlaylistPrev(
-                                            id = entry.value[0].playlistId,
-                                            name = entry.key,
-                                            listOfUrl = entry.value.map { url ->
-                                                url.coverImage
-                                            }.shuffled(Random()).take(4)
-                                        )
-                                    }
-                                )
-                            )
-                        )
-                    }
-                }
-
-                val allAlbum = async {
-                    db.readAllAlbumPreview().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                all = state.data.all.copy(
-                                    album = it.groupBy { album ->
-                                        album.id
-                                    }.map { entry ->
-                                        UiAlbumPrev(
-                                            id = entry.key,
-                                            name = entry.value[0].name,
-                                            coverImage = entry.value[0].coverImage
-                                        )
-                                    }
-                                )
-                            )
-                        )
-                    }
-                }
-
-                val allArtist = async {
-                    db.readAllArtist().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                all = state.data.all.copy(
-                                    artist = it
-                                )
-                            )
-                        )
-                    }
-                }
-
-                val allFavourite = async {
+    private fun loadAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val allPlaylist = async {
+                db.readPlaylistPreview().collect {
                     state = state.copy(
                         data = state.data.copy(
                             all = state.data.all.copy(
-                                isFavourite = db.readFavouritePrev() > 0
+                                playlist = it.groupBy { result -> result.name }.map { entry ->
+                                    UiPlaylistPrev(
+                                        id = entry.value[0].playlistId,
+                                        name = entry.key,
+                                        listOfUrl = entry.value.map { url ->
+                                            url.coverImage
+                                        }.shuffled(Random()).take(4)
+                                    )
+                                }
                             )
                         )
-                    )
-                }
-
-                allPlaylist.await()
-                allArtist.await()
-                allAlbum.await()
-                allFavourite.await()
-            }.let {
-                viewModelScope.launch(Dispatchers.IO) {
-                    delay(800)
-                    state = state.copy(
-                        isLoading = false,
-                        isInternetError = network.value != NetworkObserver.STATUS.AVAILABLE
                     )
                 }
             }
 
-            // read Pinned Data
-            viewModelScope.launch(Dispatchers.IO) {
-                val playlist = async {
-                    db.readPinnedPlaylist().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                pinned = state.data.pinned.copy(
-                                    playlist = it.groupBy { result -> result.name }
-                                        .map { map ->
-                                            UiPlaylistPrev(
-                                                id = map.value[0].playlistId,
-                                                name = map.key,
-                                                listOfUrl = map.value.map { playlist ->
-                                                    playlist.coverImage
-                                                }.shuffled(Random()).take(4)
-                                            )
-                                        }
-                                )
+            val allAlbum = async {
+                db.readAllAlbumPreview().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            all = state.data.all.copy(
+                                album = it.groupBy { album ->
+                                    album.id
+                                }.map { entry ->
+                                    UiAlbumPrev(
+                                        id = entry.key,
+                                        name = entry.value[0].name,
+                                        coverImage = entry.value[0].coverImage
+                                    )
+                                }
                             )
                         )
-                    }
+                    )
                 }
+            }
 
-                val album = async {
-                    db.readPinnedAlbum().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                pinned = state.data.pinned.copy(
-                                    album = it.groupBy { album ->
-                                        album.name
-                                    }.map { entry ->
-                                        UiAlbumPrev(
-                                            id = entry.value[0].id,
-                                            name = entry.key,
-                                            coverImage = entry.value[0].coverImage
+            val allArtist = async {
+                db.readAllArtist().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            all = state.data.all.copy(
+                                artist = it
+                            )
+                        )
+                    )
+                }
+            }
+
+            val allFavourite = async {
+                state = state.copy(
+                    data = state.data.copy(
+                        all = state.data.all.copy(
+                            isFavourite = db.readFavouritePrev() > 0
+                        )
+                    )
+                )
+            }
+
+            allPlaylist.await()
+            allArtist.await()
+            allAlbum.await()
+            allFavourite.await()
+        }.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                delay(800)
+                state = state.copy(
+                    isLoading = false,
+                    isInternetError = network.value != NetworkObserver.STATUS.AVAILABLE
+                )
+            }
+        }
+    }
+
+    private fun loadPinned() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val playlist = async {
+                db.readPinnedPlaylist().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            pinned = state.data.pinned.copy(
+                                playlist = it.groupBy { result -> result.name }
+                                    .map { map ->
+                                        UiPlaylistPrev(
+                                            id = map.value[0].playlistId,
+                                            name = map.key,
+                                            listOfUrl = map.value.map { playlist ->
+                                                playlist.coverImage
+                                            }.shuffled(Random()).take(4)
                                         )
                                     }
-                                )
                             )
                         )
-                    }
+                    )
                 }
-
-                val isFavourite = async {
-                    ds.readFavouritePinnedState().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                pinned = state.data.pinned.copy(
-                                    isFavourite = it
-                                )
-                            )
-                        )
-                    }
-                }
-
-                val artist = async {
-                    db.readPinnedArtist().collect {
-                        state = state.copy(
-                            data = state.data.copy(
-                                pinned = state.data.pinned.copy(
-                                    artist = it
-                                )
-                            )
-                        )
-                    }
-                }
-
-                playlist.await()
-                album.await()
-                isFavourite.await()
-                artist.await()
             }
+
+            val album = async {
+                db.readPinnedAlbum().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            pinned = state.data.pinned.copy(
+                                album = it.groupBy { album ->
+                                    album.name
+                                }.map { entry ->
+                                    UiAlbumPrev(
+                                        id = entry.value[0].id,
+                                        name = entry.key,
+                                        coverImage = entry.value[0].coverImage
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+            val isFavourite = async {
+                ds.readFavouritePinnedState().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            pinned = state.data.pinned.copy(
+                                isFavourite = it
+                            )
+                        )
+                    )
+                }
+            }
+
+            val artist = async {
+                db.readPinnedArtist().collect {
+                    state = state.copy(
+                        data = state.data.copy(
+                            pinned = state.data.pinned.copy(
+                                artist = it
+                            )
+                        )
+                    )
+                }
+            }
+
+            playlist.await()
+            album.await()
+            isFavourite.await()
+            artist.await()
         }
     }
 

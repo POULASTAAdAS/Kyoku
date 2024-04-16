@@ -26,12 +26,6 @@ fun Song.toResponseSong(): ResponseSong = ResponseSong(
     title = this.title,
     artist = this.artist,
     album = this.album,
-    genre = this.genre,
-    composer = this.composer,
-    publisher = this.publisher,
-    albumArtist = this.albumArtist,
-    description = this.description,
-    track = this.track,
     date = this.date
 )
 
