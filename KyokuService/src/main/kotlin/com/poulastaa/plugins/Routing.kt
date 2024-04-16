@@ -38,6 +38,7 @@ fun Application.configureRouting() {
         artistSongPage(service)
 
         album(service)
+        editAlbum(service)
         dailyMix(service)
         artistMix(service)
 

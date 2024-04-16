@@ -8,6 +8,7 @@ import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTabl
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
 import com.poulastaa.data.model.home.*
+import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.item.ItemReq
 import com.poulastaa.data.model.pinned.PinnedReq
 import com.poulastaa.data.model.playlist.AddSongToPlaylistReq
@@ -31,11 +32,8 @@ import com.poulastaa.domain.repository.genre.GenreRepository
 import com.poulastaa.domain.repository.playlist.PlaylistRepository
 import com.poulastaa.domain.repository.song.SongRepository
 import com.poulastaa.plugins.dbQuery
-import com.poulastaa.utils.constructCoverPhotoUrl
-import com.poulastaa.utils.getAlbum
-import com.poulastaa.utils.removeAlbum
+import com.poulastaa.utils.*
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
-import com.poulastaa.utils.toListOfPlaylistRow
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
 import org.jetbrains.exposed.sql.Column
@@ -352,7 +350,7 @@ class UserServiceRepositoryImpl(
             }
         }
 
-    override suspend fun getAlbum(id: Long): AlbumPreview =
+    override suspend fun getAlbum(id: Long): ResponseAlbum =
         withContext(Dispatchers.IO) {
             dbQuery {
                 SongTable
@@ -377,7 +375,9 @@ class UserServiceRepositoryImpl(
                         SongTable.artist,
                         SongTable.coverImage,
                         SongTable.points,
-                        SongTable.date
+                        SongTable.date,
+                        SongTable.masterPlaylistPath,
+                        SongTable.totalTime
                     ).select {
                         AlbumTable.id eq id
                     }.map {
@@ -389,19 +389,37 @@ class UserServiceRepositoryImpl(
                             title = it[SongTable.title],
                             artist = it[SongTable.artist],
                             cover = it[SongTable.coverImage].constructCoverPhotoUrl(),
+                            master = it[SongTable.masterPlaylistPath].constructMasterPlaylistUrl(),
+                            totalTime = it[SongTable.totalTime],
                             points = it[SongTable.points],
                             year = it[SongTable.date]
                         )
                     }.groupBy {
-                        it.name
+                        it.albumId
                     }.map {
-                        AlbumPreview(
-                            name = it.key,
-// todo will break
+                        ResponseAlbum(
+                            id = it.key,
+                            name = it.value[0].name,
+                            listOfSongs = it.value.toResponseSong()
                         )
-                    }.firstOrNull() ?: AlbumPreview()
+                    }.firstOrNull() ?: ResponseAlbum()
             }
         }
+
+    override suspend fun editAlbum(id: Long, operation: Boolean, helper: UserTypeHelper): Boolean {
+        val user = dbUsers.getDbUser(helper) ?: return false
+
+        CoroutineScope(Dispatchers.IO).launch {
+            album.handleAlbum(
+                userId = user.id,
+                userType = helper.userType,
+                albumId = id,
+                operation = if (operation) ItemOperation.ADD else ItemOperation.DELETE
+            )
+        }
+
+        return true
+    }
 
     override suspend fun getDailyMix(helper: UserTypeHelper): List<ResponseSong> {
         val user = dbUsers.getDbUser(helper) ?: return emptyList()

@@ -38,7 +38,8 @@ interface UserServiceRepository {
 
     suspend fun getArtistPageSongResponse(req: ArtistPageReq): List<SongPreview>
 
-    suspend fun getAlbum(id: Long): AlbumPreview
+    suspend fun getAlbum(id: Long): ResponseAlbum
+    suspend fun editAlbum(id: Long, operation: Boolean, helper: UserTypeHelper): Boolean
 
     suspend fun getDailyMix(helper: UserTypeHelper): List<ResponseSong>
 

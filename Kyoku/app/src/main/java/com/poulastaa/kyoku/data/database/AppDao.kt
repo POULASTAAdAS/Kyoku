@@ -305,16 +305,16 @@ interface AppDao {
 
     // remove playlist album , artists
     @Query("delete from PlaylistTable where id = :id")
-    fun deletePlaylist(id: Long)
+    fun removePlaylist(id: Long)
 
     @Query("delete from AlbumTable where id = :id")
-    fun deleteAlbum(id: Long)
+    fun removeAlbum(id: Long)
 
     @Query("delete from ArtistTable where artistId = :id")
-    fun deleteArtist(id: Long)
+    fun removeArtist(id: Long)
 
     @Query("delete from FavouriteSongTable")
-    fun deleteFavourites()
+    fun removeFavourites()
 
     // songView screen query
 
@@ -336,6 +336,9 @@ interface AppDao {
 
     @Query("select name from AlbumTable where albumId = :id")
     suspend fun getAlbumName(id: Long): String
+
+    @Query("select * from AlbumTable where albumId = :albumId limit 1")
+    suspend fun getAlbumOnAlbumId(albumId: Long): AlbumTable
 
     @Query(
         """
@@ -428,13 +431,13 @@ interface AppDao {
     suspend fun getPlaylistIdOnSongId(songId: Long): List<Long>
 
     @Query("delete from FavouriteSongTable where songId in (:listOfId)")
-    suspend fun deleteFromFavourite(listOfId: List<Long>)
+    suspend fun removeFromFavourite(listOfId: List<Long>)
 
     @Query("delete from FavouriteSongTable where songId = :songId")
-    suspend fun deleteFromFavourite(songId: Long)
+    suspend fun removeFromFavourite(songId: Long)
 
     @Delete
-    suspend fun deleteFromFavourite(entry: FavouriteSongTable)
+    suspend fun removeFromFavourite(entry: FavouriteSongTable)
 
     // remove all
     @Query("delete from AlbumTable")

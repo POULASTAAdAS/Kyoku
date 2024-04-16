@@ -6,9 +6,9 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRe
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ViewArtist
-import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
@@ -45,7 +45,8 @@ interface ServiceRepository {
     suspend fun getArtistAlbumAsPage(req: ArtistPageReq): List<ArtistAlbum>
     suspend fun getArtistSongAsPage(req: ArtistPageReq): List<SongPreview>
 
-    suspend fun getAlbum(id: Long): AlbumPreview
+    suspend fun getAlbum(id: Long): ResponseAlbum
+    suspend fun editAlbum(id: Long, op: Boolean): Boolean
 
     suspend fun getDailyMix(): List<ResponseSong>
     suspend fun getArtistMix(): List<ResponseSong>

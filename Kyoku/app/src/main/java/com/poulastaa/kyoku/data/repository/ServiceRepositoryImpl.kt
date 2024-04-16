@@ -6,9 +6,9 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRe
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ViewArtist
-import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
+import com.poulastaa.kyoku.data.model.api.service.home.ResponseAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.ResponsePlaylist
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.api.service.item.ItemReq
@@ -129,11 +129,19 @@ class ServiceRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAlbum(id: Long): AlbumPreview {
+    override suspend fun getAlbum(id: Long): ResponseAlbum {
         return try {
             api.getAlbum(id)
         } catch (e: Exception) {
-            AlbumPreview()
+            ResponseAlbum()
+        }
+    }
+
+    override suspend fun editAlbum(id: Long, op: Boolean): Boolean {
+        return try {
+            api.editAlbum(id, op)
+        } catch (e: Exception) {
+            false
         }
     }
 

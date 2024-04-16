@@ -139,7 +139,7 @@ fun HomeScreenBottomSheet(
                         )
 
                         ClickableItemWithDrawableImage(
-                            text = "Add to Playlist",
+                            text = "Add as Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
                                 scope.launch {
@@ -160,7 +160,7 @@ fun HomeScreenBottomSheet(
                                 onClick = {
                                     scope.launch {
                                         onClick.invoke(
-                                            HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum(
+                                            HomeUiEvent.BottomSheetItemClick.RemoveFromLibraryAlbum(
                                                 id = data.id
                                             )
                                         )
@@ -211,7 +211,7 @@ fun HomeScreenBottomSheet(
                         )
 
                         ClickableItemWithDrawableImage(
-                            text = "Add to Playlist",
+                            text = "Add as Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
                                 scope.launch {
@@ -252,7 +252,7 @@ fun HomeScreenBottomSheet(
                         )
 
                         ClickableItemWithDrawableImage(
-                            text = "Add to Playlist",
+                            text = "Add as Playlist",
                             icon = R.drawable.ic_add_to_playlist,
                             onClick = {
                                 scope.launch {

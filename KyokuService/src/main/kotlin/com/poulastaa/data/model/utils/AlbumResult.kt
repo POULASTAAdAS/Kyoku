@@ -8,6 +8,8 @@ data class AlbumResult(
     val title: String,
     val artist: String,
     val cover: String,
+    val master: String= "",
+    val totalTime: String = "",
     val points: Long,
     val year: String
 )

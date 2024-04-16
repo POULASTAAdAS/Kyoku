@@ -571,7 +571,7 @@ class LibraryViewModel @Inject constructor(
                                         return@launch
                                     }
 
-                                    val id = db.deletePlaylistArtistAlbumFavouriteEntry(
+                                    val id = db.removePlaylistArtistAlbumFavouriteEntry(
                                         type = state.pinnedData.type,
                                         name = state.pinnedData.name,
                                         ds = ds

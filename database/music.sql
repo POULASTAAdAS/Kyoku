@@ -467,10 +467,12 @@ select * from artist where id = 2373;
 select * from song where id = 12262;
 
 
-select * from songartistrelation where artistId = 734;
+select * from songartistrelation where artistId = 1257;
 
 
-select * from artist where name = 'Jit';
+select * from artist where name = 'Vishal';
+
+delete from songartistrelation  where artistId = 1257;
 
 
 

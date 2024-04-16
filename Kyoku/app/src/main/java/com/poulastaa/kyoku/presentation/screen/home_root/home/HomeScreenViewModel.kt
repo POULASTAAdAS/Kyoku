@@ -574,7 +574,35 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum -> {
-                        Log.d("data", "AddToLibraryAlbum: ${event.id}")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val response = api.getAlbum(event.id)
+
+                            if (response.listOfSongs.isEmpty()) {
+                                onEvent(HomeUiEvent.EmitToast("Opp's something went wrong"))
+
+                                return@launch
+                            }
+
+                            db.insertIntoAlbum(listOf(response))
+
+                            onEvent(HomeUiEvent.EmitToast("${response.name} added to library"))
+
+                            api.editAlbum(event.id, true)
+                        }
+                    }
+
+                    is HomeUiEvent.BottomSheetItemClick.RemoveFromLibraryAlbum -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val apiCallDef = async { api.editAlbum(event.id, true) }
+                            val albumDef = async { db.getAlbumOnAlbumId(event.id) }
+
+                            apiCallDef.await()
+                            val album = albumDef.await()
+
+                            db.removeAlbum(album.id)
+
+                            onEvent(HomeUiEvent.EmitToast("${album.name} removed from library"))
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToPlaylist -> {

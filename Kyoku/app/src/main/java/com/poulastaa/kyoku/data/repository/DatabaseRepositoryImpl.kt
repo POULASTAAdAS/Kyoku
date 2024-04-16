@@ -259,7 +259,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     fun removeFromFavourite(songId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            dao.deleteFromFavourite(songId = songId)
+            dao.removeFromFavourite(songId = songId)
         }
     }
 
@@ -416,7 +416,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
 
-    suspend fun deletePlaylistArtistAlbumFavouriteEntry(
+    suspend fun removePlaylistArtistAlbumFavouriteEntry(
         type: PinnedDataType,
         name: String,
         ds: DataStoreOperation
@@ -426,7 +426,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val pair = dao.getPlaylistIds(name)
 
                 return@withContext try {
-                    dao.deletePlaylist(pair.id)
+                    dao.removePlaylist(pair.id)
                     pair.originalId
                 } catch (e: Exception) {
                     -1L
@@ -437,7 +437,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val pair = dao.getIdOfAlbum(name)
 
                 return@withContext try {
-                    dao.deleteAlbum(pair.id)
+                    dao.removeAlbum(pair.id)
                     pair.originalId
                 } catch (e: Exception) {
                     -1L
@@ -448,7 +448,7 @@ class DatabaseRepositoryImpl @Inject constructor(
                 val artistId = dao.getIdOfArtist(name)
 
                 return@withContext try {
-                    dao.deleteArtist(artistId)
+                    dao.removeArtist(artistId)
                     artistId
                 } catch (e: Exception) {
                     -1L
@@ -456,7 +456,7 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             PinnedDataType.FAVOURITE -> {
-                dao.deleteFavourites()
+                dao.removeFavourites()
                 ds.storeFavouritePinnedState(false)
                 -1L
             }
@@ -586,6 +586,12 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    fun removeAlbum(id: Long) = CoroutineScope(Dispatchers.IO).launch {
+        dao.removeAlbum(id)
+    }
+
+    suspend fun getAlbumOnAlbumId(albumId: Long) = dao.getAlbumOnAlbumId(albumId)
 
 // ---------------------------------------------------------------------------------------------
 

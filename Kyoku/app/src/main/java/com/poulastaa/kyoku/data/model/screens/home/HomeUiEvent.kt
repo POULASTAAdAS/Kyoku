@@ -37,6 +37,7 @@ sealed class HomeUiEvent {
 
         data class PlayAlbum(val id: Long) : BottomSheetItemClick()
         data class AddToLibraryAlbum(val id: Long) : BottomSheetItemClick()
+        data class RemoveFromLibraryAlbum(val id: Long) : BottomSheetItemClick()
         data class DownloadAlbum(val id: Long) : BottomSheetItemClick()
 
         data object PlayArtistMix : BottomSheetItemClick()

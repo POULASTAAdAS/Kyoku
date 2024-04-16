@@ -129,7 +129,18 @@ fun AlbumResult.toPreviewSong() = SongPreview(
     year = this.year
 )
 
-
+fun Iterable<AlbumResult>.toResponseSong() = this.map {
+    ResponseSong(
+        id = it.songId,
+        title = it.title,
+        artist = it.artist,
+        album = it.name,
+        coverImage = it.cover,
+        masterPlaylistUrl = it.master,
+        totalTime = it.totalTime,
+        date = it.year
+    )
+}
 
 
 
