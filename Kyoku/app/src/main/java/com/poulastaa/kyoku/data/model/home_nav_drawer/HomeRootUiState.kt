@@ -10,6 +10,6 @@ data class HomeRootUiState(
     val libraryTopBarTitle: String = "Your Library",
     val profilePicUrl: String = "",
     val userName: String = "",
-    val startDestination: String = Screens.Library.route,
+    val startDestination: String = Screens.Home.route,
     val isHome: Boolean = startDestination == Screens.Home.route
 )

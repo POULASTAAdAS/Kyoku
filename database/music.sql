@@ -385,16 +385,6 @@ join songalbumartistrelation on songalbumartistrelation.songId = Song.id
 join album on album.id = songalbumartistrelation.albumId
 where album.id = 829;
 
-
-
-select * from passkeyauthuser;
-select * from emailauthuser;
-
-select * from passkeyuserlistenhistory;
-
-select * from googleuserlistenhistory;
-
-
 select DISTINCT googleuserlistenhistory.songid FROM googleuserlistenhistory
  WHERE (googleuserlistenhistory.userid = 1) AND (googleuserlistenhistory.`date` >= '2024-03-31T02:08:02.3295618')
  ORDER BY RAND() ASC LIMIT 8;
@@ -425,119 +415,35 @@ select * from song where artist in (
 
 
 -- -------------------
-
-
-select * from googleuserpinnedplaylist;
-select * from googleuserpinnedalbum;
-select * from googleuserpinnedartist;
-
-
-
-select * from song;
-
-select * from artist;
-
-
-select * from googleuserplaylist order by playlistid ;
-
-select * from passkeyuserplaylist order by playlistid;
-
-select * from emailuserplaylist order by playlistId;
-
-select * from playlist;
-
-select * from googleuserpinnedplaylist;
-
-select * from GoogleUserPinnedAlbum;
-
-select * from passkeyuseralbumrelation;
-
-select * from passkeyuserartistrelation;
-
-select * from googleuserartistrelation;
-
-select * from googleauthuser;
-
-
-
-select artistId from googleuserartistrelation;
-
 select * from artist 
 join googleuserartistrelation on googleuserartistrelation.artistid = artist.id
 where googleuserartistrelation.artistid and googleuserartistrelation.userid = 1;
-
 
 
 select * from album 
 join googleuseralbumrelation on googleuseralbumrelation.albumid = album.id
 where googleuseralbumrelation.userid = 1;
 
-select* from passkeyauthuser;
-
-select * from passkeyuserplaylist where playlistId = 8;
-
-
-select * from song where id = 100;
-
-
-select * from playlist;
-
-select * from googleuserplaylist order by playlistId desc;
-
-
-
-select songId from songalbumartistrelation where albumid = 829;
-
 select * from song
 join songalbumartistrelation on songalbumartistrelation.songId = song.id
 where songalbumartistrelation.albumId = 829;
 
 
-select * from playlist;
-
-
-select * from passkeyuserfavourite;
-
-select * from googleuserfavourite;
-
-
-select * from googleuserpinnedplaylist;
-
-
-select * from passkeyAuthUser;
 
 
 
+select * from song;
 
-select * from googleAuthUser;
+A.R. Rahman, Arijit Singh, Shashaa Tirupati;
 
-select * from artist order by points desc;
+select * from artist where name = 'Shashaa Tirupati';
+select * from artist where name = 'Arijit Singh';
+select * from artist where name = 'A.R. Rahman';
 
-
-select * from album where id = 54;
-
-select * from SongAlbumArtistRelation where albumid = 54;
-
-select * from artist where id in (170 , 222 , 223);
+select * from songartistrelation where artistId = 3;
 
 
-select * from googleuserpinnedalbum;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+select * from songartistrelation;
 
 
 

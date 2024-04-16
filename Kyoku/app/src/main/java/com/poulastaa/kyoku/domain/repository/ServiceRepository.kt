@@ -61,4 +61,6 @@ interface ServiceRepository {
     suspend fun removeFromFavourite(songId: Long): Boolean
 
     suspend fun addSongToPlaylist(req: AddSongToPlaylistReq): ResponseSong
+
+    suspend fun getArtistOnSongId(songId: Long)
 }

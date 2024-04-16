@@ -494,7 +494,20 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.ViewArtist -> {
-                        Log.d("data", "ViewArtist: ${event.id} , ${event.type}")
+                        if (!state.isInternetAvailable) {
+                            onEvent(HomeUiEvent.EmitToast("Please check your Internet connection"))
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(
+                                element = UiEvent.NavigateWithData(
+                                    route = Screens.ViewArtist.route,
+                                    id = event.id
+                                )
+                            )
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToFavourite -> {

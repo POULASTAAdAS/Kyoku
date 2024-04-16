@@ -309,8 +309,8 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun checkIfAlbumPinned(name: String) =
         dao.checkIfAlbumIsPinned(name)?.let { true } ?: false
 
-    suspend fun checkIfArtistPinned(name: String) =
-        dao.checkIfArtistPinned(name)?.let { true } ?: false
+    suspend fun checkIfArtistPinned(id: Long) =
+        dao.checkIfArtistPinned(id)?.let { true } ?: false
 
     suspend fun addToPinnedTable(
         type: PinnedDataType,

@@ -230,12 +230,10 @@ interface AppDao {
 
     @Query(
         """
-        select id from PinnedTable where PinnedTable.artistId = (
-            select id from ArtistTable where name = :name
-        )
+        select id from PinnedTable where PinnedTable.artistId = :id
     """
     )
-    suspend fun checkIfArtistPinned(name: String): Long?
+    suspend fun checkIfArtistPinned(id: Long): Long?
 
     @Transaction
     @Query("select id, playlistId as originalId from PlaylistTable where name = :name")

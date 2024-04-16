@@ -38,6 +38,7 @@ import com.poulastaa.kyoku.presentation.screen.setup.suggest_artist.SuggestArtis
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.SongViewRootScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistAllScreen
+import com.poulastaa.kyoku.presentation.screen.view_artist.ViewArtistScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -222,8 +223,6 @@ fun SetupNavGraph(
         }
 
 
-
-
         composable(
             route = Screens.CreatePlaylist.route + Screens.CreatePlaylist.PARAMS,
             arguments = listOf(
@@ -343,6 +342,31 @@ fun SetupNavGraph(
             EditPlaylistScreen(
                 id = id,
                 context = context,
+                navigateBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.ViewArtist.route + Screens.ViewArtist.PARAMS,
+            arguments = listOf(
+                navArgument(Screens.Args.ID.title) {
+                    type = NavType.LongType
+                }
+            ),
+        ) {
+            val id = it.arguments?.getLong(Screens.Args.ID.title, -1) ?: -1
+
+            ViewArtistScreen(
+                id = id,
+                navigate = { event ->
+                    when (event) {
+                        is UiEvent.Navigate -> navController.navigate(event)
+                        is UiEvent.NavigateWithData -> navController.navigateWithData(event)
+                        else -> Unit
+                    }
+                },
                 navigateBack = {
                     navController.popBackStack()
                 }

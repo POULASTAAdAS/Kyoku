@@ -17,5 +17,9 @@ fun NavHostController.navigateWithData(event: UiEvent.NavigateWithData) = when (
         route = "${event.route}${event.id}/${event.songType}"
     )
 
+    Screens.ViewArtist.route -> navigate(
+        route = "${event.route}${event.id}"
+    )
+
     else -> navigate(route = "${event.route}${event.name}/${event.isApiCall}")
 }

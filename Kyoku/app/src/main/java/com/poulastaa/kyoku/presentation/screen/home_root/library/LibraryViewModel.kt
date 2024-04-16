@@ -397,7 +397,8 @@ class LibraryViewModel @Inject constructor(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
                                     itemsType = ItemsType.ALBUM,
-                                    name = event.name
+                                    name = event.name,
+                                    id = event.id
                                 )
                             )
                         }
@@ -411,7 +412,7 @@ class LibraryViewModel @Inject constructor(
                                     pinnedData = state.pinnedData.copy(
                                         name = event.name,
                                         type = PinnedDataType.ARTIST,
-                                        isPinned = db.checkIfArtistPinned(name = event.name)
+                                        isPinned = db.checkIfArtistPinned(id = event.id)
                                     )
                                 )
                             }.await()

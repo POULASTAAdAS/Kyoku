@@ -46,6 +46,10 @@ sealed class Screens(val route: String) {
         const val PARAMS: String = "{id}/{type}"
     }
 
+    data object ViewArtist : Screens("/app/viewArtist") {
+        const val PARAMS: String = "{id}"
+    }
+
 
     data object AddArtist : Screens("/app/addArtist")
     data object AddAlbum : Screens("/app/addAlbum")

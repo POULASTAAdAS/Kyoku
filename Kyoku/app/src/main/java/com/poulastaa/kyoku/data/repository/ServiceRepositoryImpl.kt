@@ -207,4 +207,12 @@ class ServiceRepositoryImpl @Inject constructor(
             ResponseSong()
         }
     }
+
+    override suspend fun getArtistOnSongId(songId: Long) {
+        try {
+            api
+        } catch (e: Exception) {
+            // todo
+        }
+    }
 }
