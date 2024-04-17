@@ -7,6 +7,7 @@
     <application
         android:name="com.poulastaa.kyoku.Kyoku"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/light_logo"

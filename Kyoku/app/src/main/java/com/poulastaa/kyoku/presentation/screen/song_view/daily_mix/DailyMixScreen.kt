@@ -77,7 +77,8 @@ fun DailyMixScreen(
 
             info(
                 name = dailyMix.name,
-                size = dailyMix.listOfSong.size
+                size = dailyMix.listOfSong.size,
+                totalTime = dailyMix.totalTime
             )
 
             playControl(

@@ -19,6 +19,7 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.toUiPlaylistSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -116,10 +117,7 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        when (isApiCall) {
-                            true -> SongViewUiModel() /*getAlbumFromApi(id)*/
-                            false -> async { db.getAlbum(id) }.await()
-                        }.let {
+                        async { db.getAlbum(id) }.await().let {
                             state = state.copy(
                                 type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
                                 data = state.data.copy(
@@ -132,7 +130,51 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ALBUM_PREV -> {
                     viewModelScope.launch(Dispatchers.IO) {
+                        val album = db.getAlbum(id)
 
+                        if (album.listOfSong.isNotEmpty()) {
+                            state = state.copy(
+                                type = ItemsType.ALBUM,
+                                data = state.data.copy(
+                                    album = album
+                                )
+                            )
+                        } else {
+                            val resultDef = async { api.getAlbum(id) }
+                            db.removeAllFromReqAlbum()
+
+                            val result = resultDef.await()
+
+
+                            if (result.listOfSongs.isEmpty()) {
+                                onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+
+                            async { db.insertIntoReqAlbum(result) }.await()
+
+                            db.readFromReqAlbum().collect {
+                                state = state.copy(
+                                    data = state.data.copy(
+                                        album = it.groupBy { entry ->
+                                            entry.albumId
+                                        }.map { entry ->
+                                            SongViewUiModel(
+                                                name = entry.value[0].albumName,
+                                                totalTime = async {
+                                                    entry.value.map { single ->
+                                                        (single.totalTime.toFloatOrNull()
+                                                            ?: 0F) / 1000 / 60
+                                                    }.sum().toInt().toString()
+                                                }.await(),
+                                                listOfSong = entry.value.toUiPlaylistSong()
+                                            )
+                                        }.firstOrNull() ?: SongViewUiModel()
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -308,12 +350,14 @@ class SongViewViewModel @Inject constructor(
     fun onEvent(event: SongViewUiEvent) {
         when (event) {
             is SongViewUiEvent.EmitToast -> {
-
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(UiEvent.ShowToast(event.message))
+                }
             }
 
 
             SongViewUiEvent.SomethingWentWrong -> {
-
+                onEvent(SongViewUiEvent.EmitToast("Opp's something went wrong"))
             }
 
             is SongViewUiEvent.ItemClick -> {
@@ -354,20 +398,14 @@ class SongViewViewModel @Inject constructor(
         it
     }
 
-    // todo store to temporary album table optimising fucking sucks
-//    private suspend fun getAlbumFromApi(id: Long) = api.getAlbum(id).let { album ->
-//        UiAlbum(
-//            name = album.name,
-//            listOfSong = album.listOfSongs.map { song ->
-//                UiSong(
-//                    id = song.id.toLong(),
-//                    title = song.title,
-//                    artist = song.artist,
-//                    album = album.name,
-//                    coverImage = song.coverImage
-//                )
-//            }
-//        )
-//    }
 
+    fun removeDbEntrys() {
+        when (state.type) {
+            ItemsType.ALBUM_PREV -> {
+                db.removeAllFromReqAlbum()
+            }
+
+            else -> Unit
+        }
+    }
 }

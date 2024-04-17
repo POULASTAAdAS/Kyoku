@@ -224,4 +224,12 @@ class ServiceRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
+
+    override suspend fun removeFromRecentlyPlayed(songId: Long): Boolean {
+        return try {
+            api.removeFromRecentlyPlayed(songId)
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

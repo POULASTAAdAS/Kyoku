@@ -1,9 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 
 import android.content.res.Configuration
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,14 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults
@@ -34,8 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +39,8 @@ import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
 import com.poulastaa.kyoku.data.model.screens.home.SongType
+import com.poulastaa.kyoku.presentation.common.ClickableItemWithDrawableImage
+import com.poulastaa.kyoku.presentation.common.ClickableItemWithVectorImage
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
@@ -63,8 +59,6 @@ fun HomeScreenBottomSheet(
     onClick: (HomeUiEvent) -> Unit,
     cancelClick: () -> Unit
 ) {
-
-
     ModalBottomSheet(
         onDismissRequest = cancelClick,
         sheetState = sheetState,
@@ -387,20 +381,36 @@ fun HomeScreenBottomSheet(
                             }
                         )
 
-                        ClickableItemWithVectorImage(
-                            text = "Add to Favourite",
-                            icon = Icons.Rounded.Favorite,
-                            onClick = {
-                                scope.launch {
-                                    onClick.invoke(
-                                        HomeUiEvent.BottomSheetItemClick.AddToFavourite(
-                                            id = data.id,
-                                            type = SongType.ARTIST_SONG
+                        if (data.isAlreadySaved)
+                            ClickableItemWithDrawableImage(
+                                text = "Remove form favourite",
+                                icon = R.drawable.ic_remove_favourite,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.RemoveFromFavourite(
+                                                id = data.id,
+                                                title = data.name
+                                            )
                                         )
-                                    )
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        else
+                            ClickableItemWithVectorImage(
+                                text = "Add to favourite",
+                                icon = Icons.Rounded.Favorite,
+                                onClick = {
+                                    scope.launch {
+                                        onClick.invoke(
+                                            HomeUiEvent.BottomSheetItemClick.AddToFavourite(
+                                                id = data.id,
+                                                type = SongType.ARTIST_SONG
+                                            )
+                                        )
+                                    }
+                                }
+                            )
 
                         ClickableItemWithDrawableImage(
                             text = "Add to Playlist",
@@ -525,81 +535,7 @@ private fun ItemImage(
     }
 }
 
-@Composable
-private fun ClickableItemWithDrawableImage(
-    text: String,
-    @DrawableRes
-    icon: Int,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(CircleShape)
-            .clickable {
-                onClick.invoke()
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.dimens.small3),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-        ) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
 
-            Text(
-                text = text,
-                fontWeight = FontWeight.Light,
-                fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                letterSpacing = 1.sp
-            )
-        }
-    }
-}
-
-
-@Composable
-private fun ClickableItemWithVectorImage(
-    text: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(CircleShape)
-            .clickable {
-                onClick.invoke()
-            },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.dimens.small3),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
-            )
-
-            Text(
-                text = text,
-                fontWeight = FontWeight.Light,
-                fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                letterSpacing = 1.sp
-            )
-        }
-    }
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)

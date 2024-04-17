@@ -77,7 +77,8 @@ fun ArtistMixScreen(
 
             info(
                 name = artistMix.name,
-                size = artistMix.listOfSong.size
+                size = artistMix.listOfSong.size,
+                totalTime = artistMix.totalTime
             )
 
             playControl(

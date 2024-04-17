@@ -27,6 +27,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
+import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSavedAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
@@ -360,6 +361,9 @@ interface AppDao {
     @Query("select coverImage from ArtistTable where artistId = :id")
     suspend fun getArtistCoverImage(id: Long): String
 
+    @Query("select coverImage from ArtistTable where name = :name")
+    suspend fun getArtistCoverImage(name:String): String
+
     @Query("select count(*) from DailyMixTable")
     suspend fun checkIfDailyMixTableEmpty(): Long
 
@@ -410,6 +414,12 @@ interface AppDao {
     @Query("select songId from ArtistMixTable")
     suspend fun getSongIdListOfArtistMix(): List<Long>
 
+    @Query("select id from ArtistSongTable where songId = :songId")
+    suspend fun getArtistSongId(songId: Long): Long
+
+    @Query("delete from ArtistPreviewSongRelation where artistId = :artistId and songId = :songId")
+    suspend fun removeFromSongArtistRelation(artistId: Long, songId: Long)
+
     @Query(
         """
         select  PlaylistTable.playlistId ,  PlaylistTable.name , PlaylistSongTable.coverImage
@@ -438,6 +448,18 @@ interface AppDao {
 
     @Delete
     suspend fun removeFromFavourite(entry: FavouriteSongTable)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoReqAlbum(entrys: List<ReqAlbumSongTable>)
+
+    @Query("select * from ReqAlbumSongTable")
+    fun readFromReqAlbum(): Flow<List<ReqAlbumSongTable>>
+
+    @Query("delete from ReqAlbumSongTable")
+    suspend fun deleteAllFromReqAlbum()
+
+    @Query("delete from RecentlyPlayedPrevTable where songId = :songId")
+    suspend fun removeFromRecentlyPlayed(songId: Long)
 
     // remove all
     @Query("delete from AlbumTable")

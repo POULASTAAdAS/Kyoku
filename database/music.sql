@@ -475,7 +475,9 @@ select * from artist where name = 'Vishal';
 delete from songartistrelation  where artistId = 1257;
 
 
+select * from googleuserlistenhistory;
 
+select * from googleuserlistenhistory where songid = 100 and userid = 1;
 
 
 

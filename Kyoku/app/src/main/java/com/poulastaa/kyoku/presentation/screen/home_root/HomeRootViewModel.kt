@@ -126,7 +126,6 @@ class HomeRootViewModel @Inject constructor(
 
     var state by mutableStateOf(HomeRootUiState())
 
-
     init {
         readAccessToken()
         readAuthType()
@@ -134,7 +133,6 @@ class HomeRootViewModel @Inject constructor(
         readProfilePicUrl()
         setHomeTopBarTitle()
     }
-
 
     fun onEvent(event: HomeRootUiEvent) {
         when (event) {

@@ -37,6 +37,7 @@ import com.poulastaa.kyoku.utils.toFavouriteTableEntry
 import com.poulastaa.kyoku.utils.toFavouriteTableEntryList
 import com.poulastaa.kyoku.utils.toHistoryPrevSongEntry
 import com.poulastaa.kyoku.utils.toPlaylistSongTable
+import com.poulastaa.kyoku.utils.toReqAlbumEntry
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -494,6 +495,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
+    suspend fun getArtistCoverImage(name:String) = dao.getArtistCoverImage(name)
 
     suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
 
@@ -592,6 +594,39 @@ class DatabaseRepositoryImpl @Inject constructor(
     }
 
     suspend fun getAlbumOnAlbumId(albumId: Long) = dao.getAlbumOnAlbumId(albumId)
+
+    suspend fun insertIntoReqAlbum(entry: ResponseAlbum) {
+        dao.insertIntoReqAlbum(
+            entrys = entry.listOfSongs.toReqAlbumEntry(
+                albumId = entry.id,
+                albumName = entry.name
+            )
+        )
+    }
+
+    fun readFromReqAlbum() = dao.readFromReqAlbum()
+
+    fun removeAllFromReqAlbum() {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.deleteAllFromReqAlbum()
+        }
+    }
+
+    fun removeFromRecentlyPlayed(songId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.removeFromRecentlyPlayed(songId)
+        }
+    }
+
+    suspend fun hideSong(songId: Long, name: String) = withContext(Dispatchers.IO) {
+        val artistIdDef = async { dao.getIdOfArtist(name) }
+        val idDef = async { dao.getArtistSongId(songId) }
+
+        dao.removeFromSongArtistRelation(artistIdDef.await(), idDef.await())
+
+        //todo add to hidden song table
+    }
+
 
 // ---------------------------------------------------------------------------------------------
 

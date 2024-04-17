@@ -7,6 +7,9 @@ import com.poulastaa.data.model.db_table.*
 import com.poulastaa.data.model.db_table.user_artist.EmailUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.GoogleUserArtistRelationTable
 import com.poulastaa.data.model.db_table.user_artist.PasskeyUserArtistRelationTable
+import com.poulastaa.data.model.db_table.user_listen_history.EmailUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.GoogleUserListenHistoryTable
+import com.poulastaa.data.model.db_table.user_listen_history.PasskeyUserListenHistoryTable
 import com.poulastaa.data.model.home.*
 import com.poulastaa.data.model.item.ItemOperation
 import com.poulastaa.data.model.item.ItemReq
@@ -36,10 +39,8 @@ import com.poulastaa.utils.*
 import com.poulastaa.utils.songDownloaderApi.makeApiCallOnNotFoundSpotifySongs
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.*
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UserServiceRepositoryImpl(
     private val song: SongRepository,
@@ -584,6 +585,63 @@ class UserServiceRepositoryImpl(
 
     override suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist> {
         return artist.getResponseArtistOnSongId(songId)
+    }
+
+    override suspend fun removeFromHistory(songId: Long, helper: UserTypeHelper): Boolean {
+        val user = dbUsers.getDbUser(helper) ?: return false
+
+        return dbQuery {
+            when (helper.userType) {
+                UserType.GOOGLE_USER -> {
+                    val mostRecentDateTime = GoogleUserListenHistoryTable
+                        .slice(GoogleUserListenHistoryTable.date)
+                        .select {
+                            GoogleUserListenHistoryTable.userId eq user.id and
+                                    (GoogleUserListenHistoryTable.songId eq songId)
+                        }
+                        .maxOfOrNull { it[GoogleUserListenHistoryTable.date] } ?: return@dbQuery false
+
+                    GoogleUserListenHistoryTable.deleteWhere {
+                        this.date eq mostRecentDateTime
+                    }
+
+                    true
+                }
+
+                UserType.EMAIL_USER -> {
+                    val mostRecentDateTime = EmailUserListenHistoryTable
+                        .slice(EmailUserListenHistoryTable.date)
+                        .select {
+                            EmailUserListenHistoryTable.userId eq user.id and
+                                    (EmailUserListenHistoryTable.songId eq songId)
+                        }
+                        .maxOfOrNull { it[EmailUserListenHistoryTable.date] } ?: return@dbQuery false
+
+                    EmailUserListenHistoryTable.deleteWhere {
+                        this.date eq mostRecentDateTime
+                    }
+
+                    true
+                }
+
+                UserType.PASSKEY_USER -> {
+                    val mostRecentDateTime = PasskeyUserListenHistoryTable
+                        .slice(PasskeyUserListenHistoryTable.date)
+                        .select {
+                            PasskeyUserListenHistoryTable.userId eq user.id and
+                                    (PasskeyUserListenHistoryTable.songId eq songId)
+                        }
+                        .maxOfOrNull { it[PasskeyUserListenHistoryTable.date] } ?: return@dbQuery false
+
+                    PasskeyUserListenHistoryTable.deleteWhere {
+                        this.date eq mostRecentDateTime
+                    }
+
+                    true
+                }
+            }
+
+        }
     }
 
     // private functions

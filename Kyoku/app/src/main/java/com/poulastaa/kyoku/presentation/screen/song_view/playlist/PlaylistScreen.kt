@@ -78,7 +78,8 @@ fun PlaylistScreen(
 
             info(
                 name = data.name,
-                size = data.listOfSong.size
+                size = data.listOfSong.size,
+                totalTime = data.totalTime
             )
 
             playControl(

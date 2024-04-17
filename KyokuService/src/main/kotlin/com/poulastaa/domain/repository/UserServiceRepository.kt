@@ -57,4 +57,6 @@ interface UserServiceRepository {
     suspend fun editSongAndPlaylist(helper: UserTypeHelper, req: AddSongToPlaylistReq): ResponseSong
 
     suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist>
+
+    suspend fun removeFromHistory(songId: Long, helper: UserTypeHelper): Boolean
 }

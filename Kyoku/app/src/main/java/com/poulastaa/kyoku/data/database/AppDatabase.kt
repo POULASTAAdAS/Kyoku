@@ -20,6 +20,7 @@ import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
+import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 
 @Database(
     entities = [
@@ -44,6 +45,8 @@ import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
         PinnedTable::class,
         DailyMixTable::class,
         ArtistMixTable::class,
+
+        ReqAlbumSongTable::class,
 
         // internal tables
         InternalPinnedTable::class,

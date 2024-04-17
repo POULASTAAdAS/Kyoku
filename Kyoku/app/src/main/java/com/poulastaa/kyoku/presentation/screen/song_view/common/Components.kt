@@ -467,7 +467,8 @@ fun LazyListScope.poster(
 
 fun LazyListScope.info(
     name: String,
-    size: Int
+    size: Int,
+    totalTime: String
 ) {
     item {
         Column(
@@ -486,12 +487,14 @@ fun LazyListScope.info(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            Text(
-                text = "$size songs",
-                fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Light
-            )
+            Row {
+                Text(
+                    text = "$size songs , $totalTime minute",
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Light
+                )
+            }
         }
     }
 }

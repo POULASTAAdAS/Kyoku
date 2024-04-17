@@ -138,4 +138,9 @@ interface ServiceApi {
     suspend fun getArtistOnSongId(
         @Query("songId") songId: Long
     ): List<ViewArtist>
+
+    @GET("/api/authorised/removeFromHistory")
+    suspend fun removeFromRecentlyPlayed(
+        @Query("songId") songId: Long
+    ): Boolean
 }

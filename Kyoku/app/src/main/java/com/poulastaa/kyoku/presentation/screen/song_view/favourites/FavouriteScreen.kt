@@ -108,7 +108,8 @@ fun FavouriteScreen(
 
             info(
                 name = "Favourites",
-                size = data.listOfSong.size
+                size = data.listOfSong.size,
+                totalTime = data.totalTime
             )
 
             playControl(

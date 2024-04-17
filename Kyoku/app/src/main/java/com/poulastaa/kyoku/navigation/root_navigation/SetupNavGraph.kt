@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -37,6 +38,7 @@ import com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist.Spotif
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_artist.SuggestArtistScreen
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_genre.SuggestGenreScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.SongViewRootScreen
+import com.poulastaa.kyoku.presentation.screen.song_view.SongViewViewModel
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistAllScreen
 import com.poulastaa.kyoku.presentation.screen.view_artist.ViewArtistScreen
 
@@ -174,13 +176,17 @@ fun SetupNavGraph(
             val isApiCall = backStackEntry
                 .arguments?.getBoolean(Screens.Args.IS_API_CALL.title, false) ?: false
 
+            val viewModel: SongViewViewModel = hiltViewModel()
+
             SongViewRootScreen(
+                viewModel = viewModel,
                 type = type,
                 id = id,
                 name = name,
                 isApiCall = isApiCall,
                 navigateBack = {
                     navController.popBackStack()
+                    viewModel.removeDbEntrys()
                 },
                 navigate = {
                     when (it) {

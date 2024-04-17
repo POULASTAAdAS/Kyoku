@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.presentation.screen.song_view.album
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -77,7 +78,8 @@ fun AlbumScreen(
 
             info(
                 name = album.name,
-                size = album.listOfSong.size
+                size = album.listOfSong.size,
+                totalTime = album.totalTime
             )
 
             playControl(
@@ -142,7 +144,29 @@ private fun LazyListScope.albumSongs(
 @Preview
 @Composable
 private fun Preview() {
-    TestThem {
 
+    val list = ArrayList<UiPlaylistSong>()
+
+    for (i in 1..10) {
+        list.add(UiPlaylistSong())
+    }
+
+    val data = SongViewUiModel(
+        name = "album",
+        totalTime = "32",
+        listOfSong = list
+    )
+
+    TestThem {
+        AlbumScreen(
+            album = data,
+            isDarkThem = isSystemInDarkTheme(),
+            isCookie = false,
+            headerValue = "",
+            poster = "",
+            isSmallPhone = false
+        ) {
+
+        }
     }
 }

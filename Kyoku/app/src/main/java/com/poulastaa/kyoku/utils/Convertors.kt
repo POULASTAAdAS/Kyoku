@@ -29,11 +29,13 @@ import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
+import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
+import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -274,5 +276,33 @@ fun List<ResponseSong>.toArtistMixEntry() = this.map {
         masterPlaylistUrl = it.masterPlaylistUrl,
         totalTime = it.totalTime,
         year = it.date
+    )
+}
+
+fun List<ResponseSong>.toReqAlbumEntry(
+    albumId: Long,
+    albumName: String
+) = this.map {
+    ReqAlbumSongTable(
+        albumId = albumId,
+        albumName = albumName,
+        songId = it.id,
+        coverImage = it.coverImage,
+        masterPlaylistUrl = it.masterPlaylistUrl,
+        title = it.title,
+        artist = it.artist,
+        totalTime = it.totalTime,
+        date = it.date
+    )
+}
+
+fun List<ReqAlbumSongTable>.toUiPlaylistSong() = this.map {
+    UiPlaylistSong(
+        songId = it.songId,
+        title = it.title,
+        artist = it.artist,
+        coverImage = it.coverImage,
+        masterPlaylistUrl = it.masterPlaylistUrl,
+        totalTime = it.totalTime
     )
 }

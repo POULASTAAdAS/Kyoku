@@ -70,6 +70,8 @@ class HomeScreenViewModel @Inject constructor(
     var state by mutableStateOf(HomeUiState())
         private set
 
+    private var artistName: String? = null
+
     private suspend fun isTillNewUser() = db.checkIfNewUser()
     private suspend fun isFirstOpen() = db.isFirstOpen()
 
@@ -257,24 +259,12 @@ class HomeScreenViewModel @Inject constructor(
             is HomeUiEvent.ItemClick -> {
                 if (!state.isLoading)
                     when (event.type) {
-                        ItemsType.ALBUM_PREV -> {
-                            event
-                        }
-
-                        ItemsType.FAVOURITE -> {
-                            event
-                        }
-
                         ItemsType.SONG -> {
 //                            viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
 //                                _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
 //                            }
 
                             return
-                        }
-
-                        ItemsType.HISTORY -> {
-                            event
                         }
 
                         ItemsType.ERR -> {
@@ -441,11 +431,16 @@ class HomeScreenViewModel @Inject constructor(
                         viewModelScope.launch(Dispatchers.IO) {
                             val songDef = async {
                                 state.data.artistPrev.firstNotNullOfOrNull {
-                                    it.lisOfPrevSong.firstOrNull { song ->
-                                        song.id == event.id
+                                    it.lisOfPrevSong.firstNotNullOfOrNull { song ->
+                                        if (song.id == event.id) {
+                                            artistName = it.name
+
+                                            song
+                                        } else null
                                     }
                                 }
                             }
+
 
                             val isOnFavouriteDef = async {
                                 db.checkIfSongAlreadyInFavourite(event.id)
@@ -453,6 +448,9 @@ class HomeScreenViewModel @Inject constructor(
 
                             val song = songDef.await()
                             val isOnFavourite = isOnFavouriteDef.await()
+
+
+                            Log.d("songId", song?.id.toString())
 
                             if (song == null) {
                                 onEvent(HomeUiEvent.SomethingWentWrong)
@@ -554,11 +552,35 @@ class HomeScreenViewModel @Inject constructor(
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.RemoveFromListenHistory -> {
-                        Log.d("data", "RemoveFromListenHistory: ${event.id}")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val song = state.data.historyPrev.firstNotNullOfOrNull {
+                                if (it.id == event.id) it else null
+                            }
+
+                            if (song == null) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+                            onEvent(HomeUiEvent.EmitToast("${song.title} remove from recently played"))
+
+                            db.removeFromRecentlyPlayed(event.id)
+                            api.removeFromRecentlyPlayed(event.id)
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.HideSong -> {
-                        Log.d("data", "HideSong: ${event.id}")
+                        viewModelScope.launch(Dispatchers.IO) {
+                            if (artistName == null) {
+                                onEvent(HomeUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+
+                            db.hideSong(event.id, artistName!!)
+
+                            onEvent(HomeUiEvent.EmitToast("song added to hidden song"))
+                        }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.PlayAlbum -> {

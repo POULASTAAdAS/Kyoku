@@ -53,6 +53,8 @@ fun Application.configureRouting() {
         handlePinned(service)
         handleItems(service)
 
+        removeFromHistory(service)
+
         getMasterPlaylist(service)
 
         unauthorized()
