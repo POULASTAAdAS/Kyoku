@@ -1,5 +1,11 @@
 # <h1 align="center">Kyoku</h>
 
+# <h3 align = 'center'>Releases</h3>
+
+<br>
+https://github.com/POULASTAAdAS/Music-Streaming-App/releases/tag/v0.1.0-alphaa
+<br>
+
 # <h2 align="center">Preview Dark</h2>
 
 <table>
