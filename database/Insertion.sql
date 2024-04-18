@@ -33,26 +33,40 @@ insert ignore into Googleuserplaylist values
 (101,2 ,90 , 1),
 (110,2 ,891 , 1);
 
-insert into GoogleUserFavourite(userId , songId) values
+insert ignore into GoogleUserFavourite(userId , songId) values
+(1,829),
+(1,118),
+(1,54),
+(1,1441),
+(1,130),
+(1,21435),
+(1,18836),
+(1,14026),
+(1,15518),
+(1,17793),
+(1,20743),
+(1,17510),
+(1,21745),
+(1,21435),
+(1,18836),
+(1,14026),
+(1,15518),
+(1,17793),
+(1,20743),
+(1,20743),
+(1,21874),
+(1,18169),
+(1,16624);
+
+
+
+
+insert ignore into GoogleUserAlbumRelation (userid , albumid) values 
 (1,829),
 (1,118),
 (1,54),
 (1,1441),
 (1,130);
-
-
-
-
-insert into GoogleUserAlbumRelation (userid , albumid) values 
-(1,829),
-(1,118),
-(1,54),
-(1,1441),
-(1,130);
-
-
-
-
 
 
 

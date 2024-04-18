@@ -480,14 +480,18 @@ select * from googleuserlistenhistory;
 select * from googleuserlistenhistory where songid = 100 and userid = 1;
 
 
+select * from googleAuthUser;
 
+select * from passkeyauthuser;
+select * from emailauthuser;
 
+select * from googleuserlistenhistory order by date desc;
 
+select max(date) from googleuserlistenhistory where userid = 1 and songid = 100 ;
 
-
-
-
-
+delete from googleuserlistenhistory where userid = 1 and date = (
+	'2024-04-18 13:06:15.360313'
+) and songid = 100;
 
 
 

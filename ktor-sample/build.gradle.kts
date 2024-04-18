@@ -35,7 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
 
     implementation("com.upokecenter:cbor:4.5.2")
-
+    implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
 //    implementation("org.json:json:20231013")
 
 }

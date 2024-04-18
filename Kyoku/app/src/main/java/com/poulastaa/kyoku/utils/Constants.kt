@@ -1,8 +1,8 @@
 package com.poulastaa.kyoku.utils
 
 object Constants {
-    const val AUTH_BASE_URL = "http://poulastaa.online:8080"
-    const val SERVICE_BASE_URL = "http://poulastaa.online:8081"
+    const val AUTH_BASE_URL = "http://kyoku.poulastaa.online:8080"
+    const val SERVICE_BASE_URL = "http://kyoku.poulastaa.online:8081"
 
     const val PREFERENCES_NAME = "appPreferences"
 

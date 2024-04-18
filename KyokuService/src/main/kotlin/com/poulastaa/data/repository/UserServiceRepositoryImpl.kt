@@ -602,7 +602,7 @@ class UserServiceRepositoryImpl(
                         .maxOfOrNull { it[GoogleUserListenHistoryTable.date] } ?: return@dbQuery false
 
                     GoogleUserListenHistoryTable.deleteWhere {
-                        this.date eq mostRecentDateTime
+                        this.date eq mostRecentDateTime and (this.userId eq user.id) and (this.songId eq songId)
                     }
 
                     true
@@ -618,7 +618,7 @@ class UserServiceRepositoryImpl(
                         .maxOfOrNull { it[EmailUserListenHistoryTable.date] } ?: return@dbQuery false
 
                     EmailUserListenHistoryTable.deleteWhere {
-                        this.date eq mostRecentDateTime
+                        this.date eq mostRecentDateTime and (this.userId eq user.id) and (this.songId eq songId)
                     }
 
                     true
@@ -634,7 +634,7 @@ class UserServiceRepositoryImpl(
                         .maxOfOrNull { it[PasskeyUserListenHistoryTable.date] } ?: return@dbQuery false
 
                     PasskeyUserListenHistoryTable.deleteWhere {
-                        this.date eq mostRecentDateTime
+                        this.date eq mostRecentDateTime and (this.userId eq user.id) and (this.songId eq songId)
                     }
 
                     true
