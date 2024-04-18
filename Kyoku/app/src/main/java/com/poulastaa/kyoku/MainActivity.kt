@@ -63,7 +63,10 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = it,
                             changeThem = { localColorScheme ->
-                                colorScheme.value = localColorScheme
+                                colorScheme.value = colorScheme.value.copy(
+                                    light = localColorScheme.light,
+                                    dark = localColorScheme.dark
+                                )
                             }
                         )
                     }

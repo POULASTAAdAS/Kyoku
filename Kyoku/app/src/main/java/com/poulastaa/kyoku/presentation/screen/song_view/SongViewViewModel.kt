@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -372,9 +373,22 @@ class SongViewViewModel @Inject constructor(
                             )
                         }
                     }
+
+                    is SongViewUiEvent.OnDrag -> {
+                        Log.d("index", "${event.beforeIndex} , ${event.afterIndex}")
+                    }
                 }
             }
         }
+    }
+
+    private fun <T> MutableList<T>.move(
+        from: Int,
+        to: Int
+    ) {
+        if (from == to) return
+        val element = this.removeAt(from) ?: return
+        this.add(to, element)
     }
 
 

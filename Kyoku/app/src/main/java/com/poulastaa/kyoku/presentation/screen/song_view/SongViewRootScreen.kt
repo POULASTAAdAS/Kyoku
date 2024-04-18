@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
@@ -18,6 +19,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.SongViewErrScree
 import com.poulastaa.kyoku.presentation.screen.song_view.daily_mix.DailyMixScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.favourites.FavouriteScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.playlist.PlaylistScreen
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun SongViewRootScreen(
@@ -29,6 +31,7 @@ fun SongViewRootScreen(
     isSmallPhone: Boolean = LocalConfiguration.current.screenWidthDp <= 411,
     isDarkThem: Boolean = isSystemInDarkTheme(),
     context: Context = LocalContext.current,
+    scope: CoroutineScope = rememberCoroutineScope(),
     navigateBack: () -> Unit,
     navigate: (UiEvent) -> Unit
 ) {
@@ -82,6 +85,7 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
+                scope = scope,
                 navigateBack = navigateBack
             )
         }
@@ -97,6 +101,7 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
+                scope = scope,
                 navigateBack = navigateBack
             )
         }

@@ -356,58 +356,42 @@ fun ArtistSongCard(
 
 @Composable
 fun SongCardDragButton(
-    modifier: Modifier,
-    radius: Float = 3f,
-    padding: Dp = 2.5.dp,
-    color: Color = MaterialTheme.colorScheme.onBackground
+    modifier: Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.End
-        ) {
-            repeat(5) {
-                Canvas(
-                    modifier = Modifier
-                        .padding(
-                            bottom = padding,
-                            top = padding
-                        )
-                ) {
-                    drawCircle(
-                        color = color,
-                        radius = radius
-                    )
-                }
-            }
-        }
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            repeat(5) {
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            bottom = padding,
-                            top = padding
-                        )
-                ) {
-                    drawCircle(
-                        color = color,
-                        radius = radius
-                    )
-                }
+        Dot()
+        Dot()
+    }
+}
+
+
+@Composable
+fun Dot(
+    radius: Float = 3.5f,
+    padding: Dp = 3.7.dp,
+    color: Color = MaterialTheme.colorScheme.onBackground
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        repeat(4) {
+            Canvas(
+                modifier = Modifier
+                    .padding(padding)
+            ) {
+                drawCircle(
+                    color = color,
+                    radius = radius
+                )
             }
         }
     }
 }
-
 
 fun LazyListScope.navigateBackButton(
     navigateBack: () -> Unit

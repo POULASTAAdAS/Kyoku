@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.presentation.screen.song_view.album
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,9 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +33,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.playControl
 import com.poulastaa.kyoku.presentation.screen.song_view.common.poster
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun AlbumScreen(
@@ -39,6 +43,8 @@ fun AlbumScreen(
     headerValue: String,
     poster: String,
     isSmallPhone: Boolean,
+    scope: CoroutineScope,
+    state: LazyListState = rememberLazyListState(),
     navigateBack: () -> Unit
 ) {
     Scaffold { paddingValues ->
@@ -50,6 +56,7 @@ fun AlbumScreen(
                     top = paddingValues.calculateTopPadding(),
                     bottom = paddingValues.calculateBottomPadding()
                 ),
+            state = state,
             contentPadding = PaddingValues(
                 bottom = MaterialTheme.dimens.medium1
             ),
@@ -99,15 +106,22 @@ fun AlbumScreen(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
             }
 
-            albumSongs(
-                isDarkThem = isDarkThem,
-                isCookie = isCookie,
-                headerValue = headerValue,
-                data = album.listOfSong,
-                onSongClick = { id, name ->
+            itemsIndexed(album.listOfSong) { index: Int, item: UiPlaylistSong ->
+                SongCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .padding(start = MaterialTheme.dimens.small3)
+                        .clip(MaterialTheme.shapes.extraSmall),
+                    isDarkThem = isDarkThem,
+                    isCookie = isCookie,
+                    headerValue = headerValue,
+                    title = item.title,
+                    artist = item.artist,
+                    coverImage = item.coverImage
+                )
+            }
 
-                }
-            )
         }
     }
 }
@@ -119,22 +133,23 @@ private fun LazyListScope.albumSongs(
     data: List<UiPlaylistSong>,
     onSongClick: (id: Long, name: String) -> Unit
 ) {
-    items(data.size) {
-        SongCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .padding(start = MaterialTheme.dimens.small3)
-                .clip(MaterialTheme.shapes.extraSmall)
-                .clickable { },
-            isDarkThem = isDarkThem,
-            isCookie = isCookie,
-            headerValue = headerValue,
-            title = data[it].title,
-            artist = data[it].artist,
-            coverImage = data[it].coverImage
-        )
-    }
+
+//    items(data.size) {
+//        SongCard(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(70.dp)
+//                .padding(start = MaterialTheme.dimens.small3)
+//                .clip(MaterialTheme.shapes.extraSmall)
+//                .then(modifier),
+//            isDarkThem = isDarkThem,
+//            isCookie = isCookie,
+//            headerValue = headerValue,
+//            title = data[it].title,
+//            artist = data[it].artist,
+//            coverImage = data[it].coverImage
+//        )
+//    }
 }
 
 
@@ -164,7 +179,8 @@ private fun Preview() {
             isCookie = false,
             headerValue = "",
             poster = "",
-            isSmallPhone = false
+            isSmallPhone = false,
+            scope = rememberCoroutineScope()
         ) {
 
         }
