@@ -2,14 +2,14 @@ package com.example
 
 import io.ktor.network.tls.certificates.*
 import java.io.*
+import java.time.LocalDate
+import java.time.temporal.TemporalAccessor
 
 fun main() {
-    val keyStoreFile = File("build/keystore.jks")
-    val keyStore = buildKeyStore {
-        certificate("sampleAlias") {
-            password = "foobar"
-            domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
-        }
-    }
-    keyStore.saveToFile(keyStoreFile, "123456")
+    val date = "2024-04-20"
+
+    val new = LocalDate.parse(date)
+
+
+    println(new)
 }
