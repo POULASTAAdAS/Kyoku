@@ -362,7 +362,7 @@ interface AppDao {
     suspend fun getArtistCoverImage(id: Long): String
 
     @Query("select coverImage from ArtistTable where name = :name")
-    suspend fun getArtistCoverImage(name:String): String
+    suspend fun getArtistCoverImage(name:String): String?
 
     @Query("select count(*) from DailyMixTable")
     suspend fun checkIfDailyMixTableEmpty(): Long

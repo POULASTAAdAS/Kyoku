@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
@@ -64,13 +65,8 @@ fun LibraryScreen(
     context: Context,
     scope: CoroutineScope = rememberCoroutineScope(),
     paddingValues: PaddingValues,
-    navigate: (UiEvent) -> Unit,
-    update: () -> Unit
+    navigate: (UiEvent) -> Unit
 ) {
-    LaunchedEffect(key1 = Unit) {
-        update.invoke()
-    }
-
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
         viewModel.loadData()
     }
@@ -112,9 +108,7 @@ fun LibraryScreen(
                 "${viewModel.state.data.pinned.isFavourite}"
     )
 
-    if (
-        viewModel.state.isLoading
-    ) {
+    if (viewModel.state.isLoading) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

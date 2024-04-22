@@ -348,7 +348,7 @@ class ArtistAllViewModel @Inject constructor(
     private fun getUrl(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             state = state.copy(
-                artistUrl = db.getArtistCoverImage(name)
+                artistUrl = db.getArtistCoverImage(name) ?: ""
             )
         }
     }

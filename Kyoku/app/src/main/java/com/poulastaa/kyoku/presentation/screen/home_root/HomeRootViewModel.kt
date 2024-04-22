@@ -145,14 +145,6 @@ class HomeRootViewModel @Inject constructor(
                             route = event.route
                         )
                     )
-
-                    if (event.route != Screens.Home.route ||
-                        event.route != Screens.Library.route
-                    ) {
-                        state = state.copy(
-                            nav = Nav.NON
-                        )
-                    }
                 }
             }
 
@@ -168,14 +160,6 @@ class HomeRootViewModel @Inject constructor(
                             isApiCall = event.isApiCall
                         )
                     )
-
-                    if (event.route != Screens.Home.route ||
-                        event.route != Screens.Library.route
-                    ) {
-                        state = state.copy(
-                            nav = Nav.NON
-                        )
-                    }
                 }
             }
 

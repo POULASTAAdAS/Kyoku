@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -25,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -39,6 +42,7 @@ import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.navigation.navigateWithData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeContainer
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomBar
+import com.poulastaa.kyoku.ui.theme.dimens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -50,7 +54,7 @@ fun HomeRootDrawer(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current,
     scope: CoroutineScope = rememberCoroutineScope(),
-    navigate: (UiEvent) -> Unit
+    changeThem: () -> Unit
 ) {
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
@@ -116,8 +120,7 @@ fun HomeRootDrawer(
                             }
                         },
                         state = viewModel.state,
-                        navigateWithUiEvent = viewModel::onEvent,
-                        nav = viewModel::onEvent
+                        navigateWithUiEvent = viewModel::onEvent
                     )
             }
         )
@@ -125,7 +128,7 @@ fun HomeRootDrawer(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(120.dp)
+                .wrapContentHeight()
                 .background(color = Color.Transparent)
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -134,7 +137,9 @@ fun HomeRootDrawer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(75.dp)
+                    .padding(MaterialTheme.dimens.small3)
+                    .clip(MaterialTheme.shapes.extraSmall)
                     .background(color = MaterialTheme.colorScheme.tertiary)
                     .navigationBarsPadding()
                     .clickable {

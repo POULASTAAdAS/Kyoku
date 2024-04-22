@@ -57,7 +57,9 @@ fun CreatePlaylistScreenContent(
     text: String,
     onValueChange: (String) -> Unit,
     isLoading: Boolean = true,
-    focusRequester: FocusRequester = FocusRequester(),
+    focusRequester: FocusRequester = remember {
+        FocusRequester()
+    },
     onDoneClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
