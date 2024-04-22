@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
+import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
+import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.ui.theme.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,8 +44,8 @@ fun LibraryTopAppBar(
     isDarkThem: Boolean = isSystemInDarkTheme(),
     isSmallPhone: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
-    onSearchClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onSearchClick: (HomeRootUiEvent) -> Unit
 ) {
     TopAppBar(
         title = {
@@ -94,7 +97,14 @@ fun LibraryTopAppBar(
             )
         },
         actions = {
-            IconButton(onClick = onSearchClick) {
+            IconButton(onClick = {
+                onSearchClick.invoke(
+                    HomeRootUiEvent.NavigateWithData(
+                        route = Screens.Search.route,
+                        searchType = SearchType.LIBRARY_SEARCH
+                    )
+                )
+            }) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
                     contentDescription = null

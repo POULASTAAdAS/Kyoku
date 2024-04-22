@@ -64,8 +64,13 @@ fun LibraryScreen(
     context: Context,
     scope: CoroutineScope = rememberCoroutineScope(),
     paddingValues: PaddingValues,
-    navigate: (UiEvent) -> Unit
+    navigate: (UiEvent) -> Unit,
+    update: () -> Unit
 ) {
+    LaunchedEffect(key1 = Unit) {
+        update.invoke()
+    }
+
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
         viewModel.loadData()
     }

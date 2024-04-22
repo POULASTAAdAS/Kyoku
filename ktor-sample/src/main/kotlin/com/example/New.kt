@@ -4,12 +4,17 @@ import io.ktor.network.tls.certificates.*
 import java.io.*
 import java.time.LocalDate
 import java.time.temporal.TemporalAccessor
+import java.util.Stack
 
 fun main() {
-    val date = "2024-04-20"
+    val stack = Stack<String>()
 
-    val new = LocalDate.parse(date)
+    stack.push("hello1")
+    stack.push("hello2")
+    stack.push("hello3")
 
 
-    println(new)
+    stack.pop()
+
+    println(stack)
 }

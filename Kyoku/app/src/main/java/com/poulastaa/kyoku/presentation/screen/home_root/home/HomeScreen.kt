@@ -20,8 +20,13 @@ fun HomeScreen(
     isSmallPhone: Boolean,
     context: Context,
     paddingValues: PaddingValues,
-    navigate: (HomeRootUiEvent) -> Unit
+    navigate: (HomeRootUiEvent) -> Unit,
+    update: () -> Unit
 ) {
+    LaunchedEffect(key1 = Unit) {
+        update.invoke()
+    }
+
     LaunchedEffect(key1 = viewModel.state.isInternetAvailable) {
         viewModel.loadStartupData(context)
     }

@@ -1,15 +1,17 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.home
 
 import android.content.Context
-import androidx.compose.material3.BottomAppBarDefaults
-import androidx.compose.material3.BottomAppBarScrollBehavior
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.rememberBottomAppBarState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
@@ -19,10 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
-import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomBar
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeTopAppBar
 import com.poulastaa.kyoku.presentation.screen.home_root.library.LibraryScreen
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryTopAppBar
@@ -38,24 +38,18 @@ fun HomeContainer(
         TopAppBarDefaults.enterAlwaysScrollBehavior(
             rememberTopAppBarState()
         ),
-    bottomAppBarScrollBehavior: BottomAppBarScrollBehavior =
-        BottomAppBarDefaults.exitAlwaysScrollBehavior(
-            rememberBottomAppBarState()
-        ),
     isSmallPhone: Boolean = LocalConfiguration.current.screenWidthDp <= 411,
     context: Context = LocalContext.current,
     state: HomeRootUiState,
     opnDrawer: () -> Unit,
-    navigateWithUiEvent: (UiEvent) -> Unit,
-    navigateWithHomeRoot: (HomeRootUiEvent) -> Unit
+    nav: (HomeRootUiEvent) -> Unit,
+    navigateWithUiEvent: (HomeRootUiEvent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-            .nestedScroll(bottomAppBarScrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
-            if (state.isHome)
-                HomeTopAppBar(
+            when (state.nav) {
+                Nav.HOME -> HomeTopAppBar(
                     title = state.homeTopBarTitle,
                     profileUrl = profileUrl,
                     isCookie = isCookie,
@@ -63,12 +57,10 @@ fun HomeContainer(
                     scrollBehavior = topAppBarScrollBehavior,
                     isSmallPhone = isSmallPhone,
                     onProfileClick = opnDrawer,
-                    onSearchClick = {
-                        navigateWithHomeRoot.invoke(HomeRootUiEvent.SearchClick(SearchType.ALL_SEARCH))
-                    }
+                    onSearchClick = navigateWithUiEvent
                 )
-            else
-                LibraryTopAppBar(
+
+                Nav.LIB -> LibraryTopAppBar(
                     title = state.libraryTopBarTitle,
                     profileUrl = profileUrl,
                     isCookie = isCookie,
@@ -76,23 +68,16 @@ fun HomeContainer(
                     isSmallPhone = isSmallPhone,
                     scrollBehavior = topAppBarScrollBehavior,
                     onProfileClick = opnDrawer,
-                    onSearchClick = {
-                        navigateWithHomeRoot.invoke(HomeRootUiEvent.SearchClick(SearchType.LIBRARY_SEARCH))
-                    }
+                    onSearchClick = navigateWithUiEvent
                 )
-        },
-        bottomBar = {
-            HomeScreenBottomBar(
-                scrollBehavior = bottomAppBarScrollBehavior,
-                isHome = state.isHome
-            ) {
-                navigateWithHomeRoot.invoke(HomeRootUiEvent.BottomNavClick(it))
+
+                else -> Unit
             }
         }
     ) { paddingValue ->
         NavHost(
             navController = navController,
-            startDestination = state.startDestination
+            startDestination = Screens.Home.route
         ) {
             composable(
                 route = Screens.Home.route
@@ -103,7 +88,12 @@ fun HomeContainer(
                     isSmallPhone = isSmallPhone,
                     context = context,
                     paddingValues = paddingValue,
-                    navigate = navigateWithHomeRoot
+                    navigate = {
+
+                    },
+                    update = {
+                        nav.invoke(HomeRootUiEvent.Update(Screens.Home))
+                    }
                 )
             }
 
@@ -114,8 +104,54 @@ fun HomeContainer(
                     paddingValues = paddingValue,
                     isCookie = isCookie,
                     headerValue = authHeader,
-                    navigate = navigateWithUiEvent
+                    navigate = {
+
+                    },
+                    update = {
+                        nav.invoke(HomeRootUiEvent.Update(Screens.Library))
+                    }
                 )
+            }
+
+            composable(Screens.Search.route) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Search")
+                }
+            }
+
+            composable(Screens.Profile.route) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Profile")
+                }
+            }
+
+
+            composable(Screens.Settings.route) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Settings")
+                }
+            }
+
+            composable(Screens.History.route) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "History")
+                }
             }
         }
     }

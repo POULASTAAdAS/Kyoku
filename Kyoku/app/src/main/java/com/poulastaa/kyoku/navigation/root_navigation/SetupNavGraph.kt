@@ -106,51 +106,10 @@ fun SetupNavGraph(
                 navigate = {
                     when (it) {
                         is UiEvent.Navigate -> navController.navigate(it)
-                        is UiEvent.NavigateWithData -> navController.navigateWithData(it)
                         else -> Unit
                     }
                 }
             )
-        }
-
-        composable(Screens.Search.route) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Search")
-            }
-        }
-
-        composable(Screens.Profile.route) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Profile")
-            }
-        }
-
-        composable(Screens.Settings.route) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Settings")
-            }
-        }
-
-        composable(Screens.History.route) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "History")
-            }
         }
 
         composable(

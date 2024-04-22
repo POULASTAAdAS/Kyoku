@@ -10,7 +10,7 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
-import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
+import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Stack
 import javax.inject.Inject
 
 @HiltViewModel
@@ -123,8 +124,9 @@ class HomeRootViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-
     var state by mutableStateOf(HomeRootUiState())
+
+    val stack = Stack<String>()
 
     init {
         readAccessToken()
@@ -138,7 +140,19 @@ class HomeRootViewModel @Inject constructor(
         when (event) {
             is HomeRootUiEvent.Navigate -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    _uiEvent.send(UiEvent.Navigate(event.route))
+                    _uiEvent.send(
+                        element = UiEvent.Navigate(
+                            route = event.route
+                        )
+                    )
+
+                    if (event.route != Screens.Home.route ||
+                        event.route != Screens.Library.route
+                    ) {
+                        state = state.copy(
+                            nav = Nav.NON
+                        )
+                    }
                 }
             }
 
@@ -153,6 +167,30 @@ class HomeRootViewModel @Inject constructor(
                             longClickType = event.longClickType,
                             isApiCall = event.isApiCall
                         )
+                    )
+
+                    if (event.route != Screens.Home.route ||
+                        event.route != Screens.Library.route
+                    ) {
+                        state = state.copy(
+                            nav = Nav.NON
+                        )
+                    }
+                }
+            }
+
+            is HomeRootUiEvent.Update -> {
+                state = when (event.screens) {
+                    Screens.Home -> state.copy(
+                        nav = Nav.HOME
+                    )
+
+                    Screens.Library -> state.copy(
+                        nav = Nav.LIB
+                    )
+
+                    else -> state.copy(
+                        nav = Nav.NON
                     )
                 }
             }
@@ -170,11 +208,7 @@ class HomeRootViewModel @Inject constructor(
             is HomeRootUiEvent.BottomNavClick -> {
                 when (event.bottomNav) {
                     HomeScreenBottomNavigation.HOME_SCREEN -> {
-                        if (!state.isHome) {
-                            state = state.copy(
-                                isHome = true
-                            )
-
+                        if (state.nav != Nav.HOME) {
                             viewModelScope.launch(Dispatchers.IO) {
                                 _uiEvent.send(UiEvent.Navigate(Screens.Home.route))
                             }
@@ -182,30 +216,10 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     HomeScreenBottomNavigation.LIBRARY_SCREEN -> {
-                        if (state.isHome) {
-                            state = state.copy(
-                                isHome = false
-                            )
-
+                        if (state.nav != Nav.LIB) {
                             viewModelScope.launch(Dispatchers.IO) {
                                 _uiEvent.send(UiEvent.Navigate(Screens.Library.route))
                             }
-                        }
-                    }
-                }
-            }
-
-            is HomeRootUiEvent.SearchClick -> {
-                when (event.type) {
-                    SearchType.ALL_SEARCH -> { // todo send additional data on what kind of search
-                        viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = UiEvent.Navigate(Screens.Search.route))
-                        }
-                    }
-
-                    SearchType.LIBRARY_SEARCH -> { // todo send additional data on what kind of search
-                        viewModelScope.launch(Dispatchers.IO) {
-                            _uiEvent.send(element = UiEvent.Navigate(Screens.Search.route))
                         }
                     }
                 }

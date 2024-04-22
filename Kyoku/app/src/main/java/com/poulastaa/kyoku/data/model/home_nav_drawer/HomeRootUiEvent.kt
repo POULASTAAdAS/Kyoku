@@ -10,14 +10,16 @@ sealed class HomeRootUiEvent {
     data class NavigateWithData(
         val route: String = Screens.Home.route,
         val type: ItemsType = ItemsType.PLAYLIST,
+        val searchType: SearchType = SearchType.ALL_SEARCH,
         val id: Long = -1,
         val name: String = "name",
         val longClickType: String = "longClickType",
         val isApiCall: Boolean = false
     ) : HomeRootUiEvent()
 
+    data class Update(val screens: Screens) : HomeRootUiEvent()
+
     data class BottomNavClick(val bottomNav: HomeScreenBottomNavigation) : HomeRootUiEvent()
-    data class SearchClick(val type: SearchType) : HomeRootUiEvent()
     data object LogOut : HomeRootUiEvent()
 }
 
