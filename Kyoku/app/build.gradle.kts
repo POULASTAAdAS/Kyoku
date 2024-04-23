@@ -152,7 +152,10 @@ dependencies {
     implementation ("androidx.paging:paging-runtime-ktx:$pagingVersion")
     implementation ("androidx.paging:paging-compose:3.3.0-beta01")
 
-    // implementation ("com.google.accompanist:accompanist-permissions:0.25.0")
+    // palette color extractor
+    implementation("androidx.palette:palette-ktx:1.0.0")
+
+     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.25.0")
 
     // For extracting data from media containers
 //    implementation("androidx.media3:media3-extractor:$media3Version")

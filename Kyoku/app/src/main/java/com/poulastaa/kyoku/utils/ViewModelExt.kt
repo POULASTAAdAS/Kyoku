@@ -8,10 +8,11 @@ import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 fun ViewModel.storeCookieOrAccessToken(data: String, ds: DataStoreOperation) {
     viewModelScope.launch(Dispatchers.IO) {
@@ -68,19 +69,22 @@ fun ViewModel.storeAuthType(data: AuthType, ds: DataStoreOperation) {
     }
 }
 
-fun storeData(
+suspend fun storeData(
     context: Context,
     tokenOrCookie: String,
     response: HomeResponse,
     db: DatabaseRepositoryImpl
 ) {
-    CoroutineScope(Dispatchers.IO).launch {
+    withContext(Dispatchers.IO) {
         db.setValues(
             context,
             tokenOrCookie
         )
 
-        db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
+        val artistMixDef =
+            async { db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview) }
+
+
         db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
         db.insertResponseArtistPrev(list = response.artistsPreview)
         db.insertDailyMixPrev(data = response.dailyMixPreview)
@@ -89,6 +93,8 @@ fun storeData(
         db.insertIntoFavourite(list = response.favourites.listOfSongs)
         db.insertIntoAlbum(list = response.albums)
         db.insertIntoRecentlyPlayedPrev(list = response.historyPreview)
+
+        artistMixDef.await()
 
         delay(2000)
         db.insertIntoPinned(list = response.pinned)

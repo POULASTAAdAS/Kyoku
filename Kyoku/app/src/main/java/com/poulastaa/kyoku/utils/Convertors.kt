@@ -28,6 +28,7 @@ import com.poulastaa.kyoku.data.model.database.table.FavouriteSongTable
 import com.poulastaa.kyoku.data.model.database.table.PlaylistSongTable
 import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
@@ -36,6 +37,7 @@ import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
+import com.poulastaa.kyoku.presentation.screen.home_root.PlayerSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -303,6 +305,30 @@ fun List<ReqAlbumSongTable>.toUiPlaylistSong() = this.map {
         artist = it.artist,
         coverImage = it.coverImage,
         masterPlaylistUrl = it.masterPlaylistUrl,
+        totalTime = it.totalTime
+    )
+}
+
+fun ResponseSong.toPlayingQueueTable() = PlayingQueueTable(
+    songId = this.id,
+    title = this.title,
+    artist = this.artist,
+    album = this.album,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    totalTime = this.totalTime,
+    year = this.date
+)
+
+fun List<PlayingQueueTable>.toPlayerData() = this.map {
+    PlayerSong(
+        id = it.songId,
+        url = it.coverImage,
+        masterPlaylist = it.masterPlaylistUrl,
+        title = it.title,
+        artist = it.artist.split(","),
+        album = it.album,
+        year = it.year,
         totalTime = it.totalTime
     )
 }

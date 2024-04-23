@@ -1,6 +1,10 @@
 package com.poulastaa.kyoku.data.repository
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import coil.ImageLoader
+import coil.request.ImageRequest
 import com.poulastaa.kyoku.data.database.AppDao
 import com.poulastaa.kyoku.data.database.InternalDao
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
@@ -27,6 +31,7 @@ import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTabl
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.utils.BitmapConverter
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistMixEntry
@@ -36,12 +41,14 @@ import com.poulastaa.kyoku.utils.toDailyMixEntry
 import com.poulastaa.kyoku.utils.toFavouriteTableEntry
 import com.poulastaa.kyoku.utils.toFavouriteTableEntryList
 import com.poulastaa.kyoku.utils.toHistoryPrevSongEntry
+import com.poulastaa.kyoku.utils.toPlayingQueueTable
 import com.poulastaa.kyoku.utils.toPlaylistSongTable
 import com.poulastaa.kyoku.utils.toReqAlbumEntry
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -112,21 +119,17 @@ class DatabaseRepositoryImpl @Inject constructor(
         a.await() && b.await() && c.await()
     }
 
-    fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            async {
-                list.map {
-                    FevArtistOrDailyMixPreviewTable(
-                        artist = it.artist,
-                        coverImage = it.coverImage,
-                        type = MixType.ARTIST_MIX
-                    )
-                }.let {
-                    dao.insertIntoFevArtistOrDailyMixPrev(
-                        entrys = it
-                    )
-                }
-            }.await()
+    suspend fun insertIntoFevArtistMixPrev(list: List<FevArtistsMixPreview>) {
+        list.map {
+            FevArtistOrDailyMixPreviewTable(
+                artist = it.artist,
+                coverImage = it.coverImage,
+                type = MixType.ARTIST_MIX
+            )
+        }.let {
+            dao.insertIntoFevArtistOrDailyMixPrev(
+                entrys = it
+            )
         }
     }
 
@@ -147,9 +150,21 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun insertIntoAlbumPrev(list: List<AlbumPreview>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dao.insertIntoPrevAlbum(entrys = list.toAlbumTablePrevEntry())
+    suspend fun insertIntoAlbumPrev(list: List<AlbumPreview>) {
+        withContext(Dispatchers.IO) {
+            list.toAlbumTablePrevEntry().map {
+                async {
+                    it to loadDrawable(it.coverImage)
+                }
+            }.awaitAll().map {
+                it.first to encodeCover(it.second)
+            }.map {
+                it.first.copy(
+                    coverImage = it.second
+                )
+            }.let {
+                dao.insertIntoPrevAlbum(it)
+            }
         }
     }
 
@@ -495,23 +510,61 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
-    suspend fun getArtistCoverImage(name:String) = dao.getArtistCoverImage(name)
+    suspend fun getArtistCoverImage(name: String) = dao.getArtistCoverImage(name)
 
     suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
 
-    fun insertIntoDailyMix(entrys: List<ResponseSong>) = CoroutineScope(Dispatchers.IO).launch {
-        entrys.toDailyMixEntry().let {
-            dao.insertIntoDailyMix(it)
+    suspend fun insertIntoDailyMix(entrys: List<ResponseSong>) =
+        withContext(Dispatchers.IO) {
+            async {
+                entrys.toDailyMixEntry().let {
+                    dao.insertIntoDailyMix(it)
+                }
+            }.await()
+
+
+            if (header != null && context != null) {
+                val listPair = dao.getDailyMixImageUrlAndId().map {
+                    async { it.id to loadDrawable(it.cover) }
+                }
+
+                listPair.awaitAll().mapNotNull {
+                    try {
+                        it.first to encodeCover(it.second)
+                    } catch (_: Exception) {
+                        null
+                    }
+                }.forEach {
+                    dao.updateDailyMixUrl(it.first, it.second)
+                }
+            }
         }
-    }
 
     fun readAllDailyMix() = dao.readAllDailyMix()
 
     suspend fun checkIfArtistMixIsEmpty() = dao.checkIfArtistMixIsEmpty().toInt() == 0
 
-    fun insertIntoArtistMix(entrys: List<ResponseSong>) = CoroutineScope(Dispatchers.IO).launch {
-        entrys.toArtistMixEntry().let {
-            dao.insertIntoArtistMix(it)
+    suspend fun insertIntoArtistMix(entrys: List<ResponseSong>) = withContext(Dispatchers.IO) {
+        async {
+            entrys.toArtistMixEntry().let {
+                dao.insertIntoArtistMix(it)
+            }
+        }.await()
+
+        if (header != null && context != null) {
+            val listPair = dao.getArtistMixImageUrlAndId().map {
+                async { it.id to loadDrawable(it.cover) }
+            }
+
+            listPair.awaitAll().mapNotNull {
+                try {
+                    it.first to encodeCover(it.second)
+                } catch (_: Exception) {
+                    null
+                }
+            }.forEach {
+                dao.updateArtistMixUrl(it.first, it.second)
+            }
         }
     }
 
@@ -618,6 +671,19 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    suspend fun checkIfAlreadyInPlayingQueue(songId: Long) =
+        dao.checkIfAlreadyInPlayingQueue(songId)
+
+    suspend fun insertIntoPlayingQueueTable(song: ResponseSong) {
+        val songId = checkIfAlreadyInPlayingQueue(song.id)
+
+        if (songId != null) return
+
+        dao.insertIntoPlayingQueueTable(entry = song.toPlayingQueueTable())
+    }
+
+    fun readAllFromPlayingQueue() = dao.readAllFromPlayingQueue()
+
     suspend fun hideSong(songId: Long, name: String) = withContext(Dispatchers.IO) {
         val artistIdDef = async { dao.getIdOfArtist(name) }
         val idDef = async { dao.getArtistSongId(songId) }
@@ -689,4 +755,18 @@ class DatabaseRepositoryImpl @Inject constructor(
             intDao.addTopItemTable(data)
         }
     }
+
+    private suspend fun loadDrawable(cover: String) =
+        (ImageLoader(context!!).execute(
+            ImageRequest.Builder(context!!)
+                .addHeader(
+                    if (!header!!.startsWith("B")) "Cookie" else "Authorization",
+                    header!!
+                )
+                .data(cover)
+                .build()
+        )).drawable
+
+    private fun encodeCover(drawable: Drawable?) =
+        BitmapConverter.encodeToSting((drawable as BitmapDrawable).bitmap)
 }

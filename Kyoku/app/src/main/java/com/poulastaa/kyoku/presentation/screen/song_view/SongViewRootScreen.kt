@@ -36,7 +36,7 @@ fun SongViewRootScreen(
     navigate: (UiEvent) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadData(type, id, name, isApiCall)
+        viewModel.loadData(type, id, name, isApiCall, context)
     }
 
     LaunchedEffect(key1 = viewModel.uiEvent) {

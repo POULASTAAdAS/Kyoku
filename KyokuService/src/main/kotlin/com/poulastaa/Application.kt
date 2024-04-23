@@ -2,7 +2,10 @@ package com.poulastaa
 
 import com.poulastaa.plugins.*
 import io.ktor.server.application.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 val invalidTokenList = ArrayList<String>()
 
@@ -34,3 +37,4 @@ private fun removeFirstTokenAfter10Minute() {
         }
     }
 }
+

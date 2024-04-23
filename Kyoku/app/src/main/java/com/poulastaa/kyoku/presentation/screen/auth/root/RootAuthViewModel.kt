@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.presentation.screen.auth.root
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -42,7 +41,9 @@ import com.poulastaa.kyoku.utils.toGetPasskeyUserReq
 import com.poulastaa.kyoku.utils.toGoogleAuthReq
 import com.poulastaa.kyoku.utils.toPasskeyAuthRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -351,14 +352,18 @@ class RootAuthViewModel @Inject constructor(
             )
 
             UserCreationStatus.CONFLICT -> {
-                storeSignInState(data = SignInStatus.OLD_USER, ds)
+                CoroutineScope(Dispatchers.IO).launch {
+                    async {
+                        storeData(
+                            context = context,
+                            tokenOrCookie = cookie,
+                            response = response.data,
+                            db = db
+                        )
+                    }.await()
 
-                storeData(
-                    context = context,
-                    tokenOrCookie = cookie,
-                    response = response.data,
-                    db = db
-                )
+                    storeSignInState(data = SignInStatus.OLD_USER, ds)
+                }
             }
 
             else -> Unit
@@ -367,8 +372,6 @@ class RootAuthViewModel @Inject constructor(
 
     private fun startGoogleAuth(req: GoogleAuthReq, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("token", req.tokenId)
-
             api.googleAuth(req)?.let { response ->
                 val cookie = cookieManager.extractTokenOrCookie()
 
@@ -385,17 +388,18 @@ class RootAuthViewModel @Inject constructor(
                     )
 
                     UserCreationStatus.CONFLICT -> {
-                        storeSignInState(
-                            data = SignInStatus.OLD_USER,
-                            ds
-                        )
+                        _uiEvent.send(element = UiEvent.ShowToast("Please wait while we get things ready"))
 
-                        storeData(
-                            context = context,
-                            tokenOrCookie = cookie,
-                            response = response.data,
-                            db = db
-                        )
+                        async {
+                            storeData(
+                                context = context,
+                                tokenOrCookie = cookie,
+                                response = response.data,
+                                db = db
+                            )
+                        }.await()
+
+                        storeSignInState(data = SignInStatus.OLD_USER, ds)
                     }
 
                     UserCreationStatus.TOKEN_NOT_VALID -> {

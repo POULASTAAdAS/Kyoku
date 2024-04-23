@@ -55,6 +55,7 @@ fun Application.configureRouting() {
 
         removeFromHistory(service)
 
+        getSongOnId(service)
         getMasterPlaylist(service)
 
         unauthorized()

@@ -38,10 +38,12 @@ fun HomeScreen(
                         HomeRootUiEvent.NavigateWithData(
                             route = event.route,
                             type = event.itemsType,
+                            songType = event.songType,
                             id = event.id,
                             name = event.name,
                             longClickType = event.longClickType,
-                            isApiCall = event.isApiCall
+                            isApiCall = event.isApiCall,
+                            isPlay = event.isPlay
                         )
                     )
                 }

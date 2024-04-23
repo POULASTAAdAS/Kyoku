@@ -220,7 +220,7 @@ class ServiceRepositoryImpl @Inject constructor(
     override suspend fun getArtistOnSongId(songId: Long): List<ViewArtist> {
         return try {
             api.getArtistOnSongId(songId)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -228,8 +228,16 @@ class ServiceRepositoryImpl @Inject constructor(
     override suspend fun removeFromRecentlyPlayed(songId: Long): Boolean {
         return try {
             api.removeFromRecentlyPlayed(songId)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
+        }
+    }
+
+    override suspend fun getSongOnId(songId: Long): ResponseSong {
+        return try {
+            api.getSongOnId(songId)
+        } catch (_: Exception) {
+            ResponseSong()
         }
     }
 }

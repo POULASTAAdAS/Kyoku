@@ -143,4 +143,9 @@ interface ServiceApi {
     suspend fun removeFromRecentlyPlayed(
         @Query("songId") songId: Long
     ): Boolean
+
+    @GET("/api/authorised/getSongOnId")
+    suspend fun getSongOnId(
+        @Query("songId") songId: Long
+    ): ResponseSong
 }

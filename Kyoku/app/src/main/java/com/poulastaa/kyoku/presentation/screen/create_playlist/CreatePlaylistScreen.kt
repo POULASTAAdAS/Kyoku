@@ -27,7 +27,8 @@ fun CreatePlaylistScreen(
         viewModel.loadData(
             id = id,
             name = name,
-            typeString = type
+            typeString = type,
+            context = context
         )
     }
 
@@ -59,7 +60,7 @@ fun CreatePlaylistScreen(
         },
         isLoading = viewModel.state.isLoading,
         onDoneClick = {
-            viewModel.onEvent(CreatePlaylistUiEvent.SaveClicked)
+            viewModel.onEvent(CreatePlaylistUiEvent.SaveClicked(context))
         },
         onCancelClick = {
             navigateBack.invoke()

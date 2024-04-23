@@ -644,6 +644,17 @@ class UserServiceRepositoryImpl(
         }
     }
 
+    override suspend fun getSongOnId(songId: Long): ResponseSong =
+        withContext(Dispatchers.IO) {
+            val song = song.getSongOnId(songId)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                // todo add song to history
+            }
+
+            song
+        }
+
     // private functions
     private suspend fun createPlaylist(
         playlistHelper: CreatePlaylistHelper

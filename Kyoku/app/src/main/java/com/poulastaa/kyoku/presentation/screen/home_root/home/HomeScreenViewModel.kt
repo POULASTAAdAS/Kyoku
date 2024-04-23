@@ -101,10 +101,13 @@ class HomeScreenViewModel @Inject constructor(
                 // store response and read response
                 when (response.status) {
                     HomeResponseStatus.SUCCESS -> {
-                        db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview)
+                        val artistMixDef =
+                            async { db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview) }
                         db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
                         db.insertResponseArtistPrev(list = response.artistsPreview)
                         db.insertDailyMixPrev(response.dailyMixPreview)
+
+                        artistMixDef.await()
 
                         // load from db
                         delay(3000)
@@ -260,9 +263,16 @@ class HomeScreenViewModel @Inject constructor(
                 if (!state.isLoading)
                     when (event.type) {
                         ItemsType.SONG -> {
-//                            viewModelScope.launch(Dispatchers.IO) { // todo send more data to identify
-//                                _uiEvent.send(UiEvent.Navigate(Screens.Player.route))
-//                            }
+                            viewModelScope.launch(Dispatchers.IO) {
+                                _uiEvent.send(
+                                    UiEvent.NavigateWithData(
+                                        route = Screens.Player.route,
+                                        songType = event.songType,
+                                        id = event.id,
+                                        isPlay = true,
+                                    )
+                                )
+                            }
 
                             return
                         }
@@ -282,8 +292,6 @@ class HomeScreenViewModel @Inject constructor(
 
                         else -> event
                     }.let {
-                        Log.d("item", it.toString())
-
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(

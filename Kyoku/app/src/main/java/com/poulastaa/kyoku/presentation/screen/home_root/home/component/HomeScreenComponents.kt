@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.presentation.screen.home_root.home.component
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -57,8 +58,10 @@ import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiArtistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.BitmapConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -140,6 +143,7 @@ fun LazyListScope.homeScreenArtistList(
                                     onClick.invoke(
                                         HomeUiEvent.ItemClick(
                                             type = ItemsType.SONG,
+                                            songType = SongType.ARTIST_SONG,
                                             id = artistPrev[artistIndex]
                                                 .lisOfPrevSong[songIndex].id
                                         )
@@ -518,39 +522,39 @@ fun CustomImageView(
     context: Context = LocalContext.current,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-//    BitmapConverter.decodeToBitmap(url).let {
-//        if (it == null)
-    AsyncImage(
-        modifier = modifier,
-        model = ImageRequest.Builder(context)
-            .data(url)
-            .addHeader(
-                name = if (isCookie) "Cookie" else "Authorization",
-                value = headerValue
+    BitmapConverter.decodeToBitmap(url).let {
+        if (it == null)
+            AsyncImage(
+                modifier = modifier,
+                model = ImageRequest.Builder(context)
+                    .data(url)
+                    .addHeader(
+                        name = if (isCookie) "Cookie" else "Authorization",
+                        value = headerValue
+                    )
+                    .fallback(
+                        drawableResId = if (isDarkThem) R.drawable.night_logo
+                        else R.drawable.light_logo
+                    )
+                    .error(
+                        drawableResId = if (isDarkThem) R.drawable.night_logo
+                        else R.drawable.light_logo
+                    )
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                placeholder = painterResource(
+                    id = if (isDarkThem) R.drawable.night_logo
+                    else R.drawable.light_logo
+                ),
+                contentScale = contentScale
             )
-            .fallback(
-                drawableResId = if (isDarkThem) R.drawable.night_logo
-                else R.drawable.light_logo
-            )
-            .error(
-                drawableResId = if (isDarkThem) R.drawable.night_logo
-                else R.drawable.light_logo
-            )
-            .crossfade(true)
-            .build(),
-        contentDescription = null,
-        placeholder = painterResource(
-            id = if (isDarkThem) R.drawable.night_logo
-            else R.drawable.light_logo
-        ),
-        contentScale = contentScale
-    )
-//        else Image(
-//            modifier = modifier,
-//            bitmap = it,
-//            contentDescription = null
-//        )
-//    }
+        else Image(
+            modifier = modifier,
+            bitmap = it,
+            contentDescription = null
+        )
+    }
 }
 
 

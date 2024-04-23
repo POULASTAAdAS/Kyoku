@@ -508,6 +508,3 @@ delete from googleuserlistenhistory where userid = 1 and date = (
 
 
 
-
-
-

@@ -43,6 +43,7 @@ fun Application.configureRouting() {
     }
 }
 
+
 private fun Route.sessionInterceptor() {
     intercept(ApplicationCallPipeline.Call) {
         call.sessions.get<GoogleUserSession>()?.let {

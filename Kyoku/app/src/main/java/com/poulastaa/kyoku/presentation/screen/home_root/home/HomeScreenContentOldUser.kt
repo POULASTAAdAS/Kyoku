@@ -50,6 +50,7 @@ import com.poulastaa.kyoku.data.model.screens.home.BottomSheetData
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiData
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiEvent
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenBottomSheet
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScreenCard
@@ -392,6 +393,7 @@ fun HomeScreenContentOldUser(
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
                                                 type = ItemsType.SONG,
+                                                songType = SongType.HISTORY_SONG,
                                                 id = data.historyPrev[historySongIndex].id
                                             )
                                         )

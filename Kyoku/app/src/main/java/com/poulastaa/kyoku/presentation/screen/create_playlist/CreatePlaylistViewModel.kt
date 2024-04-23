@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.create_playlist
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,12 +13,14 @@ import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiEv
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
+import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatePlaylistViewModel @Inject constructor(
     private val connectivity: NetworkObserver,
+    private val ds: DataStoreOperation,
     private val db: DatabaseRepositoryImpl,
     private val api: ServiceRepository
 ) : ViewModel() {
@@ -57,6 +61,7 @@ class CreatePlaylistViewModel @Inject constructor(
         id: Long,
         name: String,
         typeString: String,
+        context: Context
     ) {
         val type = getType(typeString)
 
@@ -68,11 +73,21 @@ class CreatePlaylistViewModel @Inject constructor(
 
         when (type) {
             HomeLongClickType.ARTIST_MIX -> viewModelScope.launch(Dispatchers.IO) {
-                initialSetupForArtistMix()
+                initialSetupForArtistMix(
+                    context = context,
+                    header = async {
+                        ds.readTokenOrCookie().first()
+                    }.await()
+                )
             }
 
             HomeLongClickType.DAILY_MIX -> viewModelScope.launch(Dispatchers.IO) {
-                initialSetUpForDailyMix()
+                initialSetUpForDailyMix(
+                    context = context,
+                    header = async {
+                        ds.readTokenOrCookie().first()
+                    }.await()
+                )
             }
 
             HomeLongClickType.ALBUM_PREV -> state = state.copy(
@@ -111,17 +126,27 @@ class CreatePlaylistViewModel @Inject constructor(
                 onEvent(CreatePlaylistUiEvent.EmitToast("Opp's something went wrong"))
             }
 
-            CreatePlaylistUiEvent.SaveClicked -> {
+            is CreatePlaylistUiEvent.SaveClicked -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     when (state.type) {
                         HomeLongClickType.ARTIST_MIX -> {
-                            if (state.songIdList.isEmpty()) return@launch initialSetupForArtistMix()
+                            if (state.songIdList.isEmpty()) return@launch initialSetupForArtistMix(
+                                context = event.context,
+                                header = async {
+                                    ds.readTokenOrCookie().first()
+                                }.await()
+                            )
 
                             downloadPlaylistFromMix()
                         }
 
                         HomeLongClickType.DAILY_MIX -> {
-                            if (state.songIdList.isEmpty()) return@launch initialSetUpForDailyMix()
+                            if (state.songIdList.isEmpty()) return@launch initialSetUpForDailyMix(
+                                context = event.context,
+                                header = async {
+                                    ds.readTokenOrCookie().first()
+                                }.await()
+                            )
 
                             downloadPlaylistFromMix()
                         }
@@ -248,7 +273,10 @@ class CreatePlaylistViewModel @Inject constructor(
         }
     }
 
-    private suspend fun initialSetupForArtistMix() {
+    private suspend fun initialSetupForArtistMix(
+        context: Context,
+        header: String
+    ) {
         withContext(Dispatchers.IO) {
             async { delay(500) }.await()
 
@@ -276,7 +304,12 @@ class CreatePlaylistViewModel @Inject constructor(
                     return@withContext
                 }
 
-                db.insertIntoArtistMix(artistMix)
+                db.setValues(
+                    context = context,
+                    header = header
+                )
+
+                async { db.insertIntoArtistMix(artistMix) }.await()
 
                 state = state.copy(
                     isLoading = false,
@@ -293,7 +326,10 @@ class CreatePlaylistViewModel @Inject constructor(
         }
     }
 
-    private suspend fun initialSetUpForDailyMix() {
+    private suspend fun initialSetUpForDailyMix(
+        context: Context,
+        header: String
+    ) {
         withContext(Dispatchers.IO) {
             async { delay(500) }.await()
 
@@ -323,7 +359,12 @@ class CreatePlaylistViewModel @Inject constructor(
                     return@withContext
                 }
 
-                db.insertIntoDailyMix(dailyMix)
+                db.setValues(
+                    context = context,
+                    header = header
+                )
+
+                async { db.insertIntoDailyMix(dailyMix) }.await()
 
                 state = state.copy(
                     isLoading = false,  // make save button clickable

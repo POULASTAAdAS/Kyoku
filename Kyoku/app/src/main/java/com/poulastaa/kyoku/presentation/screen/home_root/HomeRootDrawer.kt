@@ -20,8 +20,10 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,6 +54,7 @@ fun HomeRootDrawer(
     viewModel: HomeRootViewModel = hiltViewModel(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
     navController: NavHostController = rememberNavController(),
+    sheetState: SheetState = rememberModalBottomSheetState(),
     context: Context = LocalContext.current,
     scope: CoroutineScope = rememberCoroutineScope(),
     changeThem: () -> Unit
@@ -132,7 +135,7 @@ fun HomeRootDrawer(
                 .background(color = Color.Transparent)
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Bottom
         ) {
             Row(
                 modifier = Modifier
@@ -173,5 +176,7 @@ fun HomeRootDrawer(
                     )
                 }
         }
+
+
     }
 }

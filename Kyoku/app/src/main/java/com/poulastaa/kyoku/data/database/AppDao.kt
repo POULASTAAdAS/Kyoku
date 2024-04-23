@@ -10,6 +10,7 @@ import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.PinnedId
 import com.poulastaa.kyoku.data.model.database.PlaylistPrevResult
 import com.poulastaa.kyoku.data.model.database.SongInfo
+import com.poulastaa.kyoku.data.model.database.UpdateCoverHelper
 import com.poulastaa.kyoku.data.model.database.table.AlbumSongTable
 import com.poulastaa.kyoku.data.model.database.table.AlbumTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
@@ -26,6 +27,7 @@ import com.poulastaa.kyoku.data.model.database.table.RecentlyPlayedPrevTable
 import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
@@ -362,7 +364,7 @@ interface AppDao {
     suspend fun getArtistCoverImage(id: Long): String
 
     @Query("select coverImage from ArtistTable where name = :name")
-    suspend fun getArtistCoverImage(name:String): String?
+    suspend fun getArtistCoverImage(name: String): String?
 
     @Query("select count(*) from DailyMixTable")
     suspend fun checkIfDailyMixTableEmpty(): Long
@@ -371,8 +373,14 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoDailyMix(entrys: List<DailyMixTable>)
 
+    @Query("select songId as id, coverImage as cover from DailyMixTable")
+    suspend fun getDailyMixImageUrlAndId(): List<UpdateCoverHelper>
+
     @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from DailyMixTable")
     fun readAllDailyMix(): Flow<List<UiPlaylistSong>>
+
+    @Query("update DailyMixTable set coverImage = :url where songId = :songId")
+    suspend fun updateDailyMixUrl(songId: Long, url: String)
 
     @Query("select count(*) from ArtistMixTable")
     suspend fun checkIfArtistMixIsEmpty(): Long
@@ -381,20 +389,14 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoArtistMix(entrys: List<ArtistMixTable>)
 
+    @Query("select songId as id, coverImage as cover from ArtistMixTable")
+    suspend fun getArtistMixImageUrlAndId(): List<UpdateCoverHelper>
+
     @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from ArtistMixTable")
     fun readAllArtistMix(): Flow<List<UiPlaylistSong>>
 
-//    @Query(
-//        """
-//        select SongTable.songId from SongTable
-//        join FavouriteTable on  FavouriteTable.songId = SongTable.id
-//        where FavouriteTable.songId
-//    """
-//    )
-//    suspend fun getAllFavouriteSongId(): List<Long>
-
-//    @Query("select id from SongTable where songId = :songId")
-//    suspend fun getAllIdOnSongId(songId: Long): List<Long>
+    @Query("update ArtistMixTable set coverImage = :url where songId = :songId")
+    suspend fun updateArtistMixUrl(songId: Long, url: String)
 
     @Query("select id from AlbumTable where albumId = :albumId")
     suspend fun checkIfAlbumAlreadyInLibrary(albumId: Long): Long?
@@ -460,6 +462,16 @@ interface AppDao {
 
     @Query("delete from RecentlyPlayedPrevTable where songId = :songId")
     suspend fun removeFromRecentlyPlayed(songId: Long)
+
+
+    @Query("select id from PlayingQueueTable where songId = :songId")
+    suspend fun checkIfAlreadyInPlayingQueue(songId: Long): Long?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoPlayingQueueTable(entry: PlayingQueueTable)
+
+    @Query("select * from PlayingQueueTable")
+    fun readAllFromPlayingQueue(): Flow<List<PlayingQueueTable>>
 
     // remove all
     @Query("delete from AlbumTable")

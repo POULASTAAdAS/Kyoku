@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -91,7 +92,8 @@ class SongViewViewModel @Inject constructor(
         typeString: String,
         id: Long,
         name: String,
-        isApiCall: Boolean
+        isApiCall: Boolean,
+        context: Context
     ) {
         if (state.isLoading) {
             when (getItemType(typeString)) {
@@ -239,7 +241,12 @@ class SongViewViewModel @Inject constructor(
                                 return@launch
                             }
 
-                            db.insertIntoArtistMix(response)
+                            db.setValues(
+                                context = context,
+                                header = state.headerValue
+                            )
+
+                            async { db.insertIntoArtistMix(response) }.await()
                         }
 
                         db.readAllArtistMix().collect {
@@ -274,7 +281,14 @@ class SongViewViewModel @Inject constructor(
                                 return@launch
                             }
 
-                            db.insertIntoDailyMix(response)
+                            db.setValues(
+                                context = context,
+                                header = state.headerValue
+                            )
+
+                            async {
+                                db.insertIntoDailyMix(entrys = response)
+                            }.await()
                         }
 
                         db.readAllDailyMix().collect {

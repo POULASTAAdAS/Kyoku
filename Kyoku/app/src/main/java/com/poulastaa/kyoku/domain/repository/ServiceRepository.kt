@@ -67,4 +67,6 @@ interface ServiceRepository {
     suspend fun getArtistOnSongId(songId: Long): List<ViewArtist>
 
     suspend fun removeFromRecentlyPlayed(songId: Long): Boolean
+
+    suspend fun getSongOnId(songId: Long): ResponseSong
 }

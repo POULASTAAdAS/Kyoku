@@ -36,10 +36,12 @@ import com.poulastaa.kyoku.utils.toEmailLogInReq
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -364,26 +366,33 @@ class EmailLoginViewModel @Inject constructor(
         }
     }
 
-    private fun setUpUser(response: EmailLogInResponse, context: Context) {
-        storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds)
-        storeRefreshToken(response.refreshToken, ds)
+    private suspend fun setUpUser(response: EmailLogInResponse, context: Context) {
+        withContext(Dispatchers.IO) {
+            storeCookieOrAccessToken(data = "Bearer ${response.accessToken}", ds)
+            storeRefreshToken(response.refreshToken, ds)
 
-        storeAuthType(AuthType.JWT_AUTH, ds)
+            storeAuthType(AuthType.JWT_AUTH, ds)
 
-        storeUsername(response.user.userName, ds)
-        storeProfilePicUri(response.user.profilePic, ds)
+            storeUsername(response.user.userName, ds)
+            storeProfilePicUri(response.user.profilePic, ds)
 
-        if (email != null && password != null) {
-            storeEmail(email!!, ds)
-            storePassword(password!!, ds)
+            if (email != null && password != null) {
+                storeEmail(email!!, ds)
+                storePassword(password!!, ds)
+            }
+
+            onEvent(EmailLoginUiEvent.EmitToast("wait while we get thing ready"))
+
+            async {
+                storeData(
+                    context = context,
+                    tokenOrCookie = "Bearer ${response.accessToken}",
+                    response = response.data,
+                    db = db
+                )
+            }.await()
+
+            storeSignInState(data = SignInStatus.OLD_USER, ds)
         }
-
-        storeSignInState(data = SignInStatus.OLD_USER, ds)
-        storeData(
-            context = context,
-            tokenOrCookie = "Bearer ${response.accessToken}",
-            response = response.data,
-            db = db
-        )
     }
 }

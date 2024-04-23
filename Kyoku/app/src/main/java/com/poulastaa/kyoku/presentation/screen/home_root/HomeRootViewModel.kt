@@ -12,10 +12,13 @@ import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
+import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeSignInState
+import com.poulastaa.kyoku.utils.toPlayerData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -25,13 +28,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Stack
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeRootViewModel @Inject constructor(
     private val ds: DataStoreOperation,
-    private val db: DatabaseRepositoryImpl
+    private val db: DatabaseRepositoryImpl,
+    private val api: ServiceRepository
 ) : ViewModel() {
     private fun readAccessToken() {
         viewModelScope.launch {
@@ -126,8 +129,6 @@ class HomeRootViewModel @Inject constructor(
 
     var state by mutableStateOf(HomeRootUiState())
 
-    val stack = Stack<String>()
-
     init {
         readAccessToken()
         readAuthType()
@@ -136,8 +137,30 @@ class HomeRootViewModel @Inject constructor(
         setHomeTopBarTitle()
     }
 
+    init {
+        viewModelScope.launch {
+            db.readAllFromPlayingQueue().collect {
+                if (it.isNotEmpty()) state = state.copy(
+                    playerData = it.toPlayerData()
+                )
+            }
+        }
+    }
+
     fun onEvent(event: HomeRootUiEvent) {
         when (event) {
+            is HomeRootUiEvent.EmitToast -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(UiEvent.ShowToast(event.message))
+                }
+            }
+
+            HomeRootUiEvent.SomethingWentWrong -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    onEvent(HomeRootUiEvent.EmitToast("Opp's something went wrong"))
+                }
+            }
+
             is HomeRootUiEvent.Navigate -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(
@@ -149,7 +172,67 @@ class HomeRootViewModel @Inject constructor(
             }
 
             is HomeRootUiEvent.NavigateWithData -> {
-                viewModelScope.launch(Dispatchers.IO) {
+                if (event.route == Screens.Player.route) {
+                    state = state.copy(
+                        isPlayer = true,
+                        isPlayerLoading = true
+                    )
+
+                    when (event.songType) {
+                        SongType.HISTORY_SONG -> {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                if (db.checkIfAlreadyInPlayingQueue(event.id) == null) {
+                                    val song = api.getSongOnId(event.id)
+
+                                    if (song.id == -1L) {
+                                        onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                        state = state.copy(
+                                            isPlayer = false,
+                                            isPlayerLoading = false
+                                        )
+
+                                        return@launch
+                                    }
+
+                                    db.insertIntoPlayingQueueTable(song)
+                                }
+                            }
+                        }
+
+                        SongType.ARTIST_SONG -> {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                val song = api.getSongOnId(event.id)
+
+                                if (song.id == -1L) {
+                                    onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                    state = state.copy(
+                                        isPlayer = false,
+                                        isPlayerLoading = false
+                                    )
+
+                                    return@launch
+                                }
+
+                                db.insertIntoPlayingQueueTable(song)
+                            }
+                        }
+
+                        SongType.ALBUM_SONG -> {
+
+                        }
+
+                        SongType.PLAYLIST_SONG -> {
+
+                        }
+
+                        SongType.API_CALL -> {
+
+                        }
+                    }
+
+                } else viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(
                         UiEvent.NavigateWithData(
                             route = event.route,

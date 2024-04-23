@@ -19,6 +19,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 
@@ -50,9 +51,11 @@ import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 
         // internal tables
         InternalPinnedTable::class,
-        InternalItemTable::class
+        InternalItemTable::class,
+
+        PlayingQueueTable::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

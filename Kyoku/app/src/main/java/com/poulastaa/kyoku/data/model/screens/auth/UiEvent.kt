@@ -16,7 +16,8 @@ sealed class UiEvent {
         val id: Long = -1,
         val name: String = "name",
         val longClickType: String = "longClickType",
-        val isApiCall: Boolean = false
+        val isApiCall: Boolean = false,
+        val isPlay: Boolean = false
     ) : UiEvent()
 
     data class ShowToast(val message: String) : UiEvent()

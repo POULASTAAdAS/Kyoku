@@ -8,6 +8,7 @@ sealed class HomeUiEvent {
 
     data class ItemClick(
         val type: ItemsType,
+        val songType: SongType = SongType.API_CALL,
         val id: Long = 0,
         val name: String = "name",
         val isApiCall: Boolean = false
@@ -53,5 +54,8 @@ sealed class HomeUiEvent {
 
 enum class SongType {
     HISTORY_SONG,
-    ARTIST_SONG
+    ARTIST_SONG,
+    ALBUM_SONG,
+    PLAYLIST_SONG,
+    API_CALL
 }
