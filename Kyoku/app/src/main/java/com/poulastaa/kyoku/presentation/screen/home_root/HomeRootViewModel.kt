@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.presentation.screen.home_root
 
 import android.graphics.Color.parseColor
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -150,6 +151,16 @@ class HomeRootViewModel @Inject constructor(
         setHomeTopBarTitle()
     }
 
+//    init {
+//        viewModelScope.launch {
+//            db.readAllFromPlayingQueue().collect {
+//                if (it.isNotEmpty()) state = state.copy(
+//                    playerData = it.toPlayerData()
+//                )
+//            }
+//        }
+//    }
+
     private fun getMediaItem(uri: String) = MediaItem.Builder()
         .setMimeType(MimeTypes.APPLICATION_M3U8)
         .setMimeType(MimeTypes.APPLICATION_ID3)
@@ -202,6 +213,8 @@ class HomeRootViewModel @Inject constructor(
             }
 
             is HomeRootUiEvent.NavigateWithData -> {
+                Log.d("cookie", state.headerValue)
+
                 if (event.route == Screens.Player.route) {
                     when (event.songType) {
                         SongType.HISTORY_SONG -> {
