@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.screens.player.PlayerControllerOperation
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -44,12 +45,16 @@ import com.poulastaa.kyoku.ui.theme.dimens
 
 @Composable
 fun SmallPlayer(
+    isPlaying: Boolean,
+    hasNext: Boolean,
+    hasPrev: Boolean,
     brushColor: List<Color>,
     isLoading: Boolean,
     playingData: PlayerSong,
     isDarkThem: Boolean,
     isCookie: Boolean,
-    header: String
+    header: String,
+    playerControllerOperation: (PlayerControllerOperation) -> Unit
 ) {
     if (isLoading) CircularProgressIndicator()
     else {
@@ -77,7 +82,7 @@ fun SmallPlayer(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(.4f)
+                        .fillMaxWidth(.45f)
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
@@ -105,34 +110,38 @@ fun SmallPlayer(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.End
                 ) {
                     PlayControlButton(
                         modifier = Modifier
-                            .rotate(180f)
+                            .rotate(90f)
                             .size(35.dp),
                         icon = R.drawable.ic_next,
                         color = IconButtonDefaults.iconButtonColors(
                             contentColor = brushColor[0]
-                        )
+                        ),
+                        enabled = hasPrev
                     ) {
-
+                        playerControllerOperation.invoke(PlayerControllerOperation.PLAY_PREV)
                     }
+
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
                     PlayControlButton(
                         modifier = Modifier
-                            .size(40.dp),
-                        icon = R.drawable.ic_play,
+                            .size(50.dp),
+                        icon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
                         color = IconButtonDefaults.iconButtonColors(
                             contentColor = brushColor[0]
-                        )
+                        ),
                     ) {
-
+                        if (isPlaying) playerControllerOperation.invoke(PlayerControllerOperation.PAUSE)
+                        else playerControllerOperation.invoke(PlayerControllerOperation.PLAY)
                     }
 
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
                     PlayControlButton(
                         modifier = Modifier
@@ -140,16 +149,19 @@ fun SmallPlayer(
                         icon = R.drawable.ic_next,
                         color = IconButtonDefaults.iconButtonColors(
                             contentColor = brushColor[0]
-                        )
+                        ),
+                        enabled = hasNext
                     ) {
-
+                        playerControllerOperation.invoke(PlayerControllerOperation.PLAY_NEXT)
                     }
+
+                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.small1))
                 }
             }
 
             LinearProgressIndicator(
-                progress = { .3f },
                 modifier = Modifier.fillMaxWidth(),
+                progress = { .3f },
                 strokeCap = StrokeCap.Round,
                 color = brushColor[1],
                 trackColor = brushColor[0]
@@ -163,11 +175,14 @@ fun PlayControlButton(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     color: IconButtonColors = IconButtonDefaults.iconButtonColors(),
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     IconButton(
+        modifier = modifier,
         onClick = onClick,
-        colors = color
+        colors = color,
+        enabled = enabled
     ) {
         Icon(
             modifier = modifier,
@@ -203,6 +218,9 @@ private fun Preview() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SmallPlayer(
+                isPlaying = false,
+                hasNext = false,
+                hasPrev = false,
                 brushColor = listOf(
                     MaterialTheme.colorScheme.tertiary,
                     MaterialTheme.colorScheme.background,
@@ -215,7 +233,7 @@ private fun Preview() {
                 isDarkThem = isSystemInDarkTheme(),
                 isCookie = false,
                 header = ""
-            )
+            ) {}
         }
     }
 }

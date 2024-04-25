@@ -59,6 +59,7 @@ import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.screens.player.PlayerControllerOperation
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.navigation.navigate
 import com.poulastaa.kyoku.navigation.navigateWithData
@@ -633,6 +634,9 @@ fun HomeContainer(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         SmallPlayer(
+                            isPlaying = player.isPlaying,
+                            hasPrev = player.hasPreviousMediaItem(),
+                            hasNext = player.hasNextMediaItem(),
                             brushColor = state.colors.ifEmpty {
                                 listOf(
                                     MaterialTheme.colorScheme.tertiary,
@@ -643,7 +647,26 @@ fun HomeContainer(
                             playingData = state.playing,
                             isDarkThem = isDarkThem,
                             isCookie = state.isCookie,
-                            header = state.headerValue
+                            header = state.headerValue,
+                            playerControllerOperation = {
+                                when (it) {
+                                    PlayerControllerOperation.PLAY -> {
+                                        if (!player.isPlaying) player.play()
+                                    }
+
+                                    PlayerControllerOperation.PAUSE -> {
+                                        if (player.isPlaying) player.pause()
+                                    }
+
+                                    PlayerControllerOperation.PLAY_NEXT -> {
+                                        if (player.hasNextMediaItem()) player.seekToNextMediaItem()
+                                    }
+
+                                    PlayerControllerOperation.PLAY_PREV -> {
+                                        if (player.hasPreviousMediaItem()) player.seekToPreviousMediaItem()
+                                    }
+                                }
+                            }
                         )
                     }
                 }
