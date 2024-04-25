@@ -11,5 +11,7 @@ data class PlayerSong(
     val artist: List<String> = listOf(""),
     val album: String = "",
     val year: String = "",
-    val totalTime: String = ""
+    val totalTime: String = "",
+    val totalInMili: Float = 0f,
+    val currentInMin: String = "-.-"
 )

@@ -23,9 +23,23 @@ sealed class HomeRootUiEvent {
         val isPlay: Boolean = false
     ) : HomeRootUiEvent()
 
-    data object SmallPlayerClick : HomeRootUiEvent()
-    data object CancelPlay : HomeRootUiEvent()
     data class UpdateNav(val screens: Screens) : HomeRootUiEvent()
+
+    sealed class PlayerUiEvent : HomeRootUiEvent() {
+        data object SmallPlayerClick : PlayerUiEvent()
+        data object CancelPlay : PlayerUiEvent()
+
+        data object PlayPause : PlayerUiEvent()
+
+        data class SelectedSongChange(val index: Int) : PlayerUiEvent()
+        data object Backward : PlayerUiEvent()
+        data object Forward : PlayerUiEvent()
+        data class SeekTo(val index: Long) : PlayerUiEvent()
+        data object SeekToNext : PlayerUiEvent()
+        data object Stop : PlayerUiEvent()
+
+        data class UpdateProgress(val value: Float) : PlayerUiEvent()
+    }
 
     data class BottomNavClick(val bottomNav: HomeScreenBottomNavigation) : HomeRootUiEvent()
     data object LogOut : HomeRootUiEvent()

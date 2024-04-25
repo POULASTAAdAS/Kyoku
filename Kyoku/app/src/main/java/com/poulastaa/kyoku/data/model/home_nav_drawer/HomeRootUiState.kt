@@ -34,11 +34,24 @@ data class HomeRootUiState @OptIn(ExperimentalFoundationApi::class) constructor(
         )
     },
 
+
+    val player: Player = Player()
+)
+
+@Stable
+data class Player(
     val isSmallPlayer: Boolean = false,
-    val isPlayer: Boolean = false,
-    val isPlayerLoading: Boolean = true,
-    val playerData: List<PlayerSong> = emptyList(),
-    val playing: PlayerSong = PlayerSong(),
+    val isPlayerOpen: Boolean = false,
+    val isLoading: Boolean = true,
+
+    val isRepeat: Boolean = false,
+
+    val allSong: List<PlayerSong> = emptyList(),
+    val playingSong: PlayerSong = PlayerSong(),
+
+    val isPlaying: Boolean = false,
+    val progress: Float = 0f,
+    val playingIndex: Int = -1,
 
     val colors: List<Color> = emptyList()
 )

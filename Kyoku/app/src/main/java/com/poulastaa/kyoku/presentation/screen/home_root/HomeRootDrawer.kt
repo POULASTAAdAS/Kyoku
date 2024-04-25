@@ -96,12 +96,12 @@ fun HomeRootDrawer(
                     navController = navController,
                     state = viewModel.state,
                     scope = scope,
-                    player = viewModel.player,
                     opnDrawer = {
                         scope.launch {
                             drawerState.open()
                         }
                     },
+                    playControl = viewModel::onEvent,
                     navigateWithUiEvent = viewModel::onEvent
                 )
         }

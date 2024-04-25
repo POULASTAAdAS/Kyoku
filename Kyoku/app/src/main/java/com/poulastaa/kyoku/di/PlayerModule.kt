@@ -9,23 +9,26 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
+import androidx.media3.session.MediaSession
+import com.poulastaa.kyoku.domain.player.notification.AudioNotificationManager
+import com.poulastaa.kyoku.domain.player.service.AudioServiceHandler
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object PlayerModule {
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     @OptIn(UnstableApi::class)
     fun provideDataSource(
         ds: DataStoreOperation
@@ -43,7 +46,7 @@ object PlayerModule {
         }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     @OptIn(UnstableApi::class)
     fun provideHLSMediaSourceFactory(dataSourceFactory: DataSource.Factory): HlsMediaSource.Factory =
         HlsMediaSource
@@ -57,7 +60,7 @@ object PlayerModule {
             .setAllowChunklessPreparation(true)
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     @OptIn(UnstableApi::class)
     fun provideExoPlayer(
         hlsMediaSourceFactory: HlsMediaSource.Factory,
@@ -65,4 +68,22 @@ object PlayerModule {
     ): ExoPlayer = ExoPlayer.Builder(context)
         .setMediaSourceFactory(hlsMediaSourceFactory)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideMediaSession(
+        @ApplicationContext context: Context,
+        player: ExoPlayer
+    ): MediaSession = MediaSession.Builder(context, player).build()
+
+    @Provides
+    @Singleton
+    fun provideNotificationManager(
+        @ApplicationContext context: Context,
+        player: ExoPlayer
+    ): AudioNotificationManager = AudioNotificationManager(context, player)
+
+    @Provides
+    @Singleton
+    fun provideServiceHandler(player: ExoPlayer): AudioServiceHandler = AudioServiceHandler(player)
 }

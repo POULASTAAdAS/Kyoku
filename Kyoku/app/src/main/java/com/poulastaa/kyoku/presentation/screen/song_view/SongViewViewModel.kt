@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -73,17 +72,14 @@ class SongViewViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            val authType = when (ds.readAuthType().first()) {
+                AuthType.SESSION_AUTH.name -> true
+                AuthType.JWT_AUTH.name -> false
+                else -> return@launch
+            }
+
             state = state.copy(
-                isCooke = when (ds.readAuthType().first()) {
-                    AuthType.SESSION_AUTH.name -> true
-                    AuthType.JWT_AUTH.name -> false
-                    else -> {
-                        state = state.copy(
-                            type = ItemsType.ERR
-                        )
-                        false
-                    }
-                }
+                isCooke = authType
             )
         }
     }
@@ -120,7 +116,7 @@ class SongViewViewModel @Inject constructor(
 
                 ItemsType.ALBUM -> {
                     viewModelScope.launch(Dispatchers.IO) {
-                        async { db.getAlbum(id) }.await().let {
+                        db.getAlbum(id).let {
                             state = state.copy(
                                 type = if (it.listOfSong.isEmpty()) ItemsType.ERR else ItemsType.ALBUM,
                                 data = state.data.copy(
@@ -387,24 +383,10 @@ class SongViewViewModel @Inject constructor(
                             )
                         }
                     }
-
-                    is SongViewUiEvent.OnDrag -> {
-                        Log.d("index", "${event.beforeIndex} , ${event.afterIndex}")
-                    }
                 }
             }
         }
     }
-
-    private fun <T> MutableList<T>.move(
-        from: Int,
-        to: Int
-    ) {
-        if (from == to) return
-        val element = this.removeAt(from) ?: return
-        this.add(to, element)
-    }
-
 
     private fun getItemType(type: String): ItemsType = when (type) {
         ItemsType.PLAYLIST.title -> ItemsType.PLAYLIST

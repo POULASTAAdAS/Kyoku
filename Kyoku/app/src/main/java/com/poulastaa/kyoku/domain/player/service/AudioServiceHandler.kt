@@ -1,0 +1,122 @@
+package com.poulastaa.kyoku.domain.player.service
+
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import com.poulastaa.kyoku.data.model.screens.player.PlayerUiEvent
+import com.poulastaa.kyoku.data.model.screens.player.PlayerUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+class AudioServiceHandler @Inject constructor(
+    private val player: ExoPlayer
+) : Player.Listener {
+    private val _playerUiState: MutableStateFlow<PlayerUiState> =
+        MutableStateFlow(PlayerUiState.Initial)
+    val playerUiState: StateFlow<PlayerUiState> = _playerUiState.asStateFlow()
+
+    private var job: Job? = null
+
+    fun addOneMediaItem(mediaItem: MediaItem) {
+        player.setMediaItem(mediaItem)
+        player.prepare()
+    }
+
+    fun addMultipleMediaItem(list: List<MediaItem>) {
+        player.setMediaItems(list)
+        player.prepare()
+    }
+
+    suspend fun onEvent(event: PlayerUiEvent) {
+        when (event) {
+            PlayerUiEvent.Backward -> player.seekBack()
+
+            PlayerUiEvent.Forward -> player.seekForward()
+
+            PlayerUiEvent.SeekToPrev -> player.seekToPrevious()
+
+            PlayerUiEvent.SeekToNext -> player.seekToNext()
+
+            PlayerUiEvent.PlayPause -> playPause()
+
+            is PlayerUiEvent.SeekTo -> player.seekTo(event.index)
+
+
+            is PlayerUiEvent.SelectedSongChange -> {
+                when (event.index) {
+                    player.currentMediaItemIndex -> playPause()
+                    else -> {
+                        player.seekToDefaultPosition(event.index)
+                        player.playWhenReady = true
+
+                        _playerUiState.value = PlayerUiState.Playing(isPlaying = true)
+
+                        startProgress()
+                    }
+                }
+            }
+
+            PlayerUiEvent.Stop -> {
+                stopProgress()
+                player.stop()
+            }
+
+            is PlayerUiEvent.UpdateProgress -> {
+                player.seekTo((player.duration * event.value).toLong())
+            }
+        }
+    }
+
+    private suspend fun playPause() {
+        if (player.isPlaying) {
+            player.pause()
+            stopProgress()
+        } else {
+            player.play()
+            _playerUiState.value = PlayerUiState.Playing(isPlaying = true)
+            startProgress()
+        }
+    }
+
+    private suspend fun startProgress() = job.run {
+        while (true) {
+            delay(300)
+            _playerUiState.value = PlayerUiState.Progress(value = player.currentPosition)
+        }
+    }
+
+    private fun stopProgress() {
+        job?.cancel()
+        _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
+    }
+
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        when (playbackState) {
+            ExoPlayer.STATE_BUFFERING -> _playerUiState.value =
+                PlayerUiState.Buffering(player.contentPosition)
+
+            ExoPlayer.STATE_READY -> _playerUiState.value = PlayerUiState.Ready(player.duration)
+            ExoPlayer.STATE_ENDED -> _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
+            ExoPlayer.STATE_IDLE -> _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
+
+            else -> Unit
+        }
+    }
+
+    override fun onIsPlayingChanged(isPlaying: Boolean) {
+        _playerUiState.value = PlayerUiState.Playing(isPlaying)
+        _playerUiState.value = PlayerUiState.CurrentPlayingIndex(player.currentMediaItemIndex)
+
+        if (isPlaying) CoroutineScope(Dispatchers.IO).launch {
+            startProgress()
+        }
+        else stopProgress()
+    }
+}

@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -46,10 +47,13 @@ import com.poulastaa.kyoku.ui.theme.dimens
 fun SmallPlayer(
     brushColor: List<Color>,
     isLoading: Boolean,
+    isPlaying: Boolean,
     playingData: PlayerSong,
+    durationUpdate: Float,
     isDarkThem: Boolean,
     isCookie: Boolean,
-    header: String
+    header: String,
+    playControl: (HomeRootUiEvent) -> Unit
 ) {
     if (isLoading) CircularProgressIndicator()
     else {
@@ -77,7 +81,7 @@ fun SmallPlayer(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(.4f)
+                        .fillMaxWidth(.5f)
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center
@@ -105,50 +109,51 @@ fun SmallPlayer(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(),
+                        .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     PlayControlButton(
                         modifier = Modifier
-                            .rotate(180f)
-                            .size(35.dp),
+                            .rotate(90f)
+                            .size(40.dp),
                         icon = R.drawable.ic_next,
                         color = IconButtonDefaults.iconButtonColors(
                             contentColor = brushColor[0]
                         )
                     ) {
-
+                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Backward)
                     }
+
+
+
+                    PlayControlButton(
+                        modifier = Modifier
+                            .size(60.dp),
+                        icon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
+                        color = IconButtonDefaults.iconButtonColors(
+                            contentColor = brushColor[0]
+                        )
+                    ) {
+                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.PlayPause)
+                    }
+
 
                     PlayControlButton(
                         modifier = Modifier
                             .size(40.dp),
-                        icon = R.drawable.ic_play,
-                        color = IconButtonDefaults.iconButtonColors(
-                            contentColor = brushColor[0]
-                        )
-                    ) {
-
-                    }
-
-
-                    PlayControlButton(
-                        modifier = Modifier
-                            .size(35.dp),
                         icon = R.drawable.ic_next,
                         color = IconButtonDefaults.iconButtonColors(
                             contentColor = brushColor[0]
                         )
                     ) {
-
+                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Forward)
                     }
                 }
             }
 
             LinearProgressIndicator(
-                progress = { .3f },
+                progress = { durationUpdate },
                 modifier = Modifier.fillMaxWidth(),
                 strokeCap = StrokeCap.Round,
                 color = brushColor[1],
@@ -166,6 +171,7 @@ fun PlayControlButton(
     onClick: () -> Unit
 ) {
     IconButton(
+        modifier = modifier,
         onClick = onClick,
         colors = color
     ) {
@@ -207,7 +213,9 @@ private fun Preview() {
                     MaterialTheme.colorScheme.tertiary,
                     MaterialTheme.colorScheme.background,
                 ),
+                isPlaying = false,
                 isLoading = false,
+                durationUpdate = 2.6023963E-6f,
                 playingData = PlayerSong(
                     title = "Title",
                     artist = listOf("artist1", "artist2")
@@ -215,7 +223,7 @@ private fun Preview() {
                 isDarkThem = isSystemInDarkTheme(),
                 isCookie = false,
                 header = ""
-            )
+            ) {}
         }
     }
 }

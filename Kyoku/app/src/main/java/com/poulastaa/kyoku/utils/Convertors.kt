@@ -329,6 +329,7 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
         artist = it.artist.split(","),
         album = it.album,
         year = it.year,
-        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000))
+        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
+        totalInMili = it.totalTime.toFloat()
     )
 }

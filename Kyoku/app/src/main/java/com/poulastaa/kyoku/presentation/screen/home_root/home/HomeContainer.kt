@@ -49,7 +49,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -95,7 +94,7 @@ fun HomeContainer(
     context: Context = LocalContext.current,
     state: HomeRootUiState,
     scope: CoroutineScope,
-    player: ExoPlayer,
+    playControl: (HomeRootUiEvent) -> Unit,
     opnDrawer: () -> Unit,
     navigateWithUiEvent: (HomeRootUiEvent) -> Unit,
 ) {
@@ -558,16 +557,9 @@ fun HomeContainer(
                 ) { // why the fuck are u re-calling on them change
                     if (state.anchors.requireOffset().roundToInt() == 250) {
                         navigateWithUiEvent.invoke(
-                            HomeRootUiEvent.CancelPlay
+                            HomeRootUiEvent.PlayerUiEvent.CancelPlay
                         )
-
-                        // todo change
-                        player.removeMediaItem(0)
                     }
-                }
-
-                LaunchedEffect(key1 = state.playing.url.isEmpty()) {
-                    player.play()
                 }
 
                 AnimatedVisibility(
@@ -585,7 +577,7 @@ fun HomeContainer(
                             )
                         }
                         .anchoredDraggable(state.anchors, Orientation.Vertical),
-                    visible = state.isSmallPlayer,
+                    visible = state.player.isSmallPlayer,
                     enter = fadeIn(
                         animationSpec = tween(durationMillis = 300)
                     ) + slideInVertically(
@@ -606,7 +598,7 @@ fun HomeContainer(
                             .clip(MaterialTheme.shapes.extraSmall)
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = state.colors.ifEmpty {
+                                    colors = state.player.colors.ifEmpty {
                                         listOf(
                                             MaterialTheme.colorScheme.tertiary,
                                             MaterialTheme.colorScheme.background,
@@ -624,7 +616,7 @@ fun HomeContainer(
                                 onClick = {
                                     scope.launch {
                                         navigateWithUiEvent.invoke(
-                                            HomeRootUiEvent.SmallPlayerClick
+                                            HomeRootUiEvent.PlayerUiEvent.SmallPlayerClick
                                         )
                                     }
                                 }
@@ -633,17 +625,20 @@ fun HomeContainer(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         SmallPlayer(
-                            brushColor = state.colors.ifEmpty {
+                            brushColor = state.player.colors.ifEmpty {
                                 listOf(
                                     MaterialTheme.colorScheme.tertiary,
                                     MaterialTheme.colorScheme.background,
                                 )
                             },
-                            isLoading = state.isPlayerLoading,
-                            playingData = state.playing,
+                            isLoading = state.player.isLoading,
+                            isPlaying = state.player.isPlaying,
+                            durationUpdate = state.player.progress,
+                            playingData = state.player.playingSong,
                             isDarkThem = isDarkThem,
                             isCookie = state.isCookie,
-                            header = state.headerValue
+                            header = state.headerValue,
+                            playControl = playControl,
                         )
                     }
                 }
@@ -660,7 +655,7 @@ fun HomeContainer(
             }
 
             AnimatedVisibility(
-                visible = state.isPlayer,
+                visible = state.player.isPlayerOpen,
                 enter = fadeIn(
                     animationSpec = tween(durationMillis = 400)
                 ) + slideInVertically(
@@ -674,7 +669,7 @@ fun HomeContainer(
                     targetOffsetY = { it / 2 }
                 )
             ) {
-                if (state.isPlayer)
+                if (state.player.isPlayerOpen)
                     LaunchedEffect(key1 = Unit) {
                         navigateWithUiEvent.invoke(
                             HomeRootUiEvent.UpdateNav(
@@ -686,20 +681,21 @@ fun HomeContainer(
                 Player(
                     isSmallPhone = isSmallPhone,
                     paddingValue = paddingValue,
-                    playerSong = state.playing,
+                    player = state.player,
                     isDarkThem = isDarkThem,
                     isCookie = state.isCookie,
                     header = state.headerValue,
                     context = context,
-                    brushColor = state.colors.ifEmpty {
+                    brushColor = state.player.colors.ifEmpty {
                         listOf(
                             MaterialTheme.colorScheme.tertiary,
                             MaterialTheme.colorScheme.background,
                         )
                     },
+                    playControl = playControl,
                     navigateBack = {
                         navigateWithUiEvent.invoke(
-                            HomeRootUiEvent.SmallPlayerClick
+                            HomeRootUiEvent.PlayerUiEvent.SmallPlayerClick
                         )
 
                         navigateWithUiEvent.invoke(

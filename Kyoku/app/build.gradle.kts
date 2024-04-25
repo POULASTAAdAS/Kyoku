@@ -156,4 +156,8 @@ dependencies {
 
     // palette color extractor
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    implementation ("com.google.accompanist:accompanist-permissions:0.30.0")
 }

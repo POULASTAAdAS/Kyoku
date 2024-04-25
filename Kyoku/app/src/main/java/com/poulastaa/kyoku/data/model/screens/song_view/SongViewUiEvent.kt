@@ -7,6 +7,4 @@ sealed class SongViewUiEvent {
     sealed class ItemClick : SongViewUiEvent() {
         data class ViewAllFromArtist(val name: String) : ItemClick()
     }
-
-    data class OnDrag(val beforeIndex: Int, val afterIndex: Int) : ItemClick()
 }

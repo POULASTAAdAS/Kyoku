@@ -1,10 +1,19 @@
 package com.example
 
-fun main() {
-    val mileSecString = "329783.329"
-    val mileSec = mileSecString.toDouble()
+import kotlinx.coroutines.delay
 
-    val minutes = String.format("%.2f", (mileSec / 60000))
+import kotlinx.coroutines.delay
 
-    println(minutes)
+fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {
+    val totalSeconds = milliseconds / 1000.0
+    val minutes = (totalSeconds / 60).toLong()
+    val seconds = (totalSeconds % 60).toLong()
+    return "$minutes:$seconds"
+}
+
+
+suspend fun main() {
+    for (i in 0..60000L) {
+        println(millisecondsToMinutesAndSeconds(i))
+    }
 }

@@ -44,6 +44,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
+import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
 import com.poulastaa.kyoku.ui.theme.TestThem
@@ -54,7 +56,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 fun Player(
     isSmallPhone: Boolean,
     paddingValue: PaddingValues,
-    playerSong: PlayerSong,
+    player: Player,
     isDarkThem: Boolean,
     isCookie: Boolean,
     header: String,
@@ -64,6 +66,7 @@ fun Player(
         MaterialTheme.colorScheme.background,
         MaterialTheme.colorScheme.background,
     ),
+    playControl: (HomeRootUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     LazyColumn(
@@ -129,7 +132,7 @@ fun Player(
                     isDarkThem = isDarkThem,
                     isCookie = isCookie,
                     headerValue = header,
-                    url = playerSong.url,
+                    url = player.playingSong.url,
                     contentScale = ContentScale.FillBounds
                 )
             }
@@ -146,10 +149,10 @@ fun Player(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(.8f)
                 ) {
                     Text(
-                        text = playerSong.title,
+                        text = player.playingSong.title,
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                         fontWeight = FontWeight.Medium,
                         color = brushColor[0],
@@ -158,7 +161,7 @@ fun Player(
                     )
 
                     Text(
-                        text = playerSong.artist.toString().trimStart('[').trimEnd(']'),
+                        text = player.playingSong.artist.toString().trimStart('[').trimEnd(']'),
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         color = brushColor[0],
                         maxLines = 1,
@@ -166,7 +169,16 @@ fun Player(
                     )
                 }
 
-
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.End
+                ) {
+                    // todo add repeat logic
+//                    CustomIconButton(icon = if (player.isRepeat) R.drawable.ic_repeat_off else R.drawable.ic_repeat_on) {
+//
+//                    }
+                }
             }
         }
 
@@ -184,7 +196,7 @@ fun Player(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 LinearProgressIndicator(
-                    progress = { .3f },
+                    progress = { player.progress },
                     modifier = Modifier.fillMaxWidth(),
                     strokeCap = StrokeCap.Round,
                     color = brushColor[1],
@@ -197,12 +209,12 @@ fun Player(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "00.00",
+                        text = player.playingSong.currentInMin,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = brushColor[0]
                     )
                     Text(
-                        text = playerSong.totalTime,
+                        text = player.playingSong.totalTime,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = brushColor[0]
                     )
@@ -224,56 +236,56 @@ fun Player(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 CustomIconButton(
-                    iconModifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(35.dp),
                     icon = R.drawable.ic_shuffle,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
                 ) {
-
+                    // todo add shuffle
+//playControl.invoke(HomeRootUiEvent)
                 }
 
                 CustomIconButton(
-                    iconModifier = Modifier
-                        .size(35.dp)
-                        .rotate(180f),
+                    modifier = Modifier
+                        .size(50.dp)
+                        .rotate(90f),
                     icon = R.drawable.ic_next,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
                 ) {
-
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Backward)
                 }
 
                 CustomIconButton(
-                    buttonModifier = Modifier.size(70.dp),
-                    iconModifier = Modifier.size(65.dp),
-                    icon = R.drawable.ic_play,
+                    modifier = Modifier.size(if (isSmallPhone) 70.dp else 90.dp),
+                    icon = if (player.isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
                 ) {
-
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.PlayPause)
                 }
 
                 CustomIconButton(
-                    iconModifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(50.dp),
                     icon = R.drawable.ic_next,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
                 ) {
-
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Forward)
                 }
 
                 CustomIconButton(
-                    iconModifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(35.dp),
                     icon = R.drawable.ic_add_to_library,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
                 ) {
-
+// todo add library option
                 }
             }
         }
@@ -287,19 +299,18 @@ fun Player(
 
 @Composable
 fun CustomIconButton(
-    buttonModifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     @DrawableRes icon: Int,
     onClick: () -> Unit
 ) {
     IconButton(
-        modifier = buttonModifier,
+        modifier = modifier,
         onClick = onClick,
         colors = colors
     ) {
         Icon(
-            modifier = iconModifier,
+            modifier = modifier,
             painter = painterResource(id = icon),
             contentDescription = null
         )
@@ -317,19 +328,22 @@ private fun Preview() {
         Player(
             isSmallPhone = false,
             paddingValue = PaddingValues(),
-            playerSong = PlayerSong(
-                title = "Title",
-                artist = listOf(
-                    "artist1",
-                    "artist2",
-                    "artist1",
-                    "artist2",
-                    "artist1",
-                    "artist2",
-                    "artist1",
-                    "artist2"
-                ),
-                totalTime = "4.40"
+            player = Player(
+                isPlaying = true,
+                playingSong = PlayerSong(
+                    title = "Title",
+                    artist = listOf(
+                        "artist1",
+                        "artist2",
+                        "artist1",
+                        "artist2",
+                        "artist1",
+                        "artist2",
+                        "artist1",
+                        "artist2"
+                    ),
+                    totalTime = "4.40"
+                )
             ),
             isDarkThem = isSystemInDarkTheme(),
             isCookie = false,
@@ -338,7 +352,8 @@ private fun Preview() {
             brushColor = listOf(
                 MaterialTheme.colorScheme.tertiary,
                 MaterialTheme.colorScheme.background,
-            )
+            ),
+            playControl = {}
         ) {
 
         }

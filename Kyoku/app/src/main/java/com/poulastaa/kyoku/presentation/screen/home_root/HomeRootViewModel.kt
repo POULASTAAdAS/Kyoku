@@ -1,6 +1,8 @@
 package com.poulastaa.kyoku.presentation.screen.home_root
 
 import android.graphics.Color.parseColor
+import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
@@ -12,19 +14,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
-import androidx.media3.exoplayer.ExoPlayer
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
+import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.model.screens.player.DragAnchors
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
+import com.poulastaa.kyoku.data.model.screens.player.PlayerUiEvent
+import com.poulastaa.kyoku.data.model.screens.player.PlayerUiState
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
+import com.poulastaa.kyoku.domain.player.service.AudioServiceHandler
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
@@ -34,6 +40,7 @@ import com.poulastaa.kyoku.utils.PaletteGenerator
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toPlayerData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -51,7 +58,7 @@ class HomeRootViewModel @Inject constructor(
     private val ds: DataStoreOperation,
     private val db: DatabaseRepositoryImpl,
     private val api: ServiceRepository,
-    val player: ExoPlayer
+    private val player: AudioServiceHandler
 ) : ViewModel() {
     private fun readAccessToken() {
         viewModelScope.launch {
@@ -141,6 +148,7 @@ class HomeRootViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var state by mutableStateOf(HomeRootUiState())
+        private set
 
     init {
         readAccessToken()
@@ -150,32 +158,52 @@ class HomeRootViewModel @Inject constructor(
         setHomeTopBarTitle()
     }
 
-    private fun getMediaItem(uri: String) = MediaItem.Builder()
-        .setMimeType(MimeTypes.APPLICATION_M3U8)
-        .setMimeType(MimeTypes.APPLICATION_ID3)
-        .setUri(uri)
-        .setLiveConfiguration(
-            MediaItem
-                .LiveConfiguration
-                .Builder()
-                .setMaxPlaybackSpeed(1.02f)
-                .build()
-        )
-        .build()
+    init {
+        viewModelScope.launch {
+            player.playerUiState.collect { event ->
+                when (event) {
+                    is PlayerUiState.Buffering -> {
+                        Log.d("update buffer", event.value.toString())
+                    }
 
-    private fun addItem(url: String) {
-        viewModelScope.launch(Dispatchers.Main) {
-            player.addMediaItem(getMediaItem(url))
-            player.prepare()
+                    is PlayerUiState.CurrentPlayingIndex -> {
+                        Log.d("update CurrentPlayingIndex", event.index.toString())
+                    }
+
+                    PlayerUiState.Initial -> {
+                        Log.d("update Initial", event.toString())
+                    }
+
+                    is PlayerUiState.Playing -> {
+                        Log.d("update Playing", event.isPlaying.toString())
+
+                        state = state.copy(
+                            player = state.player.copy(
+                                isPlaying = event.isPlaying
+                            )
+                        )
+                    }
+
+                    is PlayerUiState.Progress -> {
+                        Log.d("update Progress", event.value.toString())
+
+                        state = state.copy(
+                            player = state.player.copy(
+                                progress = calculateProgress(event.value),
+                                playingSong = state.player.playingSong.copy(
+                                    currentInMin = millisecondsToMinutesAndSeconds(event.value)
+                                )
+                            )
+                        )
+                    }
+
+                    is PlayerUiState.Ready -> {
+                        Log.d("update Ready", event.duration.toString())
+                    }
+                }
+            }
         }
     }
-
-    private fun remove(){
-        viewModelScope.launch(Dispatchers.Main) {
-                player.removeMediaItem(0)
-        }
-    }
-
 
     fun onEvent(event: HomeRootUiEvent) {
         when (event) {
@@ -203,13 +231,15 @@ class HomeRootViewModel @Inject constructor(
 
             is HomeRootUiEvent.NavigateWithData -> {
                 if (event.route == Screens.Player.route) {
+                    state = state.copy(
+                        player = state.player.copy(
+                            isSmallPlayer = true,
+                            isLoading = true
+                        )
+                    )
+
                     when (event.songType) {
                         SongType.HISTORY_SONG -> {
-                            state = state.copy(
-                                isSmallPlayer = true,
-                                isPlayerLoading = true
-                            )
-
                             viewModelScope.launch(Dispatchers.IO) {
                                 if (db.checkIfAlreadyInPlayingQueue(event.id) == null) {
                                     val song = api.getSongOnId(event.id)
@@ -218,14 +248,14 @@ class HomeRootViewModel @Inject constructor(
                                         onEvent(HomeRootUiEvent.SomethingWentWrong)
 
                                         state = state.copy(
-                                            isPlayer = false,
-                                            isPlayerLoading = false
+                                            player = state.player.copy(
+                                                isSmallPlayer = false,
+                                                isLoading = false
+                                            )
                                         )
 
                                         return@launch
                                     }
-                                    // todo clear playing queue
-
                                     async {
                                         db.insertIntoPlayingQueueTable(
                                             song,
@@ -246,34 +276,38 @@ class HomeRootViewModel @Inject constructor(
                                         val darkVariant =
                                             Color(parseColor(colors[ColorType.DARK_VIBRANT]))
 
-                                        state = state.copy(
-                                            colors = listOf(
-                                                variant,
-                                                darkVariant,
+                                        if (variant != darkVariant)
+                                            state = state.copy(
+                                                player = state.player.copy(
+                                                    colors = listOf(
+                                                        variant,
+                                                        darkVariant,
+                                                    )
+                                                )
                                             )
-                                        )
                                     }
 
-                                    addItem(list[0].masterPlaylist)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        player.onEvent(PlayerUiEvent.Stop)
+                                        list[0].setMediaItem(song.coverImage)
+                                        player.onEvent(PlayerUiEvent.PlayPause)
+                                    }
 
                                     state = state.copy(
-                                        playerData = list,
-                                        playing = list[0]
+                                        player = state.player.copy(
+                                            allSong = list,
+                                            playingSong = list[0]
+                                        )
                                     )
                                 } else {
-                                    // todo
                                     viewModelScope.launch(Dispatchers.Main) {
-                                        player.seekToDefaultPosition()
+                                        player.onEvent(PlayerUiEvent.SeekTo(0))
                                     }
                                 }
                             }
                         }
 
                         SongType.ARTIST_SONG -> {
-                            state = state.copy(
-                                isPlayerLoading = true
-                            )
-
                             viewModelScope.launch(Dispatchers.IO) {
                                 if (db.checkIfAlreadyInPlayingQueue(event.id) == null) {
                                     val song = api.getSongOnId(event.id)
@@ -282,8 +316,10 @@ class HomeRootViewModel @Inject constructor(
                                         onEvent(HomeRootUiEvent.SomethingWentWrong)
 
                                         state = state.copy(
-                                            isPlayer = false,
-                                            isPlayerLoading = false
+                                            player = state.player.copy(
+                                                isSmallPlayer = false,
+                                                isLoading = false
+                                            )
                                         )
 
                                         return@launch
@@ -311,23 +347,30 @@ class HomeRootViewModel @Inject constructor(
 
                                         if (variant != darkVariant)
                                             state = state.copy(
-                                                colors = listOf(
-                                                    variant,
-                                                    darkVariant,
+                                                player = state.player.copy(
+                                                    colors = listOf(
+                                                        variant,
+                                                        darkVariant,
+                                                    )
                                                 )
                                             )
                                     }
 
-                                    addItem(list[0].masterPlaylist)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        player.onEvent(PlayerUiEvent.Stop)
+                                        list[0].setMediaItem(song.coverImage)
+                                        player.onEvent(PlayerUiEvent.PlayPause)
+                                    }
 
                                     state = state.copy(
-                                        playerData = list,
-                                        playing = list[0]
+                                        player = state.player.copy(
+                                            allSong = list,
+                                            playingSong = list[0]
+                                        )
                                     )
                                 } else {
-                                    // todo
                                     viewModelScope.launch(Dispatchers.Main) {
-                                        player.seekToDefaultPosition()
+                                        player.onEvent(PlayerUiEvent.SeekTo(0))
                                     }
                                 }
                             }
@@ -352,8 +395,9 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }.let {
                         state = state.copy(
-                            isSmallPlayer = true,
-                            isPlayerLoading = false
+                            player = state.player.copy(
+                                isLoading = false
+                            )
                         )
                     }
 
@@ -371,41 +415,102 @@ class HomeRootViewModel @Inject constructor(
                 }
             }
 
-            HomeRootUiEvent.SmallPlayerClick -> {
-                state = state.copy(
-                    isPlayer = !state.isPlayer
-                )
-            }
+            is HomeRootUiEvent.PlayerUiEvent -> {
+                when (event) {
+                    HomeRootUiEvent.PlayerUiEvent.SmallPlayerClick -> {
+                        state = if (!state.player.isPlayerOpen) state.copy(
+                            player = state.player.copy(
+                                isPlayerOpen = true
+                            )
+                        ) else {
+                            state.copy(
+                                player = state.player.copy(
+                                    isPlayerOpen = false
+                                )
+                            )
+                        }
+                    }
 
-            HomeRootUiEvent.CancelPlay -> {
-                state = state.copy(
-                    isSmallPlayer = false,
-                    isPlayer = false,
-                    isPlayerLoading = false,
-                    playerData = emptyList(),
-                    playing = PlayerSong(),
-                )
+                    HomeRootUiEvent.PlayerUiEvent.CancelPlay -> {
+                        state = state.copy(
+                            player = Player()
 
-                viewModelScope.launch(Dispatchers.IO) {
-                    db.clearPlayingQueue()
+                        )
 
-                    delay(400)
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.Stop)
+                        }
 
-                    state = state.copy(
-                        anchors = AnchoredDraggableState(
-                            initialValue = DragAnchors.START,
-                            positionalThreshold = { it * 0.5f },
-                            velocityThreshold = { 1f },
-                            animationSpec = tween()
-                        ).apply {
-                            updateAnchors(
-                                DraggableAnchors {
-                                    DragAnchors.START at 0f
-                                    DragAnchors.END at 250f
+                        viewModelScope.launch(Dispatchers.IO) {
+                            db.clearPlayingQueue()
+
+                            delay(300)
+
+                            state = state.copy(
+                                anchors = AnchoredDraggableState(
+                                    initialValue = DragAnchors.START,
+                                    positionalThreshold = { it * 0.5f },
+                                    velocityThreshold = { 1f },
+                                    animationSpec = tween()
+                                ).apply {
+                                    updateAnchors(
+                                        DraggableAnchors {
+                                            DragAnchors.START at 0f
+                                            DragAnchors.END at 250f
+                                        }
+                                    )
                                 }
                             )
                         }
-                    )
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.Backward -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.Backward)
+                        }
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.Forward -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.Forward)
+                        }
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.PlayPause -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.PlayPause)
+                        }
+                    }
+
+                    is HomeRootUiEvent.PlayerUiEvent.SeekTo -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.SeekToNext -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+
+                        }
+                    }
+
+                    is HomeRootUiEvent.PlayerUiEvent.SelectedSongChange -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.Stop -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.Stop)
+                        }
+                    }
+
+                    is HomeRootUiEvent.PlayerUiEvent.UpdateProgress -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+
+                        }
+                    }
                 }
             }
 
@@ -422,16 +527,6 @@ class HomeRootViewModel @Inject constructor(
                     else -> state.copy(
                         nav = Nav.NON
                     )
-                }
-            }
-
-            HomeRootUiEvent.LogOut -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    storeSignInState(SignInStatus.AUTH, ds)
-
-                    delay(800)
-
-                    db.removeAllTable()
                 }
             }
 
@@ -454,6 +549,65 @@ class HomeRootViewModel @Inject constructor(
                     }
                 }
             }
+
+            HomeRootUiEvent.LogOut -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    storeSignInState(SignInStatus.AUTH, ds)
+
+                    delay(800)
+
+                    db.removeAllTable()
+                }
+            }
         }
     }
+
+    private fun calculateProgress(value: Long) =
+        try {
+            if (value > 0) {
+                val v =
+                    (value.toFloat() / state.player.playingSong.totalInMili)
+
+
+                Log.d("value", "$value , $v")
+
+                v
+            } else 0f
+        } catch (_: Exception) {
+            0f
+        }
+
+
+    private fun PlayerSong.setMediaItem(uri: String = "") {
+        val item = MediaItem.Builder()
+            .setMimeType(MimeTypes.APPLICATION_M3U8)
+            .setMimeType(MimeTypes.APPLICATION_ID3)
+            .setUri(masterPlaylist)
+            .setLiveConfiguration(
+                MediaItem
+                    .LiveConfiguration.Builder()
+                    .setMaxPlaybackSpeed(1.02f)
+                    .build()
+            ).setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setDisplayTitle(title)
+                    .setArtist(artist.toString().trimStart('[').trimEnd(']'))
+                    .setAlbumTitle(album)
+                    .setArtworkUri(Uri.parse(uri))
+                    .build()
+            )
+            .setMediaId(id.toString())
+            .build()
+
+        player.addOneMediaItem(item)
+    }
+
+    private fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {
+        val totalSeconds = milliseconds / 1000.0
+        val minutes = (totalSeconds / 60).toLong()
+        val seconds = (totalSeconds % 60).toLong()
+
+        return "$minutes.$seconds"
+    }
+
 }
