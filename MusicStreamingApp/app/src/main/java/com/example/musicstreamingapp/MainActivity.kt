@@ -17,6 +17,7 @@ import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory
 import androidx.media3.exoplayer.hls.HlsMediaSource
@@ -29,12 +30,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContent {
             MusicStreamingAppTheme {
                 val context = LocalContext.current
 
-                val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
+                val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource
+                    .Factory().apply {
+                        this.setDefaultRequestProperties(
+                            mapOf(
+                                "Cookie" to "na i am idiot"
+                            )
+                        )
+                    }
+
+
+                // http://kyoku.poulastaa.online:8081/api/authorised/playSong/master?master=Confusion_Pagglait/Confusion_Pagglait_master.m3u8
+                // http://kyoku.poulastaa.online:8081/api/authorised/playSong/master?playlist=Bekhayali_Kabir_Singh/Bekhayali_Kabir_Singh_master.m3u8
 
                 val hslMediaSource = HlsMediaSource
                     .Factory(dataSourceFactory)
@@ -44,35 +55,30 @@ class MainActivity : ComponentActivity() {
                             true
                         )
                     )
-
                     .setAllowChunklessPreparation(true)
-                    .createMediaSource(
-                        MediaItem.Builder()
-                            .setMimeType(MimeTypes.APPLICATION_M3U8)
-                            .setMimeType(MimeTypes.APPLICATION_ID3)
-                            .setUri("https://b857-103-44-172-243.ngrok-free.app/master.m3u8")
-                            .setLiveConfiguration(
-                                MediaItem
-                                    .LiveConfiguration
-                                    .Builder()
-                                    .setMaxPlaybackSpeed(1.02f)
-                                    .build()
-                            )
+
+                val item = MediaItem.Builder()
+                    .setMimeType(MimeTypes.APPLICATION_M3U8)
+                    .setMimeType(MimeTypes.APPLICATION_ID3)
+                    .setUri("http://kyoku.poulastaa.online:8081/api/authorised/playSong/master?master=Bekhayali_Kabir_Singh/Bekhayali_Kabir_Singh_master.m3u8")
+                    .setLiveConfiguration(
+                        MediaItem
+                            .LiveConfiguration
+                            .Builder()
+                            .setMaxPlaybackSpeed(1.02f)
                             .build()
                     )
+                    .build()
 
                 val player = ExoPlayer.Builder(context)
-                    .setMediaSourceFactory(
-                        DefaultMediaSourceFactory(context)
-                            .setLiveTargetOffsetMs(5000)
-                    )
+                    .setMediaSourceFactory(hslMediaSource)
                     .build()
-                    .apply {
-                        setMediaSource(hslMediaSource)
-                        prepare()
-                        play()
-                    }
 
+
+                player.addMediaItem(item)
+
+                player.prepare()
+                player.play()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),

@@ -1,20 +1,10 @@
 package com.example
 
-import io.ktor.network.tls.certificates.*
-import java.io.*
-import java.time.LocalDate
-import java.time.temporal.TemporalAccessor
-import java.util.Stack
-
 fun main() {
-    val stack = Stack<String>()
+    val mileSecString = "329783.329"
+    val mileSec = mileSecString.toDouble()
 
-    stack.push("hello1")
-    stack.push("hello2")
-    stack.push("hello3")
+    val minutes = String.format("%.2f", (mileSec / 60000))
 
-
-    stack.pop()
-
-    println(stack)
+    println(minutes)
 }

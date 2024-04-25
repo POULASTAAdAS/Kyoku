@@ -234,10 +234,9 @@ class ArtistAllViewModel @Inject constructor(
 
                                         return@launch
                                     }
-
-                                    db.insertIntoAlbum(listOf(response))
-
                                     onEvent(ArtistAllUiEvent.EmitToast("${response.name} added to library"))
+
+                                    async { db.insertIntoAlbum(listOf(response)) }.await()
 
                                     api.editAlbum(event.id, true)
                                 }
@@ -297,9 +296,9 @@ class ArtistAllViewModel @Inject constructor(
 
                                         return@launch
                                     }
-                                    db.insertIntoFavourite(list = listOf(responseSong))
-
                                     onEvent(ArtistAllUiEvent.EmitToast("${responseSong.title} added to favourite"))
+
+                                    async { db.insertIntoFavourite(list = listOf(responseSong)) }.await()
                                 }
                             }
 

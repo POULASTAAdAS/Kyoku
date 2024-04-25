@@ -6,6 +6,11 @@ object Constants {
     const val PROFILE_PIC_ROOT_DIR = "F:/songs/profilePic"
     const val ARTIST_IMAGE_ROOT_DIR = "F:/songs/artist/"
 
+    const val PLAYLIST = "F:/songs/"
+
+    const val SONG_128 = "F:/songs/128"
+    const val SONG_320 = "F:/songs/320"
+
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 
     const val BASE_URL = "http://kyoku.poulastaa.online:8081"

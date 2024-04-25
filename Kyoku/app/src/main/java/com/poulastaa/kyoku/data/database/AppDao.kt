@@ -92,12 +92,20 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoArtist(entry: ArtistTable): Long?
 
+    @Query("select artistId as id, coverImage as cover from ArtistTable")
+    suspend fun getAllArtistIdAndCover(): List<UpdateCoverHelper>
+
+    @Query("update ArtistTable set coverImage = :cover where artistId = :artistId")
+    suspend fun updateArtistCover(artistId: Long, cover: String)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoArtistSong(entry: ArtistSongTable): Long?
 
+    @Query("select songId as id , coverImage as cover from ArtistSongTable")
+    suspend fun getAllArtistSongIdAndCover(): List<UpdateCoverHelper>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoArtist(entrys: List<ArtistTable>)
+    @Query("update ArtistSongTable set coverImage = :cover where songId = :songId")
+    suspend fun updateArtistSongCover(songId: Long, cover: String)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoArtistSong(entrys: List<ArtistSongTable>)
@@ -185,6 +193,12 @@ interface AppDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoAlbum(data: AlbumTable): Long?
+
+    @Query("select songId as id , coverImage as cover from AlbumSongTable")
+    suspend fun getAllAlbumIdAndCover(): List<UpdateCoverHelper>
+
+    @Query("update AlbumSongTable set coverImage = :cover where songId = :songId")
+    suspend fun updateAlbumSongCOver(songId: Long, cover: String)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insetIntoAlbumSongTable(data: AlbumSongTable): Long?
@@ -467,11 +481,21 @@ interface AppDao {
     @Query("select id from PlayingQueueTable where songId = :songId")
     suspend fun checkIfAlreadyInPlayingQueue(songId: Long): Long?
 
+    @Query("delete from PlayingQueueTable")
+    suspend fun clearPlayingQueue()
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPlayingQueueTable(entry: PlayingQueueTable)
 
     @Query("select * from PlayingQueueTable")
     fun readAllFromPlayingQueue(): Flow<List<PlayingQueueTable>>
+
+    @Query("select coverImage from RecentlyPlayedPrevTable where songId = :songId")
+    fun getHistorySongCoverOnSongId(songId: Long): String?
+
+    @Query("select coverImage from ArtistSongTable where songId = :songId")
+    fun getArtistSongCoverOnSongId(songId: Long): String?
+
 
     // remove all
     @Query("delete from AlbumTable")

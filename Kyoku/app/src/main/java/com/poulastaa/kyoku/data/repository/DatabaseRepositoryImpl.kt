@@ -28,6 +28,7 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
+import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
@@ -66,12 +67,12 @@ class DatabaseRepositoryImpl @Inject constructor(
         this.header = header
     }
 
-    fun insertIntoPlaylist(
+    suspend fun insertIntoPlaylist(
         data: List<ResponseSong>,
         id: Long,
         playlistName: String
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             val playlistId = async {
                 dao.insertPlaylist(
                     playlist = PlaylistTable(
@@ -82,25 +83,37 @@ class DatabaseRepositoryImpl @Inject constructor(
             }.await()
 
             async {
-                dao.insertIntoPlaylistSongTable(
-                    entrys = data.map {
-                        it.toPlaylistSongTable()
+                data.map {
+                    it.toPlaylistSongTable()
+                }.map {
+                    async {
+                        it to loadDrawable(it.coverImage)
                     }
-                )
+                }.awaitAll().map {
+                    try {
+                        it.first to encodeCover(it.second)
+                    } catch (_: Exception) {
+                        it.first to it.first.coverImage
+                    }
+                }.map {
+                    it.first.copy(
+                        coverImage = it.second
+                    )
+                }.let {
+                    dao.insertIntoPlaylistSongTable(entrys = it)
+                }
             }.await()
 
-            async {
-                dao.insertIntoSongPlaylistRelation(
-                    entrys = data.map {
-                        it.id
-                    }.map {
-                        SongPlaylistRelationTable(
-                            playlistId = playlistId,
-                            songId = it
-                        )
-                    }
-                )
-            }.await()
+            dao.insertIntoSongPlaylistRelation(
+                entrys = data.map {
+                    it.id
+                }.map {
+                    SongPlaylistRelationTable(
+                        playlistId = playlistId,
+                        songId = it
+                    )
+                }
+            )
         }
     }
 
@@ -157,7 +170,11 @@ class DatabaseRepositoryImpl @Inject constructor(
                     it to loadDrawable(it.coverImage)
                 }
             }.awaitAll().map {
-                it.first to encodeCover(it.second)
+                try {
+                    it.first to encodeCover(it.second)
+                } catch (_: Exception) {
+                    it.first to it.first.coverImage
+                }
             }.map {
                 it.first.copy(
                     coverImage = it.second
@@ -168,28 +185,67 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            list.forEach { entry ->
-                dao.insertIntoArtist(
-                    entry = entry.artist.toArtistTableEntry()
-                )?.let { artistId ->
-                    if (artistId != -1L) // bal r bug
-                        entry.listOfSongs.forEach { song ->
-                            val songId = async {
-                                dao.insertIntoArtistSong(entry = song.toArtistSongEntry())
-                            }.await()
+    suspend fun insertResponseArtistPrev(list: List<ResponseArtistsPreview>) {
+        withContext(Dispatchers.IO) {
+            async {
+                list.forEach { entry ->
+                    dao.insertIntoArtist(
+                        entry = entry.artist.toArtistTableEntry()
+                    )?.let { artistId ->
+                        if (artistId != -1L) // bal r bug
+                            entry.listOfSongs.forEach { song ->
+                                val songId = async {
+                                    dao.insertIntoArtistSong(entry = song.toArtistSongEntry())
+                                }.await()
 
-                            songId?.let {
-                                dao.insertIntoArtistPrevSongRelationTable(
-                                    data = ArtistPreviewSongRelation(
-                                        artistId = artistId,
-                                        songId = songId
+                                songId?.let {
+                                    dao.insertIntoArtistPrevSongRelationTable(
+                                        data = ArtistPreviewSongRelation(
+                                            artistId = artistId,
+                                            songId = songId
+                                        )
                                     )
-                                )
+                                }
                             }
-                        }
+                    }
                 }
+            }.await()
+
+            if (header != null && context != null) {
+                val artist = async {
+                    dao.getAllArtistIdAndCover().map {
+                        async {
+                            it.id to loadDrawable(it.cover)
+                        }
+                    }.awaitAll().mapNotNull {
+                        try {
+                            it.first to encodeCover(it.second)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }.forEach {
+                        dao.updateArtistCover(it.first, it.second)
+                    }
+                }
+
+                val song = async {
+                    dao.getAllArtistSongIdAndCover().map {
+                        async {
+                            it.id to loadDrawable(it.cover)
+                        }
+                    }.awaitAll().mapNotNull {
+                        try {
+                            it.first to encodeCover(it.second)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }.forEach {
+                        dao.updateArtistSongCover(it.first, it.second)
+                    }
+                }
+
+                artist.await()
+                song.await()
             }
         }
     }
@@ -252,21 +308,39 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun readFavouritePrev() = dao.readFavouritePrev()
 
 
-    fun insertIntoPlaylist(list: List<ResponsePlaylist>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            list.forEach {
-                insertIntoPlaylist(
-                    data = it.listOfSongs,
-                    id = it.id,
-                    playlistName = it.name
-                )
-            }
+    suspend fun insertIntoPlaylist(list: List<ResponsePlaylist>) {
+        withContext(Dispatchers.IO) {
+            list.map {
+                async {
+                    insertIntoPlaylist(
+                        data = it.listOfSongs,
+                        id = it.id,
+                        playlistName = it.name
+                    )
+                }
+            }.awaitAll()
         }
     }
 
-    fun insertIntoFavourite(list: List<ResponseSong>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dao.insertIntoFavourite(entrys = list.toFavouriteTableEntryList())
+    suspend fun insertIntoFavourite(list: List<ResponseSong>) {
+        withContext(Dispatchers.IO) {
+            list.toFavouriteTableEntryList().map {
+                async {
+                    it to loadDrawable(it.coverImage)
+                }
+            }.awaitAll().map {
+                try {
+                    it.first to encodeCover(it.second)
+                } catch (_: Exception) {
+                    it.first to it.first.coverImage
+                }
+            }.map {
+                it.first.copy(
+                    coverImage = it.second
+                )
+            }.let {
+                dao.insertIntoFavourite(it)
+            }
         }
     }
 
@@ -279,40 +353,76 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun insertIntoAlbum(list: List<ResponseAlbum>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            list.forEach { album ->
-                dao.insertIntoAlbum(
-                    data = AlbumTable(
-                        albumId = album.id,
-                        name = album.name
-                    )
-                )?.let { albumId ->
-                    if (albumId != -1L)
-                        album.listOfSongs.forEach { song ->
-                            dao.insetIntoAlbumSongTable(
-                                data = song.toAlbumTableEntry()
-                            )?.let { songId ->
-                                if (songId != -1L)
-                                    dao.insertIntoSongAlbumRelationTable(
-                                        data = SongAlbumRelationTable(
-                                            songId = songId,
-                                            albumId = albumId
+    suspend fun insertIntoAlbum(list: List<ResponseAlbum>) {
+        withContext(Dispatchers.IO) {
+            async {
+                list.forEach { album ->
+                    dao.insertIntoAlbum(
+                        data = AlbumTable(
+                            albumId = album.id,
+                            name = album.name
+                        )
+                    )?.let { albumId ->
+                        if (albumId != -1L)
+                            album.listOfSongs.forEach { song ->
+                                dao.insetIntoAlbumSongTable(
+                                    data = song.toAlbumTableEntry()
+                                )?.let { songId ->
+                                    if (songId != -1L)
+                                        dao.insertIntoSongAlbumRelationTable(
+                                            data = SongAlbumRelationTable(
+                                                songId = songId,
+                                                albumId = albumId
+                                            )
                                         )
-                                    )
+                                }
                             }
-                        }
+                    }
                 }
+            }.await()
+
+            if (context != null && header != null) {
+                async {
+                    dao.getAllAlbumIdAndCover().map {
+                        async {
+                            it.id to loadDrawable(it.cover)
+                        }
+                    }.awaitAll().mapNotNull {
+                        try {
+                            it.first to encodeCover(it.second)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }.forEach {
+                        dao.updateAlbumSongCOver(it.first, it.second)
+                    }
+                }.await()
             }
         }
     }
 
 
-    fun insertIntoRecentlyPlayedPrev(list: List<SongPreview>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            dao.insertIntoRecentlyPlayedPrevTable(
-                entrys = list.toHistoryPrevSongEntry()
-            )
+    suspend fun insertIntoRecentlyPlayedPrev(list: List<SongPreview>) {
+        withContext(Dispatchers.IO) {
+            async {
+                list.toHistoryPrevSongEntry().map {
+                    async { it to loadDrawable(it.coverImage) }
+                }.awaitAll().map {
+                    try {
+                        it.first to encodeCover(it.second)
+                    } catch (_: Exception) {
+                        it.first to it.first.coverImage
+                    }
+                }.map {
+                    it.first.copy(
+                        coverImage = it.second
+                    )
+                }.let {
+                    dao.insertIntoRecentlyPlayedPrevTable(
+                        entrys = it
+                    )
+                }
+            }.await()
         }
     }
 
@@ -581,7 +691,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun isPlaylistNameDuplicate(name: String) =
         dao.playlistNameDuplicityCheck(name).isNotEmpty()
 
-    fun insertIntoPlaylist(response: ResponsePlaylist) {
+    suspend fun insertIntoPlaylist(response: ResponsePlaylist) {
         insertIntoPlaylist(
             data = response.listOfSongs,
             id = response.id,
@@ -674,15 +784,84 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun checkIfAlreadyInPlayingQueue(songId: Long) =
         dao.checkIfAlreadyInPlayingQueue(songId)
 
-    suspend fun insertIntoPlayingQueueTable(song: ResponseSong) {
+
+    suspend fun insertIntoPlayingQueueTable(song: ResponseSong, songType: SongType) {
         val songId = checkIfAlreadyInPlayingQueue(song.id)
 
         if (songId != null) return
 
-        dao.insertIntoPlayingQueueTable(entry = song.toPlayingQueueTable())
+        when (songType) {
+            SongType.HISTORY_SONG -> {
+                withContext(Dispatchers.IO) {
+                    val clear = async { dao.clearPlayingQueue() }
+                    val coverDef = async { dao.getHistorySongCoverOnSongId(song.id) }
+
+                    clear.await()
+                    val cover = coverDef.await()
+
+                    dao.insertIntoPlayingQueueTable(
+                        entry = if (cover != null) song.toPlayingQueueTable().copy(
+                            coverImage = cover
+                        )
+                        else song.toPlayingQueueTable().let {
+                            async {
+                                it to loadDrawable(it.coverImage)
+                            }.await()
+                        }.let {
+                            try {
+                                it.first to encodeCover(it.second)
+                            } catch (_: Exception) {
+                                it.first to it.first.coverImage
+                            }
+                        }.let {
+                            it.first.copy(
+                                coverImage = it.second
+                            )
+                        }
+                    )
+                }
+            }
+
+            SongType.ARTIST_SONG -> {
+                withContext(Dispatchers.IO) {
+                    val clear = async { dao.clearPlayingQueue() }
+                    val coverDef = async { dao.getArtistSongCoverOnSongId(song.id) }
+
+                    clear.await()
+                    val cover = coverDef.await()
+
+                    dao.insertIntoPlayingQueueTable(
+                        entry = if (cover != null) song.toPlayingQueueTable().copy(
+                            coverImage = cover
+                        )
+                        else song.toPlayingQueueTable().let {
+                            async {
+                                it to loadDrawable(it.coverImage)
+                            }.await()
+                        }.let {
+                            try {
+                                it.first to encodeCover(it.second)
+                            } catch (_: Exception) {
+                                it.first to it.first.coverImage
+                            }
+                        }.let {
+                            it.first.copy(
+                                coverImage = it.second
+                            )
+                        }
+                    )
+                }
+            }
+
+            else -> return
+        }
+
+
     }
 
     fun readAllFromPlayingQueue() = dao.readAllFromPlayingQueue()
+
+    suspend fun clearPlayingQueue() = dao.clearPlayingQueue()
 
     suspend fun hideSong(songId: Long, name: String) = withContext(Dispatchers.IO) {
         val artistIdDef = async { dao.getIdOfArtist(name) }
@@ -770,3 +949,4 @@ class DatabaseRepositoryImpl @Inject constructor(
     private fun encodeCover(drawable: Drawable?) =
         BitmapConverter.encodeToSting((drawable as BitmapDrawable).bitmap)
 }
+

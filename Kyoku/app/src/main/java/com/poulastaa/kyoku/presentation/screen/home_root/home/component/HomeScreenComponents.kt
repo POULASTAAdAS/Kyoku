@@ -522,7 +522,7 @@ fun CustomImageView(
     context: Context = LocalContext.current,
     contentScale: ContentScale = ContentScale.Crop
 ) {
-    BitmapConverter.decodeToBitmap(url).let {
+    BitmapConverter.decodeToImageBitmap(url).let {
         if (it == null)
             AsyncImage(
                 modifier = modifier,

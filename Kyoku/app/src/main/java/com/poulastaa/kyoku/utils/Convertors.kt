@@ -36,8 +36,8 @@ import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
+import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
-import com.poulastaa.kyoku.presentation.screen.home_root.PlayerSong
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -329,6 +329,6 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
         artist = it.artist.split(","),
         album = it.album,
         year = it.year,
-        totalTime = it.totalTime
+        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000))
     )
 }

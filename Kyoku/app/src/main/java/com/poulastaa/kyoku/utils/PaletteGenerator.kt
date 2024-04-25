@@ -10,6 +10,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.poulastaa.kyoku.R
 
+
 object PaletteGenerator {
     suspend fun convertImageUrlToBitMap(
         isDarkThem: Boolean,
@@ -38,25 +39,40 @@ object PaletteGenerator {
         }
     }
 
-    fun extractColorFromBitMap(bitmap: Bitmap): Map<String, String> {
+    fun extractColorFromBitMap(bitmap: Bitmap): Map<ColorType, String> {
         return mapOf(
-            "vibrant" to parseColorSwatch(
+            ColorType.VIBRANT to parseColorSwatch(
                 color = Palette.from(bitmap).generate().vibrantSwatch
             ),
-            "darkVibrant" to parseColorSwatch(
+            ColorType.DARK_VIBRANT to parseColorSwatch(
                 color = Palette.from(bitmap).generate().darkVibrantSwatch
             ),
-            "onDarkVibrant" to parseBodyColor(
+            ColorType.ON_DARK_VIBRANT to parseBodyColor(
                 color = Palette.from(bitmap).generate().darkVibrantSwatch?.bodyTextColor
+            ),
+            ColorType.LIGHT_VIBRANT to parseColorSwatch(
+                color = Palette.from(bitmap).generate().lightVibrantSwatch
+            ),
+            ColorType.DOMAIN_SWATCH to parseColorSwatch(
+                color = Palette.from(bitmap).generate().dominantSwatch
+            ),
+            ColorType.MUTED_SWATCH to parseColorSwatch(
+                color = Palette.from(bitmap).generate().mutedSwatch
+            ),
+            ColorType.LIGHT_MUTED to parseColorSwatch(
+                color = Palette.from(bitmap).generate().lightMutedSwatch
+            ),
+            ColorType.DARK_MUTED to parseColorSwatch(
+                color = Palette.from(bitmap).generate().darkMutedSwatch
             )
         )
     }
 
     private fun parseColorSwatch(color: Palette.Swatch?): String = if (color != null) {
-        "$${Integer.toHexString(color.rgb)}"
+        "#${Integer.toHexString(color.rgb)}"
     } else "#000000"
 
     private fun parseBodyColor(color: Int?): String = if (color != null) {
-        "$${Integer.toHexString(color)}"
+        "#${Integer.toHexString(color)}"
     } else "#FFFFFF"
 }

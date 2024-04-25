@@ -233,7 +233,11 @@ class CreatePlaylistViewModel @Inject constructor(
             return
         }
 
-        db.insertIntoPlaylist(response = playlist)
+        withContext(Dispatchers.IO) {
+            async {
+                db.insertIntoPlaylist(response = playlist)
+            }.await()
+        }
 
         onEvent(CreatePlaylistUiEvent.EmitToast("${state.text} saved"))
 
@@ -262,7 +266,9 @@ class CreatePlaylistViewModel @Inject constructor(
                 return@launch
             }
 
-            db.insertIntoPlaylist(response = playlist)
+            withContext(Dispatchers.IO) {
+                async { db.insertIntoPlaylist(response = playlist) }.await()
+            }
 
             onEvent(CreatePlaylistUiEvent.EmitToast("${playlist.name} saved"))
 

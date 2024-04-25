@@ -10,7 +10,6 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -84,19 +83,29 @@ suspend fun storeData(
         val artistMixDef =
             async { db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview) }
 
+        val albumPrevDef =
+            async { db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum) }
 
-        db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
-        db.insertResponseArtistPrev(list = response.artistsPreview)
+        val artist = async { db.insertResponseArtistPrev(list = response.artistsPreview) }
+
         db.insertDailyMixPrev(data = response.dailyMixPreview)
 
-        db.insertIntoPlaylist(list = response.playlist)
-        db.insertIntoFavourite(list = response.favourites.listOfSongs)
-        db.insertIntoAlbum(list = response.albums)
-        db.insertIntoRecentlyPlayedPrev(list = response.historyPreview)
+        val playlist = async { db.insertIntoPlaylist(list = response.playlist) }
+
+        val fav = async { db.insertIntoFavourite(list = response.favourites.listOfSongs) }
+
+        val album = async { db.insertIntoAlbum(list = response.albums) }
+
+        val history = async { db.insertIntoRecentlyPlayedPrev(list = response.historyPreview) }
 
         artistMixDef.await()
+        albumPrevDef.await()
+        artist.await()
+        fav.await()
+        album.await()
+        history.await()
+        playlist.await()
 
-        delay(2000)
         db.insertIntoPinned(list = response.pinned)
     }
 }

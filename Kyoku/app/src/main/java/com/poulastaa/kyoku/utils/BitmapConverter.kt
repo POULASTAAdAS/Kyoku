@@ -15,7 +15,17 @@ object BitmapConverter {
         return android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
     }
 
-    fun decodeToBitmap(encodedString: String): ImageBitmap? {
+    fun decodeToBitmap(encodedString: String): Bitmap? {
+        return try {
+            val encodedBytes =
+                android.util.Base64.decode(encodedString, android.util.Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(encodedBytes, 0, encodedBytes.size)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun decodeToImageBitmap(encodedString: String): ImageBitmap? {
         return try {
             val encodedBytes =
                 android.util.Base64.decode(encodedString, android.util.Base64.DEFAULT)

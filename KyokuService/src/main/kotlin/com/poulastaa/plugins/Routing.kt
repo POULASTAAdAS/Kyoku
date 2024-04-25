@@ -57,6 +57,8 @@ fun Application.configureRouting() {
 
         getSongOnId(service)
         getMasterPlaylist(service)
+        get_128_Or_320_Playlist(service)
+        getSongSegment(service)
 
         unauthorized()
 

@@ -23,7 +23,9 @@ sealed class HomeRootUiEvent {
         val isPlay: Boolean = false
     ) : HomeRootUiEvent()
 
-    data class Update(val screens: Screens) : HomeRootUiEvent()
+    data object SmallPlayerClick : HomeRootUiEvent()
+    data object CancelPlay : HomeRootUiEvent()
+    data class UpdateNav(val screens: Screens) : HomeRootUiEvent()
 
     data class BottomNavClick(val bottomNav: HomeScreenBottomNavigation) : HomeRootUiEvent()
     data object LogOut : HomeRootUiEvent()

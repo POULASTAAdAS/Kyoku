@@ -22,6 +22,7 @@ import com.poulastaa.kyoku.utils.toSpotifyPlaylistId
 import com.poulastaa.kyoku.utils.validateSpotifyLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -188,14 +189,16 @@ class SpotifyPlaylistViewModel @Inject constructor(
 
             when (response.status) {
                 HandleSpotifyPlaylistStatus.SUCCESS -> {
+                    async {
+                        db.insertIntoPlaylist(
+                            data = response.listOfResponseSong,
+                            id = response.id,
+                            playlistName = response.name
+                        )
+                    }.await()
+
                     state = GetSpotifyPlaylistUiState(
                         isFirstPlaylist = false
-                    )
-
-                    db.insertIntoPlaylist(
-                        data = response.listOfResponseSong,
-                        id = response.id,
-                        playlistName = response.name
                     )
 
                     onEvent(GetSpotifyPlaylistUiEvent.EmitToast("${response.name} added"))

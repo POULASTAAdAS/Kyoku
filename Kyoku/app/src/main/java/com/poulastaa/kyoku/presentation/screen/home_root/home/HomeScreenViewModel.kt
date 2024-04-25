@@ -48,27 +48,34 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
     private val network = mutableStateOf(NetworkObserver.STATUS.UNAVAILABLE)
 
-    init {
-        viewModelScope.launch {
-            connectivity.observe().collect {
-                network.value = it
-                state = state.copy(
-                    isInternetAvailable = it == NetworkObserver.STATUS.AVAILABLE,
-                    isInternetError = false
-                )
-                if (!state.isInternetAvailable)
-                    state = state.copy(
-                        isInternetError = true
-                    )
-            }
-        }
-    }
-
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     var state by mutableStateOf(HomeUiState())
         private set
+
+    init {
+        viewModelScope.launch {
+            try {
+                connectivity.observe().collect {
+                    network.value = it
+                    state = state.copy(
+                        isInternetAvailable = it == NetworkObserver.STATUS.AVAILABLE,
+                        isInternetError = false
+                    )
+                    if (!state.isInternetAvailable)
+                        state = state.copy(
+                            isInternetError = true
+                        )
+                }
+            } catch (_: Exception) {
+                state = state.copy(
+                    isInternetAvailable = true,
+                    isInternetError = false
+                )
+            }
+        }
+    }
 
     private var artistName: String? = null
 
@@ -103,14 +110,20 @@ class HomeScreenViewModel @Inject constructor(
                     HomeResponseStatus.SUCCESS -> {
                         val artistMixDef =
                             async { db.insertIntoFevArtistMixPrev(list = response.fevArtistsMixPreview) }
-                        db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum)
-                        db.insertResponseArtistPrev(list = response.artistsPreview)
+                        val albumPrevDef =
+                            async { db.insertIntoAlbumPrev(list = response.albumPreview.listOfPreviewAlbum) }
+
+                        val artist =
+                            async { db.insertResponseArtistPrev(list = response.artistsPreview) }
+
+
                         db.insertDailyMixPrev(response.dailyMixPreview)
 
                         artistMixDef.await()
+                        albumPrevDef.await()
+                        artist.await()
 
                         // load from db
-                        delay(3000)
                         loadFromDb()
                     }
 
@@ -531,9 +544,9 @@ class HomeScreenViewModel @Inject constructor(
 
                                 return@launch
                             }
-                            db.insertIntoFavourite(list = listOf(responseSong))
-
                             onEvent(HomeUiEvent.EmitToast("${responseSong.title} added to favourite"))
+
+                            async { db.insertIntoFavourite(list = listOf(responseSong)) }.await()
                         }
                     }
 
@@ -613,9 +626,10 @@ class HomeScreenViewModel @Inject constructor(
                                 return@launch
                             }
 
-                            db.insertIntoAlbum(listOf(response))
 
                             onEvent(HomeUiEvent.EmitToast("${response.name} added to library"))
+
+                            async { db.insertIntoAlbum(listOf(response)) }.await()
 
                             api.editAlbum(event.id, true)
                         }
