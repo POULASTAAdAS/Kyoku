@@ -22,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.kyoku.data.model.home_nav_drawer.NavDrawerUserInfo
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.navigation.navigateWithData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeContainer

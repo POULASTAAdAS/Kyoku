@@ -49,7 +49,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.ArtistAllUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.BottomSheetData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType

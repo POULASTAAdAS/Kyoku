@@ -17,13 +17,13 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.model.screens.player.DragAnchors
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
@@ -233,113 +233,8 @@ class HomeRootViewModel @Inject constructor(
             }
 
             is HomeRootUiEvent.NavigateWithData -> {
-                if (event.route == Screens.Player.route) {
-                    state = state.copy(
-                        player = state.player.copy(
-                            isSmallPlayer = true,
-                            isLoading = true
-                        )
-                    )
-
-                    when (event.songType) {
-                        SongType.HISTORY_SONG -> {
-                            viewModelScope.launch(Dispatchers.IO) {
-                                if (db.checkIfAlreadyInPlayingQueue(event.id) == null) {
-                                    val song = api.getSongOnId(event.id)
-
-                                    if (song.id == -1L) {
-                                        onEvent(HomeRootUiEvent.SomethingWentWrong)
-
-                                        state = state.copy(
-                                            player = state.player.copy(
-                                                isSmallPlayer = false,
-                                                isLoading = false
-                                            )
-                                        )
-
-                                        return@launch
-                                    }
-                                    async {
-                                        db.insertIntoPlayingQueueTable(
-                                            song,
-                                            event.songType
-                                        )
-                                    }.await()
-
-                                    val list = db.readAllFromPlayingQueue().first().toPlayerData()
-
-                                    val image =
-                                        BitmapConverter.decodeToBitmap(list[0].url)
-
-                                    if (image != null) {
-                                        val colors = PaletteGenerator.extractColorFromBitMap(image)
-
-                                        val variant =
-                                            Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
-                                        val darkVariant =
-                                            Color(parseColor(colors[ColorType.DARK_VIBRANT]))
-
-                                        if (variant != darkVariant)
-                                            state = state.copy(
-                                                player = state.player.copy(
-                                                    colors = listOf(
-                                                        variant,
-                                                        darkVariant,
-                                                    )
-                                                )
-                                            )
-                                    }
-
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        player.onEvent(PlayerUiEvent.Stop)
-                                        list[0].setMediaItem(song.coverImage)
-                                        player.onEvent(PlayerUiEvent.PlayPause)
-                                    }
-
-                                    state = state.copy(
-                                        player = state.player.copy(
-                                            allSong = list,
-                                            playingSong = list[0]
-                                        )
-                                    )
-                                } else {
-                                    viewModelScope.launch(Dispatchers.Main) {
-                                        player.onEvent(PlayerUiEvent.SeekTo(0))
-                                    }
-                                }
-                            }
-                        }
-
-                        SongType.ARTIST_SONG -> {
-
-                        }
-
-                        SongType.ALBUM_SONG -> {
-                            viewModelScope.launch(Dispatchers.IO) {
-
-                            }
-                        }
-
-                        SongType.PLAYLIST_SONG -> {
-                            viewModelScope.launch(Dispatchers.IO) {
-
-                            }
-                        }
-
-                        SongType.API_CALL -> {
-                            viewModelScope.launch(Dispatchers.IO) {
-
-                            }
-                        }
-                    }/*.let {
-                        state = state.copy(
-                            player = state.player.copy(
-                                isLoading = false
-                            )
-                        )
-                    }*/
-
-                } else viewModelScope.launch(Dispatchers.IO) {
+                if (event.route == Screens.Player.route) return
+                else viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(
                         UiEvent.NavigateWithData(
                             route = event.route,
@@ -354,6 +249,11 @@ class HomeRootViewModel @Inject constructor(
             }
 
             is HomeRootUiEvent.Play -> {
+                db.setValues(
+                    context = event.context,
+                    header = state.headerValue
+                )
+
                 state = state.copy(
                     player = state.player.copy(
                         isSmallPlayer = true,
@@ -362,7 +262,7 @@ class HomeRootViewModel @Inject constructor(
                 )
 
                 when (event.playType) {
-                    HomeRootUiEvent.Play.PlayType.HISTORY_SONG -> {
+                    UiEvent.PlayType.HISTORY_SONG -> {
                         viewModelScope.launch(Dispatchers.IO) {
                             if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
                                 val song = api.getSongOnId(event.songId)
@@ -430,7 +330,7 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
 
-                    HomeRootUiEvent.Play.PlayType.ARTIST_SONG -> {
+                    UiEvent.PlayType.ARTIST_SONG -> {
                         viewModelScope.launch(Dispatchers.IO) {
                             if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
                                 val song = api.getSongOnId(event.songId)
@@ -499,31 +399,45 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
 
-                    HomeRootUiEvent.Play.PlayType.PLAYLIST -> {
+                    UiEvent.PlayType.PLAYLIST -> {
+                        viewModelScope.launch {
+                            Log.d("PLAYLIST clicked", event.toString())
+                        }
+                    }
+
+                    UiEvent.PlayType.PLAYLIST_SONG -> {
+                        viewModelScope.launch {
+                            Log.d("PLAYLIST_SONG clicked", event.toString())
+                        }
+                    }
+
+                    UiEvent.PlayType.ALBUM -> {
+                        viewModelScope.launch {
+                            Log.d("ALBUM clicked", event.toString())
+                        }
+                    }
+
+                    UiEvent.PlayType.ALBUM_SONG -> {
+                        viewModelScope.launch {
+                            Log.d("ALBUM_SONG clicked", event.toString())
+                        }
+                    }
+
+
+
+                    UiEvent.PlayType.ALBUM_PREV -> {
                         viewModelScope.launch {
 
                         }
                     }
 
-                    HomeRootUiEvent.Play.PlayType.ALBUM -> {
+                    UiEvent.PlayType.ALBUM_PREV_SONG -> {
                         viewModelScope.launch {
 
                         }
                     }
 
-                    HomeRootUiEvent.Play.PlayType.ALBUM_PREV -> {
-                        viewModelScope.launch {
-
-                        }
-                    }
-
-                    HomeRootUiEvent.Play.PlayType.ALBUM_SONG -> {
-                        viewModelScope.launch {
-
-                        }
-                    }
-
-                    HomeRootUiEvent.Play.PlayType.PLAYLIST_SONG -> {
+                    UiEvent.PlayType.ARTIST_MORE_SONG -> {
                         viewModelScope.launch {
 
                         }

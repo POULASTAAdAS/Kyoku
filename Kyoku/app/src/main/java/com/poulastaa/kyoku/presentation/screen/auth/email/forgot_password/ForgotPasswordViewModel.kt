@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.email.SendForgotPasswordMailStatus
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.email.forgot_password.ForgotPasswordState
 import com.poulastaa.kyoku.data.model.screens.auth.email.forgot_password.ForgotPasswordUiEvent
 import com.poulastaa.kyoku.domain.repository.AuthRepository
@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(

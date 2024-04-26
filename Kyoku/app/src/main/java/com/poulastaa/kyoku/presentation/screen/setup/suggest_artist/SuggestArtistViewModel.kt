@@ -10,7 +10,7 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.ArtistResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.SuggestArtistReq
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_artist.SuggestArtistUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_artist.SuggestArtistUiState
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation

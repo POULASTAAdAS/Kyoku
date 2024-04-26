@@ -17,7 +17,7 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.CreatePasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.GetPasskeyUserReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthResponse
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootUiEvent
 import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl

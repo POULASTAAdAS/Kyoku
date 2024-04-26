@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_artist.SuggestArtistUiEvent
 import com.poulastaa.kyoku.presentation.screen.setup.suggest_artist.components.SuggestArtistTopBar
 import com.poulastaa.kyoku.ui.theme.dimens

@@ -9,7 +9,7 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.GenreResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.suggest_genre.SuggestGenreUiState
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation

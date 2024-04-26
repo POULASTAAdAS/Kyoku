@@ -350,6 +350,9 @@ interface AppDao {
     )
     fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
 
+    @Query("select playlistId from PlaylistTable where name = :name")
+    suspend fun getPlaylistId(name:String): Long?
+
 
     @Query("select name from AlbumTable where albumId = :id")
     suspend fun getAlbumName(id: Long): String

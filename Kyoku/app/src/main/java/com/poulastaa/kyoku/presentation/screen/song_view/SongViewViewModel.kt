@@ -1,16 +1,17 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
@@ -369,6 +370,59 @@ class SongViewViewModel @Inject constructor(
 
             SongViewUiEvent.SomethingWentWrong -> {
                 onEvent(SongViewUiEvent.EmitToast("Opp's something went wrong"))
+            }
+
+            is SongViewUiEvent.PlayControlClick -> {
+                when (event) {
+                    is SongViewUiEvent.PlayControlClick.DownloadClick -> {
+                        // todo add logic to download
+                        Log.d("download clicked", event.toString())
+                    }
+
+                    is SongViewUiEvent.PlayControlClick.PlayClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val playlistId = db.getPlaylistId(event.name)
+
+                            if (playlistId == null) {
+                                onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+
+                            _uiEvent.send(
+                                UiEvent.Play(
+                                    otherId = playlistId,
+                                    playType = event.type
+                                )
+                            )
+                        }
+                    }
+
+                    is SongViewUiEvent.PlayControlClick.ShuffleClick -> {
+                        // todo add logic to shuffle
+                        Log.d("ShuffleClick clicked", event.toString())
+                    }
+
+                    is SongViewUiEvent.PlayControlClick.SongPlayClick -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val playlistId = db.getPlaylistId(event.name)
+
+                            if (playlistId == null) {
+                                onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                return@launch
+                            }
+
+                            _uiEvent.send(
+                                UiEvent.Play(
+                                    otherId = playlistId,
+                                    songId = event.songId,
+                                    playType = event.type
+                                )
+                            )
+                        }
+                    }
+                }
             }
 
             is SongViewUiEvent.ItemClick -> {

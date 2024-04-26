@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
@@ -30,6 +32,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.playControl
 import com.poulastaa.kyoku.presentation.screen.song_view.common.poster
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants.PLAYER_PADDING
 
 @Composable
 fun PlaylistScreen(
@@ -39,6 +42,7 @@ fun PlaylistScreen(
     headerValue: String,
     poster: String,
     isSmallPhone: Boolean,
+    playControl: (SongViewUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     Scaffold { paddingValues ->
@@ -51,7 +55,7 @@ fun PlaylistScreen(
                     bottom = paddingValues.calculateBottomPadding()
                 ),
             contentPadding = PaddingValues(
-                bottom = MaterialTheme.dimens.medium1
+                bottom = MaterialTheme.dimens.medium1 + PLAYER_PADDING
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -85,13 +89,28 @@ fun PlaylistScreen(
             playControl(
                 isDownloading = false, // todo
                 onDownloadClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.DownloadClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.PLAYLIST
+                        )
+                    )
                 },
                 onShuffleClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.ShuffleClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.PLAYLIST
+                        )
+                    )
                 },
                 onPlayClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.PlayClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.PLAYLIST
+                        )
+                    )
                 }
             )
 
@@ -105,8 +124,14 @@ fun PlaylistScreen(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 data = data.listOfSong,
-                onSongClick = { id, name ->
-
+                onSongClick = { id ->
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.SongPlayClick(
+                            name = data.name,
+                            songId = id,
+                            type = UiEvent.PlayType.PLAYLIST_SONG
+                        )
+                    )
                 }
             )
         }
@@ -118,7 +143,7 @@ private fun LazyListScope.playlistSongs(
     isCookie: Boolean,
     headerValue: String,
     data: List<UiPlaylistSong>,
-    onSongClick: (id: Long, name: String) -> Unit
+    onSongClick: (id: Long) -> Unit
 ) {
     items(data.size) {
         SongCard(
@@ -127,7 +152,9 @@ private fun LazyListScope.playlistSongs(
                 .height(70.dp)
                 .padding(start = MaterialTheme.dimens.small3)
                 .clip(MaterialTheme.shapes.extraSmall)
-                .clickable { },
+                .clickable {
+                    onSongClick.invoke(data[it].songId)
+                },
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,
@@ -142,7 +169,6 @@ private fun LazyListScope.playlistSongs(
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
-@Preview
 @Composable
 private fun Preview() {
     val list = ArrayList<UiPlaylistSong>()
@@ -171,7 +197,8 @@ private fun Preview() {
             isCookie = false,
             headerValue = "",
             poster = "",
-            navigateBack = {}
+            navigateBack = {},
+            playControl = {}
         )
     }
 }

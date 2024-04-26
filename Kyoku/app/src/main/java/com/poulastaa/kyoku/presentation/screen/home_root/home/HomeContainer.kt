@@ -54,10 +54,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.navigation.navigate
 import com.poulastaa.kyoku.navigation.navigateWithData
@@ -94,12 +94,14 @@ fun HomeContainer(
     context: Context = LocalContext.current,
     state: HomeRootUiState,
     scope: CoroutineScope,
-    playControl: (HomeRootUiEvent) -> Unit,
     opnDrawer: () -> Unit,
+    playControl: (HomeRootUiEvent) -> Unit,
     navigateWithUiEvent: (HomeRootUiEvent) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+        modifier = Modifier
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+            .padding(bottom = MaterialTheme.dimens.small2),
         topBar = {
             when (state.nav) {
                 Nav.HOME -> HomeTopAppBar(
@@ -187,9 +189,10 @@ fun HomeContainer(
                                     )
                                 }
 
-                                is  UiEvent.Play -> {
+                                is UiEvent.Play -> {
                                     navigateWithUiEvent.invoke(
                                         HomeRootUiEvent.Play(
+                                            context = context,
                                             songId = event.songId,
                                             otherId = event.otherId,
                                             playType = event.playType
@@ -222,7 +225,6 @@ fun HomeContainer(
                         Text(text = "Search")
                     }
                 }
-
                 composable(Screens.Profile.route) {
                     LaunchedEffect(key1 = Unit) {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.UpdateNav(Screens.Profile))
@@ -236,8 +238,6 @@ fun HomeContainer(
                         Text(text = "Profile")
                     }
                 }
-
-
                 composable(Screens.Settings.route) {
                     LaunchedEffect(key1 = Unit) {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.UpdateNav(Screens.Settings))
@@ -251,7 +251,6 @@ fun HomeContainer(
                         Text(text = "Settings")
                     }
                 }
-
                 composable(Screens.History.route) {
                     LaunchedEffect(key1 = Unit) {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.UpdateNav(Screens.History))
@@ -307,10 +306,21 @@ fun HomeContainer(
                             navController.popBackStack()
                             viewModel.removeDbEntrys()
                         },
-                        navigate = {
-                            when (it) {
-                                is UiEvent.Navigate -> navController.navigate(it)
-                                is UiEvent.NavigateWithData -> navController.navigateWithData(it)
+                        navigate = { event ->
+                            when (event) {
+                                is UiEvent.Navigate -> navController.navigate(event)
+                                is UiEvent.NavigateWithData -> navController.navigateWithData(event)
+                                is UiEvent.Play -> {
+                                    navigateWithUiEvent.invoke(
+                                        HomeRootUiEvent.Play(
+                                            context = context,
+                                            songId = event.songId,
+                                            otherId = event.otherId,
+                                            playType = event.playType
+                                        )
+                                    )
+                                }
+
                                 else -> Unit
                             }
                         }
@@ -641,7 +651,6 @@ fun HomeContainer(
                                     MaterialTheme.colorScheme.background,
                                 )
                             },
-                            isLoading = state.player.isLoading,
                             isPlaying = state.player.isPlaying,
                             durationUpdate = state.player.progress,
                             playingData = state.player.playingSong,

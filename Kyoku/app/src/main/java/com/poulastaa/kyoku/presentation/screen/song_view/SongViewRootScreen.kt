@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.presentation.screen.song_view.album.AlbumScreen
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.ArtistScreen
@@ -45,8 +45,14 @@ fun SongViewRootScreen(
                 is UiEvent.Navigate -> navigate.invoke(event)
                 is UiEvent.NavigateWithData -> navigate.invoke(event)
 
-                is  UiEvent.Play ->{
-                    // todo
+                is UiEvent.Play -> {
+                    navigate.invoke(
+                        UiEvent.Play(
+                            songId = event.songId,
+                            otherId = event.otherId,
+                            playType = event.playType
+                        )
+                    )
                 }
 
                 is UiEvent.ShowToast -> {
@@ -74,6 +80,7 @@ fun SongViewRootScreen(
                     headerValue = viewModel.state.headerValue,
                     poster = viewModel.state.data.playlist.listOfSong[0].coverImage,
                     isSmallPhone = isSmallPhone,
+                    playControl = viewModel::onEvent,
                     navigateBack = navigateBack
                 )
             }

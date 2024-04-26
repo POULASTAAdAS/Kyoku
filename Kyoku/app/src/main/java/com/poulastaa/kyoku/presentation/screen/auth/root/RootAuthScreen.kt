@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootUiEvent
 import com.poulastaa.kyoku.presentation.screen.auth.root.google.StartActivityForResult
 import com.poulastaa.kyoku.presentation.screen.auth.root.google.singIn

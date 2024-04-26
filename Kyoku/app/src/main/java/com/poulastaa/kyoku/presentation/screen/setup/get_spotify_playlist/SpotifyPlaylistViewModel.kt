@@ -10,7 +10,7 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.HandleSpotifyPlaylistStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyDataStoreState
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist

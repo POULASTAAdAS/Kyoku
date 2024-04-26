@@ -49,6 +49,7 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.HomeScre
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.homeScreenArtistList
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.LibraryScreenPlaylistGridView
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants.PLAYER_PADDING
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -84,7 +85,7 @@ fun HomeScreenContentNewUser(
                 bottom = paddingValues.calculateBottomPadding(),
             ),
         contentPadding = PaddingValues(
-            bottom = MaterialTheme.dimens.medium1,
+            bottom = MaterialTheme.dimens.medium1 + PLAYER_PADDING,
         )
     ) {
         if (data.playlist.isNotEmpty()) {

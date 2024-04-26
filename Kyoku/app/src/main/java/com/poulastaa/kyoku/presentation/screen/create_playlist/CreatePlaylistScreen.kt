@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiEvent
 import com.poulastaa.kyoku.presentation.common.CreatePlaylistScreenContent
 import com.poulastaa.kyoku.ui.theme.dimens

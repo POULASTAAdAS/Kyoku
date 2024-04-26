@@ -9,7 +9,7 @@ import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateReq
 import com.poulastaa.kyoku.data.model.api.service.setup.set_b_date.SetBDateResponseStatus
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.set_b_date.SetBirthDateUiState
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation

@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.navigation
 
 import androidx.navigation.NavHostController
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 
 fun NavHostController.navigate(event: UiEvent.Navigate) = this.navigate(route = event.route)
 fun NavHostController.navigateWithData(event: UiEvent.NavigateWithData) = when (event.route) {

@@ -13,7 +13,7 @@ import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedOperation
 import com.poulastaa.kyoku.data.model.api.service.pinned.PinnedReq
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiAlbumPrev
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev

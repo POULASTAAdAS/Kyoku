@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.data.model.home_nav_drawer
 
+import android.content.Context
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.navigation.Screens
@@ -26,20 +28,11 @@ sealed class HomeRootUiEvent {
     data class UpdateNav(val screens: Screens) : HomeRootUiEvent()
 
     data class Play(
+        val context: Context,
         val songId: Long = -1,
         val otherId: Long = -1,
-        val playType: PlayType
-    ) : HomeRootUiEvent() {
-        enum class PlayType {
-            HISTORY_SONG,
-            ARTIST_SONG,
-            PLAYLIST,
-            ALBUM,
-            ALBUM_PREV,
-            ALBUM_SONG,
-            PLAYLIST_SONG
-        }
-    }
+        val playType: UiEvent.PlayType
+    ) : HomeRootUiEvent()
 
     sealed class PlayerUiEvent : HomeRootUiEvent() {
         data object SmallPlayerClick : PlayerUiEvent()

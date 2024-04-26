@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +51,7 @@ fun HomeScreen(
                 is UiEvent.Play -> {
                     navigate.invoke(
                         HomeRootUiEvent.Play(
+                            context = context,
                             songId = event.songId,
                             otherId = event.otherId,
                             playType = event.playType

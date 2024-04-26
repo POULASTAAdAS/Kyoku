@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.LoadingStatus
 import com.poulastaa.kyoku.presentation.common.CreatePlaylistScreenContent

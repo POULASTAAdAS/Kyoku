@@ -1,6 +1,5 @@
-package com.poulastaa.kyoku.data.model.screens.auth
+package com.poulastaa.kyoku.data.model
 
-import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.SongType
@@ -24,8 +23,20 @@ sealed class UiEvent {
     data class Play(
         val songId: Long = -1,
         val otherId: Long = -1,
-        val playType: HomeRootUiEvent.Play.PlayType
+        val playType: PlayType
     ) : UiEvent()
 
     data class ShowToast(val message: String) : UiEvent()
+
+    enum class PlayType {
+        HISTORY_SONG,
+        ARTIST_SONG,
+        PLAYLIST,
+        PLAYLIST_SONG,
+        ALBUM,
+        ALBUM_SONG,
+        ALBUM_PREV,
+        ALBUM_PREV_SONG,
+        ARTIST_MORE_SONG
+    }
 }

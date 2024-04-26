@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
-import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
@@ -278,18 +277,11 @@ class HomeScreenViewModel @Inject constructor(
                     when (event.type) {
                         ItemsType.SONG -> {
                             viewModelScope.launch(Dispatchers.IO) {
-                                UiEvent.Play(
-                                    songId = event.id,
-                                    playType = if (event.songType == SongType.ARTIST_SONG) HomeRootUiEvent.Play.PlayType.ARTIST_SONG
-                                    else HomeRootUiEvent.Play.PlayType.HISTORY_SONG
-                                )
-
                                 _uiEvent.send(
-                                    UiEvent.NavigateWithData(
-                                        route = Screens.Player.route,
-                                        songType = event.songType,
-                                        id = event.id,
-                                        isPlay = true,
+                                    UiEvent.Play(
+                                        songId = event.id,
+                                        playType = if (event.songType == SongType.ARTIST_SONG) UiEvent.PlayType.ARTIST_SONG
+                                        else UiEvent.PlayType.HISTORY_SONG
                                     )
                                 )
                             }

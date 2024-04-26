@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,7 +52,6 @@ import com.poulastaa.kyoku.ui.theme.dimens
 @Composable
 fun SmallPlayer(
     brushColor: List<Color>,
-    isLoading: Boolean,
     isPlaying: Boolean,
     playingData: PlayerSong,
     durationUpdate: Float,
@@ -63,136 +61,133 @@ fun SmallPlayer(
     onDurationChange: (Float) -> Unit,
     playControl: (HomeRootUiEvent) -> Unit
 ) {
-    if (isLoading) CircularProgressIndicator()
-    else {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxHeight(.87f)
+                .fillMaxWidth()
         ) {
-            Row(
+            CustomImageView(
                 modifier = Modifier
-                    .fillMaxHeight(.87f)
-                    .fillMaxWidth()
+                    .fillMaxWidth(.18f)
+                    .clip(MaterialTheme.shapes.small),
+                isDarkThem = isDarkThem,
+                isCookie = isCookie,
+                headerValue = header,
+                url = playingData.url
+            )
+
+            Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(.5f)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
             ) {
-                CustomImageView(
-                    modifier = Modifier
-                        .fillMaxWidth(.18f)
-                        .clip(MaterialTheme.shapes.small),
-                    isDarkThem = isDarkThem,
-                    isCookie = isCookie,
-                    headerValue = header,
-                    url = playingData.url
+                Text(
+                    text = playingData.title,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = if (isDarkThem) MaterialTheme.colorScheme.onBackground else Color.Unspecified
                 )
 
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(.5f)
-                        .fillMaxHeight(),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = playingData.title,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = if (isDarkThem) MaterialTheme.colorScheme.onBackground else Color.Unspecified
-                    )
-
-                    Text(
-                        text = playingData.artist.toString().trimStart('[').trimEnd(']'),
-                        fontWeight = FontWeight.Light,
-                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = if (isDarkThem) MaterialTheme.colorScheme.onBackground else Color.Unspecified
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    PlayControlButton(
-                        modifier = Modifier
-                            .rotate(90f)
-                            .size(40.dp),
-                        icon = R.drawable.ic_next,
-                        color = IconButtonDefaults.iconButtonColors(
-                            contentColor = brushColor[0]
-                        )
-                    ) {
-                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Backward)
-                    }
-
-
-
-                    PlayControlButton(
-                        modifier = Modifier
-                            .size(60.dp),
-                        icon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
-                        color = IconButtonDefaults.iconButtonColors(
-                            contentColor = brushColor[0]
-                        )
-                    ) {
-                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.PlayPause)
-                    }
-
-
-                    PlayControlButton(
-                        modifier = Modifier
-                            .size(40.dp),
-                        icon = R.drawable.ic_next,
-                        color = IconButtonDefaults.iconButtonColors(
-                            contentColor = brushColor[0]
-                        )
-                    ) {
-                        playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Forward)
-                    }
-                }
+                Text(
+                    text = playingData.artist.toString().trimStart('[').trimEnd(']'),
+                    fontWeight = FontWeight.Light,
+                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = if (isDarkThem) MaterialTheme.colorScheme.onBackground else Color.Unspecified
+                )
             }
 
-            Slider(
-                value = durationUpdate,
-                onValueChange = onDurationChange,
+            Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
+
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                colors = SliderDefaults.colors(
-                    activeTrackColor = brushColor[0],
-                    inactiveTrackColor = brushColor[1]
-                ),
-                valueRange = 0f..100f,
-                thumb = {
-                    SliderDefaults.Thumb(
-                        modifier = Modifier.offset(x = 3.dp, y = 4.dp),
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        },
-                        thumbSize = DpSize(15.dp, 10.dp),
-                        colors = SliderColors(
-                            thumbColor = brushColor[0],
-                            activeTrackColor = brushColor[0],
-                            activeTickColor = brushColor[1],
-                            inactiveTickColor = Color.Unspecified,
-                            disabledThumbColor = Color.Unspecified,
-                            disabledActiveTickColor = Color.Unspecified,
-                            disabledInactiveTrackColor = Color.Unspecified,
-                            disabledInactiveTickColor = Color.Unspecified,
-                            inactiveTrackColor = Color.Unspecified,
-                            disabledActiveTrackColor = Color.Unspecified
-                        )
+                    .fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                PlayControlButton(
+                    modifier = Modifier
+                        .rotate(90f)
+                        .size(40.dp),
+                    icon = R.drawable.ic_next,
+                    color = IconButtonDefaults.iconButtonColors(
+                        contentColor = brushColor[0]
                     )
+                ) {
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Backward)
                 }
-            )
+
+
+
+                PlayControlButton(
+                    modifier = Modifier
+                        .size(60.dp),
+                    icon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play,
+                    color = IconButtonDefaults.iconButtonColors(
+                        contentColor = brushColor[0]
+                    )
+                ) {
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.PlayPause)
+                }
+
+
+                PlayControlButton(
+                    modifier = Modifier
+                        .size(40.dp),
+                    icon = R.drawable.ic_next,
+                    color = IconButtonDefaults.iconButtonColors(
+                        contentColor = brushColor[0]
+                    )
+                ) {
+                    playControl.invoke(HomeRootUiEvent.PlayerUiEvent.Forward)
+                }
+            }
         }
+
+        Slider(
+            value = durationUpdate,
+            onValueChange = onDurationChange,
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                activeTrackColor = brushColor[0],
+                inactiveTrackColor = brushColor[1]
+            ),
+            valueRange = 0f..100f,
+            thumb = {
+                SliderDefaults.Thumb(
+                    modifier = Modifier.offset(x = 3.dp, y = 4.dp),
+                    interactionSource = remember {
+                        MutableInteractionSource()
+                    },
+                    thumbSize = DpSize(15.dp, 10.dp),
+                    colors = SliderColors(
+                        thumbColor = brushColor[0],
+                        activeTrackColor = brushColor[0],
+                        activeTickColor = brushColor[1],
+                        inactiveTickColor = Color.Unspecified,
+                        disabledThumbColor = Color.Unspecified,
+                        disabledActiveTickColor = Color.Unspecified,
+                        disabledInactiveTrackColor = Color.Unspecified,
+                        disabledInactiveTickColor = Color.Unspecified,
+                        inactiveTrackColor = Color.Unspecified,
+                        disabledActiveTrackColor = Color.Unspecified
+                    )
+                )
+            }
+        )
     }
 }
 
@@ -247,8 +242,7 @@ private fun Preview() {
                     MaterialTheme.colorScheme.background,
                 ),
                 isPlaying = false,
-                isLoading = false,
-                durationUpdate = 2.6023964E-6f,
+                durationUpdate = 14.34f,
                 playingData = PlayerSong(
                     title = "Title",
                     artist = listOf("artist1", "artist2")

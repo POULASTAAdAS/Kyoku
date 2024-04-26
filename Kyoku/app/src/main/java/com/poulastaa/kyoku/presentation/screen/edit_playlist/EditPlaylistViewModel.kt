@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.playlist.AddSongToPlaylistReq
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiPlaylist
 import com.poulastaa.kyoku.data.model.screens.edit_playlist.EditPlaylistUiState

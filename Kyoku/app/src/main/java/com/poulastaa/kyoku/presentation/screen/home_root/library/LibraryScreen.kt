@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.home_root.library
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -34,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomToast
@@ -50,6 +49,7 @@ import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libra
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.libraryScreenItemPlaylist
 import com.poulastaa.kyoku.presentation.screen.home_root.library.component.playlist
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants.PLAYER_PADDING
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -81,10 +81,6 @@ fun LibraryScreen(
                     navigate.invoke(event)
                 }
 
-                is  UiEvent.Play ->{
-                    // todo
-                }
-
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
@@ -92,24 +88,11 @@ fun LibraryScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
+                else -> Unit
             }
         }
     }
-
-
-    Log.d(
-        "Load", "${viewModel.state.data.all.isFavourite} ," +
-                "${viewModel.state.data.all.playlist.isEmpty()} ," +
-                "${viewModel.state.data.all.artist.isEmpty()} , " +
-                "${viewModel.state.data.all.album.isEmpty()} , " +
-                "${viewModel.state.isLoading}" +
-                "\n" +
-                "Pinned: " +
-                "${viewModel.state.data.pinned.artist.isEmpty()} , " +
-                "${viewModel.state.data.pinned.playlist.isEmpty()} , " +
-                "${viewModel.state.data.pinned.album.isEmpty()} , " +
-                "${viewModel.state.data.pinned.isFavourite}"
-    )
 
     if (viewModel.state.isLoading) {
         Column(
@@ -133,7 +116,8 @@ fun LibraryScreen(
                 ),
             contentPadding = PaddingValues(
                 start = MaterialTheme.dimens.medium1,
-                end = MaterialTheme.dimens.medium1
+                end = MaterialTheme.dimens.medium1,
+                bottom = MaterialTheme.dimens.medium2 + PLAYER_PADDING
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {

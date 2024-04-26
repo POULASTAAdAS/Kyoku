@@ -599,6 +599,7 @@ class DatabaseRepositoryImpl @Inject constructor(
     // songView screen query
     fun getPlaylistName(id: Long) = dao.getPlaylistName(id)
     fun getPlaylist(id: Long) = dao.getPlaylist(id)
+    suspend fun getPlaylistId(name: String) = dao.getPlaylistId(name)
 
 
     suspend fun getAlbum(id: Long) = withContext(Dispatchers.IO) {
