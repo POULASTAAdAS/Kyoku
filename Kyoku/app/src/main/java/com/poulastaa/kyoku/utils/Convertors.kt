@@ -320,6 +320,7 @@ fun ResponseSong.toPlayingQueueTable() = PlayingQueueTable(
     year = this.date
 )
 
+@JvmName("PlayingQueueTableToPlayerData")
 fun List<PlayingQueueTable>.toPlayerData() = this.map {
     PlayerSong(
         id = it.songId,
@@ -329,6 +330,19 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
         artist = it.artist.split(","),
         album = it.album,
         year = it.year,
+        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
+        totalInMili = it.totalTime.toFloat()
+    )
+}
+
+@JvmName("UiPlaylistSongToPlayerData")
+fun List<UiPlaylistSong>.toPlayerData() = this.map {
+    PlayerSong(
+        id = it.songId,
+        url = it.coverImage,
+        masterPlaylist = it.masterPlaylistUrl,
+        title = it.title,
+        artist = it.artist.split(","),
         totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
         totalInMili = it.totalTime.toFloat()
     )

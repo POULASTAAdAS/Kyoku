@@ -185,11 +185,6 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     is PlayerUiState.Progress -> {
-                        Log.d(
-                            "update Progress",
-                            "${((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f)} , ${event.value}"
-                        )
-
                         state = state.copy(
                             player = state.player.copy(
                                 progress = ((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f),
@@ -400,8 +395,38 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.PLAYLIST -> {
-                        viewModelScope.launch {
-                            Log.d("PLAYLIST clicked", event.toString())
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val playlistDef = async { db.getPlaylist(id = event.otherId).first() }
+                            val playlistNameDef = async { db.getPlaylistName(event.otherId) }
+
+                            val playlistSongs = playlistDef.await().toPlayerData()
+                            val playlist = event.otherId to playlistNameDef.await()
+
+                            if (playlistSongs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                playlistSongs.setMediaItems()
+                                player.onEvent(PlayerUiEvent.PlayPause)
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = playlistSongs,
+                                    playingSong = playlistSongs[0]
+                                )
+                            )
                         }
                     }
 
@@ -422,7 +447,6 @@ class HomeRootViewModel @Inject constructor(
                             Log.d("ALBUM_SONG clicked", event.toString())
                         }
                     }
-
 
 
                     UiEvent.PlayType.ALBUM_PREV -> {
@@ -470,7 +494,6 @@ class HomeRootViewModel @Inject constructor(
                     HomeRootUiEvent.PlayerUiEvent.CancelPlay -> {
                         state = state.copy(
                             player = Player()
-
                         )
 
                         viewModelScope.launch(Dispatchers.Main) {
@@ -628,12 +651,30 @@ class HomeRootViewModel @Inject constructor(
         player.addOneMediaItem(item)
     }
 
-    private fun calculateProgress(value: Long) = try {
-        if (value > 0) {
-            (value.toFloat() / state.player.playingSong.totalInMili)
-        } else 0f
-    } catch (_: Exception) {
-        0f
+    private fun List<PlayerSong>.setMediaItems() {
+        this.map {
+            MediaItem.Builder()
+                .setMimeType(MimeTypes.APPLICATION_M3U8)
+                .setMimeType(MimeTypes.APPLICATION_ID3)
+                .setUri(it.masterPlaylist)
+                .setLiveConfiguration(
+                    MediaItem
+                        .LiveConfiguration.Builder()
+                        .setMaxPlaybackSpeed(1.02f)
+                        .build()
+                ).setMediaMetadata(
+                    MediaMetadata.Builder()
+                        .setDisplayTitle(it.title)
+                        .setArtist(it.artist.toString().trimStart('[').trimEnd(']'))
+                        .setAlbumTitle(it.album)
+                        .setArtworkUri(Uri.parse(it.url))
+                        .build()
+                )
+                .setMediaId(it.id.toString())
+                .build()
+        }.let {
+            player.addMultipleMediaItem(it)
+        }
     }
 
     private fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {
