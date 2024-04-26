@@ -56,6 +56,10 @@ fun ViewArtistScreen(
                     navigate.invoke(event)
                 }
 
+                is  UiEvent.Play ->{
+                    // todo
+                }
+
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,

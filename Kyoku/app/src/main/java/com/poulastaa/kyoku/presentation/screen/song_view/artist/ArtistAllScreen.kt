@@ -88,6 +88,11 @@ fun ArtistAllScreen(
             when (event) {
                 is UiEvent.Navigate -> navigate.invoke(event)
                 is UiEvent.NavigateWithData -> navigate.invoke(event)
+
+                is  UiEvent.Play ->{
+                    // todo
+                }
+
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,

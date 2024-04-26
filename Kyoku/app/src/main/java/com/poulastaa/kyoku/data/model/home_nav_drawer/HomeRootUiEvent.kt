@@ -25,6 +25,22 @@ sealed class HomeRootUiEvent {
 
     data class UpdateNav(val screens: Screens) : HomeRootUiEvent()
 
+    data class Play(
+        val songId: Long = -1,
+        val otherId: Long = -1,
+        val playType: PlayType
+    ) : HomeRootUiEvent() {
+        enum class PlayType {
+            HISTORY_SONG,
+            ARTIST_SONG,
+            PLAYLIST,
+            ALBUM,
+            ALBUM_PREV,
+            ALBUM_SONG,
+            PLAYLIST_SONG
+        }
+    }
+
     sealed class PlayerUiEvent : HomeRootUiEvent() {
         data object SmallPlayerClick : PlayerUiEvent()
         data object CancelPlay : PlayerUiEvent()
@@ -34,7 +50,8 @@ sealed class HomeRootUiEvent {
         data class SelectedSongChange(val index: Int) : PlayerUiEvent()
         data object Backward : PlayerUiEvent()
         data object Forward : PlayerUiEvent()
-        data class SeekTo(val index: Long) : PlayerUiEvent()
+        data class SeekTo(val index: Float) : PlayerUiEvent()
+        data object SeekToPrev : PlayerUiEvent()
         data object SeekToNext : PlayerUiEvent()
         data object Stop : PlayerUiEvent()
 

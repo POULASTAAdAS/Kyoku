@@ -12,6 +12,7 @@ import com.poulastaa.kyoku.data.model.SignInStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponseStatus
 import com.poulastaa.kyoku.data.model.api.service.home.HomeType
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.common.UiPlaylistPrev
@@ -277,6 +278,12 @@ class HomeScreenViewModel @Inject constructor(
                     when (event.type) {
                         ItemsType.SONG -> {
                             viewModelScope.launch(Dispatchers.IO) {
+                                UiEvent.Play(
+                                    songId = event.id,
+                                    playType = if (event.songType == SongType.ARTIST_SONG) HomeRootUiEvent.Play.PlayType.ARTIST_SONG
+                                    else HomeRootUiEvent.Play.PlayType.HISTORY_SONG
+                                )
+
                                 _uiEvent.send(
                                     UiEvent.NavigateWithData(
                                         route = Screens.Player.route,

@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.presentation.screen.home_root.player
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,29 +13,34 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
@@ -43,6 +49,7 @@ import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomIm
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmallPlayer(
     brushColor: List<Color>,
@@ -53,6 +60,7 @@ fun SmallPlayer(
     isDarkThem: Boolean,
     isCookie: Boolean,
     header: String,
+    onDurationChange: (Float) -> Unit,
     playControl: (HomeRootUiEvent) -> Unit
 ) {
     if (isLoading) CircularProgressIndicator()
@@ -152,12 +160,37 @@ fun SmallPlayer(
                 }
             }
 
-            LinearProgressIndicator(
-                progress = { durationUpdate },
-                modifier = Modifier.fillMaxWidth(),
-                strokeCap = StrokeCap.Round,
-                color = brushColor[1],
-                trackColor = brushColor[0]
+            Slider(
+                value = durationUpdate,
+                onValueChange = onDurationChange,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    activeTrackColor = brushColor[0],
+                    inactiveTrackColor = brushColor[1]
+                ),
+                valueRange = 0f..100f,
+                thumb = {
+                    SliderDefaults.Thumb(
+                        modifier = Modifier.offset(x = 3.dp, y = 4.dp),
+                        interactionSource = remember {
+                            MutableInteractionSource()
+                        },
+                        thumbSize = DpSize(15.dp, 10.dp),
+                        colors = SliderColors(
+                            thumbColor = brushColor[0],
+                            activeTrackColor = brushColor[0],
+                            activeTickColor = brushColor[1],
+                            inactiveTickColor = Color.Unspecified,
+                            disabledThumbColor = Color.Unspecified,
+                            disabledActiveTickColor = Color.Unspecified,
+                            disabledInactiveTrackColor = Color.Unspecified,
+                            disabledInactiveTickColor = Color.Unspecified,
+                            inactiveTrackColor = Color.Unspecified,
+                            disabledActiveTrackColor = Color.Unspecified
+                        )
+                    )
+                }
             )
         }
     }
@@ -215,14 +248,15 @@ private fun Preview() {
                 ),
                 isPlaying = false,
                 isLoading = false,
-                durationUpdate = 2.6023963E-6f,
+                durationUpdate = 2.6023964E-6f,
                 playingData = PlayerSong(
                     title = "Title",
                     artist = listOf("artist1", "artist2")
                 ),
                 isDarkThem = isSystemInDarkTheme(),
                 isCookie = false,
-                header = ""
+                header = "",
+                onDurationChange = {}
             ) {}
         }
     }

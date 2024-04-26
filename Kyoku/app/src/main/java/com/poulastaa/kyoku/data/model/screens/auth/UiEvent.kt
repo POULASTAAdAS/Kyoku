@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.data.model.screens.auth
 
+import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.SearchType
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.SongType
@@ -18,6 +19,12 @@ sealed class UiEvent {
         val longClickType: String = "longClickType",
         val isApiCall: Boolean = false,
         val isPlay: Boolean = false
+    ) : UiEvent()
+
+    data class Play(
+        val songId: Long = -1,
+        val otherId: Long = -1,
+        val playType: HomeRootUiEvent.Play.PlayType
     ) : UiEvent()
 
     data class ShowToast(val message: String) : UiEvent()

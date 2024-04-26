@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -45,6 +44,11 @@ fun SongViewRootScreen(
             when (event) {
                 is UiEvent.Navigate -> navigate.invoke(event)
                 is UiEvent.NavigateWithData -> navigate.invoke(event)
+
+                is  UiEvent.Play ->{
+                    // todo
+                }
+
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,

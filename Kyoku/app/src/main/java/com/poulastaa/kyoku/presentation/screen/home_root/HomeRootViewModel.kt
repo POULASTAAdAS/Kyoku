@@ -185,11 +185,14 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     is PlayerUiState.Progress -> {
-                        Log.d("update Progress", event.value.toString())
+                        Log.d(
+                            "update Progress",
+                            "${((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f)} , ${event.value}"
+                        )
 
                         state = state.copy(
                             player = state.player.copy(
-                                progress = calculateProgress(event.value),
+                                progress = ((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f),
                                 playingSong = state.player.playingSong.copy(
                                     currentInMin = millisecondsToMinutesAndSeconds(event.value)
                                 )
@@ -308,72 +311,7 @@ class HomeRootViewModel @Inject constructor(
                         }
 
                         SongType.ARTIST_SONG -> {
-                            viewModelScope.launch(Dispatchers.IO) {
-                                if (db.checkIfAlreadyInPlayingQueue(event.id) == null) {
-                                    val song = api.getSongOnId(event.id)
 
-                                    if (song.id == -1L) {
-                                        onEvent(HomeRootUiEvent.SomethingWentWrong)
-
-                                        state = state.copy(
-                                            player = state.player.copy(
-                                                isSmallPlayer = false,
-                                                isLoading = false
-                                            )
-                                        )
-
-                                        return@launch
-                                    }
-
-                                    async {
-                                        db.insertIntoPlayingQueueTable(
-                                            song,
-                                            event.songType
-                                        )
-                                    }.await()
-
-                                    val list = db.readAllFromPlayingQueue().first().toPlayerData()
-
-                                    val image =
-                                        BitmapConverter.decodeToBitmap(list[0].url)
-
-                                    if (image != null) {
-                                        val colors = PaletteGenerator.extractColorFromBitMap(image)
-
-                                        val variant =
-                                            Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
-                                        val darkVariant =
-                                            Color(parseColor(colors[ColorType.DARK_VIBRANT]))
-
-                                        if (variant != darkVariant)
-                                            state = state.copy(
-                                                player = state.player.copy(
-                                                    colors = listOf(
-                                                        variant,
-                                                        darkVariant,
-                                                    )
-                                                )
-                                            )
-                                    }
-
-                                    CoroutineScope(Dispatchers.Main).launch {
-                                        player.onEvent(PlayerUiEvent.Stop)
-                                        list[0].setMediaItem(song.coverImage)
-                                        player.onEvent(PlayerUiEvent.PlayPause)
-                                    }
-
-                                    state = state.copy(
-                                        player = state.player.copy(
-                                            allSong = list,
-                                            playingSong = list[0]
-                                        )
-                                    )
-                                } else {
-                                    viewModelScope.launch(Dispatchers.Main) {
-                                        player.onEvent(PlayerUiEvent.SeekTo(0))
-                                    }
-                                }
-                            }
                         }
 
                         SongType.ALBUM_SONG -> {
@@ -393,13 +331,13 @@ class HomeRootViewModel @Inject constructor(
 
                             }
                         }
-                    }.let {
+                    }/*.let {
                         state = state.copy(
                             player = state.player.copy(
                                 isLoading = false
                             )
                         )
-                    }
+                    }*/
 
                 } else viewModelScope.launch(Dispatchers.IO) {
                     _uiEvent.send(
@@ -410,6 +348,190 @@ class HomeRootViewModel @Inject constructor(
                             name = event.name,
                             longClickType = event.longClickType,
                             isApiCall = event.isApiCall
+                        )
+                    )
+                }
+            }
+
+            is HomeRootUiEvent.Play -> {
+                state = state.copy(
+                    player = state.player.copy(
+                        isSmallPlayer = true,
+                        isLoading = true
+                    )
+                )
+
+                when (event.playType) {
+                    HomeRootUiEvent.Play.PlayType.HISTORY_SONG -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
+                                val song = api.getSongOnId(event.songId)
+
+                                if (song.id == -1L) {
+                                    onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                    state = state.copy(
+                                        player = state.player.copy(
+                                            isSmallPlayer = false,
+                                            isLoading = false
+                                        )
+                                    )
+
+                                    return@launch
+                                }
+                                async {
+                                    db.insertIntoPlayingQueueTable(
+                                        song,
+                                        songType = SongType.ARTIST_SONG
+                                    )
+                                }.await()
+
+                                val list = db.readAllFromPlayingQueue().first().toPlayerData()
+
+                                val image =
+                                    BitmapConverter.decodeToBitmap(list[0].url)
+
+                                if (image != null) {
+                                    val colors = PaletteGenerator.extractColorFromBitMap(image)
+
+                                    val variant =
+                                        Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
+                                    val darkVariant =
+                                        Color(parseColor(colors[ColorType.DARK_VIBRANT]))
+
+                                    if (variant != darkVariant)
+                                        state = state.copy(
+                                            player = state.player.copy(
+                                                colors = listOf(
+                                                    variant,
+                                                    darkVariant,
+                                                )
+                                            )
+                                        )
+                                }
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    player.onEvent(PlayerUiEvent.Stop)
+                                    list[0].setMediaItem(song.coverImage)
+                                    player.onEvent(PlayerUiEvent.PlayPause)
+                                }
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        allSong = list,
+                                        playingSong = list[0]
+                                    )
+                                )
+                            } else {
+                                viewModelScope.launch(Dispatchers.Main) {
+                                    player.onEvent(PlayerUiEvent.SeekTo(0))
+                                }
+                            }
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.ARTIST_SONG -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
+                                val song = api.getSongOnId(event.songId)
+
+                                if (song.id == -1L) {
+                                    onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                    state = state.copy(
+                                        player = state.player.copy(
+                                            isSmallPlayer = false,
+                                            isLoading = false
+                                        )
+                                    )
+
+                                    return@launch
+                                }
+
+                                async {
+                                    db.insertIntoPlayingQueueTable(
+                                        song,
+                                        songType = SongType.HISTORY_SONG
+                                    )
+                                }.await()
+
+                                val list = db.readAllFromPlayingQueue().first().toPlayerData()
+
+                                val image =
+                                    BitmapConverter.decodeToBitmap(list[0].url)
+
+                                if (image != null) {
+                                    val colors = PaletteGenerator.extractColorFromBitMap(image)
+
+                                    val variant =
+                                        Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
+                                    val darkVariant =
+                                        Color(parseColor(colors[ColorType.DARK_VIBRANT]))
+
+                                    if (variant != darkVariant)
+                                        state = state.copy(
+                                            player = state.player.copy(
+                                                colors = listOf(
+                                                    variant,
+                                                    darkVariant,
+                                                )
+                                            )
+                                        )
+                                }
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    player.onEvent(PlayerUiEvent.Stop)
+                                    list[0].setMediaItem(song.coverImage)
+                                    player.onEvent(PlayerUiEvent.PlayPause)
+                                }
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        allSong = list,
+                                        playingSong = list[0]
+                                    )
+                                )
+                            } else {
+                                viewModelScope.launch(Dispatchers.Main) {
+                                    player.onEvent(PlayerUiEvent.SeekTo(0))
+                                }
+                            }
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.PLAYLIST -> {
+                        viewModelScope.launch {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.ALBUM -> {
+                        viewModelScope.launch {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.ALBUM_PREV -> {
+                        viewModelScope.launch {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.ALBUM_SONG -> {
+                        viewModelScope.launch {
+
+                        }
+                    }
+
+                    HomeRootUiEvent.Play.PlayType.PLAYLIST_SONG -> {
+                        viewModelScope.launch {
+
+                        }
+                    }
+                }.let {
+                    state = state.copy(
+                        player = state.player.copy(
+                            isLoading = false
                         )
                     )
                 }
@@ -483,6 +605,12 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     is HomeRootUiEvent.PlayerUiEvent.SeekTo -> {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.SeekTo((state.player.playingSong.totalInMili * event.index / 100f).toLong()))
+                        }
+                    }
+
+                    HomeRootUiEvent.PlayerUiEvent.SeekToPrev -> {
                         viewModelScope.launch(Dispatchers.Main) {
 
                         }
@@ -562,22 +690,6 @@ class HomeRootViewModel @Inject constructor(
         }
     }
 
-    private fun calculateProgress(value: Long) =
-        try {
-            if (value > 0) {
-                val v =
-                    (value.toFloat() / state.player.playingSong.totalInMili)
-
-
-                Log.d("value", "$value , $v")
-
-                v
-            } else 0f
-        } catch (_: Exception) {
-            0f
-        }
-
-
     private fun PlayerSong.setMediaItem(uri: String = "") {
         val item = MediaItem.Builder()
             .setMimeType(MimeTypes.APPLICATION_M3U8)
@@ -602,6 +714,14 @@ class HomeRootViewModel @Inject constructor(
         player.addOneMediaItem(item)
     }
 
+    private fun calculateProgress(value: Long) = try {
+        if (value > 0) {
+            (value.toFloat() / state.player.playingSong.totalInMili)
+        } else 0f
+    } catch (_: Exception) {
+        0f
+    }
+
     private fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {
         val totalSeconds = milliseconds / 1000.0
         val minutes = (totalSeconds / 60).toLong()
@@ -609,5 +729,4 @@ class HomeRootViewModel @Inject constructor(
 
         return "$minutes.$seconds"
     }
-
 }

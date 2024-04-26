@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.screens.auth.UiEvent
 import com.poulastaa.kyoku.data.model.screens.library.LibraryUiEvent
 import com.poulastaa.kyoku.presentation.common.ItemDeleteDialog
@@ -80,6 +79,10 @@ fun LibraryScreen(
 
                 is UiEvent.NavigateWithData -> {
                     navigate.invoke(event)
+                }
+
+                is  UiEvent.Play ->{
+                    // todo
                 }
 
                 is UiEvent.ShowToast -> {

@@ -1,19 +1,13 @@
 package com.example
 
-import kotlinx.coroutines.delay
+fun main() {
+    val currentMile = 17971
+    val totalMinute = 423947.30
 
-import kotlinx.coroutines.delay
+//    println(currentMile.toFloat() / totalMinute.toFloat() * 100f)
 
-fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {
-    val totalSeconds = milliseconds / 1000.0
-    val minutes = (totalSeconds / 60).toLong()
-    val seconds = (totalSeconds % 60).toLong()
-    return "$minutes:$seconds"
+    val temp = (totalMinute * 38.346474 / 100f).toLong()
+    println(temp)
 }
 
 
-suspend fun main() {
-    for (i in 0..60000L) {
-        println(millisecondsToMinutesAndSeconds(i))
-    }
-}

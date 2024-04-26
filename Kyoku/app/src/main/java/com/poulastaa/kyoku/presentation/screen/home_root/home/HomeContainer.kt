@@ -187,6 +187,16 @@ fun HomeContainer(
                                     )
                                 }
 
+                                is  UiEvent.Play -> {
+                                    navigateWithUiEvent.invoke(
+                                        HomeRootUiEvent.Play(
+                                            songId = event.songId,
+                                            otherId = event.otherId,
+                                            playType = event.playType
+                                        )
+                                    )
+                                }
+
                                 is UiEvent.ShowToast -> {
                                     Toast.makeText(
                                         context,
@@ -639,6 +649,9 @@ fun HomeContainer(
                             isCookie = state.isCookie,
                             header = state.headerValue,
                             playControl = playControl,
+                            onDurationChange = {
+                                navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))
+                            }
                         )
                     }
                 }
@@ -703,6 +716,9 @@ fun HomeContainer(
                                 screens = Screens.Home
                             )
                         )
+                    },
+                    onDurationChange = {
+                        navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))
                     }
                 )
             }

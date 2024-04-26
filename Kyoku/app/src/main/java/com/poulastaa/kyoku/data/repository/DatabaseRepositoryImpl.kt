@@ -855,8 +855,6 @@ class DatabaseRepositoryImpl @Inject constructor(
 
             else -> return
         }
-
-
     }
 
     fun readAllFromPlayingQueue() = dao.readAllFromPlayingQueue()

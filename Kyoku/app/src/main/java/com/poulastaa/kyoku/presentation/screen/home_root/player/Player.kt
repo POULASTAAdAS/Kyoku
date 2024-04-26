@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,12 +23,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,6 +54,7 @@ import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Player(
     isSmallPhone: Boolean,
@@ -66,6 +69,7 @@ fun Player(
         MaterialTheme.colorScheme.background,
         MaterialTheme.colorScheme.background,
     ),
+    onDurationChange: (Float) -> Unit,
     playControl: (HomeRootUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -195,16 +199,23 @@ fun Player(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LinearProgressIndicator(
-                    progress = { player.progress },
-                    modifier = Modifier.fillMaxWidth(),
-                    strokeCap = StrokeCap.Round,
-                    color = brushColor[1],
-                    trackColor = brushColor[0]
+                Slider(
+                    value = player.progress,
+                    onValueChange = onDurationChange,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = SliderDefaults.colors(
+                        thumbColor = brushColor[0],
+                        activeTrackColor = brushColor[0],
+                        inactiveTrackColor = brushColor[1]
+                    ),
+                    valueRange = 0f..100f
                 )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = (-15).dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -224,7 +235,7 @@ fun Player(
 
         item {
             Spacer(
-                modifier = Modifier.height(MaterialTheme.dimens.medium3)
+                modifier = Modifier.height(MaterialTheme.dimens.medium1)
             )
         }
 
@@ -353,7 +364,8 @@ private fun Preview() {
                 MaterialTheme.colorScheme.tertiary,
                 MaterialTheme.colorScheme.background,
             ),
-            playControl = {}
+            playControl = {},
+            onDurationChange = {}
         ) {
 
         }

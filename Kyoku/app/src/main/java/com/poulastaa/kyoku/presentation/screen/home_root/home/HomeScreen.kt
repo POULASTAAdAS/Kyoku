@@ -48,6 +48,16 @@ fun HomeScreen(
                     )
                 }
 
+                is UiEvent.Play -> {
+                    navigate.invoke(
+                        HomeRootUiEvent.Play(
+                            songId = event.songId,
+                            otherId = event.otherId,
+                            playType = event.playType
+                        )
+                    )
+                }
+
                 is UiEvent.ShowToast -> {
                     Toast.makeText(
                         context,
