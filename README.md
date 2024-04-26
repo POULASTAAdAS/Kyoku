@@ -59,6 +59,9 @@ https://github.com/POULASTAAdAS/Music-Streaming-App/releases/tag/v0.1.0-alphaa
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/All%20from%20Artist.jpg" width="250" height="500">
     </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/All%20from%20Artist.jpg" width="250" height="500">
+    </td>
   </tr>
 </table>
 
@@ -73,6 +76,7 @@ https://github.com/POULASTAAdAS/Music-Streaming-App/releases/tag/v0.1.0-alphaa
 - Flows
 - Coil
 - Splash API
+- Palette Api (Dinamic Them)
 -
 - Credentials
 - DataStore
