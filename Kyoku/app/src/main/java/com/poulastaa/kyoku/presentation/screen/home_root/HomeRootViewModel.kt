@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.presentation.screen.home_root
 
-import android.graphics.Color.parseColor
 import android.net.Uri
 import android.util.Log
 import androidx.compose.animation.core.tween
@@ -10,7 +9,6 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -24,6 +22,7 @@ import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongInfo
 import com.poulastaa.kyoku.data.model.screens.home.SongType
 import com.poulastaa.kyoku.data.model.screens.player.DragAnchors
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
@@ -34,11 +33,9 @@ import com.poulastaa.kyoku.domain.player.service.AudioServiceHandler
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
-import com.poulastaa.kyoku.utils.BitmapConverter
-import com.poulastaa.kyoku.utils.ColorType
-import com.poulastaa.kyoku.utils.PaletteGenerator
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toPlayerData
+import com.poulastaa.kyoku.utils.toPlayingQueueTable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +60,8 @@ class HomeRootViewModel @Inject constructor(
     private fun readAccessToken() {
         viewModelScope.launch {
             ds.readTokenOrCookie().collect {
+                Log.d("cookie", it)
+
                 state = state.copy(
                     headerValue = it
                 )
@@ -166,8 +165,21 @@ class HomeRootViewModel @Inject constructor(
                         Log.d("update buffer", event.value.toString())
                     }
 
-                    is PlayerUiState.CurrentPlayingIndex -> {
-                        Log.d("update CurrentPlayingIndex", event.index.toString())
+                    is PlayerUiState.CurrentPlayingSongId -> {
+                        val song = state.player.allSong.firstNotNullOfOrNull {
+                            if (it.id == event.id) it else null
+                        }
+
+                        if (song != null)
+                            state = state.copy(
+                                player = state.player.copy(
+                                    colors = listOf(
+                                        song.colorOne,
+                                        song.colorTwo
+                                    ),
+                                    playingSong = song
+                                )
+                            )
                     }
 
                     PlayerUiState.Initial -> {
@@ -187,9 +199,17 @@ class HomeRootViewModel @Inject constructor(
                     is PlayerUiState.Progress -> {
                         state = state.copy(
                             player = state.player.copy(
-                                progress = ((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f),
+                                progress = try {
+                                    ((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f)
+                                } catch (_: Exception) {
+                                    0f
+                                },
                                 playingSong = state.player.playingSong.copy(
-                                    currentInMin = millisecondsToMinutesAndSeconds(event.value)
+                                    currentInMin = try {
+                                        millisecondsToMinutesAndSeconds(event.value)
+                                    } catch (_: Exception) {
+                                        "-.-"
+                                    }
                                 )
                             )
                         )
@@ -283,28 +303,6 @@ class HomeRootViewModel @Inject constructor(
 
                                 val list = db.readAllFromPlayingQueue().first().toPlayerData()
 
-                                val image =
-                                    BitmapConverter.decodeToBitmap(list[0].url)
-
-                                if (image != null) {
-                                    val colors = PaletteGenerator.extractColorFromBitMap(image)
-
-                                    val variant =
-                                        Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
-                                    val darkVariant =
-                                        Color(parseColor(colors[ColorType.DARK_VIBRANT]))
-
-                                    if (variant != darkVariant)
-                                        state = state.copy(
-                                            player = state.player.copy(
-                                                colors = listOf(
-                                                    variant,
-                                                    darkVariant,
-                                                )
-                                            )
-                                        )
-                                }
-
                                 CoroutineScope(Dispatchers.Main).launch {
                                     player.onEvent(PlayerUiEvent.Stop)
                                     list[0].setMediaItem(song.coverImage)
@@ -314,7 +312,10 @@ class HomeRootViewModel @Inject constructor(
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0]
+                                        playingSong = list[0],
+                                        info = PlayingSongInfo(
+                                            typeName = "Recently Played"
+                                        )
                                     )
                                 )
                             } else {
@@ -322,13 +323,24 @@ class HomeRootViewModel @Inject constructor(
                                     player.onEvent(PlayerUiEvent.SeekTo(0))
                                 }
                             }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
                         }
                     }
 
                     UiEvent.PlayType.ARTIST_SONG -> {
                         viewModelScope.launch(Dispatchers.IO) {
                             if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
-                                val song = api.getSongOnId(event.songId)
+                                val songDef = async { api.getSongOnId(event.songId) }
+
+                                val artistDef = async { db.getArtistOnId(event.otherId) }
+
+                                val song = songDef.await()
+                                val artist = artistDef.await()
 
                                 if (song.id == -1L) {
                                     onEvent(HomeRootUiEvent.SomethingWentWrong)
@@ -346,33 +358,11 @@ class HomeRootViewModel @Inject constructor(
                                 async {
                                     db.insertIntoPlayingQueueTable(
                                         song,
-                                        songType = SongType.HISTORY_SONG
+                                        songType = SongType.ARTIST_SONG
                                     )
                                 }.await()
 
                                 val list = db.readAllFromPlayingQueue().first().toPlayerData()
-
-                                val image =
-                                    BitmapConverter.decodeToBitmap(list[0].url)
-
-                                if (image != null) {
-                                    val colors = PaletteGenerator.extractColorFromBitMap(image)
-
-                                    val variant =
-                                        Color(parseColor(colors[ColorType.LIGHT_VIBRANT]))
-                                    val darkVariant =
-                                        Color(parseColor(colors[ColorType.DARK_VIBRANT]))
-
-                                    if (variant != darkVariant)
-                                        state = state.copy(
-                                            player = state.player.copy(
-                                                colors = listOf(
-                                                    variant,
-                                                    darkVariant,
-                                                )
-                                            )
-                                        )
-                                }
 
                                 CoroutineScope(Dispatchers.Main).launch {
                                     player.onEvent(PlayerUiEvent.Stop)
@@ -383,7 +373,11 @@ class HomeRootViewModel @Inject constructor(
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0]
+                                        playingSong = list[0],
+                                        info = PlayingSongInfo(
+                                            id = artist?.artistId ?: -1,
+                                            typeName = artist?.name ?: "Kyoku"
+                                        )
                                     )
                                 )
                             } else {
@@ -391,11 +385,23 @@ class HomeRootViewModel @Inject constructor(
                                     player.onEvent(PlayerUiEvent.SeekTo(0))
                                 }
                             }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false,
+                                    colors = listOf(
+                                        state.player.playingSong.colorOne,
+                                        state.player.playingSong.colorTwo
+                                    )
+                                )
+                            )
                         }
                     }
 
                     UiEvent.PlayType.PLAYLIST -> {
                         viewModelScope.launch(Dispatchers.IO) {
+                            async { db.clearPlayingQueue() }.await()
+
                             val playlistDef = async { db.getPlaylist(id = event.otherId).first() }
                             val playlistNameDef = async { db.getPlaylistName(event.otherId) }
 
@@ -415,6 +421,21 @@ class HomeRootViewModel @Inject constructor(
                                 return@launch
                             }
 
+                            db.insertIntoPlayingQueueTable(
+                                playlistSongs.toPlayingQueueTable(),
+                                SongType.PLAYLIST
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = playlistSongs,
+                                    info = PlayingSongInfo(
+                                        id = playlist.first,
+                                        typeName = playlist.second
+                                    )
+                                )
+                            )
+
                             CoroutineScope(Dispatchers.Main).launch {
                                 player.onEvent(PlayerUiEvent.Stop)
                                 playlistSongs.setMediaItems()
@@ -425,6 +446,16 @@ class HomeRootViewModel @Inject constructor(
                                 player = state.player.copy(
                                     allSong = playlistSongs,
                                     playingSong = playlistSongs[0]
+                                )
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false,
+                                    colors = listOf(
+                                        state.player.playingSong.colorOne,
+                                        state.player.playingSong.colorTwo
+                                    )
                                 )
                             )
                         }
@@ -466,13 +497,14 @@ class HomeRootViewModel @Inject constructor(
 
                         }
                     }
-                }.let {
-                    state = state.copy(
-                        player = state.player.copy(
-                            isLoading = false
-                        )
-                    )
                 }
+//                    .run {
+//                    state = state.copy(
+//                        player = state.player.copy(
+//                            isLoading = false
+//                        )
+//                    )
+//                }
             }
 
             is HomeRootUiEvent.PlayerUiEvent -> {
@@ -525,13 +557,13 @@ class HomeRootViewModel @Inject constructor(
 
                     HomeRootUiEvent.PlayerUiEvent.Backward -> {
                         viewModelScope.launch(Dispatchers.Main) {
-                            player.onEvent(PlayerUiEvent.Backward)
+                            player.onEvent(PlayerUiEvent.SeekToPrev)
                         }
                     }
 
                     HomeRootUiEvent.PlayerUiEvent.Forward -> {
                         viewModelScope.launch(Dispatchers.Main) {
-                            player.onEvent(PlayerUiEvent.Forward)
+                            player.onEvent(PlayerUiEvent.SeekToNext)
                         }
                     }
 
@@ -639,13 +671,13 @@ class HomeRootViewModel @Inject constructor(
                     .build()
             ).setMediaMetadata(
                 MediaMetadata.Builder()
-                    .setDisplayTitle(title)
-                    .setArtist(artist.toString().trimStart('[').trimEnd(']'))
-                    .setAlbumTitle(album)
+                    .setTitle(this.title)
+                    .setArtist(this.artist.toString().trimStart('[').trimEnd(']'))
+                    .setAlbumTitle(this.album)
                     .setArtworkUri(Uri.parse(uri))
                     .build()
             )
-            .setMediaId(id.toString())
+            .setMediaId(this.id.toString())
             .build()
 
         player.addOneMediaItem(item)

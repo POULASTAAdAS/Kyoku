@@ -7,9 +7,10 @@ sealed class HomeUiEvent {
     data object SomethingWentWrong : HomeUiEvent()
 
     data class ItemClick(
+        val id: Long = 0,
+        val otherId: Long = -1,
         val type: ItemsType,
         val songType: SongType = SongType.API_CALL,
-        val id: Long = 0,
         val name: String = "name",
         val isApiCall: Boolean = false
     ) : HomeUiEvent()
@@ -53,6 +54,8 @@ sealed class HomeUiEvent {
 
 
 enum class SongType {
+    PLAYLIST,
+    ALBUM,
     HISTORY_SONG,
     ARTIST_SONG,
     ALBUM_SONG,

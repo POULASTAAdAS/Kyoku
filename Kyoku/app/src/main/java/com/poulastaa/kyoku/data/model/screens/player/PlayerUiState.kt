@@ -7,5 +7,5 @@ sealed class PlayerUiState {
     data class Buffering(val value: Long) : PlayerUiState()
     data class Playing(val isPlaying: Boolean) : PlayerUiState()
 
-    data class CurrentPlayingIndex(val index: Int) : PlayerUiState()
+    data class CurrentPlayingSongId(val id: Long) : PlayerUiState()
 }

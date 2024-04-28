@@ -14,5 +14,7 @@ data class PlayingQueueTable(
     val coverImage: String = "",
     val masterPlaylistUrl: String = "",
     val totalTime: String = "",
-    val year: String = ""
+    val year: String = "",
+    val colorOne: String = "",
+    val colorTwo: String = ""
 )

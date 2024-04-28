@@ -12,18 +12,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -54,7 +55,6 @@ import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Player(
     isSmallPhone: Boolean,
@@ -94,21 +94,47 @@ fun Player(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .padding(end = 56.dp - MaterialTheme.dimens.medium1),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
-                IconButton(
-                    onClick = navigateBack,
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = brushColor[1],
-                        contentColor = brushColor[0]
-                    )
+                Row(
+                    modifier = Modifier.wrapContentSize()
                 ) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        imageVector = Icons.Rounded.KeyboardArrowDown,
-                        contentDescription = null
+                    IconButton(
+                        onClick = navigateBack,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = brushColor[1],
+                            contentColor = brushColor[0]
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            imageVector = Icons.Rounded.KeyboardArrowDown,
+                            contentDescription = null
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Playing from",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = brushColor[1]
+                    )
+                    Text(
+                        text = player.info.typeName,
+                        fontWeight = FontWeight.Light,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        color = brushColor[1]
                     )
                 }
             }
@@ -171,17 +197,6 @@ fun Player(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                }
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.End
-                ) {
-                    // todo add repeat logic
-//                    CustomIconButton(icon = if (player.isRepeat) R.drawable.ic_repeat_off else R.drawable.ic_repeat_on) {
-//
-//                    }
                 }
             }
         }
@@ -248,7 +263,7 @@ fun Player(
             ) {
                 CustomIconButton(
                     modifier = Modifier.size(35.dp),
-                    icon = R.drawable.ic_shuffle,
+                    icon = R.drawable.ic_repeat_off,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
@@ -298,6 +313,20 @@ fun Player(
                 ) {
 // todo add library option
                 }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
+        }
+
+        item {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
             }
         }
     }

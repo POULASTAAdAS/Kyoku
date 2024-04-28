@@ -47,6 +47,7 @@ data class Player(
     val isRepeat: Boolean = false,
 
     val allSong: List<PlayerSong> = emptyList(),
+    val info: PlayingSongInfo = PlayingSongInfo(),
     val playingSong: PlayerSong = PlayerSong(),
 
     val isPlaying: Boolean = false,
@@ -54,6 +55,11 @@ data class Player(
     val playingIndex: Int = -1,
 
     val colors: List<Color> = emptyList()
+)
+
+data class PlayingSongInfo(
+    val id: Long = -1,
+    val typeName: String = "Kyoku"
 )
 
 @Stable

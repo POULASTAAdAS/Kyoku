@@ -55,7 +55,7 @@ import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
 
         PlayingQueueTable::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

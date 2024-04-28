@@ -393,9 +393,9 @@ fun HomeScreenContentOldUser(
                                     scope.launch {
                                         onClick.invoke(
                                             HomeUiEvent.ItemClick(
+                                                id = data.historyPrev[historySongIndex].id,
                                                 type = ItemsType.SONG,
                                                 songType = SongType.HISTORY_SONG,
-                                                id = data.historyPrev[historySongIndex].id
                                             )
                                         )
                                     }

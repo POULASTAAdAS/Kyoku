@@ -28,11 +28,15 @@ import com.poulastaa.kyoku.data.model.database.table.SongAlbumRelationTable
 import com.poulastaa.kyoku.data.model.database.table.SongPlaylistRelationTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalItemTable
 import com.poulastaa.kyoku.data.model.database.table.internal.InternalPinnedTable
+import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.screens.home.SongType
+import com.poulastaa.kyoku.data.model.screens.library.Artist
 import com.poulastaa.kyoku.data.model.screens.library.PinnedDataType
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.utils.BitmapConverter
+import com.poulastaa.kyoku.utils.ColorType
+import com.poulastaa.kyoku.utils.PaletteGenerator
 import com.poulastaa.kyoku.utils.toAlbumTableEntry
 import com.poulastaa.kyoku.utils.toAlbumTablePrevEntry
 import com.poulastaa.kyoku.utils.toArtistMixEntry
@@ -622,6 +626,14 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
     suspend fun getArtistCoverImage(name: String) = dao.getArtistCoverImage(name)
+    suspend fun getArtistId(name: String) = dao.getIdOfArtist(name)
+    suspend fun getArtistOnId(id: Long) = dao.getArtistOnId(id)?.let {
+        Artist(
+            artistId = it.artistId,
+            name = it.name,
+            coverImage = it.coverImage
+        )
+    }
 
     suspend fun checkIfDailyMixTableEmpty() = dao.checkIfDailyMixTableEmpty().toInt() == 0
 
@@ -815,8 +827,22 @@ class DatabaseRepositoryImpl @Inject constructor(
                                 it.first to it.first.coverImage
                             }
                         }.let {
+                            val bitmap = BitmapConverter.decodeToBitmap(it.second)
+
+                            val vibrant =
+                                if (bitmap != null) PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
+                                    ?: "#FFB3CEA6"
+                                else "#FFB3CEA6"
+
+                            val darkVibrant =
+                                if (bitmap != null) PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
+                                    ?: "#FF354D2E"
+                                else "#FF354D2E"
+
                             it.first.copy(
-                                coverImage = it.second
+                                coverImage = it.second,
+                                colorOne = vibrant,
+                                colorTwo = darkVibrant
                             )
                         }
                     )
@@ -846,8 +872,22 @@ class DatabaseRepositoryImpl @Inject constructor(
                                 it.first to it.first.coverImage
                             }
                         }.let {
+                            val bitmap = BitmapConverter.decodeToBitmap(it.second)
+
+                            val vibrant =
+                                if (bitmap != null) PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
+                                    ?: "#FFB3CEA6"
+                                else "#FFB3CEA6"
+
+                            val darkVibrant =
+                                if (bitmap != null) PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
+                                    ?: "#FF354D2E"
+                                else "#FF354D2E"
+
                             it.first.copy(
-                                coverImage = it.second
+                                coverImage = it.second,
+                                colorOne = vibrant,
+                                colorTwo = darkVibrant
                             )
                         }
                     )
@@ -855,6 +895,18 @@ class DatabaseRepositoryImpl @Inject constructor(
             }
 
             else -> return
+        }
+    }
+
+    fun insertIntoPlayingQueueTable(entrys: List<PlayingQueueTable>, songType: SongType) {
+        CoroutineScope(Dispatchers.IO).launch {
+            when (songType) {
+                SongType.PLAYLIST -> {
+                    dao.insertIntoPlayingQueueTable(entrys)
+                }
+
+                else -> Unit
+            }
         }
     }
 

@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
-import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.api.service.playlist.CreatePlaylistReq
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.create_playlist.CreatePlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
@@ -128,6 +128,8 @@ class CreatePlaylistViewModel @Inject constructor(
 
             is CreatePlaylistUiEvent.SaveClicked -> {
                 viewModelScope.launch(Dispatchers.IO) {
+                    val header = async { ds.readTokenOrCookie().first() }.await()
+
                     when (state.type) {
                         HomeLongClickType.ARTIST_MIX -> {
                             if (state.songIdList.isEmpty()) return@launch initialSetupForArtistMix(
@@ -137,7 +139,10 @@ class CreatePlaylistViewModel @Inject constructor(
                                 }.await()
                             )
 
-                            downloadPlaylistFromMix()
+                            downloadPlaylistFromMix(
+                                context = event.context,
+                                header = header
+                            )
                         }
 
                         HomeLongClickType.DAILY_MIX -> {
@@ -148,7 +153,10 @@ class CreatePlaylistViewModel @Inject constructor(
                                 }.await()
                             )
 
-                            downloadPlaylistFromMix()
+                            downloadPlaylistFromMix(
+                                context = event.context,
+                                header = header
+                            )
                         }
 
 
@@ -180,7 +188,10 @@ class CreatePlaylistViewModel @Inject constructor(
         }
     }
 
-    private suspend fun downloadPlaylistFromMix() {
+    private suspend fun downloadPlaylistFromMix(
+        context: Context,
+        header: String
+    ) {
         state = state.copy(
             isLoading = true
         )
@@ -234,6 +245,11 @@ class CreatePlaylistViewModel @Inject constructor(
         }
 
         withContext(Dispatchers.IO) {
+            db.setValues(
+                context = context,
+                header = header
+            )
+
             async {
                 db.insertIntoPlaylist(response = playlist)
             }.await()

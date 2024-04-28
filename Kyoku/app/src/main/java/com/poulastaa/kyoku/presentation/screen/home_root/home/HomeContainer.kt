@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -100,8 +101,7 @@ fun HomeContainer(
 ) {
     Scaffold(
         modifier = Modifier
-            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-            .padding(bottom = MaterialTheme.dimens.small2),
+            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
         topBar = {
             when (state.nav) {
                 Nav.HOME -> HomeTopAppBar(
@@ -644,24 +644,33 @@ fun HomeContainer(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SmallPlayer(
-                            brushColor = state.player.colors.ifEmpty {
-                                listOf(
-                                    MaterialTheme.colorScheme.tertiary,
-                                    MaterialTheme.colorScheme.background,
-                                )
-                            },
-                            isPlaying = state.player.isPlaying,
-                            durationUpdate = state.player.progress,
-                            playingData = state.player.playingSong,
-                            isDarkThem = isDarkThem,
-                            isCookie = state.isCookie,
-                            header = state.headerValue,
-                            playControl = playControl,
-                            onDurationChange = {
-                                navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))
-                            }
-                        )
+                        if (state.player.isLoading)
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.background
+                            )
+                        else
+                            SmallPlayer(
+                                brushColor = state.player.colors.ifEmpty {
+                                    listOf(
+                                        MaterialTheme.colorScheme.tertiary,
+                                        MaterialTheme.colorScheme.background,
+                                    )
+                                },
+                                isPlaying = state.player.isPlaying,
+                                durationUpdate = state.player.progress,
+                                playingData = state.player.playingSong,
+                                isDarkThem = isDarkThem,
+                                isCookie = state.isCookie,
+                                header = state.headerValue,
+                                playControl = playControl,
+                                onDurationChange = {
+                                    navigateWithUiEvent.invoke(
+                                        HomeRootUiEvent.PlayerUiEvent.SeekTo(
+                                            it
+                                        )
+                                    )
+                                }
+                            )
                     }
                 }
 
@@ -720,11 +729,12 @@ fun HomeContainer(
                             HomeRootUiEvent.PlayerUiEvent.SmallPlayerClick
                         )
 
-                        navigateWithUiEvent.invoke(
-                            HomeRootUiEvent.UpdateNav(
-                                screens = Screens.Home
+                        if (navController.currentDestination?.route == Screens.Home.route)
+                            navigateWithUiEvent.invoke(
+                                HomeRootUiEvent.UpdateNav(
+                                    screens = Screens.Home
+                                )
                             )
-                        )
                     },
                     onDurationChange = {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))

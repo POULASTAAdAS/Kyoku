@@ -1,5 +1,8 @@
 package com.poulastaa.kyoku.utils
 
+import android.graphics.Color.parseColor
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.google.gson.JsonParser
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailLogInReq
 import com.poulastaa.kyoku.data.model.api.auth.email.EmailSignUpReq
@@ -38,6 +41,8 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
+import com.poulastaa.kyoku.ui.theme.dark_type_one_background
+import com.poulastaa.kyoku.ui.theme.dark_type_two_tertiary
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_GOOGLE
@@ -309,6 +314,7 @@ fun List<ReqAlbumSongTable>.toUiPlaylistSong() = this.map {
     )
 }
 
+@JvmName("ResponseSongToPlayingQueueTable")
 fun ResponseSong.toPlayingQueueTable() = PlayingQueueTable(
     songId = this.id,
     title = this.title,
@@ -320,8 +326,44 @@ fun ResponseSong.toPlayingQueueTable() = PlayingQueueTable(
     year = this.date
 )
 
+@JvmName("PlayerSongToPlayingQueueTable")
+fun List<PlayerSong>.toPlayingQueueTable() = this.map {
+    PlayingQueueTable(
+        songId = it.id,
+        title = it.title,
+        artist = it.artist.toString().trimStart('[').trimEnd(']'),
+        album = it.album,
+        coverImage = it.url,
+        masterPlaylistUrl = it.masterPlaylist,
+        totalTime = it.totalInMili.toString(),
+        colorOne = String.format("#%06X", 0xFFFFFF and it.colorOne.toArgb()),
+        colorTwo = String.format("#%06X", 0xFFFFFF and it.colorTwo.toArgb())
+    )
+}
+
 @JvmName("PlayingQueueTableToPlayerData")
 fun List<PlayingQueueTable>.toPlayerData() = this.map {
+    val bitmap = BitmapConverter.decodeToBitmap(it.coverImage)
+
+    var lightMuted: String? = null
+    var darkMuted: String? = null
+
+    val backupOne: String?
+    val backupTwo: String?
+
+    if (bitmap != null) {
+        lightMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
+        darkMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
+
+        backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
+        backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
+
+        if (lightMuted == darkMuted) {
+            lightMuted = backupOne
+            darkMuted = backupTwo
+        }
+    }
+
     PlayerSong(
         id = it.songId,
         url = it.coverImage,
@@ -331,12 +373,35 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
         album = it.album,
         year = it.year,
         totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-        totalInMili = it.totalTime.toFloat()
+        totalInMili = it.totalTime.toFloat(),
+        colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
+        colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background
     )
 }
 
 @JvmName("UiPlaylistSongToPlayerData")
 fun List<UiPlaylistSong>.toPlayerData() = this.map {
+    val bitmap = BitmapConverter.decodeToBitmap(it.coverImage)
+
+    var lightMuted: String? = null
+    var darkMuted: String? = null
+
+    val backupOne: String?
+    val backupTwo: String?
+
+    if (bitmap != null) {
+        lightMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
+        darkMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
+
+        backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
+        backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
+
+        if (lightMuted == darkMuted) {
+            lightMuted = backupOne
+            darkMuted = backupTwo
+        }
+    }
+
     PlayerSong(
         id = it.songId,
         url = it.coverImage,
@@ -344,6 +409,8 @@ fun List<UiPlaylistSong>.toPlayerData() = this.map {
         title = it.title,
         artist = it.artist.split(","),
         totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-        totalInMili = it.totalTime.toFloat()
+        totalInMili = it.totalTime.toFloat(),
+        colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
+        colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background
     )
 }

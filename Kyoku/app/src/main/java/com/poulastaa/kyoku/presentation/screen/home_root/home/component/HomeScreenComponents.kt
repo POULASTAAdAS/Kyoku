@@ -91,9 +91,9 @@ fun LazyListScope.homeScreenArtistList(
                     scope.launch {
                         onClick.invoke(
                             HomeUiEvent.ItemClick(
+                                id = artistPrev[artistIndex].id,
                                 type = ItemsType.ARTIST,
                                 name = artistPrev[artistIndex].name,
-                                id = artistPrev[artistIndex].id,
                                 isApiCall = true
                             )
                         )
@@ -145,7 +145,8 @@ fun LazyListScope.homeScreenArtistList(
                                             type = ItemsType.SONG,
                                             songType = SongType.ARTIST_SONG,
                                             id = artistPrev[artistIndex]
-                                                .lisOfPrevSong[songIndex].id
+                                                .lisOfPrevSong[songIndex].id,
+                                            name = artistPrev[artistIndex].name
                                         )
                                     )
                                 }

@@ -351,7 +351,7 @@ interface AppDao {
     fun getPlaylist(id: Long): Flow<List<UiPlaylistSong>>
 
     @Query("select playlistId from PlaylistTable where name = :name")
-    suspend fun getPlaylistId(name:String): Long?
+    suspend fun getPlaylistId(name: String): Long?
 
 
     @Query("select name from AlbumTable where albumId = :id")
@@ -382,6 +382,9 @@ interface AppDao {
 
     @Query("select coverImage from ArtistTable where name = :name")
     suspend fun getArtistCoverImage(name: String): String?
+
+    @Query("select * from ArtistTable where artistId = :id")
+    suspend fun getArtistOnId(id: Long): ArtistTable?
 
     @Query("select count(*) from DailyMixTable")
     suspend fun checkIfDailyMixTableEmpty(): Long
@@ -489,6 +492,9 @@ interface AppDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPlayingQueueTable(entry: PlayingQueueTable)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoPlayingQueueTable(entrys: List<PlayingQueueTable>)
 
     @Query("select * from PlayingQueueTable")
     fun readAllFromPlayingQueue(): Flow<List<PlayingQueueTable>>

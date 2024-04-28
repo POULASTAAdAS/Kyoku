@@ -277,9 +277,17 @@ class HomeScreenViewModel @Inject constructor(
                     when (event.type) {
                         ItemsType.SONG -> {
                             viewModelScope.launch(Dispatchers.IO) {
+                                val name = state.data.artistPrev.firstNotNullOfOrNull {
+                                    if (it.name == event.name) it else null
+                                }
+
+                                val artistId = if (name != null)
+                                    db.getArtistId(event.name) else -1
+
                                 _uiEvent.send(
                                     UiEvent.Play(
                                         songId = event.id,
+                                        otherId = artistId,
                                         playType = if (event.songType == SongType.ARTIST_SONG) UiEvent.PlayType.ARTIST_SONG
                                         else UiEvent.PlayType.HISTORY_SONG
                                     )
