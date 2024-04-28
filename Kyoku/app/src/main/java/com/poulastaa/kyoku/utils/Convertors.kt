@@ -13,6 +13,7 @@ import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyAuthReq
 import com.poulastaa.kyoku.data.model.api.auth.passkey.PasskeyJson
 import com.poulastaa.kyoku.data.model.api.service.ResponseArtist
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
+import com.poulastaa.kyoku.data.model.api.service.artist.ViewArtist
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.ArtistSong
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
@@ -34,6 +35,7 @@ import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
+import com.poulastaa.kyoku.data.model.home_nav_drawer.QueueSong
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
 import com.poulastaa.kyoku.data.model.screens.auth.root.RootAuthScreenState
@@ -41,7 +43,10 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeAlbumUiPrev
 import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
+import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 import com.poulastaa.kyoku.ui.theme.dark_type_one_background
+import com.poulastaa.kyoku.ui.theme.dark_type_two_background
+import com.poulastaa.kyoku.ui.theme.dark_type_two_onBackground
 import com.poulastaa.kyoku.ui.theme.dark_type_two_tertiary
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_LOG_IN
 import com.poulastaa.kyoku.utils.Constants.AUTH_TYPE_EMAIL_SIGN_UP
@@ -348,6 +353,8 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
     var lightMuted: String? = null
     var darkMuted: String? = null
 
+    var colorThree: String? = null
+
     val backupOne: String?
     val backupTwo: String?
 
@@ -358,24 +365,32 @@ fun List<PlayingQueueTable>.toPlayerData() = this.map {
         backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
         backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
 
+        colorThree = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.MUTED_SWATCH]
+
+
+
         if (lightMuted == darkMuted) {
             lightMuted = backupOne
             darkMuted = backupTwo
         }
     }
 
-    PlayerSong(
-        id = it.songId,
-        url = it.coverImage,
-        masterPlaylist = it.masterPlaylistUrl,
-        title = it.title,
-        artist = it.artist.split(","),
-        album = it.album,
-        year = it.year,
-        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-        totalInMili = it.totalTime.toFloat(),
-        colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
-        colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background
+    QueueSong(
+        isPlaying = false,
+        playerSong = PlayerSong(
+            id = it.songId,
+            url = it.coverImage,
+            masterPlaylist = it.masterPlaylistUrl,
+            title = it.title,
+            artist = it.artist.split(","),
+            album = it.album,
+            year = it.year,
+            totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
+            totalInMili = it.totalTime.toFloat(),
+            colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
+            colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background,
+            colorThree = if (colorThree != null) Color(parseColor(colorThree)) else dark_type_two_onBackground
+        )
     )
 }
 
@@ -386,6 +401,8 @@ fun List<UiPlaylistSong>.toPlayerData() = this.map {
     var lightMuted: String? = null
     var darkMuted: String? = null
 
+    var colorThree: String? = null
+
     val backupOne: String?
     val backupTwo: String?
 
@@ -396,21 +413,37 @@ fun List<UiPlaylistSong>.toPlayerData() = this.map {
         backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
         backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
 
+
+        colorThree = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.MUTED_SWATCH]
+
         if (lightMuted == darkMuted) {
             lightMuted = backupOne
             darkMuted = backupTwo
         }
     }
 
-    PlayerSong(
-        id = it.songId,
-        url = it.coverImage,
-        masterPlaylist = it.masterPlaylistUrl,
-        title = it.title,
-        artist = it.artist.split(","),
-        totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-        totalInMili = it.totalTime.toFloat(),
-        colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
-        colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background
+    QueueSong(
+        isPlaying = false,
+        playerSong = PlayerSong(
+            id = it.songId,
+            url = it.coverImage,
+            masterPlaylist = it.masterPlaylistUrl,
+            title = it.title,
+            artist = it.artist.split(","),
+            totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
+            totalInMili = it.totalTime.toFloat(),
+            colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
+            colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_two_background,
+            colorThree = if (colorThree != null) Color(parseColor(colorThree)) else dark_type_two_onBackground
+        )
+    )
+}
+
+fun List<ViewArtist>.toViewArtist() = this.map {
+    ViewArtistUiArtist(
+        artistId = it.id,
+        name = it.name,
+        coverImage = it.coverImage,
+        listened = it.points
     )
 }

@@ -573,7 +573,7 @@ fun LazyListScope.playControl(
 @Composable
 private fun Preview() {
     TestThem {
-        SongCardNonDraggable(
+        SongCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(70.dp)

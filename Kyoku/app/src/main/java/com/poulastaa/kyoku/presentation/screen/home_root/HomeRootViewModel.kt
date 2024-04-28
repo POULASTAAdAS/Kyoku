@@ -36,9 +36,11 @@ import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toPlayerData
 import com.poulastaa.kyoku.utils.toPlayingQueueTable
+import com.poulastaa.kyoku.utils.toViewArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -143,6 +145,8 @@ class HomeRootViewModel @Inject constructor(
     }
 
 
+    private var getArtistJob: Job? = null
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -167,19 +171,37 @@ class HomeRootViewModel @Inject constructor(
 
                     is PlayerUiState.CurrentPlayingSongId -> {
                         val song = state.player.allSong.firstNotNullOfOrNull {
-                            if (it.id == event.id) it else null
+                            if (it.playerSong.id == event.id) it.playerSong else null
                         }
 
-                        if (song != null)
+                        if (song != null) {
                             state = state.copy(
                                 player = state.player.copy(
                                     colors = listOf(
                                         song.colorOne,
-                                        song.colorTwo
+                                        song.colorTwo,
+                                        song.colorThree
                                     ),
                                     playingSong = song
                                 )
                             )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = state.player.allSong.map {
+                                        if (it.playerSong.id == song.id) it.copy(
+                                            isPlaying = true
+                                        )
+                                        else it.copy(
+                                            isPlaying = false
+                                        )
+                                    }
+                                )
+                            )
+
+                            getArtistJob?.cancel()
+                            getArtistJob = getArtistJob(song.id)
+                        }
                     }
 
                     PlayerUiState.Initial -> {
@@ -221,6 +243,33 @@ class HomeRootViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun loadSongIfAny() {
+        if (state.isFirst)
+            viewModelScope.launch(Dispatchers.IO) {
+                db.readAllFromPlayingQueue().first().let {
+                    if (it.isEmpty()) return@launch
+
+                    val result = it.toPlayerData()
+
+                    state = state.copy(
+                        isFirst = false,
+                        player = state.player.copy(
+                            isLoading = false,
+                            isSmallPlayer = true,
+                            allSong = result
+                        )
+                    )
+
+                    CoroutineScope(Dispatchers.Main).launch {
+                        result.map { song ->
+                            song.playerSong
+                        }.setMediaItems()
+                    }
+                }
+            }
+
     }
 
     fun onEvent(event: HomeRootUiEvent) {
@@ -305,14 +354,14 @@ class HomeRootViewModel @Inject constructor(
 
                                 CoroutineScope(Dispatchers.Main).launch {
                                     player.onEvent(PlayerUiEvent.Stop)
-                                    list[0].setMediaItem(song.coverImage)
+                                    list[0].playerSong.setMediaItem(song.coverImage)
                                     player.onEvent(PlayerUiEvent.PlayPause)
                                 }
 
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0],
+                                        playingSong = list[0].playerSong,
                                         info = PlayingSongInfo(
                                             typeName = "Recently Played"
                                         )
@@ -366,14 +415,14 @@ class HomeRootViewModel @Inject constructor(
 
                                 CoroutineScope(Dispatchers.Main).launch {
                                     player.onEvent(PlayerUiEvent.Stop)
-                                    list[0].setMediaItem(song.coverImage)
+                                    list[0].playerSong.setMediaItem(song.coverImage)
                                     player.onEvent(PlayerUiEvent.PlayPause)
                                 }
 
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0],
+                                        playingSong = list[0].playerSong,
                                         info = PlayingSongInfo(
                                             id = artist?.artistId ?: -1,
                                             typeName = artist?.name ?: "Kyoku"
@@ -422,7 +471,9 @@ class HomeRootViewModel @Inject constructor(
                             }
 
                             db.insertIntoPlayingQueueTable(
-                                playlistSongs.toPlayingQueueTable(),
+                                playlistSongs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
                                 SongType.PLAYLIST
                             )
 
@@ -438,14 +489,16 @@ class HomeRootViewModel @Inject constructor(
 
                             CoroutineScope(Dispatchers.Main).launch {
                                 player.onEvent(PlayerUiEvent.Stop)
-                                playlistSongs.setMediaItems()
+                                playlistSongs.map {
+                                    it.playerSong
+                                }.setMediaItems()
                                 player.onEvent(PlayerUiEvent.PlayPause)
                             }
 
                             state = state.copy(
                                 player = state.player.copy(
                                     allSong = playlistSongs,
-                                    playingSong = playlistSongs[0]
+                                    playingSong = playlistSongs[0].playerSong
                                 )
                             )
 
@@ -463,7 +516,9 @@ class HomeRootViewModel @Inject constructor(
 
                     UiEvent.PlayType.PLAYLIST_SONG -> {
                         viewModelScope.launch {
-                            Log.d("PLAYLIST_SONG clicked", event.toString())
+                            async { db.clearPlayingQueue() }.await()
+
+                            // todo
                         }
                     }
 
@@ -715,5 +770,17 @@ class HomeRootViewModel @Inject constructor(
         val seconds = (totalSeconds % 60).toLong()
 
         return "$minutes.$seconds"
+    }
+
+    private suspend fun getArtistJob(songId: Long) = viewModelScope.launch(Dispatchers.IO) {
+        val result = api.getArtistOnSongId(songId).toViewArtist()
+
+        if (result.isEmpty()) return@launch
+
+        state = state.copy(
+            player = state.player.copy(
+                playingSongArtist = result
+            )
+        )
     }
 }

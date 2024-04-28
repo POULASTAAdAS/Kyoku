@@ -21,8 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.poulastaa.kyoku.data.model.home_nav_drawer.NavDrawerUserInfo
 import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.home_nav_drawer.NavDrawerUserInfo
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.navigation.navigateWithData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.HomeContainer
@@ -40,6 +40,10 @@ fun HomeRootDrawer(
     scope: CoroutineScope = rememberCoroutineScope(),
     changeThem: () -> Unit
 ) {
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadSongIfAny()
+    }
+
     LaunchedEffect(key1 = viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {

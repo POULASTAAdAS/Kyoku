@@ -45,9 +45,15 @@ class AudioServiceHandler @Inject constructor(
 
             PlayerUiEvent.Forward -> player.seekForward()
 
-            PlayerUiEvent.SeekToPrev -> player.seekToPrevious()
+            PlayerUiEvent.SeekToPrev -> {
+                player.seekToPrevious()
+                player.play()
+            }
 
-            PlayerUiEvent.SeekToNext -> player.seekToNext()
+            PlayerUiEvent.SeekToNext -> {
+                player.seekToNext()
+                player.play()
+            }
 
             PlayerUiEvent.PlayPause -> playPause()
 

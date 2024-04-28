@@ -618,7 +618,7 @@ fun HomeContainer(
                             .clip(MaterialTheme.shapes.extraSmall)
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = state.player.colors.ifEmpty {
+                                    colors = state.player.colors.take(2).ifEmpty {
                                         listOf(
                                             MaterialTheme.colorScheme.tertiary,
                                             MaterialTheme.colorScheme.background,
@@ -650,7 +650,7 @@ fun HomeContainer(
                             )
                         else
                             SmallPlayer(
-                                brushColor = state.player.colors.ifEmpty {
+                                brushColor = state.player.colors.take(2).ifEmpty {
                                     listOf(
                                         MaterialTheme.colorScheme.tertiary,
                                         MaterialTheme.colorScheme.background,
@@ -716,11 +716,12 @@ fun HomeContainer(
                     isDarkThem = isDarkThem,
                     isCookie = state.isCookie,
                     header = state.headerValue,
-                    context = context,
+                    scope = scope,
                     brushColor = state.player.colors.ifEmpty {
                         listOf(
                             MaterialTheme.colorScheme.tertiary,
                             MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.onBackground,
                         )
                     },
                     playControl = playControl,

@@ -9,13 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,18 +21,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiEvent
-import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
+import com.poulastaa.kyoku.presentation.common.ArtistView
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
 
@@ -95,46 +90,22 @@ fun ViewArtistContent(
 
 
         data.forEach {
-            Row(
+            ArtistView(
+                data = it,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
                     .clip(MaterialTheme.shapes.extraSmall)
                     .clickable {
                         onClick.invoke(ViewArtistUiEvent.ArtistClick(it.name))
-                    }
-            ) {
-                CustomImageView(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(MaterialTheme.shapes.extraSmall),
-                    isDarkThem = isDarkThem,
-                    isCookie = isCookie,
-                    headerValue = headerValue,
-                    url = it.coverImage
-                )
-
-                Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
-
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(
-                        text = it.name,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-
-                    Text(
-                        text = "${it.listened} listened",
-                        fontWeight = FontWeight.Light,
-                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
+                    },
+                imageSize = 120.dp,
+                isDarkThem = isDarkThem,
+                isCookie = isCookie,
+                header = headerValue,
+                nameFontSize = MaterialTheme.typography.titleLarge.fontSize,
+                listenedFontSize = MaterialTheme.typography.titleSmall.fontSize
+            )
 
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
         }

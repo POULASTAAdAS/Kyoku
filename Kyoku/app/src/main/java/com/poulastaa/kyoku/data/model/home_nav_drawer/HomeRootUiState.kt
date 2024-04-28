@@ -8,9 +8,12 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 import com.poulastaa.kyoku.data.model.screens.player.DragAnchors
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
+import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 
 @Stable
-data class HomeRootUiState @OptIn(ExperimentalFoundationApi::class) constructor(
+@OptIn(ExperimentalFoundationApi::class)
+data class HomeRootUiState(
+    val isFirst: Boolean = true,
     val isCookie: Boolean = false,
     val isLoading: Boolean = false,
     val headerValue: String = "",
@@ -46,9 +49,11 @@ data class Player(
 
     val isRepeat: Boolean = false,
 
-    val allSong: List<PlayerSong> = emptyList(),
+    val allSong: List<QueueSong> = emptyList(),
     val info: PlayingSongInfo = PlayingSongInfo(),
+
     val playingSong: PlayerSong = PlayerSong(),
+    val playingSongArtist: List<ViewArtistUiArtist> = emptyList(),
 
     val isPlaying: Boolean = false,
     val progress: Float = 0f,
@@ -57,6 +62,13 @@ data class Player(
     val colors: List<Color> = emptyList()
 )
 
+@Stable
+data class QueueSong(
+    val isPlaying: Boolean = false,
+    val playerSong: PlayerSong
+)
+
+@Stable
 data class PlayingSongInfo(
     val id: Long = -1,
     val typeName: String = "Kyoku"

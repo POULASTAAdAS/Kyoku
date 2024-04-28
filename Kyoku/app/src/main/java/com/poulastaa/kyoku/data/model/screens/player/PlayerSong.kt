@@ -2,7 +2,8 @@ package com.poulastaa.kyoku.data.model.screens.player
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
-import com.poulastaa.kyoku.ui.theme.dark_type_one_background
+import com.poulastaa.kyoku.ui.theme.dark_type_two_background
+import com.poulastaa.kyoku.ui.theme.dark_type_two_onBackground
 import com.poulastaa.kyoku.ui.theme.dark_type_two_tertiary
 
 @Stable
@@ -18,5 +19,6 @@ data class PlayerSong(
     val totalInMili: Float = 0f,
     val currentInMin: String = "-.-",
     val colorOne: Color = dark_type_two_tertiary,
-    val colorTwo: Color = dark_type_one_background,
+    val colorTwo: Color = dark_type_two_background,
+    val colorThree: Color = dark_type_two_onBackground
 )
