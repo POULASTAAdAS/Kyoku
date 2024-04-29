@@ -44,7 +44,6 @@ import com.poulastaa.kyoku.data.model.screens.home.HomeUiSongPrev
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
-import com.poulastaa.kyoku.ui.theme.dark_type_one_background
 import com.poulastaa.kyoku.ui.theme.dark_type_two_background
 import com.poulastaa.kyoku.ui.theme.dark_type_two_onBackground
 import com.poulastaa.kyoku.ui.theme.dark_type_two_tertiary
@@ -56,6 +55,9 @@ import com.poulastaa.kyoku.utils.Constants.TYPE_EMAIL_LOG_IN_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_EMAIL_SIGN_UP_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_GOOGLE_AUTH_REQ
 import com.poulastaa.kyoku.utils.Constants.TYPE_PASSKEY_AUTH_REQ
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 fun RootAuthScreenState.toPasskeyAuthRequest() = PasskeyAuthReq(
     type = TYPE_PASSKEY_AUTH_REQ,
@@ -346,97 +348,125 @@ fun List<PlayerSong>.toPlayingQueueTable() = this.map {
     )
 }
 
-@JvmName("PlayingQueueTableToPlayerData")
-fun List<PlayingQueueTable>.toPlayerData() = this.map {
-    val bitmap = BitmapConverter.decodeToBitmap(it.coverImage)
+fun List<PlayingQueueTable>.toPlayerDataIfAny() = this.map { song ->
+    val bitmap = BitmapConverter.decodeToBitmap(song.coverImage)
+    val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
 
-    var lightMuted: String? = null
-    var darkMuted: String? = null
+    var lightMuted = palette?.get(ColorType.LIGHT_MUTED)
+    var darkMuted = palette?.get(ColorType.DARK_MUTED)
 
-    var colorThree: String? = null
+    val backupOne = palette?.get(ColorType.LIGHT_VIBRANT)
+    val backupTwo = palette?.get(ColorType.DARK_VIBRANT)
+    val colorThree = palette?.get(ColorType.MUTED_SWATCH)
 
-    val backupOne: String?
-    val backupTwo: String?
-
-    if (bitmap != null) {
-        lightMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
-        darkMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
-
-        backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
-        backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
-
-        colorThree = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.MUTED_SWATCH]
-
-
-
-        if (lightMuted == darkMuted) {
-            lightMuted = backupOne
-            darkMuted = backupTwo
-        }
+    if (lightMuted == darkMuted) {
+        lightMuted = backupOne
+        darkMuted = backupTwo
     }
+
+    val lightColor = lightMuted?.let { Color(parseColor(it)) } ?: dark_type_two_tertiary
+    val darkColor = darkMuted?.let { Color(parseColor(it)) } ?: dark_type_two_background
+    val thirdColor = colorThree?.let { Color(parseColor(it)) } ?: dark_type_two_onBackground
 
     QueueSong(
         isPlaying = false,
         playerSong = PlayerSong(
-            id = it.songId,
-            url = it.coverImage,
-            masterPlaylist = it.masterPlaylistUrl,
-            title = it.title,
-            artist = it.artist.split(","),
-            album = it.album,
-            year = it.year,
-            totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-            totalInMili = it.totalTime.toFloat(),
-            colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
-            colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_one_background,
-            colorThree = if (colorThree != null) Color(parseColor(colorThree)) else dark_type_two_onBackground
+            id = song.songId,
+            url = song.coverImage,
+            masterPlaylist = song.masterPlaylistUrl,
+            title = song.title,
+            artist = song.artist.split(","),
+            totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+            totalInMili = song.totalTime.toFloat(),
+            colorOne = lightColor,
+            colorTwo = darkColor,
+            colorThree = thirdColor
         )
     )
 }
 
-@JvmName("UiPlaylistSongToPlayerData")
-fun List<UiPlaylistSong>.toPlayerData() = this.map {
-    val bitmap = BitmapConverter.decodeToBitmap(it.coverImage)
+@JvmName("PlayingQueueTableToPlayerData")
+suspend fun List<PlayingQueueTable>.toPlayerData() = coroutineScope {
+    this@toPlayerData.map { song ->
+        async {
+            val bitmap = BitmapConverter.decodeToBitmap(song.coverImage)
+            val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
 
-    var lightMuted: String? = null
-    var darkMuted: String? = null
+            var lightMuted = palette?.get(ColorType.LIGHT_MUTED)
+            var darkMuted = palette?.get(ColorType.DARK_MUTED)
 
-    var colorThree: String? = null
+            val backupOne = palette?.get(ColorType.LIGHT_VIBRANT)
+            val backupTwo = palette?.get(ColorType.DARK_VIBRANT)
+            val colorThree = palette?.get(ColorType.MUTED_SWATCH)
 
-    val backupOne: String?
-    val backupTwo: String?
+            if (lightMuted == darkMuted) {
+                lightMuted = backupOne
+                darkMuted = backupTwo
+            }
 
-    if (bitmap != null) {
-        lightMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_MUTED]
-        darkMuted = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_MUTED]
+            val lightColor = lightMuted?.let { Color(parseColor(it)) } ?: dark_type_two_tertiary
+            val darkColor = darkMuted?.let { Color(parseColor(it)) } ?: dark_type_two_background
+            val thirdColor = colorThree?.let { Color(parseColor(it)) } ?: dark_type_two_onBackground
 
-        backupOne = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.LIGHT_VIBRANT]
-        backupTwo = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.DARK_VIBRANT]
-
-
-        colorThree = PaletteGenerator.extractColorFromBitMap(bitmap)[ColorType.MUTED_SWATCH]
-
-        if (lightMuted == darkMuted) {
-            lightMuted = backupOne
-            darkMuted = backupTwo
+            QueueSong(
+                isPlaying = false,
+                playerSong = PlayerSong(
+                    id = song.songId,
+                    url = song.coverImage,
+                    masterPlaylist = song.masterPlaylistUrl,
+                    title = song.title,
+                    artist = song.artist.split(","),
+                    totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+                    totalInMili = song.totalTime.toFloat(),
+                    colorOne = lightColor,
+                    colorTwo = darkColor,
+                    colorThree = thirdColor
+                )
+            )
         }
-    }
+    }.awaitAll()
+}
 
-    QueueSong(
-        isPlaying = false,
-        playerSong = PlayerSong(
-            id = it.songId,
-            url = it.coverImage,
-            masterPlaylist = it.masterPlaylistUrl,
-            title = it.title,
-            artist = it.artist.split(","),
-            totalTime = String.format("%.2f", (it.totalTime.toDouble() / 60000)),
-            totalInMili = it.totalTime.toFloat(),
-            colorOne = if (lightMuted != null) Color(parseColor(lightMuted)) else dark_type_two_tertiary,
-            colorTwo = if (darkMuted != null) Color(parseColor(darkMuted)) else dark_type_two_background,
-            colorThree = if (colorThree != null) Color(parseColor(colorThree)) else dark_type_two_onBackground
-        )
-    )
+@JvmName("UiPlaylistSongToPlayerData")
+suspend fun List<UiPlaylistSong>.toPlayerData() = coroutineScope {
+    this@toPlayerData.map { song ->
+        async {
+            val bitmap = BitmapConverter.decodeToBitmap(song.coverImage)
+            val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
+
+            var lightMuted = palette?.get(ColorType.LIGHT_MUTED)
+            var darkMuted = palette?.get(ColorType.DARK_MUTED)
+
+            val backupOne = palette?.get(ColorType.LIGHT_VIBRANT)
+            val backupTwo = palette?.get(ColorType.DARK_VIBRANT)
+            val colorThree = palette?.get(ColorType.MUTED_SWATCH)
+
+            if (lightMuted == darkMuted) {
+                lightMuted = backupOne
+                darkMuted = backupTwo
+            }
+
+            val lightColor = lightMuted?.let { Color(parseColor(it)) } ?: dark_type_two_tertiary
+            val darkColor = darkMuted?.let { Color(parseColor(it)) } ?: dark_type_two_background
+            val thirdColor = colorThree?.let { Color(parseColor(it)) } ?: dark_type_two_onBackground
+
+            QueueSong(
+                isPlaying = false,
+                playerSong = PlayerSong(
+                    id = song.songId,
+                    url = song.coverImage,
+                    masterPlaylist = song.masterPlaylistUrl,
+                    title = song.title,
+                    artist = song.artist.split(","),
+                    totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+                    totalInMili = song.totalTime.toFloat(),
+                    colorOne = lightColor,
+                    colorTwo = darkColor,
+                    colorThree = thirdColor
+                )
+            )
+        }
+    }.awaitAll()
 }
 
 fun List<ViewArtist>.toViewArtist() = this.map {

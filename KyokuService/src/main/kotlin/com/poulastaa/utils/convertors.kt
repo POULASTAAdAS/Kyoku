@@ -43,11 +43,11 @@ fun List<Long>.toListOfPlaylistRow(id: Long) = this.map {
 
 
 fun String.constructCoverPhotoUrl(): String = "$BASE_URL${EndPoints.CoverImage.route}?coverImage=${
-    this.replace(COVER_IMAGE_ROOT_DIR, "")
+    this.replace(COVER_IMAGE_ROOT_DIR, "").replace("&" , "%26")
 }"
 
 fun String.constructMasterPlaylistUrl(): String = "$BASE_URL${EndPoints.PlaySongMaster.route}?master=${
-    this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
+    this.replace(MASTER_PLAYLIST_ROOT_DIR, "").replace("&" , "%26")
 }"
 
 fun String.getAlbum(): String {

@@ -26,9 +26,9 @@ fun ByteArray.b64Encode(): String = Base64.getUrlEncoder().encodeToString(this)
 fun constructProfileUrl(): String = "${Constants.SERVICE_URL}${EndPoints.ProfilePic.route}"
 
 fun String.constructCoverPhotoUrl(): String = "${Constants.SERVICE_URL}${EndPoints.CoverImage.route}?coverImage=${
-    this.replace(COVER_IMAGE_ROOT_DIR, "")
+    this.replace(COVER_IMAGE_ROOT_DIR, "").replace("&" , "%26")
 }"
 
 fun String.constructMasterPlaylistUrl(): String = "${Constants.SERVICE_URL}${EndPoints.PlaySongMaster.route}?master=${
-    this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
+    this.replace(MASTER_PLAYLIST_ROOT_DIR, "").replace("&" , "%26")
 }"

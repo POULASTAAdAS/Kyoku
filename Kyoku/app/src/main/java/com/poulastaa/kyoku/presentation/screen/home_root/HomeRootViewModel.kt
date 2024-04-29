@@ -35,6 +35,7 @@ import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
 import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toPlayerData
+import com.poulastaa.kyoku.utils.toPlayerDataIfAny
 import com.poulastaa.kyoku.utils.toPlayingQueueTable
 import com.poulastaa.kyoku.utils.toViewArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -251,7 +253,7 @@ class HomeRootViewModel @Inject constructor(
                 db.readAllFromPlayingQueue().first().let {
                     if (it.isEmpty()) return@launch
 
-                    val result = it.toPlayerData()
+                    val result = it.toPlayerDataIfAny()
 
                     state = state.copy(
                         isFirst = false,
@@ -262,14 +264,13 @@ class HomeRootViewModel @Inject constructor(
                         )
                     )
 
-                    CoroutineScope(Dispatchers.Main).launch {
+                    withContext(Dispatchers.Main) {
                         result.map { song ->
                             song.playerSong
                         }.setMediaItems()
                     }
                 }
             }
-
     }
 
     fun onEvent(event: HomeRootUiEvent) {
@@ -361,7 +362,6 @@ class HomeRootViewModel @Inject constructor(
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0].playerSong,
                                         info = PlayingSongInfo(
                                             typeName = "Recently Played"
                                         )
@@ -422,7 +422,6 @@ class HomeRootViewModel @Inject constructor(
                                 state = state.copy(
                                     player = state.player.copy(
                                         allSong = list,
-                                        playingSong = list[0].playerSong,
                                         info = PlayingSongInfo(
                                             id = artist?.artistId ?: -1,
                                             typeName = artist?.name ?: "Kyoku"
@@ -437,11 +436,7 @@ class HomeRootViewModel @Inject constructor(
 
                             state = state.copy(
                                 player = state.player.copy(
-                                    isLoading = false,
-                                    colors = listOf(
-                                        state.player.playingSong.colorOne,
-                                        state.player.playingSong.colorTwo
-                                    )
+                                    isLoading = false
                                 )
                             )
                         }
@@ -449,11 +444,12 @@ class HomeRootViewModel @Inject constructor(
 
                     UiEvent.PlayType.PLAYLIST -> {
                         viewModelScope.launch(Dispatchers.IO) {
-                            async { db.clearPlayingQueue() }.await()
-
-                            val playlistDef = async { db.getPlaylist(id = event.otherId).first() }
+                            val clear = async { db.clearPlayingQueue() }
+                            val playlistDef =
+                                async { db.getPlaylist(id = event.otherId).first() }
                             val playlistNameDef = async { db.getPlaylistName(event.otherId) }
 
+                            clear.await()
                             val playlistSongs = playlistDef.await().toPlayerData()
                             val playlist = event.otherId to playlistNameDef.await()
 
@@ -480,6 +476,7 @@ class HomeRootViewModel @Inject constructor(
                             state = state.copy(
                                 player = state.player.copy(
                                     allSong = playlistSongs,
+                                    playingSong = playlistSongs[0].playerSong,
                                     info = PlayingSongInfo(
                                         id = playlist.first,
                                         typeName = playlist.second
@@ -497,13 +494,6 @@ class HomeRootViewModel @Inject constructor(
 
                             state = state.copy(
                                 player = state.player.copy(
-                                    allSong = playlistSongs,
-                                    playingSong = playlistSongs[0].playerSong
-                                )
-                            )
-
-                            state = state.copy(
-                                player = state.player.copy(
                                     isLoading = false,
                                     colors = listOf(
                                         state.player.playingSong.colorOne,
@@ -515,28 +505,72 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.PLAYLIST_SONG -> {
-                        val song = state.player.allSong.firstNotNullOfOrNull {
-                            if (it.playerSong.id == event.songId) it.playerSong else null
+                        val index = state.player.allSong.map { it.playerSong.id }
+                            .indexOf(event.songId)
+
+                        val oldSong = try { // same playlist song
+                            state.player.allSong[index]
+                        } catch (_: Exception) {
+                            null
                         }
 
-                        val index =
-                            state.player.allSong[state.player.allSong.map { it.playerSong.id }
-                                .indexOf(event.songId)]
+                        if (oldSong != null) viewModelScope.launch(Dispatchers.Main) {
+                            player.onEvent(PlayerUiEvent.SeekToSong(index))
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
+                        else viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val playlistDef =
+                                async { db.getPlaylist(id = event.otherId).first() }
+                            val playlistNameDef = async { db.getPlaylistName(event.otherId) }
+
+                            clear.await()
+                            val playlistSongs = playlistDef.await().toPlayerData()
+                            val playlist = event.otherId to playlistNameDef.await()
 
 
-
-                        if (song != null) {
-                            CoroutineScope(Dispatchers.Main).launch {
-
+                            val playingSong = playlistSongs.firstNotNullOfOrNull {
+                                if (it.playerSong.id == event.songId) it else null
                             }
-                        }
 
-                        viewModelScope.launch {
+                            if (playingSong == null) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
 
-//                            async { db.clearPlayingQueue() }.await()
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
 
+                                return@launch
+                            }
 
-                            // todo
+                            val i = playlistSongs.map {
+                                it.playerSong.id
+                            }.indexOf(event.songId)
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                playlistSongs.map { it.playerSong }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.SeekToSong(i))
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false,
+                                    allSong = playlistSongs,
+                                    info = PlayingSongInfo(
+                                        id = playlist.first,
+                                        typeName = playlist.second
+                                    )
+                                )
+                            )
                         }
                     }
 

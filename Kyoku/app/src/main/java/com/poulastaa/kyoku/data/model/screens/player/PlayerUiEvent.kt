@@ -8,6 +8,7 @@ sealed class PlayerUiEvent {
     data object Forward : PlayerUiEvent()
 
     data class SeekTo(val index: Long) : PlayerUiEvent()
+    data class SeekToSong(val index: Int, val pos: Long = 0) : PlayerUiEvent()
 
     data object SeekToPrev : PlayerUiEvent()
     data object SeekToNext : PlayerUiEvent()

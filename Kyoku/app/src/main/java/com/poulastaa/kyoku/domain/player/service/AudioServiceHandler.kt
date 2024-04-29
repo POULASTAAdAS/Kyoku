@@ -1,6 +1,8 @@
 package com.poulastaa.kyoku.domain.player.service
 
+import android.util.Log
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
@@ -47,18 +49,33 @@ class AudioServiceHandler @Inject constructor(
 
             PlayerUiEvent.SeekToPrev -> {
                 player.seekToPrevious()
-                player.play()
+
+                if (!player.isPlaying) CoroutineScope(Dispatchers.Main).launch {
+                    player.prepare()
+                    playPause()
+                }
             }
 
             PlayerUiEvent.SeekToNext -> {
                 player.seekToNext()
-                player.play()
+
+                if (!player.isPlaying) CoroutineScope(Dispatchers.Main).launch {
+                    player.prepare()
+                    playPause()
+                }
             }
 
             PlayerUiEvent.PlayPause -> playPause()
 
             is PlayerUiEvent.SeekTo -> player.seekTo(event.index)
 
+            is PlayerUiEvent.SeekToSong -> {
+                player.seekTo(event.index, event.pos)
+
+                if (!player.isPlaying) CoroutineScope(Dispatchers.Main).launch {
+                    playPause()
+                }
+            }
 
             is PlayerUiEvent.SelectedSongChange -> {
                 when (event.index) {
@@ -109,18 +126,25 @@ class AudioServiceHandler @Inject constructor(
         _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
     }
 
+
     override fun onPlaybackStateChanged(playbackState: Int) {
+        Log.d("playbackState", playbackState.toString())
+
         when (playbackState) {
             ExoPlayer.STATE_BUFFERING -> _playerUiState.value =
                 PlayerUiState.Buffering(player.contentPosition)
 
             ExoPlayer.STATE_READY -> _playerUiState.value = PlayerUiState.Ready(player.duration)
+
             ExoPlayer.STATE_ENDED -> _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
             ExoPlayer.STATE_IDLE -> _playerUiState.value = PlayerUiState.Playing(isPlaying = false)
             ExoPlayer.COMMAND_SEEK_TO_NEXT -> _playerUiState.value =
                 PlayerUiState.Playing(isPlaying = true)
 
             ExoPlayer.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM -> _playerUiState.value =
+                PlayerUiState.Playing(isPlaying = true)
+
+            ExoPlayer.COMMAND_SEEK_TO_MEDIA_ITEM -> _playerUiState.value =
                 PlayerUiState.Playing(isPlaying = true)
 
             else -> Unit
@@ -141,5 +165,25 @@ class AudioServiceHandler @Inject constructor(
 
         _playerUiState.value =
             PlayerUiState.CurrentPlayingSongId(player.currentMediaItem?.mediaId?.toLong() ?: -1L)
+    }
+
+    override fun onPlayerError(error: PlaybackException) {
+        super.onPlayerError(error)
+        if (error.errorCode == 2004) {
+            if (player.hasNextMediaItem()) {
+                player.seekToNext()
+                player.prepare()
+                CoroutineScope(Dispatchers.Main).launch {
+                    playPause()
+                }
+            }
+            else {
+                player.seekToDefaultPosition(0)
+                player.prepare()
+                CoroutineScope(Dispatchers.Main).launch {
+                    playPause()
+                }
+            }
+        }
     }
 }

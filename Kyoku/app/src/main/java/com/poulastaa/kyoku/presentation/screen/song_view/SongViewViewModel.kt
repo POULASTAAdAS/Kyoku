@@ -105,15 +105,114 @@ class SongViewViewModel @Inject constructor(
                 }
             }
 
-            ItemsType.ALBUM -> TODO()
-            ItemsType.ALBUM_PREV -> TODO()
-            ItemsType.ARTIST -> TODO()
-            ItemsType.ARTIST_MIX -> TODO()
-            ItemsType.DAILY_MIX -> TODO()
-            ItemsType.ARTIST_MORE -> TODO()
-            ItemsType.FAVOURITE -> TODO()
-            ItemsType.SONG -> TODO()
-            ItemsType.HISTORY -> TODO()
+            ItemsType.ALBUM -> {
+                if (state.data.album.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            album = state.data.album.copy(
+                                listOfSong = state.data.album.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+            ItemsType.ALBUM_PREV -> {
+                if (state.data.album.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            album = state.data.album.copy(
+                                listOfSong = state.data.album.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+
+            ItemsType.ARTIST_MIX -> {
+                if (state.data.dailyMixOrArtistMix.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            dailyMixOrArtistMix = state.data.dailyMixOrArtistMix.copy(
+                                listOfSong = state.data.dailyMixOrArtistMix.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+            ItemsType.DAILY_MIX -> {
+                if (state.data.dailyMixOrArtistMix.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            dailyMixOrArtistMix = state.data.dailyMixOrArtistMix.copy(
+                                listOfSong = state.data.dailyMixOrArtistMix.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+            ItemsType.FAVOURITE -> {
+                if (state.data.favourites.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            favourites = state.data.favourites.copy(
+                                listOfSong = state.data.favourites.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+
+            ItemsType.ARTIST -> {
+
+            }
+
+            ItemsType.ARTIST_MORE -> {
+
+            }
+
+            ItemsType.SONG -> {
+
+            }
+
+            ItemsType.HISTORY -> {
+
+            }
+
             ItemsType.ERR -> return
         }
     }
