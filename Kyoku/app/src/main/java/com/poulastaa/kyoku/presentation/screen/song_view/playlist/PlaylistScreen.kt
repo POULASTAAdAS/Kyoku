@@ -155,6 +155,7 @@ private fun LazyListScope.playlistSongs(
                 .clickable {
                     onSongClick.invoke(data[it].songId)
                 },
+            isPlaying = data[it].isPlaying ?: false,
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,

@@ -97,6 +97,7 @@ fun HomeRootDrawer(
                     profileUrl = viewModel.state.profilePicUrl,
                     isCookie = viewModel.state.isCookie,
                     authHeader = viewModel.state.headerValue,
+                    playingSongId = viewModel.state.player.playingSong.id,
                     navController = navController,
                     state = viewModel.state,
                     scope = scope,

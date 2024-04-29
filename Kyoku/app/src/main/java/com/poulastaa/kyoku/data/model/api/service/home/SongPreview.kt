@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SongPreview(
+    val isPlaying: Boolean? = false,
     val id: String = "",
     val title: String = "",
     val coverImage: String = "",

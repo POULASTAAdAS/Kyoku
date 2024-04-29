@@ -161,6 +161,7 @@ fun SongCardNonDraggable(
 @Composable
 fun SongCard(
     modifier: Modifier,
+    isPlaying: Boolean = false,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -178,7 +179,6 @@ fun SongCard(
                 .fillMaxWidth(.07f)
                 .padding(start = MaterialTheme.dimens.small3)
         )
-
 
         Row(
             modifier = Modifier
@@ -211,7 +211,7 @@ fun SongCard(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
@@ -220,7 +220,7 @@ fun SongCard(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -246,7 +246,7 @@ fun SongCard(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_song_card_add),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(34.dp)
                 )
             }
@@ -265,7 +265,7 @@ fun SongCard(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_more),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(34.dp)
                 )
             }
@@ -584,6 +584,7 @@ private fun Preview() {
 
                     }
                 ),
+            isPlaying = true,
             isDarkThem = isSystemInDarkTheme(),
             isCookie = false,
             headerValue = "",

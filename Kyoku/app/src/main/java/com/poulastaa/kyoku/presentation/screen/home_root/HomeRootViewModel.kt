@@ -515,8 +515,26 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.PLAYLIST_SONG -> {
+                        val song = state.player.allSong.firstNotNullOfOrNull {
+                            if (it.playerSong.id == event.songId) it.playerSong else null
+                        }
+
+                        val index =
+                            state.player.allSong[state.player.allSong.map { it.playerSong.id }
+                                .indexOf(event.songId)]
+
+
+
+                        if (song != null) {
+                            CoroutineScope(Dispatchers.Main).launch {
+
+                            }
+                        }
+
                         viewModelScope.launch {
-                            async { db.clearPlayingQueue() }.await()
+
+//                            async { db.clearPlayingQueue() }.await()
+
 
                             // todo
                         }
@@ -553,13 +571,6 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
                 }
-//                    .run {
-//                    state = state.copy(
-//                        player = state.player.copy(
-//                            isLoading = false
-//                        )
-//                    )
-//                }
             }
 
             is HomeRootUiEvent.PlayerUiEvent -> {

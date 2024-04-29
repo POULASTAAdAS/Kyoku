@@ -85,6 +85,39 @@ class SongViewViewModel @Inject constructor(
         }
     }
 
+    fun savePlayingSongId(id: Long) {
+        when (state.type) {
+            ItemsType.PLAYLIST -> {
+                if (state.data.playlist.listOfSong.isNotEmpty()) {
+                    state = state.copy(
+                        data = state.data.copy(
+                            playlist = state.data.playlist.copy(
+                                listOfSong = state.data.playlist.listOfSong.map {
+                                    if (it.songId == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
+                }
+            }
+
+            ItemsType.ALBUM -> TODO()
+            ItemsType.ALBUM_PREV -> TODO()
+            ItemsType.ARTIST -> TODO()
+            ItemsType.ARTIST_MIX -> TODO()
+            ItemsType.DAILY_MIX -> TODO()
+            ItemsType.ARTIST_MORE -> TODO()
+            ItemsType.FAVOURITE -> TODO()
+            ItemsType.SONG -> TODO()
+            ItemsType.HISTORY -> TODO()
+            ItemsType.ERR -> return
+        }
+    }
+
     fun loadData(
         typeString: String,
         id: Long,

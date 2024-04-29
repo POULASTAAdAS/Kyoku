@@ -41,6 +41,7 @@ data class UiArtist(
 
 @Stable
 data class UiPlaylistSong(
+    val isPlaying: Boolean? = false,
     val songId: Long = 0,
     val title: String = "",
     val artist: String = "",

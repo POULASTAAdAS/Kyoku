@@ -85,6 +85,7 @@ fun HomeContainer(
     profileUrl: String,
     isCookie: Boolean,
     authHeader: String,
+    playingSongId: Long,
     navController: NavHostController,
     topAppBarScrollBehavior: TopAppBarScrollBehavior =
         TopAppBarDefaults.enterAlwaysScrollBehavior(
@@ -295,6 +296,13 @@ fun HomeContainer(
                         .arguments?.getBoolean(Screens.Args.IS_API_CALL.title, false) ?: false
 
                     val viewModel: SongViewViewModel = hiltViewModel()
+
+                    LaunchedEffect(
+                        key1 = viewModel.state.isLoading,
+                        key2 = playingSongId
+                    ) {
+                        viewModel.savePlayingSongId(playingSongId)
+                    }
 
                     SongViewRootScreen(
                         viewModel = viewModel,
@@ -618,12 +626,14 @@ fun HomeContainer(
                             .clip(MaterialTheme.shapes.extraSmall)
                             .background(
                                 brush = Brush.linearGradient(
-                                    colors = state.player.colors.take(2).ifEmpty {
-                                        listOf(
-                                            MaterialTheme.colorScheme.tertiary,
-                                            MaterialTheme.colorScheme.background,
-                                        )
-                                    }
+                                    colors = state.player.colors
+                                        .take(2)
+                                        .ifEmpty {
+                                            listOf(
+                                                MaterialTheme.colorScheme.tertiary,
+                                                MaterialTheme.colorScheme.background,
+                                            )
+                                        }
                                 )
                             )
                             .padding(MaterialTheme.dimens.small1)
@@ -644,33 +654,31 @@ fun HomeContainer(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (state.player.isLoading)
-                            CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.background
-                            )
-                        else
-                            SmallPlayer(
-                                brushColor = state.player.colors.take(2).ifEmpty {
-                                    listOf(
-                                        MaterialTheme.colorScheme.tertiary,
-                                        MaterialTheme.colorScheme.background,
+                        if (state.player.isLoading) CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.background
+                        )
+                        else SmallPlayer(
+                            brushColor = state.player.colors.take(2).ifEmpty {
+                                listOf(
+                                    MaterialTheme.colorScheme.tertiary,
+                                    MaterialTheme.colorScheme.background,
+                                )
+                            },
+                            isPlaying = state.player.isPlaying,
+                            durationUpdate = state.player.progress,
+                            playingData = state.player.playingSong,
+                            isDarkThem = isDarkThem,
+                            isCookie = state.isCookie,
+                            header = state.headerValue,
+                            playControl = playControl,
+                            onDurationChange = {
+                                navigateWithUiEvent.invoke(
+                                    HomeRootUiEvent.PlayerUiEvent.SeekTo(
+                                        it
                                     )
-                                },
-                                isPlaying = state.player.isPlaying,
-                                durationUpdate = state.player.progress,
-                                playingData = state.player.playingSong,
-                                isDarkThem = isDarkThem,
-                                isCookie = state.isCookie,
-                                header = state.headerValue,
-                                playControl = playControl,
-                                onDurationChange = {
-                                    navigateWithUiEvent.invoke(
-                                        HomeRootUiEvent.PlayerUiEvent.SeekTo(
-                                            it
-                                        )
-                                    )
-                                }
-                            )
+                                )
+                            }
+                        )
                     }
                 }
 
