@@ -1,5 +1,7 @@
 package com.poulastaa.kyoku.utils
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color.parseColor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -348,6 +350,7 @@ fun List<PlayerSong>.toPlayingQueueTable() = this.map {
     )
 }
 
+
 fun List<PlayingQueueTable>.toPlayerDataIfAny() = this.map { song ->
     val bitmap = BitmapConverter.decodeToBitmap(song.coverImage)
     val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
@@ -428,10 +431,22 @@ suspend fun List<PlayingQueueTable>.toPlayerData() = coroutineScope {
 }
 
 @JvmName("UiPlaylistSongToPlayerData")
-suspend fun List<UiPlaylistSong>.toPlayerData() = coroutineScope {
+suspend fun List<UiPlaylistSong>.toPlayerData(
+    isDarkThem: Boolean = false,
+    header: String = "",
+    context: Context? = null
+) = coroutineScope {
     this@toPlayerData.map { song ->
         async {
-            val bitmap = BitmapConverter.decodeToBitmap(song.coverImage)
+            val bitmap =
+                if (song.coverImage.startsWith("http") && context != null)
+                    PaletteGenerator.convertImageUrlToBitMap(
+                        isDarkThem = isDarkThem,
+                        url = song.coverImage,
+                        header = header,
+                        context = context
+                    ).copy(Bitmap.Config.ARGB_8888, true)
+                else BitmapConverter.decodeToBitmap(song.coverImage)
             val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
 
             var lightMuted = palette?.get(ColorType.LIGHT_MUTED)

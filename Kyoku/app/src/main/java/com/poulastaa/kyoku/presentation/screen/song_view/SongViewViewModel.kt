@@ -1,12 +1,15 @@
 package com.poulastaa.kyoku.presentation.screen.song_view
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.ImageLoader
+import coil.request.ImageRequest
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
@@ -21,10 +24,12 @@ import com.poulastaa.kyoku.data.repository.DatabaseRepositoryImpl
 import com.poulastaa.kyoku.domain.repository.DataStoreOperation
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
 import com.poulastaa.kyoku.navigation.Screens
+import com.poulastaa.kyoku.utils.BitmapConverter
 import com.poulastaa.kyoku.utils.toUiPlaylistSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -272,11 +277,15 @@ class SongViewViewModel @Inject constructor(
                                 )
                             )
                         } else {
+                            db.setValues(
+                                context = context,
+                                header = state.headerValue
+                            )
+
                             val resultDef = async { api.getAlbum(id) }
                             db.removeAllFromReqAlbum()
 
                             val result = resultDef.await()
-
 
                             if (result.listOfSongs.isEmpty()) {
                                 onEvent(SongViewUiEvent.SomethingWentWrong)
@@ -284,7 +293,37 @@ class SongViewViewModel @Inject constructor(
                                 return@launch
                             }
 
-                            async { db.insertIntoReqAlbum(result) }.await()
+                            val songs = result.listOfSongs.map {
+                                async {
+                                    it to (ImageLoader(context).execute(
+                                        ImageRequest.Builder(context)
+                                            .addHeader(
+                                                if (!state.headerValue.startsWith("B")) "Cookie" else "Authorization",
+                                                state.headerValue
+                                            )
+                                            .data(it.coverImage)
+                                            .build()
+                                    )).drawable
+                                }
+                            }.awaitAll().map {
+                                try {
+                                    it.first to BitmapConverter.encodeToSting((it.second as BitmapDrawable).bitmap)
+                                } catch (e: Exception) {
+                                    it.first to it.first.coverImage
+                                }
+                            }.map {
+                                it.first.copy(
+                                    coverImage = it.second
+                                )
+                            }
+
+                            async {
+                                db.insertIntoReqAlbum(
+                                    entry = result.copy(
+                                        listOfSongs = songs
+                                    )
+                                )
+                            }.await()
 
                             db.readFromReqAlbum().collect {
                                 state = state.copy(
@@ -499,7 +538,6 @@ class SongViewViewModel @Inject constructor(
                 }
             }
 
-
             SongViewUiEvent.SomethingWentWrong -> {
                 onEvent(SongViewUiEvent.EmitToast("Opp's something went wrong"))
             }
@@ -512,21 +550,65 @@ class SongViewViewModel @Inject constructor(
                     }
 
                     is SongViewUiEvent.PlayControlClick.PlayClick -> {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            val playlistId = db.getPlaylistId(event.name)
+                        when (event.type) {
+                            UiEvent.PlayType.PLAYLIST -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val playlistId = db.getPlaylistId(event.name)
 
-                            if (playlistId == null) {
-                                onEvent(SongViewUiEvent.SomethingWentWrong)
+                                    if (playlistId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
 
-                                return@launch
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = playlistId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
                             }
 
-                            _uiEvent.send(
-                                UiEvent.Play(
-                                    otherId = playlistId,
-                                    playType = event.type
-                                )
-                            )
+                            UiEvent.PlayType.ALBUM -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val albumId = db.getAlbumId(event.name)
+
+                                    if (albumId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = albumId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.ALBUM_PREV -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val albumId = db.getPrevAlbumId(event.name)
+
+                                    if (albumId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = albumId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            else -> Unit
                         }
                     }
 
@@ -536,22 +618,72 @@ class SongViewViewModel @Inject constructor(
                     }
 
                     is SongViewUiEvent.PlayControlClick.SongPlayClick -> {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            val playlistId = db.getPlaylistId(event.name)
+                        when (event.type) {
+                            UiEvent.PlayType.PLAYLIST_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val playlistId = db.getPlaylistId(event.name)
 
-                            if (playlistId == null) {
-                                onEvent(SongViewUiEvent.SomethingWentWrong)
+                                    if (playlistId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
 
-                                return@launch
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = playlistId,
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
                             }
 
-                            _uiEvent.send(
-                                UiEvent.Play(
-                                    otherId = playlistId,
-                                    songId = event.songId,
-                                    playType = event.type
-                                )
-                            )
+                            UiEvent.PlayType.ALBUM_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val albumId = db.getAlbumId(event.name)
+
+                                    if (albumId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = albumId,
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.ALBUM_PREV_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val albumId = db.getPrevAlbumId(event.name)
+
+                                    if (albumId == null) {
+                                        onEvent(SongViewUiEvent.SomethingWentWrong)
+
+                                        return@launch
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = albumId,
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.ARTIST_MORE_SONG -> {
+
+                            }
+
+                            else -> Unit
                         }
                     }
                 }

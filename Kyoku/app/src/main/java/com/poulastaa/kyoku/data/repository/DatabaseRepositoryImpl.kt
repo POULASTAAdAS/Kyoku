@@ -622,6 +622,11 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
+    suspend fun getAlbumId(name: String) = dao.getAlbumId(name)
+
+    suspend fun getPrevAlbum(albumId: Long) = dao.getPrevAlbum(albumId)
+    suspend fun getPrevAlbumId(name: String) = dao.getPrevAlbumId(name)
+
     fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
 
     suspend fun getArtistCoverImage(id: Long) = dao.getArtistCoverImage(id)
@@ -772,12 +777,30 @@ class DatabaseRepositoryImpl @Inject constructor(
     suspend fun getAlbumOnAlbumId(albumId: Long) = dao.getAlbumOnAlbumId(albumId)
 
     suspend fun insertIntoReqAlbum(entry: ResponseAlbum) {
-        dao.insertIntoReqAlbum(
-            entrys = entry.listOfSongs.toReqAlbumEntry(
+        withContext(Dispatchers.IO) {
+            val data = entry.listOfSongs.toReqAlbumEntry(
                 albumId = entry.id,
                 albumName = entry.name
+            ).map {
+                async {
+                    it to loadDrawable(it.coverImage)
+                }
+            }.awaitAll().map {
+                try {
+                    it.first to encodeCover(it.second)
+                } catch (e: Exception) {
+                    it.first to it.first.coverImage
+                }
+            }.map {
+                it.first.copy(
+                    coverImage = it.second
+                )
+            }
+
+            dao.insertIntoReqAlbum(
+                entrys = data
             )
-        )
+        }
     }
 
     fun readFromReqAlbum() = dao.readFromReqAlbum()
@@ -901,10 +924,9 @@ class DatabaseRepositoryImpl @Inject constructor(
     fun insertIntoPlayingQueueTable(entrys: List<PlayingQueueTable>, songType: SongType) {
         CoroutineScope(Dispatchers.IO).launch {
             when (songType) {
-                SongType.PLAYLIST -> {
-                    dao.insertIntoPlayingQueueTable(entrys)
-                }
+                SongType.PLAYLIST -> dao.insertIntoPlayingQueueTable(entrys)
 
+                SongType.PREV_ALBUM -> dao.insertIntoPlayingQueueTable(entrys)
                 else -> Unit
             }
         }

@@ -31,7 +31,8 @@ sealed class HomeRootUiEvent {
         val context: Context,
         val songId: Long = -1,
         val otherId: Long = -1,
-        val playType: UiEvent.PlayType
+        val playType: UiEvent.PlayType,
+        val isDarkThem: Boolean = true,
     ) : HomeRootUiEvent()
 
     sealed class PlayerUiEvent : HomeRootUiEvent() {

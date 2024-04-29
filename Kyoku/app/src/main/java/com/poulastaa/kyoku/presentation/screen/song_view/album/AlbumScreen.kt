@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.presentation.screen.song_view.album
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCard
@@ -37,6 +39,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun AlbumScreen(
+    isPrevAlbum:Boolean,
     album: SongViewUiModel,
     isDarkThem: Boolean,
     isCookie: Boolean,
@@ -45,6 +48,7 @@ fun AlbumScreen(
     isSmallPhone: Boolean,
     scope: CoroutineScope,
     state: LazyListState = rememberLazyListState(),
+    playControl: (SongViewUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     Scaffold { paddingValues ->
@@ -92,13 +96,28 @@ fun AlbumScreen(
             playControl(
                 isDownloading = false, // todo
                 onDownloadClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.DownloadClick(
+                            name = album.name,
+                            type = if (isPrevAlbum) UiEvent.PlayType.ALBUM_PREV else UiEvent.PlayType.ALBUM
+                        )
+                    )
                 },
                 onShuffleClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.ShuffleClick(
+                            name = album.name,
+                            type = if (isPrevAlbum) UiEvent.PlayType.ALBUM_PREV else UiEvent.PlayType.ALBUM
+                        )
+                    )
                 },
                 onPlayClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.PlayClick(
+                            name = album.name,
+                            type = if (isPrevAlbum) UiEvent.PlayType.ALBUM_PREV else UiEvent.PlayType.ALBUM
+                        )
+                    )
                 }
             )
 
@@ -106,22 +125,21 @@ fun AlbumScreen(
                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
             }
 
-            itemsIndexed(album.listOfSong) { index: Int, item: UiPlaylistSong ->
-                SongCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp)
-                        .padding(start = MaterialTheme.dimens.small3)
-                        .clip(MaterialTheme.shapes.extraSmall),
-                    isDarkThem = isDarkThem,
-                    isCookie = isCookie,
-                    headerValue = headerValue,
-                    title = item.title,
-                    artist = item.artist,
-                    coverImage = item.coverImage
-                )
-            }
-
+            albumSongs(
+                isDarkThem = isDarkThem,
+                isCookie = isCookie,
+                headerValue = headerValue,
+                data = album.listOfSong,
+                onSongClick = { id ->
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.SongPlayClick(
+                            name = album.name,
+                            songId = id,
+                            type = if (isPrevAlbum) UiEvent.PlayType.ALBUM_PREV_SONG else UiEvent.PlayType.ALBUM_SONG
+                        )
+                    )
+                }
+            )
         }
     }
 }
@@ -131,25 +149,27 @@ private fun LazyListScope.albumSongs(
     isCookie: Boolean,
     headerValue: String,
     data: List<UiPlaylistSong>,
-    onSongClick: (id: Long, name: String) -> Unit
+    onSongClick: (id: Long) -> Unit
 ) {
-
-//    items(data.size) {
-//        SongCard(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(70.dp)
-//                .padding(start = MaterialTheme.dimens.small3)
-//                .clip(MaterialTheme.shapes.extraSmall)
-//                .then(modifier),
-//            isDarkThem = isDarkThem,
-//            isCookie = isCookie,
-//            headerValue = headerValue,
-//            title = data[it].title,
-//            artist = data[it].artist,
-//            coverImage = data[it].coverImage
-//        )
-//    }
+    items(data.size) {
+        SongCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(70.dp)
+                .padding(start = MaterialTheme.dimens.small3)
+                .clip(MaterialTheme.shapes.extraSmall)
+                .clickable {
+                    onSongClick.invoke(data[it].songId)
+                },
+            isPlaying = data[it].isPlaying ?: false,
+            isDarkThem = isDarkThem,
+            isCookie = isCookie,
+            headerValue = headerValue,
+            title = data[it].title,
+            artist = data[it].artist,
+            coverImage = data[it].coverImage
+        )
+    }
 }
 
 
@@ -174,13 +194,15 @@ private fun Preview() {
 
     TestThem {
         AlbumScreen(
+            isPrevAlbum = true,
             album = data,
             isDarkThem = isSystemInDarkTheme(),
             isCookie = false,
             headerValue = "",
             poster = "",
             isSmallPhone = false,
-            scope = rememberCoroutineScope()
+            scope = rememberCoroutineScope(),
+            playControl = {}
         ) {
 
         }

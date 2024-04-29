@@ -495,10 +495,11 @@ delete from googleuserlistenhistory where userid = 1 and date = (
 
 
 
+select * from song where coverImage like "%#%";
+select * from song where masterPlaylistPath like "%&%";
 
 
-
-
+update song set coverImage = replace(coverImage , '#' , '') where id in (21570 , 21251);
 
 
 

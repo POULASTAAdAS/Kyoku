@@ -60,5 +60,6 @@ enum class SongType {
     ARTIST_SONG,
     ALBUM_SONG,
     PLAYLIST_SONG,
+    PREV_ALBUM,
     API_CALL
 }

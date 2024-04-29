@@ -371,6 +371,15 @@ interface AppDao {
     )
     suspend fun getAlbum(id: Long): List<UiPlaylistSong>
 
+    @Query("select albumId from albumtable where name = :name")
+    suspend fun getAlbumId(name: String): Long?
+
+    @Query("select * from ReqAlbumSongTable where albumId = :albumId")
+    suspend fun getPrevAlbum(albumId: Long): List<ReqAlbumSongTable>
+
+    @Query("select albumId from PreviewAlbumTable where name = :name")
+    suspend fun getPrevAlbumId(name: String): Long?
+
     @Query("select songId , title , artist , coverImage , masterPlaylistUrl , totalTime from FavouriteSongTable")
     fun getAllFavouriteSongs(): Flow<List<UiPlaylistSong>>
 

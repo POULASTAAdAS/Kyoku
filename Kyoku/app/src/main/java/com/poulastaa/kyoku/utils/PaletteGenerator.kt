@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.request.ImageRequest
-import coil.request.SuccessResult
 import com.poulastaa.kyoku.R
 
 
@@ -15,22 +14,21 @@ object PaletteGenerator {
     suspend fun convertImageUrlToBitMap(
         isDarkThem: Boolean,
         url: String,
-        isCookie: Boolean,
         header: String,
         context: Context
     ): Bitmap {
-        val loader = ImageLoader(context)
-        val req = ImageRequest.Builder(context)
-            .data(url)
-            .addHeader(
-                name = if (isCookie) "Cookie" else "Authorization",
-                value = header
-            ).build()
+        val res = (ImageLoader(context).execute(
+            ImageRequest.Builder(context)
+                .addHeader(
+                    if (!header.startsWith("B")) "Cookie" else "Authorization",
+                    header
+                )
+                .data(url)
+                .build()
+        )).drawable
 
-        val imageReq = loader.execute(req)
-
-        return if (imageReq is SuccessResult) {
-            (imageReq.drawable as BitmapDrawable).bitmap
+        return if (res != null) {
+            (res as BitmapDrawable).bitmap
         } else {
             BitmapFactory.decodeResource(
                 context.resources,

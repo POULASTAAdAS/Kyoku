@@ -91,6 +91,7 @@ fun SongViewRootScreen(
                 viewModel.state.data.album.listOfSong.isEmpty()
             ) SongViewContentLoading(isSmallPhone = isSmallPhone)
             else AlbumScreen(
+                isPrevAlbum = false,
                 album = viewModel.state.data.album,
                 isDarkThem = isDarkThem,
                 isCookie = viewModel.state.isCooke,
@@ -98,6 +99,7 @@ fun SongViewRootScreen(
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
                 scope = scope,
+                playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
         }
@@ -107,6 +109,7 @@ fun SongViewRootScreen(
                 viewModel.state.data.album.listOfSong.isEmpty()
             ) SongViewContentLoading(isSmallPhone = isSmallPhone)
             else AlbumScreen(
+                isPrevAlbum = true,
                 album = viewModel.state.data.album,
                 isDarkThem = isDarkThem,
                 isCookie = viewModel.state.isCooke,
@@ -114,6 +117,7 @@ fun SongViewRootScreen(
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
                 scope = scope,
+                playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
         }

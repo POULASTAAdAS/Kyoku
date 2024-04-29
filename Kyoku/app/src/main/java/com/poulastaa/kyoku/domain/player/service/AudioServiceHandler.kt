@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.domain.player.service
 
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -128,8 +127,6 @@ class AudioServiceHandler @Inject constructor(
 
 
     override fun onPlaybackStateChanged(playbackState: Int) {
-        Log.d("playbackState", playbackState.toString())
-
         when (playbackState) {
             ExoPlayer.STATE_BUFFERING -> _playerUiState.value =
                 PlayerUiState.Buffering(player.contentPosition)
