@@ -5,7 +5,7 @@ sealed class ArtistAllUiEvent {
     data object SomethingWentWrong : ArtistAllUiEvent()
 
     sealed class ItemClick : ArtistAllUiEvent() {
-        data class AlbumClick(val id: Long) : ItemClick()
+        data class AlbumClick(val id: Long , val name:String) : ItemClick()
         data class SongClick(val id: Long) : ItemClick()
     }
 

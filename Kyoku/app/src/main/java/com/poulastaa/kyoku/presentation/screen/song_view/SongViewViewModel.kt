@@ -332,6 +332,7 @@ class SongViewViewModel @Inject constructor(
                                             entry.albumId
                                         }.map { entry ->
                                             SongViewUiModel(
+                                                id = entry.key,
                                                 name = entry.value[0].albumName,
                                                 totalTime = async {
                                                     entry.value.map { single ->
@@ -593,15 +594,26 @@ class SongViewViewModel @Inject constructor(
                                 viewModelScope.launch(Dispatchers.IO) {
                                     val albumId = db.getPrevAlbumId(event.name)
 
-                                    if (albumId == null) {
+                                    if (albumId == null && state.data.album.id == -1L) {
                                         onEvent(SongViewUiEvent.SomethingWentWrong)
 
                                         return@launch
                                     }
 
+
+
+                                    if (albumId != null){
+                                        _uiEvent.send(
+                                            UiEvent.Play(
+                                                otherId = albumId,
+                                                playType = event.type
+                                            )
+                                        )
+                                    }
+
                                     _uiEvent.send(
                                         UiEvent.Play(
-                                            otherId = albumId,
+                                            otherId = state.data.album.id,
                                             playType = event.type
                                         )
                                     )
@@ -693,15 +705,27 @@ class SongViewViewModel @Inject constructor(
                                 viewModelScope.launch(Dispatchers.IO) {
                                     val albumId = db.getPrevAlbumId(event.name)
 
-                                    if (albumId == null) {
+                                    if (albumId == null && state.data.album.id == -1L) {
                                         onEvent(SongViewUiEvent.SomethingWentWrong)
 
                                         return@launch
                                     }
 
+
+
+                                    if (albumId != null){
+                                        _uiEvent.send(
+                                            UiEvent.Play(
+                                                otherId = albumId,
+                                                songId = event.songId,
+                                                playType = event.type
+                                            )
+                                        )
+                                    }
+
                                     _uiEvent.send(
                                         UiEvent.Play(
-                                            otherId = albumId,
+                                            otherId = state.data.album.id,
                                             songId = event.songId,
                                             playType = event.type
                                         )

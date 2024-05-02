@@ -26,6 +26,7 @@ data class SongViewData(
 
 @Stable
 data class SongViewUiModel(
+    val id: Long = -1,
     val name: String = "",
     val totalTime: String = "",
     val listOfSong: List<UiPlaylistSong> = emptyList()

@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
-import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.ArtistAllUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.BottomSheetData
 import com.poulastaa.kyoku.presentation.screen.home_root.home.component.CustomImageView
@@ -89,7 +89,7 @@ fun ArtistAllScreen(
                 is UiEvent.Navigate -> navigate.invoke(event)
                 is UiEvent.NavigateWithData -> navigate.invoke(event)
 
-                is  UiEvent.Play ->{
+                is UiEvent.Play -> {
                     // todo
                 }
 
@@ -237,7 +237,12 @@ private fun LazyListScope.album(
                     .background(color = MaterialTheme.colorScheme.background)
                     .combinedClickable(
                         onClick = {
-                            viewModel.onEvent(ArtistAllUiEvent.ItemClick.AlbumClick(id = album[it]!!.id))
+                            viewModel.onEvent(
+                                ArtistAllUiEvent.ItemClick.AlbumClick(
+                                    id = album[it]?.id ?: -1,
+                                    name = album[it]?.name ?: ""
+                                )
+                            )
                         },
                         onLongClick = {
                             viewModel.onEvent(

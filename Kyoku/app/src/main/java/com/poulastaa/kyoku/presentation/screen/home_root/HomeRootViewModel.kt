@@ -563,7 +563,7 @@ class HomeRootViewModel @Inject constructor(
 
                         viewModelScope.launch(Dispatchers.IO) {
                             val clear = async { db.clearPlayingQueue() }
-                            val prevAlbumDef = async { db.getPrevAlbum(event.otherId) }
+                            val prevAlbumDef = async { db.getReqAlbum(event.otherId) }
 
                             clear.await()
                             val pair = prevAlbumDef.await().groupBy { it.albumId }.map {
@@ -604,7 +604,7 @@ class HomeRootViewModel @Inject constructor(
 
                         viewModelScope.launch(Dispatchers.IO) {
                             val clear = async { db.clearPlayingQueue() }
-                            val prevAlbumDef = async { db.getPrevAlbum(event.otherId) }
+                            val prevAlbumDef = async { db.getReqAlbum(event.otherId) }
 
                             clear.await()
                             val pair = prevAlbumDef.await().groupBy { it.albumId }.map {

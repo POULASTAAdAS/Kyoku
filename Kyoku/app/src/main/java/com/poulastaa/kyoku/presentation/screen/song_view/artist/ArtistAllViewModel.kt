@@ -10,10 +10,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.poulastaa.kyoku.connectivity.NetworkObserver
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
-import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.common.ItemsType
 import com.poulastaa.kyoku.data.model.screens.home.HomeLongClickType
 import com.poulastaa.kyoku.data.model.screens.home.SongType
@@ -159,13 +159,15 @@ class ArtistAllViewModel @Inject constructor(
             is ArtistAllUiEvent.ItemClick -> {
                 when (event) {
                     is ArtistAllUiEvent.ItemClick.AlbumClick -> {
+                        if (event.id == -1L || event.name.isEmpty()) return onEvent(ArtistAllUiEvent.SomethingWentWrong)
+
                         viewModelScope.launch(Dispatchers.IO) {
                             _uiEvent.send(
                                 UiEvent.NavigateWithData(
                                     route = Screens.SongView.route,
                                     itemsType = ItemsType.ALBUM_PREV,
                                     id = event.id,
-                                    isApiCall = true
+                                    name = event.name,
                                 )
                             )
                         }
@@ -178,13 +180,7 @@ class ArtistAllViewModel @Inject constructor(
             }
 
             is ArtistAllUiEvent.ItemLongClick -> {
-                if (event.id == -1L) {
-                    onEvent(ArtistAllUiEvent.SomethingWentWrong)
-
-                    return
-                }
-
-
+                if (event.id == -1L) return onEvent(ArtistAllUiEvent.SomethingWentWrong)
 
                 viewModelScope.launch(Dispatchers.IO) {
                     val status = when (event.type) {

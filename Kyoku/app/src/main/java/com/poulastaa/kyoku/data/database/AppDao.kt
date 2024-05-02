@@ -375,7 +375,7 @@ interface AppDao {
     suspend fun getAlbumId(name: String): Long?
 
     @Query("select * from ReqAlbumSongTable where albumId = :albumId")
-    suspend fun getPrevAlbum(albumId: Long): List<ReqAlbumSongTable>
+    suspend fun getReqAlbum(albumId: Long): List<ReqAlbumSongTable>
 
     @Query("select albumId from PreviewAlbumTable where name = :name")
     suspend fun getPrevAlbumId(name: String): Long?

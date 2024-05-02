@@ -625,7 +625,7 @@ class DatabaseRepositoryImpl @Inject constructor(
 
     suspend fun getAlbumId(name: String) = dao.getAlbumId(name)
 
-    suspend fun getPrevAlbum(albumId: Long) = dao.getPrevAlbum(albumId)
+    suspend fun getReqAlbum(albumId: Long) = dao.getReqAlbum(albumId)
     suspend fun getPrevAlbumId(name: String) = dao.getPrevAlbumId(name)
 
     fun getAllFavouriteSongs() = dao.getAllFavouriteSongs()
