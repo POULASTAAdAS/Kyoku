@@ -35,6 +35,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.playControl
 import com.poulastaa.kyoku.presentation.screen.song_view.common.poster
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -46,7 +47,6 @@ fun AlbumScreen(
     headerValue: String,
     poster: String,
     isSmallPhone: Boolean,
-    scope: CoroutineScope,
     state: LazyListState = rememberLazyListState(),
     playControl: (SongViewUiEvent) -> Unit,
     navigateBack: () -> Unit
@@ -62,7 +62,7 @@ fun AlbumScreen(
                 ),
             state = state,
             contentPadding = PaddingValues(
-                bottom = MaterialTheme.dimens.medium1
+                bottom = MaterialTheme.dimens.medium1 + Constants.PLAYER_PADDING
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -201,7 +201,6 @@ private fun Preview() {
             headerValue = "",
             poster = "",
             isSmallPhone = false,
-            scope = rememberCoroutineScope(),
             playControl = {}
         ) {
 

@@ -31,6 +31,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.playControl
 import com.poulastaa.kyoku.presentation.screen.song_view.common.poster
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants
 
 @Composable
 fun DailyMixScreen(
@@ -53,7 +54,7 @@ fun DailyMixScreen(
                     bottom = paddingValues.calculateBottomPadding()
                 ),
             contentPadding = PaddingValues(
-                bottom = MaterialTheme.dimens.medium1
+                bottom = MaterialTheme.dimens.medium1 + Constants.PLAYER_PADDING
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
             horizontalAlignment = Alignment.CenterHorizontally

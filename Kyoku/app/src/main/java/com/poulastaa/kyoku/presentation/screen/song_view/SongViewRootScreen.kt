@@ -98,7 +98,6 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
-                scope = scope,
                 playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
@@ -116,7 +115,6 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.album.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
-                scope = scope,
                 playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
@@ -192,6 +190,7 @@ fun SongViewRootScreen(
                 isCookie = viewModel.state.isCooke,
                 headerValue = viewModel.state.headerValue,
                 isSmallPhone = isSmallPhone,
+                playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
         }

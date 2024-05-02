@@ -54,6 +54,10 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
+private const val DAILY_MIX = "Daily Mix"
+private const val ARTIST_MIX = "Artist Mix"
+private const val FAVOURITE = "Favourite"
+
 @OptIn(ExperimentalFoundationApi::class)
 @HiltViewModel
 class HomeRootViewModel @Inject constructor(
@@ -931,7 +935,7 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.ARTIST_MIX -> {
-                        if (state.player.info.typeName.lowercase() == "artist mix") {
+                        if (state.player.info.typeName == ARTIST_MIX) {
                             viewModelScope.launch(Dispatchers.Main) {
                                 player.onEvent(PlayerUiEvent.SeekToSong(0, 0))
 
@@ -976,7 +980,7 @@ class HomeRootViewModel @Inject constructor(
                                 player = state.player.copy(
                                     allSong = songs,
                                     info = PlayingSongInfo(
-                                        typeName = "Artist Mix"
+                                        typeName = ARTIST_MIX
                                     )
                                 )
                             )
@@ -998,7 +1002,7 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.ARTIST_MIX_SONG -> {
-                        if (state.player.info.typeName.lowercase() == "artist mix") {
+                        if (state.player.info.typeName == ARTIST_MIX) {
                             val index =
                                 state.player.allSong.map { it.playerSong.id }.indexOf(event.songId)
 
@@ -1065,7 +1069,7 @@ class HomeRootViewModel @Inject constructor(
                                 player = state.player.copy(
                                     allSong = songs,
                                     info = PlayingSongInfo(
-                                        typeName = "Artist Mix"
+                                        typeName = ARTIST_MIX
                                     )
                                 )
                             )
@@ -1091,7 +1095,7 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.DAILY_MIX -> {
-                        if (state.player.info.typeName.lowercase() == "daily mix") {
+                        if (state.player.info.typeName == DAILY_MIX) {
                             viewModelScope.launch(Dispatchers.Main) {
                                 player.onEvent(PlayerUiEvent.SeekToSong(0, 0))
 
@@ -1136,7 +1140,7 @@ class HomeRootViewModel @Inject constructor(
                                 player = state.player.copy(
                                     allSong = songs,
                                     info = PlayingSongInfo(
-                                        typeName = "Daily Mix"
+                                        typeName = DAILY_MIX
                                     )
                                 )
                             )
@@ -1158,7 +1162,7 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.DAILY_MIX_SONG -> {
-                        if (state.player.info.typeName.lowercase() == "daily mix") {
+                        if (state.player.info.typeName == DAILY_MIX) {
                             val index =
                                 state.player.allSong.map { it.playerSong.id }.indexOf(event.songId)
 
@@ -1225,7 +1229,7 @@ class HomeRootViewModel @Inject constructor(
                                 player = state.player.copy(
                                     allSong = songs,
                                     info = PlayingSongInfo(
-                                        typeName = "Daily Mix"
+                                        typeName = DAILY_MIX
                                     )
                                 )
                             )
@@ -1250,11 +1254,169 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
 
-                    UiEvent.PlayType.ARTIST_MORE_SONG -> {
-                        viewModelScope.launch {
+                    UiEvent.PlayType.FAVOURITE -> {
+                        Log.d("FAVOURITE", "FAVOURITE")
 
+                        if (state.player.info.typeName == FAVOURITE) {
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(0, 0))
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.getAllFavouriteSongs().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.FAVOURITE
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = FAVOURITE
+                                    )
+                                )
+                            )
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.PlayPause)
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
                         }
                     }
+
+                    UiEvent.PlayType.FAVOURITE_SONG -> {
+                        if (state.player.info.typeName == FAVOURITE) {
+                            val index =
+                                state.player.allSong.map { it.playerSong.id }.indexOf(event.songId)
+
+                            val oldSong = try {
+                                state.player.allSong[index]
+                            } catch (_: Exception) {
+                                null
+                            }
+
+                            if (oldSong == null) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return
+                            }
+
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(index))
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.getAllFavouriteSongs().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.FAVOURITE
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = FAVOURITE
+                                    )
+                                )
+                            )
+
+                            val i = songs.map {
+                                it.playerSong.id
+                            }.indexOf(event.songId)
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.SeekToSong(i))
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
+                    }
+
+                    else -> Unit
                 }
             }
 

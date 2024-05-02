@@ -935,6 +935,8 @@ class DatabaseRepositoryImpl @Inject constructor(
 
                 UiEvent.PlayType.ARTIST_MIX -> dao.insertIntoPlayingQueueTable(entrys)
 
+                UiEvent.PlayType.FAVOURITE -> dao.insertIntoPlayingQueueTable(entrys)
+
                 else -> Unit
             }
         }

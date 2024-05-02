@@ -37,10 +37,12 @@ sealed class UiEvent {
         ALBUM_SONG,
         ALBUM_PREV,
         ALBUM_PREV_SONG,
-        ARTIST_MORE_SONG,
         ARTIST_MIX,
         ARTIST_MIX_SONG,
         DAILY_MIX,
-        DAILY_MIX_SONG
+        DAILY_MIX_SONG,
+        FAVOURITE,
+        FAVOURITE_SONG,
+        ARTIST_MORE_SONG,
     }
 }

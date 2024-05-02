@@ -628,6 +628,16 @@ class SongViewViewModel @Inject constructor(
                                 }
                             }
 
+                            UiEvent.PlayType.FAVOURITE -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
                             else -> Unit
                         }
                     }
@@ -711,6 +721,18 @@ class SongViewViewModel @Inject constructor(
                             }
 
                             UiEvent.PlayType.DAILY_MIX_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+
+                            UiEvent.PlayType.FAVOURITE_SONG -> {
                                 viewModelScope.launch(Dispatchers.IO) {
                                     _uiEvent.send(
                                         UiEvent.Play(
