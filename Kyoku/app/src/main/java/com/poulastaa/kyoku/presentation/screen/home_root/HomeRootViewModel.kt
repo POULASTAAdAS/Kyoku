@@ -152,7 +152,6 @@ class HomeRootViewModel @Inject constructor(
         }
     }
 
-
     private var getArtistJob: Job? = null
 
     private val _uiEvent = Channel<UiEvent>()
