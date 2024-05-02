@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCardNonDraggable
@@ -38,6 +39,7 @@ fun DailyMixScreen(
     headerValue: String,
     poster: String,
     isSmallPhone: Boolean,
+    playControl: (SongViewUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     Scaffold { paddingValues ->

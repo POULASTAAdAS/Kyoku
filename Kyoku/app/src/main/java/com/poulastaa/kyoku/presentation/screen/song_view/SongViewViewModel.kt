@@ -608,6 +608,26 @@ class SongViewViewModel @Inject constructor(
                                 }
                             }
 
+                            UiEvent.PlayType.ARTIST_MIX -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.DAILY_MIX -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
                             else -> Unit
                         }
                     }
@@ -679,8 +699,26 @@ class SongViewViewModel @Inject constructor(
                                 }
                             }
 
-                            UiEvent.PlayType.ARTIST_MORE_SONG -> {
+                            UiEvent.PlayType.ARTIST_MIX_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
 
+                            UiEvent.PlayType.DAILY_MIX_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
                             }
 
                             else -> Unit

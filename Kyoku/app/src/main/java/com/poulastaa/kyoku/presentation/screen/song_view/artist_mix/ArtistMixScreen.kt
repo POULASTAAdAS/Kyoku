@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
 import com.poulastaa.kyoku.presentation.screen.song_view.common.SongCardNonDraggable
@@ -38,6 +40,7 @@ fun ArtistMixScreen(
     headerValue: String,
     poster: String,
     isSmallPhone: Boolean,
+    playControl: (SongViewUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     Scaffold { paddingValues ->
@@ -84,13 +87,28 @@ fun ArtistMixScreen(
             playControl(
                 isDownloading = false, // todo
                 onDownloadClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.DownloadClick(
+                            name = artistMix.name,
+                            type = UiEvent.PlayType.ARTIST_MIX
+                        )
+                    )
                 },
                 onShuffleClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.ShuffleClick(
+                            name = artistMix.name,
+                            type = UiEvent.PlayType.ARTIST_MIX
+                        )
+                    )
                 },
                 onPlayClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.PlayClick(
+                            name = artistMix.name,
+                            type = UiEvent.PlayType.ARTIST_MIX
+                        )
+                    )
                 }
             )
 
@@ -103,8 +121,14 @@ fun ArtistMixScreen(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 data = artistMix.listOfSong,
-                onSongClick = { id , name ->
-
+                onSongClick = { id ->
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.SongPlayClick(
+                            name = artistMix.name,
+                            songId = id,
+                            type = UiEvent.PlayType.ARTIST_MIX_SONG
+                        )
+                    )
                 }
             )
         }
@@ -116,7 +140,7 @@ private fun LazyListScope.artistMixSongs(
     isCookie: Boolean,
     headerValue: String,
     data: List<UiPlaylistSong>,
-    onSongClick: (id: Long, name: String) -> Unit
+    onSongClick: (id: Long) -> Unit
 ) {
     items(data.size) {
         SongCardNonDraggable(
@@ -125,7 +149,9 @@ private fun LazyListScope.artistMixSongs(
                 .height(70.dp)
                 .padding(start = MaterialTheme.dimens.medium1)
                 .clip(MaterialTheme.shapes.extraSmall)
-                .clickable { },
+                .clickable {
+                    onSongClick.invoke(data[it].songId)
+                },
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,

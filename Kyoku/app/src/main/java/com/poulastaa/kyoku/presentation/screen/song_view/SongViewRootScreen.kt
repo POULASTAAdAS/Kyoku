@@ -151,6 +151,7 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.dailyMixOrArtistMix.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
+                playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
         }
@@ -169,6 +170,7 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 poster = viewModel.state.data.dailyMixOrArtistMix.listOfSong[0].coverImage,
                 isSmallPhone = isSmallPhone,
+                playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
         }

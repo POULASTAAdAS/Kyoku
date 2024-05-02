@@ -60,6 +60,7 @@ import com.poulastaa.kyoku.utils.Constants.TYPE_PASSKEY_AUTH_REQ
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import java.util.Locale
 
 fun RootAuthScreenState.toPasskeyAuthRequest() = PasskeyAuthReq(
     type = TYPE_PASSKEY_AUTH_REQ,
@@ -379,7 +380,11 @@ fun List<PlayingQueueTable>.toPlayerDataIfAny() = this.map { song ->
             masterPlaylist = song.masterPlaylistUrl,
             title = song.title,
             artist = song.artist.split(","),
-            totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+            totalTime = String.format(
+                Locale.getDefault(Locale.Category.FORMAT),
+                "%.2f",
+                (song.totalTime.toDouble() / 60000)
+            ),
             totalInMili = song.totalTime.toFloat(),
             colorOne = lightColor,
             colorTwo = darkColor,
@@ -419,7 +424,11 @@ suspend fun List<PlayingQueueTable>.toPlayerData() = coroutineScope {
                     masterPlaylist = song.masterPlaylistUrl,
                     title = song.title,
                     artist = song.artist.split(","),
-                    totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+                    totalTime = String.format(
+                        Locale.getDefault(Locale.Category.FORMAT),
+                        "%.2f",
+                        (song.totalTime.toDouble() / 60000)
+                    ),
                     totalInMili = song.totalTime.toFloat(),
                     colorOne = lightColor,
                     colorTwo = darkColor,
@@ -473,7 +482,11 @@ suspend fun List<UiPlaylistSong>.toPlayerData(
                     masterPlaylist = song.masterPlaylistUrl,
                     title = song.title,
                     artist = song.artist.split(","),
-                    totalTime = String.format("%.2f", (song.totalTime.toDouble() / 60000)),
+                    totalTime = String.format(
+                        Locale.getDefault(Locale.Category.FORMAT),
+                        "%.2f",
+                        (song.totalTime.toDouble() / 60000)
+                    ),
                     totalInMili = song.totalTime.toFloat(),
                     colorOne = lightColor,
                     colorTwo = darkColor,
