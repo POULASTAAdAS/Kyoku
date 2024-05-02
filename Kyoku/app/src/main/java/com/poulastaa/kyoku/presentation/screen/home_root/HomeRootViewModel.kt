@@ -453,7 +453,6 @@ class HomeRootViewModel @Inject constructor(
                                         isLoading = false
                                     )
                                 )
-
                             }
 
                             return
@@ -486,7 +485,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistSongs.map {
                                     it.playerSong
                                 }.toPlayingQueueTable(),
-                                SongType.PLAYLIST
+                                UiEvent.PlayType.PLAYLIST
                             )
 
                             state = state.copy(
@@ -562,6 +561,14 @@ class HomeRootViewModel @Inject constructor(
                                 return@launch
                             }
 
+                            db.insertIntoPlayingQueueTable(
+                                playlistSongs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                UiEvent.PlayType.PLAYLIST
+                            )
+
+
                             val i = playlistSongs.map {
                                 it.playerSong.id
                             }.indexOf(event.songId)
@@ -626,7 +633,7 @@ class HomeRootViewModel @Inject constructor(
                                 entrys = albumSongs.map {
                                     it.playerSong
                                 }.toPlayingQueueTable(),
-                                songType = SongType.ALBUM
+                                songType = UiEvent.PlayType.ALBUM
                             )
 
                             state = state.copy(
@@ -724,7 +731,6 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
 
-
                     UiEvent.PlayType.ALBUM_PREV -> {
                         if (event.otherId == state.player.info.id) {
                             viewModelScope.launch(Dispatchers.Main) {
@@ -786,7 +792,7 @@ class HomeRootViewModel @Inject constructor(
                                 entrys = songs.map {
                                     it.playerSong
                                 }.toPlayingQueueTable(),
-                                songType = SongType.PREV_ALBUM
+                                songType = UiEvent.PlayType.ALBUM_PREV
                             )
 
                             state = state.copy(
@@ -813,7 +819,7 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.ALBUM_PREV_SONG -> {
-                        if (state.player.info.id == event.otherId){
+                        if (state.player.info.id == event.otherId) {
                             val index = state.player.allSong.map { it.playerSong.id }
                                 .indexOf(event.songId)
 
@@ -890,11 +896,11 @@ class HomeRootViewModel @Inject constructor(
                                 context = event.context
                             )
 
-                            db.insertIntoPlayingQueueTable( // todo
+                            db.insertIntoPlayingQueueTable(
                                 entrys = songs.map {
                                     it.playerSong
                                 }.toPlayingQueueTable(),
-                                songType = SongType.PREV_ALBUM
+                                songType = UiEvent.PlayType.ALBUM_PREV
                             )
 
                             state = state.copy(
@@ -925,19 +931,323 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.ARTIST_MIX -> {
+                        if (state.player.info.typeName.lowercase() == "artist mix") {
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(0, 0))
 
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.readAllArtistMix().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.ARTIST_MIX
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = "Artist Mix"
+                                    )
+                                )
+                            )
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.PlayPause)
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
                     }
 
                     UiEvent.PlayType.ARTIST_MIX_SONG -> {
+                        if (state.player.info.typeName.lowercase() == "artist mix") {
+                            val index =
+                                state.player.allSong.map { it.playerSong.id }.indexOf(event.songId)
 
+                            val oldSong = try {
+                                state.player.allSong[index]
+                            } catch (_: Exception) {
+                                null
+                            }
+
+                            if (oldSong == null) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return
+                            }
+
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(index))
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.readAllArtistMix().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.ARTIST_MIX
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = "Artist Mix"
+                                    )
+                                )
+                            )
+
+                            val i = songs.map {
+                                it.playerSong.id
+                            }.indexOf(event.songId)
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.SeekToSong(i))
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
                     }
 
                     UiEvent.PlayType.DAILY_MIX -> {
+                        if (state.player.info.typeName.lowercase() == "daily mix") {
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(0, 0))
 
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.readAllDailyMix().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.DAILY_MIX
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = "Daily Mix"
+                                    )
+                                )
+                            )
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.PlayPause)
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
                     }
 
                     UiEvent.PlayType.DAILY_MIX_SONG -> {
+                        if (state.player.info.typeName.lowercase() == "daily mix") {
+                            val index =
+                                state.player.allSong.map { it.playerSong.id }.indexOf(event.songId)
 
+                            val oldSong = try {
+                                state.player.allSong[index]
+                            } catch (_: Exception) {
+                                null
+                            }
+
+                            if (oldSong == null) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return
+                            }
+
+                            viewModelScope.launch(Dispatchers.Main) {
+                                player.onEvent(PlayerUiEvent.SeekToSong(index))
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isLoading = false
+                                    )
+                                )
+                            }
+
+                            return
+                        }
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { db.readAllDailyMix().first() }
+
+                            clear.await()
+                            val songs = songDef.await().toPlayerData()
+
+                            if (songs.isEmpty()) {
+                                onEvent(HomeRootUiEvent.SomethingWentWrong)
+
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        isSmallPlayer = false,
+                                        isLoading = false
+                                    )
+                                )
+
+                                return@launch
+                            }
+
+                            db.insertIntoPlayingQueueTable(
+                                entrys = songs.map {
+                                    it.playerSong
+                                }.toPlayingQueueTable(),
+                                songType = UiEvent.PlayType.DAILY_MIX
+                            )
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = songs,
+                                    info = PlayingSongInfo(
+                                        typeName = "Daily Mix"
+                                    )
+                                )
+                            )
+
+                            val i = songs.map {
+                                it.playerSong.id
+                            }.indexOf(event.songId)
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                songs.map {
+                                    it.playerSong
+                                }.setMediaItems()
+                                player.onEvent(PlayerUiEvent.SeekToSong(i))
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    isLoading = false
+                                )
+                            )
+                        }
                     }
 
                     UiEvent.PlayType.ARTIST_MORE_SONG -> {

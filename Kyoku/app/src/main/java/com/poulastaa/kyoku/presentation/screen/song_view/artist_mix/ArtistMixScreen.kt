@@ -89,7 +89,6 @@ fun ArtistMixScreen(
                 onDownloadClick = {
                     playControl.invoke(
                         SongViewUiEvent.PlayControlClick.DownloadClick(
-                            name = artistMix.name,
                             type = UiEvent.PlayType.ARTIST_MIX
                         )
                     )
@@ -97,7 +96,6 @@ fun ArtistMixScreen(
                 onShuffleClick = {
                     playControl.invoke(
                         SongViewUiEvent.PlayControlClick.ShuffleClick(
-                            name = artistMix.name,
                             type = UiEvent.PlayType.ARTIST_MIX
                         )
                     )
@@ -105,7 +103,6 @@ fun ArtistMixScreen(
                 onPlayClick = {
                     playControl.invoke(
                         SongViewUiEvent.PlayControlClick.PlayClick(
-                            name = artistMix.name,
                             type = UiEvent.PlayType.ARTIST_MIX
                         )
                     )
@@ -124,7 +121,6 @@ fun ArtistMixScreen(
                 onSongClick = { id ->
                     playControl.invoke(
                         SongViewUiEvent.PlayControlClick.SongPlayClick(
-                            name = artistMix.name,
                             songId = id,
                             type = UiEvent.PlayType.ARTIST_MIX_SONG
                         )
@@ -152,6 +148,7 @@ private fun LazyListScope.artistMixSongs(
                 .clickable {
                     onSongClick.invoke(data[it].songId)
                 },
+            isPlaying = data[it].isPlaying ?: false,
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,

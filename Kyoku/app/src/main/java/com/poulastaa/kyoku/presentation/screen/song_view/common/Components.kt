@@ -52,6 +52,7 @@ import com.poulastaa.kyoku.ui.theme.dimens
 @Composable
 fun SongCardNonDraggable(
     modifier: Modifier,
+    isPlaying: Boolean = false,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -95,7 +96,7 @@ fun SongCardNonDraggable(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
@@ -104,7 +105,7 @@ fun SongCardNonDraggable(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -130,7 +131,7 @@ fun SongCardNonDraggable(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_song_card_add),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(34.dp)
                 )
             }
@@ -149,7 +150,7 @@ fun SongCardNonDraggable(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_more),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(34.dp)
                 )
             }

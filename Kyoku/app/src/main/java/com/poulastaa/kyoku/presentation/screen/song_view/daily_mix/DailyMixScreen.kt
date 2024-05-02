@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiModel
 import com.poulastaa.kyoku.data.model.screens.song_view.UiPlaylistSong
@@ -86,13 +87,25 @@ fun DailyMixScreen(
             playControl(
                 isDownloading = false, // todo
                 onDownloadClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.DownloadClick(
+                            type = UiEvent.PlayType.DAILY_MIX
+                        )
+                    )
                 },
                 onShuffleClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.ShuffleClick(
+                            type = UiEvent.PlayType.DAILY_MIX
+                        )
+                    )
                 },
                 onPlayClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.PlayClick(
+                            type = UiEvent.PlayType.DAILY_MIX
+                        )
+                    )
                 }
             )
 
@@ -105,8 +118,13 @@ fun DailyMixScreen(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 data = dailyMix.listOfSong,
-                onSongClick = { id, name ->
-
+                onSongClick = { id ->
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.SongPlayClick(
+                            songId = id,
+                            type = UiEvent.PlayType.DAILY_MIX_SONG
+                        )
+                    )
                 }
             )
         }
@@ -118,7 +136,7 @@ private fun LazyListScope.dailyMixSongs(
     isCookie: Boolean,
     headerValue: String,
     data: List<UiPlaylistSong>,
-    onSongClick: (id: Long, name: String) -> Unit
+    onSongClick: (id: Long) -> Unit
 ) {
     items(data.size) {
         SongCardNonDraggable(
@@ -127,7 +145,10 @@ private fun LazyListScope.dailyMixSongs(
                 .height(70.dp)
                 .padding(start = MaterialTheme.dimens.medium1)
                 .clip(MaterialTheme.shapes.extraSmall)
-                .clickable { },
+                .clickable {
+                    onSongClick.invoke(data[it].songId)
+                },
+            isPlaying = data[it].isPlaying ?: false,
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,
