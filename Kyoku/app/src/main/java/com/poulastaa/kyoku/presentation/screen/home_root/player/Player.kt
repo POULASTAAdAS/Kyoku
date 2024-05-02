@@ -162,7 +162,6 @@ fun Player(
 
         item {
             Card(
-                modifier = Modifier.aspectRatio(1f),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
                 ),
@@ -173,12 +172,12 @@ fun Player(
                 shape = MaterialTheme.shapes.small
             ) {
                 CustomImageView(
-                    modifier = Modifier.fillParentMaxSize(),
+                    modifier = Modifier.aspectRatio(1f),
                     isDarkThem = isDarkThem,
                     isCookie = isCookie,
                     headerValue = header,
                     url = player.playingSong.url,
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.Crop
                 )
             }
         }

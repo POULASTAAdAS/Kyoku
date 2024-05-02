@@ -1,15 +1,15 @@
 package com.poulastaa.utils
 
 object Constants {
-    const val MASTER_PLAYLIST_ROOT_DIR = "F:/songs/master/"
-    const val COVER_IMAGE_ROOT_DIR = "F:/songs/coverPhoto/"
-    const val PROFILE_PIC_ROOT_DIR = "F:/songs/profilePic"
-    const val ARTIST_IMAGE_ROOT_DIR = "F:/songs/artist/"
+    const val MASTER_PLAYLIST_ROOT_DIR = "G:/songs/master/"
+    const val COVER_IMAGE_ROOT_DIR = "G:/songs/coverPhoto/"
+    const val PROFILE_PIC_ROOT_DIR = "G:/songs/profilePic"
+    const val ARTIST_IMAGE_ROOT_DIR = "G:/songs/artist/"
 
-    const val PLAYLIST = "F:/songs/"
+    const val PLAYLIST = "G:/songs/"
 
-    const val SONG_128 = "F:/songs/128"
-    const val SONG_320 = "F:/songs/320"
+    const val SONG_128 = "G:/songs/128"
+    const val SONG_320 = "G:/songs/320"
 
     const val DEFAULT_PROFILE_PIC = "$PROFILE_PIC_ROOT_DIR/defaultProfilePic.png"
 

@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.presentation.screen.song_view.common
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -443,7 +443,7 @@ fun LazyListScope.poster(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 url = poster,
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Crop
             )
         }
     }
@@ -573,24 +573,30 @@ fun LazyListScope.playControl(
 @Composable
 private fun Preview() {
     TestThem {
-        SongCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .clip(MaterialTheme.shapes.extraSmall)
-                .background(color = MaterialTheme.colorScheme.background)
-                .clickable(
-                    onClick = {
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(MaterialTheme.dimens.medium1),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(100.dp))
 
-                    }
+            Card(
+                modifier = Modifier.aspectRatio(1f),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
                 ),
-            isPlaying = true,
-            isDarkThem = isSystemInDarkTheme(),
-            isCookie = false,
-            headerValue = "",
-            title = "Title",
-            artist = "Artist",
-            coverImage = ""
-        )
+                shape = MaterialTheme.shapes.medium
+            ) {
+                CustomImageView(
+                    modifier = Modifier.fillMaxSize(),
+                    isDarkThem = isSystemInDarkTheme(),
+                    isCookie = false,
+                    headerValue = "",
+                    url = "",
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
     }
 }

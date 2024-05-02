@@ -96,7 +96,7 @@ class AudioServiceHandler @Inject constructor(
             }
 
             is PlayerUiEvent.UpdateProgress -> {
-                player.seekTo((player.duration * event.value).toLong())
+
             }
         }
     }

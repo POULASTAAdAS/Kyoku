@@ -64,7 +64,7 @@ fun Route.getMasterPlaylist(
                     if (it.endsWith(".m3u8")) {
                         masterPlaylist.appendLine(
                             "${BASE_URL + EndPoints.PlaySongPlaylist.route}?playlist=${
-                                it.removePrefix(PLAYLIST)
+                                it.removePrefix("F:/songs/")
                             }"
                         )
                     } else masterPlaylist.appendLine(it)
