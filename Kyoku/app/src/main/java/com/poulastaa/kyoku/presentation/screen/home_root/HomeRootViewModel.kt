@@ -775,6 +775,71 @@ class HomeRootViewModel @Inject constructor(
                         }
                     }
 
+                    UiEvent.PlayType.ARTIST_MORE_ALL_SONG -> {
+                        if (state.player.info.id == event.otherId) return restartPlayer()
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songsDef = async { api.getSongOnListOfId(event.songIdList) }
+                            val artistDef = async { db.getArtistOnId(event.otherId) }
+
+
+                            clear.await()
+                            val songs = songsDef.await()
+                                .sortedBy { song -> event.songIdList.indexOf(song.id) }
+                                .toPlayerData(
+                                    isDarkThem = event.isDarkThem,
+                                    header = state.headerValue,
+                                    context = event.context
+                                )
+                            val artist = artistDef.await()
+
+                            if (songs.isEmpty()) return@launch unableToPlaySong()
+
+                            loadPlayer(
+                                songs = songs,
+                                playlistInfo = PlayingSongInfo(
+                                    id = artist?.artistId ?: -1,
+                                    typeName = "Most Played from ${artist?.name}"
+                                ),
+                                type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                            )
+                        }
+                    }
+
+                    UiEvent.PlayType.ARTIST_MORE_ONE_SONG -> {
+                        if (state.player.info.id == event.otherId) return playSpecificSong(event.songId)
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songsDef = async { api.getSongOnListOfId(event.songIdList) }
+                            val artistDef = async { db.getArtistOnId(event.otherId) }
+
+
+                            clear.await()
+                            val songs = songsDef.await()
+                                .sortedBy { song -> event.songIdList.indexOf(song.id) }
+                                .toPlayerData(
+                                    isDarkThem = event.isDarkThem,
+                                    header = state.headerValue,
+                                    context = event.context
+                                )
+                            val artist = artistDef.await()
+
+                            if (songs.isEmpty()) return@launch unableToPlaySong()
+
+                            loadPlayerForOneSong(
+                                songs = songs,
+                                songId = event.songId,
+                                playlistInfo = PlayingSongInfo(
+                                    id = artist?.artistId ?: -1,
+                                    typeName = "Most Played from ${artist?.name}"
+                                ),
+                                type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                            )
+                        }
+                    }
+
                     else -> Unit
                 }
             }
@@ -1031,11 +1096,12 @@ class HomeRootViewModel @Inject constructor(
         playlistInfo: PlayingSongInfo,
         type: UiEvent.PlayType,
     ) {
+        Log.d("loadPlayerForOneSong", "$songId , $songs")
+
         db.insertIntoPlayingQueueTable(
             entrys = songs.map {
                 it.playerSong
-            }.toPlayingQueueTable(),
-            songType = type
+            }.toPlayingQueueTable()
         )
 
         val i = songs.map {
@@ -1077,8 +1143,7 @@ class HomeRootViewModel @Inject constructor(
         db.insertIntoPlayingQueueTable(
             entrys = songs.map {
                 it.playerSong
-            }.toPlayingQueueTable(),
-            songType = type
+            }.toPlayingQueueTable()
         )
 
         CoroutineScope(Dispatchers.Main).launch {

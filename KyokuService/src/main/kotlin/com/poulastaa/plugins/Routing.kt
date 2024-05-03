@@ -56,6 +56,8 @@ fun Application.configureRouting() {
         removeFromHistory(service)
 
         getSongOnId(service)
+        getSongOnListonIdList(service)
+
         getMasterPlaylist(service)
         get_128_Or_320_Playlist(service)
         getSongSegment(service)

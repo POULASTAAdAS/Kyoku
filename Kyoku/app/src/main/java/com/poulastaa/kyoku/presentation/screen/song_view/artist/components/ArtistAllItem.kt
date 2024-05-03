@@ -55,6 +55,7 @@ fun Header(
 @Composable
 fun ArtistAllItem(
     modifier: Modifier,
+    isPlaying: Boolean,
     isDarkThem: Boolean,
     title: String,
     year: String,
@@ -119,16 +120,13 @@ private fun Preview() {
                     .clip(MaterialTheme.shapes.extraSmall)
                     .background(color = MaterialTheme.colorScheme.background),
                 isDarkThem = isSystemInDarkTheme(),
+                isPlaying = true,
                 title = "Title",
                 year = "2024",
                 coverImage = "",
                 isCookie = false,
                 headerValue = ""
             )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-
-            Header(Modifier.fillMaxWidth(), "Album")
         }
     }
 }

@@ -43,6 +43,7 @@ sealed class EndPoints(val route: String) {
     data object RemoveFromHistory : EndPoints("/api/authorised/removeFromHistory")
 
     data object GetSongOnId : EndPoints("/api/authorised/getSongOnId")
+    data object GetSongOnListonIdList: EndPoints("/api/authorised/getSongOnListonIdList")
 
     data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
     data object PlaySongPlaylist : EndPoints(route = "/api/authorised/playSong/playlist")

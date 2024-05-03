@@ -50,6 +50,7 @@ fun SongViewRootScreen(
                         UiEvent.Play(
                             songId = event.songId,
                             otherId = event.otherId,
+                            songIdList = event.songIdList,
                             playType = event.playType
                         )
                     )
@@ -131,6 +132,7 @@ fun SongViewRootScreen(
                 headerValue = viewModel.state.headerValue,
                 isSmallPhone = isSmallPhone,
                 navigateBack = navigateBack,
+                playControl = viewModel::onEvent,
                 viewAll = viewModel::onEvent
             )
         }
@@ -173,9 +175,7 @@ fun SongViewRootScreen(
             )
         }
 
-        ItemsType.ARTIST_MORE -> {
 
-        }
 
         ItemsType.FAVOURITE -> {
             if (viewModel.state.isLoading ||
@@ -193,6 +193,10 @@ fun SongViewRootScreen(
                 playControl = viewModel::onEvent,
                 navigateBack = navigateBack
             )
+        }
+
+        ItemsType.ARTIST_MORE -> {
+
         }
 
         ItemsType.SONG -> {

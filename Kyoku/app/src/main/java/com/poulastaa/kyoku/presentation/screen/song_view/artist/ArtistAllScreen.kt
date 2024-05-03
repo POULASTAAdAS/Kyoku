@@ -63,6 +63,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistAllScreen(
+    songId: Long,
+    albumId: Long,
     name: String,
     isFromMore: Boolean,
     isDarkThem: Boolean = isSystemInDarkTheme(),
@@ -255,6 +257,7 @@ private fun LazyListScope.album(
                             )
                         }
                     ),
+                isPlaying = false,
                 isDarkThem = isDarkThem,
                 title = album[it]!!.name,
                 year = album[it]!!.year,
@@ -308,6 +311,7 @@ private fun LazyListScope.song(
                             )
                         }
                     ),
+                isPlaying = song[it]?.isPlaying ?: false,
                 isDarkThem = isDarkThem,
                 title = song[it]!!.title,
                 year = song[it]!!.year,

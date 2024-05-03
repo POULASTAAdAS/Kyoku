@@ -29,7 +29,9 @@ sealed class HomeRootUiEvent {
 
     data class Play(
         val context: Context,
+        val name:String = "",
         val songId: Long = -1,
+        val songIdList: List<Long> = emptyList(),
         val otherId: Long = -1,
         val playType: UiEvent.PlayType,
         val isDarkThem: Boolean = true,

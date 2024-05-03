@@ -5,6 +5,8 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
+import com.poulastaa.kyoku.data.model.api.service.artist.SongListReq
+import com.poulastaa.kyoku.data.model.api.service.artist.SongListResponse
 import com.poulastaa.kyoku.data.model.api.service.artist.ViewArtist
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
@@ -148,4 +150,9 @@ interface ServiceApi {
     suspend fun getSongOnId(
         @Query("songId") songId: Long
     ): ResponseSong
+
+    @POST("api/authorised/getSongOnListonIdList")
+    suspend fun getSongOnListonIdList(
+        @Body request: SongListReq
+    ): SongListResponse
 }

@@ -203,7 +203,20 @@ class SongViewViewModel @Inject constructor(
 
 
             ItemsType.ARTIST -> {
-
+                if (state.data.artist.listOfSong.isNotEmpty())
+                    state = state.copy(
+                        data = state.data.copy(
+                            artist = state.data.artist.copy(
+                                listOfSong = state.data.artist.listOfSong.map {
+                                    if (it.id.toLong() == id) it.copy(
+                                        isPlaying = true
+                                    ) else it.copy(
+                                        isPlaying = false
+                                    )
+                                }
+                            )
+                        )
+                    )
             }
 
             ItemsType.ARTIST_MORE -> {
@@ -602,7 +615,7 @@ class SongViewViewModel @Inject constructor(
 
 
 
-                                    if (albumId != null){
+                                    if (albumId != null) {
                                         _uiEvent.send(
                                             UiEvent.Play(
                                                 otherId = albumId,
@@ -644,6 +657,24 @@ class SongViewViewModel @Inject constructor(
                                 viewModelScope.launch(Dispatchers.IO) {
                                     _uiEvent.send(
                                         UiEvent.Play(
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.ARTIST_MORE_ALL_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val artistId = db.getArtistId(event.name)
+
+                                    val songIdList = state.data.artist.listOfSong.map {
+                                        it.id.toLong()
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = artistId,
+                                            songIdList = songIdList,
                                             playType = event.type
                                         )
                                     )
@@ -713,7 +744,7 @@ class SongViewViewModel @Inject constructor(
 
 
 
-                                    if (albumId != null){
+                                    if (albumId != null) {
                                         _uiEvent.send(
                                             UiEvent.Play(
                                                 otherId = albumId,
@@ -761,6 +792,25 @@ class SongViewViewModel @Inject constructor(
                                     _uiEvent.send(
                                         UiEvent.Play(
                                             songId = event.songId,
+                                            playType = event.type
+                                        )
+                                    )
+                                }
+                            }
+
+                            UiEvent.PlayType.ARTIST_MORE_ONE_SONG -> {
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    val artistId = db.getArtistId(event.name)
+
+                                    val songIdList = state.data.artist.listOfSong.map {
+                                        it.id.toLong()
+                                    }
+
+                                    _uiEvent.send(
+                                        UiEvent.Play(
+                                            otherId = artistId,
+                                            songId = event.songId,
+                                            songIdList = songIdList,
                                             playType = event.type
                                         )
                                     )

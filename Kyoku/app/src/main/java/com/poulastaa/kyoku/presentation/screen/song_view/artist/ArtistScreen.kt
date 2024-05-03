@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.service.home.SongPreview
 import com.poulastaa.kyoku.data.model.screens.song_view.SongViewUiEvent
 import com.poulastaa.kyoku.data.model.screens.song_view.UiArtist
@@ -40,6 +41,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.common.playControl
 import com.poulastaa.kyoku.presentation.screen.song_view.common.poster
 import com.poulastaa.kyoku.ui.theme.TestThem
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants
 
 @Composable
 fun ArtistScreen(
@@ -49,6 +51,7 @@ fun ArtistScreen(
     headerValue: String,
     isSmallPhone: Boolean,
     navigateBack: () -> Unit,
+    playControl: (SongViewUiEvent) -> Unit,
     viewAll: (SongViewUiEvent.ItemClick.ViewAllFromArtist) -> Unit
 ) {
     Scaffold { paddingValues ->
@@ -61,7 +64,7 @@ fun ArtistScreen(
                     bottom = paddingValues.calculateBottomPadding()
                 ),
             contentPadding = PaddingValues(
-                bottom = MaterialTheme.dimens.medium1
+                bottom = MaterialTheme.dimens.medium1 + Constants.PLAYER_PADDING
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -103,13 +106,28 @@ fun ArtistScreen(
             playControl(
                 isDownloading = false, // todo
                 onDownloadClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.DownloadClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                        )
+                    )
                 },
                 onShuffleClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.ShuffleClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                        )
+                    )
                 },
                 onPlayClick = {
-
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.PlayClick(
+                            name = data.name,
+                            type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                        )
+                    )
                 }
             )
 
@@ -118,8 +136,14 @@ fun ArtistScreen(
                 isCookie = isCookie,
                 headerValue = headerValue,
                 data = data.listOfSong,
-                onSongClick = { id, name ->
-
+                onSongClick = { id ->
+                    playControl.invoke(
+                        SongViewUiEvent.PlayControlClick.SongPlayClick(
+                            name = data.name,
+                            songId = id,
+                            type = UiEvent.PlayType.ARTIST_MORE_ONE_SONG
+                        )
+                    )
                 }
             )
 
@@ -241,7 +265,7 @@ private fun LazyListScope.artistSongs(
     isCookie: Boolean,
     headerValue: String,
     data: List<SongPreview>,
-    onSongClick: (id: Long, name: String) -> Unit
+    onSongClick: (id: Long) -> Unit
 ) {
     items(data.size) {
         ArtistSongCard(
@@ -252,7 +276,10 @@ private fun LazyListScope.artistSongs(
                     start = MaterialTheme.dimens.medium1,
                 )
                 .clip(MaterialTheme.shapes.extraSmall)
-                .clickable { },
+                .clickable {
+                    onSongClick.invoke(data[it].id.toLong())
+                },
+            isPlaying = data[it].isPlaying ?: false,
             isDarkThem = isDarkThem,
             isCookie = isCookie,
             headerValue = headerValue,
@@ -298,6 +325,7 @@ private fun Preview() {
             headerValue = "",
             isSmallPhone = false,
             viewAll = {},
+            playControl = {},
             navigateBack = {}
         )
     }

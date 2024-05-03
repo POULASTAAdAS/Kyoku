@@ -69,4 +69,5 @@ interface ServiceRepository {
     suspend fun removeFromRecentlyPlayed(songId: Long): Boolean
 
     suspend fun getSongOnId(songId: Long): ResponseSong
+    suspend fun getSongOnListOfId(songIdList: List<Long>): List<ResponseSong>
 }

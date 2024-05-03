@@ -5,6 +5,7 @@ import com.poulastaa.kyoku.data.model.api.service.artist.ArtistAlbum
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistMostPopularSongRes
 import com.poulastaa.kyoku.data.model.api.service.artist.ArtistPageReq
+import com.poulastaa.kyoku.data.model.api.service.artist.SongListReq
 import com.poulastaa.kyoku.data.model.api.service.artist.ViewArtist
 import com.poulastaa.kyoku.data.model.api.service.home.HomeReq
 import com.poulastaa.kyoku.data.model.api.service.home.HomeResponse
@@ -238,6 +239,18 @@ class ServiceRepositoryImpl @Inject constructor(
             api.getSongOnId(songId)
         } catch (_: Exception) {
             ResponseSong()
+        }
+    }
+
+    override suspend fun getSongOnListOfId(songIdList: List<Long>): List<ResponseSong> {
+        return try {
+            api.getSongOnListonIdList(
+                request = SongListReq(
+                    listOfSongId = songIdList
+                )
+            ).list
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 }

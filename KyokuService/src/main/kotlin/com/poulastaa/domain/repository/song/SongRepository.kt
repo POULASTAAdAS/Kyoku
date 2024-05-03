@@ -36,4 +36,6 @@ interface SongRepository {
     )
 
     suspend fun getSongOnId(songId: Long): ResponseSong
+
+    suspend fun getListSongOnId(songIdList: List<Long>): List<ResponseSong>
 }

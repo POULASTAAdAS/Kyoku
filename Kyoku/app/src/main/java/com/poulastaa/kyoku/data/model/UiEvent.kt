@@ -22,6 +22,7 @@ sealed class UiEvent {
 
     data class Play(
         val songId: Long = -1,
+        val songIdList: List<Long> = emptyList(),
         val otherId: Long = -1,
         val playType: PlayType
     ) : UiEvent()
@@ -43,6 +44,7 @@ sealed class UiEvent {
         DAILY_MIX_SONG,
         FAVOURITE,
         FAVOURITE_SONG,
-        ARTIST_MORE_SONG,
+        ARTIST_MORE_ALL_SONG,
+        ARTIST_MORE_ONE_SONG,
     }
 }

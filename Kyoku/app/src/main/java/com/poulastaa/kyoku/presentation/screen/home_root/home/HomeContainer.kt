@@ -323,6 +323,7 @@ fun HomeContainer(
                                         HomeRootUiEvent.Play(
                                             context = context,
                                             songId = event.songId,
+                                            songIdList = event.songIdList,
                                             otherId = event.otherId,
                                             playType = event.playType
                                         )
@@ -354,7 +355,9 @@ fun HomeContainer(
                         backStackEntry.arguments?.getString(Screens.Args.NAME.title, "") ?: ""
                     val isForMore = backStackEntry
                         .arguments?.getBoolean(Screens.Args.IS_FOR_MORE.title, false) ?: false
-                    ArtistAllScreen(
+                    ArtistAllScreen( // todo put playing albumId
+                        albumId = -1,
+                        songId = playingSongId,
                         name = name,
                         isFromMore = isForMore,
                         navigateBack = {

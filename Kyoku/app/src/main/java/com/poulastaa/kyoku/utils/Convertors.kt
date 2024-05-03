@@ -497,6 +497,65 @@ suspend fun List<UiPlaylistSong>.toPlayerData(
     }.awaitAll()
 }
 
+@JvmName("ResponseSongToPlayerData")
+suspend fun List<ResponseSong>.toPlayerData(
+    isDarkThem: Boolean = false,
+    header: String = "",
+    context: Context? = null
+) = coroutineScope {
+    map { song ->
+        async {
+            val bitmap = if (song.coverImage.startsWith("http") && context != null)
+                PaletteGenerator.convertImageUrlToBitMap(
+                    isDarkThem = isDarkThem,
+                    url = song.coverImage,
+                    header = header,
+                    context = context
+                ).copy(Bitmap.Config.ARGB_8888, true)
+            else BitmapConverter.decodeToBitmap(song.coverImage)
+
+            val palette = bitmap?.let { PaletteGenerator.extractColorFromBitMap(it) }
+
+            var lightMuted = palette?.get(ColorType.LIGHT_MUTED)
+            var darkMuted = palette?.get(ColorType.DARK_MUTED)
+
+            val backupOne = palette?.get(ColorType.LIGHT_VIBRANT)
+            val backupTwo = palette?.get(ColorType.DARK_VIBRANT)
+            val colorThree = palette?.get(ColorType.MUTED_SWATCH)
+
+            if (lightMuted == darkMuted) {
+                lightMuted = backupOne
+                darkMuted = backupTwo
+            }
+
+            val lightColor = lightMuted?.let { Color(parseColor(it)) } ?: dark_type_two_tertiary
+            val darkColor = darkMuted?.let { Color(parseColor(it)) } ?: dark_type_two_background
+            val thirdColor = colorThree?.let { Color(parseColor(it)) } ?: dark_type_two_onBackground
+
+            QueueSong(
+                isPlaying = false,
+                playerSong = PlayerSong(
+                    id = song.id,
+                    url = song.coverImage,
+                    masterPlaylist = song.masterPlaylistUrl,
+                    title = song.title,
+                    artist = song.artist.split(","),
+                    totalTime = String.format(
+                        Locale.getDefault(Locale.Category.FORMAT),
+                        "%.2f",
+                        (song.totalTime.toDouble() / 60000)
+                    ),
+                    totalInMili = song.totalTime.toFloat(),
+                    colorOne = lightColor,
+                    colorTwo = darkColor,
+                    colorThree = thirdColor
+                )
+            )
+        }
+    }.awaitAll()
+}
+
+
 fun List<ViewArtist>.toViewArtist() = this.map {
     ViewArtistUiArtist(
         artistId = it.id,

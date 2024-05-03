@@ -1,5 +1,6 @@
 package com.poulastaa.routes
 
+import com.poulastaa.data.model.artist.SongListReq
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.domain.repository.UserServiceRepository
@@ -11,6 +12,7 @@ import com.poulastaa.utils.getUserType
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
@@ -27,12 +29,12 @@ fun Route.getSongOnId(
                     status = HttpStatusCode.OK
                 )
 
-                getUserType() ?: return@get call.respond(
+                val helper = getUserType() ?: return@get call.respond(
                     message = ResponseSong(),
                     status = HttpStatusCode.OK
                 )
 
-                val response = service.getSongOnId(songId.toLong())
+                val response = service.getSongOnId(songId.toLong(), helper)
 
                 call.respond(
                     message = response,
@@ -42,6 +44,34 @@ fun Route.getSongOnId(
         }
     }
 }
+
+fun Route.getSongOnListonIdList(
+    service: UserServiceRepository
+) {
+    authenticate(configurations = Constants.SECURITY_LIST) {
+        route(EndPoints.GetSongOnListonIdList.route) {
+            post {
+                val req = call.receiveNullable<SongListReq>() ?: return@post call.respond(
+                    message = emptyList<ResponseSong>(),
+                    status = HttpStatusCode.OK
+                )
+
+                val helper = getUserType() ?: return@post call.respond(
+                    message = emptyList<ResponseSong>(),
+                    status = HttpStatusCode.OK
+                )
+
+                val response = service.getListOfSong(req.listOfSongId, helper)
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
+
 
 fun Route.getMasterPlaylist(
     service: UserServiceRepository
@@ -86,8 +116,8 @@ fun Route.get_128_Or_320_Playlist(
                     call.parameters["playlist"] ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 val pair =
-                    if (playlist.startsWith("128")) "128/" + playlist.split('/')[1]  to File(PLAYLIST + playlist)
-                    else "320/" + playlist.split('/')[1]  to File(PLAYLIST + playlist)
+                    if (playlist.startsWith("128")) "128/" + playlist.split('/')[1] to File(PLAYLIST + playlist)
+                    else "320/" + playlist.split('/')[1] to File(PLAYLIST + playlist)
 
                 val masterPlaylist = StringBuilder()
 

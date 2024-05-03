@@ -7,7 +7,6 @@ import coil.ImageLoader
 import coil.request.ImageRequest
 import com.poulastaa.kyoku.data.database.AppDao
 import com.poulastaa.kyoku.data.database.InternalDao
-import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.service.ResponseSong
 import com.poulastaa.kyoku.data.model.api.service.home.AlbumPreview
 import com.poulastaa.kyoku.data.model.api.service.home.DailyMixPreview
@@ -922,23 +921,9 @@ class DatabaseRepositoryImpl @Inject constructor(
         }
     }
 
-    fun insertIntoPlayingQueueTable(entrys: List<PlayingQueueTable>, songType: UiEvent.PlayType) {
+    fun insertIntoPlayingQueueTable(entrys: List<PlayingQueueTable>) {
         CoroutineScope(Dispatchers.IO).launch {
-            when (songType) {
-                UiEvent.PlayType.PLAYLIST -> dao.insertIntoPlayingQueueTable(entrys)
-
-                UiEvent.PlayType.ALBUM_PREV -> dao.insertIntoPlayingQueueTable(entrys)
-
-                UiEvent.PlayType.ALBUM -> dao.insertIntoPlayingQueueTable(entrys)
-
-                UiEvent.PlayType.DAILY_MIX -> dao.insertIntoPlayingQueueTable(entrys)
-
-                UiEvent.PlayType.ARTIST_MIX -> dao.insertIntoPlayingQueueTable(entrys)
-
-                UiEvent.PlayType.FAVOURITE -> dao.insertIntoPlayingQueueTable(entrys)
-
-                else -> Unit
-            }
+            dao.insertIntoPlayingQueueTable(entrys)
         }
     }
 

@@ -277,6 +277,7 @@ fun SongCard(
 @Composable
 fun ArtistSongCard(
     modifier: Modifier,
+    isPlaying: Boolean,
     isDarkThem: Boolean,
     isCookie: Boolean,
     headerValue: String,
@@ -320,7 +321,7 @@ fun ArtistSongCard(
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
 
                 Text(
@@ -329,7 +330,7 @@ fun ArtistSongCard(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -348,7 +349,7 @@ fun ArtistSongCard(
             Icon(
                 painter = painterResource(id = R.drawable.ic_more),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = if (isPlaying) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(34.dp)
             )
         }
@@ -575,7 +576,8 @@ fun LazyListScope.playControl(
 private fun Preview() {
     TestThem {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(MaterialTheme.dimens.medium1),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally

@@ -60,5 +60,6 @@ interface UserServiceRepository {
 
     suspend fun removeFromHistory(songId: Long, helper: UserTypeHelper): Boolean
 
-    suspend fun getSongOnId(songId: Long): ResponseSong
+    suspend fun getSongOnId(songId: Long, helper: UserTypeHelper): ResponseSong
+    suspend fun getListOfSong(songIdList: List<Long>, helper: UserTypeHelper): SongListResponse
 }

@@ -43,9 +43,9 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class UserServiceRepositoryImpl(
+    private val dbUsers: DbUsers,
     private val song: SongRepository,
     private val playlist: PlaylistRepository,
-    private val dbUsers: DbUsers,
     private val genre: GenreRepository,
     private val artist: ArtistRepository,
     private val album: AlbumRepository,
@@ -644,15 +644,33 @@ class UserServiceRepositoryImpl(
         }
     }
 
-    override suspend fun getSongOnId(songId: Long): ResponseSong =
+    override suspend fun getSongOnId(
+        songId: Long,
+        helper: UserTypeHelper
+    ): ResponseSong = withContext(Dispatchers.IO) {
+        val song = song.getSongOnId(songId)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            // todo add song to history
+        }
+
+        song
+    }
+
+    override suspend fun getListOfSong(
+        songIdList: List<Long>,
+        helper: UserTypeHelper
+    ): SongListResponse =
         withContext(Dispatchers.IO) {
-            val song = song.getSongOnId(songId)
+            val songs = song.getListSongOnId(songIdList)
 
             CoroutineScope(Dispatchers.IO).launch {
-                // todo add song to history
+                // todo do something if needed
             }
 
-            song
+            SongListResponse(
+                list = songs
+            )
         }
 
     // private functions
