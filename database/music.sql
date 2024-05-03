@@ -501,9 +501,10 @@ select * from song where masterPlaylistPath like "%&%";
 
 update song set coverImage = replace(coverImage , '#' , '') where id in (21570 , 21251);
 
-update song set coverImage = replace(coverImage, 'F:/songs/coverPhoto/', 'G:/songs/coverPhoto/');
+update song set masterPlaylistPath = replace(masterPlaylistPath, 'G:/songs/master/%', 'G:/songs/master/');
 
 
+select * from song;
 
 
 

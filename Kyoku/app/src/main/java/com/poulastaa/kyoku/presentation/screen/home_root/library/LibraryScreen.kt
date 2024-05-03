@@ -117,7 +117,7 @@ fun LibraryScreen(
             contentPadding = PaddingValues(
                 start = MaterialTheme.dimens.medium1,
                 end = MaterialTheme.dimens.medium1,
-                bottom = MaterialTheme.dimens.medium2 + PLAYER_PADDING
+                bottom = MaterialTheme.dimens.medium2
             ),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {

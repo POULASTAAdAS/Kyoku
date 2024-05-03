@@ -58,6 +58,7 @@ import javax.inject.Inject
 private const val DAILY_MIX = "Daily Mix"
 private const val ARTIST_MIX = "Artist Mix"
 private const val FAVOURITE = "Favourite"
+private const val ARTIST_RELEASE = "Artist Release"
 
 @OptIn(ExperimentalFoundationApi::class)
 @HiltViewModel
@@ -337,18 +338,8 @@ class HomeRootViewModel @Inject constructor(
                             if (db.checkIfAlreadyInPlayingQueue(event.songId) == null) {
                                 val song = api.getSongOnId(event.songId)
 
-                                if (song.id == -1L) {
-                                    onEvent(HomeRootUiEvent.SomethingWentWrong)
+                                if (song.id == -1L) return@launch unableToPlaySong()
 
-                                    state = state.copy(
-                                        player = state.player.copy(
-                                            isSmallPlayer = false,
-                                            isLoading = false
-                                        )
-                                    )
-
-                                    return@launch
-                                }
                                 async {
                                     db.insertIntoPlayingQueueTable(
                                         song,
@@ -467,8 +458,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = playlist.first,
                                     typeName = playlist.second
-                                ),
-                                type = UiEvent.PlayType.PLAYLIST
+                                )
                             )
                         }
                     }
@@ -499,8 +489,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = playlist.first,
                                     typeName = playlist.second
-                                ),
-                                type = UiEvent.PlayType.PLAYLIST
+                                )
                             )
                         }
                     }
@@ -525,8 +514,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = album.albumId,
                                     typeName = album.name
-                                ),
-                                type = UiEvent.PlayType.ALBUM
+                                )
                             )
                         }
                     }
@@ -551,8 +539,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = album.albumId,
                                     typeName = album.name
-                                ),
-                                type = UiEvent.PlayType.ALBUM
+                                )
                             )
                         }
                     }
@@ -592,8 +579,7 @@ class HomeRootViewModel @Inject constructor(
 
                             loadPlayer(
                                 songs = songs,
-                                playlistInfo = pair.first,
-                                type = UiEvent.PlayType.ALBUM_PREV
+                                playlistInfo = pair.first
                             )
                         }
                     }
@@ -634,8 +620,7 @@ class HomeRootViewModel @Inject constructor(
                             loadPlayerForOneSong(
                                 songs = songs,
                                 songId = event.songId,
-                                playlistInfo = pair.first,
-                                type = UiEvent.PlayType.ALBUM_PREV
+                                playlistInfo = pair.first
                             )
                         }
                     }
@@ -656,8 +641,7 @@ class HomeRootViewModel @Inject constructor(
                                 songs = songs,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = ARTIST_MIX
-                                ),
-                                type = UiEvent.PlayType.ARTIST_MIX
+                                )
                             )
                         }
                     }
@@ -679,8 +663,7 @@ class HomeRootViewModel @Inject constructor(
                                 songId = event.songId,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = ARTIST_MIX
-                                ),
-                                type = UiEvent.PlayType.ARTIST_MIX
+                                )
                             )
                         }
                     }
@@ -701,8 +684,7 @@ class HomeRootViewModel @Inject constructor(
                                 songs = songs,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = DAILY_MIX
-                                ),
-                                type = UiEvent.PlayType.DAILY_MIX
+                                )
                             )
                         }
                     }
@@ -724,8 +706,7 @@ class HomeRootViewModel @Inject constructor(
                                 songId = event.songId,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = DAILY_MIX
-                                ),
-                                type = UiEvent.PlayType.DAILY_MIX
+                                )
                             )
                         }
                     }
@@ -746,8 +727,7 @@ class HomeRootViewModel @Inject constructor(
                                 songs = songs,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = FAVOURITE
-                                ),
-                                type = UiEvent.PlayType.FAVOURITE
+                                )
                             )
                         }
                     }
@@ -769,8 +749,7 @@ class HomeRootViewModel @Inject constructor(
                                 songId = event.songId,
                                 playlistInfo = PlayingSongInfo(
                                     typeName = DAILY_MIX
-                                ),
-                                type = UiEvent.PlayType.DAILY_MIX
+                                )
                             )
                         }
                     }
@@ -801,8 +780,7 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = artist?.artistId ?: -1,
                                     typeName = "Most Played from ${artist?.name}"
-                                ),
-                                type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                                )
                             )
                         }
                     }
@@ -834,8 +812,46 @@ class HomeRootViewModel @Inject constructor(
                                 playlistInfo = PlayingSongInfo(
                                     id = artist?.artistId ?: -1,
                                     typeName = "Most Played from ${artist?.name}"
-                                ),
-                                type = UiEvent.PlayType.ARTIST_MORE_ALL_SONG
+                                )
+                            )
+                        }
+                    }
+
+                    UiEvent.PlayType.ARTIST_MORE_SONG -> {
+                        if (state.player.playingSong.id == event.songId) return restartPlayer()
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val clear = async { db.clearPlayingQueue() }
+                            val songDef = async { api.getSongOnId(event.songId) }
+
+                            clear.await()
+                            val song  = songDef.await()
+
+                            if (song.id == -1L) return@launch unableToPlaySong()
+
+                            async {
+                                db.insertIntoPlayingQueueTable(
+                                    song,
+                                    songType = SongType.ARTIST_SONG
+                                )
+                            }.await()
+
+                            val list = db.readAllFromPlayingQueue().first().toPlayerData()
+
+                            CoroutineScope(Dispatchers.Main).launch {
+                                player.onEvent(PlayerUiEvent.Stop)
+                                list[0].playerSong.setMediaItem(song.coverImage)
+                                player.onEvent(PlayerUiEvent.PlayPause)
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    allSong = list,
+                                    info = PlayingSongInfo(
+                                        typeName = ARTIST_RELEASE
+                                    ),
+                                    isLoading = false
+                                )
                             )
                         }
                     }
@@ -1093,8 +1109,7 @@ class HomeRootViewModel @Inject constructor(
     private fun loadPlayerForOneSong(
         songs: List<QueueSong>,
         songId: Long,
-        playlistInfo: PlayingSongInfo,
-        type: UiEvent.PlayType,
+        playlistInfo: PlayingSongInfo
     ) {
         Log.d("loadPlayerForOneSong", "$songId , $songs")
 
@@ -1137,8 +1152,7 @@ class HomeRootViewModel @Inject constructor(
 
     private fun loadPlayer(
         songs: List<QueueSong>,
-        playlistInfo: PlayingSongInfo,
-        type: UiEvent.PlayType
+        playlistInfo: PlayingSongInfo
     ) {
         db.insertIntoPlayingQueueTable(
             entrys = songs.map {

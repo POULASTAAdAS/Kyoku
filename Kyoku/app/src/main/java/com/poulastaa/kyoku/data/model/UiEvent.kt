@@ -46,5 +46,6 @@ sealed class UiEvent {
         FAVOURITE_SONG,
         ARTIST_MORE_ALL_SONG,
         ARTIST_MORE_ONE_SONG,
+        ARTIST_MORE_SONG
     }
 }

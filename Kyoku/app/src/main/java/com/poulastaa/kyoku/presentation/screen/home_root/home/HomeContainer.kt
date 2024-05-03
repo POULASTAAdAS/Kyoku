@@ -367,6 +367,17 @@ fun HomeContainer(
                             when (it) {
                                 is UiEvent.Navigate -> navController.navigate(it)
                                 is UiEvent.NavigateWithData -> navController.navigateWithData(it)
+                                is UiEvent.Play -> {
+                                    navigateWithUiEvent.invoke(
+                                        HomeRootUiEvent.Play(
+                                            context = context,
+                                            songId = it.songId,
+                                            songIdList = it.songIdList,
+                                            otherId = it.otherId,
+                                            playType = it.playType
+                                        )
+                                    )
+                                }
                                 else -> Unit
                             }
                         }

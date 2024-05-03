@@ -174,7 +174,14 @@ class ArtistAllViewModel @Inject constructor(
                     }
 
                     is ArtistAllUiEvent.ItemClick.SongClick -> {
-                        // todo player screen
+                        viewModelScope.launch(Dispatchers.IO) {
+                            _uiEvent.send(
+                                UiEvent.Play(
+                                    songId = event.id,
+                                    playType = UiEvent.PlayType.ARTIST_MORE_SONG
+                                )
+                            )
+                        }
                     }
                 }
             }

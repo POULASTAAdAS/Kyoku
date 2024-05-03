@@ -57,6 +57,7 @@ import com.poulastaa.kyoku.presentation.screen.song_view.artist.components.Artis
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.components.ArtistAllItem
 import com.poulastaa.kyoku.presentation.screen.song_view.artist.components.Header
 import com.poulastaa.kyoku.ui.theme.dimens
+import com.poulastaa.kyoku.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -92,7 +93,14 @@ fun ArtistAllScreen(
                 is UiEvent.NavigateWithData -> navigate.invoke(event)
 
                 is UiEvent.Play -> {
-                    // todo
+                    navigate.invoke(
+                        UiEvent.Play(
+                            songId = event.songId,
+                            songIdList = event.songIdList,
+                            otherId = event.otherId,
+                            playType = event.playType
+                        )
+                    )
                 }
 
                 is UiEvent.ShowToast -> {
@@ -176,7 +184,7 @@ fun ArtistAllScreen(
                 contentPadding = PaddingValues(
                     start = MaterialTheme.dimens.medium1,
                     end = MaterialTheme.dimens.medium1,
-                    bottom = MaterialTheme.dimens.medium1
+                    bottom = MaterialTheme.dimens.medium1 + Constants.PLAYER_PADDING
                 ),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
                 horizontalAlignment = Alignment.CenterHorizontally
