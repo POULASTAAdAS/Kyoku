@@ -1,8 +1,0 @@
-package com.poulastaa.kyoku.data.model.api.auth.email
-
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class RefreshTokenReq(
-    val oldRefreshToken: String
-)
