@@ -100,7 +100,7 @@ fun HomeRootDrawer(
                             drawerState.open()
                         }
                     },
-                    loadAditionalInfo = viewModel::loadAdditionalData,
+                    loadAdditionalInfo = viewModel::loadAdditionalData,
                     playControl = viewModel::onEvent,
                     navigateWithUiEvent = viewModel::onEvent
                 )

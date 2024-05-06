@@ -607,20 +607,22 @@ class HomeScreenViewModel @Inject constructor(
 
                             db.hideSong(event.id, artistName!!)
 
+                            // todo make api call
+
                             onEvent(HomeUiEvent.EmitToast("song added to hidden song"))
                         }
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.PlayAlbum -> {
-                        Log.d("data", "PlayAlbum: ${event.id}")
+                        Log.d("data", "PlayAlbum: $event")
                     }
 
                     HomeUiEvent.BottomSheetItemClick.PlayArtistMix -> {
-                        Log.d("data", "PlayArtistMix")
+                        Log.d("data", "PlayArtistMix $event")
                     }
 
                     HomeUiEvent.BottomSheetItemClick.PlayDailyMix -> {
-                        Log.d("data", "PlayDailyMix")
+                        Log.d("data", "PlayDailyMix $event")
                     }
 
                     is HomeUiEvent.BottomSheetItemClick.AddToLibraryAlbum -> {
@@ -632,7 +634,6 @@ class HomeScreenViewModel @Inject constructor(
 
                                 return@launch
                             }
-
 
                             onEvent(HomeUiEvent.EmitToast("${response.name} added to library"))
 

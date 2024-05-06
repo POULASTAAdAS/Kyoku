@@ -128,7 +128,7 @@ fun SpotifyPlaylistScreen(
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             },
             onAddClick = {
-                viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnAddButtonClick)
+                viewModel.onEvent(GetSpotifyPlaylistUiEvent.OnAddButtonClick(context))
                 focusManager.clearFocus()
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             },

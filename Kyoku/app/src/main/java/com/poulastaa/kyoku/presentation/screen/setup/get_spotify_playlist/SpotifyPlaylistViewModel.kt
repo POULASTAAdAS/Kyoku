@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.presentation.screen.setup.get_spotify_playlist
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
 import com.poulastaa.kyoku.data.model.SignInStatus
+import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.HandleSpotifyPlaylistStatus
 import com.poulastaa.kyoku.data.model.api.service.setup.spotiry_playlist.SpotifyDataStoreState
-import com.poulastaa.kyoku.data.model.UiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiEvent
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.GetSpotifyPlaylistUiState
 import com.poulastaa.kyoku.data.model.screens.setup.spotify_playlist.SpotifyUiPlaylist
@@ -134,13 +135,13 @@ class SpotifyPlaylistViewModel @Inject constructor(
                 )
             }
 
-            GetSpotifyPlaylistUiEvent.OnAddButtonClick -> {
+            is GetSpotifyPlaylistUiEvent.OnAddButtonClick -> {
                 if (checkInternetConnection()) {
                     if (state.link.validateSpotifyLink()) {
                         state = state.copy(
                             isMakingApiCall = true
                         )
-                        makeApiCall()
+                        makeApiCall(event.context)
                     } else {
                         state = state.copy(
                             isLinkError = true,
@@ -181,7 +182,7 @@ class SpotifyPlaylistViewModel @Inject constructor(
         }
     }
 
-    private fun makeApiCall() {
+    private fun makeApiCall(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = service.getSpotifyPlaylist(
                 playlistId = state.link.toSpotifyPlaylistId()
@@ -189,6 +190,11 @@ class SpotifyPlaylistViewModel @Inject constructor(
 
             when (response.status) {
                 HandleSpotifyPlaylistStatus.SUCCESS -> {
+                    db.setValues(
+                        context = context,
+                        header = dsState.tokenOrCookie
+                    )
+
                     async {
                         db.insertIntoPlaylist(
                             data = response.listOfResponseSong,

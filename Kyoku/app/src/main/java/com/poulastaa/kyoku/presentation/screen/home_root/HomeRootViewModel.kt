@@ -74,8 +74,6 @@ class HomeRootViewModel @Inject constructor(
     private fun readAccessToken() {
         viewModelScope.launch {
             ds.readTokenOrCookie().collect {
-                Log.d("cookie", it)
-
                 state = state.copy(
                     headerValue = it
                 )
@@ -1125,8 +1123,6 @@ class HomeRootViewModel @Inject constructor(
         songId: Long,
         playlistInfo: PlayingSongInfo
     ) {
-        Log.d("loadPlayerForOneSong", "$songId , $songs")
-
         db.insertIntoPlayingQueueTable(
             entrys = songs.map {
                 it.playerSong

@@ -97,7 +97,7 @@ fun HomeContainer(
     state: HomeRootUiState,
     scope: CoroutineScope,
     opnDrawer: () -> Unit,
-    loadAditionalInfo: () -> Unit,
+    loadAdditionalInfo: () -> Unit,
     playControl: (HomeRootUiEvent) -> Unit,
     navigateWithUiEvent: (HomeRootUiEvent) -> Unit,
 ) {
@@ -763,7 +763,7 @@ fun HomeContainer(
                                 )
                             )
                     },
-                    loadAdditionalData = loadAditionalInfo,
+                    loadAdditionalData = loadAdditionalInfo,
                     onDurationChange = {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))
                     }
