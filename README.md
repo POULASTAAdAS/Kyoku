@@ -2,9 +2,16 @@
 
 # <h3 align = 'center'>Releases</h3>
 
+# <h1 align="center"> NOTE</h1>
+
 <br>
-https://github.com/POULASTAAdAS/Music-Streaming-App/releases/tag/v0.1.0-alphaa
-<br>
+
+<h2 align="center">
+I DON'T LIKE HOW DEV IS GOING.
+I AM GOING TO TAKE SOME TIME BRAKE AND MODULARISE THE APP AND BOTH BACKEND.
+THERE ARE ALSO SOME ADJUSTMENT NEED TO THE DATABASE TABLES.
+STAY TUNED :)
+</h2>
 
 # <h2 align="center">Preview Dark</h2>
 
