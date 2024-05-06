@@ -31,8 +31,12 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenre
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongAlbum
+import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 import com.poulastaa.kyoku.data.remote.ServiceApi
 import com.poulastaa.kyoku.domain.repository.ServiceRepository
+import com.poulastaa.kyoku.utils.toPlayingSongAlbum
+import com.poulastaa.kyoku.utils.toPlayingSongArtist
 import javax.inject.Inject
 
 class ServiceRepositoryImpl @Inject constructor(
@@ -223,6 +227,17 @@ class ServiceRepositoryImpl @Inject constructor(
             api.getArtistOnSongId(songId)
         } catch (_: Exception) {
             emptyList()
+        }
+    }
+
+    override suspend fun getAdditionalInfoOnSongId(songId: Long): Pair<List<ViewArtistUiArtist>, Pair<String, PlayingSongAlbum>> {
+        return try {
+            api.getAdditionalInfoOnSongId(songId).let {
+                it.artist.toPlayingSongArtist() to
+                        (it.releaseYear to it.album.toPlayingSongAlbum())
+            }
+        } catch (_: Exception) {
+            emptyList<ViewArtistUiArtist>() to ("" to PlayingSongAlbum())
         }
     }
 

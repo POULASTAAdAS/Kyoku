@@ -17,6 +17,7 @@ import com.poulastaa.data.model.setup.genre.SuggestGenreReq
 import com.poulastaa.data.model.setup.genre.SuggestGenreResponse
 import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
+import com.poulastaa.data.model.song.SongAdditionalInfo
 import com.poulastaa.data.model.utils.UserTypeHelper
 
 interface UserServiceRepository {
@@ -57,6 +58,8 @@ interface UserServiceRepository {
     suspend fun editSongAndPlaylist(helper: UserTypeHelper, req: AddSongToPlaylistReq): ResponseSong
 
     suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist>
+
+    suspend fun getSongAdditionalInfo(songId: Long): SongAdditionalInfo
 
     suspend fun removeFromHistory(songId: Long, helper: UserTypeHelper): Boolean
 

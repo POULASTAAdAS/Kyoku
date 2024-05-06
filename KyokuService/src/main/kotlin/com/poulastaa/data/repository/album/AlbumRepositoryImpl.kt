@@ -13,6 +13,7 @@ import com.poulastaa.data.model.db_table.user_pinned_album.PasskeyUserPinnedAlbu
 import com.poulastaa.data.model.home.AlbumPreview
 import com.poulastaa.data.model.home.ResponseAlbumPreview
 import com.poulastaa.data.model.item.ItemOperation
+import com.poulastaa.data.model.song.PlayingSongAlbum
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.UserType
 import com.poulastaa.domain.dao.Album
@@ -136,6 +137,24 @@ class AlbumRepositoryImpl : AlbumRepository {
                 it[SongAlbumArtistRelationTable.songId]
             }
         }.toResponseSongList()
+    }
+
+    override suspend fun getResponseSongAlbumOnSongId(songId: Long): PlayingSongAlbum = dbQuery {
+        AlbumTable
+            .join(
+                otherTable = SongAlbumArtistRelationTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    SongAlbumArtistRelationTable.albumId as Column<*> eq AlbumTable.id
+                }
+            ).select {
+                SongAlbumArtistRelationTable.songId eq songId
+            }.map {
+                PlayingSongAlbum(
+                    albumId = it[AlbumTable.id].value,
+                    name = it[AlbumTable.name]
+                )
+            }.firstOrNull() ?: PlayingSongAlbum()
     }
 
     private suspend fun getFevAlbumIdList(userType: UserType, userId: Long) = dbQuery {

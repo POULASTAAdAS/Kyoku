@@ -32,6 +32,7 @@ import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -41,6 +42,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -51,13 +53,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.poulastaa.kyoku.R
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiEvent
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongData
 import com.poulastaa.kyoku.data.model.home_nav_drawer.QueueSong
 import com.poulastaa.kyoku.data.model.screens.player.PlayerSong
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
@@ -84,6 +90,7 @@ fun Player(
         MaterialTheme.colorScheme.background,
         MaterialTheme.colorScheme.background,
     ),
+    loadAdditionalData: () -> Unit,
     onDurationChange: (Float) -> Unit,
     playControl: (HomeRootUiEvent) -> Unit,
     navigateBack: () -> Unit
@@ -176,7 +183,7 @@ fun Player(
                     isDarkThem = isDarkThem,
                     isCookie = isCookie,
                     headerValue = header,
-                    url = player.playingSong.url,
+                    url = player.playingSongData.playingSong.url,
                     contentScale = ContentScale.Crop
                 )
             }
@@ -196,7 +203,7 @@ fun Player(
                     modifier = Modifier.fillMaxWidth(.8f)
                 ) {
                     Text(
-                        text = player.playingSong.title,
+                        text = player.playingSongData.playingSong.title,
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                         fontWeight = FontWeight.Medium,
                         color = brushColor[0],
@@ -205,7 +212,8 @@ fun Player(
                     )
 
                     Text(
-                        text = player.playingSong.artist.toString().trimStart('[').trimEnd(']'),
+                        text = player.playingSongData.playingSong.artist.toString().trimStart('[')
+                            .trimEnd(']'),
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         color = brushColor[0],
                         maxLines = 1,
@@ -249,12 +257,12 @@ fun Player(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = player.playingSong.currentInMin,
+                        text = player.playingSongData.playingSong.currentInMin,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = brushColor[0]
                     )
                     Text(
-                        text = player.playingSong.totalTime,
+                        text = player.playingSongData.playingSong.totalTime,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = brushColor[0]
                     )
@@ -291,6 +299,7 @@ fun Player(
                         .size(50.dp)
                         .rotate(90f),
                     icon = R.drawable.ic_next,
+                    enabled = player.hasPrev,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
@@ -311,6 +320,7 @@ fun Player(
                 CustomIconButton(
                     modifier = Modifier.size(50.dp),
                     icon = R.drawable.ic_next,
+                    enabled = player.hasNext,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
@@ -407,12 +417,36 @@ fun Player(
 
                             }
                         )
-                        else SongArtist(
-                            artist = player.playingSongArtist,
-                            isDarkThem = isDarkThem,
-                            isCookie = isCookie,
-                            header = header
-                        )
+                        else {
+                            LaunchedEffect(key1 = player.playingSongData.isAdditionalDataLoaded) {
+                                if (!player.playingSongData.isAdditionalDataLoaded)
+                                    loadAdditionalData.invoke()
+                            }
+
+                            if (!player.playingSongData.isAdditionalDataLoaded)
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(MaterialTheme.dimens.small3),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            else
+                                SongInfo(
+                                    songData = player.playingSongData,
+                                    isDarkThem = isDarkThem,
+                                    isCookie = isCookie,
+                                    header = header,
+                                    onArtistClick = {
+
+                                    },
+                                    onAlbumClick = {
+
+                                    }
+                                )
+                        }
 
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
                         Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
@@ -493,7 +527,7 @@ private fun AllQueueSong(
                 isPlaying = it.isPlaying,
                 onAddClick = onAddClick
             )
-            
+
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
         }
     }
@@ -570,33 +604,161 @@ private fun PlayingQueueSong(
 }
 
 @Composable
-private fun SongArtist(
-    artist: List<ViewArtistUiArtist>,
+private fun SongInfo(
+    songData: PlayingSongData,
     isDarkThem: Boolean,
     isCookie: Boolean,
-    header: String
+    header: String,
+    interactionSource: MutableInteractionSource = remember {
+        MutableInteractionSource()
+    },
+    onArtistClick: (artistId: Long) -> Unit,
+    onAlbumClick: (albumId: Long) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
     ) {
-        artist.forEach {
-            ArtistView(
-                data = it,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp),
-                imageSize = 70.dp,
-                isDarkThem = isDarkThem,
-                isCookie = isCookie,
-                header = header,
-                nameFontSize = MaterialTheme.typography.titleMedium.fontSize,
-                listenedFontSize = MaterialTheme.typography.titleSmall.fontSize
+        if (songData.playingSongArtist.isNotEmpty()) {
+            Text(
+                text = "Artist",
+                fontWeight = FontWeight.Medium,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+            songData.playingSongArtist.forEach {
+                ArtistView(
+                    data = it,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null
+                        ) {
+                            onArtistClick.invoke(it.artistId)
+                        },
+                    imageSize = 70.dp,
+                    isDarkThem = isDarkThem,
+                    isCookie = isCookie,
+                    header = header,
+                    nameFontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    listenedFontSize = MaterialTheme.typography.titleSmall.fontSize
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+            }
         }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            if (songData.playingSongAlbum.albumId != -1L) {
+                Column(
+                    modifier = Modifier.wrapContentSize(),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Album",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    AlbumView(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null
+                            ) {
+                                onAlbumClick.invoke(songData.playingSongAlbum.albumId)
+                            },
+                        cover = songData.playingSong.url,
+                        isDarkThem = isDarkThem,
+                        isCookie = isCookie,
+                        header = header,
+                        name = songData.playingSongAlbum.name
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.wrapContentSize(),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Release Year",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Text(
+                    text = songData.playingSong.year.ifEmpty { songData.releaseDate },
+                    fontWeight = FontWeight.Light,
+                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    letterSpacing = 2.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
+
+        Text(
+            text = "Some Info may not be totally accurate. Sorry for the Inconvenience.",
+            fontWeight = FontWeight.Light,
+            fontFamily = FontFamily.Monospace,
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            color = MaterialTheme.colorScheme.onBackground,
+            letterSpacing = 2.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun AlbumView(
+    modifier: Modifier = Modifier,
+    cover: String,
+    isDarkThem: Boolean,
+    isCookie: Boolean,
+    header: String,
+    name: String,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CustomImageView(
+            modifier = Modifier
+                .size(70.dp)
+                .clip(MaterialTheme.shapes.extraSmall),
+            isDarkThem = isDarkThem,
+            isCookie = isCookie,
+            headerValue = header,
+            url = cover
+        )
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small1))
+
+        Text(
+            modifier = Modifier.width(70.dp),
+            text = name,
+            fontWeight = FontWeight.Light,
+            fontSize = MaterialTheme.typography.titleSmall.fontSize,
+            color = MaterialTheme.colorScheme.onBackground,
+            letterSpacing = 2.sp
+        )
     }
 }
 
@@ -606,12 +768,14 @@ fun CustomIconButton(
     modifier: Modifier = Modifier,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     @DrawableRes icon: Int,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     IconButton(
         modifier = modifier,
         onClick = onClick,
-        colors = colors
+        colors = colors,
+        enabled = enabled
     ) {
         Icon(
             modifier = modifier,
@@ -629,7 +793,7 @@ fun CustomIconButton(
 @Composable
 private fun Preview() {
     TestThem {
-        Player(
+        com.poulastaa.kyoku.presentation.screen.home_root.player.Player(
             isSmallPhone = false,
             paddingValue = PaddingValues(),
             player = Player(
@@ -718,28 +882,30 @@ private fun Preview() {
                         )
                     )
                 ),
-                playingSong = PlayerSong(
-                    title = "Title",
-                    artist = listOf(
-                        "artist1",
-                        "artist2",
-                        "artist1",
-                        "artist2",
-                        "artist1",
-                        "artist2",
-                        "artist1",
-                        "artist2"
+                playingSongData = PlayingSongData(
+                    playingSong = PlayerSong(
+                        title = "Title",
+                        artist = listOf(
+                            "artist1",
+                            "artist2",
+                            "artist1",
+                            "artist2",
+                            "artist1",
+                            "artist2",
+                            "artist1",
+                            "artist2"
+                        ),
+                        totalTime = "4.40"
                     ),
-                    totalTime = "4.40"
-                ),
-                playingSongArtist = listOf(
-                    ViewArtistUiArtist(
-                        name = "name1",
-                        listened = 1200
-                    ),
-                    ViewArtistUiArtist(
-                        name = "name2",
-                        listened = 100
+                    playingSongArtist = listOf(
+                        ViewArtistUiArtist(
+                            name = "name1",
+                            listened = 1200
+                        ),
+                        ViewArtistUiArtist(
+                            name = "name2",
+                            listened = 100
+                        )
                     )
                 )
             ),
@@ -753,10 +919,46 @@ private fun Preview() {
                 MaterialTheme.colorScheme.onBackground,
             ),
             playControl = {},
+            loadAdditionalData = {},
             onDurationChange = {},
 
             ) {
 
         }
+
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(MaterialTheme.colorScheme.tertiaryContainer)
+//                .padding(MaterialTheme.dimens.medium1)
+//        ) {
+//            SongInfo(
+//                songData = PlayingSongData(
+//                    playingSong = PlayerSong(
+//                        year = "2023"
+//                    ),
+//                    isAdditionalDataLoaded = true,
+//                    playingSongArtist = listOf(
+//                        ViewArtistUiArtist(
+//                            name = "name1",
+//                            listened = 1200
+//                        ),
+//                        ViewArtistUiArtist(
+//                            name = "name2",
+//                            listened = 100
+//                        )
+//                    ),
+//                    playingSongAlbum = PlayingSongAlbum(
+//                        albumId = 1,
+//                        name = "albumName",
+//                    )
+//                ),
+//                isDarkThem = false,
+//                isCookie = false,
+//                header = "",
+//                headerColor = MaterialTheme.colorScheme.tertiary,
+//                onArtistClick = {},
+//            )
+//        }
     }
 }

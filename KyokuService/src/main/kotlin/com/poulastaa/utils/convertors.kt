@@ -5,6 +5,7 @@ import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.common.ResponseArtist
 import com.poulastaa.data.model.common.ResponseSong
 import com.poulastaa.data.model.home.SongPreview
+import com.poulastaa.data.model.song.PlayingSongArtist
 import com.poulastaa.data.model.utils.AlbumResult
 import com.poulastaa.data.model.utils.PlaylistRow
 import com.poulastaa.data.model.utils.User
@@ -43,11 +44,11 @@ fun List<Long>.toListOfPlaylistRow(id: Long) = this.map {
 
 
 fun String.constructCoverPhotoUrl(): String = "$BASE_URL${EndPoints.CoverImage.route}?coverImage=${
-    this.replace(COVER_IMAGE_ROOT_DIR, "").replace("&" , "%26")
+    this.replace(COVER_IMAGE_ROOT_DIR, "").replace("&", "%26")
 }"
 
 fun String.constructMasterPlaylistUrl(): String = "$BASE_URL${EndPoints.PlaySongMaster.route}?master=${
-    this.replace(MASTER_PLAYLIST_ROOT_DIR, "").replace("&" , "%26")
+    this.replace(MASTER_PLAYLIST_ROOT_DIR, "").replace("&", "%26")
 }"
 
 fun String.getAlbum(): String {
@@ -139,6 +140,15 @@ fun Iterable<AlbumResult>.toResponseSong() = this.map {
         masterPlaylistUrl = it.master,
         totalTime = it.totalTime,
         date = it.year
+    )
+}
+
+fun List<ViewArtist>.toListOfPlayingSongArtist() = this.map {
+    PlayingSongArtist(
+        artistId = it.id,
+        name = it.name,
+        coverImage = it.coverImage,
+        listened = it.points
     )
 }
 

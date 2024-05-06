@@ -22,6 +22,7 @@ import com.poulastaa.data.model.setup.set_b_date.SetBDateResponse
 import com.poulastaa.data.model.setup.spotify.HandleSpotifyPlaylistStatus
 import com.poulastaa.data.model.setup.spotify.SpotifyPlaylistResponse
 import com.poulastaa.data.model.setup.spotify.SpotifySong
+import com.poulastaa.data.model.song.SongAdditionalInfo
 import com.poulastaa.data.model.utils.*
 import com.poulastaa.domain.dao.Artist
 import com.poulastaa.domain.dao.user_artist.EmailUserArtistRelation
@@ -582,9 +583,21 @@ class UserServiceRepositoryImpl(
         song.getSongOnId(req.songId)
     }
 
-
-    override suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist> {
+     override suspend fun getResponseArtistOnSongId(songId: Long): List<ViewArtist> {
         return artist.getResponseArtistOnSongId(songId)
+    }
+
+
+    override suspend fun getSongAdditionalInfo(songId: Long): SongAdditionalInfo = withContext(Dispatchers.IO) {
+        val artistDef = async { artist.getResponseArtistOnSongId(songId) }
+        val albumDef = async { album.getResponseSongAlbumOnSongId(songId) }
+        val songYearDef = async { song.getSongOnId(songId).date }
+
+        SongAdditionalInfo(
+            artist = artistDef.await().toListOfPlayingSongArtist(),
+            album = albumDef.await(),
+            releaseYear = songYearDef.await()
+        )
     }
 
     override suspend fun removeFromHistory(songId: Long, helper: UserTypeHelper): Boolean {

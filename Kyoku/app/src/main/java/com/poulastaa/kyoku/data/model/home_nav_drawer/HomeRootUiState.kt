@@ -14,9 +14,12 @@ import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 @OptIn(ExperimentalFoundationApi::class)
 data class HomeRootUiState(
     val isFirst: Boolean = true,
+
     val isCookie: Boolean = false,
-    val isLoading: Boolean = false,
     val headerValue: String = "",
+
+    val isLoading: Boolean = false,
+
     val homeTopBarTitle: String = "Good Morning",
     val libraryTopBarTitle: String = "Your Library",
     val profilePicUrl: String = "",
@@ -37,7 +40,6 @@ data class HomeRootUiState(
         )
     },
 
-
     val player: Player = Player()
 )
 
@@ -47,15 +49,18 @@ data class Player(
     val isPlayerOpen: Boolean = false,
     val isLoading: Boolean = true,
 
-    val isRepeat: Boolean = false,
-
     val allSong: List<QueueSong> = emptyList(),
     val info: PlayingSongInfo = PlayingSongInfo(),
 
-    val playingSong: PlayerSong = PlayerSong(),
-    val playingSongArtist: List<ViewArtistUiArtist> = emptyList(),
+    val playingSongData: PlayingSongData = PlayingSongData(),
+
+    val isShuffle: Boolean = false,
+    val isRepeat: Boolean = false,
 
     val isPlaying: Boolean = false,
+    val hasNext: Boolean = false,
+    val hasPrev: Boolean = false,
+
     val progress: Float = 0f,
     val playingIndex: Int = -1,
 
@@ -72,6 +77,21 @@ data class QueueSong(
 data class PlayingSongInfo(
     val id: Long = -1,
     val typeName: String = "Kyoku"
+)
+
+@Stable
+data class PlayingSongData(
+    val isAdditionalDataLoaded: Boolean = false,
+    val releaseDate: String = "",
+    val playingSong: PlayerSong = PlayerSong(),
+    val playingSongArtist: List<ViewArtistUiArtist> = emptyList(),
+    val playingSongAlbum: PlayingSongAlbum = PlayingSongAlbum()
+)
+
+@Stable
+data class PlayingSongAlbum(
+    val albumId: Long = -1,
+    val name: String = ""
 )
 
 @Stable

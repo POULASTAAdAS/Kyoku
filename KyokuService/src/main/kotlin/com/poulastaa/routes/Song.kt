@@ -3,6 +3,7 @@ package com.poulastaa.routes
 import com.poulastaa.data.model.artist.SongListReq
 import com.poulastaa.data.model.common.EndPoints
 import com.poulastaa.data.model.common.ResponseSong
+import com.poulastaa.data.model.song.SongAdditionalInfo
 import com.poulastaa.domain.repository.UserServiceRepository
 import com.poulastaa.utils.Constants
 import com.poulastaa.utils.Constants.BASE_URL
@@ -45,6 +46,7 @@ fun Route.getSongOnId(
     }
 }
 
+
 fun Route.getSongOnListonIdList(
     service: UserServiceRepository
 ) {
@@ -72,6 +74,33 @@ fun Route.getSongOnListonIdList(
     }
 }
 
+
+fun Route.getSongAdditionalInfo(
+    service: UserServiceRepository
+) {
+    authenticate(configurations = Constants.SECURITY_LIST) {
+        route(EndPoints.SongInfo.route) {
+            get {
+                val songId = call.parameters["songId"] ?: return@get call.respond(
+                    message = emptyList<SongAdditionalInfo>(),
+                    status = HttpStatusCode.OK
+                )
+
+                getUserType() ?: return@get call.respond(
+                    message = emptyList<SongAdditionalInfo>(),
+                    status = HttpStatusCode.OK
+                )
+
+                val response = service.getSongAdditionalInfo(songId.toLong())
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
 
 fun Route.getMasterPlaylist(
     service: UserServiceRepository

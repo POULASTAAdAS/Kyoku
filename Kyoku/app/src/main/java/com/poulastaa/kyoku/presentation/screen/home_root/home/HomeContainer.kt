@@ -97,6 +97,7 @@ fun HomeContainer(
     state: HomeRootUiState,
     scope: CoroutineScope,
     opnDrawer: () -> Unit,
+    loadAditionalInfo: () -> Unit,
     playControl: (HomeRootUiEvent) -> Unit,
     navigateWithUiEvent: (HomeRootUiEvent) -> Unit,
 ) {
@@ -378,6 +379,7 @@ fun HomeContainer(
                                         )
                                     )
                                 }
+
                                 else -> Unit
                             }
                         }
@@ -679,8 +681,10 @@ fun HomeContainer(
                                 )
                             },
                             isPlaying = state.player.isPlaying,
+                            hasNext = state.player.hasNext,
+                            hasPrev = state.player.hasPrev,
                             durationUpdate = state.player.progress,
-                            playingData = state.player.playingSong,
+                            playingData = state.player.playingSongData.playingSong,
                             isDarkThem = isDarkThem,
                             isCookie = state.isCookie,
                             header = state.headerValue,
@@ -759,6 +763,7 @@ fun HomeContainer(
                                 )
                             )
                     },
+                    loadAdditionalData = loadAditionalInfo,
                     onDurationChange = {
                         navigateWithUiEvent.invoke(HomeRootUiEvent.PlayerUiEvent.SeekTo(it))
                     }

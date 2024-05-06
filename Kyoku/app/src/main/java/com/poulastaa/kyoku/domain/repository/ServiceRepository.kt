@@ -26,6 +26,8 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenre
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongAlbum
+import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 
 interface ServiceRepository {
     suspend fun getSpotifyPlaylist(playlistId: String): SpotifyPlaylistResponse
@@ -65,6 +67,8 @@ interface ServiceRepository {
     suspend fun addSongToPlaylist(req: AddSongToPlaylistReq): ResponseSong
 
     suspend fun getArtistOnSongId(songId: Long): List<ViewArtist>
+
+    suspend fun getAdditionalInfoOnSongId(songId: Long): Pair<List<ViewArtistUiArtist>, Pair<String , PlayingSongAlbum>>
 
     suspend fun removeFromRecentlyPlayed(songId: Long): Boolean
 

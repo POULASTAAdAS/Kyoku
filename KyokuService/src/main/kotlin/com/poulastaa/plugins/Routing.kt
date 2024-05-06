@@ -33,7 +33,7 @@ fun Application.configureRouting() {
         home(service)
 
         artist(service)
-        getSongArtist(service)
+        getSongAdditionalInfo(service)
         artistAlbumPage(service)
         artistSongPage(service)
 
@@ -56,6 +56,7 @@ fun Application.configureRouting() {
         removeFromHistory(service)
 
         getSongOnId(service)
+        getSongArtist(service)
         getSongOnListonIdList(service)
 
         getMasterPlaylist(service)

@@ -506,6 +506,7 @@ update song set masterPlaylistPath = replace(masterPlaylistPath, 'G:/songs/maste
 
 select * from song;
 
+select * from songalbumartistrelation where songId = 10;
 
 
 

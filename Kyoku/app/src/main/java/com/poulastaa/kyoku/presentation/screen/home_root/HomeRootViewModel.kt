@@ -22,6 +22,7 @@ import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeRootUiState
 import com.poulastaa.kyoku.data.model.home_nav_drawer.HomeScreenBottomNavigation
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Nav
 import com.poulastaa.kyoku.data.model.home_nav_drawer.Player
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongAlbum
 import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongInfo
 import com.poulastaa.kyoku.data.model.home_nav_drawer.QueueSong
 import com.poulastaa.kyoku.data.model.screens.home.SongType
@@ -39,7 +40,6 @@ import com.poulastaa.kyoku.utils.storeSignInState
 import com.poulastaa.kyoku.utils.toPlayerData
 import com.poulastaa.kyoku.utils.toPlayerDataIfAny
 import com.poulastaa.kyoku.utils.toPlayingQueueTable
-import com.poulastaa.kyoku.utils.toViewArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,11 +55,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-private const val DAILY_MIX = "Daily Mix"
-private const val ARTIST_MIX = "Artist Mix"
-private const val FAVOURITE = "Favourite"
-private const val ARTIST_RELEASE = "Artist Release"
-
 @OptIn(ExperimentalFoundationApi::class)
 @HiltViewModel
 class HomeRootViewModel @Inject constructor(
@@ -68,6 +63,14 @@ class HomeRootViewModel @Inject constructor(
     private val api: ServiceRepository,
     private val player: AudioServiceHandler
 ) : ViewModel() {
+
+    companion object {
+        private const val DAILY_MIX = "Daily Mix"
+        private const val ARTIST_MIX = "Artist Mix"
+        private const val FAVOURITE = "Favourite"
+        private const val ARTIST_RELEASE = "Artist Release"
+    }
+
     private fun readAccessToken() {
         viewModelScope.launch {
             ds.readTokenOrCookie().collect {
@@ -153,7 +156,14 @@ class HomeRootViewModel @Inject constructor(
         }
     }
 
-    private var getArtistJob: Job? = null
+    fun loadAdditionalData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getAdditionalInfoJob?.cancel()
+            getAdditionalInfoJob = getAdditionalInfoJob(state.player.playingSongData.playingSong.id)
+        }
+    }
+
+    private var getAdditionalInfoJob: Job? = null
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -177,7 +187,7 @@ class HomeRootViewModel @Inject constructor(
                         Log.d("update buffer", event.value.toString())
                     }
 
-                    is PlayerUiState.CurrentPlayingSongId -> {
+                    is PlayerUiState.CurrentPlayingSong -> {
                         val song = state.player.allSong.firstNotNullOfOrNull {
                             if (it.playerSong.id == event.id) it.playerSong else null
                         }
@@ -190,12 +200,19 @@ class HomeRootViewModel @Inject constructor(
                                         song.colorTwo,
                                         song.colorThree
                                     ),
-                                    playingSong = song
+                                    playingSongData = state.player.playingSongData.copy(
+                                        playingSong = song,
+                                        isAdditionalDataLoaded = false,
+                                        playingSongArtist = emptyList(),
+                                        playingSongAlbum = PlayingSongAlbum()
+                                    )
                                 )
                             )
 
                             state = state.copy(
                                 player = state.player.copy(
+                                    hasPrev = event.hasPrev,
+                                    hasNext = event.hasNext,
                                     allSong = state.player.allSong.map {
                                         if (it.playerSong.id == song.id) it.copy(
                                             isPlaying = true
@@ -206,9 +223,6 @@ class HomeRootViewModel @Inject constructor(
                                     }
                                 )
                             )
-
-                            getArtistJob?.cancel()
-                            getArtistJob = getArtistJob(song.id)
                         }
                     }
 
@@ -217,8 +231,6 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     is PlayerUiState.Playing -> {
-                        Log.d("update Playing", event.isPlaying.toString())
-
                         state = state.copy(
                             player = state.player.copy(
                                 isPlaying = event.isPlaying
@@ -230,16 +242,18 @@ class HomeRootViewModel @Inject constructor(
                         state = state.copy(
                             player = state.player.copy(
                                 progress = try {
-                                    ((event.value.toFloat() / state.player.playingSong.totalInMili) * 100f)
+                                    ((event.value.toFloat() / state.player.playingSongData.playingSong.totalInMili) * 100f)
                                 } catch (_: Exception) {
                                     0f
                                 },
-                                playingSong = state.player.playingSong.copy(
-                                    currentInMin = try {
-                                        millisecondsToMinutesAndSeconds(event.value)
-                                    } catch (_: Exception) {
-                                        "-.-"
-                                    }
+                                playingSongData = state.player.playingSongData.copy(
+                                    playingSong = state.player.playingSongData.playingSong.copy(
+                                        currentInMin = try {
+                                            millisecondsToMinutesAndSeconds(event.value)
+                                        } catch (_: Exception) {
+                                            "-.-"
+                                        }
+                                    )
                                 )
                             )
                         )
@@ -818,14 +832,14 @@ class HomeRootViewModel @Inject constructor(
                     }
 
                     UiEvent.PlayType.ARTIST_MORE_SONG -> {
-                        if (state.player.playingSong.id == event.songId) return restartPlayer()
+                        if (state.player.playingSongData.playingSong.id == event.songId) return restartPlayer()
 
                         viewModelScope.launch(Dispatchers.IO) {
                             val clear = async { db.clearPlayingQueue() }
                             val songDef = async { api.getSongOnId(event.songId) }
 
                             clear.await()
-                            val song  = songDef.await()
+                            val song = songDef.await()
 
                             if (song.id == -1L) return@launch unableToPlaySong()
 
@@ -928,7 +942,7 @@ class HomeRootViewModel @Inject constructor(
 
                     is HomeRootUiEvent.PlayerUiEvent.SeekTo -> {
                         viewModelScope.launch(Dispatchers.Main) {
-                            player.onEvent(PlayerUiEvent.SeekTo((state.player.playingSong.totalInMili * event.index / 100f).toLong()))
+                            player.onEvent(PlayerUiEvent.SeekTo((state.player.playingSongData.playingSong.totalInMili * event.index / 100f).toLong()))
                         }
                     }
 
@@ -1186,14 +1200,38 @@ class HomeRootViewModel @Inject constructor(
         return "$minutes.$seconds"
     }
 
-    private suspend fun getArtistJob(songId: Long) = viewModelScope.launch(Dispatchers.IO) {
-        val result = api.getArtistOnSongId(songId).toViewArtist()
+    private suspend fun getAdditionalInfoJob(songId: Long) = viewModelScope.launch(Dispatchers.IO) {
+        if (state.player.playingSongData.playingSongArtist.isNotEmpty()) return@launch
 
-        if (result.isEmpty()) return@launch
+
+        val result = api.getAdditionalInfoOnSongId(songId)
+
+        if (result.first.isNotEmpty()) {
+            state = state.copy(
+                player = state.player.copy(
+                    playingSongData = state.player.playingSongData.copy(
+                        releaseDate = result.second.first,
+                        playingSongArtist = result.first
+                    )
+                )
+            )
+        }
+
+        if (result.second.second.albumId != -1L) {
+            state = state.copy(
+                player = state.player.copy(
+                    playingSongData = state.player.playingSongData.copy(
+                        playingSongAlbum = result.second.second
+                    )
+                )
+            )
+        }
 
         state = state.copy(
             player = state.player.copy(
-                playingSongArtist = result
+                playingSongData = state.player.playingSongData.copy(
+                    isAdditionalDataLoaded = true
+                )
             )
         )
     }

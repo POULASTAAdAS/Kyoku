@@ -28,6 +28,7 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenre
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
+import com.poulastaa.kyoku.data.model.api.service.song.SongAdditionalInfo
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -140,6 +141,11 @@ interface ServiceApi {
     suspend fun getArtistOnSongId(
         @Query("songId") songId: Long
     ): List<ViewArtist>
+
+    @GET("/api/authorised/songInfo")
+    suspend fun getAdditionalInfoOnSongId(
+        @Query("songId") songId: Long
+    ): SongAdditionalInfo
 
     @GET("/api/authorised/removeFromHistory")
     suspend fun removeFromRecentlyPlayed(

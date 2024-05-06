@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.kyoku.connectivity.NetworkObserver
-import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.UiEvent
+import com.poulastaa.kyoku.data.model.api.auth.AuthType
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiArtist
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiEvent
 import com.poulastaa.kyoku.data.model.screens.view_aritst.ViewArtistUiState

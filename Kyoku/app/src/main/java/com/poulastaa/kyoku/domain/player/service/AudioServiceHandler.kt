@@ -160,8 +160,11 @@ class AudioServiceHandler @Inject constructor(
     override fun onTracksChanged(tracks: Tracks) {
         super.onTracksChanged(tracks)
 
-        _playerUiState.value =
-            PlayerUiState.CurrentPlayingSongId(player.currentMediaItem?.mediaId?.toLong() ?: -1L)
+        _playerUiState.value = PlayerUiState.CurrentPlayingSong(
+            id = player.currentMediaItem?.mediaId?.toLong() ?: -1L,
+            hasPrev = player.hasPreviousMediaItem(),
+            hasNext = player.hasNextMediaItem()
+        )
     }
 
     override fun onPlayerError(error: PlaybackException) {
@@ -173,8 +176,7 @@ class AudioServiceHandler @Inject constructor(
                 CoroutineScope(Dispatchers.Main).launch {
                     playPause()
                 }
-            }
-            else {
+            } else {
                 player.seekToDefaultPosition(0)
                 player.prepare()
                 CoroutineScope(Dispatchers.Main).launch {

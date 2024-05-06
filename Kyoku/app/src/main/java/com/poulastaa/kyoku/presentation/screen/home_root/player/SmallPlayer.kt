@@ -53,6 +53,8 @@ import com.poulastaa.kyoku.ui.theme.dimens
 fun SmallPlayer(
     brushColor: List<Color>,
     isPlaying: Boolean,
+    hasNext: Boolean,
+    hasPrev: Boolean,
     playingData: PlayerSong,
     durationUpdate: Float,
     isDarkThem: Boolean,
@@ -109,8 +111,6 @@ fun SmallPlayer(
                 )
             }
 
-            Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
-
             Row(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -122,6 +122,7 @@ fun SmallPlayer(
                         .rotate(90f)
                         .size(40.dp),
                     icon = R.drawable.ic_next,
+                    enable = hasPrev,
                     color = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
@@ -147,6 +148,7 @@ fun SmallPlayer(
                     modifier = Modifier
                         .size(40.dp),
                     icon = R.drawable.ic_next,
+                    enable = hasNext,
                     color = IconButtonDefaults.iconButtonColors(
                         contentColor = brushColor[0]
                     )
@@ -196,12 +198,14 @@ fun PlayControlButton(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
     color: IconButtonColors = IconButtonDefaults.iconButtonColors(),
+    enable: Boolean = true,
     onClick: () -> Unit
 ) {
     IconButton(
         modifier = modifier,
         onClick = onClick,
-        colors = color
+        colors = color,
+        enabled = enable
     ) {
         Icon(
             modifier = modifier,
@@ -242,6 +246,8 @@ private fun Preview() {
                     MaterialTheme.colorScheme.background,
                 ),
                 isPlaying = false,
+                hasNext = true,
+                hasPrev = true,
                 durationUpdate = 14.34f,
                 playingData = PlayerSong(
                     title = "Title",

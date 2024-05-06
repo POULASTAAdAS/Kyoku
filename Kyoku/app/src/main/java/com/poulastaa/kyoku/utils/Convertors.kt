@@ -25,6 +25,8 @@ import com.poulastaa.kyoku.data.model.api.service.setup.suggest_artist.UiArtist
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.StoreGenreReq
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.SuggestGenreResponse
 import com.poulastaa.kyoku.data.model.api.service.setup.suggest_genre.UiGenre
+import com.poulastaa.kyoku.data.model.api.service.song.PlayingSongAlbumResponse
+import com.poulastaa.kyoku.data.model.api.service.song.PlayingSongArtist
 import com.poulastaa.kyoku.data.model.database.ArtistPrevResult
 import com.poulastaa.kyoku.data.model.database.table.AlbumSongTable
 import com.poulastaa.kyoku.data.model.database.table.ArtistMixTable
@@ -37,6 +39,7 @@ import com.poulastaa.kyoku.data.model.database.table.prev.ArtistSongTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PlayingQueueTable
 import com.poulastaa.kyoku.data.model.database.table.prev.PreviewAlbumTable
 import com.poulastaa.kyoku.data.model.database.table.prev.ReqAlbumSongTable
+import com.poulastaa.kyoku.data.model.home_nav_drawer.PlayingSongAlbum
 import com.poulastaa.kyoku.data.model.home_nav_drawer.QueueSong
 import com.poulastaa.kyoku.data.model.screens.auth.email.login.EmailLogInState
 import com.poulastaa.kyoku.data.model.screens.auth.email.signup.EmailSignUpState
@@ -554,6 +557,20 @@ suspend fun List<ResponseSong>.toPlayerData(
         }
     }.awaitAll()
 }
+
+fun List<PlayingSongArtist>.toPlayingSongArtist() = this.map {
+    ViewArtistUiArtist(
+        artistId = it.artistId,
+        name = it.name,
+        coverImage = it.coverImage,
+        listened = it.listened
+    )
+}
+
+fun PlayingSongAlbumResponse.toPlayingSongAlbum() = PlayingSongAlbum(
+    albumId = this.albumId,
+    name = this.name
+)
 
 
 fun List<ViewArtist>.toViewArtist() = this.map {
