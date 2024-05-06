@@ -1,17 +1,15 @@
 # <h1 align="center">Kyoku</h>
 
-# <h3 align = 'center'>Releases</h3>
-
-# <h1 align="center"> NOTE</h1>
+# <h1 align="center">NOTE</h1>
 
 <br>
 
-<h2 align="center">
+<h3 align="start">
 I DON'T LIKE HOW DEV IS GOING.
 I AM GOING TO TAKE SOME TIME BRAKE AND MODULARISE THE APP AND BOTH BACKEND.
 THERE ARE ALSO SOME ADJUSTMENT NEED TO THE DATABASE TABLES.
 STAY TUNED :)
-</h2>
+</h3>
 
 # <h2 align="center">Preview Dark</h2>
 
@@ -40,7 +38,6 @@ STAY TUNED :)
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/main/screenShorts/Navigation.jpg" width="250" height="500">
     </td>
-    
   </tr>
 </table>
 
