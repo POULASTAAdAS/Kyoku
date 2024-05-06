@@ -1,12 +1,5 @@
 # <h1 align="center">Kyoku</h>
 
-# <h1 align="center">NOTE</h1>
-
-<p>I DON'T LIKE HOW DEV IS GOING.<br>
-I AM GOING TO TAKE SOME TIME BRAKE AND MODULARISE THE APP AND BOTH BACKEND.<br>
-THERE ARE ALSO SOME ADJUSTMENT NEED TO THE DATABASE TABLES.<br>
-STAY TUNED :)</p>
-
 # <h2 align="center">Preview Dark</h2>
 
 <table>
