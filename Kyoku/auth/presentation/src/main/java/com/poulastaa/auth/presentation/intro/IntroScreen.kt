@@ -48,17 +48,7 @@ private fun IntroScreen(
     state: IntroUiState,
     onEvent: (IntroUiEvent) -> Unit,
 ) {
-    Scaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
 
-        }
-    }
 }
 
 @Preview(
