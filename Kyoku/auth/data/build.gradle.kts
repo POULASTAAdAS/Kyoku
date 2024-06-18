@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kyoku.android.library)
     alias(libs.plugins.kyoku.okhttp.library)
+
+    alias(libs.plugins.kyoku.android.dagger)
 }
 
 android {

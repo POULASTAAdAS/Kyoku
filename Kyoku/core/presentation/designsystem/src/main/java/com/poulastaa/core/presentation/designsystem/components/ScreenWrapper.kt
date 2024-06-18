@@ -1,6 +1,7 @@
 package com.poulastaa.core.presentation.designsystem.components
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.poulastaa.core.presentation.designsystem.dimens
 
@@ -27,13 +29,12 @@ fun ScreenWrapper(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Center,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    compactContext: @Composable ColumnScope.() -> Unit,
-    mediumContext: @Composable ColumnScope.() -> Unit,
-    expandedContext: @Composable ColumnScope.() -> Unit,
+    compactContent: @Composable ColumnScope.() -> Unit,
+    mediumContent: @Composable ColumnScope.() -> Unit,
+    expandedContent: @Composable ColumnScope.() -> Unit,
 ) {
     val context = LocalContext.current
     val screenWith = calculateWindowSizeClass(activity = context as Activity)
-
 
     Scaffold {
         Column(
@@ -42,28 +43,28 @@ fun ScreenWrapper(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.tertiary,
                             MaterialTheme.colorScheme.onTertiary,
+                            MaterialTheme.colorScheme.tertiary,
                         )
                     )
                 )
                 .padding(it)
-                .padding(horizontal = MaterialTheme.dimens.medium1)
+                .padding(MaterialTheme.dimens.medium1)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = horizontalAlignment,
             verticalArrangement = verticalArrangement
         ) {
             when (screenWith.widthSizeClass) {
                 WindowWidthSizeClass.Compact -> {
-
+                    compactContent()
                 }
 
                 WindowWidthSizeClass.Medium -> {
-
+                    mediumContent()
                 }
 
                 WindowWidthSizeClass.Expanded -> {
-
+                    expandedContent()
                 }
             }
         }

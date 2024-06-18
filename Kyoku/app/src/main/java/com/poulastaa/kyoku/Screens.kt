@@ -10,6 +10,7 @@ sealed class Screens(val route: String) {
     data object Intro : Screens("/intro")
     data object EmailLogIn : Screens("/emailLogIn")
     data object EmailSignUp : Screens("/emailSignUp")
+    data object ForgotPassword : Screens("/forgotPassword")
 
     data object GetSpotifyPlaylist : Screens("/getSpotifyPlaylist")
     data object SetBirthDate : Screens("/setBirthDate")

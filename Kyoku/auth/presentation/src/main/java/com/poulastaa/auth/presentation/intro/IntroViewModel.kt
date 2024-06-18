@@ -30,11 +30,7 @@ class IntroViewModel @Inject constructor(
             }
 
             IntroUiEvent.OnGoogleLogInClick -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    delay(3000)
 
-                    _uiEvent.send(IntroUiAction.OnSuccess(NavigationScreen.SET_B_DATE))
-                }
             }
         }
     }

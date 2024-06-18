@@ -3,7 +3,7 @@ package com.poulastaa.kyoku
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.StartScreen
+import com.poulastaa.core.domain.ScreenEnum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,40 +27,41 @@ class MainViewModel @Inject constructor(
             val value = dataStore.readSignInState()
 
             when (value) {
-                StartScreen.INTRO -> StartRoute(
+                ScreenEnum.INTRO -> StartRoute(
                     route = Screens.AUTH_ROUTE,
-                    startDestination = Screens.Intro.route
+                    startDestination = Screens.EmailLogIn.route
                 )
 
-                StartScreen.GET_SPOTIFY_PLAYLIST -> StartRoute(
+                ScreenEnum.GET_SPOTIFY_PLAYLIST -> StartRoute(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.GetSpotifyPlaylist.route
                 )
 
 
-                StartScreen.SET_B_DATE -> StartRoute(
+                ScreenEnum.SET_B_DATE -> StartRoute(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.SetBirthDate.route
                 )
 
 
-                StartScreen.PIC_GENRE -> StartRoute(
+                ScreenEnum.PIC_GENRE -> StartRoute(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.PicGenre.route
                 )
 
 
-                StartScreen.PIC_ARTIST -> StartRoute(
+                ScreenEnum.PIC_ARTIST -> StartRoute(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.PicArtist.route
                 )
 
 
-                StartScreen.HOME -> StartRoute(
+                ScreenEnum.HOME -> StartRoute(
                     route = Screens.APP_ROUTE,
                     startDestination = Screens.Home.route
                 )
 
+                else -> return@launch
             }.let {
                 _startRoute.value = it
                 if (_startRoute.value.startDestination != null) _keepSplashOn.value = false

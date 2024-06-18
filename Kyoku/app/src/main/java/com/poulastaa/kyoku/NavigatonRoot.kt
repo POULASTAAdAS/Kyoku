@@ -6,8 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.poulastaa.auth.presentation.email.login.EmailLoginRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
-import com.poulastaa.auth.presentation.intro.NavigationScreen
+import com.poulastaa.core.domain.ScreenEnum
 
 
 @Composable
@@ -27,7 +28,7 @@ fun NavigationRoot(
 }
 
 private fun NavGraphBuilder.authGraph(
-    navHostController: NavHostController,
+    nav: NavHostController,
     screen: String,
 ) {
     navigation(
@@ -36,37 +37,81 @@ private fun NavGraphBuilder.authGraph(
     ) {
         composable(route = Screens.Intro.route) {
             IntroRootScreen { screen ->
-                navHostController.popBackStack()
+                nav.popBackStack()
+
                 when (screen) {
-                    NavigationScreen.EMAIL_LOGIN -> {
-                        navHostController.navigate(Screens.EmailLogIn.route)
+                    ScreenEnum.EMAIL_LOGIN -> {
+                        nav.navigate(Screens.EmailLogIn.route)
                     }
 
-                    NavigationScreen.NEW_USER -> {
-                        navHostController.navigate(Screens.GetSpotifyPlaylist.route)
+                    ScreenEnum.GET_SPOTIFY_PLAYLIST -> {
+                        nav.navigate(Screens.GetSpotifyPlaylist.route)
                     }
 
-                    NavigationScreen.SET_B_DATE -> {
-                        navHostController.navigate(Screens.SetBirthDate.route)
+                    ScreenEnum.SET_B_DATE -> {
+                        nav.navigate(Screens.SetBirthDate.route)
                     }
 
-                    NavigationScreen.PIC_GENRE -> {
-                        navHostController.navigate(Screens.PicGenre.route)
+                    ScreenEnum.PIC_GENRE -> {
+                        nav.navigate(Screens.PicGenre.route)
                     }
 
-                    NavigationScreen.PIC_ARTIST -> {
-                        navHostController.navigate(Screens.PicArtist.route)
+                    ScreenEnum.PIC_ARTIST -> {
+                        nav.navigate(Screens.PicArtist.route)
                     }
 
-                    NavigationScreen.OLD_USER -> {
-                        navHostController.navigate(Screens.Home.route)
+                    ScreenEnum.HOME -> {
+                        nav.navigate(Screens.Home.route)
                     }
+
+                    else -> Unit
                 }
             }
         }
 
         composable(route = Screens.EmailLogIn.route) {
+            EmailLoginRootScreen(
+                navigateToEmailSignUp = {
+                    nav.popBackStack()
+                    nav.navigate(Screens.EmailSignUp.route)
+                },
+                navigateToForgotPassword = {
+                    nav.navigate(Screens.ForgotPassword.route) // todo add email if any
+                },
+                navigate = { screen ->
+                    when (screen) {
+                        ScreenEnum.EMAIL_SIGN_UP -> {
+                            nav.navigate(Screens.EmailSignUp.route)
+                        }
 
+                        ScreenEnum.FORGOT_PASSWORD -> {
+                            nav.navigate(Screens.ForgotPassword.route)
+                        }
+
+                        ScreenEnum.GET_SPOTIFY_PLAYLIST -> {
+                            nav.navigate(Screens.GetSpotifyPlaylist.route)
+                        }
+
+                        ScreenEnum.SET_B_DATE -> {
+                            nav.navigate(Screens.SetBirthDate.route)
+                        }
+
+                        ScreenEnum.PIC_GENRE -> {
+                            nav.navigate(Screens.PicGenre.route)
+                        }
+
+                        ScreenEnum.PIC_ARTIST -> {
+                            nav.navigate(Screens.PicArtist.route)
+                        }
+
+                        ScreenEnum.HOME -> {
+                            nav.navigate(Screens.Home.route)
+                        }
+
+                        else -> Unit
+                    }
+                }
+            )
         }
 
         composable(route = Screens.EmailSignUp.route) {

@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.StartScreen
+import com.poulastaa.core.domain.ScreenEnum
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -23,14 +23,16 @@ class DataStoreRepositoryImpl @Inject constructor(
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
     }
 
-    override suspend fun storeSignInState(state: StartScreen) {
+    override suspend fun storeSignInState(state: ScreenEnum) {
         when (state) {
-            StartScreen.INTRO -> StartScreen.INTRO.name
-            StartScreen.GET_SPOTIFY_PLAYLIST -> StartScreen.GET_SPOTIFY_PLAYLIST.name
-            StartScreen.SET_B_DATE -> StartScreen.SET_B_DATE.name
-            StartScreen.PIC_GENRE -> StartScreen.PIC_GENRE.name
-            StartScreen.PIC_ARTIST -> StartScreen.PIC_ARTIST.name
-            StartScreen.HOME -> StartScreen.HOME.name
+            ScreenEnum.INTRO -> ScreenEnum.INTRO.name
+            ScreenEnum.GET_SPOTIFY_PLAYLIST -> ScreenEnum.GET_SPOTIFY_PLAYLIST.name
+            ScreenEnum.SET_B_DATE -> ScreenEnum.SET_B_DATE.name
+            ScreenEnum.PIC_GENRE -> ScreenEnum.PIC_GENRE.name
+            ScreenEnum.PIC_ARTIST -> ScreenEnum.PIC_ARTIST.name
+            ScreenEnum.HOME -> ScreenEnum.HOME.name
+
+            else -> return
         }.let { value ->
             dataStore.edit {
                 it[PreferencesKeys.SIGN_IN_STATE] = value
@@ -38,11 +40,11 @@ class DataStoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun readSignInState(): StartScreen = dataStore.data.catch {
+    override suspend fun readSignInState(): ScreenEnum = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
-        val state = it[PreferencesKeys.SIGN_IN_STATE] ?: StartScreen.INTRO.name
-        StartScreen.valueOf(state)
+        val state = it[PreferencesKeys.SIGN_IN_STATE] ?: ScreenEnum.INTRO.name
+        ScreenEnum.valueOf(state)
     }.first()
 
 
