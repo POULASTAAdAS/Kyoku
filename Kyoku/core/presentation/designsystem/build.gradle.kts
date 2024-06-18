@@ -13,5 +13,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
 
+    implementation(libs.material3WindowSizeClass)
+
     debugImplementation(libs.androidx.ui.tooling)
 }
