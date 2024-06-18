@@ -15,6 +15,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.presentation.designsystem.KyokuThem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -36,10 +37,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val startDestination by viewModel.startDestination.collectAsState()
+                    val startDestination by viewModel.startRoute.collectAsState()
+                    val navController = rememberNavController()
 
-                    startDestination?.let {
-
+                    startDestination.startDestination?.let {
+                        NavigationRoot(
+                            navHostController = navController,
+                            route = startDestination.route,
+                            screen = it
+                        )
                     }
                 }
             }

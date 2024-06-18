@@ -14,8 +14,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dataStore: DataStoreRepository,
 ) : ViewModel() {
-    private val _startDestination = MutableStateFlow<String?>(null)
-    val startDestination = _startDestination.asStateFlow()
+    private val _startRoute = MutableStateFlow(
+        StartRoute()
+    )
+    val startRoute = this._startRoute.asStateFlow()
 
     private val _keepSplashOn = MutableStateFlow(true)
     val keepSplashOn get() = _keepSplashOn.asStateFlow()
@@ -25,16 +27,43 @@ class MainViewModel @Inject constructor(
             val value = dataStore.readSignInState()
 
             when (value) {
-                StartScreen.INTRO -> _startDestination.value = Screens.Intro.route
-                StartScreen.GET_SPOTIFY_PLAYLIST -> _startDestination.value =
-                    Screens.GetSpotifyPlaylist.route
+                StartScreen.INTRO -> StartRoute(
+                    route = Screens.AUTH_ROUTE,
+                    startDestination = Screens.Intro.route
+                )
 
-                StartScreen.SET_B_DATE -> _startDestination.value = Screens.SetBirthDate.route
-                StartScreen.PIC_GENRE -> _startDestination.value = Screens.PicGenre.route
-                StartScreen.PIC_ARTIST -> _startDestination.value = Screens.PicArtist.route
-                StartScreen.HOME -> _startDestination.value = Screens.Home.route
+                StartScreen.GET_SPOTIFY_PLAYLIST -> StartRoute(
+                    route = Screens.START_UP_ROUTE,
+                    startDestination = Screens.GetSpotifyPlaylist.route
+                )
+
+
+                StartScreen.SET_B_DATE -> StartRoute(
+                    route = Screens.START_UP_ROUTE,
+                    startDestination = Screens.SetBirthDate.route
+                )
+
+
+                StartScreen.PIC_GENRE -> StartRoute(
+                    route = Screens.START_UP_ROUTE,
+                    startDestination = Screens.PicGenre.route
+                )
+
+
+                StartScreen.PIC_ARTIST -> StartRoute(
+                    route = Screens.START_UP_ROUTE,
+                    startDestination = Screens.PicArtist.route
+                )
+
+
+                StartScreen.HOME -> StartRoute(
+                    route = Screens.APP_ROUTE,
+                    startDestination = Screens.Home.route
+                )
+
             }.let {
-                if (_startDestination.value != null) _keepSplashOn.value = false
+                _startRoute.value = it
+                if (_startRoute.value.startDestination != null) _keepSplashOn.value = false
             }
         }
     }

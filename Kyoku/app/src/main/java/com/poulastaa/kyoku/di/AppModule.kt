@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.poulastaa.core.data.auth.DataStoreRepositoryImpl
+import com.poulastaa.core.data.DataStoreRepositoryImpl
 import com.poulastaa.core.domain.DataStoreRepository
 import dagger.Module
 import dagger.Provides
