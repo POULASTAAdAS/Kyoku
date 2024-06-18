@@ -13,7 +13,7 @@
   </tr>
 </table>
 
-# <h2 align="center">Preview Dark</h2>
+# <h2 align="center">Preview Light</h2>
 
 <table>
   <tr>
