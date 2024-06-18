@@ -1,3 +1,31 @@
+# <h1 align="center">Kyoku</h>
+
+# <h2 align="center">Preview Dark</h2>
+
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/dark_intro.jpg" width="250" height="500">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/dark_email_login.jpg" width="250" height="500">
+    </td>
+  </tr>
+</table>
+
+# <h2 align="center">Preview Dark</h2>
+
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/light_intro.jpg" width="250" height="500">
+    </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/light_email_login.jpg" width="250" height="500">
+    </td>
+  </tr>
+</table>
+
 # License
 
 ```xml
