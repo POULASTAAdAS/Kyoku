@@ -14,10 +14,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dataStore: DataStoreRepository,
 ) : ViewModel() {
-    private val _startRoute = MutableStateFlow(
-        StartRoute()
+    private val _RouteExt = MutableStateFlow(
+        RouteExt()
     )
-    val startRoute = this._startRoute.asStateFlow()
+    val startRoute = this._RouteExt.asStateFlow()
 
     private val _keepSplashOn = MutableStateFlow(true)
     val keepSplashOn get() = _keepSplashOn.asStateFlow()
@@ -27,44 +27,44 @@ class MainViewModel @Inject constructor(
             val value = dataStore.readSignInState()
 
             when (value) {
-                ScreenEnum.INTRO -> StartRoute(
+                ScreenEnum.INTRO -> RouteExt(
                     route = Screens.AUTH_ROUTE,
-                    startDestination = Screens.EmailLogIn.route
+                    startDestination = Screens.ForgotPassword.route
                 )
 
-                ScreenEnum.GET_SPOTIFY_PLAYLIST -> StartRoute(
+                ScreenEnum.GET_SPOTIFY_PLAYLIST -> RouteExt(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.GetSpotifyPlaylist.route
                 )
 
 
-                ScreenEnum.SET_B_DATE -> StartRoute(
+                ScreenEnum.SET_B_DATE -> RouteExt(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.SetBirthDate.route
                 )
 
 
-                ScreenEnum.PIC_GENRE -> StartRoute(
+                ScreenEnum.PIC_GENRE -> RouteExt(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.PicGenre.route
                 )
 
 
-                ScreenEnum.PIC_ARTIST -> StartRoute(
+                ScreenEnum.PIC_ARTIST -> RouteExt(
                     route = Screens.START_UP_ROUTE,
                     startDestination = Screens.PicArtist.route
                 )
 
 
-                ScreenEnum.HOME -> StartRoute(
+                ScreenEnum.HOME -> RouteExt(
                     route = Screens.APP_ROUTE,
                     startDestination = Screens.Home.route
                 )
 
                 else -> return@launch
             }.let {
-                _startRoute.value = it
-                if (_startRoute.value.startDestination != null) _keepSplashOn.value = false
+                _RouteExt.value = it
+                if (_RouteExt.value.startDestination != null) _keepSplashOn.value = false
             }
         }
     }

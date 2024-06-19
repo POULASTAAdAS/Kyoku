@@ -1,6 +1,9 @@
 package com.poulastaa.core.presentation.designsystem
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,3 +38,11 @@ val EyeOpenIcon: ImageVector
 val EyeCloseIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_visibility_off)
+
+val UserIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_user)
+
+val ArrowBackIcon: ImageVector
+    @Composable
+    get() = Icons.AutoMirrored.Rounded.ArrowBack

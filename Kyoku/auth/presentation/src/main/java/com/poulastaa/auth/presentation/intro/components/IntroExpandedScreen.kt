@@ -110,7 +110,7 @@ fun ColumnScope.IntroExpandedScreen(
                     )
                 },
                 onClick = {
-                    onEvent(IntroUiEvent.OnGoogleLogInClick)
+                    onEvent(IntroUiEvent.OnEmailLogInClick)
                 }
             )
         }

@@ -78,7 +78,7 @@ fun IntroAuthButton(
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Medium,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    letterSpacing = 2.5.sp
+                    letterSpacing = 2.sp
                 )
 
                 Spacer(modifier = Modifier.width(30.dp))

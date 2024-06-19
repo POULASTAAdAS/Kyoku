@@ -6,7 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.email.login.EmailLoginRootScreen
+import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
 
@@ -72,41 +74,40 @@ private fun NavGraphBuilder.authGraph(
         composable(route = Screens.EmailLogIn.route) {
             EmailLoginRootScreen(
                 navigateToEmailSignUp = {
-                    nav.popBackStack()
-                    nav.navigate(Screens.EmailSignUp.route)
+                    nav.navigate(Screens.EmailSignUp.route) {
+                        popUpTo(Screens.EmailLogIn.route) {
+                            inclusive = true
+                            saveState = true
+                        }
+
+                        restoreState = true
+                    }
                 },
                 navigateToForgotPassword = {
-                    nav.navigate(Screens.ForgotPassword.route) // todo add email if any
+                    nav.navigate(Screens.ForgotPassword.route) {  // todo add email if any
+                        popUpTo(Screens.EmailLogIn.route) {
+                            inclusive = true
+                            saveState = true
+                        }
+
+                        restoreState = true
+                    }
                 },
                 navigate = { screen ->
+                    nav.popBackStack()
+
                     when (screen) {
-                        ScreenEnum.EMAIL_SIGN_UP -> {
-                            nav.navigate(Screens.EmailSignUp.route)
-                        }
+                        ScreenEnum.INTRO -> nav.navigate(Screens.Intro.route)
 
-                        ScreenEnum.FORGOT_PASSWORD -> {
-                            nav.navigate(Screens.ForgotPassword.route)
-                        }
+                        ScreenEnum.GET_SPOTIFY_PLAYLIST -> nav.navigate(Screens.GetSpotifyPlaylist.route)
 
-                        ScreenEnum.GET_SPOTIFY_PLAYLIST -> {
-                            nav.navigate(Screens.GetSpotifyPlaylist.route)
-                        }
+                        ScreenEnum.SET_B_DATE -> nav.navigate(Screens.SetBirthDate.route)
 
-                        ScreenEnum.SET_B_DATE -> {
-                            nav.navigate(Screens.SetBirthDate.route)
-                        }
+                        ScreenEnum.PIC_GENRE -> nav.navigate(Screens.PicGenre.route)
 
-                        ScreenEnum.PIC_GENRE -> {
-                            nav.navigate(Screens.PicGenre.route)
-                        }
+                        ScreenEnum.PIC_ARTIST -> nav.navigate(Screens.PicArtist.route)
 
-                        ScreenEnum.PIC_ARTIST -> {
-                            nav.navigate(Screens.PicArtist.route)
-                        }
-
-                        ScreenEnum.HOME -> {
-                            nav.navigate(Screens.Home.route)
-                        }
+                        ScreenEnum.HOME -> nav.navigate(Screens.Home.route)
 
                         else -> Unit
                     }
@@ -115,13 +116,48 @@ private fun NavGraphBuilder.authGraph(
         }
 
         composable(route = Screens.EmailSignUp.route) {
+            EmailSignUpRootScreen(
+                navigateBack = {
+                    nav.navigate(Screens.EmailLogIn.route) {
+                        popUpTo(Screens.EmailSignUp.route) {
+                            inclusive = true
+                            saveState = true
+                        }
 
+                        restoreState = true
+                    }
+                },
+                navigate = { screen ->
+                    nav.popBackStack()
+
+                    when (screen) {
+                        ScreenEnum.GET_SPOTIFY_PLAYLIST -> nav.navigate(Screens.GetSpotifyPlaylist.route)
+
+                        ScreenEnum.SET_B_DATE -> nav.navigate(Screens.SetBirthDate.route)
+
+                        ScreenEnum.PIC_GENRE -> nav.navigate(Screens.PicGenre.route)
+
+                        ScreenEnum.PIC_ARTIST -> nav.navigate(Screens.PicArtist.route)
+
+                        ScreenEnum.HOME -> nav.navigate(Screens.Home.route)
+
+                        else -> Unit
+                    }
+                }
+            )
+        }
+
+        composable(route = Screens.ForgotPassword.route) {
+            ForgotPasswordRootScreen {
+                nav.popBackStack()
+                nav.navigate(Screens.EmailLogIn.route)
+            }
         }
     }
 }
 
 private fun NavGraphBuilder.startUpGraph(
-    navHostController: NavHostController,
+    nav: NavHostController,
     screen: String,
 ) {
     navigation(
@@ -147,7 +183,7 @@ private fun NavGraphBuilder.startUpGraph(
 }
 
 private fun NavGraphBuilder.appGraph(
-    navHostController: NavHostController,
+    nav: NavHostController,
     screen: String,
 ) {
     navigation(

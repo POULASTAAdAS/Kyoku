@@ -56,7 +56,6 @@ val MediumDimens = Dimens(
 )
 
 val ExpandedDimens = Dimens(
-    // todo not tested
     small1 = 4.dp,
     small2 = 8.dp,
     small3 = 16.dp,

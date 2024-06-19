@@ -4,10 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.Validator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,11 +33,15 @@ class EmailLoginViewModel @Inject constructor(
             }
 
             EmailLoginUiEvent.OnForgotPasswordClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(EmailLoginUiAction.OnForgotPassword(email = state.email.data))
+                }
             }
 
             EmailLoginUiEvent.OnEmailSignUpClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(EmailLoginUiAction.OnEmailSignUp)
+                }
             }
 
             EmailLoginUiEvent.OnContinueClick -> {

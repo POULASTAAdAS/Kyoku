@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.email.login.components
+package com.poulastaa.auth.presentation.email.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme

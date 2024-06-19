@@ -96,7 +96,7 @@ fun ColumnScope.IntroCompactScreen(
             )
         },
         onClick = {
-            onEvent(IntroUiEvent.OnGoogleLogInClick)
+            onEvent(IntroUiEvent.OnEmailLogInClick)
         }
     )
 

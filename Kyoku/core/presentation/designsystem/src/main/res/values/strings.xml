@@ -11,4 +11,10 @@
     <string name="signUp">SignUp</string>
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="login">LogIn</string>
+    <string name="did_not_reveive__verification_mail">Didn\'t receive verification Mail ?</string>
+    <string name="send_again">Send Again</string>
+    <string name="username">Username</string>
+    <string name="conform_password">Conform password</string>
+    <string name="verification_maail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
+    <string name="send">S E N D</string>
 </resources>

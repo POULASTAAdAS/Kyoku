@@ -1,29 +1,27 @@
-package com.poulastaa.auth.presentation.email.login
+package com.poulastaa.auth.presentation.email.forgot_password
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.auth.presentation.email.login.components.EmailLoginCompactScreen
-import com.poulastaa.auth.presentation.email.login.components.EmailLoginExpandedScreen
-import com.poulastaa.auth.presentation.email.login.components.EmailLoginMediumScreen
-import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.auth.presentation.email.forgot_password.components.ForgotPasswordCompact
+import com.poulastaa.auth.presentation.email.forgot_password.components.ForgotPasswordMedium
 import com.poulastaa.core.presentation.designsystem.components.ScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
 @Composable
-fun EmailLoginRootScreen(
-    viewModel: EmailLoginViewModel = hiltViewModel(),
-    navigateToEmailSignUp: () -> Unit,
-    navigateToForgotPassword: (email: String?) -> Unit,
-    navigate: (ScreenEnum) -> Unit,
+fun ForgotPasswordRootScreen(
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
+    navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
     ObserveAsEvent(flow = viewModel.uiAction) { event ->
         when (event) {
-            is EmailLoginUiAction.EmitToast -> {
+            is ForgotPasswordUiAction.EmitToast -> {
                 Toast.makeText(
                     context,
                     event.message.asString(context),
@@ -31,44 +29,43 @@ fun EmailLoginRootScreen(
                 ).show()
             }
 
-            is EmailLoginUiAction.OnSuccess -> navigate(event.route)
-
-            is EmailLoginUiAction.OnForgotPassword -> navigateToForgotPassword(event.email)
-
-            EmailLoginUiAction.OnEmailSignUp -> navigateToEmailSignUp()
+            ForgotPasswordUiAction.NavigateBack -> navigateBack()
         }
     }
 
-    EmailLoginScreen(
+    ForgotPasswordScreen(
         state = viewModel.state,
         onEvent = viewModel::onEvent
     )
 
     BackHandler {
-        navigate(ScreenEnum.INTRO)
+        viewModel.onEvent(ForgotPasswordUiEvent.OnBackClick)
     }
 }
 
+
 @Composable
-private fun EmailLoginScreen(
-    state: EmailLogInUiState,
-    onEvent: (EmailLoginUiEvent) -> Unit,
+private fun ForgotPasswordScreen(
+    state: ForgotPasswordUiState,
+    onEvent: (ForgotPasswordUiEvent) -> Unit,
 ) {
     ScreenWrapper(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
         compactContent = {
-            EmailLoginCompactScreen(
+            ForgotPasswordCompact(
                 state = state,
                 onEvent = onEvent
             )
         },
         mediumContent = {
-            EmailLoginMediumScreen(
+            ForgotPasswordMedium(
                 state = state,
                 onEvent = onEvent
             )
         },
         expandedContent = {
-            EmailLoginExpandedScreen(
+            ForgotPasswordMedium(
                 state = state,
                 onEvent = onEvent
             )

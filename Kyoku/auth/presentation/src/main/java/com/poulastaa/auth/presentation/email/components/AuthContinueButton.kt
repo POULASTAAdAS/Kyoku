@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.email.login.components
+package com.poulastaa.auth.presentation.email.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.core.presentation.designsystem.AppThem
@@ -30,19 +31,28 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun AuthContinueButton(
     modifier: Modifier = Modifier,
+    text: String,
     isLoading: Boolean,
+    enable: Boolean = true,
+    fontWeight: FontWeight = FontWeight.Bold,
+    fontSize: TextUnit = MaterialTheme.typography.titleLarge.fontSize,
+    letterSpacing: TextUnit = 2.sp,
     onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            contentColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background
+            contentColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background,
+            disabledContainerColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.background
         ),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 8.dp,
+            disabledElevation = 8.dp
         ),
-        shape = MaterialTheme.shapes.medium
+        enabled = enable,
+        shape = MaterialTheme.shapes.medium,
     ) {
         Box(
             modifier = modifier,
@@ -58,12 +68,12 @@ fun AuthContinueButton(
             )
 
             Text(
-                text = stringResource(id = R.string.continue_text),
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                text = text,
+                fontWeight = fontWeight,
+                fontSize = fontSize,
                 modifier = Modifier.alpha(if (isLoading) 0f else 1f),
                 textAlign = TextAlign.Center,
-                letterSpacing = 2.sp
+                letterSpacing = letterSpacing
             )
         }
     }
@@ -82,6 +92,7 @@ private fun Preview() {
                 .padding(MaterialTheme.dimens.medium1)
         ) {
             AuthContinueButton(
+                text = stringResource(id = R.string.continue_text),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.dimens.small1),

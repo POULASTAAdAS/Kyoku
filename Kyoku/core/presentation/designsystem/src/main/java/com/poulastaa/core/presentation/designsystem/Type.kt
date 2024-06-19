@@ -15,7 +15,7 @@ val Dosis = FontFamily(
         weight = FontWeight.Light
     ),
     Font(
-        resId = R.font.dosis_light,
+        resId = R.font.dosis_regular,
         weight = FontWeight.Normal
     ),
     Font(

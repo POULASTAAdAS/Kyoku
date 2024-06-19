@@ -96,7 +96,7 @@ fun ColumnScope.IntroMediumScreen(
             )
         },
         onClick = {
-            onEvent(IntroUiEvent.OnGoogleLogInClick)
+            onEvent(IntroUiEvent.OnEmailLogInClick)
         }
     )
 
