@@ -1,16 +1,16 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.content.res.Configuration
+import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.auth.presentation.intro.components.IntroCompactScreen
 import com.poulastaa.auth.presentation.intro.components.IntroExpandedScreen
 import com.poulastaa.auth.presentation.intro.components.IntroMediumScreen
+import com.poulastaa.auth.presentation.intro.components.StartActivityForResult
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.components.ScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
@@ -46,6 +46,25 @@ private fun IntroScreen(
     state: IntroUiState,
     onEvent: (IntroUiEvent) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    StartActivityForResult(
+        key = state.isGoogleLogging,
+        activity = context as Activity,
+        clientId = state.clientId,
+        onSuccess = {
+            onEvent(
+                IntroUiEvent.OnTokenReceive(
+                    token = it,
+                    activity = context
+                )
+            )
+        },
+        onCanceled = {
+            onEvent(IntroUiEvent.OnGoogleLogInCancel)
+        }
+    )
+
     ScreenWrapper(
         compactContent = {
             IntroCompactScreen(
@@ -66,19 +85,4 @@ private fun IntroScreen(
             )
         }
     )
-}
-
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Preview
-@Composable
-private fun Preview() {
-    AppThem {
-        IntroScreen(
-            state = IntroUiState()
-        ) {
-
-        }
-    }
 }

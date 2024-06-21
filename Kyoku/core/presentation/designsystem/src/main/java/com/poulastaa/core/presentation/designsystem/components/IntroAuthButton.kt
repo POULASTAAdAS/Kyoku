@@ -57,7 +57,7 @@ fun IntroAuthButton(
         ) {
             CircularProgressIndicator(
                 strokeWidth = 2.5.dp,
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.primary,
                 strokeCap = StrokeCap.Round,
                 modifier = Modifier
                     .size(30.dp)
@@ -103,7 +103,7 @@ private fun Preview() {
             IntroAuthButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.continue_with_google),
-                isLoading = false,
+                isLoading = true,
                 icon = {
                     Image(
                         painter = GoogleIcon,

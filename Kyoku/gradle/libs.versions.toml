@@ -35,6 +35,7 @@ datastorePreferences = "1.1.1"
 
 paging = "3.3.0"
 
+credentials = "1.3.0-beta02"
 googleId = "1.1.0"
 
 coilCompose = "2.6.0"
@@ -114,6 +115,8 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 pagingRuntimeKtx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
 pagingCompose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
+credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+credentialsPlayServicesAuth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 google-id = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }

@@ -5,7 +5,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.poulastaa.core.data.ConfigProviderRepositoryImpl
 import com.poulastaa.core.data.DataStoreRepositoryImpl
+import com.poulastaa.core.domain.ConfigProviderRepository
 import com.poulastaa.core.domain.DataStoreRepository
 import dagger.Module
 import dagger.Provides
@@ -32,4 +34,8 @@ object AppModule {
     fun provideDataStoreRepository(
         dataStore: DataStore<Preferences>,
     ): DataStoreRepository = DataStoreRepositoryImpl(dataStore)
+
+    @Provides
+    @Singleton
+    fun provideConfig(): ConfigProviderRepository = ConfigProviderRepositoryImpl()
 }

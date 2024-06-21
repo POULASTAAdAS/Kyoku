@@ -12,6 +12,6 @@ data class EmailLogInUiState(
 
     val isResendVerificationMailVisible: Boolean = false,
     val canResendMailAgain: Boolean = false,
-    val resendMailText: String = "40",
+    val resendMailText: String = "40 s",
     val isResendMailLoading: Boolean = false,
 )

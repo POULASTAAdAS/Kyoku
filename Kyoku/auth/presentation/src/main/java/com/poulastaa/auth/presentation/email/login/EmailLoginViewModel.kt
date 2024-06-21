@@ -10,8 +10,10 @@ import com.poulastaa.auth.domain.Validator
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +28,8 @@ class EmailLoginViewModel @Inject constructor(
     private val _uiEvent = Channel<EmailLoginUiAction>()
     val uiAction = _uiEvent.receiveAsFlow()
 
-    private var resendVerificationMailJob: Job? = null
+    private var emailVerificationJob: Job? = null
+    private var resendMailJob: Job? = null
 
     fun onEvent(event: EmailLoginUiEvent) {
         when (event) {
@@ -67,7 +70,8 @@ class EmailLoginViewModel @Inject constructor(
                     isResendMailLoading = false
                 )
 
-                resendVerificationMailJob?.cancel()
+                resendMailJob?.cancel()
+                emailVerificationJob?.cancel()
 
                 viewModelScope.launch {
                     _uiEvent.send(EmailLoginUiAction.OnEmailSignUp)
@@ -81,7 +85,7 @@ class EmailLoginViewModel @Inject constructor(
                 state = state.copy(
                     isMakingApiCall = true
                 )
-                resendVerificationMailJob?.cancel()
+
 
 
             }
@@ -161,5 +165,21 @@ class EmailLoginViewModel @Inject constructor(
         }
 
         return err
+    }
+
+    private fun resendVerificationMail() = viewModelScope.launch(Dispatchers.IO) {
+        for (i in 39 downTo 1) {
+            delay(1000L)
+
+            state = state.copy(
+                resendMailText = "$i s"
+            )
+        }
+
+        state = state.copy(
+            canResendMailAgain = true,
+            isResendMailLoading = false,
+            resendMailText = "Send Again"
+        )
     }
 }
