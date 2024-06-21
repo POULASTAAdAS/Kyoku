@@ -13,6 +13,10 @@
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/forgot_password.jpg" width="280" height="500">
     </td>
+    
+  </tr>
+
+  <tr>
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_signup.jpg" width="280" height="500">
     </td>
@@ -32,6 +36,9 @@
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/forgot_password.jpg" width="280" height="500">
     </td>
+  </tr>
+
+  <tr>
     <td>
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/email_signup.jpg" width="280" height="500">
     </td>
