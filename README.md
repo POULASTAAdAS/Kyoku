@@ -5,20 +5,20 @@
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/intro.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/intro.jpg" width="240" height="520">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_login.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_login.jpg" width="240" height="520">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/forgot_password.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/forgot_password.jpg" width="240" height="520">
     </td>
     
   </tr>
 
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_signup.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_signup.jpg" width="240" height="520">
     </td>
   </tr>
 </table>
@@ -28,19 +28,19 @@
 <table>
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/intro.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/intro.jpg" width="240" height="520">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/email_login.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/email_login.jpg" width="240" height="520">
     </td>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/forgot_password.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/forgot_password.jpg" width="240" height="520">
     </td>
   </tr>
 
   <tr>
     <td>
-      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/email_signup.jpg" width="280" height="500">
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/light/email_signup.jpg" width="240" height="520">
     </td>
   </tr>
 </table>
