@@ -1,7 +1,6 @@
 package com.poulastaa.auth.presentation.email.forgot_password.components
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.auth.presentation.email.components.AuthContinueButton
 import com.poulastaa.auth.presentation.email.components.AuthTextField
@@ -56,31 +53,18 @@ fun ColumnScope.ForgotPasswordCompact(
         }
     )
 
-
-    AnimatedVisibility(visible = state.isResendVerificationMailSent) {
-        Column {
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-
-            Text(
-                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.large1),
-                text = stringResource(id = R.string.verification_maail_sent),
-                fontWeight = FontWeight.Medium,
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
-        }
-    }
+    ForgotPasswordSentText(
+        state.isResendVerificationMailSent
+    )
 
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
     AuthContinueButton(
         modifier = Modifier
             .fillMaxWidth(.7f)
-            .padding(MaterialTheme.dimens.small1),
-        text = if (state.canResendMail) stringResource(id = R.string.send) else "${state.resendMailCounter} s",
+            .padding(MaterialTheme.dimens.small1)
+            .fillMaxWidth(),
+        text = if (state.canResendMail) stringResource(id = R.string.send) else state.resendMailCounter,
         enable = state.canResendMail,
         isLoading = state.isMakingApiCall,
         fontWeight = FontWeight.SemiBold,
@@ -107,8 +91,9 @@ private fun Preview() {
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.onTertiary,
-                            MaterialTheme.colorScheme.tertiary,
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.background,
                         )
                     )
                 )

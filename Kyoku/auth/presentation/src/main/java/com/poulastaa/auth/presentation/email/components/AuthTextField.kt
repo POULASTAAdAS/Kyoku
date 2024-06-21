@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -59,31 +60,23 @@ fun AuthTextField(
                 onDone()
             }
         ),
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.Transparent,
-            focusedContainerColor = Color.Transparent,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(.5f),
 
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(.5f),
 
-            unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedLabelColor = MaterialTheme.colorScheme.secondaryContainer,
+            cursorColor = MaterialTheme.colorScheme.secondary,
 
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedLeadingIconColor = MaterialTheme.colorScheme.secondaryContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(.05f),
+            unfocusedContainerColor = MaterialTheme.colorScheme.onSurface.copy(.05f),
 
-            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedTrailingIconColor = MaterialTheme.colorScheme.secondaryContainer,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+            unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurface.copy(.5f),
 
-            errorIndicatorColor = MaterialTheme.colorScheme.error,
-            errorTrailingIconColor = MaterialTheme.colorScheme.error,
-            errorLeadingIconColor = MaterialTheme.colorScheme.error,
-            errorSupportingTextColor = MaterialTheme.colorScheme.error,
-            errorTextColor = MaterialTheme.colorScheme.error,
-
-            unfocusedTextColor = MaterialTheme.colorScheme.primaryContainer,
-            focusedTextColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.background
-            else MaterialTheme.colorScheme.onBackground,
+            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+            unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurface.copy(.5f),
         )
     )
 }

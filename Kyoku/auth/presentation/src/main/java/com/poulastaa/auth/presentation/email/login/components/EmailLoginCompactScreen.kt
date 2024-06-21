@@ -23,10 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.Autofill
+import androidx.compose.ui.autofill.AutofillNode
+import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalAutofill
+import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,8 +57,12 @@ import com.poulastaa.core.presentation.designsystem.PasswordIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ColumnScope.EmailLoginCompactScreen(
+    autoFillEmail: AutofillNode,
+    autoFillPassword: AutofillNode,
+    autoFill: Autofill?,
     state: EmailLogInUiState,
     onEvent: (EmailLoginUiEvent) -> Unit,
 ) {
@@ -64,7 +77,16 @@ fun ColumnScope.EmailLoginCompactScreen(
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
 
     AuthTextField(
-        modifier = Modifier,
+        modifier = Modifier
+            .onGloballyPositioned {
+                autoFillEmail.boundingBox = it.boundsInRoot()
+            }
+            .onFocusChanged {
+                autoFill?.run {
+                    if (it.isFocused) requestAutofillForNode(autoFillEmail)
+                    else cancelAutofillForNode(autoFillEmail)
+                }
+            },
         text = state.email,
         onValueChange = { onEvent(EmailLoginUiEvent.OnEmailChange(it)) },
         label = stringResource(id = R.string.email),
@@ -88,7 +110,16 @@ fun ColumnScope.EmailLoginCompactScreen(
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.small1))
 
     AuthTextField(
-        modifier = Modifier,
+        modifier = Modifier
+            .onGloballyPositioned {
+                autoFillPassword.boundingBox = it.boundsInRoot()
+            }
+            .onFocusChanged {
+                autoFill?.run {
+                    if (it.isFocused) requestAutofillForNode(autoFillPassword)
+                    else cancelAutofillForNode(autoFillPassword)
+                }
+            },
         text = state.password,
         onValueChange = { onEvent(EmailLoginUiEvent.OnPasswordChange(it)) },
         label = stringResource(id = R.string.password),
@@ -119,48 +150,14 @@ fun ColumnScope.EmailLoginCompactScreen(
 
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.small1))
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
-    ) {
-        Text(
-            text = stringResource(id = R.string.forgot_password),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-            color = Color.DarkGray,
-            modifier = Modifier.clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {
-                    onEvent(EmailLoginUiEvent.OnForgotPasswordClick)
-                }
-            )
-        )
+    ForgotPassword(interactionSource = interactionSource) {
+        onEvent(EmailLoginUiEvent.OnForgotPasswordClick)
     }
 
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.large2))
 
-    Row {
-        Text(
-            text = "${stringResource(id = R.string.dont_have_account)}  ",
-            color = MaterialTheme.colorScheme.background
-        )
-
-        Spacer(modifier = Modifier.width(MaterialTheme.dimens.small1))
-
-        Text(
-            text = stringResource(id = R.string.signUp),
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            textDecoration = TextDecoration.Underline,
-            modifier = Modifier.clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = {
-                    onEvent(EmailLoginUiEvent.OnEmailSignUpClick)
-                }
-            )
-        )
+    DontHaveAccount(interactionSource = interactionSource) {
+        onEvent(EmailLoginUiEvent.OnEmailSignUpClick)
     }
 
     Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium3))
@@ -204,12 +201,27 @@ fun ColumnScope.EmailLoginCompactScreen(
 }
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Preview
 @Composable
 private fun Preview() {
+    val autoFillEmail = AutofillNode(
+        autofillTypes = listOf(AutofillType.EmailAddress),
+        onFill = {}
+    )
+
+    val autoFillPassword = AutofillNode(
+        autofillTypes = listOf(AutofillType.Password),
+        onFill = {}
+    )
+
+    val autoFill = LocalAutofill.current
+    LocalAutofillTree.current += autoFillEmail
+    LocalAutofillTree.current += autoFillPassword
+
     AppThem {
         Column(
             modifier = Modifier
@@ -217,8 +229,9 @@ private fun Preview() {
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.onTertiary,
-                            MaterialTheme.colorScheme.tertiary,
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.background,
                         )
                     )
                 )
@@ -227,12 +240,13 @@ private fun Preview() {
             verticalArrangement = Arrangement.Center
         ) {
             EmailLoginCompactScreen(
+                autoFillEmail = autoFillEmail,
+                autoFillPassword = autoFillPassword,
+                autoFill = autoFill,
                 state = EmailLogInUiState(
                     isResendVerificationMailVisible = true
                 )
-            ) {
-
-            }
+            ) {}
         }
     }
 }

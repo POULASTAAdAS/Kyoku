@@ -11,5 +11,5 @@ data class ForgotPasswordUiState(
     val isResendVerificationMailSent: Boolean = false,
 
     val canResendMail: Boolean = false,
-    val resendMailCounter: Int = 40,
+    val resendMailCounter: String = "S E N D",
 )

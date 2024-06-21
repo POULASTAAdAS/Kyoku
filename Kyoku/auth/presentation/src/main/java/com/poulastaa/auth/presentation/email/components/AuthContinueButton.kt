@@ -39,17 +39,17 @@ fun AuthContinueButton(
     letterSpacing: TextUnit = 2.sp,
     onClick: () -> Unit,
 ) {
+    val them = isSystemInDarkTheme()
+
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            contentColor = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.background,
-            disabledContainerColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.secondary,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(.3f),
+            disabledContentColor = MaterialTheme.colorScheme.background.copy(.6f)
         ),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 8.dp,
-            disabledElevation = 8.dp
         ),
         enabled = enable,
         shape = MaterialTheme.shapes.medium,
@@ -64,7 +64,7 @@ fun AuthContinueButton(
                     .size(40.dp)
                     .padding(MaterialTheme.dimens.small1)
                     .alpha(if (isLoading) 1f else 0f),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.onPrimary
             )
 
             Text(
@@ -96,7 +96,8 @@ private fun Preview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.dimens.small1),
-                isLoading = false
+                isLoading = true,
+                enable = false
             ) {
 
             }

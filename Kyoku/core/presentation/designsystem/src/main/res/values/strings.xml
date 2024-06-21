@@ -17,4 +17,14 @@
     <string name="conform_password">Conform password</string>
     <string name="verification_maail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
     <string name="send">S E N D</string>
+    <string name="error_invalid_email">Not a valid email</string>
+    <string name="error_empty_password">Password can\'t be empty</string>
+    <string name="error_password_to_short">Password must contain attlist 4 character</string>
+    <string name="error_password_to_long">Password can\'t exceed 15 character</string>
+    <string name="error_password_invalid">Password can only contain number and alphabets</string>
+    <string name="error_username_invalid">Please enter a valid username</string>
+    <string name="error_username_to_long">Username can\'t exceed 20 character</string>
+    <string name="error_username_cant_start_with_underscore">Username can\'t start with underscore</string>
+    <string name="error_username_empty">Username can\'t be empty</string>
+    <string name="error_password_not_match">Password doesn\'t match</string>
 </resources>

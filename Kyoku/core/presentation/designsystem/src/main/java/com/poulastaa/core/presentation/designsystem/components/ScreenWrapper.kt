@@ -43,8 +43,9 @@ fun ScreenWrapper(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.onTertiary,
-                            MaterialTheme.colorScheme.tertiary,
+                            MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.background,
+                            MaterialTheme.colorScheme.background,
                         )
                     )
                 )

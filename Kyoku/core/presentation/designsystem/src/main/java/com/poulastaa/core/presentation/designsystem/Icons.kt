@@ -12,7 +12,7 @@ import androidx.compose.ui.res.vectorResource
 
 val AppLogo: Painter
     @Composable
-    get() = if (isSystemInDarkTheme()) painterResource(id = R.drawable.ic_app_logo_night)
+    get() = if (!isSystemInDarkTheme()) painterResource(id = R.drawable.ic_app_logo_night)
     else painterResource(id = R.drawable.ic_app_logo_light)
 
 val GoogleIcon: Painter

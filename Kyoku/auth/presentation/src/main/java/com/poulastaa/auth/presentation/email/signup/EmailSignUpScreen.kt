@@ -3,6 +3,11 @@ package com.poulastaa.auth.presentation.email.signup
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.autofill.AutofillNode
+import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.platform.LocalAutofill
+import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.auth.presentation.email.signup.components.EmailSignUpCompact
@@ -47,26 +52,66 @@ fun EmailSignUpRootScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EmailSignUpScreen(
     state: EmailSignUpUiState,
     onEvent: (EmailSignUpUiEvent) -> Unit,
 ) {
+    val autoFillEmail = AutofillNode(
+        autofillTypes = listOf(AutofillType.EmailAddress),
+        onFill = {
+            onEvent(EmailSignUpUiEvent.OnEmailChange(it))
+        }
+    )
+
+    val autoFillPassword = AutofillNode(
+        autofillTypes = listOf(AutofillType.Password),
+        onFill = {
+            onEvent(EmailSignUpUiEvent.OnPasswordChange(it))
+            onEvent(EmailSignUpUiEvent.OnConfirmPasswordChange(it))
+        }
+    )
+
+    val autoFillUserName = AutofillNode(
+        autofillTypes = listOf(AutofillType.NewUsername),
+        onFill = {
+            onEvent(EmailSignUpUiEvent.OnUserNameChange(it))
+        }
+    )
+
+    val autoFill = LocalAutofill.current
+    LocalAutofillTree.current += autoFillEmail
+    LocalAutofillTree.current += autoFillPassword
+    LocalAutofillTree.current += autoFillUserName
+
     ScreenWrapper(
         compactContent = {
             EmailSignUpCompact(
+                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
+                autoFillPassword = autoFillPassword,
+                autoFill = autoFill,
                 state = state,
                 onEvent = onEvent
             )
         },
         mediumContent = {
             EmailSignUpMedium(
+                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
+                autoFillPassword = autoFillPassword,
+                autoFill = autoFill,
                 state = state,
                 onEvent = onEvent
             )
         },
         expandedContent = {
             EmailSignUpExpanded(
+                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
+                autoFillPassword = autoFillPassword,
+                autoFill = autoFill,
                 state = state,
                 onEvent = onEvent
             )

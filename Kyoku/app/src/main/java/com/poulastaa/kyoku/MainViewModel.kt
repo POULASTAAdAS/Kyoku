@@ -14,10 +14,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val dataStore: DataStoreRepository,
 ) : ViewModel() {
-    private val _RouteExt = MutableStateFlow(
-        RouteExt()
-    )
-    val startRoute = this._RouteExt.asStateFlow()
+    private val _routeExt = MutableStateFlow(RouteExt())
+    val startRoute = _routeExt.asStateFlow()
 
     private val _keepSplashOn = MutableStateFlow(true)
     val keepSplashOn get() = _keepSplashOn.asStateFlow()
@@ -29,7 +27,7 @@ class MainViewModel @Inject constructor(
             when (value) {
                 ScreenEnum.INTRO -> RouteExt(
                     route = Screens.AUTH_ROUTE,
-                    startDestination = Screens.ForgotPassword.route
+                    startDestination = Screens.Intro.route
                 )
 
                 ScreenEnum.GET_SPOTIFY_PLAYLIST -> RouteExt(
@@ -63,8 +61,8 @@ class MainViewModel @Inject constructor(
 
                 else -> return@launch
             }.let {
-                _RouteExt.value = it
-                if (_RouteExt.value.startDestination != null) _keepSplashOn.value = false
+                _routeExt.value = it
+                if (_routeExt.value.startDestination != null) _keepSplashOn.value = false
             }
         }
     }
