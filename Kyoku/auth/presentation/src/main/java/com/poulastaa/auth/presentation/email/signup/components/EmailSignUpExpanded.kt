@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.email.signup.components
 
+import android.app.Activity
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +69,7 @@ fun EmailSignUpExpanded(
     onEvent: (EmailSignUpUiEvent) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     Row {
         Column(
@@ -200,7 +203,7 @@ fun EmailSignUpExpanded(
                 visualTransformation = PasswordVisualTransformation(),
                 onDone = {
                     focusManager.clearFocus()
-                    onEvent(EmailSignUpUiEvent.OnContinueClick)
+                    onEvent(EmailSignUpUiEvent.OnContinueClick(context as Activity))
                 }
             )
         }
@@ -232,7 +235,7 @@ fun EmailSignUpExpanded(
                 fontWeight = FontWeight.Medium,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                 onClick = {
-                    onEvent(EmailSignUpUiEvent.OnContinueClick)
+                    onEvent(EmailSignUpUiEvent.OnContinueClick(context as Activity))
                 }
             )
         }

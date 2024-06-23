@@ -15,7 +15,7 @@
     <string name="send_again">Send Again</string>
     <string name="username">Username</string>
     <string name="conform_password">Conform password</string>
-    <string name="verification_maail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
+    <string name="verification_mail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
     <string name="send">S E N D</string>
     <string name="error_invalid_email">Not a valid email</string>
     <string name="error_empty_password">Password can\'t be empty</string>
@@ -27,4 +27,9 @@
     <string name="error_username_cant_start_with_underscore">Username can\'t start with underscore</string>
     <string name="error_username_empty">Username can\'t be empty</string>
     <string name="error_password_not_match">Password doesn\'t match</string>
+    <string name="error_something_went_wrong">Opp\'s something went wrong try again</string>
+    <string name="error_no_internet">Please check your Internet Connection.</string>
+    <string name="error_user_not_found">No User Found</string>
+    <string name="error_invalid_password">Password doesn\'t match</string>
+    <string name="error_email_already_exist">Email Already In User</string>
 </resources>

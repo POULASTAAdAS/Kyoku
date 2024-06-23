@@ -25,7 +25,7 @@ fun ForgotPasswordSentText(
 
             Text(
                 modifier = Modifier.padding(horizontal = MaterialTheme.dimens.large1),
-                text = stringResource(id = R.string.verification_maail_sent),
+                text = stringResource(id = R.string.verification_mail_sent),
                 fontWeight = FontWeight.Medium,
                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                 color = MaterialTheme.colorScheme.primary,

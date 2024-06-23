@@ -8,10 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.PasswordState
 import com.poulastaa.auth.domain.UsernameState
 import com.poulastaa.auth.domain.Validator
+import com.poulastaa.auth.domain.auth.AuthRepository
+import com.poulastaa.auth.domain.auth.UserAuthStatus
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -20,12 +25,15 @@ import javax.inject.Inject
 @HiltViewModel
 class EmailSignUpViewModel @Inject constructor(
     private val validator: Validator,
+    private val auth: AuthRepository,
 ) : ViewModel() {
     var state by mutableStateOf(EmailSignUpUiState())
         private set
 
     private val _uiEvent = Channel<EmailSignUpUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var emailSignUpVerificationJob: Job? = null
 
     fun onEvent(event: EmailSignUpUiEvent) {
         when (event) {
@@ -83,16 +91,87 @@ class EmailSignUpViewModel @Inject constructor(
                 }
             }
 
-            EmailSignUpUiEvent.OnContinueClick -> {
+            is EmailSignUpUiEvent.OnContinueClick -> {
                 if (state.isMakingApiCall) return
                 if (isErr()) return
 
+                val countryCode = event.activity.resources.configuration.locales[0].country
 
                 state = state.copy(
                     isMakingApiCall = true
                 )
 
+                viewModelScope.launch(Dispatchers.IO) {
+                    val result = auth.emailSingUp(
+                        email = state.email.data.trim(),
+                        password = state.password.data.trim(),
+                        username = state.userName.toString(),
+                        countryCode = countryCode
+                    )
 
+
+                    when (result) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.CONFLICT -> {
+                                    state = state.copy(
+                                        email = state.email.copy(
+                                            isErr = true,
+                                            errText = UiText.StringResource(R.string.error_email_already_exist)
+                                        )
+                                    )
+                                }
+
+                                DataError.Network.NO_INTERNET -> {
+                                    _uiEvent.send(
+                                        EmailSignUpUiAction.EmitToast(
+                                            message = UiText.StringResource(R.string.error_no_internet)
+                                        )
+                                    )
+                                }
+
+                                else -> {
+                                    _uiEvent.send(
+                                        EmailSignUpUiAction.EmitToast(
+                                            message = UiText.StringResource(R.string.error_something_went_wrong)
+                                        )
+                                    )
+                                }
+                            }
+
+                            state = state.copy(
+                                isMakingApiCall = false
+                            )
+                        }
+
+                        is Result.Success -> {
+                            when (result.data) {
+                                UserAuthStatus.CREATED -> {
+                                    _uiEvent.send(
+                                        EmailSignUpUiAction.EmitToast(
+                                            message = UiText.StringResource(R.string.verification_mail_sent)
+                                        )
+                                    )
+
+                                    emailSignUpVerificationJob?.cancel()
+                                    emailSignUpVerificationJob = signUpVerificationMailCheck()
+                                }
+
+                                else -> {
+                                    _uiEvent.send(
+                                        EmailSignUpUiAction.EmitToast(
+                                            message = UiText.StringResource(R.string.error_something_went_wrong)
+                                        )
+                                    )
+
+                                    state = state.copy(
+                                        isMakingApiCall = false
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -220,5 +299,13 @@ class EmailSignUpViewModel @Inject constructor(
         }
 
         return isErr
+    }
+
+    private fun signUpVerificationMailCheck() = viewModelScope.launch(Dispatchers.IO) {
+
+
+        state = state.copy(
+            isMakingApiCall = false
+        )
     }
 }

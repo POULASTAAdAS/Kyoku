@@ -5,12 +5,19 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.poulastaa.core.data.auth.model.UserSerializable
+import com.poulastaa.core.data.auth.toUser
+import com.poulastaa.core.data.auth.toUserSerializable
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.domain.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
@@ -20,6 +27,7 @@ class DataStoreRepositoryImpl @Inject constructor(
     private object PreferencesKeys {
         val SIGN_IN_STATE = stringPreferencesKey(name = "sign_in_state")
         val TOKEN_OR_COOKIE = stringPreferencesKey(name = "token_or_cookie")
+        val REFRESH_TOKEN = stringPreferencesKey(name = "refresh_token")
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
     }
 
@@ -58,5 +66,37 @@ class DataStoreRepositoryImpl @Inject constructor(
         emit(emptyPreferences())
     }.map {
         it[PreferencesKeys.TOKEN_OR_COOKIE] ?: ""
+    }
+
+    override suspend fun storeRefreshToken(data: String) {
+        dataStore.edit {
+            it[PreferencesKeys.REFRESH_TOKEN] = data
+        }
+    }
+
+    override suspend fun readRefreshToken(): String = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        it[PreferencesKeys.REFRESH_TOKEN] ?: ""
+    }.first()
+
+    override suspend fun storeLocalUser(user: User) {
+        val jsonString = Json.encodeToString(user.toUserSerializable())
+
+        dataStore.edit {
+            it[PreferencesKeys.LOCAL_USER] = jsonString
+        }
+    }
+
+    override suspend fun readLocalUser(): User {
+       val pref = dataStore.data.catch {
+           emit(emptyPreferences())
+       }.first()
+
+        val response = pref[PreferencesKeys.LOCAL_USER]?.let {
+            Json.decodeFromString<UserSerializable>(it)
+        }
+
+        return response?.toUser() ?: User()
     }
 }

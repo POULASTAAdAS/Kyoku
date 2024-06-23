@@ -7,6 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.PasswordState
 import com.poulastaa.auth.domain.Validator
+import com.poulastaa.auth.domain.auth.AuthRepository
+import com.poulastaa.auth.domain.auth.UserAuthStatus
+import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EmailLoginViewModel @Inject constructor(
     private val validator: Validator,
+    private val auth: AuthRepository,
+    private val ds: DataStoreRepository,
 ) : ViewModel() {
     var state by mutableStateOf(EmailLogInUiState())
         private set
@@ -28,7 +36,8 @@ class EmailLoginViewModel @Inject constructor(
     private val _uiEvent = Channel<EmailLoginUiAction>()
     val uiAction = _uiEvent.receiveAsFlow()
 
-    private var emailVerificationJob: Job? = null
+    private var emailSignInVerificationJob: Job? = null
+    private var emailLogInVerificationJob: Job? = null
     private var resendMailJob: Job? = null
 
     fun onEvent(event: EmailLoginUiEvent) {
@@ -65,13 +74,14 @@ class EmailLoginViewModel @Inject constructor(
                     isMakingApiCall = false,
 
                     canResendMailAgain = false,
-                    resendMailText = "40",
+                    resendMailText = "40 s",
                     isResendVerificationMailVisible = false,
                     isResendMailLoading = false
                 )
 
                 resendMailJob?.cancel()
-                emailVerificationJob?.cancel()
+                emailLogInVerificationJob?.cancel()
+                emailSignInVerificationJob?.cancel()
 
                 viewModelScope.launch {
                     _uiEvent.send(EmailLoginUiAction.OnEmailSignUp)
@@ -85,7 +95,6 @@ class EmailLoginViewModel @Inject constructor(
                 state = state.copy(
                     isMakingApiCall = true
                 )
-
 
 
             }
@@ -167,7 +176,137 @@ class EmailLoginViewModel @Inject constructor(
         return err
     }
 
-    private fun resendVerificationMail() = viewModelScope.launch(Dispatchers.IO) {
+    private fun logInUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = auth.emailLogIn(
+                email = state.email.data.trim(),
+                password = state.password.data.trim()
+            )
+
+            when (result) {
+                is Result.Error -> {
+                    when (result.error) {
+                        DataError.Network.NO_INTERNET -> {
+                            _uiEvent.send(
+                                EmailLoginUiAction.EmitToast(
+                                    message = UiText.StringResource(R.string.error_no_internet)
+                                )
+                            )
+                        }
+
+                        DataError.Network.NOT_FOUND -> {
+                            state = state.copy(
+                                email = state.email.copy(
+                                    isErr = true,
+                                    errText = UiText.StringResource(R.string.error_user_not_found)
+                                )
+                            )
+                        }
+
+                        DataError.Network.PASSWORD_DOES_NOT_MATCH -> {
+                            state = state.copy(
+                                password = state.password.copy(
+                                    isErr = true,
+                                    errText = UiText.StringResource(R.string.password)
+                                )
+                            )
+                        }
+
+                        DataError.Network.EMAIL_NOT_VERIFIED -> {
+                            _uiEvent.send(
+                                EmailLoginUiAction.EmitToast(
+                                    message = UiText.StringResource(R.string.verification_mail_sent)
+                                )
+                            )
+
+                            emailSignInVerificationJob?.cancel()
+                            emailSignInVerificationJob = emailSignUpVerificationCheck()
+
+                            return@launch
+                        }
+
+                        else -> {
+                            _uiEvent.send(
+                                EmailLoginUiAction.EmitToast(
+                                    message = UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }.let {
+                        state = state.copy(
+                            isMakingApiCall = false
+                        )
+                    }
+                }
+
+                is Result.Success -> {
+                    when (result.data) {
+                        UserAuthStatus.CREATED -> {
+                            ScreenEnum.GET_SPOTIFY_PLAYLIST
+                        }
+
+                        UserAuthStatus.USER_FOUND_HOME -> {
+                            ScreenEnum.HOME
+                        }
+
+                        UserAuthStatus.USER_FOUND_STORE_B_DATE -> {
+                            ScreenEnum.SET_B_DATE
+                        }
+
+                        UserAuthStatus.USER_FOUND_SET_GENRE -> {
+                            ScreenEnum.PIC_GENRE
+                        }
+
+                        UserAuthStatus.USER_FOUND_SET_ARTIST -> {
+                            ScreenEnum.PIC_ARTIST
+                        }
+
+                        else -> {
+                            _uiEvent.send(
+                                EmailLoginUiAction.EmitToast(
+                                    message = UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                            return@launch
+                        }
+                    }.let {
+                        emailLogInVerificationJob?.cancel()
+                        emailSignInVerificationJob = emailLogInVerificationCheck(it)
+
+                        delay(10_000L)
+                        resendMailJob?.cancel()
+                        resendMailJob = resendVerificationMailCounter()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun emailSignUpVerificationCheck() = viewModelScope.launch(Dispatchers.IO) {
+        // todo
+
+        state = state.copy(
+            isMakingApiCall = false
+        )
+
+        ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST)
+        _uiEvent.send(EmailLoginUiAction.OnSuccess(ScreenEnum.GET_SPOTIFY_PLAYLIST))
+    }
+
+    private fun emailLogInVerificationCheck(
+        screen: ScreenEnum,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        // todo
+
+        state = state.copy(
+            isMakingApiCall = false
+        )
+
+        ds.storeSignInState(screen)
+        _uiEvent.send(EmailLoginUiAction.OnSuccess(screen))
+    }
+
+    private fun resendVerificationMailCounter() = viewModelScope.launch(Dispatchers.IO) {
         for (i in 39 downTo 1) {
             delay(1000L)
 

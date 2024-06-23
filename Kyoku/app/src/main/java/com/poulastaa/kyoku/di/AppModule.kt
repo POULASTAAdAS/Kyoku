@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.gson.Gson
 import com.poulastaa.core.data.ConfigProviderRepositoryImpl
 import com.poulastaa.core.data.DataStoreRepositoryImpl
 import com.poulastaa.core.domain.ConfigProviderRepository
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.net.CookieManager
 import javax.inject.Singleton
 
 @Module
@@ -38,4 +40,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideConfig(): ConfigProviderRepository = ConfigProviderRepositoryImpl()
+
+    @Provides
+    @Singleton
+    fun provideCookieManager(): CookieManager = CookieManager()
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = Gson()
 }

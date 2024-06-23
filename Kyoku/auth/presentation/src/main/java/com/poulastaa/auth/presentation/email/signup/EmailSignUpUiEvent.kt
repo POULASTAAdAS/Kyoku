@@ -1,5 +1,7 @@
 package com.poulastaa.auth.presentation.email.signup
 
+import android.app.Activity
+
 sealed interface EmailSignUpUiEvent {
     data class OnUserNameChange(val value: String) : EmailSignUpUiEvent
     data class OnEmailChange(val value: String) : EmailSignUpUiEvent
@@ -9,5 +11,5 @@ sealed interface EmailSignUpUiEvent {
     data object OnPasswordVisibilityToggle : EmailSignUpUiEvent
     data object OnEmailLogInClick : EmailSignUpUiEvent
 
-    data object OnContinueClick : EmailSignUpUiEvent
+    data class OnContinueClick(val activity: Activity) : EmailSignUpUiEvent
 }
