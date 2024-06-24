@@ -1,9 +1,9 @@
-package com.poulastaa.auth.data.model.res
+package com.poulastaa.data.model.auth.response
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class UserAuthStatusDto {
+enum class UserAuthStatus {
     CREATED,
     CONFLICT,
     USER_FOUND_HOME,

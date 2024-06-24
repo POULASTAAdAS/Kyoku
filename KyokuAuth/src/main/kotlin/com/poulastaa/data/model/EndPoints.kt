@@ -3,8 +3,11 @@ package com.poulastaa.data.model
 sealed class EndPoints(val route: String) {
     data object Auth : EndPoints(route = "/api/auth")
 
-    data object VerifyEmail : EndPoints(route = "/api/auth/verifyEmail")
-    data object EmailVerificationCheck : EndPoints(route = "/api/auth/emailVerificationCheck")
+    data object VerifySignUpEmail : EndPoints(route = "/api/auth/verifySignUpEmail")
+    data object VerifyLogInEmail : EndPoints(route = "/api/auth/verifyLogInEmail")
+
+    data object SignUpEmailVerificationCheck : EndPoints(route = "/api/auth/signUpEmailVerificationCheck")
+    data object LogInEmailVerificationCheck : EndPoints(route = "/api/auth/logInEmailVerificationCheck")
 
     data object ForgotPassword : EndPoints(route = "/api/auth/forgotPassword")
     data object ResetPassword : EndPoints(route = "/api/auth/resetPassword")

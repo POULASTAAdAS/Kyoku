@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EmailLogInReq(
     val email: String,
-    val password: String
+    val password: String,
 ) : AuthReqBaseModel

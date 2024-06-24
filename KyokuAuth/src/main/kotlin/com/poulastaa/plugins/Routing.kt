@@ -1,6 +1,8 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.data.model.session.UserSession
+import com.poulastaa.routes.auth.auth
+import com.poulastaa.routes.unAuthorised
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -10,6 +12,9 @@ import java.io.File
 fun Application.configureRouting() {
     routing {
         sessionInterceptor()
+
+        auth()
+        unAuthorised()
 
         staticFiles(
             remotePath = ".well-known",

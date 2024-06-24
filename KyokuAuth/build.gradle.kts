@@ -57,4 +57,7 @@ dependencies {
 
     // koin
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
+
+    // send mail
+    implementation("com.sun.mail:jakarta.mail:2.0.1")
 }

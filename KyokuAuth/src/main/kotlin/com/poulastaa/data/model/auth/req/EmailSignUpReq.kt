@@ -7,5 +7,5 @@ data class EmailSignUpReq(
     var email: String,
     val password: String,
     val userName: String,
-    val countryCode: String
+    val countryCode: String,
 ) : AuthReqBaseModel

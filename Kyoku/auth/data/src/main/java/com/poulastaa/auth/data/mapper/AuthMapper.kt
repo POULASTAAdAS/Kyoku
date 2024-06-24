@@ -1,12 +1,7 @@
 package com.poulastaa.auth.data.mapper
 
-import com.poulastaa.auth.data.model.res.EmailAuthDto
-import com.poulastaa.auth.data.model.res.GoogleAuthDto
 import com.poulastaa.auth.data.model.res.ResponseUserDto
 import com.poulastaa.auth.data.model.res.UserAuthStatusDto
-import com.poulastaa.auth.domain.auth.EmailAuth
-import com.poulastaa.auth.domain.auth.GoogleAuth
-import com.poulastaa.auth.domain.auth.ResponseUser
 import com.poulastaa.auth.domain.auth.UserAuthStatus
 import com.poulastaa.core.domain.User
 
@@ -18,6 +13,8 @@ fun ResponseUserDto.toUser() = User(
 
 fun UserAuthStatusDto.toUserAuthStatus() = when (this) {
     UserAuthStatusDto.CREATED -> UserAuthStatus.CREATED
+
+    UserAuthStatusDto.CONFLICT -> UserAuthStatus.CONFLICT
 
     UserAuthStatusDto.USER_FOUND_HOME -> UserAuthStatus.USER_FOUND_HOME
     UserAuthStatusDto.USER_FOUND_STORE_B_DATE -> UserAuthStatus.USER_FOUND_STORE_B_DATE

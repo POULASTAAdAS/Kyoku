@@ -1,8 +1,6 @@
 package com.poulastaa
 
-import com.poulastaa.plugins.configureKoin
-import com.poulastaa.plugins.configureRouting
-import com.poulastaa.plugins.configureSerialization
+import com.poulastaa.plugins.*
 import io.ktor.server.application.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +18,10 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     configureKoin(this)
+    configureSecurity()
+    configureSession()
     configureSerialization()
+    configureDatabase()
     configureRouting()
 }
 

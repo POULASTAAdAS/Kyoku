@@ -2,6 +2,7 @@ package com.poulastaa.auth.domain.auth
 
 enum class UserAuthStatus {
     CREATED,
+    CONFLICT,
     USER_FOUND_HOME,
     USER_FOUND_STORE_B_DATE,
     USER_FOUND_SET_GENRE,
