@@ -28,7 +28,7 @@ val mediaType = "application/json".toMediaType()
 suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.authPost(
     route: String,
     body: Request,
-    gson: Gson
+    gson: Gson,
 ): Result<Response, DataError.Network> {
     val url = constructAuthRoute(route)
 
@@ -63,6 +63,8 @@ suspend inline fun <reified Response : Any> OkHttpClient.authGet(
         val response = makeCall(req)
         responseToResult<Response>(response, gson)
     } catch (e: Exception) {
+
+
         handleOtherException(e)
     }
 }

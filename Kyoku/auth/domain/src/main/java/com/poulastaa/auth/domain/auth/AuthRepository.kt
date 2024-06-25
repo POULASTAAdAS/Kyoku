@@ -21,4 +21,12 @@ interface AuthRepository {
         token: String,
         countryCode: String,
     ): Result<UserAuthStatus, DataError.Network>
+
+    suspend fun emailSignupStatusCheck(
+        email: String,
+    ): Boolean
+
+    suspend fun emailLoginStatusCheck(
+        email: String,
+    ): Boolean
 }

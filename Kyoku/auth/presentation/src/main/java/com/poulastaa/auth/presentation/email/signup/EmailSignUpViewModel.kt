@@ -10,6 +10,7 @@ import com.poulastaa.auth.domain.UsernameState
 import com.poulastaa.auth.domain.Validator
 import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.UserAuthStatus
+import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
@@ -18,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -71,6 +73,10 @@ class EmailSignUpViewModel @Inject constructor(
                         data = event.value,
                         isErr = false,
                         errText = UiText.DynamicString("")
+                    ),
+                    confirmPassword = state.confirmPassword.copy(
+                        isErr = false,
+                        errText = UiText.DynamicString("")
                     )
                 )
             }
@@ -79,6 +85,10 @@ class EmailSignUpViewModel @Inject constructor(
                 state = state.copy(
                     confirmPassword = state.confirmPassword.copy(
                         data = event.value,
+                        isErr = false,
+                        errText = UiText.DynamicString("")
+                    ),
+                    password = state.password.copy(
                         isErr = false,
                         errText = UiText.DynamicString("")
                     )
@@ -105,7 +115,7 @@ class EmailSignUpViewModel @Inject constructor(
                     val result = auth.emailSingUp(
                         email = state.email.data.trim(),
                         password = state.password.data.trim(),
-                        username = state.userName.toString(),
+                        username = state.userName.data.trim(),
                         countryCode = countryCode
                     )
 
@@ -302,7 +312,25 @@ class EmailSignUpViewModel @Inject constructor(
     }
 
     private fun signUpVerificationMailCheck() = viewModelScope.launch(Dispatchers.IO) {
+        for (i in 1..80) {
+            delay(3000L)
 
+            val response = auth.emailSignupStatusCheck(state.email.data.trim())
+
+            if (response) {
+                state = state.copy(
+                    isMakingApiCall = false
+                )
+
+                _uiEvent.send(
+                    EmailSignUpUiAction.OnSuccess(
+                        screen = ScreenEnum.GET_SPOTIFY_PLAYLIST
+                    )
+                )
+
+                break
+            }
+        }
 
         state = state.copy(
             isMakingApiCall = false

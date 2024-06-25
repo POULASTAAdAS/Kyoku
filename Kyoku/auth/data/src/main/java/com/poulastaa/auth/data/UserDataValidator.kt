@@ -14,9 +14,7 @@ class UserDataValidator @Inject constructor() : Validator {
         if (password.trim().length < 4) return PasswordState.TOO_SHORT
         if (password.trim().length > 15) return PasswordState.TOO_LONG
 
-        val regex = "^[a-zA-Z0-9]+$".toRegex()
-        return if (password.trim().matches(regex)) PasswordState.VALID
-        else PasswordState.INVALID
+        return PasswordState.VALID
     }
 
     override fun isValidUserName(name: String): UsernameState {

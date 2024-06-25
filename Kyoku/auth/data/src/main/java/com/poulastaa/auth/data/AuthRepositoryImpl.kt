@@ -7,13 +7,16 @@ import com.poulastaa.auth.data.model.req.EmailLogInReq
 import com.poulastaa.auth.data.model.req.EmailSignUpReq
 import com.poulastaa.auth.data.model.req.GoogleAuthReq
 import com.poulastaa.auth.data.model.res.EmailAuthDto
+import com.poulastaa.auth.data.model.res.EmailVerificationDto
 import com.poulastaa.auth.data.model.res.GoogleAuthDto
 import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.UserAuthStatus
+import com.poulastaa.core.data.networking.authGet
 import com.poulastaa.core.data.networking.authPost
 import com.poulastaa.core.data.networking.getCookie
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.EndPoints
+import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
@@ -23,10 +26,11 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.net.CookieManager
 import javax.inject.Inject
+import javax.inject.Named
 
 class AuthRepositoryImpl @Inject constructor(
     private val gson: Gson,
-    private val client: OkHttpClient,
+    @Named("AuthHttpClient") private val client: OkHttpClient,
     private val ds: DataStoreRepository,
     private val cookieManager: CookieManager,
 ) : AuthRepository {
@@ -105,5 +109,59 @@ class AuthRepositoryImpl @Inject constructor(
         return response.map {
             it.status.toUserAuthStatus()
         }
+    }
+
+    override suspend fun emailSignupStatusCheck(email: String): Boolean {
+        val response = client.authGet<EmailVerificationDto>(
+            route = EndPoints.SignUpEmailVerificationCheck.route,
+            params = listOf(
+                Pair(
+                    first = "email",
+                    second = email
+                )
+            ),
+            gson = gson
+        )
+
+        if (response is Result.Success && response.data.status) {
+            withContext(Dispatchers.IO) {
+                val accessToken = async { ds.storeTokenOrCookie(response.data.accessToken) }
+                val refreshToken = async { ds.storeRefreshToken(response.data.refreshToken) }
+                val signInScreen = async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
+
+                accessToken.await()
+                refreshToken.await()
+                signInScreen.await()
+            }
+
+            return true
+        }
+        return false
+    }
+
+    override suspend fun emailLoginStatusCheck(email: String): Boolean {
+        val response = client.authGet<EmailVerificationDto>(
+            route = EndPoints.LogInEmailVerificationCheck.route,
+            params = listOf(
+                Pair(
+                    first = "email",
+                    second = email
+                )
+            ),
+            gson = gson
+        )
+
+        if (response is Result.Success && response.data.status) {
+            withContext(Dispatchers.IO) {
+                val accessToken = async { ds.storeTokenOrCookie(response.data.accessToken) }
+                val refreshToken = async { ds.storeRefreshToken(response.data.refreshToken) }
+
+                accessToken.await()
+                refreshToken.await()
+            }
+
+            return true
+        }
+        return false
     }
 }

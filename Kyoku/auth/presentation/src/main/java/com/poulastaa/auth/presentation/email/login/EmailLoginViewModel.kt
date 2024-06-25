@@ -93,14 +93,32 @@ class EmailLoginViewModel @Inject constructor(
                 if (isErr()) return
 
                 state = state.copy(
-                    isMakingApiCall = true
+                    isMakingApiCall = true,
+                    canResendMailAgain = false,
+                    isResendVerificationMailVisible = false,
+                    resendMailText = "40 s",
+                    isResendMailLoading = false
                 )
 
-
+                emailLogInVerificationJob?.cancel()
+                emailSignInVerificationJob?.cancel()
+                logInUser()
             }
 
             EmailLoginUiEvent.OnResendMailClick -> {
+                if (isErr()) return
 
+                state = state.copy(
+                    isMakingApiCall = true,
+                    canResendMailAgain = false,
+                    isResendVerificationMailVisible = false,
+                    resendMailText = "40 s",
+                    isResendMailLoading = false
+                )
+
+                emailLogInVerificationJob?.cancel()
+                emailSignInVerificationJob?.cancel()
+                logInUser()
             }
 
             EmailLoginUiEvent.OnPasswordVisibilityToggle -> {
@@ -220,8 +238,7 @@ class EmailLoginViewModel @Inject constructor(
                             )
 
                             emailSignInVerificationJob?.cancel()
-                            emailSignInVerificationJob = emailSignUpVerificationCheck()
-
+                            emailSignInVerificationJob = signUpVerificationMailCheck()
                             return@launch
                         }
 
@@ -241,24 +258,21 @@ class EmailLoginViewModel @Inject constructor(
 
                 is Result.Success -> {
                     when (result.data) {
-                        UserAuthStatus.CREATED -> {
-                            ScreenEnum.GET_SPOTIFY_PLAYLIST
-                        }
+                        UserAuthStatus.CREATED -> ScreenEnum.GET_SPOTIFY_PLAYLIST
 
-                        UserAuthStatus.USER_FOUND_HOME -> {
-                            ScreenEnum.HOME
-                        }
+                        UserAuthStatus.USER_FOUND_HOME -> ScreenEnum.HOME
 
-                        UserAuthStatus.USER_FOUND_STORE_B_DATE -> {
-                            ScreenEnum.SET_B_DATE
-                        }
+                        UserAuthStatus.USER_FOUND_STORE_B_DATE -> ScreenEnum.SET_B_DATE
 
-                        UserAuthStatus.USER_FOUND_SET_GENRE -> {
-                            ScreenEnum.PIC_GENRE
-                        }
+                        UserAuthStatus.USER_FOUND_SET_GENRE -> ScreenEnum.PIC_GENRE
 
-                        UserAuthStatus.USER_FOUND_SET_ARTIST -> {
-                            ScreenEnum.PIC_ARTIST
+                        UserAuthStatus.USER_FOUND_SET_ARTIST -> ScreenEnum.PIC_ARTIST
+
+                        UserAuthStatus.EMAIL_NOT_VERIFIED -> {
+                            emailSignInVerificationJob?.cancel()
+                            emailSignInVerificationJob = signUpVerificationMailCheck()
+
+                            return@launch
                         }
 
                         else -> {
@@ -273,7 +287,11 @@ class EmailLoginViewModel @Inject constructor(
                         emailLogInVerificationJob?.cancel()
                         emailSignInVerificationJob = emailLogInVerificationCheck(it)
 
-                        delay(10_000L)
+                        delay(8_000L)
+                        state = state.copy(
+                            isResendVerificationMailVisible = true
+                        )
+
                         resendMailJob?.cancel()
                         resendMailJob = resendVerificationMailCounter()
                     }
@@ -282,28 +300,47 @@ class EmailLoginViewModel @Inject constructor(
         }
     }
 
-    private fun emailSignUpVerificationCheck() = viewModelScope.launch(Dispatchers.IO) {
-        // todo
+    private fun signUpVerificationMailCheck() = viewModelScope.launch(Dispatchers.IO) {
+        for (i in 1..75) {
+            delay(3000L)
 
-        state = state.copy(
-            isMakingApiCall = false
-        )
+            val response = auth.emailSignupStatusCheck(state.email.data.trim())
 
-        ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST)
-        _uiEvent.send(EmailLoginUiAction.OnSuccess(ScreenEnum.GET_SPOTIFY_PLAYLIST))
+            if (response) {
+                state = state.copy(
+                    isMakingApiCall = false
+                )
+
+                _uiEvent.send(EmailLoginUiAction.OnSuccess(ScreenEnum.GET_SPOTIFY_PLAYLIST))
+                break
+            }
+        }
     }
 
     private fun emailLogInVerificationCheck(
         screen: ScreenEnum,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        // todo
-
-        state = state.copy(
-            isMakingApiCall = false
+        _uiEvent.send(
+            EmailLoginUiAction.EmitToast(
+                message = UiText.StringResource(R.string.verification_mail_sent)
+            )
         )
 
-        ds.storeSignInState(screen)
-        _uiEvent.send(EmailLoginUiAction.OnSuccess(screen))
+        for (i in 1..75) {
+            delay(3000L)
+
+            val response = auth.emailLoginStatusCheck(email = state.email.data.trim())
+
+            if (response) {
+                state = state.copy(
+                    isMakingApiCall = false
+                )
+
+                ds.storeSignInState(screen)
+                _uiEvent.send(EmailLoginUiAction.OnSuccess(screen))
+                break
+            }
+        }
     }
 
     private fun resendVerificationMailCounter() = viewModelScope.launch(Dispatchers.IO) {
@@ -316,6 +353,7 @@ class EmailLoginViewModel @Inject constructor(
         }
 
         state = state.copy(
+            isMakingApiCall = false,
             canResendMailAgain = true,
             isResendMailLoading = false,
             resendMailText = "Send Again"
