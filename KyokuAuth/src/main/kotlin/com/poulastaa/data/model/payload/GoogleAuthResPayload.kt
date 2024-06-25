@@ -1,4 +1,4 @@
-package com.poulastaa.data.model
+package com.poulastaa.data.model.payload
 
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
 

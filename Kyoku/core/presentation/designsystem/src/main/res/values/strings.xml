@@ -15,7 +15,8 @@
     <string name="send_again">Send Again</string>
     <string name="username">Username</string>
     <string name="conform_password">Conform password</string>
-    <string name="verification_mail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
+    <string name="verification_mail_sent">An email verification mail is sent to you on this email.Please verify to continue.</string>
+    <string name="password_reset_mail_sent">An password reset mail is sent to you on this email.Please change your password and login again.</string>
     <string name="send">S E N D</string>
     <string name="error_invalid_email">Not a valid email</string>
     <string name="error_empty_password">Password can\'t be empty</string>

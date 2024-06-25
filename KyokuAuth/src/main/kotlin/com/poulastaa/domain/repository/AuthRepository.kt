@@ -1,9 +1,10 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.GoogleAuthResPayload
 import com.poulastaa.data.model.auth.res.Payload
 import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
+import com.poulastaa.data.model.payload.GoogleAuthResPayload
+import com.poulastaa.data.model.payload.UpdateEmailVerificationPayload
 
 interface AuthRepository {
     suspend fun createEmailUser(
@@ -24,4 +25,20 @@ interface AuthRepository {
         payload: Payload,
         countryId: Int,
     ): GoogleAuthResPayload
+
+    suspend fun updateSignUpEmailVerificationStatus(
+        email: String,
+    ): UpdateEmailVerificationPayload
+
+    suspend fun updateLogInEmailVerificationStatus(
+        email: String,
+    ): UpdateEmailVerificationPayload
+
+    suspend fun signUpEmailVerificationCheck(
+        email: String,
+    ): Boolean
+
+    suspend fun logInEmailVerificationCheck(
+        email: String,
+    ): Boolean
 }

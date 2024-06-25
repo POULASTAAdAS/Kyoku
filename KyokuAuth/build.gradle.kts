@@ -60,4 +60,11 @@ dependencies {
 
     // send mail
     implementation("com.sun.mail:jakarta.mail:2.0.1")
+
+    // Google Client API Library
+    implementation("com.google.api-client:google-api-client:2.2.0"){
+        exclude(group = "com.google.guava", module = "guava")
+    }
+
+    implementation("com.google.guava:guava:33.2.1-jre")
 }

@@ -1,5 +1,7 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.domain.table.other.LogInVerificationMailTable
+import com.poulastaa.domain.table.session.SessionStorageTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.zaxxer.hikari.HikariConfig
@@ -23,6 +25,8 @@ fun Application.configureDatabase() {
     )
 
     transaction(db) {
+        SchemaUtils.create(LogInVerificationMailTable)
+        SchemaUtils.create(SessionStorageTable)
         SchemaUtils.create(EmailAuthUserTable)
         SchemaUtils.create(GoogleAuthUserTable)
     }

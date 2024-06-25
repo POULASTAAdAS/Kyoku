@@ -21,4 +21,27 @@ select count(*) from ArtistGenreRelation;
 select count(*) from ArtistAlbumRelation;
 
 
+select * from emailauthuser;
+select * from googleauthuser;
+
+select * from loginverificationmail;
+
+delete from emailauthuser;
+delete from googleauthuser;
+
+update emailauthuser set emailVerificationDone = false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

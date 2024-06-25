@@ -10,6 +10,7 @@ object EmailAuthUserTable : LongIdTable() {
     val email: Column<String> = varchar("email", 320).uniqueIndex()
     val password: Column<String> = varchar("password", 20)
     val emailVerified: Column<Boolean> = bool("emailVerified").default(false)
+    val emailVerificationDone: Column<Boolean> = bool("emailVerificationDone").default(false)
     val profilePic: Column<String> = varchar("profilePic", 200)
         .default(DEFAULT_PROFILE_PIC)
     val refreshToken: Column<String> = text("refreshToken")
