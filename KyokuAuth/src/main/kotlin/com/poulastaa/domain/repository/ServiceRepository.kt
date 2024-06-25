@@ -4,11 +4,12 @@ import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
 import com.poulastaa.data.model.auth.res.Payload
+import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
-import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 
 typealias UserId = Long
+typealias Email = String
 
 interface ServiceRepository {
     suspend fun createEmailUser(
@@ -32,11 +33,19 @@ interface ServiceRepository {
         token: String,
     ): VerifiedMailStatus
 
-     suspend fun signUpEmailVerificationCheck(
+    suspend fun signUpEmailVerificationCheck(
         email: String,
     ): CheckEmailVerificationResponse
 
     suspend fun logInEmailVerificationCheck(
         email: String,
     ): CheckEmailVerificationResponse
+
+    suspend fun sendForgotPasswordMail(
+        email: String,
+    ): Boolean
+
+    suspend fun validateForgotPasswordMailToken(
+        token: String,
+    ): Pair<Email, VerifiedMailStatus>
 }

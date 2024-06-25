@@ -11,6 +11,7 @@ sealed class EndPoints(val route: String) {
 
     data object ForgotPassword : EndPoints(route = "/api/auth/forgotPassword")
     data object ResetPassword : EndPoints(route = "/api/auth/resetPassword")
+    data object SubmitNewPassword : EndPoints(route = "/api/auth/submitNewPassword")
 
     data object RefreshToken : EndPoints(route = "/api/auth/refreshToken")
 

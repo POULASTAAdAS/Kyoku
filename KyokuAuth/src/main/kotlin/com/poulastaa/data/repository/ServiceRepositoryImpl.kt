@@ -8,11 +8,12 @@ import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
 import com.poulastaa.data.model.auth.res.Payload
+import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
-import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.domain.repository.AuthRepository
+import com.poulastaa.domain.repository.Email
 import com.poulastaa.domain.repository.JWTRepository
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.repository.UserId
@@ -20,6 +21,7 @@ import com.poulastaa.domain.table.other.CountryTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.invalidTokenList
 import com.poulastaa.plugins.dbQuery
+import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
@@ -231,6 +233,35 @@ class ServiceRepositoryImpl(
     override suspend fun logInEmailVerificationCheck(email: String): CheckEmailVerificationResponse {
         val response = authRepo.logInEmailVerificationCheck(email)
         return emailVerificationCheckResponse(response, email)
+    }
+
+    override suspend fun sendForgotPasswordMail(email: String): Boolean {
+        dbQuery {
+            EmailAuthUser.find {
+                EmailAuthUserTable.email eq email
+            }.singleOrNull()
+        } ?: return false
+
+        val token = jwtRepo.generateForgotPasswordMailToken(email = email)
+
+        forgotPasswordMail(
+            to = email,
+            token = token
+        )
+
+        return true
+    }
+
+    override suspend fun validateForgotPasswordMailToken(token: String): Pair<Email, VerifiedMailStatus> {
+        val result = jwtRepo.verifyJWTToken(
+            token = token,
+            claim = FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
+        ) ?: return "" to VerifiedMailStatus.TOKEN_NOT_VALID
+
+        if (result == VerifiedMailStatus.TOKEN_USED.name) return "" to VerifiedMailStatus.TOKEN_USED
+        invalidTokenList.add(token)
+
+        return result to VerifiedMailStatus.VERIFIED
     }
 
     private suspend fun emailVerificationCheckResponse(
@@ -600,6 +631,112 @@ class ServiceRepositoryImpl(
         sendEmail(
             to = to,
             subject = "Welcome back $userName",
+            content = content
+        )
+    }
+
+    private fun forgotPasswordMail(
+        to: String,
+        token: String,
+    ) {
+        val url = "${System.getenv("AUTH_URL") + EndPoints.ResetPassword.route}?token=$token"
+
+        val content = """
+            <!DOCTYPE html>
+            <html lang="en">
+
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>Password Reset Mail</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  color: #333;
+                  line-height: 1.6;
+                }
+
+                .container {
+                  width: 80%;
+                  margin: 0 auto;
+                  padding: 20px;
+                  background-color: #f4f4f4;
+                  border-radius: 10px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+
+                .appLogo img {
+                  width: 150px;
+                  margin-bottom: 20px;
+                  display: block;
+                  margin-left: auto;
+                  margin-right: auto;
+                }
+
+                .header {
+                  color: #4caf50;
+                  text-align: center;
+                }
+
+                .content {
+                  margin: 20px 0;
+                  text-align: center;
+                }
+
+                .cta-button {
+                  display: inline-block;
+                  padding: 10px 20px;
+                  color: white;
+                  background-color: #4caf50;
+                  text-decoration: none;
+                  border-radius: 5px;
+                  margin-top: 20px;
+                }
+
+                .footer {
+                  margin-top: 20px;
+                  text-align: center;
+                  text-decoration: underline;
+                }
+              </style>
+            </head>
+
+            <body>
+              <div class="container">
+                <p class="appLogo">
+                  <a>
+                    <img src="http://kyoku.poulastaa.online:9090/.well-known/app_logo.png" alt="Kyoku Logo" />
+                  </a>
+                </p>
+
+                <h1 class="header">Password reset Mail!</h1>
+
+                <p class="content">You̥ are seeing this email because you requested for a password reset.</p>
+                <p class="content">
+                  Follow the bellow link to reset you password.
+                  Please login again through app after changing you password.
+                </p>
+                
+                <p class="content">
+                 This link is only valid for 10 minute.
+                </p>
+                
+                <p class="content">
+                  <a href="$url" class="cta-button">Reset Password</a>
+                </p>
+                <p class="footer">
+                  If you didn't requested for password reset, please ignore this email.
+                </p>
+                <p class="footer">Best regards,<br />Kyoku</p>
+              </div>
+            </body>
+
+            </html>
+        """.trimIndent()
+
+        sendEmail(
+            to = to,
+            subject = "Password Reset Mail",
             content = content
         )
     }
