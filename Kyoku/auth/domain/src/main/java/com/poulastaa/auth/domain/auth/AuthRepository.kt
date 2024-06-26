@@ -29,4 +29,8 @@ interface AuthRepository {
     suspend fun emailLoginStatusCheck(
         email: String,
     ): Boolean
+
+    suspend fun sendForgotPasswordMail(
+        email: String,
+    ): Result<ForgotPasswordSetStatus, DataError.Network>
 }

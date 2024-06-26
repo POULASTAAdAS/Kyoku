@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import com.poulastaa.auth.presentation.email.components.AuthTextField
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordUiEvent
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordUiState
 import com.poulastaa.core.presentation.designsystem.AppThem
+import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.BackButton
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -48,6 +50,12 @@ fun ColumnScope.ForgotPasswordMedium(
         text = state.email,
         onValueChange = { onEvent(ForgotPasswordUiEvent.OnEmailChange(it)) },
         label = stringResource(id = R.string.email),
+        trailingIcon = {
+            if (state.isValidEmail) Icon(
+                imageVector = CheckIcon,
+                contentDescription = null
+            )
+        },
         onDone = {
             focusManager.clearFocus()
             onEvent(ForgotPasswordUiEvent.OnSendClick)

@@ -29,8 +29,6 @@ select * from loginverificationmail;
 delete from emailauthuser;
 delete from googleauthuser;
 
-update emailauthuser set emailVerificationDone = false;
-
 
 
 

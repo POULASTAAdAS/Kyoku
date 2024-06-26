@@ -6,6 +6,7 @@ import com.poulastaa.data.model.auth.req.EmailSignUpReq
 import com.poulastaa.data.model.auth.res.Payload
 import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.EmailAuthRes
+import com.poulastaa.data.model.auth.response.ForgotPasswordSetStatus
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
 import com.poulastaa.data.model.payload.UpdatePasswordStatus
 
@@ -44,7 +45,7 @@ interface ServiceRepository {
 
     suspend fun sendForgotPasswordMail(
         email: String,
-    ): Boolean
+    ): ForgotPasswordSetStatus
 
     suspend fun validateForgotPasswordMailToken(
         token: String,

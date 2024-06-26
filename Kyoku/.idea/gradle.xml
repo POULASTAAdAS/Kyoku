@@ -40,6 +40,11 @@
             <option value="$PROJECT_DIR$/play/domain" />
             <option value="$PROJECT_DIR$/play/network" />
             <option value="$PROJECT_DIR$/play/presentation" />
+            <option value="$PROJECT_DIR$/setup" />
+            <option value="$PROJECT_DIR$/setup/data" />
+            <option value="$PROJECT_DIR$/setup/domain" />
+            <option value="$PROJECT_DIR$/setup/network" />
+            <option value="$PROJECT_DIR$/setup/presentation" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

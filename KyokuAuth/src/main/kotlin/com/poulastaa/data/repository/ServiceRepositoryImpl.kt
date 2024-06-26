@@ -8,10 +8,7 @@ import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
 import com.poulastaa.data.model.auth.res.Payload
-import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
-import com.poulastaa.data.model.auth.response.EmailAuthRes
-import com.poulastaa.data.model.auth.response.GoogleAuthRes
-import com.poulastaa.data.model.auth.response.UserAuthStatus
+import com.poulastaa.data.model.auth.response.*
 import com.poulastaa.data.model.payload.UpdatePasswordStatus
 import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.other.CountryTable
@@ -233,12 +230,12 @@ class ServiceRepositoryImpl(
         return emailVerificationCheckResponse(response, email)
     }
 
-    override suspend fun sendForgotPasswordMail(email: String): Boolean {
+    override suspend fun sendForgotPasswordMail(email: String): ForgotPasswordSetStatus {
         dbQuery {
             EmailAuthUser.find {
                 EmailAuthUserTable.email eq email
             }.singleOrNull()
-        } ?: return false
+        } ?: return ForgotPasswordSetStatus.NO_USER_FOUND
 
         val token = jwtRepo.generateForgotPasswordMailToken(email = email)
 
@@ -247,7 +244,7 @@ class ServiceRepositoryImpl(
             token = token
         )
 
-        return true
+        return ForgotPasswordSetStatus.SENT
     }
 
     override suspend fun validateForgotPasswordMailToken(token: String): Pair<Email, VerifiedMailStatus> {

@@ -8,8 +8,10 @@ import com.poulastaa.auth.data.model.req.EmailSignUpReq
 import com.poulastaa.auth.data.model.req.GoogleAuthReq
 import com.poulastaa.auth.data.model.res.EmailAuthDto
 import com.poulastaa.auth.data.model.res.EmailVerificationDto
+import com.poulastaa.auth.data.model.res.ForgotPasswordSetStatusDao
 import com.poulastaa.auth.data.model.res.GoogleAuthDto
 import com.poulastaa.auth.domain.auth.AuthRepository
+import com.poulastaa.auth.domain.auth.ForgotPasswordSetStatus
 import com.poulastaa.auth.domain.auth.UserAuthStatus
 import com.poulastaa.core.data.networking.authGet
 import com.poulastaa.core.data.networking.authPost
@@ -163,5 +165,25 @@ class AuthRepositoryImpl @Inject constructor(
             return true
         }
         return false
+    }
+
+    override suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordSetStatus, DataError.Network> {
+        val response = client.authGet<ForgotPasswordSetStatusDao>(
+            route = EndPoints.ForgotPassword.route,
+            params = listOf(
+                Pair(
+                    first = "email",
+                    second = email
+                )
+            ),
+            gson = gson
+        )
+
+        return response.map {
+            when (it) {
+                ForgotPasswordSetStatusDao.SENT -> ForgotPasswordSetStatus.SENT
+                ForgotPasswordSetStatusDao.NO_USER_FOUND -> ForgotPasswordSetStatus.NO_USER_FOUND
+            }
+        }
     }
 }
