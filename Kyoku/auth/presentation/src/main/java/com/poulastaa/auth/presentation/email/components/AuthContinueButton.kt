@@ -39,8 +39,6 @@ fun AuthContinueButton(
     letterSpacing: TextUnit = 2.sp,
     onClick: () -> Unit,
 ) {
-    val them = isSystemInDarkTheme()
-
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(

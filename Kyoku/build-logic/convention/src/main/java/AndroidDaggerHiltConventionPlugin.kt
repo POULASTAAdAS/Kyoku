@@ -13,8 +13,8 @@ class AndroidDaggerHiltConventionPlugin : Plugin<Project> {
 
             dependencies {
                 "implementation"(libs.findLibrary("dagger.hilt").get())
-                "kapt"(libs.findLibrary("dagger.hilt.compiler").get())
                 "implementation"(libs.findLibrary("hilt.navigation.compose").get())
+                "kapt"(libs.findLibrary("dagger.hilt.compiler").get())
                 "kapt"(libs.findLibrary("hilt.compiler").get())
             }
         }

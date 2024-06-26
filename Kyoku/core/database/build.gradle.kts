@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.kyoku.android.library)
+    alias(libs.plugins.kyoku.android.dagger)
+
     alias(libs.plugins.kyoku.android.room)
 }
 

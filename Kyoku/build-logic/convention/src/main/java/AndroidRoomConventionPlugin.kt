@@ -10,7 +10,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
         target.run {
             pluginManager.run {
                 apply("androidx.room")
-                apply("com.google.devtools.ksp")
+//                apply("com.google.devtools.ksp")
             }
 
             extensions.configure<RoomExtension> {
@@ -20,7 +20,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(libs.findLibrary("room.runtime").get())
                 "implementation"(libs.findLibrary("room.ktx").get())
-                "ksp"(libs.findLibrary("room.compiler").get())
+                "kapt"(libs.findLibrary("room.compiler").get())
             }
         }
     }
