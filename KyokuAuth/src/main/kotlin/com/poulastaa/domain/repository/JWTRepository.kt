@@ -6,6 +6,8 @@ import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_TIME
 import com.poulastaa.utils.Constants.REFRESH_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.REFRESH_TOKEN_DEFAULT_TIME
+import com.poulastaa.utils.Constants.SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY
+import com.poulastaa.utils.Constants.SUBMIT_NEW_PASSWORD_TOKEN_TIME
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_TIME
 
@@ -36,6 +38,13 @@ interface JWTRepository {
         email: String,
         claimName: String = FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY,
         validationTime: Long = FORGOT_PASSWORD_MAIL_TOKEN_TIME,
+    ): String
+
+    fun generateSubmitPasswordVerificationToken(
+        sub: String = "SubmitNewPassword",
+        email: String,
+        claimName: String = SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY,
+        validationTime: Long = SUBMIT_NEW_PASSWORD_TOKEN_TIME,
     ): String
 
     fun verifyJWTToken(token: String, claim: String): String?

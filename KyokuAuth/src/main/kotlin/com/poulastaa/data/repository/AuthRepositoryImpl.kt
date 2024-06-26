@@ -11,6 +11,7 @@ import com.poulastaa.data.model.auth.response.GoogleAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
 import com.poulastaa.data.model.payload.GoogleAuthResPayload
 import com.poulastaa.data.model.payload.UpdateEmailVerificationPayload
+import com.poulastaa.data.model.payload.UpdatePasswordStatus
 import com.poulastaa.domain.repository.AuthRepository
 import com.poulastaa.domain.table.other.LogInVerificationMailTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
@@ -233,6 +234,22 @@ class AuthRepositoryImpl : AuthRepository {
 
             true
         } else false
+    }
+
+    override suspend fun updatePassword(
+        password: String,
+        email: String,
+    ): UpdatePasswordStatus {
+        val user = findEmailUser(email) ?: return UpdatePasswordStatus.USER_NOT_FOUND
+        if (password.length < 4 || password.length > 15) return UpdatePasswordStatus.NOT_PASSWORD
+
+        if (password == user.password) return UpdatePasswordStatus.SAME_PASSWORD
+
+        dbQuery {
+            user.password = password
+        }
+
+        return UpdatePasswordStatus.RESET
     }
 
     private suspend fun findEmailUser(email: String) = dbQuery {

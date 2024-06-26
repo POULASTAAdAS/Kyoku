@@ -7,6 +7,7 @@ import com.poulastaa.data.model.auth.res.Payload
 import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
+import com.poulastaa.data.model.payload.UpdatePasswordStatus
 
 typealias UserId = Long
 typealias Email = String
@@ -48,4 +49,9 @@ interface ServiceRepository {
     suspend fun validateForgotPasswordMailToken(
         token: String,
     ): Pair<Email, VerifiedMailStatus>
+
+    suspend fun updatePassword(
+        token: String,
+        password: String,
+    ): UpdatePasswordStatus
 }

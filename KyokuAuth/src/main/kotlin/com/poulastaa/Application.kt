@@ -17,6 +17,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureCors()
     configureKoin(this)
     configureSecurity()
     configureSession()

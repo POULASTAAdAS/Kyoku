@@ -77,6 +77,18 @@ class JWTRepositoryImpl(
         validationTime = validationTime
     )
 
+    override fun generateSubmitPasswordVerificationToken(
+        sub: String,
+        email: String,
+        claimName: String,
+        validationTime: Long,
+    ): String = generateJWTToken(
+        sub = sub,
+        claimName = claimName,
+        email = email,
+        validationTime = validationTime
+    )
+
     override fun verifyJWTToken(
         token: String,
         claim: String,

@@ -12,16 +12,14 @@ import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.GoogleAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
-import com.poulastaa.domain.repository.AuthRepository
-import com.poulastaa.domain.repository.Email
-import com.poulastaa.domain.repository.JWTRepository
-import com.poulastaa.domain.repository.ServiceRepository
-import com.poulastaa.domain.repository.UserId
+import com.poulastaa.data.model.payload.UpdatePasswordStatus
+import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.other.CountryTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.invalidTokenList
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
+import com.poulastaa.utils.Constants.SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
@@ -261,7 +259,30 @@ class ServiceRepositoryImpl(
         if (result == VerifiedMailStatus.TOKEN_USED.name) return "" to VerifiedMailStatus.TOKEN_USED
         invalidTokenList.add(token)
 
-        return result to VerifiedMailStatus.VERIFIED
+        val newToken = jwtRepo.generateSubmitPasswordVerificationToken(email = result)
+        return newToken to VerifiedMailStatus.VERIFIED
+    }
+
+    override suspend fun updatePassword(
+        token: String,
+        password: String,
+    ): UpdatePasswordStatus {
+        val result = jwtRepo.verifyJWTToken(
+            token = token,
+            claim = SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY
+        ) ?: return UpdatePasswordStatus.USER_NOT_FOUND
+
+        if (result == VerifiedMailStatus.TOKEN_USED.name) return UpdatePasswordStatus.TOKEN_USED
+
+        val response = authRepo.updatePassword(
+            password = password.trim(),
+            email = result
+        )
+
+        if (response != UpdatePasswordStatus.SAME_PASSWORD)
+            invalidTokenList.add(token)
+
+        return response
     }
 
     private suspend fun emailVerificationCheckResponse(
@@ -705,7 +726,7 @@ class ServiceRepositoryImpl(
               <div class="container">
                 <p class="appLogo">
                   <a>
-                    <img src="http://kyoku.poulastaa.online:9090/.well-known/app_logo.png" alt="Kyoku Logo" />
+                    <img src="${System.getenv("AUTH_URL")}/.well-known/app_logo.png" alt="Kyoku Logo" />
                   </a>
                 </p>
 

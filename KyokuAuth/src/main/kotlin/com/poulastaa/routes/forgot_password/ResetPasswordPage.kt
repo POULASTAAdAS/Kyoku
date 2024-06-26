@@ -19,7 +19,7 @@ fun Route.resetPasswordPage(
 
             when (response.second) {
                 VerifiedMailStatus.VERIFIED -> resetPasswordPage(
-                    email = response.first
+                    token = response.first
                 )
 
                 VerifiedMailStatus.TOKEN_USED -> responseVerificationMailHtml(
@@ -52,8 +52,9 @@ fun Route.resetPasswordPage(
     }
 }
 
+
 private fun resetPasswordPage(
-    email: String,
+    token: String,
 ): String {
     val url = System.getenv("AUTH_URL")
 
@@ -72,59 +73,59 @@ private fun resetPasswordPage(
         <title>Password Confirmation</title>
         <style>
             body {
-                margin: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                background: linear-gradient(to top,
-                        black,
-                        #1A3A38);
-                font-family: Arial, sans-serif;
-            }
-    
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to top, black, #1A3A38);
+            font-family: Arial, sans-serif;
+        }
+
             .container {
                 text-align: center;
-                background-color: transparent;
                 color: #fff;
-                margin-right: 10rem;
-                margin-bottom: 10rem;
+                margin: 2rem;
             }
     
             .logo {
                 margin-bottom: 20px;
-                margin-left: 10.5rem;
             }
     
             .logo img {
-                width: 11rem;
-                height: 11rem;
-                background-color: transparent;
+                width: 20vw;
+                max-width: 150px;
+                height: auto;
                 border-radius: 10px;
             }
     
             .form {
-                max-width: 300px;
-                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
     
             .input-group {
                 position: relative;
                 margin-bottom: 15px;
+                width: 100%;
+                max-width: 300px;
             }
     
             .input-group img {
                 width: 2rem;
-                margin-left: 10rem;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
             }
     
             .input-group input {
-                width: 30rem;
-                height: 4.5rem;
+                width: 100%;
                 padding: 10px;
                 border: none;
                 border-radius: 5px;
-                box-sizing: border-box;
                 background-color: transparent;
                 border: 1px solid #09BEAA;
                 color: white;
@@ -147,25 +148,24 @@ private fun resetPasswordPage(
             .input-group input:not(:placeholder-shown)+label {
                 top: 0;
                 left: 10px;
-                font-size: 1.5rem;
+                font-size: 0.9rem;
                 color: #09BEAA;
-                background: linear-gradient(to top,
-                        #112423,
-                        #102524);
+                background: linear-gradient(to top, #112423, #102524);
+                padding: 0 5px;
             }
     
             button {
                 width: 100%;
-                height: 6vh;
+                max-width: 300px;
+                padding: 10px;
                 background-color: #008f8f;
                 border: none;
                 border-radius: 5px;
-                font-size: 16px;
+                font-size: 1rem;
                 cursor: pointer;
                 color: white;
-                margin-left: 5.5rem;
                 margin-top: 3rem;
-                letter-spacing: 10px;
+                letter-spacing: 2px;
                 font-weight: bold;
             }
     
@@ -174,21 +174,27 @@ private fun resetPasswordPage(
             }
     
             .info {
-                font-size: 1.3rem;
+                font-size: 1rem;
                 color: #ffffff;
-                margin-left: 10.5rem;
                 margin-top: 0.7rem;
             }
+
+            @media (max-width: 600px) {
+                .input-group input {
+                    font-size: 1rem;
+                }
     
-            .toggle-password {
-                position: absolute;
-                top: 30%;
-                right: 10px;
-                transform: translateY(-50%);
-                transform: translatex(550%);
-                cursor: pointer;
-                width: 2rem;
-                height: auto;
+                .input-group label {
+                    font-size: 1rem;
+                }
+    
+                .info {
+                    font-size: 0.9rem;
+                }
+    
+                button {
+                    font-size: 0.9rem;
+                }
             }
         </style>
     </head>
@@ -217,15 +223,15 @@ private fun resetPasswordPage(
         <script>
             function togglePassword(fieldId, toggleImg) {
                 const passwordField = document.getElementById(fieldId);
-                const isPasswordeye_on = passwordField.type === 'password';
-                passwordField.type = isPasswordeye_on ? 'text' : 'password';
-                toggleImg.src = isPasswordeye_on ? "$eyeOffUrl" : "$eyeOnUrl";
+                const isPasswordVisible = passwordField.type === 'password';
+                passwordField.type = isPasswordVisible ? 'text' : 'password';
+                toggleImg.src = isPasswordVisible ? "$eyeOffUrl" : "$eyeOnUrl";
             }
 
             function sendPassword() {
                 const password = document.getElementById('password').value.trim();
                 const repeatPassword = document.getElementById('repeat-password').value.trim();
-                const email = $email;
+                const token = "$token";
 
                 if (!password || !repeatPassword) {
                     alert('Password fields cannot be empty!');
@@ -245,7 +251,7 @@ private fun resetPasswordPage(
 
                 const data = {
                     password: password,
-                    email: email
+                    token: token
                 };
 
                 fetch("$submitUrl", {
@@ -258,7 +264,12 @@ private fun resetPasswordPage(
                     .then(response => response.json())
                     .then(data => {
                         console.log('Success:', data);
-                        alert('Password reset successful!');
+
+                        if (data.status === "SAME_PASSWORD") {
+                            alert('New password cannot be the same as the current password!');
+                        } else {
+                            window.location.href = data.successUrl;
+                        }
                     })
                     .catch((error) => {
                         console.error('Error:', error);

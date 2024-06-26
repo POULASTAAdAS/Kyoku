@@ -5,6 +5,7 @@ import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
 import com.poulastaa.data.model.payload.GoogleAuthResPayload
 import com.poulastaa.data.model.payload.UpdateEmailVerificationPayload
+import com.poulastaa.data.model.payload.UpdatePasswordStatus
 
 interface AuthRepository {
     suspend fun createEmailUser(
@@ -41,4 +42,9 @@ interface AuthRepository {
     suspend fun logInEmailVerificationCheck(
         email: String,
     ): Boolean
+
+    suspend fun updatePassword(
+        password: String,
+        email: String,
+    ): UpdatePasswordStatus
 }
