@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e18076677ddb762b4a05ffc385ab1a33",
+    "identityHash": "6c7a39fe7338e1efbc7b0da772c922ee",
     "entities": [
       {
-        "tableName": "SonEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `coverImage` TEXT NOT NULL, `title` TEXT NOT NULL, `releaseDate` TEXT NOT NULL, `masterPlaylistUrl` TEXT NOT NULL, `lightVibrant` TEXT NOT NULL, `darkVibrant` TEXT NOT NULL, `mutedSwatch` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "tableName": "SongEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `coverImage` TEXT NOT NULL, `title` TEXT NOT NULL, `artistName` TEXT NOT NULL, `releaseYear` TEXT NOT NULL, `masterPlaylistUrl` TEXT NOT NULL, `primary` TEXT NOT NULL, `background` TEXT NOT NULL, `onBackground` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,8 +27,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "releaseDate",
-            "columnName": "releaseDate",
+            "fieldPath": "artistName",
+            "columnName": "artistName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "releaseYear",
+            "columnName": "releaseYear",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -39,20 +45,20 @@
             "notNull": true
           },
           {
-            "fieldPath": "lightVibrant",
-            "columnName": "lightVibrant",
+            "fieldPath": "primary",
+            "columnName": "primary",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "darkVibrant",
-            "columnName": "darkVibrant",
+            "fieldPath": "background",
+            "columnName": "background",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "mutedSwatch",
-            "columnName": "mutedSwatch",
+            "fieldPath": "onBackground",
+            "columnName": "onBackground",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -126,7 +132,7 @@
       },
       {
         "tableName": "SongArtistRelationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `artistId` INTEGER NOT NULL, PRIMARY KEY(`songId`, `artistId`), FOREIGN KEY(`songId`) REFERENCES `SonEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`artistId`) REFERENCES `ArtistEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `artistId` INTEGER NOT NULL, PRIMARY KEY(`songId`, `artistId`), FOREIGN KEY(`songId`) REFERENCES `SongEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`artistId`) REFERENCES `ArtistEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "songId",
@@ -148,10 +154,29 @@
             "artistId"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_SongArtistRelationEntity_songId",
+            "unique": false,
+            "columnNames": [
+              "songId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongArtistRelationEntity_songId` ON `${TABLE_NAME}` (`songId`)"
+          },
+          {
+            "name": "index_SongArtistRelationEntity_artistId",
+            "unique": false,
+            "columnNames": [
+              "artistId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongArtistRelationEntity_artistId` ON `${TABLE_NAME}` (`artistId`)"
+          }
+        ],
         "foreignKeys": [
           {
-            "table": "SonEntity",
+            "table": "SongEntity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -176,7 +201,7 @@
       },
       {
         "tableName": "SongPlaylistRelationEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `playlistId` INTEGER NOT NULL, PRIMARY KEY(`songId`, `playlistId`), FOREIGN KEY(`songId`) REFERENCES `SonEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`playlistId`) REFERENCES `PlaylistEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `playlistId` INTEGER NOT NULL, PRIMARY KEY(`songId`, `playlistId`), FOREIGN KEY(`songId`) REFERENCES `SongEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`playlistId`) REFERENCES `PlaylistEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "songId",
@@ -198,10 +223,29 @@
             "playlistId"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_SongPlaylistRelationEntity_songId",
+            "unique": false,
+            "columnNames": [
+              "songId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongPlaylistRelationEntity_songId` ON `${TABLE_NAME}` (`songId`)"
+          },
+          {
+            "name": "index_SongPlaylistRelationEntity_playlistId",
+            "unique": false,
+            "columnNames": [
+              "playlistId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongPlaylistRelationEntity_playlistId` ON `${TABLE_NAME}` (`playlistId`)"
+          }
+        ],
         "foreignKeys": [
           {
-            "table": "SonEntity",
+            "table": "SongEntity",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
@@ -228,7 +272,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e18076677ddb762b4a05ffc385ab1a33')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6c7a39fe7338e1efbc7b0da772c922ee')"
     ]
   }
 }

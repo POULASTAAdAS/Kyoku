@@ -3,8 +3,8 @@ package com.poulastaa.auth.data.di
 import com.google.gson.Gson
 import com.poulastaa.auth.data.AuthRepositoryImpl
 import com.poulastaa.auth.data.UserDataValidator
-import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.Validator
+import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.core.domain.DataStoreRepository
 import dagger.Module
 import dagger.Provides
@@ -39,7 +39,7 @@ object AuthModule {
         ds: DataStoreRepository,
         cookieManager: CookieManager,
     ): AuthRepository = AuthRepositoryImpl(
-        gson =gson,
+        gson = gson,
         client = client,
         ds = ds,
         cookieManager = cookieManager

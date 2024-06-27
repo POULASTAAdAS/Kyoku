@@ -33,4 +33,8 @@
     <string name="error_user_not_found">No User Found</string>
     <string name="error_invalid_password">Password doesn\'t match</string>
     <string name="error_email_already_exist">Email Already In User</string>
+    <string name="link">Past Link</string>
+    <string name="add">A D D</string>
+    <string name="spotify_top_appbar_title">Import Your Spotify Playlist</string>
+    <string name="skip">S K I P</string>
 </resources>

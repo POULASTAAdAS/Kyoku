@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
@@ -38,7 +39,7 @@ class MainViewModel @Inject constructor(
 
                 ScreenEnum.SET_B_DATE -> RouteExt(
                     route = Screens.START_UP_ROUTE,
-                    startDestination = Screens.SetBirthDate.route
+                    startDestination = Screens.GetSpotifyPlaylist.route
                 )
 
 
@@ -61,7 +62,7 @@ class MainViewModel @Inject constructor(
 
                 else -> return@launch
             }.let {
-
+                _routeExt.value = it
                 if (_routeExt.value.startDestination != null) _keepSplashOn.value = false
             }
         }

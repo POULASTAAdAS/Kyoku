@@ -5,7 +5,7 @@ import com.poulastaa.core.presentation.ui.model.TextHolder
 data class EmailSignUpUiState(
     val isMakingApiCall: Boolean = false,
 
-    val isValidUserName:Boolean = false,
+    val isValidUserName: Boolean = false,
     val userName: TextHolder = TextHolder(),
 
     val isValidEmail: Boolean = false,

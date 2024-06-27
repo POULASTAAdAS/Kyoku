@@ -14,7 +14,7 @@ import com.poulastaa.auth.presentation.email.signup.components.EmailSignUpCompac
 import com.poulastaa.auth.presentation.email.signup.components.EmailSignUpExpanded
 import com.poulastaa.auth.presentation.email.signup.components.EmailSignUpMedium
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.presentation.designsystem.components.ScreenWrapper
+import com.poulastaa.core.presentation.designsystem.components.AuthScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
 @Composable
@@ -85,7 +85,7 @@ fun EmailSignUpScreen(
     LocalAutofillTree.current += autoFillPassword
     LocalAutofillTree.current += autoFillUserName
 
-    ScreenWrapper(
+    AuthScreenWrapper(
         compactContent = {
             EmailSignUpCompact(
                 autoFillUserName = autoFillUserName,

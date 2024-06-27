@@ -5,6 +5,7 @@ import com.poulastaa.core.domain.utils.Error as Err
 sealed interface Result<out D, out E : Err> {
     data class Success<out D>(val data: D) :
         Result<D, Nothing>
+
     data class Error<out E : Err>(val error: E) :
         Result<Nothing, E>
 }

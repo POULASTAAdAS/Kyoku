@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -89,9 +88,9 @@ class DataStoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun readLocalUser(): User {
-       val pref = dataStore.data.catch {
-           emit(emptyPreferences())
-       }.first()
+        val pref = dataStore.data.catch {
+            emit(emptyPreferences())
+        }.first()
 
         val response = pref[PreferencesKeys.LOCAL_USER]?.let {
             Json.decodeFromString<UserSerializable>(it)

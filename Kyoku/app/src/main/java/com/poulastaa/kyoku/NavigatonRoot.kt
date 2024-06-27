@@ -11,6 +11,7 @@ import com.poulastaa.auth.presentation.email.login.EmailLoginRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyRootScreen
 
 
 @Composable
@@ -84,7 +85,7 @@ private fun NavGraphBuilder.authGraph(
                     }
                 },
                 navigateToForgotPassword = {
-                    nav.navigate(Screens.ForgotPassword.route) {  // todo add email if any
+                    nav.navigate(Screens.ForgotPassword.route) {
                         popUpTo(Screens.EmailLogIn.route) {
                             inclusive = true
                             saveState = true
@@ -165,7 +166,10 @@ private fun NavGraphBuilder.startUpGraph(
         startDestination = screen
     ) {
         composable(route = Screens.GetSpotifyPlaylist.route) {
-
+            SpotifyRootScreen {
+                nav.popBackStack()
+                nav.navigate(Screens.SetBirthDate.route)
+            }
         }
 
         composable(route = Screens.SetBirthDate.route) {

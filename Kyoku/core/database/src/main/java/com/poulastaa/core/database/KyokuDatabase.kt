@@ -6,13 +6,13 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
-import com.poulastaa.core.database.entity.SonEntity
+import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 
 @Database(
     entities = [
-        SonEntity::class,
+        SongEntity::class,
         ArtistEntity::class,
         PlaylistEntity::class,
         SongArtistRelationEntity::class,

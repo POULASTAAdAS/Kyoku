@@ -10,4 +10,7 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.setup.domain)
+
+    implementation(libs.material3WindowSizeClass)
+    implementation(libs.coil.compose)
 }

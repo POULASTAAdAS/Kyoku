@@ -13,9 +13,9 @@ import com.poulastaa.auth.data.model.res.GoogleAuthDto
 import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.ForgotPasswordSetStatus
 import com.poulastaa.auth.domain.auth.UserAuthStatus
-import com.poulastaa.core.data.networking.authGet
-import com.poulastaa.core.data.networking.authPost
-import com.poulastaa.core.data.networking.getCookie
+import com.poulastaa.core.data.network.authGet
+import com.poulastaa.core.data.network.authPost
+import com.poulastaa.core.data.network.getCookie
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.ScreenEnum
@@ -127,7 +127,8 @@ class AuthRepositoryImpl @Inject constructor(
 
         if (response is Result.Success && response.data.status) {
             withContext(Dispatchers.IO) {
-                val accessToken = async { ds.storeTokenOrCookie(response.data.accessToken) }
+                val accessToken =
+                    async { ds.storeTokenOrCookie("Bearer ${response.data.accessToken}") }
                 val refreshToken = async { ds.storeRefreshToken(response.data.refreshToken) }
                 val signInScreen = async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
 
@@ -155,7 +156,8 @@ class AuthRepositoryImpl @Inject constructor(
 
         if (response is Result.Success && response.data.status) {
             withContext(Dispatchers.IO) {
-                val accessToken = async { ds.storeTokenOrCookie(response.data.accessToken) }
+                val accessToken =
+                    async { ds.storeTokenOrCookie("Bearer ${response.data.accessToken}") }
                 val refreshToken = async { ds.storeRefreshToken(response.data.refreshToken) }
 
                 accessToken.await()

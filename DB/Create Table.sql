@@ -5,14 +5,16 @@ name varchar(100) not null unique
 
 create table Genre(
 id int primary key auto_increment,
-name varchar(100) not null unique
+name varchar(100) not null unique,
+points bigint not null default(0)
 );
 
 
 Create table artist(
 id bigint primary key auto_increment,
 name varchar(400) not null unique,
-coverImage varchar(800) default(null)
+coverImage varchar(800) default(null),
+points bigint not null default(0)
 );
 
 Create table ArtistCountryRelation(
@@ -31,7 +33,8 @@ primary key(artistId, genreId)
 
 Create table Album(
 id bigint primary key auto_increment,
-name varchar(100) not null unique
+name varchar(100) not null unique,
+points bigint not null default(0)
 );
 
 Create table ArtistAlbumRelation(
@@ -40,7 +43,6 @@ albumId bigint references Album(id) on delete cascade,
 
 primary key(artistId, albumId)
 );
-
 
 
 Create Table Song(
@@ -53,7 +55,8 @@ composer text not null default (''),
 publisher text not null default (''),
 album_artist text not null default (''),
 track text not null default (''),
-`year` year
+`year` year,
+points bigint not null default(0)
 );
 
 Create table songArtistRelation(

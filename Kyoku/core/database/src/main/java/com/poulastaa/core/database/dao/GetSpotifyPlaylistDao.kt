@@ -9,16 +9,13 @@ import kotlinx.coroutines.flow.Flow
 interface GetSpotifyPlaylistDao {
     @Query(
         """
-        select SonEntity.id as songId , SonEntity.coverImage as songCoverImage,
-        SonEntity.title as songTitle, PlaylistEntity.id as playlistId,
-        PlaylistEntity.name as playlistName, ArtistEntity.id as artistId, 
-        ArtistEntity.name as artistName, ArtistEntity.coverImage as artistCoverImage from SonEntity
+        select SongEntity.id as songId , SongEntity.coverImage as songCoverImage,
+        SongEntity.title as songTitle, SongEntity.artistName as artist, PlaylistEntity.id as playlistId,
+        PlaylistEntity.name as playlistName from SongEntity
+        join SongPlaylistRelationEntity on SongPlaylistRelationEntity.songId = SongEntity.id
         join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
-        join SongArtistRelationEntity on SongArtistRelationEntity.songId = SonEntity.id
-        join ArtistEntity on ArtistEntity.id = SongArtistRelationEntity.artistId
-        join SongPlaylistRelationEntity on SongPlaylistRelationEntity.songId = SonEntity.id
-        where PlaylistEntity.id = :playlistId
+        where PlaylistEntity.id order by PlaylistEntity.id desc
     """
     )
-    fun getPlaylist(playlistId: Long): Flow<List<PlaylistResult>>
+    fun getAllPlaylist(): Flow<List<PlaylistResult>>
 }

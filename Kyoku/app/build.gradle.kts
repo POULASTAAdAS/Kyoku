@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.google.id)
 
 
+    // project
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
     implementation(projects.core.domain)
@@ -70,4 +71,9 @@ dependencies {
     implementation(projects.play.domain)
     implementation(projects.play.data)
     implementation(projects.play.network)
+
+    implementation(projects.setup.presentation)
+    implementation(projects.setup.domain)
+    implementation(projects.setup.data)
+    implementation(projects.setup.network)
 }

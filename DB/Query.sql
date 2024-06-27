@@ -30,7 +30,7 @@ delete from emailauthuser;
 delete from googleauthuser;
 
 
-
+select * from song;
 
 
 

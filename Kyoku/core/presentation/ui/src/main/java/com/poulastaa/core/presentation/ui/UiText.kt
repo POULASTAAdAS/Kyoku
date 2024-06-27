@@ -10,7 +10,7 @@ sealed interface UiText {
 
     class StringResource(
         @StringRes val resId: Int,
-        val args: Array<Any> = arrayOf()
+        val args: Array<Any> = arrayOf(),
     ) : UiText
 
     @Composable

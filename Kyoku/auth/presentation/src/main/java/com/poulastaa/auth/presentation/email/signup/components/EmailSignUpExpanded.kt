@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,9 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -41,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.auth.presentation.email.components.AuthContinueButton
 import com.poulastaa.auth.presentation.email.components.AuthTextField
@@ -90,7 +85,7 @@ fun EmailSignUpExpanded(
                             if (it.isFocused) requestAutofillForNode(autoFillUserName)
                             else cancelAutofillForNode(autoFillUserName)
                         }
-                    } ,
+                    },
                 text = state.userName,
                 onValueChange = { onEvent(EmailSignUpUiEvent.OnUserNameChange(it)) },
                 label = stringResource(id = R.string.username),
@@ -282,7 +277,8 @@ private fun Preview() {
                 autoFillEmail = autoFillEmail,
                 autoFillPassword = autoFillEmail,
                 autoFill = null,
-                state = EmailSignUpUiState()) {
+                state = EmailSignUpUiState()
+            ) {
 
             }
         }

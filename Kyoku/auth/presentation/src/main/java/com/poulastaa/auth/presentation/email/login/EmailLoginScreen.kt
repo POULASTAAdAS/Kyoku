@@ -14,7 +14,7 @@ import com.poulastaa.auth.presentation.email.login.components.EmailLoginCompactS
 import com.poulastaa.auth.presentation.email.login.components.EmailLoginExpandedScreen
 import com.poulastaa.auth.presentation.email.login.components.EmailLoginMediumScreen
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.presentation.designsystem.components.ScreenWrapper
+import com.poulastaa.core.presentation.designsystem.components.AuthScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
 @Composable
@@ -80,7 +80,7 @@ private fun EmailLoginScreen(
     LocalAutofillTree.current += autoFillPassword
 
 
-    ScreenWrapper(
+    AuthScreenWrapper(
         compactContent = {
             EmailLoginCompactScreen(
                 autoFillEmail = autoFillEmail,

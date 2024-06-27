@@ -26,10 +26,15 @@ internal fun Project.configureBuildTypes(
                 extensions.configure<ApplicationExtension> {
                     buildTypes {
                         debug {
-                            configureDebugBuildType(authUrl, serviceUrl,clientId)
+                            configureDebugBuildType(authUrl, serviceUrl, clientId)
                         }
                         release {
-                            configureReleaseBuildType(commonExtension, authUrl, serviceUrl,clientId)
+                            configureReleaseBuildType(
+                                commonExtension,
+                                authUrl,
+                                serviceUrl,
+                                clientId
+                            )
                         }
                     }
                 }
@@ -39,10 +44,15 @@ internal fun Project.configureBuildTypes(
                 extensions.configure<LibraryExtension> {
                     buildTypes {
                         debug {
-                            configureDebugBuildType(authUrl, serviceUrl,clientId)
+                            configureDebugBuildType(authUrl, serviceUrl, clientId)
                         }
                         release {
-                            configureReleaseBuildType(commonExtension, authUrl, serviceUrl,clientId)
+                            configureReleaseBuildType(
+                                commonExtension,
+                                authUrl,
+                                serviceUrl,
+                                clientId
+                            )
                         }
                     }
                 }

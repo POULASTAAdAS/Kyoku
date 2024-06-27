@@ -48,6 +48,8 @@ legacySupport = "1.0.0"
 
 secretsPlugin = "2.0.1"
 
+palette = "1.0.0"
+
 composeCompiler = "1.5.1"
 
 #gradle
@@ -99,10 +101,6 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 
 
 okhttp-url-connection = { group = "com.squareup.okhttp3", name = "okhttp-urlconnection", version.ref = "okhttp" }
-#retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-#retrofit-gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
-#retrofit-serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "serializationConverter" }
-#retrofitScalarsConverter = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit" }
 
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
@@ -130,6 +128,8 @@ media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 legacy-support-V4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupport" }
+
+androidx-palette = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }
 
 #androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 

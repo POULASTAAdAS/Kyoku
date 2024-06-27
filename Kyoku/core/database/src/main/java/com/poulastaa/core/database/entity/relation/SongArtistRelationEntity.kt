@@ -1,15 +1,16 @@
 package com.poulastaa.core.database.entity.relation
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import com.poulastaa.core.database.entity.ArtistEntity
-import com.poulastaa.core.database.entity.SonEntity
+import com.poulastaa.core.database.entity.SongEntity
 
 @Entity(
     tableName = "SongArtistRelationEntity",
     foreignKeys = [
         ForeignKey(
-            entity = SonEntity::class,
+            entity = SongEntity::class,
             parentColumns = ["id"],
             childColumns = ["songId"],
             onDelete = ForeignKey.CASCADE
@@ -24,6 +25,8 @@ import com.poulastaa.core.database.entity.SonEntity
     primaryKeys = ["songId", "artistId"]
 )
 data class SongArtistRelationEntity(
+    @ColumnInfo(index = true)
     val songId: Long,
+    @ColumnInfo(index = true)
     val artistId: Long,
 )

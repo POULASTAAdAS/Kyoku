@@ -6,7 +6,5 @@ data class PlaylistResult(
     val songId: Long,
     val songTitle: String,
     val songCoverImage: String,
-    val artistId: Long,
-    val artistName: String,
-    val artistCoverImage: String,
+    val artist: String,
 )

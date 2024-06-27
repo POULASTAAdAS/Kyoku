@@ -5,17 +5,17 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
-import com.poulastaa.core.database.entity.SonEntity
+import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 
 @Dao
 interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSong(song: SonEntity)
+    suspend fun insertSong(song: SongEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSongs(songs: List<SonEntity>)
+    suspend fun insertSongs(songs: List<SongEntity>)
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

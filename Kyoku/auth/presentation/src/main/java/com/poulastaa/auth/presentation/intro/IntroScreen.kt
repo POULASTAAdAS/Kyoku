@@ -1,7 +1,6 @@
 package com.poulastaa.auth.presentation.intro
 
 import android.app.Activity
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -11,7 +10,7 @@ import com.poulastaa.auth.presentation.intro.components.IntroExpandedScreen
 import com.poulastaa.auth.presentation.intro.components.IntroMediumScreen
 import com.poulastaa.auth.presentation.intro.components.StartActivityForResult
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.presentation.designsystem.components.ScreenWrapper
+import com.poulastaa.core.presentation.designsystem.components.AuthScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
 @Composable
@@ -65,7 +64,7 @@ private fun IntroScreen(
         }
     )
 
-    ScreenWrapper(
+    AuthScreenWrapper(
         compactContent = {
             IntroCompactScreen(
                 state = state,

@@ -1,7 +1,7 @@
 package com.poulastaa.utils
 
 object Constants {
-    private const val CURRENT_PROJECT_FOLDER = "G:/"
+    private const val CURRENT_PROJECT_FOLDER = "G:"
 
     private const val PROFILE_PIC_ROOT_DIR = "$CURRENT_PROJECT_FOLDER/data/profilePic"
 

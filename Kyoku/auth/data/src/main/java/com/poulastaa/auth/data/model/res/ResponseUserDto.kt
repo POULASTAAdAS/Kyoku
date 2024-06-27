@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ResponseUserDto(
     val email: String = "",
     val userName: String = "",
-    val profilePic: String = ""
+    val profilePic: String = "",
 )

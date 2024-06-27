@@ -3,7 +3,7 @@ package com.poulastaa.core.presentation.designsystem
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,3 +46,16 @@ val UserIcon: ImageVector
 val ArrowBackIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ArrowBack
+
+val LinkIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.link)
+
+val MusicImage: Painter
+    @Composable
+    get() = painterResource(id = R.drawable.ic_music)
+
+val DropDownIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.ArrowDropDown
+
