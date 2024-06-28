@@ -22,11 +22,12 @@ class SongDao(id: EntityID<Long>) : LongEntity(id) {
     val year by SongTable.year
     var points by SongTable.points
 
-    fun constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.PlaySongMaster.route}?master=${
-        this.masterPlaylistPath.replace(MASTER_PLAYLIST_ROOT_DIR, "")
+    fun constructCoverImage() = "${System.getenv("SERVICE_URL") + EndPoints.GetCoverImage.route}?coverImage=${
+        this.coverImage.replace(COVER_IMAGE_ROOT_DIR, "")
     }"
 
-    fun constructCoverImage() = "${System.getenv("SERVICE_URL") + EndPoints.PlaySongMaster.route}?coverImage=${
-        this.coverImage.replace(COVER_IMAGE_ROOT_DIR, "")
+
+     fun constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.GetCoverImage.route}?master=${
+        this.masterPlaylistPath.replace(MASTER_PLAYLIST_ROOT_DIR, "")
     }"
 }

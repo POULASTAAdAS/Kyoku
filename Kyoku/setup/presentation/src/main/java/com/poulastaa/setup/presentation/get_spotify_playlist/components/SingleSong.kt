@@ -2,6 +2,7 @@ package com.poulastaa.setup.presentation.get_spotify_playlist.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -144,21 +145,37 @@ private fun SingleSong(
     coverImage: String,
     storeLoadedBitmapInLocalDatabase: (Bitmap?) -> Unit,
 ) {
-    val image = loadImageBitmap(
+    val bitmap = loadImageBitmap(
         url = coverImage,
         header = header
     )
 
-    LaunchedEffect(key1 = image != null) {
-        storeLoadedBitmapInLocalDatabase(image)
+    LaunchedEffect(key1 = bitmap != null) {
+        storeLoadedBitmapInLocalDatabase(bitmap)
     }
+
+    val image = BitmapConverter.decodeToImageBitmap(coverImage)
 
     Row(
         modifier = modifier
             .padding(MaterialTheme.dimens.small3)
     ) {
-        SubcomposeAsyncImage(
-            model = BitmapConverter.decodeToImageBitmap(coverImage) ?: image,
+        if (image != null) {
+            Image(
+                bitmap = image,
+                contentDescription = null,
+                Modifier
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .border(
+                        width = 1.2.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(.3f),
+                        shape = CircleShape
+                    ),
+                alignment = Alignment.Center,
+            )
+        } else SubcomposeAsyncImage(
+            model = coverImage,
             contentDescription = null,
             modifier = Modifier
                 .aspectRatio(1f)

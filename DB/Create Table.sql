@@ -55,7 +55,7 @@ composer text not null default (''),
 publisher text not null default (''),
 album_artist text not null default (''),
 track text not null default (''),
-`year` year,
+`year` int,
 points bigint not null default(0)
 );
 
@@ -75,11 +75,18 @@ primary key(songId , albumId)
 );
 
 
+Create table Playlist(
+id Bigint primary key auto_increment,
+name varchar(400) not null,
+points bigint not null default(0)
+);
 
+Create Table SongPlaylistRelation(
+playlistId bigint references Playlist(id) on delete cascade,
+songId bigint references Song(id) on delete cascade,
 
-
-
-
+primary key(playlistId , songId)
+);
 
 
 

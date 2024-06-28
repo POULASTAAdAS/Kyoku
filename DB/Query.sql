@@ -29,15 +29,24 @@ select * from loginverificationmail;
 delete from emailauthuser;
 delete from googleauthuser;
 
+select * from song where title like 'Rehnuma%';
+
+select * from playlist;
+
+drop table playlist;
+
+
+
 
 select * from song;
 
+select * from songartistrelation where songid = 47673;
 
 
-
-
-
-
+SELECT COUNT(s.id)
+FROM song s
+LEFT JOIN songartistRelation sar ON s.id = sar.songid
+WHERE sar.songid IS NULL;
 
 
 

@@ -1,11 +1,11 @@
 package com.poulastaa.utils
 
 object Constants {
-     private const val CURRENT_PROJECT_FOLDER = "G:"
+    const val CURRENT_PROJECT_FOLDER = "G:"
     private const val PROFILE_PIC_ROOT_DIR = "/data/profilePic"
 
     const val MASTER_PLAYLIST_ROOT_DIR = "/data/master/"
-    const val COVER_IMAGE_ROOT_DIR = "/data/coverPhoto/"
+    const val COVER_IMAGE_ROOT_DIR = "/data/coverImage/"
     const val ARTIST_IMAGE_ROOT_DIR = "/data/artist/"
 
     const val PLAYLIST = "/songs/"

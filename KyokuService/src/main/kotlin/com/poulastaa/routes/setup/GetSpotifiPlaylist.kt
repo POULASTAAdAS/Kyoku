@@ -1,71 +1,61 @@
 package com.poulastaa.routes.setup
 
+import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.req.setup.CreatePlaylistReq
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.SpotifySongTitle
+import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.route_ext.getReqUserPayload
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import kotlinx.serialization.json.*
 
 fun Route.getSpotifyPlaylist(
-
+    service: UserRepository,
 ) {
     authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.GetSpotifyPlaylistSong.route) {
             post {
+                val playlistId = call.receiveNullable<CreatePlaylistReq>()
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
+                val userPayload = call.getReqUserPayload()
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val playlistJson =
+                    getPlaylist(playlistId.playlistId) ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val spotifyPayload = getSpotifySongPayload(playlistJson)
+
+                if (spotifyPayload.isEmpty()) return@post call.respond(
+                    message = PlaylistDto(),
+                    status = HttpStatusCode.OK
+                )
+
+                val response = service.getSpotifyPlaylist(
+                    userPayload = userPayload,
+                    spotifyPayload = spotifyPayload
+                )
+
+                call.respond(
+                    message = response,
+                    status = HttpStatusCode.OK
+                )
             }
         }
     }
 }
 
-
-private fun getSpotifySongPayload(json: String): List<SpotifySongTitle> {
-    val list = ArrayList<SpotifySongTitle>()
-
-    return try {
-        val jsonElement = Json.parseToJsonElement(json)
-
-        val itemsArray = jsonElement.jsonObject["items"]?.jsonArray
-
-        itemsArray?.forEach { item ->
-            val trackJson = item?.jsonObject?.get("track") // some items don't exist this check is important
-
-            if (trackJson != null && trackJson is JsonObject) {
-                trackJson.jsonObject["track"]?.jsonObject?.get("name")
-                    ?.jsonPrimitive?.contentOrNull?.let { name ->
-                        if (name.isNotBlank()) {
-                            val title = name.removeAlbumNameIfAny()
-
-                            if (title.isNotEmpty()) list.add(title)
-                        }
-                    }
-            }
-        }
-        list
-    } catch (_: Exception) {
-        emptyList()
-    }
-}
-
-
-fun String.removeAlbumNameIfAny(): String =
-    this.replace(Regex("\\(.*"), "").trim()
-
-fun String.getAlbum(): String {
-    val temp = Regex("\"([^\"]+)\"").find(this)
-
-    temp?.let {
-        return it.groupValues[1].trim()
-    }
-    return this.replace(Regex("\\(.*"), "").trim()
-}
 
 private suspend fun getPlaylist(playlistId: String): String? {
     val accessToken = getSpotifyPlaylistAccessToken() ?: return null
@@ -107,3 +97,29 @@ private suspend fun getSpotifyPlaylistAccessToken(
 private fun String.encodeBase64(): String {
     return java.util.Base64.getEncoder().encodeToString(this.toByteArray())
 }
+
+private fun getSpotifySongPayload(json: String): List<SpotifySongTitle> {
+    val list = ArrayList<SpotifySongTitle>()
+
+    return try {
+        val jsonElement = Json.parseToJsonElement(json)
+
+        val itemsArray = jsonElement.jsonObject["items"]?.jsonArray
+
+        itemsArray?.forEach { item ->
+            item?.jsonObject?.get("track")?.jsonObject?.get("name")?.jsonPrimitive?.contentOrNull?.let { name ->
+                if (name.isNotBlank()) {
+                    val title = name.removeAlbumNameIfAny()
+
+                    if (title.isNotEmpty()) list.add(title)
+                }
+            }
+        }
+        list
+    } catch (e: Exception) {
+        emptyList()
+    }
+}
+
+private fun String.removeAlbumNameIfAny(): String =
+    this.replace(Regex("\\(.*"), "").trim()

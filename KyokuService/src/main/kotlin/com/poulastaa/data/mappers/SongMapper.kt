@@ -10,5 +10,4 @@ fun SongDao.toSonDto(artist: String) = SongDto(
     artistName = artist,
     releaseYear = this.year,
     masterPlaylistUrl = this.constructMasterPlaylistUrl()
-
 )

@@ -3,6 +3,8 @@ package com.poulastaa.domain.model
 sealed class EndPoints(val route: String) {
     data object GetSpotifyPlaylistSong : EndPoints(route = "/api/authorised/spotifyPlaylist")
 
+    data object GetCoverImage : EndPoints(route = "/api/authorised/coverImage")
+
     data object StoreBDate : EndPoints(route = "/api/authorised/storeBDate")
 
     data object SuggestGenre : EndPoints(route = "/api/authorised/suggestGenre")

@@ -29,8 +29,9 @@ suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.
     route: String,
     body: Request,
     gson: Gson,
+    auth: Boolean = false,
 ): Result<Response, DataError.Network> {
-    val url = constructAuthRoute(route)
+    val url = if (auth) constructAuthRoute(route) else constructServiceRoute(route)
 
     val reqBody = gson.toJson(body).toRequestBody(mediaType)
     val req = Req.Builder().url(url).post(reqBody).build()

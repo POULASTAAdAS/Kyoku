@@ -102,6 +102,9 @@ fun SpotifyCompactScreen(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
                 contentPadding = PaddingValues(MaterialTheme.dimens.small3),
                 internalPadding = MaterialTheme.dimens.small3,
+                cardClick = {
+                    onEvent(SpotifyPlaylistUiEvent.OnPlaylistClick(it))
+                },
                 storeLoadedBitmapInLocalDatabase = { id, bitmap ->
                     onEvent(SpotifyPlaylistUiEvent.UpdateCoverImage(id, bitmap))
                 }

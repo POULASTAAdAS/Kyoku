@@ -1,13 +1,9 @@
-package com.poulastaa.data.model
+package com.poulastaa.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class SongDto(
+data class ResultSong(
     val id: Long = -1,
     val coverImage: String = "",
     val title: String = "",
-    val artistName: String,
     val releaseYear: Int = -1,
     val masterPlaylistUrl: String = "",
 )

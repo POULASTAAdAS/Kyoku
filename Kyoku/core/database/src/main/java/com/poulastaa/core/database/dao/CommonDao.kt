@@ -45,4 +45,20 @@ interface CommonDao {
 
     @Query("select id from SongEntity where coverImage = :url")
     suspend fun getSongOnUrl(url: String): Long?
+
+    @Query(
+        """
+        update SongEntity 
+        set coverImage = :encodedCoverImage , `primary` = :primary , 
+        background = :background , onBackground = :onBackground
+        where id = :songId
+    """
+    )
+    suspend fun updateCoverAndColor(
+        songId: Long,
+        encodedCoverImage: String,
+        primary: String,
+        background: String,
+        onBackground: String,
+    )
 }

@@ -1,5 +1,11 @@
 package com.poulastaa.domain.repository
 
-interface UserRepository {
+import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.domain.model.ReqUserPayload
 
+interface UserRepository {
+    suspend fun getSpotifyPlaylist(
+        userPayload: ReqUserPayload,
+        spotifyPayload: List<SpotifySongTitle>,
+    ): PlaylistDto
 }

@@ -16,6 +16,8 @@ object BitmapConverter {
     }
 
     fun decodeToImageBitmap(encodedString: String): ImageBitmap? {
+        if (encodedString.startsWith("http")) return null
+
         return try {
             val encodedBytes =
                 android.util.Base64.decode(encodedString, android.util.Base64.DEFAULT)

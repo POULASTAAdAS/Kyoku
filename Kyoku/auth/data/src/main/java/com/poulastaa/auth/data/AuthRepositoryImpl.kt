@@ -14,8 +14,8 @@ import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.ForgotPasswordSetStatus
 import com.poulastaa.auth.domain.auth.UserAuthStatus
 import com.poulastaa.core.data.network.authGet
-import com.poulastaa.core.data.network.post
 import com.poulastaa.core.data.network.getCookie
+import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.ScreenEnum
@@ -50,7 +50,8 @@ class AuthRepositoryImpl @Inject constructor(
                 userName = username,
                 countryCode = countryCode
             ),
-            gson = gson
+            gson = gson,
+            auth = true
         )
 
         if (response is Result.Success) {
@@ -73,7 +74,8 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password,
             ),
-            gson = gson
+            gson = gson,
+            auth = true
         )
 
         if (response is Result.Success) {
@@ -95,7 +97,8 @@ class AuthRepositoryImpl @Inject constructor(
                 token = token,
                 countryCode = countryCode
             ),
-            gson = gson
+            gson = gson,
+            auth = true
         )
 
         if (response is Result.Success) {

@@ -36,7 +36,7 @@ private fun provideDataSource(url: String, driverClass: String): HikariDataSourc
         }
     )
 
-suspend fun <T> dbQuery(block: suspend () -> T): T {
+suspend fun <T> query(block: suspend () -> T): T {
     return try {
         newSuspendedTransaction(
             Dispatchers.IO,

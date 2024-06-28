@@ -1,6 +1,6 @@
 package com.poulastaa.data.dao
 
-import com.poulastaa.domain.table.other.CountryTable
+import com.poulastaa.domain.table.CountryTable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

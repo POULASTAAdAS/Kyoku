@@ -58,7 +58,13 @@ class RoomLocalSpotifyDataSource @Inject constructor(
         background: String,
         onBackground: String,
     ) {
-
+        commonDao.updateCoverAndColor(
+            songId = songId,
+            encodedCoverImage = encodedCoverImage,
+            primary = primary,
+            background = background,
+            onBackground = onBackground
+        )
     }
 
     override fun getAllPlaylistWithSong(): Flow<List<PlaylistWithSongInfo>> =

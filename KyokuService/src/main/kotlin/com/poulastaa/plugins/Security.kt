@@ -2,7 +2,7 @@ package com.poulastaa.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
 import com.poulastaa.domain.model.EndPoints
-import com.poulastaa.domain.model.GoogleUserSession
+import com.poulastaa.domain.model.UserSession
 import com.poulastaa.domain.repository.JWTRepository
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.server.application.*
@@ -36,7 +36,7 @@ fun Application.configureSecurity() {
             }
         }
 
-        session<GoogleUserSession>(SECURITY_LIST[1]) {
+        session<UserSession>(SECURITY_LIST[1]) {
             validate { it }
 
             challenge { call.resolveResource(EndPoints.UnAuthorised.route) }
