@@ -13,6 +13,7 @@ import com.poulastaa.core.presentation.BitmapConverter
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.toSpotifyPlaylistId
+import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.toUiPlaylist
 import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.validateSpotifyLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,16 @@ class SpotifyViewModel @Inject constructor(
             ds.readTokenOrCookie().collectLatest {
                 state = state.copy(
                     authHeader = it
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            repository.getPlaylists().collectLatest { list ->
+                state = state.copy(
+                    playlists = list.map { entry ->
+                        entry.toUiPlaylist()
+                    }
                 )
             }
         }
