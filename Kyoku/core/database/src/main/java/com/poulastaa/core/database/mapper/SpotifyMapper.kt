@@ -3,9 +3,9 @@ package com.poulastaa.core.database.mapper
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.model.PlaylistResult
-import com.poulastaa.core.domain.get_spotify_playlist.Playlist
-import com.poulastaa.core.domain.get_spotify_playlist.PlaylistSong
-import com.poulastaa.core.domain.get_spotify_playlist.Song
+import com.poulastaa.core.domain.model.Playlist
+import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.model.Song
 
 fun Song.toSongEntity() = SongEntity(
     id = id,

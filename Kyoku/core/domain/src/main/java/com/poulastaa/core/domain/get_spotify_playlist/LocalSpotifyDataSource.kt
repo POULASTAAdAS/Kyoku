@@ -1,5 +1,8 @@
 package com.poulastaa.core.domain.get_spotify_playlist
 
+import com.poulastaa.core.domain.model.Playlist
+import com.poulastaa.core.domain.model.PlaylistWithSongInfo
+import com.poulastaa.core.domain.model.Song
 import kotlinx.coroutines.flow.Flow
 
 typealias songId = Long
@@ -9,7 +12,17 @@ interface LocalSpotifyDataSource {
     suspend fun insertSongs(songs: List<Song>): List<songId>
     suspend fun insertPlaylist(playlist: Playlist): playlistId
 
-    suspend fun addColorToSong(songId: songId, encodedCoverImage: String)
+    suspend fun createRelationOnSongAndPlaylist(songIdList: List<songId>, playlistId: playlistId)
 
-    suspend fun getAllPlaylistWithSong(): Flow<List<PlaylistWithSong>>
+    suspend fun getSongOnUrl(url: String): songId?
+
+    suspend fun addColorToSong(
+        songId: songId,
+        encodedCoverImage: String,
+        primary: String,
+        background: String,
+        onBackground: String,
+    )
+
+    fun getAllPlaylistWithSong(): Flow<List<PlaylistWithSongInfo>>
 }

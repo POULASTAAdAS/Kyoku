@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain.get_spotify_playlist
+package com.poulastaa.core.domain.model
 
 data class Song(
     val id: Long,
@@ -7,7 +7,7 @@ data class Song(
     val artistName: String,
     val releaseYear: String,
     val masterPlaylistUrl: String,
-    val primary: String,
-    val background: String,
-    val onBackground: String,
+    val primary: String = "", // todo add default color
+    val background: String = "",
+    val onBackground: String = "",
 )

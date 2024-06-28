@@ -14,7 +14,7 @@ import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.ForgotPasswordSetStatus
 import com.poulastaa.auth.domain.auth.UserAuthStatus
 import com.poulastaa.core.data.network.authGet
-import com.poulastaa.core.data.network.authPost
+import com.poulastaa.core.data.network.post
 import com.poulastaa.core.data.network.getCookie
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.EndPoints
@@ -42,7 +42,7 @@ class AuthRepositoryImpl @Inject constructor(
         username: String,
         countryCode: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.authPost<EmailSignUpReq, EmailAuthDto>(
+        val response = client.post<EmailSignUpReq, EmailAuthDto>(
             route = EndPoints.Auth.route,
             body = EmailSignUpReq(
                 email = email,
@@ -67,7 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.authPost<EmailLogInReq, EmailAuthDto>(
+        val response = client.post<EmailLogInReq, EmailAuthDto>(
             route = EndPoints.Auth.route,
             body = EmailLogInReq(
                 email = email,
@@ -89,7 +89,7 @@ class AuthRepositoryImpl @Inject constructor(
         token: String,
         countryCode: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.authPost<GoogleAuthReq, GoogleAuthDto>(
+        val response = client.post<GoogleAuthReq, GoogleAuthDto>(
             route = EndPoints.Auth.route,
             body = GoogleAuthReq(
                 token = token,

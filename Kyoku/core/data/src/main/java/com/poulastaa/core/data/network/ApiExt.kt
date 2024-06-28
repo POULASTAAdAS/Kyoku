@@ -25,7 +25,7 @@ import okhttp3.Request as Req
 
 val mediaType = "application/json".toMediaType()
 
-suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.authPost(
+suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.post(
     route: String,
     body: Request,
     gson: Gson,

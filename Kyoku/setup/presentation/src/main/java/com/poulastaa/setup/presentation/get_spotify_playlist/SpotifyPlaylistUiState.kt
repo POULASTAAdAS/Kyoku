@@ -7,5 +7,7 @@ data class SpotifyPlaylistUiState(
     val isMakingApiCall: Boolean = false,
     val link: TextHolder = TextHolder(),
 
+    val authHeader: String = "",
+
     val playlists: List<UiPlaylist> = emptyList(),
 )

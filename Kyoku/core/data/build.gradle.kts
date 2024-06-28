@@ -15,5 +15,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
 
+    implementation(libs.androidx.palette)
+
     implementation(libs.datastore.preferences)
 }

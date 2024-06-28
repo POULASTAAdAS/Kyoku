@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.di
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -11,11 +12,13 @@ import com.poulastaa.core.data.DataStoreRepositoryImpl
 import com.poulastaa.core.data.network.AuthHeaderInterceptor
 import com.poulastaa.core.domain.ConfigProviderRepository
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.kyoku.Kyoku
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import java.net.CookieManager
@@ -56,10 +59,16 @@ object AppModule {
     @Singleton
     fun provideHttClient(
         cookieManager: CookieManager,
-        ds: DataStoreRepository
+        ds: DataStoreRepository,
     ): OkHttpClient = OkHttpClient
         .Builder()
         .addInterceptor(AuthHeaderInterceptor(ds = ds))
         .cookieJar(JavaNetCookieJar(cookieManager))
         .build()
+
+    @Provides
+    @Singleton
+    fun provideCoroutineScope(
+        application: Application,
+    ): CoroutineScope = (application as Kyoku).applicationScope()
 }

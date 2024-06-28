@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.poulastaa.core.presentation.BitmapConverter
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DropDownIcon
 import com.poulastaa.core.presentation.designsystem.MusicImage
@@ -57,6 +58,7 @@ import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiSong
 fun PlaylistCard(
     modifier: Modifier = Modifier,
     elevation: CardElevation,
+    header: String,
     playlist: UiPlaylist,
     internalPadding: Dp,
     storeLoadedBitmapInLocalDatabase: (id: Long, bitmap: Bitmap) -> Unit,
@@ -115,6 +117,7 @@ fun PlaylistCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(100.dp),
+                                header = header,
                                 title = song.title,
                                 artist = song.artist,
                                 coverImage = song.coverImage,
@@ -135,12 +138,16 @@ fun PlaylistCard(
 @Composable
 private fun SingleSong(
     modifier: Modifier = Modifier,
+    header: String,
     title: String,
     artist: String,
     coverImage: String,
     storeLoadedBitmapInLocalDatabase: (Bitmap?) -> Unit,
 ) {
-    val image = loadImageBitmap(url = coverImage)
+    val image = loadImageBitmap(
+        url = coverImage,
+        header = header
+    )
 
     LaunchedEffect(key1 = image != null) {
         storeLoadedBitmapInLocalDatabase(image)
@@ -151,7 +158,7 @@ private fun SingleSong(
             .padding(MaterialTheme.dimens.small3)
     ) {
         SubcomposeAsyncImage(
-            model = image ?: coverImage,
+            model = BitmapConverter.decodeToImageBitmap(coverImage) ?: image,
             contentDescription = null,
             modifier = Modifier
                 .aspectRatio(1f)
@@ -229,7 +236,7 @@ private fun SingleSong(
 @Composable
 private fun Preview() {
     var expanded by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     val playlist = (1..7).map {
@@ -267,6 +274,7 @@ private fun Preview() {
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 2.dp
                 ),
+                header = "",
                 playlist = playlist,
                 internalPadding = MaterialTheme.dimens.small3,
                 storeLoadedBitmapInLocalDatabase = { _, _ -> }

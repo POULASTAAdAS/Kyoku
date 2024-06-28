@@ -37,4 +37,6 @@
     <string name="add">A D D</string>
     <string name="spotify_top_appbar_title">Import Your Spotify Playlist</string>
     <string name="skip">S K I P</string>
+    <string name="error_invalid_spotify_link">Please enter valid playlist link</string>
+    <string name="playlist_added">Playlist added</string>
 </resources>

@@ -1,6 +1,6 @@
-package com.poulastaa.core.domain.get_spotify_playlist
+package com.poulastaa.core.domain.model
 
-data class PlaylistWithSong(
+data class PlaylistWithSongInfo(
     val playlistId: Long,
     val name: String,
     val listOfPlaylistSong: List<PlaylistSong>,

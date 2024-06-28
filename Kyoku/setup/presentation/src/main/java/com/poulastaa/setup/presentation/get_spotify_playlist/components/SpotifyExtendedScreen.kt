@@ -155,6 +155,7 @@ fun SpotifyExtendedScreen(
             ListContent(
                 elevation = elevation,
                 data = state.playlists,
+                header = state.authHeader,
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
                 internalPadding = MaterialTheme.dimens.medium1,

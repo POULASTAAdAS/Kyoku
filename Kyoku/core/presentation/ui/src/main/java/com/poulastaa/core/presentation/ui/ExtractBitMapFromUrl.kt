@@ -14,9 +14,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun loadImageBitmap(url: String): Bitmap? {
-    if (!url.startsWith("http")) return null
-
+fun loadImageBitmap(
+    url: String,
+    header: String,
+): Bitmap? {
     val context = LocalContext.current
     val bitmapState = remember { mutableStateOf<Bitmap?>(null) }
 
@@ -24,8 +25,12 @@ fun loadImageBitmap(url: String): Bitmap? {
         withContext(Dispatchers.IO) {
             val loader = ImageLoader(context)
             val request = ImageRequest.Builder(context)
+                .addHeader(
+                    name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
+                    value = header
+                )
                 .data(url)
-                .allowHardware(false) // Disable hardware bitmaps to get the bitmap
+                .allowHardware(false)
                 .build()
 
             val result = (loader.execute(request) as? SuccessResult)?.drawable

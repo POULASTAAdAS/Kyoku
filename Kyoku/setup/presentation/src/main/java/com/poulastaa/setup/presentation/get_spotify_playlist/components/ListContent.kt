@@ -16,6 +16,7 @@ import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 fun ListContent(
     elevation: CardElevation,
     data: List<UiPlaylist>,
+    header: String,
     verticalArrangement: Arrangement.Vertical,
     contentPadding: PaddingValues,
     internalPadding: Dp,
@@ -34,6 +35,7 @@ fun ListContent(
         ) { playlist ->
             PlaylistCard(
                 elevation = elevation,
+                header = header,
                 playlist = playlist,
                 internalPadding = internalPadding,
                 storeLoadedBitmapInLocalDatabase = storeLoadedBitmapInLocalDatabase

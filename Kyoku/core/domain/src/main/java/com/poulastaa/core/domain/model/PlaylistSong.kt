@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain.get_spotify_playlist
+package com.poulastaa.core.domain.model
 
 data class PlaylistSong(
     val id: Long,

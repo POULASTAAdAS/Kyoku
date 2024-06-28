@@ -1,4 +1,4 @@
-package com.poulastaa.core.database.utils
+package com.poulastaa.core.data
 
 import android.graphics.Bitmap
 import androidx.palette.graphics.Palette
@@ -52,4 +52,3 @@ private fun parseColorSwatch(color: Palette.Swatch?): String = if (color != null
 private fun parseBodyColor(color: Int?): String = if (color != null) {
     "#${Integer.toHexString(color)}"
 } else "#FFFFFF"
-
