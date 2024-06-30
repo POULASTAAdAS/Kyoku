@@ -53,11 +53,15 @@ class OnlineFirstSpotifyRepository @Inject constructor(
         }.await()
     }
 
-    override suspend fun updateCoverImage(
+    override suspend fun storeImageColor(
         songId: Long,
         encodedString: String,
     ) {
         applicationScope.async {
+            local.getSongColorInfo(songId)?.let {
+                if (it.primary != null && it.background != null && it.onBackground != null) return@async
+            }
+
             val bitmap = BitmapConverter.decodeToBitmap(encodedString) ?: return@async
 
             val colorMap = ColorGenerator.extractColorFromBitMap(bitmap)
@@ -74,7 +78,6 @@ class OnlineFirstSpotifyRepository @Inject constructor(
 
             local.addColorToSong(
                 songId = songId,
-                encodedCoverImage = encodedString,
                 primary = primary ?: defaultPrimary,
                 background = background ?: defaultBackground,
                 onBackground = onBackground ?: defaultOnBackground

@@ -7,7 +7,7 @@ sealed interface SpotifyPlaylistUiEvent {
     data object OnLikeSubmit : SpotifyPlaylistUiEvent
     data class OnPlaylistClick(val id: Long) : SpotifyPlaylistUiEvent
 
-    data class UpdateCoverImage(
+    data class StoreImageColor(
         val id: Long,
         val bitmap: Bitmap,
     ) : SpotifyPlaylistUiEvent

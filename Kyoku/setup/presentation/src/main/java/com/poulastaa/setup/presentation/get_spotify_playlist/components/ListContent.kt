@@ -24,7 +24,7 @@ fun ListContent(
     contentPadding: PaddingValues,
     internalPadding: Dp,
     cardClick: (id: Long) -> Unit,
-    storeLoadedBitmapInLocalDatabase: (id: Long, bitmap: Bitmap) -> Unit,
+    storeImageColor: (id: Long, bitmap: Bitmap) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
@@ -51,7 +51,7 @@ fun ListContent(
                 header = header,
                 playlist = playlist,
                 internalPadding = internalPadding,
-                storeLoadedBitmapInLocalDatabase = storeLoadedBitmapInLocalDatabase
+                storeImageColor = storeImageColor
             )
         }
     }

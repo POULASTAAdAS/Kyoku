@@ -162,8 +162,8 @@ fun SpotifyExtendedScreen(
                 cardClick = {
                     onEvent(SpotifyPlaylistUiEvent.OnPlaylistClick(it))
                 },
-                storeLoadedBitmapInLocalDatabase = { id , bitmap ->
-                    onEvent(SpotifyPlaylistUiEvent.UpdateCoverImage(id, bitmap))
+                storeImageColor = { id, bitmap ->
+                    onEvent(SpotifyPlaylistUiEvent.StoreImageColor(id, bitmap))
                 }
             )
         }

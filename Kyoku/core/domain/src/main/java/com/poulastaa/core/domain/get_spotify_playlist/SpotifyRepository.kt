@@ -9,7 +9,7 @@ interface SpotifyRepository {
     fun getPlaylists(): Flow<List<PlaylistWithSongInfo>>
     suspend fun insertPlaylist(url: String): EmptyResult<DataError>
 
-    suspend fun updateCoverImage(
+    suspend fun storeImageColor(
         songId: Long,
         encodedString: String,
     )

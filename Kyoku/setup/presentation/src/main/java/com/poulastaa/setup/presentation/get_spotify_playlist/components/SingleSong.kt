@@ -40,18 +40,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.poulastaa.core.presentation.BitmapConverter
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DropDownIcon
 import com.poulastaa.core.presentation.designsystem.MusicImage
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.loadImageBitmap
+import com.poulastaa.core.presentation.ui.getBitmapFromUrlOrCache
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiSong
 
@@ -62,7 +63,7 @@ fun PlaylistCard(
     header: String,
     playlist: UiPlaylist,
     internalPadding: Dp,
-    storeLoadedBitmapInLocalDatabase: (id: Long, bitmap: Bitmap) -> Unit,
+    storeImageColor: (id: Long, bitmap: Bitmap) -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -109,27 +110,26 @@ fun PlaylistCard(
                     playlist.isExpanded
                 }
 
-                if (temp)
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)
-                    ) {
-                        playlist.listOfUiSong.forEach { song ->
-                            SingleSong(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                header = header,
-                                title = song.title,
-                                artist = song.artist,
-                                coverImage = song.coverImage,
-                                storeLoadedBitmapInLocalDatabase = {
-                                    it?.let {
-                                        storeLoadedBitmapInLocalDatabase(song.id, it)
-                                    }
+                if (temp) Column(
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)
+                ) {
+                    playlist.listOfUiSong.forEach { song ->
+                        SingleSong(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            header = header,
+                            title = song.title,
+                            artist = song.artist,
+                            coverImageUrl = song.coverImage,
+                            storeImageColor = {
+                                it?.let {
+                                    storeImageColor(song.id, it)
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
+                }
             }
         }
     }
@@ -142,82 +142,91 @@ private fun SingleSong(
     header: String,
     title: String,
     artist: String,
-    coverImage: String,
-    storeLoadedBitmapInLocalDatabase: (Bitmap?) -> Unit,
+    coverImageUrl: String,
+    storeImageColor: (Bitmap?) -> Unit,
 ) {
-    val bitmap = loadImageBitmap(
-        url = coverImage,
-        header = header
-    )
+    val bitmapState = getBitmapFromUrlOrCache(url = coverImageUrl, header = header)
+    val bitmap = bitmapState.value
 
     LaunchedEffect(key1 = bitmap != null) {
-        storeLoadedBitmapInLocalDatabase(bitmap)
+        storeImageColor(bitmap)
     }
-
-    val image = BitmapConverter.decodeToImageBitmap(coverImage)
 
     Row(
         modifier = modifier
             .padding(MaterialTheme.dimens.small3)
     ) {
-        if (image != null) {
-            Image(
-                bitmap = image,
-                contentDescription = null,
-                Modifier
-                    .aspectRatio(1f)
-                    .clip(CircleShape)
-                    .border(
-                        width = 1.2.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(.3f),
-                        shape = CircleShape
-                    ),
-                alignment = Alignment.Center,
-            )
-        } else SubcomposeAsyncImage(
-            model = coverImage,
-            contentDescription = null,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .clip(CircleShape)
-                .border(
-                    width = 1.2.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(.3f),
-                    shape = CircleShape
-                ),
-            loading = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 1.5.dp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            },
-            error = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = MusicImage,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(MaterialTheme.dimens.medium1),
-                        alignment = Alignment.Center,
-                        colorFilter = ColorFilter.tint(
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    )
-                }
-            }
-        )
+//        if (bitmap != null) {
+//            Image(
+//                bitmap = bitmap.asImageBitmap(),
+//                contentDescription = null,
+//                contentScale = ContentScale.Inside,
+//                modifier = Modifier
+//                    .clip(CircleShape)
+//                    .aspectRatio(1f)
+//                    .border(
+//                        width = 1.2.dp,
+//                        color = MaterialTheme.colorScheme.primary.copy(.3f),
+//                        shape = CircleShape
+//                    )
+//            )
+//        } else {
+//            Box(
+//                modifier = Modifier.fillMaxSize(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                CircularProgressIndicator(
+//                    modifier = Modifier.size(20.dp),
+//                    strokeWidth = 1.5.dp,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                )
+//            }
+//        }
+//        SubcomposeAsyncImage(
+//            model = bitmap,
+//            contentDescription = null,
+//            contentScale = ContentScale.Inside,
+//            modifier = Modifier
+//                .clip(CircleShape)
+//                .aspectRatio(1f)
+//                .border(
+//                    width = 1.2.dp,
+//                    color = MaterialTheme.colorScheme.primary.copy(.3f),
+//                    shape = CircleShape
+//                ),
+//            loading = {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    CircularProgressIndicator(
+//                        modifier = Modifier.size(20.dp),
+//                        strokeWidth = 1.5.dp,
+//                        color = MaterialTheme.colorScheme.onSurface
+//                    )
+//                }
+//            },
+//            error = {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize(),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Image(
+//                        painter = MusicImage,
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(MaterialTheme.dimens.medium1),
+//                        alignment = Alignment.Center,
+//                        colorFilter = ColorFilter.tint(
+//                            color = MaterialTheme.colorScheme.onBackground
+//                        )
+//                    )
+//                }
+//            }
+//        )
 
         Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
@@ -294,7 +303,7 @@ private fun Preview() {
                 header = "",
                 playlist = playlist,
                 internalPadding = MaterialTheme.dimens.small3,
-                storeLoadedBitmapInLocalDatabase = { _, _ -> }
+                storeImageColor = { _, _ -> }
             )
         }
     }

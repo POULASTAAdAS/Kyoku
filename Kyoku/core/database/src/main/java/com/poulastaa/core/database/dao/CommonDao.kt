@@ -9,6 +9,7 @@ import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
+import com.poulastaa.core.database.model.SongColorResult
 
 @Dao
 interface CommonDao {
@@ -48,15 +49,23 @@ interface CommonDao {
 
     @Query(
         """
+    select `primary`, background, onBackground 
+    from SongEntity 
+    where id = :songId
+    """
+    )
+    suspend fun getSongColorInfo(songId: Long): SongColorResult
+
+    @Query(
+        """
         update SongEntity 
-        set coverImage = :encodedCoverImage , `primary` = :primary , 
+        set `primary` = :primary , 
         background = :background , onBackground = :onBackground
         where id = :songId
     """
     )
     suspend fun updateCoverAndColor(
         songId: Long,
-        encodedCoverImage: String,
         primary: String,
         background: String,
         onBackground: String,
