@@ -29,15 +29,7 @@ select * from loginverificationmail;
 -- delete from emailauthuser;
 -- delete from googleauthuser;
 
-select * from song where title like 'Rehnuma%';
-
-select * from playlist;
-
 -- drop table playlist;
-
-
-
-select * from song;
 
 
 SELECT COUNT(s.id)

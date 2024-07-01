@@ -1,6 +1,5 @@
 package com.poulastaa.setup.presentation.get_spotify_playlist.components
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,21 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 
 @Composable
 fun ListContent(
     elevation: CardElevation,
-    data: List<UiPlaylist>,
+    itemDefaultHeight: Dp = 100.dp,
     header: String,
+    data: List<UiPlaylist>,
     verticalArrangement: Arrangement.Vertical,
     contentPadding: PaddingValues,
     internalPadding: Dp,
     cardClick: (id: Long) -> Unit,
-    storeImageColor: (id: Long, bitmap: Bitmap) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         verticalArrangement = verticalArrangement,
         contentPadding = contentPadding
     ) {
@@ -47,11 +48,11 @@ fun ListContent(
                     },
                     indication = null
                 ),
-                elevation = elevation,
+                itemDefaultHeight = itemDefaultHeight,
                 header = header,
+                elevation = elevation,
                 playlist = playlist,
                 internalPadding = internalPadding,
-                storeImageColor = storeImageColor
             )
         }
     }

@@ -22,7 +22,7 @@ fun SpotifyFloatingActionButton(
     onClick: () -> Unit,
 ) {
     Button(
-        modifier = Modifier.padding(MaterialTheme.dimens.medium1),
+        modifier = Modifier.padding(MaterialTheme.dimens.small2),
         onClick = onClick,
         shape = if (isExpanded) MaterialTheme.shapes.medium else MaterialTheme.shapes.small,
         elevation = ButtonDefaults.buttonElevation(

@@ -39,4 +39,11 @@
     <string name="skip">S K I P</string>
     <string name="error_invalid_spotify_link">Please enter valid playlist link</string>
     <string name="playlist_added">Playlist added</string>
+    <string name="error_empyt_BDate">Please fill this field</string>
+    <string name="set_bDate_top_appbar_title">Set Your B\'Day</string>
+    <string name="select_b_date">Select B\'day</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="error_bDate_too_young">You are too young to use the app</string>
+    <string name="error_bDate_too_old">Age can\'t exced 99 year</string>
 </resources>

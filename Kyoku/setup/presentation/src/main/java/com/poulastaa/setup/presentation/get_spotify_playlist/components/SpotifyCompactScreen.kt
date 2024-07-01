@@ -104,9 +104,6 @@ fun SpotifyCompactScreen(
                 internalPadding = MaterialTheme.dimens.small3,
                 cardClick = {
                     onEvent(SpotifyPlaylistUiEvent.OnPlaylistClick(it))
-                },
-                storeImageColor = { id, bitmap ->
-                    onEvent(SpotifyPlaylistUiEvent.StoreImageColor(id, bitmap))
                 }
             )
         }

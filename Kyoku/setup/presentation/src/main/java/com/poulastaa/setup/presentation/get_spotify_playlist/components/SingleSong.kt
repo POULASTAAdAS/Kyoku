@@ -1,8 +1,6 @@
 package com.poulastaa.setup.presentation.get_spotify_playlist.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,7 +48,7 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DropDownIcon
 import com.poulastaa.core.presentation.designsystem.MusicImage
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.getBitmapFromUrlOrCache
+import com.poulastaa.core.presentation.ui.imageReq
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiSong
 
@@ -60,10 +56,10 @@ import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiSong
 fun PlaylistCard(
     modifier: Modifier = Modifier,
     elevation: CardElevation,
+    itemDefaultHeight: Dp,
     header: String,
     playlist: UiPlaylist,
     internalPadding: Dp,
-    storeImageColor: (id: Long, bitmap: Bitmap) -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -117,16 +113,11 @@ fun PlaylistCard(
                         SingleSong(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp),
+                                .height(itemDefaultHeight),
                             header = header,
                             title = song.title,
                             artist = song.artist,
                             coverImageUrl = song.coverImage,
-                            storeImageColor = {
-                                it?.let {
-                                    storeImageColor(song.id, it)
-                                }
-                            }
                         )
                     }
                 }
@@ -135,7 +126,6 @@ fun PlaylistCard(
     }
 }
 
-
 @Composable
 private fun SingleSong(
     modifier: Modifier = Modifier,
@@ -143,90 +133,59 @@ private fun SingleSong(
     title: String,
     artist: String,
     coverImageUrl: String,
-    storeImageColor: (Bitmap?) -> Unit,
 ) {
-    val bitmapState = getBitmapFromUrlOrCache(url = coverImageUrl, header = header)
-    val bitmap = bitmapState.value
-
-    LaunchedEffect(key1 = bitmap != null) {
-        storeImageColor(bitmap)
-    }
-
     Row(
         modifier = modifier
             .padding(MaterialTheme.dimens.small3)
     ) {
-//        if (bitmap != null) {
-//            Image(
-//                bitmap = bitmap.asImageBitmap(),
-//                contentDescription = null,
-//                contentScale = ContentScale.Inside,
-//                modifier = Modifier
-//                    .clip(CircleShape)
-//                    .aspectRatio(1f)
-//                    .border(
-//                        width = 1.2.dp,
-//                        color = MaterialTheme.colorScheme.primary.copy(.3f),
-//                        shape = CircleShape
-//                    )
-//            )
-//        } else {
-//            Box(
-//                modifier = Modifier.fillMaxSize(),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                CircularProgressIndicator(
-//                    modifier = Modifier.size(20.dp),
-//                    strokeWidth = 1.5.dp,
-//                    color = MaterialTheme.colorScheme.onSurface
-//                )
-//            }
-//        }
-//        SubcomposeAsyncImage(
-//            model = bitmap,
-//            contentDescription = null,
-//            contentScale = ContentScale.Inside,
-//            modifier = Modifier
-//                .clip(CircleShape)
-//                .aspectRatio(1f)
-//                .border(
-//                    width = 1.2.dp,
-//                    color = MaterialTheme.colorScheme.primary.copy(.3f),
-//                    shape = CircleShape
-//                ),
-//            loading = {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    CircularProgressIndicator(
-//                        modifier = Modifier.size(20.dp),
-//                        strokeWidth = 1.5.dp,
-//                        color = MaterialTheme.colorScheme.onSurface
-//                    )
-//                }
-//            },
-//            error = {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize(),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Image(
-//                        painter = MusicImage,
-//                        contentDescription = null,
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(MaterialTheme.dimens.medium1),
-//                        alignment = Alignment.Center,
-//                        colorFilter = ColorFilter.tint(
-//                            color = MaterialTheme.colorScheme.onBackground
-//                        )
-//                    )
-//                }
-//            }
-//        )
+        SubcomposeAsyncImage(
+            model = imageReq(
+                header = header,
+                url = coverImageUrl
+            ),
+            contentDescription = null,
+            contentScale = ContentScale.Inside,
+            modifier = Modifier
+                .clip(CircleShape)
+                .aspectRatio(1f)
+                .border(
+                    width = 1.2.dp,
+                    color = MaterialTheme.colorScheme.primary.copy(.3f),
+                    shape = CircleShape
+                ),
+            loading = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 1.5.dp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            error = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = MusicImage,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.dimens.medium1),
+                        alignment = Alignment.Center,
+                        colorFilter = ColorFilter.tint(
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                }
+            }
+        )
 
         Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
 
@@ -300,10 +259,10 @@ private fun Preview() {
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 2.dp
                 ),
+                itemDefaultHeight = 100.dp,
                 header = "",
                 playlist = playlist,
                 internalPadding = MaterialTheme.dimens.small3,
-                storeImageColor = { _, _ -> }
             )
         }
     }

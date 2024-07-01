@@ -16,7 +16,7 @@ import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 
 @Composable
-fun BackButton(
+fun AppBackButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -24,7 +24,7 @@ fun BackButton(
         modifier = modifier,
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary.copy(.8f),
             contentColor = MaterialTheme.colorScheme.background
         )
     ) {
@@ -48,7 +48,7 @@ private fun Preview() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(MaterialTheme.dimens.medium1)
         ) {
-            BackButton {
+            AppBackButton {
 
             }
         }

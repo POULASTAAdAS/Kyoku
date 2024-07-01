@@ -12,6 +12,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyRootScreen
+import com.poulastaa.setup.presentation.set_b_date.BDateRootScreen
 
 
 @Composable
@@ -173,7 +174,23 @@ private fun NavGraphBuilder.startUpGraph(
         }
 
         composable(route = Screens.SetBirthDate.route) {
+            BDateRootScreen(
+                navigateBack = {
+                    nav.popBackStack()
+                    nav.navigate(Screens.GetSpotifyPlaylist.route){
+                        popUpTo(Screens.SetBirthDate.route) {
+                            inclusive = true
+                            saveState = true
+                        }
 
+                        restoreState = true
+                    }
+                },
+                navigateToPicGenre = {
+                    nav.popBackStack()
+                    nav.navigate(Screens.PicGenre.route)
+                }
+            )
         }
 
         composable(route = Screens.PicGenre.route) {

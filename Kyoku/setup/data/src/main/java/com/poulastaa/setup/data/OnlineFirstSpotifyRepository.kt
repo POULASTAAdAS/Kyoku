@@ -1,7 +1,5 @@
 package com.poulastaa.setup.data
 
-import com.poulastaa.core.data.BitmapConverter
-import com.poulastaa.core.data.ColorGenerator
 import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
 import com.poulastaa.core.domain.get_spotify_playlist.RemoteSpotifyDataSource
 import com.poulastaa.core.domain.get_spotify_playlist.SpotifyRepository
@@ -20,10 +18,6 @@ class OnlineFirstSpotifyRepository @Inject constructor(
     private val remote: RemoteSpotifyDataSource,
     private val applicationScope: CoroutineScope,
 ) : SpotifyRepository {
-    private val defaultPrimary = "#002924"
-    private val defaultBackground = "#111413"
-    private val defaultOnBackground = "#739C93"
-
     override fun getPlaylists(): Flow<List<PlaylistWithSongInfo>> = local.getAllPlaylistWithSong()
 
     override suspend fun insertPlaylist(url: String): EmptyResult<DataError> {
@@ -53,35 +47,35 @@ class OnlineFirstSpotifyRepository @Inject constructor(
         }.await()
     }
 
-    override suspend fun storeImageColor(
-        songId: Long,
-        encodedString: String,
-    ) {
-        applicationScope.async {
-            local.getSongColorInfo(songId)?.let {
-                if (it.primary != null && it.background != null && it.onBackground != null) return@async
-            }
-
-            val bitmap = BitmapConverter.decodeToBitmap(encodedString) ?: return@async
-
-            val colorMap = ColorGenerator.extractColorFromBitMap(bitmap)
-
-            var primary = colorMap[ColorGenerator.ColorType.LIGHT_MUTED]
-            var background = colorMap[ColorGenerator.ColorType.DARK_MUTED]
-            var onBackground = colorMap[ColorGenerator.ColorType.MUTED_SWATCH]
-
-            if (primary == background) {
-                primary = defaultPrimary
-                background = defaultBackground
-                onBackground = defaultOnBackground
-            }
-
-            local.addColorToSong(
-                songId = songId,
-                primary = primary ?: defaultPrimary,
-                background = background ?: defaultBackground,
-                onBackground = onBackground ?: defaultOnBackground
-            )
-        }.await()
-    }
+//    override suspend fun storeImageColor(
+//        songId: Long,
+//        encodedString: String,
+//    ) {
+//        applicationScope.async {
+//            local.getSongColorInfo(songId)?.let {
+//                if (it.primary != null && it.background != null && it.onBackground != null) return@async
+//            }
+//
+//            val bitmap = BitmapConverter.decodeToBitmap(encodedString) ?: return@async
+//
+//            val colorMap = ColorGenerator.extractColorFromBitMap(bitmap)
+//
+//            var primary = colorMap[ColorGenerator.ColorType.LIGHT_MUTED]
+//            var background = colorMap[ColorGenerator.ColorType.DARK_MUTED]
+//            var onBackground = colorMap[ColorGenerator.ColorType.MUTED_SWATCH]
+//
+//            if (primary == background) {
+//                primary = defaultPrimary
+//                background = defaultBackground
+//                onBackground = defaultOnBackground
+//            }
+//
+//            local.addColorToSong(
+//                songId = songId,
+//                primary = primary ?: defaultPrimary,
+//                background = background ?: defaultBackground,
+//                onBackground = onBackground ?: defaultOnBackground
+//            )
+//        }.await()
+//    }
 }

@@ -8,9 +8,4 @@ import kotlinx.coroutines.flow.Flow
 interface SpotifyRepository {
     fun getPlaylists(): Flow<List<PlaylistWithSongInfo>>
     suspend fun insertPlaylist(url: String): EmptyResult<DataError>
-
-    suspend fun storeImageColor(
-        songId: Long,
-        encodedString: String,
-    )
 }

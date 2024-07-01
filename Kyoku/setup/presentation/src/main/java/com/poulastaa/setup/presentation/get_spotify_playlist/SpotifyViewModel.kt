@@ -9,10 +9,8 @@ import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.get_spotify_playlist.SpotifyRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
-import com.poulastaa.core.presentation.BitmapConverter
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
-import com.poulastaa.core.presentation.ui.getBitmapFromUrlOrCache
 import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.toSpotifyPlaylistId
 import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.toUiPlaylist
 import com.poulastaa.setup.presentation.get_spotify_playlist.mapper.validateSpotifyLink
@@ -133,15 +131,6 @@ class SpotifyViewModel @Inject constructor(
                         } else it
                     }
                 )
-            }
-
-            is SpotifyPlaylistUiEvent.StoreImageColor -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    repository.storeImageColor(
-                        songId = event.id,
-                        encodedString = BitmapConverter.encodeToSting(event.bitmap)
-                    )
-                }
             }
 
             SpotifyPlaylistUiEvent.OnSkipClick -> {

@@ -93,8 +93,8 @@ private fun Preview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.dimens.small1),
-                isLoading = true,
-                enable = false
+                isLoading = false,
+                enable = true
             ) {
 
             }

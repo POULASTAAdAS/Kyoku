@@ -59,7 +59,6 @@ fun SpotifyExtendedScreen(
         defaultElevation = 3.dp
     )
 
-
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -161,9 +160,6 @@ fun SpotifyExtendedScreen(
                 internalPadding = MaterialTheme.dimens.medium1,
                 cardClick = {
                     onEvent(SpotifyPlaylistUiEvent.OnPlaylistClick(it))
-                },
-                storeImageColor = { id, bitmap ->
-                    onEvent(SpotifyPlaylistUiEvent.StoreImageColor(id, bitmap))
                 }
             )
         }

@@ -4,15 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
 import coil.disk.DiskCache
@@ -38,91 +30,61 @@ private fun loadBitmapFromFile(filename: String, context: Context): Bitmap? {
     } else null
 }
 
+
 @Composable
-fun getBitmapFromUrlOrCache(
+fun imageReq(
+    header: String,
     url: String,
-    header: String
-): State<Bitmap?> {
-    val context = LocalContext.current
+) = ImageRequest.Builder(LocalContext.current)
+    .data(url)
+    .addHeader(
+        name = if (header.startsWith("Bearer")) "Authorization" else "Cookie",
+        value = header
+    )
+    .crossfade(true)
+    .build()
+
+
+suspend fun getBitmapFromUrlOrCache(
+    url: String,
+    header: String,
+    context: Context,
+): Bitmap? {
     val filename = url.hashCode().toString()
+    var bitmap: Bitmap?
 
-    return produceState<Bitmap?>(initialValue = null, url) {
-        value = withContext(Dispatchers.IO) {
-            loadBitmapFromFile(filename, context) ?: run {
-                val loader = ImageLoader.Builder(context)
-                    .diskCache {
-                        DiskCache.Builder()
-                            .directory(context.cacheDir.resolve("image_catch"))
-                            .maxSizePercent(0.02)
-                            .build()
-                    }
-                    .build()
+    withContext(Dispatchers.IO) {
+        bitmap = loadBitmapFromFile(filename, context)
 
-                val request = ImageRequest.Builder(context)
-                    .addHeader(
-                        name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
-                        value = header
-                    )
-                    .data(url)
-                    .allowHardware(false)
-                    .build()
-
-                val result = (loader.execute(request) as? SuccessResult)?.drawable
-                val newBitmap = (result as? BitmapDrawable)?.bitmap
-
-                newBitmap?.let {
-                    saveBitmapToFile(it, filename, context)
+        if (bitmap == null) {
+            val loader = ImageLoader.Builder(context)
+                .diskCache {
+                    DiskCache.Builder()
+                        .directory(context.cacheDir.resolve("image_catch"))
+                        .maxSizePercent(0.02)
+                        .build()
                 }
-                newBitmap
+                .build()
+
+            val request = ImageRequest.Builder(context)
+                .addHeader(
+                    name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
+                    value = header
+                )
+                .data(url)
+                .allowHardware(false)
+                .build()
+
+            val result = (loader.execute(request) as? SuccessResult)?.drawable
+            val newBitmap = (result as? BitmapDrawable)?.bitmap
+
+            newBitmap?.let {
+                saveBitmapToFile(it, filename, context)
+                bitmap = it
             }
         }
+
     }
+
+    return bitmap
 }
-
-
-//@Composable
-//fun getBitmapFromUrlOrCache(
-//    url: String,
-//    header: String,
-//): Bitmap? {
-//    val context = LocalContext.current
-//    val filename = url.hashCode().toString()
-//    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-//
-//    LaunchedEffect(url) {
-//        withContext(Dispatchers.IO) {
-//            bitmap = loadBitmapFromFile(filename, context)
-//
-//            if (bitmap == null) {
-//                val loader = ImageLoader.Builder(context)
-//                    .diskCache {
-//                        DiskCache.Builder()
-//                            .directory(context.cacheDir.resolve("image_catch"))
-//                            .maxSizePercent(0.02)
-//                            .build()
-//                    }
-//                    .build()
-//
-//                val request = ImageRequest.Builder(context)
-//                    .addHeader(
-//                        name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
-//                        value = header
-//                    )
-//                    .data(url)
-//                    .allowHardware(false)
-//                    .build()
-//
-//                val result = (loader.execute(request) as? SuccessResult)?.drawable
-//                val newBitmap = (result as? BitmapDrawable)?.bitmap
-//
-//                newBitmap?.let {
-//                    saveBitmapToFile(it, filename, context)
-//                    bitmap = it
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    return bitmap
-//}

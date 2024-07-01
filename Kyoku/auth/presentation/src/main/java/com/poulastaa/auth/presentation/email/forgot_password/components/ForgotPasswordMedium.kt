@@ -27,7 +27,7 @@ import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordUiSta
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.components.BackButton
+import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.dimens
 
 @Composable
@@ -37,7 +37,7 @@ fun ColumnScope.ForgotPasswordMedium(
 ) {
     val focusManager = LocalFocusManager.current
 
-    BackButton(
+    AppBackButton(
         modifier = Modifier.align(Alignment.Start)
     ) {
         onEvent(ForgotPasswordUiEvent.OnBackClick)

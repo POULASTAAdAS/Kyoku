@@ -3,20 +3,22 @@ package com.poulastaa.setup.presentation.get_spotify_playlist
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.components.AppTopAppbar
+import com.poulastaa.core.presentation.designsystem.components.SetupScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.setup.presentation.get_spotify_playlist.components.SpotifyCompactScreen
 import com.poulastaa.setup.presentation.get_spotify_playlist.components.SpotifyExtendedScreen
 import com.poulastaa.setup.presentation.get_spotify_playlist.components.SpotifyFloatingActionButton
 import com.poulastaa.setup.presentation.get_spotify_playlist.components.SpotifyMediumScreen
-import com.poulastaa.setup.presentation.get_spotify_playlist.components.SpotifyTopAppbar
 
 @Composable
 fun SpotifyRootScreen(
@@ -54,10 +56,12 @@ private fun SpotifyScreen(
     val context = LocalContext.current as Activity
     val windowSize = calculateWindowSizeClass(activity = context)
 
-    Scaffold(
+    SetupScreenWrapper(
+        windowSizeClass = windowSize,
         topBar = {
-            SpotifyTopAppbar(
-                isExpanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
+            AppTopAppbar(
+                isExpanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded,
+                text = stringResource(id = R.string.spotify_top_appbar_title)
             )
         },
         floatingActionButton = {
@@ -74,29 +78,27 @@ private fun SpotifyScreen(
                     }
                 )
             }
+        },
+        compactContent = { paddingValue ->
+            SpotifyCompactScreen(
+                state = state,
+                paddingValues = paddingValue,
+                onEvent = onEvent
+            )
+        },
+        mediumContent = { paddingValue ->
+            SpotifyMediumScreen(
+                state = state,
+                paddingValues = paddingValue,
+                onEvent = onEvent
+            )
+        },
+        expandedContent = { paddingValue ->
+            SpotifyExtendedScreen(
+                state = state,
+                paddingValues = paddingValue,
+                onEvent = onEvent
+            )
         }
-    ) {
-        when (windowSize.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                SpotifyCompactScreen(
-                    state = state, paddingValues = it,
-                    onEvent = onEvent
-                )
-            }
-
-            WindowWidthSizeClass.Medium -> {
-                SpotifyMediumScreen(
-                    state = state, paddingValues = it,
-                    onEvent = onEvent
-                )
-            }
-
-            WindowWidthSizeClass.Expanded -> {
-                SpotifyExtendedScreen(
-                    state = state, paddingValues = it,
-                    onEvent = onEvent
-                )
-            }
-        }
-    }
+    )
 }

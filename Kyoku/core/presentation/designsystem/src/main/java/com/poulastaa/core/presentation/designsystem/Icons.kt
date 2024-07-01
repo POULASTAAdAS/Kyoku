@@ -49,7 +49,7 @@ val ArrowBackIcon: ImageVector
 
 val LinkIcon: ImageVector
     @Composable
-    get() = ImageVector.vectorResource(id = R.drawable.link)
+    get() = ImageVector.vectorResource(id = R.drawable.ic_link)
 
 val MusicImage: Painter
     @Composable
@@ -58,4 +58,8 @@ val MusicImage: Painter
 val DropDownIcon: ImageVector
     @Composable
     get() = Icons.Rounded.ArrowDropDown
+
+val CalenderIcon: ImageVector
+    @Composable
+    get() =  ImageVector.vectorResource(id = R.drawable.ic_b_date)
 

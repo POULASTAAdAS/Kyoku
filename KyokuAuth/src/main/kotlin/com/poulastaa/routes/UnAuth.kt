@@ -10,7 +10,7 @@ fun Route.unAuthorised() {
     route(EndPoints.UnAuthorised.route) {
         get {
             call.respond(
-                message = "Unauthorised",
+                message = "Fuck you.Stop westing you and my time.",
                 status = HttpStatusCode.Unauthorized
             )
         }

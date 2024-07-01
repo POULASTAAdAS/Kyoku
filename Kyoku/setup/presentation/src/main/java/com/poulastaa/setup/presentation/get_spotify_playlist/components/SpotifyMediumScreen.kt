@@ -143,14 +143,12 @@ fun SpotifyMediumScreen(
                 elevation = elevation,
                 data = state.playlists,
                 header = state.authHeader,
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3),
-                contentPadding = PaddingValues(MaterialTheme.dimens.medium3),
+                itemDefaultHeight = 150.dp,
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
+                contentPadding = PaddingValues(MaterialTheme.dimens.small3),
                 internalPadding = MaterialTheme.dimens.medium2,
                 cardClick = {
                     onEvent(SpotifyPlaylistUiEvent.OnPlaylistClick(it))
-                },
-                storeImageColor = { id, bitmap ->
-                    onEvent(SpotifyPlaylistUiEvent.StoreImageColor(id, bitmap))
                 }
             )
         }

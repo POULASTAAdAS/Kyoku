@@ -5,7 +5,6 @@ import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPlaylistSong
-import com.poulastaa.core.database.mapper.toSongColor
 import com.poulastaa.core.database.mapper.toSongsEntity
 import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
 import com.poulastaa.core.domain.get_spotify_playlist.playlistId
@@ -13,7 +12,6 @@ import com.poulastaa.core.domain.get_spotify_playlist.songId
 import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.model.PlaylistWithSongInfo
 import com.poulastaa.core.domain.model.Song
-import com.poulastaa.core.domain.model.SongColor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -52,23 +50,6 @@ class RoomLocalSpotifyDataSource @Inject constructor(
     }
 
     override suspend fun getSongOnUrl(url: String): songId? = commonDao.getSongOnUrl(url)
-
-    override suspend fun getSongColorInfo(songId: Long): SongColor =
-        commonDao.getSongColorInfo(songId).toSongColor()
-
-    override suspend fun addColorToSong(
-        songId: songId,
-        primary: String,
-        background: String,
-        onBackground: String,
-    ) {
-        commonDao.updateCoverAndColor(
-            songId = songId,
-            primary = primary,
-            background = background,
-            onBackground = onBackground
-        )
-    }
 
     override fun getAllPlaylistWithSong(): Flow<List<PlaylistWithSongInfo>> =
         spotifyDao.getAllPlaylist().map { rawRes ->
