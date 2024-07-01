@@ -26,10 +26,15 @@ select * from googleauthuser;
 
 select * from loginverificationmail;
 
+
+select * from playlist;
+select * from userplaylistsongrelation;
 -- delete from emailauthuser;
 -- delete from googleauthuser;
 
--- drop table playlist;
+drop table playlist;
+drop table userplaylistsongrelation;
+
 
 
 SELECT COUNT(s.id)

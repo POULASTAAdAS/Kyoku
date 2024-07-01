@@ -1,11 +1,12 @@
 package com.poulastaa.setup.presentation.set_b_date
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.b_date.BDateRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
@@ -25,6 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BDateViewModel @Inject constructor(
+    private val ds: DataStoreRepository,
     private val repository: BDateRepository,
 ) : ViewModel() {
     var state by mutableStateOf(BDateUiState())
@@ -141,6 +143,8 @@ class BDateViewModel @Inject constructor(
             }
 
             is Result.Success -> {
+                ds.storeSignInState(ScreenEnum.PIC_GENRE)
+
                 _uiEvent.send(
                     BDateUiAction.EmitToast(UiText.StringResource(R.string.success_bDate_stored))
                 )

@@ -1,7 +1,7 @@
 package com.poulastaa.routes
 
 import com.poulastaa.domain.model.EndPoints
-import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
 import com.poulastaa.utils.Constants.COVER_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.CURRENT_PROJECT_FOLDER
@@ -12,7 +12,7 @@ import java.io.File
 
 
 fun Route.getCoverImage(
-    service: UserRepository,
+    service: ServiceRepository,
 ) {
     route(EndPoints.GetCoverImage.route) {
         get {

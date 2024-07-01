@@ -4,7 +4,7 @@ import com.poulastaa.data.model.PlaylistDto
 import com.poulastaa.data.model.req.setup.CreatePlaylistReq
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.SpotifySongTitle
-import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
 import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.client.*
@@ -21,7 +21,7 @@ import io.ktor.util.*
 import kotlinx.serialization.json.*
 
 fun Route.getSpotifyPlaylist(
-    service: UserRepository,
+    service: ServiceRepository,
 ) {
     authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.GetSpotifyPlaylistSong.route) {

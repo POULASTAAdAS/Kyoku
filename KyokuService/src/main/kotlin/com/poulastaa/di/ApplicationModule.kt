@@ -1,13 +1,7 @@
 package com.poulastaa.di
 
-import com.poulastaa.data.repository.JWTRepositoryImpl
-import com.poulastaa.data.repository.KyokuDatabaseImpl
-import com.poulastaa.data.repository.SetupRepositoryDatabaseImpl
-import com.poulastaa.data.repository.UserRepositoryImpl
-import com.poulastaa.domain.repository.DatabaseRepository
-import com.poulastaa.domain.repository.JWTRepository
-import com.poulastaa.domain.repository.SetupRepository
-import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.data.repository.*
+import com.poulastaa.domain.repository.*
 import io.ktor.server.application.*
 import org.koin.dsl.module
 
@@ -33,9 +27,16 @@ fun provideSetupRepository() = module {
 
 fun provideUserRepository() = module {
     single<UserRepository> {
-        UserRepositoryImpl(
-            kyokuDatabase = get(),
-            setupRepository = get()
+        UserDatabaseRepository()
+    }
+}
+
+fun provideServiceRepository() = module {
+    single<ServiceRepository> {
+        ServiceRepositoryImpl(
+            kyokuRepo = get(),
+            setupRepo = get(),
+            userRepo = get()
         )
     }
 }

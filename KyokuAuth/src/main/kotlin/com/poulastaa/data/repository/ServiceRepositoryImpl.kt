@@ -131,7 +131,6 @@ class ServiceRepositoryImpl(
 
         return when (response.response.status) {
             UserAuthStatus.CREATED -> {
-
                 CoroutineScope(Dispatchers.IO).launch {
                     welcomeMail(
                         email = payload.email,
