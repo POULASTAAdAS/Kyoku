@@ -44,6 +44,25 @@ suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.
     }
 }
 
+suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.put(
+    route: String,
+    body: Request,
+    gson: Gson,
+    auth: Boolean = false,
+): Result<Response, DataError.Network> {
+    val url = if (auth) constructAuthRoute(route) else constructServiceRoute(route)
+
+    val reqBody = gson.toJson(body).toRequestBody(mediaType)
+    val req = Req.Builder().url(url).put(reqBody).build()
+
+    return try {
+        val response = makeCall(req)
+        responseToResult<Response>(response, gson)
+    } catch (e: Exception) {
+        handleOtherException(e)
+    }
+}
+
 suspend inline fun <reified Response : Any> OkHttpClient.authGet(
     route: String,
     params: List<Pair<String, String>>,

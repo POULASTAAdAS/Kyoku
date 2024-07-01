@@ -1,10 +1,14 @@
 package com.poulastaa.setup.presentation.set_b_date
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.b_date.BDateRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,13 +18,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class BDateViewModel @Inject constructor(
-
+    private val repository: BDateRepository,
 ) : ViewModel() {
     var state by mutableStateOf(BDateUiState())
         private set
@@ -115,6 +120,41 @@ class BDateViewModel @Inject constructor(
     }
 
     private fun storeBDate() = viewModelScope.launch(Dispatchers.IO) {
+        val date = LocalDate.parse(state.bDate.data, DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        val longBDate = date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 
+        when (val response = repository.storeBDate(longBDate)) {
+            is Result.Error -> {
+                when (response.error) {
+                    DataError.Network.NO_INTERNET -> {
+                        _uiEvent.send(
+                            BDateUiAction.EmitToast(UiText.StringResource(R.string.error_no_internet))
+                        )
+                    }
+
+                    else -> {
+                        _uiEvent.send(
+                            BDateUiAction.EmitToast(UiText.StringResource(R.string.error_something_went_wrong))
+                        )
+                    }
+                }
+            }
+
+            is Result.Success -> {
+                _uiEvent.send(
+                    BDateUiAction.EmitToast(UiText.StringResource(R.string.success_bDate_stored))
+                )
+
+                _uiEvent.send(
+                    BDateUiAction.NavigateToSetGenre
+                )
+            }
+        }
+
+        state = state.copy(
+            isMakingApiCall = false,
+        )
+
+        storeBDateJob?.cancel()
     }
 }
