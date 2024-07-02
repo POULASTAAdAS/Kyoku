@@ -13,6 +13,7 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyRootScreen
 import com.poulastaa.setup.presentation.set_b_date.BDateRootScreen
+import com.poulastaa.setup.presentation.set_genre.GenreRootScreen
 
 
 @Composable
@@ -177,7 +178,7 @@ private fun NavGraphBuilder.startUpGraph(
             BDateRootScreen(
                 navigateBack = {
                     nav.popBackStack()
-                    nav.navigate(Screens.GetSpotifyPlaylist.route){
+                    nav.navigate(Screens.GetSpotifyPlaylist.route) {
                         popUpTo(Screens.SetBirthDate.route) {
                             inclusive = true
                             saveState = true
@@ -194,7 +195,10 @@ private fun NavGraphBuilder.startUpGraph(
         }
 
         composable(route = Screens.PicGenre.route) {
-
+            GenreRootScreen {
+                nav.popBackStack()
+                nav.navigate(Screens.PicArtist.route)
+            }
         }
 
         composable(route = Screens.PicArtist.route) {

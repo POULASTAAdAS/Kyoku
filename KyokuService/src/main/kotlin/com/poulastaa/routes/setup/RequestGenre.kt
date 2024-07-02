@@ -1,7 +1,7 @@
 package com.poulastaa.routes.setup
 
-import com.poulastaa.domain.model.route_model.req.setup.StoreBDateReq
 import com.poulastaa.domain.model.EndPoints
+import com.poulastaa.domain.model.route_model.req.setup.SuggestGenreReq
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
 import io.ktor.http.*
@@ -10,19 +10,18 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.storeBDate(
+fun Route.requestGenre(
     service: ServiceRepository,
 ) {
-    route(EndPoints.StoreBDate.route) {
-        put {
-            val req =
-                call.receiveNullable<StoreBDateReq>() ?: return@put call.respondRedirect(EndPoints.UnAuthorised.route)
+    route(EndPoints.SuggestGenre.route) {
+        post {
+            val request = call.receiveNullable<SuggestGenreReq>()
+                ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
+            val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
-            val payload = call.getReqUserPayload() ?: return@put call.respondRedirect(EndPoints.UnAuthorised.route)
-
-            val response = service.updateBDate(
+            val response = service.getGenre(
                 userPayload = payload,
-                date = req.bDate,
+                genreIds = request.listOfSentGenreId
             )
 
             call.respond(

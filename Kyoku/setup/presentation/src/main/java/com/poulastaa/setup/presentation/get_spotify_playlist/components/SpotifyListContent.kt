@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 
 @Composable
-fun ListContent(
+fun SpotifyListContent(
     elevation: CardElevation,
     itemDefaultHeight: Dp = 100.dp,
     header: String,

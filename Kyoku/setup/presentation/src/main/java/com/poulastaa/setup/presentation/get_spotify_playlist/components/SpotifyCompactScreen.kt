@@ -95,7 +95,7 @@ fun SpotifyCompactScreen(
                     shape = MaterialTheme.shapes.medium
                 )
         ) {
-            ListContent(
+            SpotifyListContent(
                 elevation = elevation,
                 data = state.playlists,
                 header = state.authHeader,

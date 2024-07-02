@@ -2,6 +2,7 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.data.mappers.toPlaylistDto
 import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.SuggestGenreDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.repository.*
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +53,17 @@ class ServiceRepositoryImpl(
             userId = user.id,
             bDate = date,
             userType = userPayload.userType
+        )
+    }
+
+    override suspend fun getGenre(
+        userPayload: ReqUserPayload,
+        genreIds: List<Int>,
+    ): SuggestGenreDto {
+        userRepo.getUserOnPayload(userPayload) ?: return SuggestGenreDto()
+
+        return SuggestGenreDto(
+            listOgGenre = setupRepo.getGenre(genreIds)
         )
     }
 }

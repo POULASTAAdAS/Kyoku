@@ -45,6 +45,8 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="error_bDate_too_young">You are too young to use the app</string>
-    <string name="error_bDate_too_old">Age can\'t exced 99 year</string>
+    <string name="error_bDate_too_old">Age can\'t exceed 99 year</string>
     <string name="success_bDate_stored">B\'Date stored successfully</string>
+    <string name="less_genre_selected">Please select at-list 5 genre to continue</string>
+    <string name="set_genre_title">Pic Your Favourite Genre</string>
 </resources>

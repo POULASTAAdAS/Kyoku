@@ -74,3 +74,20 @@ val surfaceContainerLowDark = Color(0xFF151D1C)
 val surfaceContainerDark = Color(0xFF192120)
 val surfaceContainerHighDark = Color(0xFF242C2A)
 val surfaceContainerHighestDark = Color(0xFF2E3635)
+
+val listOfSuggestGenreCardColors = listOf(
+    Color(0xFFF06292),
+    Color(0xFFFF8A65),
+    Color(0xFFE57373),
+    Color(0xFFBA68C8),
+    Color(0xFF9575CD),
+    Color(0xFF1E88E5),
+    Color(0xFF4DB6AC),
+    Color(0xFF81C784),
+    Color(0xFFDCE775),
+    Color(0xFFFFD54F),
+    Color(0xFF66BB6A),
+    Color(0xFFFFCDD2),
+    Color(0xFFFFAB91),
+    Color(0xFF559288)
+)

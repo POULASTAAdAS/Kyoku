@@ -1,13 +1,17 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.dao.GenreDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
+import com.poulastaa.data.mappers.toGenreDto
 import com.poulastaa.data.mappers.toResultSong
+import com.poulastaa.data.model.GenreDto
 import com.poulastaa.domain.model.PlaylistResult
 import com.poulastaa.domain.model.SongWithArtistResult
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.SetupRepository
 import com.poulastaa.domain.repository.SpotifySongTitle
+import com.poulastaa.domain.table.GenreTable
 import com.poulastaa.domain.table.PlaylistTable
 import com.poulastaa.domain.table.SongTable
 import com.poulastaa.plugins.query
@@ -15,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.not
 
@@ -89,5 +94,14 @@ class SetupRepositoryDatabaseImpl(
                 )
             }
         )
+    }
+
+    override suspend fun getGenre(sentGenreIdList: List<Int>): List<GenreDto> = query {
+        GenreDao.find {
+            GenreTable.id notInList sentGenreIdList
+        }.orderBy(GenreTable.points to SortOrder.DESC)
+            .limit(7).toList()
+    }.map {
+        it.toGenreDto()
     }
 }

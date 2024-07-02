@@ -3,6 +3,7 @@ package com.poulastaa.plugins
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.routes.getCoverImage
 import com.poulastaa.routes.setup.getSpotifyPlaylist
+import com.poulastaa.routes.setup.requestGenre
 import com.poulastaa.routes.setup.storeBDate
 import com.poulastaa.routes.unAuthorized
 import io.ktor.server.application.*
@@ -24,4 +25,5 @@ fun Application.configureRouting() {
 private fun Routing.setUpRoutes(service: ServiceRepository) {
     getSpotifyPlaylist(service)
     storeBDate(service)
+    requestGenre(service)
 }

@@ -32,9 +32,12 @@ select * from userplaylistsongrelation;
 -- delete from emailauthuser;
 -- delete from googleauthuser;
 
-drop table playlist;
-drop table userplaylistsongrelation;
+-- drop table playlist;
+-- drop table userplaylistsongrelation;
 
+select * from genre order by points desc;
+
+update genre set points = 3 where id in(6 , 8, 20,60,46,69);
 
 
 SELECT COUNT(s.id)

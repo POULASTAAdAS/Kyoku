@@ -1,7 +1,7 @@
 package com.poulastaa.routes.setup
 
 import com.poulastaa.data.model.PlaylistDto
-import com.poulastaa.data.model.req.setup.CreatePlaylistReq
+import com.poulastaa.domain.model.route_model.req.setup.CreatePlaylistReq
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.SpotifySongTitle
 import com.poulastaa.domain.repository.ServiceRepository
