@@ -2,6 +2,7 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.data.mappers.toPlaylistDto
 import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.SuggestArtistDao
 import com.poulastaa.data.model.SuggestGenreDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.repository.*
@@ -82,5 +83,16 @@ class ServiceRepositoryImpl(
         kyokuRepo.updateGenrePointByOne(genreIds)
 
         return true
+    }
+
+    override suspend fun getArtist(
+        userPayload: ReqUserPayload,
+        artistIds: List<Long>,
+    ): SuggestArtistDao {
+        userRepo.getUserOnPayload(userPayload) ?: return SuggestArtistDao()
+
+        return SuggestArtistDao(
+            listOfArtist = setupRepo.getArtist(artistIds)
+        )
     }
 }

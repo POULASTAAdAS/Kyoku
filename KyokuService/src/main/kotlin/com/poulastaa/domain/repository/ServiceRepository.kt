@@ -1,6 +1,7 @@
 package com.poulastaa.domain.repository
 
 import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.SuggestArtistDao
 import com.poulastaa.data.model.SuggestGenreDto
 import com.poulastaa.domain.model.ReqUserPayload
 
@@ -24,4 +25,9 @@ interface ServiceRepository {
         userPayload: ReqUserPayload,
         genreIds: List<Int>,
     ): Boolean
+
+    suspend fun getArtist(
+        userPayload: ReqUserPayload,
+        artistIds: List<Long>,
+    ): SuggestArtistDao
 }

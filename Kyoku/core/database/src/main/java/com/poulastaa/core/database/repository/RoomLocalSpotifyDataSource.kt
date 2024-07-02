@@ -1,4 +1,4 @@
-package com.poulastaa.core.database.get_spotify_playlist
+package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao

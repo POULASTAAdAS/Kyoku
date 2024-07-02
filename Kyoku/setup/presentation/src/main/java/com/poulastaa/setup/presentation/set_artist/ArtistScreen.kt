@@ -1,4 +1,4 @@
-package com.poulastaa.setup.presentation.set_genre
+package com.poulastaa.setup.presentation.set_artist
 
 import android.app.Activity
 import android.widget.Toast
@@ -16,18 +16,18 @@ import com.poulastaa.core.presentation.designsystem.components.AppTopAppbar
 import com.poulastaa.core.presentation.designsystem.components.SetupScreenWrapper
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.setup.presentation.components.ContinueFloatingActionButton
-import com.poulastaa.setup.presentation.set_genre.components.GenreCompact
+import com.poulastaa.setup.presentation.set_artist.components.ArtistCompact
 
 @Composable
-fun GenreRootScreen(
-    viewModel: SetGenreViewModel = hiltViewModel(),
-    navigateToPicArtist: () -> Unit,
+fun ArtistRootScreen(
+    viewModel: ArtistViewModel = hiltViewModel(),
+    navigateToHome: () -> Unit,
 ) {
     val context = LocalContext.current
 
     ObserveAsEvent(flow = viewModel.uiEvent) {
         when (it) {
-            is GenreUiAction.EmitToast -> {
+            is ArtistUiAction.EmitToast -> {
                 Toast.makeText(
                     context,
                     it.message.asString(context),
@@ -35,31 +35,33 @@ fun GenreRootScreen(
                 ).show()
             }
 
-            GenreUiAction.NavigateToSetArtist -> navigateToPicArtist()
+            ArtistUiAction.NavigateToHome -> navigateToHome()
         }
     }
 
-    GenreScreen(
+    ArtistScreen(
         state = viewModel.state,
         onEvent = viewModel::onEvent
     )
 }
 
+
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-private fun GenreScreen(
-    state: GenreUiState,
-    onEvent: (GenreUiEvent) -> Unit,
+private fun ArtistScreen(
+    state: ArtistUiState,
+    onEvent: (ArtistUiEvent) -> Unit,
 ) {
     val context = LocalContext.current as Activity
     val windowSize = calculateWindowSizeClass(activity = context)
+
 
     SetupScreenWrapper(
         windowSizeClass = windowSize,
         topBar = {
             AppTopAppbar(
                 isExpanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded,
-                text = stringResource(id = R.string.set_genre_title)
+                text = stringResource(id = R.string.set_artist_title)
             )
         },
         floatingActionButton = {
@@ -69,29 +71,29 @@ private fun GenreScreen(
                 }
 
                 if (temp) ContinueFloatingActionButton {
-                    onEvent(GenreUiEvent.OnContinueClick)
+                    onEvent(ArtistUiEvent.OnContinueClick)
                 }
             }
         },
         compactContent = {
-            GenreCompact(
+            ArtistCompact(
                 paddingValues = it,
                 state = state,
                 onEvent = onEvent
             )
         },
         mediumContent = {
-            GenreCompact(
-                grid = 4,
+            ArtistCompact(
                 paddingValues = it,
+                grid = 4,
                 state = state,
                 onEvent = onEvent
             )
         },
         expandedContent = {
-            GenreCompact(
-                grid = 5,
+            ArtistCompact(
                 paddingValues = it,
+                grid = 4,
                 state = state,
                 onEvent = onEvent
             )

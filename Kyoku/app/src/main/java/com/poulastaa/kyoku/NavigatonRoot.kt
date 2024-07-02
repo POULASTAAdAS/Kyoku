@@ -12,6 +12,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyRootScreen
+import com.poulastaa.setup.presentation.set_artist.ArtistRootScreen
 import com.poulastaa.setup.presentation.set_b_date.BDateRootScreen
 import com.poulastaa.setup.presentation.set_genre.GenreRootScreen
 
@@ -202,7 +203,10 @@ private fun NavGraphBuilder.startUpGraph(
         }
 
         composable(route = Screens.PicArtist.route) {
-
+            ArtistRootScreen {
+                nav.popBackStack()
+                nav.navigate(Screens.Home.route)
+            }
         }
     }
 }

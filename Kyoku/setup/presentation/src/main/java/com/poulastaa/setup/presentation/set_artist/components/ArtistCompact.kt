@@ -1,4 +1,4 @@
-package com.poulastaa.setup.presentation.set_genre.components
+package com.poulastaa.setup.presentation.set_artist.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -16,17 +16,17 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.setup.presentation.components.LessSelectedToast
 import com.poulastaa.setup.presentation.components.NoInternetToast
-import com.poulastaa.setup.presentation.set_genre.GenreUiEvent
-import com.poulastaa.setup.presentation.set_genre.GenreUiState
-import com.poulastaa.setup.presentation.set_genre.model.UiGenre
+import com.poulastaa.setup.presentation.set_artist.ArtistUiEvent
+import com.poulastaa.setup.presentation.set_artist.ArtistUiState
+import com.poulastaa.setup.presentation.set_artist.model.UiArtist
 import kotlin.random.Random
 
 @Composable
-fun GenreCompact(
+fun ArtistCompact(
     paddingValues: PaddingValues,
-    state: GenreUiState,
+    state: ArtistUiState,
     grid: Int = 3,
-    onEvent: (GenreUiEvent) -> Unit,
+    onEvent: (ArtistUiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -37,16 +37,16 @@ fun GenreCompact(
     ) {
         LessSelectedToast(
             visible = state.isToastVisible,
-            text = stringResource(id = R.string.less_genre_selected)
+            text = stringResource(id = R.string.less_artist_selected)
         )
-
         NoInternetToast(visible = state.isInternetErr)
 
-        GenreListContent(
+        ArtistContentList(
             grid = grid,
+            header = state.header,
             data = state.data,
             onClick = {
-                onEvent(GenreUiEvent.OnGenreClick(it))
+                onEvent(ArtistUiEvent.OnArtistClick(it))
             }
         )
     }
@@ -55,24 +55,33 @@ fun GenreCompact(
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
-@Preview
+@Preview(
+    device = "spec:width=800dp,height=1280dp,dpi=480",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 840,
+    heightDp = 540
+)
 @Composable
 private fun Preview() {
     AppThem {
-        val data = (1..30).map {
-            UiGenre(
-                id = it,
-                name = "Genre $it",
+        val data = (1..40).map {
+            UiArtist(
+                id = it.toLong(),
+                name = "Artist $it",
                 isSelected = Random.nextBoolean()
             )
         }
 
-        GenreCompact(
+        ArtistCompact(
             paddingValues = PaddingValues(),
-            state = GenreUiState(
+            state = ArtistUiState(
                 data = data,
+                isToastVisible = true,
                 isInternetErr = true
-            ),
+            )
         ) {
 
         }

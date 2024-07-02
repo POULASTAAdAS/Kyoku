@@ -1,16 +1,20 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.GenreDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
+import com.poulastaa.data.mappers.toArtistDto
 import com.poulastaa.data.mappers.toGenreDto
 import com.poulastaa.data.mappers.toResultSong
+import com.poulastaa.data.model.ArtistDto
 import com.poulastaa.data.model.GenreDto
 import com.poulastaa.domain.model.PlaylistResult
 import com.poulastaa.domain.model.SongWithArtistResult
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.SetupRepository
 import com.poulastaa.domain.repository.SpotifySongTitle
+import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.GenreTable
 import com.poulastaa.domain.table.PlaylistTable
 import com.poulastaa.domain.table.SongTable
@@ -103,5 +107,15 @@ class SetupRepositoryDatabaseImpl(
             .limit(if (sentGenreIdList.isEmpty()) 7 else 4).toList()
     }.map {
         it.toGenreDto()
+    }
+
+    override suspend fun getArtist(sentArtistIdList: List<Long>): List<ArtistDto> = query {
+        ArtistDao.find {
+            ArtistTable.id notInList sentArtistIdList
+        }.orderBy(ArtistTable.points to SortOrder.DESC)
+            .limit(if (sentArtistIdList.isEmpty()) 7 else 4).toList()
+            .map {
+                it.toArtistDto()
+            }
     }
 }

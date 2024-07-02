@@ -1,7 +1,9 @@
 package com.poulastaa.data.mappers
 
+import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.GenreDao
 import com.poulastaa.data.dao.SongDao
+import com.poulastaa.data.model.ArtistDto
 import com.poulastaa.data.model.GenreDto
 import com.poulastaa.domain.model.ResultSong
 
@@ -17,4 +19,10 @@ fun SongDao.toResultSong() = ResultSong(
 fun GenreDao.toGenreDto() = GenreDto(
     id = this.id.value,
     name = this.name
+)
+
+fun ArtistDao.toArtistDto() = ArtistDto(
+    id = this.id.value,
+    name = this.name,
+    coverImage =  this.constructProfilePic()
 )

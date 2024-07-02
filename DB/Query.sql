@@ -39,6 +39,8 @@ select * from usergenrerelation;
 
 select * from genre order by points desc;
 
+select * from artist order by points desc;
+
 
 SELECT COUNT(s.id)
 FROM song s

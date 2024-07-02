@@ -1,9 +1,11 @@
 package com.poulastaa.setup.network.di
 
 import com.google.gson.Gson
+import com.poulastaa.core.domain.artist.RemoteArtistDataSource
 import com.poulastaa.core.domain.b_date.RemoteBDateDataSource
 import com.poulastaa.core.domain.genre.RemoteGenreDataSource
 import com.poulastaa.core.domain.get_spotify_playlist.RemoteSpotifyDataSource
+import com.poulastaa.setup.network.ArtistRemoteDataSource
 import com.poulastaa.setup.network.BDateRemoteDataSource
 import com.poulastaa.setup.network.GenreRemoteDataSource
 import com.poulastaa.setup.network.SpotifyRemoteDataSource
@@ -43,6 +45,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteGenreDataSource = GenreRemoteDataSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideArtistRemoteDataSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteArtistDataSource = ArtistRemoteDataSource(
         client = client,
         gson = gson
     )

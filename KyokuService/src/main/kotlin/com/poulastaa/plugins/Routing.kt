@@ -1,11 +1,9 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.domain.repository.ServiceRepository
+import com.poulastaa.routes.getArtistImage
 import com.poulastaa.routes.getCoverImage
-import com.poulastaa.routes.setup.getSpotifyPlaylist
-import com.poulastaa.routes.setup.requestGenre
-import com.poulastaa.routes.setup.storeBDate
-import com.poulastaa.routes.setup.storeGenre
+import com.poulastaa.routes.setup.*
 import com.poulastaa.routes.unAuthorized
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
@@ -17,6 +15,7 @@ fun Application.configureRouting() {
 
         setUpRoutes(service)
         getCoverImage(service)
+        getArtistImage()
 
         unAuthorized()
     }
@@ -28,4 +27,5 @@ private fun Routing.setUpRoutes(service: ServiceRepository) {
     storeBDate(service)
     requestGenre(service)
     storeGenre(service)
+    requestArtist(service)
 }
