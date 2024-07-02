@@ -29,15 +29,15 @@ select * from loginverificationmail;
 
 select * from playlist;
 select * from userplaylistsongrelation;
+select * from usergenrerelation;
 -- delete from emailauthuser;
 -- delete from googleauthuser;
 
 -- drop table playlist;
 -- drop table userplaylistsongrelation;
+-- drop table usergenrerelation;
 
 select * from genre order by points desc;
-
-update genre set points = 3 where id in(6 , 8, 20,60,46,69);
 
 
 SELECT COUNT(s.id)

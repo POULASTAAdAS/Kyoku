@@ -8,4 +8,6 @@ object UserGenreRelationTable : Table() {
     val userId = long("userId")
     val userType = varchar("userType", 20)
     val genreId = integer("genreId").references(GenreTable.id, onDelete = ReferenceOption.CASCADE)
+
+    override val primaryKey: PrimaryKey = PrimaryKey(userId, userType, genreId)
 }

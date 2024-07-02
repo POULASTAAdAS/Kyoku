@@ -100,7 +100,7 @@ class SetupRepositoryDatabaseImpl(
         GenreDao.find {
             GenreTable.id notInList sentGenreIdList
         }.orderBy(GenreTable.points to SortOrder.DESC)
-            .limit(7).toList()
+            .limit(if (sentGenreIdList.isEmpty()) 7 else 4).toList()
     }.map {
         it.toGenreDto()
     }

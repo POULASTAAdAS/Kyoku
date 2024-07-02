@@ -5,6 +5,7 @@ import com.poulastaa.data.mappers.toArtistResult
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.table.ArtistTable
+import com.poulastaa.domain.table.GenreTable
 import com.poulastaa.domain.table.SongTable
 import com.poulastaa.domain.table.relation.SongArtistRelationTable
 import com.poulastaa.plugins.query
@@ -80,5 +81,17 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 }
             }
         }.awaitAll()
+    }
+
+    override fun updateGenrePointByOne(list: List<Int>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            query {
+                GenreTable.update({ GenreTable.id inList list }) {
+                    with(SqlExpressionBuilder) {
+                        it[points] = points + 1
+                    }
+                }
+            }
+        }
     }
 }

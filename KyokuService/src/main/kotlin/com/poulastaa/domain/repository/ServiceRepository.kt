@@ -19,4 +19,9 @@ interface ServiceRepository {
         userPayload: ReqUserPayload,
         genreIds: List<Int>,
     ): SuggestGenreDto
+
+    suspend fun storeGenre(
+        userPayload: ReqUserPayload,
+        genreIds: List<Int>,
+    ): Boolean
 }

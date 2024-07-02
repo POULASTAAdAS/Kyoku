@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -61,5 +62,9 @@ val DropDownIcon: ImageVector
 
 val CalenderIcon: ImageVector
     @Composable
-    get() =  ImageVector.vectorResource(id = R.drawable.ic_b_date)
+    get() = ImageVector.vectorResource(id = R.drawable.ic_b_date)
+
+val WarningIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Warning
 

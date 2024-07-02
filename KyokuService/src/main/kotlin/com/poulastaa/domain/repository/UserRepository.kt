@@ -7,7 +7,7 @@ import com.poulastaa.domain.model.UserType
 interface UserRepository {
     suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult?
 
-    suspend fun createUserPlaylist(
+    fun createUserPlaylist(
         userId: Long,
         userType: UserType,
         playlistId: Long,
@@ -19,4 +19,10 @@ interface UserRepository {
         bDate: Long,
         userType: UserType,
     ): Boolean
+
+    suspend fun storeGenre(
+        userId: Long,
+        userType: UserType,
+        idList: List<Int>,
+    )
 }

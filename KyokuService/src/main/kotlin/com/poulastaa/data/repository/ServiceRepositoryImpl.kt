@@ -66,4 +66,21 @@ class ServiceRepositoryImpl(
             listOgGenre = setupRepo.getGenre(genreIds)
         )
     }
+
+    override suspend fun storeGenre(
+        userPayload: ReqUserPayload,
+        genreIds: List<Int>,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return false
+
+        userRepo.storeGenre(
+            userId = user.id,
+            userType = user.userType,
+            idList = genreIds
+        )
+
+        kyokuRepo.updateGenrePointByOne(genreIds)
+
+        return true
+    }
 }

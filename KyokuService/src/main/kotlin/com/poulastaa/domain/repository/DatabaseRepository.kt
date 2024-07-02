@@ -8,4 +8,6 @@ interface DatabaseRepository {
 
     suspend fun getArtistOnSongId(songId: Long): List<ResultArtist>
     suspend fun getArtistOnSongIdList(list: List<Long>): List<Pair<Long, List<ResultArtist>>>
+
+    fun updateGenrePointByOne(list: List<Int>)
 }

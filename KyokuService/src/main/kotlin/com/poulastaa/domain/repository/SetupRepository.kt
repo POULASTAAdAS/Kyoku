@@ -10,5 +10,7 @@ interface SetupRepository {
         spotifyPayload: List<SpotifySongTitle>,
     ): PlaylistResult
 
-    suspend fun getGenre(sentGenreIdList: List<Int>): List<GenreDto>
+    suspend fun getGenre(
+        sentGenreIdList: List<Int>,
+    ): List<GenreDto>
 }

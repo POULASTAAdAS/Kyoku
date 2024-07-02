@@ -123,10 +123,20 @@ private fun GenreScreen(
             )
         },
         mediumContent = {
-
+            GenreCompact(
+                grid = 4,
+                paddingValues = it,
+                state = state,
+                onEvent = onEvent
+            )
         },
         expandedContent = {
-
+            GenreCompact(
+                grid = 5,
+                paddingValues = it,
+                state = state,
+                onEvent = onEvent
+            )
         }
     )
 }

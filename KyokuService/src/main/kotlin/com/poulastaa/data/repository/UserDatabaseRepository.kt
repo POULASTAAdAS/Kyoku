@@ -7,12 +7,16 @@ import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.poulastaa.plugins.query
-import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.insertIgnore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.batchInsert
 
 class UserDatabaseRepository : UserRepository {
     override suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult? {
@@ -35,25 +39,19 @@ class UserDatabaseRepository : UserRepository {
         }
     }
 
-    override suspend fun createUserPlaylist(
+    override fun createUserPlaylist(
         userId: Long,
         userType: UserType,
         playlistId: Long,
         songIdList: List<Long>,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            songIdList.map { songId ->
-                async {
-                    query {
-                        UserPlaylistSongRelationTable.insertIgnore {
-                            it[this.userId] = userId
-                            it[this.playlistId] = playlistId
-                            it[this.songId] = songId
-                            it[this.userType] = userType.name
-                        }
-                    }
-                }
-            }.awaitAll()
+            UserPlaylistSongRelationTable.batchInsert(songIdList, ignore = true) { songId ->
+                this[UserPlaylistSongRelationTable.userId] = userId
+                this[UserPlaylistSongRelationTable.playlistId] = playlistId
+                this[UserPlaylistSongRelationTable.songId] = songId
+                this[UserPlaylistSongRelationTable.userType] = userType.name
+            }
         }
     }
 
@@ -81,5 +79,21 @@ class UserDatabaseRepository : UserRepository {
         }
 
         return true
+    }
+
+    override suspend fun storeGenre(
+        userId: Long,
+        userType: UserType,
+        idList: List<Int>,
+    ) {
+        coroutineScope {
+            query {
+                UserGenreRelationTable.batchInsert(idList, ignore = true) { genreId ->
+                    this[UserGenreRelationTable.userId] = userId
+                    this[UserGenreRelationTable.userType] = userType.name
+                    this[UserGenreRelationTable.genreId] = genreId
+                }
+            }
+        }
     }
 }
