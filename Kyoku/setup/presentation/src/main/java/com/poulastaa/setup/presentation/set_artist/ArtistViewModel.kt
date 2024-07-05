@@ -30,7 +30,7 @@ class ArtistViewModel @Inject constructor(
     var state by mutableStateOf(ArtistUiState())
         private set
 
-    private val selectedArtistList: ArrayList<Long> = ArrayList()
+    private val selectedArtistIdList: ArrayList<Long> = ArrayList()
 
     private val _uiEvent = Channel<ArtistUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -62,8 +62,8 @@ class ArtistViewModel @Inject constructor(
                 state = state.copy(
                     data = state.data.map {
                         if (it.id == event.id) {
-                            if (selectedArtistList.contains(it.id)) selectedArtistList.remove(it.id)
-                            else selectedArtistList.add(it.id)
+                            if (selectedArtistIdList.contains(it.id)) selectedArtistIdList.remove(it.id)
+                            else selectedArtistIdList.add(it.id)
 
                             shouldMakeCall = !it.isSelected
 
@@ -72,6 +72,15 @@ class ArtistViewModel @Inject constructor(
                     }
                 )
 
+                state = if (selectedArtistIdList.size > 4) state.copy(
+                    isToastVisible = false,
+                    canMakeApiCall = true
+                ) else state.copy(
+                    isToastVisible = true,
+                    canMakeApiCall = false
+                )
+
+
                 if (shouldMakeCall) {
                     getArtistJob?.cancel()
                     getArtistJob = getArtist()
@@ -79,7 +88,7 @@ class ArtistViewModel @Inject constructor(
             }
 
             ArtistUiEvent.OnContinueClick -> {
-                if (selectedArtistList.size < 4) {
+                if (selectedArtistIdList.size < 4) {
                     state = state.copy(
                         isToastVisible = true,
                         canMakeApiCall = false
@@ -96,7 +105,7 @@ class ArtistViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     val artistList = state.data.filter {
-                        selectedArtistList.contains(it.id)
+                        selectedArtistIdList.contains(it.id)
                     }.map {
                         it.toArtist()
                     }

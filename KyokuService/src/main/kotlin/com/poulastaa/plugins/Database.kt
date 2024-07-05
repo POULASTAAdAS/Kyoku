@@ -1,5 +1,6 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.domain.table.relation.UserArtistRelationTable
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.zaxxer.hikari.HikariConfig
@@ -25,6 +26,7 @@ fun Application.configureDatabase() {
     transaction(db) {
         SchemaUtils.create(UserPlaylistSongRelationTable)
         SchemaUtils.create(UserGenreRelationTable)
+        SchemaUtils.create(UserArtistRelationTable)
     }
 }
 

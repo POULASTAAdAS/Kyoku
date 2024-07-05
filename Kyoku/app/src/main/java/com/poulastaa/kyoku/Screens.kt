@@ -18,4 +18,6 @@ sealed class Screens(val route: String) {
     data object PicArtist : Screens("/suggestArtist")
 
     data object Home : Screens("/homeRoot/home")
+
+
 }

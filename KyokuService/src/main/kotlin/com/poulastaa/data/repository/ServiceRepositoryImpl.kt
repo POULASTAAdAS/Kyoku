@@ -95,4 +95,21 @@ class ServiceRepositoryImpl(
             listOfArtist = setupRepo.getArtist(artistIds)
         )
     }
+
+    override suspend fun storeArtist(
+        userPayload: ReqUserPayload,
+        artistIds: List<Long>,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return false
+
+        userRepo.storeArtist(
+            userId = user.id,
+            userType = userPayload.userType,
+            idList = artistIds
+        )
+
+        kyokuRepo.updateArtistPointByOne(artistIds)
+
+        return true
+    }
 }

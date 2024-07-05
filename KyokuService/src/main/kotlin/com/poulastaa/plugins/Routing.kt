@@ -28,4 +28,5 @@ private fun Routing.setUpRoutes(service: ServiceRepository) {
     requestGenre(service)
     storeGenre(service)
     requestArtist(service)
+    storeArtist(service)
 }

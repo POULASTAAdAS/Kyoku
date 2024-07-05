@@ -219,6 +219,8 @@ private fun NavGraphBuilder.appGraph(
         route = Screens.APP_ROUTE,
         startDestination = screen
     ) {
+        composable(route = Screens.Home.route) {
 
+        }
     }
 }

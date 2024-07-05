@@ -39,6 +39,7 @@ fun ArtistCompact(
             visible = state.isToastVisible,
             text = stringResource(id = R.string.less_artist_selected)
         )
+
         NoInternetToast(visible = state.isInternetErr)
 
         ArtistContentList(

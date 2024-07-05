@@ -25,4 +25,10 @@ interface UserRepository {
         userType: UserType,
         idList: List<Int>,
     )
+
+    suspend fun storeArtist(
+        userId: Long,
+        userType: UserType,
+        idList: List<Long>,
+    )
 }

@@ -30,4 +30,9 @@ interface ServiceRepository {
         userPayload: ReqUserPayload,
         artistIds: List<Long>,
     ): SuggestArtistDao
+
+    suspend fun storeArtist(
+        userPayload: ReqUserPayload,
+        artistIds: List<Long>,
+    ): Boolean
 }

@@ -10,6 +10,6 @@ data class ArtistUiState(
 
     val data: List<UiArtist> = emptyList(),
 
-    val isToastVisible: Boolean = false,
+    val isToastVisible: Boolean = true,
     val canMakeApiCall: Boolean = false,
 )

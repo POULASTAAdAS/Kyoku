@@ -7,6 +7,7 @@ import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.table.relation.UserArtistRelationTable
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
@@ -92,6 +93,18 @@ class UserDatabaseRepository : UserRepository {
                     this[UserGenreRelationTable.userId] = userId
                     this[UserGenreRelationTable.userType] = userType.name
                     this[UserGenreRelationTable.genreId] = genreId
+                }
+            }
+        }
+    }
+
+    override suspend fun storeArtist(userId: Long, userType: UserType, idList: List<Long>) {
+        coroutineScope {
+            query {
+                UserArtistRelationTable.batchInsert(idList, ignore = true) { artistId ->
+                    this[UserArtistRelationTable.userId] = userId
+                    this[UserArtistRelationTable.userType] = userType.name
+                    this[UserArtistRelationTable.artistId] = artistId
                 }
             }
         }

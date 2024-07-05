@@ -28,7 +28,7 @@ class SetGenreViewModel @Inject constructor(
     var state by mutableStateOf(GenreUiState())
         private set
 
-    private val selectedIdList: ArrayList<Int> = ArrayList()
+    private val selectedGenreIdList: ArrayList<Int> = ArrayList()
 
     private val _uiEvent = Channel<GenreUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -50,8 +50,8 @@ class SetGenreViewModel @Inject constructor(
                 state = state.copy(
                     data = state.data.map {
                         if (it.id == event.id) {
-                            if (selectedIdList.contains(it.id)) selectedIdList.remove(it.id)
-                            else selectedIdList.add(it.id)
+                            if (selectedGenreIdList.contains(it.id)) selectedGenreIdList.remove(it.id)
+                            else selectedGenreIdList.add(it.id)
 
                             shouldMakeCall = !it.isSelected
 
@@ -60,7 +60,7 @@ class SetGenreViewModel @Inject constructor(
                     }
                 )
 
-                state = if (selectedIdList.size > 4) state.copy(
+                state = if (selectedGenreIdList.size > 4) state.copy(
                     isToastVisible = false,
                     canMakeApiCall = true
                 ) else state.copy(
@@ -75,7 +75,7 @@ class SetGenreViewModel @Inject constructor(
             }
 
             GenreUiEvent.OnContinueClick -> {
-                if (selectedIdList.size < 4) {
+                if (selectedGenreIdList.size < 4) {
                     state = state.copy(
                         isToastVisible = true,
                         canMakeApiCall = false
@@ -92,7 +92,7 @@ class SetGenreViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     val response = repository.storeGenre(
-                        genre = selectedIdList
+                        genre = selectedGenreIdList
                     )
 
                     when (response) {
