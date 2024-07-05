@@ -23,10 +23,8 @@ hiltCompiler = "2.49"
 hilt = "1.2.0"
 
 okhttp = "4.4.1"
-#retrofit = "2.9.0"
-#serializationConverter = "1.0.0"
 
-navigation = "2.7.7"
+navigation = "2.8.0-beta04"
 
 room = "2.6.1"
 

@@ -222,5 +222,9 @@ private fun NavGraphBuilder.appGraph(
         composable(route = Screens.Home.route) {
 
         }
+
+        composable(route = Screens.Library.route) {
+
+        }
     }
 }
