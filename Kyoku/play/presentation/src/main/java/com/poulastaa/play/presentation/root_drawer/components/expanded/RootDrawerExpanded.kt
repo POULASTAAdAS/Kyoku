@@ -32,6 +32,7 @@ import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
+import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -123,20 +124,17 @@ fun RootDrawerExpanded(
                 startDestination = state.startDestination
             ) {
                 composable(route = DrawerScreen.Home.route) {
-                    HomeCompactScreen(
-                        profileUrl = state.profilePicUrl,
-                        onEvent = {
-                            when (it) {
-                                HomeToDrawerEvent.PROFILE_CLICK -> {}
-
-                                HomeToDrawerEvent.SEARCH_CLICK -> onEvent(
-                                    RootDrawerUiEvent.Navigate(
-                                        screen = ScreenEnum.HOME_SEARCH
-                                    )
-                                )
-                            }
-                        }
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Home",
+                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 composable(route = DrawerScreen.Library.route) {

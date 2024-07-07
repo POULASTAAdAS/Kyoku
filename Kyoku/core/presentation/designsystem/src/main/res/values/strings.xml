@@ -60,4 +60,5 @@
     <string name="history_label">History</string>
     <string name="settings_label">Settings</string>
     <string name="logout_label">Logout</string>
+    <string name="library_title">Your Library</string>
 </resources>

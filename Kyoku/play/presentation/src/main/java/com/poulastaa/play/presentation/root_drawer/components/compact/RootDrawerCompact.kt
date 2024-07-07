@@ -33,6 +33,7 @@ import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
+import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -142,16 +143,8 @@ fun RootDrawerCompact(
                     }
 
                     composable(route = DrawerScreen.Library.route) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Library",
-                                fontSize = MaterialTheme.typography.displayLarge.fontSize,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                        LibraryCompactScreen {
+
                         }
                     }
 

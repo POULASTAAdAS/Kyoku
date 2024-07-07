@@ -1,6 +1,7 @@
-package com.poulastaa.play.presentation.root_drawer.home
+package com.poulastaa.play.presentation.root_drawer.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,25 +10,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.play.domain.HomeToDrawerEvent
-import com.poulastaa.play.presentation.root_drawer.home.components.HomeAppbar
+import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.play.presentation.root_drawer.library.components.LibraryTopAppbar
 
 @Composable
-fun HomeCompactScreen(
-    profileUrl: String,
-    viewModel: HomeViewModel = hiltViewModel(),
-    onEvent: (HomeToDrawerEvent) -> Unit,
+fun LibraryCompactScreen(
+    viewModel: LibraryViewModel = hiltViewModel(),
+    navigate: (ScreenEnum) -> Unit,
 ) {
-    HomeScreen(
-        profileUrl = profileUrl,
+    ObserveAsEvent(flow = viewModel.uiEvent) { event ->
+        when (event) {
+            is LibraryUiAction.Navigate -> {
+                navigate(event.screen)
+            }
+        }
+    }
+
+    LibraryScreen(
         state = viewModel.state,
-        onProfileClick = {
-            onEvent(HomeToDrawerEvent.PROFILE_CLICK)
-        },
         onSearchClick = {
-            onEvent(HomeToDrawerEvent.SEARCH_CLICK)
+
         },
         onEvent = viewModel::onEvent
     )
@@ -35,22 +41,17 @@ fun HomeCompactScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
-    state: HomeUiState,
-    profileUrl: String,
-    onProfileClick: () -> Unit,
+private fun LibraryScreen(
+    state: LibraryUiState,
     onSearchClick: () -> Unit,
-    onEvent: (HomeUiEvent) -> Unit,
+    onEvent: (LibraryUiEvent) -> Unit,
 ) {
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         topBar = {
-            HomeAppbar(
+            LibraryTopAppbar(
                 scrollBehavior = appBarScrollBehavior,
-                title = state.heading,
-                profileUrl = profileUrl,
-                onProfileClick = onProfileClick,
                 onSearchClick = onSearchClick
             )
         }
@@ -59,7 +60,9 @@ private fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                .padding(it)
+                .padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
 
         }

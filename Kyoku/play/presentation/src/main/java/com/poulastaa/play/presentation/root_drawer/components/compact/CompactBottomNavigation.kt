@@ -93,7 +93,7 @@ fun BoxScope.CompactBottomNavigation(
 
             NavigationButton(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.small1)
+                    .padding(2.dp)
                     .then(
                         if (screenWidth.widthSizeClass == WindowWidthSizeClass.Medium)
                             Modifier.size(56.dp) else Modifier

@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeAppbar(
+    scrollBehavior: TopAppBarScrollBehavior,
     title: String,
     profileUrl: String,
     onProfileClick: () -> Unit,
@@ -43,6 +45,7 @@ fun HomeAppbar(
     val hapticFeedback = LocalHapticFeedback.current
 
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         modifier = Modifier.padding(start = MaterialTheme.dimens.small1),
         title = {
             Text(
@@ -95,11 +98,14 @@ fun HomeAppbar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun Preview() {
     AppThem {
-        HomeAppbar(title = "Good Morning", profileUrl = "", onProfileClick = { /*TODO*/ }) {
+        HomeAppbar(
+            scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+            title = "Good Morning", profileUrl = "", onProfileClick = { /*TODO*/ }) {
 
         }
     }
