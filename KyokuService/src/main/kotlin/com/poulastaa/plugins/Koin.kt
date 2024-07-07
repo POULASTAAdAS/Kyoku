@@ -13,6 +13,7 @@ fun Application.configureKoin(
             provideDatabaseRepository(),
             provideSetupRepository(),
             provideUserRepository(),
+            provideHomeRepository(),
             provideServiceRepository()
         )
     }

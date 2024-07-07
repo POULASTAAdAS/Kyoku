@@ -44,6 +44,13 @@ albumId bigint references Album(id) on delete cascade,
 primary key(artistId, albumId)
 );
 
+Create table AlbumCountryRelation(
+albumId bigint references Album(id) on delete cascade,
+countryId bigint references Country(id) on delete cascade,
+
+primary key(albumId, countryId)
+);
+
 
 Create Table Song(
 id Bigint primary key auto_increment,
@@ -64,6 +71,13 @@ songId bigint references Song(id) on delete cascade,
 artistId bigint references artist(id) on delete cascade,
 
 primary key(songId, artistId)
+);
+
+Create table songCountryRelation(
+songId bigint references Song(id) on delete cascade,
+countryId int references Country(id) on delete cascade,
+
+primary key(songId, countryId)
 );
 
 

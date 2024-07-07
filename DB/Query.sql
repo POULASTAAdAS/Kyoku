@@ -30,63 +30,58 @@ select * from playlist;
 select * from userplaylistsongrelation;
 select * from usergenrerelation;
 select * from userartistrelation;
--- delete from emailauthuser;
--- delete from googleauthuser;
-
--- drop table playlist;
--- drop table userplaylistsongrelation;
--- drop table usergenrerelation;
-
-select * from genre order by points desc;
-
-select * from artist order by points desc;
-
-
-SELECT COUNT(s.id)
-FROM song s
-LEFT JOIN songartistRelation sar ON s.id = sar.songid
-WHERE sar.songid IS NULL;
-
-
-
-select * from artist order by points desc;
 
 
 
 
 
 
+-- getPopularSongMix
+select * from song
+join songcountryrelation on songcountryrelation.songId = song.id
+where songcountryrelation.countryId = 1
+order by song.points desc;
+
+-- getPopularSongFromUserTime
+select * from song
+join songcountryrelation on songcountryrelation.songId = song.id
+where songcountryrelation.countryId = 1 and song.year = 2016
+order by song.points desc;
 
 
+-- getFavouriteArtistMix
+select song.id , song.title , song.coverImage , song.points from song
+join songartistrelation on songartistrelation.songId = song.id
+join artist on artist.id = songartistrelation.artistId
+join userartistrelation on userartistrelation.artistid = artist.id
+where userartistrelation.userid = 9 and userartistrelation.usertype = "GOOGLE_USER"
+order by rand() asc ,song.points desc limit 50;
 
 
+-- getDayTypeSong
+SELECT DISTINCT song.id, 
+                song.title, 
+                song.coverImage, 
+                song.points 
+FROM song
+JOIN songcountryrelation 
+  ON songcountryrelation.songId = song.id
+WHERE songcountryrelation.countryId = 1 
+  AND (song.title LIKE '%lofi%' OR song.title LIKE '%remix%')
+ORDER BY CASE 
+           WHEN song.title LIKE '%lofi%' THEN 1 
+           ELSE 2 
+         END, 
+         song.points DESC limit 40;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
+-- getPopularAlbum
+select distinct album.id , album.name , song.coverImage , album.points from song
+join songalbumrelation on songalbumrelation.songId = song.id
+join album on album.id = songalbumrelation.albumId
+join albumcountryrelation on albumcountryrelation.albumId = album.id
+where albumcountryrelation.countryId = 1 order by album.points desc limit 10;
 
 
 

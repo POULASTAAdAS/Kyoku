@@ -31,12 +31,19 @@ fun provideUserRepository() = module {
     }
 }
 
+fun provideHomeRepository() = module {
+    single<HomeRepository> {
+        HomeRepositoryImpl()
+    }
+}
+
 fun provideServiceRepository() = module {
     single<ServiceRepository> {
         ServiceRepositoryImpl(
             kyokuRepo = get(),
             setupRepo = get(),
-            userRepo = get()
+            userRepo = get(),
+            homeRepo = get()
         )
     }
 }

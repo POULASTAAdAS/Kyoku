@@ -1,19 +1,22 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.mappers.getYear
 import com.poulastaa.data.mappers.toPlaylistDto
 import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.ResponseStatus
 import com.poulastaa.data.model.SuggestArtistDao
 import com.poulastaa.data.model.SuggestGenreDto
+import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
+import com.poulastaa.domain.model.route_model.req.home.HomeReq
 import com.poulastaa.domain.repository.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class ServiceRepositoryImpl(
     private val setupRepo: SetupRepository,
     private val kyokuRepo: DatabaseRepository,
     private val userRepo: UserRepository,
+    private val homeRepo: HomeRepository,
 ) : ServiceRepository {
     override suspend fun getSpotifyPlaylist(
         userPayload: ReqUserPayload,
@@ -111,5 +114,62 @@ class ServiceRepositoryImpl(
         kyokuRepo.updateArtistPointByOne(artistIds)
 
         return true
+    }
+
+    override suspend fun homeReq(
+        userPayload: ReqUserPayload,
+        req: HomeReq,
+    ): HomeDto = coroutineScope {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return@coroutineScope HomeDto()
+
+        val popularSongMixDef = async { homeRepo.getPopularSongMix(user.countryId) }
+        val popularSongFromYourTimeDef = async {
+            homeRepo.getPopularSongFromUserTime(user.bDate.getYear(), user.countryId)
+        }
+        val favouriteArtistMixDef = async {
+            homeRepo.getFavouriteArtistMix(
+                userId = user.id,
+                userType = user.userType,
+                countryId = user.countryId
+            )
+        }
+        val dayTimeSongDef = async {
+            homeRepo.getDayTypeSong(
+                dayType = req.dayType,
+                countryId = user.countryId
+            )
+        }
+        val poplarAlbumDef = async { homeRepo.getPopularAlbum(user.countryId) }
+        val poplarArtistDef = async {
+            homeRepo.getPopularArtist(
+                userId = user.id,
+                userType = user.userType,
+                countryId = user.countryId
+            )
+        }
+
+        val popularArtist = poplarArtistDef.await()
+
+        val poplarArtistSongDef = async {
+            homeRepo.getPopularArtistSong(
+                userId = user.id,
+                userType = user.userType,
+                excludeArtist = popularArtist.map {
+                    it.id
+                },
+                countryId = user.countryId
+            )
+        }
+
+        HomeDto(
+            status = ResponseStatus.SUCCESS,
+            popularSongMixPrev = popularSongMixDef.await(),
+            popularSongFromYourTimePrev = popularSongFromYourTimeDef.await(),
+            favouriteArtistMixPrev = favouriteArtistMixDef.await(),
+            dayTypeSong = dayTimeSongDef.await(),
+            popularAlbum = poplarAlbumDef.await(),
+            popularArtist = popularArtist,
+            popularArtistSong = poplarArtistSongDef.await()
+        )
     }
 }

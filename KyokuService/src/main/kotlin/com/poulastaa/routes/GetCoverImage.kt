@@ -11,9 +11,7 @@ import io.ktor.server.routing.*
 import java.io.File
 
 
-fun Route.getCoverImage(
-    service: ServiceRepository,
-) {
+fun Route.getCoverImage() {
     route(EndPoints.GetCoverImage.route) {
         get {
             val image =
