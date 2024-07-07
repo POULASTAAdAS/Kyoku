@@ -80,6 +80,9 @@ private fun AppDrawer(
                 drawerState = drawerState,
                 navController = navController,
                 state = state,
+                onSaveScreenToggle = {
+                    onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
+                },
                 onEvent = onEvent
             )
         },
@@ -88,6 +91,9 @@ private fun AppDrawer(
                 drawerState = drawerState,
                 navController = navController,
                 state = state,
+                onSaveScreenToggle = {
+                    onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
+                },
                 onEvent = onEvent
             )
         },

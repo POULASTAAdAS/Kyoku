@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -79,14 +81,6 @@ class RootDrawerViewModel @Inject constructor(
             }
 
             else -> Unit
-        }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-        viewModelScope.launch {
-            ds.storeSaveScreen(state.saveScreen.name)
         }
     }
 }

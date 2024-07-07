@@ -94,11 +94,11 @@ val HomeUnSelectedIcon: ImageVector
 
 val LibrarySelectedIcon: ImageVector
     @Composable
-    get() = ImageVector.vectorResource(id = R.drawable.ic_libary)
+    get() = ImageVector.vectorResource(id = R.drawable.ic_library)
 
 val LibraryUnSelectedIcon: ImageVector
     @Composable
-    get() = ImageVector.vectorResource(id = R.drawable.ic_libary_empty)
+    get() = ImageVector.vectorResource(id = R.drawable.ic_library_empty)
 
 val ThreeLineIcon: ImageVector
     @Composable

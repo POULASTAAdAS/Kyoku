@@ -8,7 +8,7 @@ fun String.toSavedScreen() = when (this) {
     else -> DrawerScreen.Library.route
 }
 
-fun String.toDrawScreenRoute() = when(this){
+fun String.toDrawScreenRoute() = when (this) {
     SaveScreen.HOME.name -> DrawerScreen.Home.route
     else -> DrawerScreen.Library.route
 }

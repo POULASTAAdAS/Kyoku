@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,11 +67,20 @@ fun RootDrawerExpanded(
                     toggle = false
 
                     when (it.screen) {
-                        ScreenEnum.PROFILE -> navController.navigate(DrawerScreen.Profile.route)
+                        ScreenEnum.PROFILE -> navController.navigate(DrawerScreen.Profile.route) {
+                            popUpTo(DrawerScreen.Profile.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
 
-                        ScreenEnum.HISTORY -> navController.navigate(DrawerScreen.History.route)
+                        ScreenEnum.HISTORY -> navController.navigate(DrawerScreen.History.route) {
+                            popUpTo(DrawerScreen.History.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
 
-                        ScreenEnum.SETTINGS -> navController.navigate(DrawerScreen.Settings.route)
+                        ScreenEnum.SETTINGS -> navController.navigate(DrawerScreen.Settings.route) {
+                            popUpTo(DrawerScreen.Settings.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
 
                         else -> onEvent(it)
                     }
@@ -130,19 +140,59 @@ fun RootDrawerExpanded(
                 }
 
                 composable(route = DrawerScreen.Library.route) {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Library",
+                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 composable(route = DrawerScreen.Profile.route) {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Profile",
+                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 composable(route = DrawerScreen.History.route) {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "History",
+                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
 
                 composable(route = DrawerScreen.Settings.route) {
-
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Settings",
+                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
