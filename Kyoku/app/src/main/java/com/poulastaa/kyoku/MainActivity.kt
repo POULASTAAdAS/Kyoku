@@ -37,13 +37,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val startDestination by viewModel.startRoute.collectAsState()
+                    val startRoute by viewModel.startRoute.collectAsState()
                     val navController = rememberNavController()
 
-                    startDestination.startDestination?.let {
+                    startRoute.startDestination?.let {
                         NavigationRoot(
                             navHostController = navController,
-                            route = startDestination.route,
+                            route = startRoute.route,
                             screen = it
                         )
                     }

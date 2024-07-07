@@ -3,7 +3,10 @@ package com.poulastaa.core.presentation.designsystem
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
@@ -68,3 +71,35 @@ val WarningIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Warning
 
+val SearchIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Search
+
+val SettingsIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Settings
+
+
+val LogoutIcon: ImageVector
+    @Composable
+    get() = Icons.AutoMirrored.Rounded.ExitToApp
+
+val HomeSelectedIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_home)
+
+val HomeUnSelectedIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_home_empty)
+
+val LibrarySelectedIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_libary)
+
+val LibraryUnSelectedIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_libary_empty)
+
+val ThreeLineIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_three_line)

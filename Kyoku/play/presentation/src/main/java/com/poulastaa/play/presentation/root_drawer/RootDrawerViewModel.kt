@@ -1,0 +1,92 @@
+package com.poulastaa.play.presentation.root_drawer
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.play.domain.DrawerScreen
+import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.root_drawer.mapper.toDrawScreenRoute
+import com.poulastaa.play.presentation.root_drawer.mapper.toSavedScreen
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class RootDrawerViewModel @Inject constructor(
+    private val ds: DataStoreRepository,
+) : ViewModel() {
+    var state by mutableStateOf(RootDrawerUiState())
+        private set
+
+    init {
+        viewModelScope.launch {
+            val savedScreenDef = async {
+                ds.readSaveScreen().first().toSavedScreen()
+            }
+            val userDef = async { ds.readLocalUser() }
+            val savedScreen = savedScreenDef.await()
+            val user = userDef.await()
+
+            state = state.copy(
+                startDestination = savedScreen,
+                isScreenLoaded = true,
+                username = user.name,
+                profilePicUrl = user.profilePic
+            )
+        }
+    }
+
+    private val _uiEvent = Channel<RootDrawerUiAction>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    fun onEvent(event: RootDrawerUiEvent) {
+        when (event) {
+            is RootDrawerUiEvent.Navigate -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    _uiEvent.send(
+                        RootDrawerUiAction.Navigate(event.screen)
+                    )
+                }
+            }
+
+            RootDrawerUiEvent.LogOut -> {
+//                viewModelScope.launch {
+//                    ds.logOut()
+//                    _uiEvent.send(
+//                        RootDrawerUiAction.Navigate(ScreenEnum.INTRO)
+//                    )
+//                }
+            }
+
+            is RootDrawerUiEvent.SaveScreenToggle -> {
+                if (state.startDestination != event.screen.name.toDrawScreenRoute()) {
+                    state = state.copy(
+                        startDestination = when (event.screen) {
+                            SaveScreen.HOME -> DrawerScreen.Home.route
+                            SaveScreen.LIBRARY -> DrawerScreen.Library.route
+                        },
+                        saveScreen = event.screen
+                    )
+                }
+            }
+
+            else -> Unit
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        viewModelScope.launch {
+            ds.storeSaveScreen(state.saveScreen.name)
+        }
+    }
+}

@@ -14,4 +14,9 @@ interface DataStoreRepository {
 
     suspend fun storeLocalUser(user: User)
     suspend fun readLocalUser(): User
+
+    suspend fun storeSaveScreen(data: String)
+    fun readSaveScreen(): Flow<String>
+
+    suspend fun logOut()
 }

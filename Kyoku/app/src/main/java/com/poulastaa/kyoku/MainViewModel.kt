@@ -56,7 +56,7 @@ class MainViewModel @Inject constructor(
 
                 ScreenEnum.HOME -> RouteExt(
                     route = Screens.APP_ROUTE,
-                    startDestination = Screens.Home.route
+                    startDestination = Screens.AppRoot.route
                 )
 
                 else -> return@launch

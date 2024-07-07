@@ -11,6 +11,7 @@ import com.poulastaa.auth.presentation.email.login.EmailLoginRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.play.presentation.root_drawer.RootDrawerScreen
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyRootScreen
 import com.poulastaa.setup.presentation.set_artist.ArtistRootScreen
 import com.poulastaa.setup.presentation.set_b_date.BDateRootScreen
@@ -67,7 +68,7 @@ private fun NavGraphBuilder.authGraph(
                     }
 
                     ScreenEnum.HOME -> {
-                        nav.navigate(Screens.Home.route)
+                        nav.navigate(Screens.AppRoot.route)
                     }
 
                     else -> Unit
@@ -111,7 +112,7 @@ private fun NavGraphBuilder.authGraph(
 
                         ScreenEnum.PIC_ARTIST -> nav.navigate(Screens.PicArtist.route)
 
-                        ScreenEnum.HOME -> nav.navigate(Screens.Home.route)
+                        ScreenEnum.HOME -> nav.navigate(Screens.AppRoot.route)
 
                         else -> Unit
                     }
@@ -143,7 +144,7 @@ private fun NavGraphBuilder.authGraph(
 
                         ScreenEnum.PIC_ARTIST -> nav.navigate(Screens.PicArtist.route)
 
-                        ScreenEnum.HOME -> nav.navigate(Screens.Home.route)
+                        ScreenEnum.HOME -> nav.navigate(Screens.AppRoot.route)
 
                         else -> Unit
                     }
@@ -205,7 +206,7 @@ private fun NavGraphBuilder.startUpGraph(
         composable(route = Screens.PicArtist.route) {
             ArtistRootScreen {
                 nav.popBackStack()
-                nav.navigate(Screens.Home.route)
+                nav.navigate(Screens.AppRoot.route)
             }
         }
     }
@@ -219,11 +220,25 @@ private fun NavGraphBuilder.appGraph(
         route = Screens.APP_ROUTE,
         startDestination = screen
     ) {
-        composable(route = Screens.Home.route) {
+        composable(route = Screens.AppRoot.route) {
+            RootDrawerScreen {
+                when (it) {
+                    ScreenEnum.INTRO -> {
+                        nav.popBackStack()
+                        nav.navigate(Screens.Intro.route)
+                    }
 
+                    ScreenEnum.HOME_SEARCH -> {
+                        nav.navigate(Screens.HomeSearch.route)
+                    }
+
+                    else -> Unit
+                }
+            }
         }
 
-        composable(route = Screens.Library.route) {
+
+        composable(route = Screens.HomeSearch.route) {
 
         }
     }

@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.activity.compose)
 
+    implementation(libs.material3WindowSizeClass)
+
     implementation(projects.core.domain)
     implementation(projects.play.domain)
 }

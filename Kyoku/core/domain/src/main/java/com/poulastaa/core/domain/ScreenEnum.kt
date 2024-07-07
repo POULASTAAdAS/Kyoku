@@ -9,5 +9,9 @@ enum class ScreenEnum {
     SET_B_DATE,
     PIC_GENRE,
     PIC_ARTIST,
-    HOME
+    HOME,
+    HOME_SEARCH,
+    PROFILE,
+    HISTORY,
+    SETTINGS,
 }

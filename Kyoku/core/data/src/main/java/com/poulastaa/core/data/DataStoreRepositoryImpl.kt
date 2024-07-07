@@ -28,6 +28,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val TOKEN_OR_COOKIE = stringPreferencesKey(name = "token_or_cookie")
         val REFRESH_TOKEN = stringPreferencesKey(name = "refresh_token")
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
+        val SAVED_SCREEN = stringPreferencesKey(name = "saved_screen")
     }
 
     override suspend fun storeSignInState(state: ScreenEnum) {
@@ -97,5 +98,23 @@ class DataStoreRepositoryImpl @Inject constructor(
         }
 
         return response?.toUser() ?: User()
+    }
+
+    override suspend fun storeSaveScreen(data: String) {
+        dataStore.edit {
+            it[PreferencesKeys.SAVED_SCREEN] = data
+        }
+    }
+
+    override fun readSaveScreen(): Flow<String> = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        it[PreferencesKeys.SAVED_SCREEN] ?: "HOME"
+    }
+
+    override suspend fun logOut() {
+        dataStore.edit {
+            it.clear()
+        }
     }
 }
