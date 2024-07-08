@@ -8,5 +8,5 @@ data class NewHome(
     val dayTypeSong: List<PrevSong> = emptyList(),
     val popularAlbum: List<PrevAlbum> = emptyList(),
     val popularArtist: List<Artist> = emptyList(),
-    val popularArtistSong: List<PreArtistSong> = emptyList(),
+    val popularArtistSong: List<PrevArtistSong> = emptyList(),
 )

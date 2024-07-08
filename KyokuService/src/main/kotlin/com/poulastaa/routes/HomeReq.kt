@@ -13,7 +13,7 @@ import io.ktor.server.routing.*
 fun Route.homeReq(
     service: ServiceRepository,
 ) {
-    route(EndPoints.Home.route) {
+    route(EndPoints.NewHome.route) {
         post {
             val req = call.receiveNullable<HomeReq>() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 

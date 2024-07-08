@@ -1,7 +1,7 @@
 package com.poulastaa.setup.network.mappers
 
 import com.poulastaa.core.domain.model.Artist
-import com.poulastaa.setup.network.model.res.ArtistDto
+import com.poulastaa.core.data.model.ArtistDto
 
 fun ArtistDto.toArtist() = Artist(
     id = id,
