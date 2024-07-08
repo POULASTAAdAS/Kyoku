@@ -4,5 +4,5 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 
 interface BDateRepository {
-    suspend fun storeBDate(bDate: Long):  Result<Boolean, DataError.Network>
+    suspend fun storeBDate(bDate: Long): Result<Boolean, DataError.Network>
 }

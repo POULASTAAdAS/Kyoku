@@ -21,10 +21,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import kotlin.random.Random
 
 class HomeRepositoryImpl : HomeRepository {
-    override suspend fun getPopularSongMix(countryId: Int): List<PrevSongDto> = withContext(Dispatchers.IO) {
+    override suspend fun getPopularSongMixPrev(countryId: Int): List<PrevSongDto> = withContext(Dispatchers.IO) {
         query {
             SongTable
                 .join(
@@ -40,7 +39,7 @@ class HomeRepositoryImpl : HomeRepository {
                 ).select {
                     SongCountryRelationTable.countryId eq countryId
                 }.orderBy(SongTable.points to SortOrder.DESC)
-                .limit(Random.nextInt(40, 56))
+                .limit(4)
                 .map {
                     PrevSongDto(
                         songId = it[SongTable.id].value,
@@ -50,15 +49,14 @@ class HomeRepositoryImpl : HomeRepository {
         }
     }
 
-    override suspend fun getPopularSongFromUserTime(
+    override suspend fun getPopularSongFromUserTimePrev(
         year: Int,
         countryId: Int,
     ): List<PrevSongDto> = withContext(Dispatchers.IO) {
-        var tempYear = year - 1
-        (1..5).map {
-            tempYear++
-
+        (1..4).map { index ->
             async {
+                val targetYear = year - 1 + index
+
                 query {
                     SongTable
                         .join(
@@ -72,11 +70,11 @@ class HomeRepositoryImpl : HomeRepository {
                             SongTable.id,
                             SongTable.coverImage
                         ).select {
-                            SongCountryRelationTable.countryId eq countryId and (SongTable.year eq tempYear)
+                            SongCountryRelationTable.countryId eq countryId and (SongTable.year eq targetYear)
                         }
                         .orderBy(SongTable.points to SortOrder.DESC)
-                        .limit(Random.nextInt(8, 12))
-                        .map {
+                        .firstOrNull()
+                        ?.let {
                             PrevSongDto(
                                 songId = it[SongTable.id].value,
                                 coverImage = it[SongTable.coverImage].constructSongCoverImage()
@@ -84,10 +82,10 @@ class HomeRepositoryImpl : HomeRepository {
                         }
                 }
             }
-        }.awaitAll().flatten()
+        }.awaitAll().filterNotNull()
     }
 
-    override suspend fun getFavouriteArtistMix(
+    override suspend fun getFavouriteArtistMixPrev(
         userId: Long,
         userType: UserType,
         countryId: Int,
@@ -127,7 +125,7 @@ class HomeRepositoryImpl : HomeRepository {
                     SongTable.points to SortOrder.DESC
                 )
                 .orderBy()
-                .limit(Random.nextInt(45, 56))
+                .limit(4)
                 .map {
                     PrevSongDto(
                         songId = it[SongTable.id].value,
@@ -137,7 +135,7 @@ class HomeRepositoryImpl : HomeRepository {
         }
     }
 
-    override suspend fun getDayTypeSong(
+    override suspend fun getDayTypeSongPrev(
         dayType: DayType,
         countryId: Int,
     ): List<PrevSongDto> = withContext(Dispatchers.IO) {
@@ -163,7 +161,7 @@ class HomeRepositoryImpl : HomeRepository {
                                 .Else(intLiteral(2)) to SortOrder.ASC,
                             SongTable.points to SortOrder.DESC
                         )
-                        .limit(Random.nextInt(45, 56))
+                        .limit(4)
                         .distinct()
                         .toList()
                         .map {
@@ -177,7 +175,7 @@ class HomeRepositoryImpl : HomeRepository {
         }
     }
 
-    override suspend fun getPopularAlbum(countryId: Int): List<PrevAlbumDto> = withContext(Dispatchers.IO) {
+    override suspend fun getPopularAlbumPrev(countryId: Int): List<PrevAlbumDto> = withContext(Dispatchers.IO) {
         query {
             AlbumTable
                 .join(
@@ -271,7 +269,7 @@ class HomeRepositoryImpl : HomeRepository {
         }
     }
 
-    override suspend fun getPopularArtistSong(
+    override suspend fun getPopularArtistSongPrev(
         userId: Long,
         userType: UserType,
         excludeArtist: List<Long>,

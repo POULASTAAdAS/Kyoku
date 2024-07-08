@@ -122,24 +122,24 @@ class ServiceRepositoryImpl(
     ): HomeDto = coroutineScope {
         val user = userRepo.getUserOnPayload(userPayload) ?: return@coroutineScope HomeDto()
 
-        val popularSongMixDef = async { homeRepo.getPopularSongMix(user.countryId) }
+        val popularSongMixDef = async { homeRepo.getPopularSongMixPrev(user.countryId) }
         val popularSongFromYourTimeDef = async {
-            homeRepo.getPopularSongFromUserTime(user.bDate.getYear(), user.countryId)
+            homeRepo.getPopularSongFromUserTimePrev(user.bDate.getYear(), user.countryId)
         }
         val favouriteArtistMixDef = async {
-            homeRepo.getFavouriteArtistMix(
+            homeRepo.getFavouriteArtistMixPrev(
                 userId = user.id,
                 userType = user.userType,
                 countryId = user.countryId
             )
         }
         val dayTimeSongDef = async {
-            homeRepo.getDayTypeSong(
+            homeRepo.getDayTypeSongPrev(
                 dayType = req.dayType,
                 countryId = user.countryId
             )
         }
-        val poplarAlbumDef = async { homeRepo.getPopularAlbum(user.countryId) }
+        val poplarAlbumDef = async { homeRepo.getPopularAlbumPrev(user.countryId) }
         val poplarArtistDef = async {
             homeRepo.getPopularArtist(
                 userId = user.id,
@@ -151,7 +151,7 @@ class ServiceRepositoryImpl(
         val popularArtist = poplarArtistDef.await()
 
         val poplarArtistSongDef = async {
-            homeRepo.getPopularArtistSong(
+            homeRepo.getPopularArtistSongPrev(
                 userId = user.id,
                 userType = user.userType,
                 excludeArtist = popularArtist.map {

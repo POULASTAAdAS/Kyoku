@@ -27,12 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.DrawerScreen
-import com.poulastaa.play.domain.HomeToDrawerEvent
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
-import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
-import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 
 @Composable
 fun RootDrawerExpanded(

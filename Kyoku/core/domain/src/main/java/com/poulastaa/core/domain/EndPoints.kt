@@ -9,8 +9,6 @@ sealed class EndPoints(val route: String) {
     data object LogInEmailVerificationCheck :
         EndPoints(route = "/api/auth/logInEmailVerificationCheck")
 
-    data object ResendVerificationMail : EndPoints(route = "/api/auth/resendVerificationMail")
-
     data object ForgotPassword : EndPoints(route = "/api/auth/forgotPassword")
 
     data object RefreshToken : EndPoints(route = "/api/auth/refreshToken")
@@ -25,4 +23,6 @@ sealed class EndPoints(val route: String) {
     data object SuggestArtist : EndPoints(route = "/api/authorised/suggestArtist")
     data object GetArtistImage : EndPoints(route = "/api/authorised/getArtistImage")
     data object StoreArtist : EndPoints(route = "/api/authorised/storeArtist")
+
+
 }

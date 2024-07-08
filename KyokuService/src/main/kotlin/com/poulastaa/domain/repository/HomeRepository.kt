@@ -8,27 +8,27 @@ import com.poulastaa.domain.model.DayType
 import com.poulastaa.domain.model.UserType
 
 interface HomeRepository {
-    suspend fun getPopularSongMix(
+    suspend fun getPopularSongMixPrev(
         countryId: Int,
     ): List<PrevSongDto>
 
-    suspend fun getPopularSongFromUserTime(
+    suspend fun getPopularSongFromUserTimePrev(
         year: Int,
         countryId: Int,
     ): List<PrevSongDto>
 
-    suspend fun getFavouriteArtistMix(
+    suspend fun getFavouriteArtistMixPrev(
         userId: Long,
         userType: UserType,
         countryId: Int,
     ): List<PrevSongDto>
 
-    suspend fun getDayTypeSong(
+    suspend fun getDayTypeSongPrev(
         dayType: DayType,
         countryId: Int,
     ): List<PrevSongDto>
 
-    suspend fun getPopularAlbum(
+    suspend fun getPopularAlbumPrev(
         countryId: Int,
     ): List<PrevAlbumDto>
 
@@ -38,7 +38,7 @@ interface HomeRepository {
         countryId: Int,
     ): List<ArtistDto>
 
-    suspend fun getPopularArtistSong(
+    suspend fun getPopularArtistSongPrev(
         userId: Long,
         userType: UserType,
         excludeArtist: List<Long>,

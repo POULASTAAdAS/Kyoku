@@ -43,10 +43,37 @@ where songcountryrelation.countryId = 1
 order by song.points desc;
 
 -- getPopularSongFromUserTime
-select * from song
+select song.id , song.title , song.coverImage , song.year from song
 join songcountryrelation on songcountryrelation.songId = song.id
-where songcountryrelation.countryId = 1 and song.year = 2016
-order by song.points desc;
+where songcountryrelation.countryId = 1 and song.year in (2016 , 2017 , 2018 , 2019)
+order by song.points desc limit 1;
+
+select song.id , song.title , song.coverImage , song.year from song
+join songcountryrelation on songcountryrelation.songId = song.id
+where songcountryrelation.countryId = 1 and song.year = 2018
+order by song.points desc limit 1;
+
+WITH RankedSongs AS (
+    SELECT 
+        song.id, 
+        song.title, 
+        song.coverImage, 
+        song.year,
+        ROW_NUMBER() OVER (PARTITION BY song.year ORDER BY song.points DESC) as rn
+    FROM song
+    JOIN songcountryrelation ON songcountryrelation.songId = song.id
+    WHERE songcountryrelation.countryId = 1 AND song.year IN (2016, 2017, 2018, 2019)
+)
+SELECT 
+    id, 
+    title, 
+    coverImage, 
+    year 
+FROM RankedSongs 
+WHERE rn = 1;
+
+
+
 
 
 -- getFavouriteArtistMix

@@ -5,8 +5,17 @@ import androidx.room.RoomDatabase
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.entity.ArtistEntity
+import com.poulastaa.core.database.entity.DayTypeSongPrevEntity
+import com.poulastaa.core.database.entity.FavouriteArtistMixPrevEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
+import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
+import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
+import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
+import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
 import com.poulastaa.core.database.entity.SongEntity
+import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
+import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
+import com.poulastaa.core.database.entity.relation.PopularArtistSongRelation
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 
@@ -16,7 +25,19 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         ArtistEntity::class,
         PlaylistEntity::class,
         SongArtistRelationEntity::class,
-        SongPlaylistRelationEntity::class
+        SongPlaylistRelationEntity::class,
+
+        PopularSongMixPrevEntity::class,
+        PopularSongFromYourTimePrevEntity::class,
+        FavouriteArtistMixPrevEntity::class,
+        DayTypeSongPrevEntity::class,
+
+        PopularAlbumPrevEntity::class,
+        PopularSuggestArtistEntity::class,
+
+        ArtistSongEntity::class,
+        PopularSongArtistEntity::class,
+        PopularArtistSongRelation::class
     ],
     version = 1,
     exportSchema = true
