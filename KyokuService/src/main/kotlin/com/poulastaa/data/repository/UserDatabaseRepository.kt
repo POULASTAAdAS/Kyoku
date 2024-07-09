@@ -47,11 +47,13 @@ class UserDatabaseRepository : UserRepository {
         songIdList: List<Long>,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            UserPlaylistSongRelationTable.batchInsert(songIdList, ignore = true) { songId ->
-                this[UserPlaylistSongRelationTable.userId] = userId
-                this[UserPlaylistSongRelationTable.playlistId] = playlistId
-                this[UserPlaylistSongRelationTable.songId] = songId
-                this[UserPlaylistSongRelationTable.userType] = userType.name
+            query {
+                UserPlaylistSongRelationTable.batchInsert(songIdList, ignore = true) { songId ->
+                    this[UserPlaylistSongRelationTable.userId] = userId
+                    this[UserPlaylistSongRelationTable.playlistId] = playlistId
+                    this[UserPlaylistSongRelationTable.songId] = songId
+                    this[UserPlaylistSongRelationTable.userType] = userType.name
+                }
             }
         }
     }

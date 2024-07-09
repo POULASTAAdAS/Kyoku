@@ -18,7 +18,7 @@ import com.poulastaa.setup.presentation.components.LessSelectedToast
 import com.poulastaa.setup.presentation.components.NoInternetToast
 import com.poulastaa.setup.presentation.set_artist.ArtistUiEvent
 import com.poulastaa.setup.presentation.set_artist.ArtistUiState
-import com.poulastaa.setup.presentation.set_artist.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiArtist
 import kotlin.random.Random
 
 @Composable

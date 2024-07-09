@@ -18,11 +18,12 @@ object DatabaseAppModule {
     @Singleton
     fun provideKyokuDatabase(
         @ApplicationContext context: Context,
-    ): KyokuDatabase = Room.databaseBuilder(
+    ) = Room.databaseBuilder(
         context = context,
         KyokuDatabase::class.java,
         "KyokuDatabase"
-    ).fallbackToDestructiveMigration().build()
+    ).fallbackToDestructiveMigration()
+        .build()
 
     @Provides
     @Singleton

@@ -1,6 +1,6 @@
 package com.poulastaa.setup.presentation.set_artist
 
-import com.poulastaa.setup.presentation.set_artist.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiArtist
 
 data class ArtistUiState(
     val isMakingApiCall: Boolean = false,

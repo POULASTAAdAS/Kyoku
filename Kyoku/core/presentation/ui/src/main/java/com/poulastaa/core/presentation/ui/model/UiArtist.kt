@@ -1,4 +1,4 @@
-package com.poulastaa.setup.presentation.set_artist.model
+package com.poulastaa.core.presentation.ui.model
 
 data class UiArtist(
     val id: Long = -1,

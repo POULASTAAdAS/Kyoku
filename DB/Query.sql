@@ -23,6 +23,7 @@ select count(*) from ArtistAlbumRelation;
 
 select * from emailauthuser;
 select * from googleauthuser;
+delete from googleauthuser;
 
 select * from loginverificationmail;
 
@@ -31,6 +32,9 @@ select * from userplaylistsongrelation;
 select * from usergenrerelation;
 select * from userartistrelation;
 
+delete from playlist;
+delete from usergenrerelation;
+delete from userartistrelation;
 
 
 

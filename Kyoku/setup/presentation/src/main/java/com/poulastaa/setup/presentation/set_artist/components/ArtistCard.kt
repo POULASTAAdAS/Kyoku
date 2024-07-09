@@ -36,7 +36,7 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReq
-import com.poulastaa.setup.presentation.set_artist.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiArtist
 
 @Composable
 fun ArtistCard(

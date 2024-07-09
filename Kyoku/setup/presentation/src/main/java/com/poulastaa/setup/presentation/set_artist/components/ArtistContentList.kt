@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.setup.presentation.set_artist.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiArtist
 
 @Composable
 fun ArtistContentList(

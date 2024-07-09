@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class ArtistSongEntity(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
+    val title: String,
     val coverImage: String,
 )
