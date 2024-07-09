@@ -18,7 +18,7 @@ import com.poulastaa.setup.presentation.components.LessSelectedToast
 import com.poulastaa.setup.presentation.components.NoInternetToast
 import com.poulastaa.setup.presentation.set_artist.ArtistUiEvent
 import com.poulastaa.setup.presentation.set_artist.ArtistUiState
-import com.poulastaa.core.presentation.ui.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 import kotlin.random.Random
 
 @Composable
@@ -69,7 +69,7 @@ fun ArtistCompact(
 private fun Preview() {
     AppThem {
         val data = (1..40).map {
-            UiArtist(
+            SpotifyUiArtist(
                 id = it.toLong(),
                 name = "Artist $it",
                 isSelected = Random.nextBoolean()

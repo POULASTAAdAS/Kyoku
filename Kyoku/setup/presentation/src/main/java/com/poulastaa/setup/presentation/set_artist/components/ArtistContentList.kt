@@ -13,13 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 
 @Composable
 fun ArtistContentList(
     grid: Int,
     header: String,
-    data: List<UiArtist>,
+    data: List<SpotifyUiArtist>,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
     onClick: (id: Long) -> Unit,

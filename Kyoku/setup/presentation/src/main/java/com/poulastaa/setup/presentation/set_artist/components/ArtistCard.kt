@@ -36,13 +36,13 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReq
-import com.poulastaa.core.presentation.ui.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 
 @Composable
 fun ArtistCard(
     modifier: Modifier = Modifier,
     header: String,
-    artist: UiArtist,
+    artist: SpotifyUiArtist,
 ) {
     Card(
         modifier = modifier,
@@ -141,7 +141,7 @@ private fun Preview() {
                 modifier = Modifier
                     .aspectRatio(1f),
                 header = "",
-                artist = UiArtist(
+                artist = SpotifyUiArtist(
                     name = "Artist",
                     isSelected = true
                 )

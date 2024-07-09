@@ -61,4 +61,13 @@
     <string name="settings_label">Settings</string>
     <string name="logout_label">Logout</string>
     <string name="library_title">Your Library</string>
+    <string name="more_from_artist">More From</string>
+    <string name="view_more">view\nmore</string>
+    <string name="explore_more">Explore More</string>
+    <string name="popular_artist_mix">Popular Artist Mix</string>
+    <string name="popular_song_mix">Popular Songs Mix</string>
+    <string name="popular_songs_from_your_time">Old Gems</string>
+    <string name="popular_albums">"Popular Albums "</string>
+    <string name="artist_you_may_like">Artist\'s You May Like</string>
+    <string name="best_from_artist">Best From Artists</string>
 </resources>

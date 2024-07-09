@@ -15,6 +15,7 @@ import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         setHomeTopBarTitle()
+        readHeader()
         loadData()
     }
 
@@ -36,10 +38,19 @@ class HomeViewModel @Inject constructor(
 
     }
 
+
     private fun setHomeTopBarTitle() {
         viewModelScope.launch {
             state = state.copy(
                 heading = getCurrentTime(),
+            )
+        }
+    }
+
+    private fun readHeader() = viewModelScope.launch {
+        ds.readTokenOrCookie().collectLatest {
+            state = state.copy(
+                header = it
             )
         }
     }
@@ -54,7 +65,6 @@ class HomeViewModel @Inject constructor(
             populateDef.await()
         }
     }
-
 
     private fun loadNewUserData() {
         viewModelScope.launch {
@@ -83,10 +93,12 @@ class HomeViewModel @Inject constructor(
     private suspend fun populate(): Unit = withContext(Dispatchers.IO) {
         val data = homeRepo.loadHomeData()
 
-        state = state.copy(
-            isNewUser = false,
-            isDataLoading = false,
-            data = data.toUiHomeData()
-        )
+        withContext(Dispatchers.Main) { // canShowUi is not updating without thread change
+            state = state.copy(
+                isNewUser = false,
+                isDataLoading = false,
+                data = data.toUiHomeData()
+            )
+        }
     }
 }

@@ -10,6 +10,7 @@ import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.poulastaa.core.presentation.designsystem.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -44,6 +45,60 @@ fun imageReq(
     .crossfade(true)
     .build()
 
+
+@Composable
+fun imageReqSongCover(
+    header: String,
+    url: String,
+): ImageRequest {
+    val context = LocalContext.current
+
+    ImageLoader.Builder(context)
+        .diskCache {
+            DiskCache.Builder()
+                .directory(context.cacheDir.resolve("image_catch"))
+                .maxSizePercent(0.02)
+                .build()
+        }
+        .build()
+
+    return ImageRequest.Builder(context)
+        .addHeader(
+            name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
+            value = header
+        )
+        .placeholder(R.drawable.ic_music_vector)
+        .error(R.drawable.ic_music_vector)
+        .data(url)
+        .build()
+}
+
+@Composable
+fun imageReqUser(
+    header: String,
+    url: String,
+): ImageRequest {
+    val context = LocalContext.current
+
+    ImageLoader.Builder(context)
+        .diskCache {
+            DiskCache.Builder()
+                .directory(context.cacheDir.resolve("image_catch"))
+                .maxSizePercent(0.02)
+                .build()
+        }
+        .build()
+
+    return ImageRequest.Builder(context)
+        .addHeader(
+            name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
+            value = header
+        )
+        .placeholder(R.drawable.ic_user)
+        .error(R.drawable.ic_user)
+        .data(url)
+        .build()
+}
 
 suspend fun getBitmapFromUrlOrCache(
     url: String,

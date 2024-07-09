@@ -1,10 +1,18 @@
 package com.poulastaa.play.presentation.root_drawer.home.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,21 +23,23 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SearchIcon
+import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,27 +61,15 @@ fun HomeAppbar(
             Text(
                 text = title,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 letterSpacing = 2.sp,
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2)
             )
         },
         navigationIcon = {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(profileUrl)
-                    .placeholder(drawableResId = R.drawable.ic_user)
-                    .crossfade(true)
-                    .error(drawableResId = R.drawable.ic_user)
-                    .build(),
-                contentDescription = null,
+            Card(
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.small1)
-                    .size(50.dp)
-                    .shadow(
-                        elevation = 10.dp,
-                        shape = CircleShape,
-                    )
+                    .size(54.dp)
                     .clickable(
                         onClick = {
                             onProfileClick()
@@ -81,8 +79,51 @@ fun HomeAppbar(
                         interactionSource = remember {
                             MutableInteractionSource()
                         }
-                    )
-            )
+                    ),
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                )
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(profileUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    error = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                imageVector = UserIcon,
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(
+                                    color = MaterialTheme.colorScheme.onBackground.copy(.7f)
+                                ),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(MaterialTheme.dimens.small3)
+                            )
+                        }
+                    },
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                strokeWidth = 1.5.dp,
+                                strokeCap = StrokeCap.Round,
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                )
+            }
         },
         actions = {
             IconButton(onClick = onSearchClick) {
@@ -98,15 +139,21 @@ fun HomeAppbar(
     )
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
+@PreviewLightDark
 @Composable
 private fun Preview() {
     AppThem {
-        HomeAppbar(
-            scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
-            title = "Good Morning", profileUrl = "", onProfileClick = { /*TODO*/ }) {
-
+        Column(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+        ) {
+            HomeAppbar(
+                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                title = "Good Morning",
+                profileUrl = "",
+                onProfileClick = { /*TODO*/ }
+            ) {}
         }
     }
 }

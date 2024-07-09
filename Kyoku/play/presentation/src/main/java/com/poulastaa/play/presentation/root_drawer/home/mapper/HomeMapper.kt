@@ -7,12 +7,13 @@ import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.PrevArtistSong
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
+import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 import com.poulastaa.core.presentation.ui.model.UiArtist
-import com.poulastaa.play.presentation.root_drawer.home.UiArtistWithSong
-import com.poulastaa.play.presentation.root_drawer.home.UiHomeData
-import com.poulastaa.play.presentation.root_drawer.home.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.UiPrevSong
-import com.poulastaa.play.presentation.root_drawer.home.UiSongWithInfo
+import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
+import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
+import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
