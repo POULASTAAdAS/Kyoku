@@ -21,6 +21,12 @@
       <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/email_signup.jpg" width="240" height="520">
     </td>
   </tr>
+
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/phone/dark/phone_home.gif" width="240" height="520">
+    </td>
+  </tr>
 </table>
 
 # <h2 align="center">Preview Light</h2>
@@ -45,6 +51,15 @@
   </tr>
 </table>
 
+# <h2 align="center">Preview Dark Tablet</h2>
+
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Music-Streaming-App/blob/modularize/screensorts/tablet/tablate_home.gif" width="240" height="520">
+    </td>
+  </tr>
+</table>
 # License
 
 ```xml
