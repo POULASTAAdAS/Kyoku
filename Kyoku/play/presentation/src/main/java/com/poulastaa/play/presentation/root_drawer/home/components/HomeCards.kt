@@ -56,7 +56,82 @@ import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 
-private val defaultElevation = 10.dp
+private val defaultElevationSmall = 6.dp
+private val defaultElevationMedium = 10.dp
+
+@Composable
+fun SavedPlaylistCard(
+    modifier: Modifier = Modifier,
+    header: String,
+    uiPlaylist: UiPrevPlaylist,
+) {
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraSmall,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = defaultElevationSmall
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+        ) {
+            ImageGrid(
+                modifier = Modifier.aspectRatio(1f),
+                header = header,
+                urls = uiPlaylist.urls,
+                elevation = CardDefaults.cardElevation(0.dp)
+            )
+
+            Text(
+                text = uiPlaylist.name,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun SavedAlbumCard(
+    modifier: Modifier = Modifier,
+    header: String,
+    uiAlbum: UiPrevAlbum,
+) {
+    Card(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.extraSmall,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = defaultElevationSmall
+        )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+        ) {
+            AsyncImage(
+                model = imageReqSongCover(
+                    header = header,
+                    url = uiAlbum.coverImage
+                ),
+                modifier = Modifier
+                    .aspectRatio(1f),
+                contentDescription = null
+            )
+
+            Text(
+                text = uiAlbum.name,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
 
 @Composable
 fun HomePlaylistCard(
@@ -65,7 +140,7 @@ fun HomePlaylistCard(
     uiPrevPlaylist: UiPrevPlaylist,
     shape: Shape = MaterialTheme.shapes.extraSmall,
     elevation: CardElevation = CardDefaults.cardElevation(
-        defaultElevation = 6.dp
+        defaultElevation = defaultElevationSmall
     ),
     colors: CardColors = CardDefaults.cardColors(),
     onClick: (id: Long) -> Unit,
@@ -110,7 +185,7 @@ fun HomeAlbumCard(
     prevAlbum: UiPrevAlbum,
     shape: Shape = MaterialTheme.shapes.extraSmall,
     elevation: CardElevation = CardDefaults.cardElevation(
-        defaultElevation = 10.dp
+        defaultElevation = defaultElevationMedium
     ),
     colors: CardColors = CardDefaults.cardColors(),
     onClick: (id: Long) -> Unit,
@@ -177,10 +252,10 @@ fun GridImageCard(
             .clickable {
                 onClick()
             },
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
         shape = MaterialTheme.shapes.extraSmall,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        )
     ) {
         ImageGrid(
             modifier = Modifier
@@ -215,7 +290,7 @@ fun SingleSongCard(
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = defaultElevationSmall
         ),
         shape = MaterialTheme.shapes.small,
     ) {
@@ -346,9 +421,9 @@ fun ViewMore(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = CircleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = defaultElevation
+            defaultElevation = defaultElevationMedium
         )
     ) {
         Column(
@@ -387,7 +462,7 @@ private fun CircularArtist(
         modifier = modifier,
         shape = CircleShape,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = defaultElevationSmall
         )
     ) {
         SubcomposeAsyncImage(
@@ -437,7 +512,7 @@ private fun ImageGrid(
     header: String,
     urls: List<String>,
     elevation: CardElevation = CardDefaults.cardElevation(
-        defaultElevation = 6.dp
+        defaultElevation = defaultElevationSmall
     ),
     colors: CardColors = CardDefaults.cardColors(),
 ) {
@@ -505,26 +580,35 @@ private fun ImageGrid(
 @PreviewLightDark
 @Composable
 private fun Preview() {
+    val data = (1..2).map {
+        UiPrevAlbum(
+            id = 2,
+            name = "My Album",
+        )
+    }
+
     AppThem {
         Row(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(MaterialTheme.dimens.large1),
+                .fillMaxWidth()
+                .padding(MaterialTheme.dimens.medium1),
         ) {
-//            SingleSongCard(
-//                modifier = Modifier.size(90.dp),
-//                header = "",
-//                song = UiSongWithInfo(
-//                    title = "song"
-//                )
-//            )
-
-            GridImageCard(
-                header = "",
-                songs = listOf(),
-                title = "ArtistMix",
-                onClick = {}
-            )
+            Row(
+                modifier = Modifier
+                    .height(70.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+            ) {
+                data.forEach {
+                    SavedAlbumCard(
+                        uiAlbum = it,
+                        header = "",
+                        modifier = Modifier
+                            .weight(1f)
+                    )
+                }
+            }
         }
     }
 }

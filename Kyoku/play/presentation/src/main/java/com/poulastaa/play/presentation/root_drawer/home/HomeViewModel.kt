@@ -12,10 +12,12 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
 import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
+import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -63,6 +65,7 @@ class HomeViewModel @Inject constructor(
 
             if (newUserDef.await()) return@launch loadNewUserData()
             populateDef.await()
+            loadSavedPlaylist()
         }
     }
 
@@ -97,8 +100,22 @@ class HomeViewModel @Inject constructor(
             state = state.copy(
                 isNewUser = false,
                 isDataLoading = false,
-                data = data.toUiHomeData()
+                staticData = data.toUiHomeData()
             )
+        }
+    }
+
+    private fun loadSavedPlaylist() {
+        viewModelScope.launch {
+            homeRepo.loadSavedPlaylist().map {
+                it.map { result ->
+                    result.toUiPlaylist()
+                }
+            }.map {
+                state = state.copy(
+                    savedPlaylists = it
+                )
+            }
         }
     }
 }

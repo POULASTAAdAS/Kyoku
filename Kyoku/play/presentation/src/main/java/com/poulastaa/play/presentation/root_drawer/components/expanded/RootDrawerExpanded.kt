@@ -26,10 +26,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
+import com.poulastaa.play.domain.HomeToDrawerEvent
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
+import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -43,8 +46,10 @@ fun RootDrawerExpanded(
     }
 
     Row(
-        modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.Start,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.surfaceContainer),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
         verticalAlignment = Alignment.Top
     ) {
         Surface(
@@ -121,17 +126,20 @@ fun RootDrawerExpanded(
                 startDestination = state.startDestination
             ) {
                 composable(route = DrawerScreen.Home.route) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Home",
-                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    HomeCompactScreen(
+                        profileUrl = state.profilePicUrl,
+                        onEvent = {
+                            when (it) {
+                                HomeToDrawerEvent.PROFILE_CLICK -> onEvent(RootDrawerUiEvent.OnDrawerToggle)
+
+                                HomeToDrawerEvent.SEARCH_CLICK -> onEvent(
+                                    RootDrawerUiEvent.Navigate(
+                                        screen = ScreenEnum.HOME_SEARCH
+                                    )
+                                )
+                            }
+                        }
+                    )
                 }
 
                 composable(route = DrawerScreen.Library.route) {

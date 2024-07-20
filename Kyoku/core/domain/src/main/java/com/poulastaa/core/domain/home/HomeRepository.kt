@@ -5,6 +5,7 @@ import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
+import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
     suspend fun storeNewHomeResponse(dayType: DayType): EmptyResult<DataError.Network>
@@ -12,4 +13,6 @@ interface HomeRepository {
     suspend fun isNewUser(): Boolean
 
     suspend fun loadHomeData(): HomeData
+
+    fun loadSavedPlaylist(): Flow<SavedPlaylist>
 }

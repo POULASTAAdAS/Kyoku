@@ -16,14 +16,19 @@ import com.poulastaa.core.database.mapper.toPopularSongMixPrev
 import com.poulastaa.core.database.mapper.toPopularSongMixPrevEntity
 import com.poulastaa.core.database.mapper.toPopularSuggestArtistEntity
 import com.poulastaa.core.database.mapper.toPrevArtistSong
+import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.database.mapper.toSuggestArtist
 import com.poulastaa.core.domain.home.LocalHomeDatasource
+import com.poulastaa.core.domain.home.SavedPlaylist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -168,4 +173,9 @@ class RoomLocalHomeDatasource @Inject constructor(
             popularArtistSong = readPopularArtistSongDef.await()
         )
     }
+
+    override fun loadSavedPlaylist(): Flow<SavedPlaylist> = homeDao.getSavedPlaylists().map {
+        it.groupBy { result -> result.id }
+            .map { mapEntry -> mapEntry.toSavedPlaylist() }
+    }.take(3)
 }

@@ -40,7 +40,7 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         PopularSongArtistEntity::class,
         PopularArtistSongRelation::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 abstract class KyokuDatabase : RoomDatabase() {

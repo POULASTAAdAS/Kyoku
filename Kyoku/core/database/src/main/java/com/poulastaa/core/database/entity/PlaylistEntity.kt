@@ -8,4 +8,5 @@ data class PlaylistEntity(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     val name: String,
+    val points: Long = 0,
 )

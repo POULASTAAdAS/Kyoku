@@ -57,7 +57,7 @@ fun imageReqSongCover(
         .diskCache {
             DiskCache.Builder()
                 .directory(context.cacheDir.resolve("image_catch"))
-                .maxSizePercent(0.02)
+                .maxSizePercent(0.04)
                 .build()
         }
         .build()
@@ -84,7 +84,7 @@ fun imageReqUser(
         .diskCache {
             DiskCache.Builder()
                 .directory(context.cacheDir.resolve("image_catch"))
-                .maxSizePercent(0.02)
+                .maxSizePercent(0.04)
                 .build()
         }
         .build()
@@ -116,7 +116,7 @@ suspend fun getBitmapFromUrlOrCache(
                 .diskCache {
                     DiskCache.Builder()
                         .directory(context.cacheDir.resolve("image_catch"))
-                        .maxSizePercent(0.02)
+                        .maxSizePercent(0.04)
                         .build()
                 }
                 .build()

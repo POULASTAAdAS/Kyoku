@@ -4,26 +4,30 @@ import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.route_ext.getReqUserPayload
 import com.poulastaa.utils.Constants.ARTIST_IMAGE_ROOT_DIR
 import com.poulastaa.utils.Constants.CURRENT_PROJECT_FOLDER
+import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 
 fun Route.getArtistImage() {
-    route(EndPoints.GetArtistImage.route) {
-        get {
-            val image =
-                call.request.queryParameters["artistCover"]?.replace("_", " ")
-                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.GetArtistImage.route) {
+            get {
+                val image =
+                    call.request.queryParameters["artistCover"]?.replace("_", " ")
+                        ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
-            call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
-            val folderPath = "$CURRENT_PROJECT_FOLDER$ARTIST_IMAGE_ROOT_DIR/$image"
+                val folderPath = "$CURRENT_PROJECT_FOLDER$ARTIST_IMAGE_ROOT_DIR/$image"
 
 
-            val file = pictRandom(folderPath) ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                val file = pictRandom(folderPath) ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
-            call.respondFile(file)
+                call.respondFile(file)
+            }
         }
     }
 }

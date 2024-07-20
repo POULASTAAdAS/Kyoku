@@ -14,6 +14,8 @@ import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelation
 import com.poulastaa.core.database.model.PopularArtistWithSongResult
+import com.poulastaa.core.database.model.PrevSongResult
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HomeDao {
@@ -76,4 +78,14 @@ interface HomeDao {
     """
     )
     suspend fun readPopularArtistSong(): List<PopularArtistWithSongResult>
+
+    @Query(
+        """
+        select PlaylistEntity.id , PlaylistEntity.name ,  SongEntity.coverImage from SongEntity
+        join SongPlaylistRelationEntity on SongEntity.id = SongPlaylistRelationEntity.songId
+        join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
+        where PlaylistEntity.id order by PlaylistEntity.points
+    """
+    )
+    fun getSavedPlaylists(): Flow<List<PrevSongResult>>
 }
