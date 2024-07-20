@@ -28,8 +28,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.DrawerScreen
-import com.poulastaa.play.domain.HomeToDrawerEvent
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
@@ -130,9 +130,9 @@ fun RootDrawerCompact(
                             profileUrl = state.profilePicUrl,
                             onEvent = {
                                 when (it) {
-                                    HomeToDrawerEvent.PROFILE_CLICK -> onEvent(RootDrawerUiEvent.OnDrawerToggle)
+                                    TopBarToDrawerEvent.PROFILE_CLICK -> onEvent(RootDrawerUiEvent.OnDrawerToggle)
 
-                                    HomeToDrawerEvent.SEARCH_CLICK -> onEvent(
+                                    TopBarToDrawerEvent.SEARCH_CLICK -> onEvent(
                                         RootDrawerUiEvent.Navigate(
                                             screen = ScreenEnum.HOME_SEARCH
                                         )
@@ -143,9 +143,15 @@ fun RootDrawerCompact(
                     }
 
                     composable(route = DrawerScreen.Library.route) {
-                        LibraryCompactScreen {
+                        LibraryCompactScreen(
+                            profileUrl = state.profilePicUrl,
+                            onProfileClick = {
+                                onEvent(RootDrawerUiEvent.OnDrawerToggle)
+                            },
+                            navigate = {
 
-                        }
+                            }
+                        )
                     }
 
                     composable(route = DrawerScreen.Profile.route) {

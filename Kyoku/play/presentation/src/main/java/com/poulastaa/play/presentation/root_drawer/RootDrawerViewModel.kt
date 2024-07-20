@@ -9,9 +9,11 @@ import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.root_drawer.mapper.toDrawScreenRoute
-import com.poulastaa.play.presentation.root_drawer.mapper.toSavedScreen
+import com.poulastaa.play.presentation.root_drawer.mapper.toDrawerScreen
+import com.poulastaa.play.presentation.root_drawer.mapper.toSaveScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
@@ -28,15 +30,16 @@ class RootDrawerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val savedScreenDef = async {
-                ds.readSaveScreen().first().toSavedScreen()
+            val savedScreenStringDef = async {
+                ds.readSaveScreen().first()
             }
             val userDef = async { ds.readLocalUser() }
-            val savedScreen = savedScreenDef.await()
+            val savedScreen = savedScreenStringDef.await()
             val user = userDef.await()
 
             state = state.copy(
-                startDestination = savedScreen,
+                saveScreen = savedScreen.toSaveScreen(),
+                startDestination = savedScreen.toDrawerScreen().route,
                 isScreenLoaded = true,
                 username = user.name,
                 profilePicUrl = user.profilePic
@@ -46,6 +49,8 @@ class RootDrawerViewModel @Inject constructor(
 
     private val _uiEvent = Channel<RootDrawerUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var updateSaveScreenJob: Job? = null
 
     fun onEvent(event: RootDrawerUiEvent) {
         when (event) {
@@ -70,8 +75,19 @@ class RootDrawerViewModel @Inject constructor(
                 if (state.startDestination != event.screen.name.toDrawScreenRoute()) {
                     state = state.copy(
                         startDestination = when (event.screen) {
-                            SaveScreen.HOME -> DrawerScreen.Home.route
-                            SaveScreen.LIBRARY -> DrawerScreen.Library.route
+                            SaveScreen.HOME -> {
+                                updateSaveScreenJob?.cancel()
+                                updateSaveScreenJob = updateSaveScreen(SaveScreen.HOME)
+
+                                DrawerScreen.Home.route
+                            }
+
+                            SaveScreen.LIBRARY -> {
+                                updateSaveScreenJob?.cancel()
+                                updateSaveScreenJob = updateSaveScreen(SaveScreen.LIBRARY)
+
+                                DrawerScreen.Library.route
+                            }
                         },
                         saveScreen = event.screen
                     )
@@ -80,5 +96,9 @@ class RootDrawerViewModel @Inject constructor(
 
             else -> Unit
         }
+    }
+
+    private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {
+        ds.storeSaveScreen(screen.name)
     }
 }

@@ -70,4 +70,8 @@
     <string name="popular_albums">"Popular Albums "</string>
     <string name="artist_you_may_like">Artist\'s You May Like</string>
     <string name="best_from_artist">Best From Artists</string>
+    <string name="artist">Artist</string>
+    <string name="album">Album</string>
+    <string name="playlist">Playlist</string>
+    <string name="all">All</string>
 </resources>

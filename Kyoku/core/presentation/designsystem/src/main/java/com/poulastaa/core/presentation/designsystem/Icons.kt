@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
@@ -107,3 +108,27 @@ val ThreeLineIcon: ImageVector
 val MoreFromArtistIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_more_from_artist)
+
+val FilterPlaylistIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_filter_playlist)
+
+val FilterArtistIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_filter_artist)
+
+val FilterAlbumIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_filter_album)
+
+val SortTypeListIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_list)
+
+val SortTypeGridIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_grid)
+
+val AddIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Add

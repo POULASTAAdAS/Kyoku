@@ -1,6 +1,6 @@
 package com.poulastaa.play.domain
 
-enum class HomeToDrawerEvent {
+enum class TopBarToDrawerEvent {
     PROFILE_CLICK,
     SEARCH_CLICK
 }

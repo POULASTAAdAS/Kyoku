@@ -2,6 +2,7 @@ package com.poulastaa.core.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -29,6 +30,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val REFRESH_TOKEN = stringPreferencesKey(name = "refresh_token")
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
         val SAVED_SCREEN = stringPreferencesKey(name = "saved_screen")
+        val LIBRARY_VIEW_TYPE = booleanPreferencesKey(name = "library_view_type")
     }
 
     override suspend fun storeSignInState(state: ScreenEnum) {
@@ -111,6 +113,18 @@ class DataStoreRepositoryImpl @Inject constructor(
     }.map {
         it[PreferencesKeys.SAVED_SCREEN] ?: "HOME"
     }
+
+    override suspend fun storeLibraryViewType(isGrid: Boolean) {
+        dataStore.edit {
+            it[PreferencesKeys.LIBRARY_VIEW_TYPE] = isGrid
+        }
+    }
+
+    override suspend fun readLibraryViewType(): Boolean = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
+    }.first()
 
     override suspend fun logOut() {
         dataStore.edit {

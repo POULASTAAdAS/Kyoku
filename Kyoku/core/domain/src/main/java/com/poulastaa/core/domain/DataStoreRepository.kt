@@ -18,5 +18,8 @@ interface DataStoreRepository {
     suspend fun storeSaveScreen(data: String)
     fun readSaveScreen(): Flow<String>
 
+    suspend fun storeLibraryViewType(isGrid: Boolean)
+    suspend fun readLibraryViewType(): Boolean
+
     suspend fun logOut()
 }
