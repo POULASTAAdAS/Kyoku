@@ -12,7 +12,7 @@ import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevPlaylist
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 import java.time.LocalDateTime
@@ -104,10 +104,3 @@ fun HomeData.toUiHomeData() = UiHomeData(
         it.toUiArtistWithSong()
     }
 )
-
-fun PrevSavedPlaylist.toUiPlaylist() = UiPrevPlaylist(
-    id = this.id,
-    name = this.name,
-    urls = this.coverImageList
-)
-

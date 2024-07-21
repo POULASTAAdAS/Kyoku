@@ -6,10 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
+import com.poulastaa.play.presentation.root_drawer.mapper.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,11 +21,13 @@ import javax.inject.Inject
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     private val ds: DataStoreRepository,
+    private val repo: LibraryRepository,
 ) : ViewModel() {
     var state by mutableStateOf(LibraryUiState())
         private set
 
     init {
+        readAuthHeader()
         readLibraryViewType()
         populate()
     }
@@ -51,6 +56,17 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
+
+    private fun readAuthHeader() {
+        viewModelScope.launch {
+            ds.readTokenOrCookie().collectLatest {
+                state = state.copy(
+                    header = it
+                )
+            }
+        }
+    }
+
     private fun readLibraryViewType() {
         viewModelScope.launch {
             val type = if (ds.readLibraryViewType()) LibraryViewType.GRID else LibraryViewType.LIST
@@ -65,6 +81,36 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun populate() {
+        readPlaylist()
+        readArtist()
+    }
 
+    private fun readPlaylist() {
+        viewModelScope.launch {
+            repo.getPlaylist().collectLatest { list ->
+                state = state.copy(
+                    data = state.data.copy(
+                        playlist = list.map {
+                            it.toUiPlaylist()
+                        }
+                    )
+                )
+            }
+        }
+    }
+
+    private fun readArtist() {
+        viewModelScope.launch {
+            repo.getArtist().collectLatest {
+                state = state.copy(
+                    data = state.data.copy(
+                        artist = it.map { artist ->
+                            artist.toUiArtist()
+                        }
+                    ),
+                    isDataLoading = false
+                )
+            }
+        }
     }
 }

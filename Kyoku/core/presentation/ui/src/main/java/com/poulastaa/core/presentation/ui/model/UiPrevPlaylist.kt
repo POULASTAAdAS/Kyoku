@@ -1,4 +1,4 @@
-package com.poulastaa.play.presentation.root_drawer.home.model
+package com.poulastaa.core.presentation.ui.model
 
 data class UiPrevPlaylist(
     val id: Long,

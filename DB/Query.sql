@@ -119,16 +119,6 @@ where albumcountryrelation.countryId = 1 order by album.points desc limit 10;
 
 
 
-select playlistid , songid from userplaylistsongrelation;
-select * from playlist;
-
-
-
-
-
-
-
-
 
 
 

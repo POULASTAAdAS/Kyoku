@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
+import com.poulastaa.play.presentation.root_drawer.library.model.LibraryUiData
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 
 data class LibraryUiState(
@@ -9,6 +10,8 @@ data class LibraryUiState(
     val header: String = "",
     val filterType: LibraryFilterType = LibraryFilterType.ALL,
     val viewType: LibraryViewType = LibraryViewType.GRID,
+
+    val data: LibraryUiData = LibraryUiData(),
 ) {
     val canShowUi: Boolean
         get() = !isDataLoading && !viewTypeReading

@@ -1,5 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.mapper
 
+import com.poulastaa.core.domain.model.PrevSavedPlaylist
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 
@@ -18,3 +20,9 @@ fun String.toDrawScreenRoute() = when (this) {
     SaveScreen.HOME.name -> DrawerScreen.Home.route
     else -> DrawerScreen.Library.route
 }
+
+fun PrevSavedPlaylist.toUiPlaylist() = UiPrevPlaylist(
+    id = this.id,
+    name = this.name,
+    urls = this.coverImageList
+)

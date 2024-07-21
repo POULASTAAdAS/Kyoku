@@ -40,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
@@ -52,8 +53,7 @@ import com.poulastaa.core.presentation.ui.imageReq
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevPlaylist
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 
 private val defaultElevationSmall = 6.dp
@@ -67,7 +67,7 @@ fun SavedPlaylistCard(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(
             defaultElevation = defaultElevationSmall
         )
@@ -243,7 +243,7 @@ fun GridImageCard(
     modifier: Modifier = Modifier,
     size: Dp = 90.dp,
     header: String,
-    songs: List<UiPrevSong>,
+    urls: List<String>,
     title: String,
     onClick: () -> Unit,
 ) {
@@ -262,7 +262,7 @@ fun GridImageCard(
                 .align(Alignment.CenterHorizontally)
                 .size(size),
             header = header,
-            urls = songs.map { it.coverImage }
+            urls = urls
         )
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.small1))
@@ -338,6 +338,8 @@ fun SuggestedArtistCard(
     modifier: Modifier = Modifier,
     artist: UiArtist,
     header: String,
+    fontSize: TextUnit = MaterialTheme.typography.titleLarge.fontSize,
+    maxLine: Int = 1,
 ) {
     Column(
         modifier = modifier,
@@ -353,9 +355,11 @@ fun SuggestedArtistCard(
 
         Text(
             text = artist.name,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontSize = fontSize,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = maxLine,
+            textAlign = TextAlign.Center
         )
     }
 }

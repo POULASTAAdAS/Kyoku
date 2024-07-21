@@ -5,9 +5,9 @@ import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.model.PrevSong
+import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.flow.Flow
 
-typealias SavedPlaylist = List<PrevSavedPlaylist>
 
 interface LocalHomeDatasource {
     suspend fun storeNewHomeResponse(

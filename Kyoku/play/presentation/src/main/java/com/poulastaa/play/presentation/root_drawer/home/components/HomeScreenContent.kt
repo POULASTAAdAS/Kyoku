@@ -40,12 +40,12 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiState
 import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 
@@ -59,7 +59,6 @@ fun HomeScreen(
     onEvent: (HomeUiEvent) -> Unit,
 ) {
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     val config = LocalConfiguration.current
 
     Scaffold(
@@ -101,7 +100,7 @@ fun HomeScreen(
             if (state.savedPlaylists.isNotEmpty()) item {
                 TopRow(
                     modifier = Modifier
-                        .height(60.dp)
+                        .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
                         .fillMaxWidth()
                         .windowInsetsPadding(
                             insets = WindowInsets(
@@ -118,7 +117,6 @@ fun HomeScreen(
                             header = state.header,
                             uiPlaylist = playlist,
                             modifier = Modifier
-
                                 .weight(1f)
                         )
                     }
@@ -164,7 +162,9 @@ fun HomeScreen(
                         GridImageCard(
                             size = 150.dp,
                             header = state.header,
-                            songs = state.staticData.popularSongMix,
+                            urls = state.staticData.popularSongMix.map { entry ->
+                                entry.coverImage
+                            },
                             title = stringResource(id = R.string.popular_song_mix)
                         ) {
 
@@ -175,7 +175,9 @@ fun HomeScreen(
                         GridImageCard(
                             size = 150.dp,
                             header = state.header,
-                            songs = state.staticData.popularSongFromYourTime,
+                            urls = state.staticData.popularSongFromYourTime.map { entry ->
+                                entry.coverImage
+                            },
                             title = stringResource(id = R.string.popular_songs_from_your_time)
                         ) {
 
@@ -186,7 +188,9 @@ fun HomeScreen(
                         GridImageCard(
                             size = 150.dp,
                             header = state.header,
-                            songs = state.staticData.favouriteArtistMix,
+                            urls = state.staticData.favouriteArtistMix.map { entry ->
+                                entry.coverImage
+                            },
                             title = stringResource(id = R.string.popular_artist_mix)
                         ) {
 

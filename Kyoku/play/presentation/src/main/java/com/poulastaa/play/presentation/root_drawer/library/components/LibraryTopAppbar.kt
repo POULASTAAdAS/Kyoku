@@ -117,7 +117,7 @@ fun LibraryTopAppbar(
             Text(
                 text = stringResource(id = R.string.library_title),
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 letterSpacing = 2.sp,
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2)
             )

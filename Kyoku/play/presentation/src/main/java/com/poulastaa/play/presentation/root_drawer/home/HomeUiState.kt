@@ -2,7 +2,7 @@ package com.poulastaa.play.presentation.root_drawer.home
 
 import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevPlaylist
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 
 data class HomeUiState(
     val heading: String = "",

@@ -19,10 +19,10 @@ import com.poulastaa.core.database.mapper.toPrevArtistSong
 import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.database.mapper.toSuggestArtist
 import com.poulastaa.core.domain.home.LocalHomeDatasource
-import com.poulastaa.core.domain.home.SavedPlaylist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
+import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
