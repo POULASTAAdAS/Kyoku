@@ -9,10 +9,14 @@ import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.home.HomeRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
 import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
-import com.poulastaa.play.presentation.root_drawer.mapper.toUiPlaylist
+import com.poulastaa.play.presentation.root_drawer.home.model.BottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
+import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,7 +41,132 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onEvent(event: HomeUiEvent) {
+        when (event) {
+            is HomeUiEvent.OnItemClick -> {
 
+            }
+
+            is HomeUiEvent.OnItemLongClick -> {
+                when (event.itemClickType) {
+                    HomeItemClickType.SAVED_PLAYLIST -> Unit
+                    HomeItemClickType.SAVED_ALBUM -> Unit
+                    HomeItemClickType.POPULAR_SONG_MIX -> {
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                title = UiText.StringResource(R.string.popular_song_mix)
+                                    .asString(event.context),
+                                urls = state.staticData.popularSongMix.map { it.coverImage },
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    HomeItemClickType.OLD_GEM -> {
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                title = UiText.StringResource(R.string.old_gem)
+                                    .asString(event.context),
+                                urls = state.staticData.popularSongFromYourTime.map { it.coverImage },
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                title = UiText.StringResource(R.string.favourite_artist_mix)
+                                    .asString(event.context),
+                                urls = state.staticData.favouriteArtistMix.map { it.coverImage },
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    HomeItemClickType.SUGGEST_ARTIST -> {
+                        val artist = state.staticData.suggestedArtist.firstOrNull {
+                            it.id == event.id
+                        } ?: return
+
+                        // todo check if artist is in library
+
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                flag = false, // todo
+                                id = artist.id,
+                                title = artist.name,
+                                urls = listOf(artist.coverImageUrl),
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    HomeItemClickType.POPULAR_ARTIST -> Unit
+                    HomeItemClickType.SUGGEST_ALBUM -> {
+                        val album = state.staticData.popularAlbum.firstOrNull {
+                            it.id == event.id
+                        } ?: return
+
+                        // todo check if album saved in library
+
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                flag = false, // todo
+                                id = album.id,
+                                title = album.name,
+                                urls = listOf(album.coverImage),
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    HomeItemClickType.HISTORY_SONG -> Unit
+                    HomeItemClickType.SUGGEST_ARTIST_SONG -> {
+                        val song = state.staticData.popularArtistSong.firstOrNull {
+                            it.artist.id == event.artistId
+                        }?.listOfSong?.firstOrNull {
+                            it.id == event.id
+                        } ?: return
+
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState(
+                                isOpen = true,
+                                flag = false, // todo if anything playing false
+                                isQueue = false, // todo if is in playingQueue
+                                isInFavourite = false, // todo if is in favourite
+                                id = song.id,
+                                title = song.title,
+                                urls = listOf(song.coverImage),
+                                itemType = event.itemClickType
+                            )
+                        )
+                    }
+
+                    else -> Unit
+                }
+            }
+
+            is HomeUiEvent.BottomSheetUiEvent -> {
+                when (event) {
+                    HomeUiEvent.BottomSheetUiEvent.Cancel -> {
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState()
+                        )
+                    }
+
+                    else -> {
+                        state = state.copy(
+                            bottomSheetUiState = BottomSheetUiState()
+                        )
+                    }
+                }
+            }
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.poulastaa.play.presentation.root_drawer.mapper
+package com.poulastaa.play.presentation.root_drawer
 
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist

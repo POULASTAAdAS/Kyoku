@@ -8,9 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
-import com.poulastaa.play.presentation.root_drawer.mapper.toDrawScreenRoute
-import com.poulastaa.play.presentation.root_drawer.mapper.toDrawerScreen
-import com.poulastaa.play.presentation.root_drawer.mapper.toSaveScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

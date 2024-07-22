@@ -74,4 +74,22 @@
     <string name="album">Album</string>
     <string name="playlist">Playlist</string>
     <string name="all">All</string>
+    <string name="play_playlist">Play Playlist</string>
+    <string name="play">Play</string>
+    <string name="add_as_playlist">Add as Playlist</string>
+    <string name="download">Download</string>
+    <string name="old_gem">Old Gem</string>
+    <string name="favourite_artist_mix">Favourite Artist Mix</string>
+    <string name="play_next_on_queue">Play Next On Queue</string>
+    <string name="follow">Follow</string>
+    <string name="explore">Explore</string>
+    <string name="un_follow">Unfollow</string>
+    <string name="remove_from_saved_album">Remove From Saved Album</string>
+    <string name="save_album">Save Album</string>
+    <string name="remove_from_queue">Remove From Queue</string>
+    <string name="play_last_on_queue">play Last On Queue</string>
+    <string name="add_to_playlist">Add To Playlist</string>
+    <string name="view_artist">View Artist</string>
+    <string name="add_to_favourite">Add To Favourite</string>
+    <string name="remove_from_favourite">Remove From Favourite</string>
 </resources>

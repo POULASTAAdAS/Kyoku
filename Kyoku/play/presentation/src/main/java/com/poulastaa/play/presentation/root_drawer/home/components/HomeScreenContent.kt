@@ -1,7 +1,9 @@
 package com.poulastaa.play.presentation.root_drawer.home.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,12 +27,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,8 +55,10 @@ import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
+import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     state: HomeUiState,
@@ -60,6 +69,10 @@ fun HomeScreen(
 ) {
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val config = LocalConfiguration.current
+    val context = LocalContext.current
+
+    val bottomSheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection),
@@ -160,41 +173,86 @@ fun HomeScreen(
                 ItemsRow {
                     item {
                         GridImageCard(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemClick(
+                                            itemClickType = HomeItemClickType.POPULAR_SONG_MIX
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemLongClick(
+                                            itemClickType = HomeItemClickType.POPULAR_SONG_MIX,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            ),
                             size = 150.dp,
                             header = state.header,
                             urls = state.staticData.popularSongMix.map { entry ->
                                 entry.coverImage
                             },
                             title = stringResource(id = R.string.popular_song_mix)
-                        ) {
-
-                        }
+                        )
                     }
 
                     item {
                         GridImageCard(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemClick(
+                                            itemClickType = HomeItemClickType.OLD_GEM
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemLongClick(
+                                            itemClickType = HomeItemClickType.OLD_GEM,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            ),
                             size = 150.dp,
                             header = state.header,
                             urls = state.staticData.popularSongFromYourTime.map { entry ->
                                 entry.coverImage
                             },
                             title = stringResource(id = R.string.popular_songs_from_your_time)
-                        ) {
-
-                        }
+                        )
                     }
 
                     item {
                         GridImageCard(
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemClick(
+                                            itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX
+                                        )
+                                    )
+                                },
+                                onLongClick = {
+                                    onEvent(
+                                        HomeUiEvent.OnItemLongClick(
+                                            itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            ),
                             size = 150.dp,
                             header = state.header,
                             urls = state.staticData.favouriteArtistMix.map { entry ->
                                 entry.coverImage
                             },
                             title = stringResource(id = R.string.popular_artist_mix)
-                        ) {
-
-                        }
+                        )
                     }
                 }
             }
@@ -214,7 +272,28 @@ fun HomeScreen(
                         }
                     ) { artist ->
                         SuggestedArtistCard(
-                            modifier = Modifier.size(220.dp),
+                            modifier = Modifier
+                                .size(220.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .combinedClickable(
+                                    onClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemClick(
+                                                id = artist.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST
+                                            )
+                                        )
+                                    },
+                                    onLongClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemLongClick(
+                                                id = artist.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST,
+                                                context = context
+                                            )
+                                        )
+                                    }
+                                ),
                             artist = artist,
                             header = state.header
                         )
@@ -237,12 +316,29 @@ fun HomeScreen(
                         }
                     ) { album ->
                         HomeAlbumCard(
-                            modifier = Modifier.size(150.dp),
+                            modifier = Modifier
+                                .size(150.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemClick(
+                                                id = album.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ALBUM
+                                            )
+                                        )
+                                    },
+                                    onLongClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemLongClick(
+                                                id = album.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ALBUM,
+                                                context = context
+                                            )
+                                        )
+                                    }
+                                ),
                             header = state.header,
                             prevAlbum = album,
-                            onClick = {
-
-                            }
                         )
                     }
 
@@ -284,7 +380,28 @@ fun HomeScreen(
                         }
                     ) { song ->
                         SingleSongCard(
-                            modifier = Modifier.size(150.dp),
+                            modifier = Modifier
+                                .size(150.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemClick(
+                                                id = song.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG
+                                            )
+                                        )
+                                    },
+                                    onLongClick = {
+                                        onEvent(
+                                            HomeUiEvent.OnItemLongClick(
+                                                id = song.id,
+                                                artistId = songData.artist.id,
+                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG,
+                                                context = context
+                                            )
+                                        )
+                                    }
+                                ),
                             header = state.header,
                             song = song
                         )
@@ -299,9 +416,41 @@ fun HomeScreen(
             }
 
             item {
-                Spacer(modifier = Modifier.height(if (config.screenWidthDp < 500) 70.dp else MaterialTheme.dimens.medium1))
+                Spacer(
+                    modifier = Modifier.height(
+                        if (config.screenWidthDp < 500) 70.dp
+                        else MaterialTheme.dimens.medium1
+                    )
+                )
             }
         }
+
+
+        LaunchedEffect(key1 = state.bottomSheetUiState.isOpen) {
+            if (state.bottomSheetUiState.isOpen) scope.launch {
+                bottomSheetState.show()
+            }
+        }
+
+        if (state.bottomSheetUiState.isOpen) ItemBottomSheet(
+            sheetState = bottomSheetState,
+            header = state.header,
+            state = state.bottomSheetUiState,
+            onEvent = { event ->
+                scope.launch {
+                    bottomSheetState.hide()
+                }.invokeOnCompletion {
+                    onEvent(event)
+                }
+            },
+            onCancel = {
+                scope.launch {
+                    bottomSheetState.hide()
+                }.invokeOnCompletion {
+                    onEvent(HomeUiEvent.BottomSheetUiEvent.Cancel)
+                }
+            }
+        )
     }
 }
 

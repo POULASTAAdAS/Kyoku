@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
-import com.poulastaa.play.presentation.root_drawer.mapper.toUiPlaylist
+import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

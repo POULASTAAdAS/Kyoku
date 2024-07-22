@@ -2,7 +2,6 @@ package com.poulastaa.play.presentation.root_drawer.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,8 +51,8 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReq
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.core.presentation.ui.model.UiArtist
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 
 private val defaultElevationSmall = 6.dp
@@ -102,7 +101,7 @@ fun SavedAlbumCard(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(
             defaultElevation = defaultElevationSmall
         )
@@ -188,16 +187,12 @@ fun HomeAlbumCard(
         defaultElevation = defaultElevationMedium
     ),
     colors: CardColors = CardDefaults.cardColors(),
-    onClick: (id: Long) -> Unit,
 ) {
     Card(
         modifier = modifier,
         shape = shape,
         elevation = elevation,
-        colors = colors,
-        onClick = {
-            onClick(prevAlbum.id)
-        }
+        colors = colors
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -245,13 +240,9 @@ fun GridImageCard(
     header: String,
     urls: List<String>,
     title: String,
-    onClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .clickable {
-                onClick()
-            },
+        modifier = modifier,
         shape = MaterialTheme.shapes.extraSmall,
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
@@ -316,16 +307,17 @@ fun SingleSongCard(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                MaterialTheme.colorScheme.primary.copy(.7f),
-                                MaterialTheme.colorScheme.primary.copy(.7f),
+                                MaterialTheme.colorScheme.primary.copy(.8f),
+                                MaterialTheme.colorScheme.primary.copy(.8f),
                             ),
                         )
                     )
-                    .padding(top = MaterialTheme.dimens.small1),
+                    .padding(top = MaterialTheme.dimens.small1)
+                    .padding(horizontal = MaterialTheme.dimens.small1),
                 textAlign = TextAlign.Center,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
                 color = MaterialTheme.colorScheme.background,
                 fontWeight = FontWeight.Medium
             )

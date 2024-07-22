@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
@@ -132,3 +133,44 @@ val SortTypeGridIcon: ImageVector
 val AddIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Add
+
+val PlayIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_play)
+
+
+val AddAsPlaylistIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_add_to_playlist)
+
+val DownloadIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_download)
+
+val FollowArtistIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_follow_artist)
+
+val UnFollowArtistIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_unfollow_artist)
+
+val CancelIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Close
+
+val PlayNextIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_play_next_in_queue)
+
+val PlayLastIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_play_last_in_queue)
+
+val FavouriteIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_favourite)
+
+val NotFavouriteIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_remove_favourite)

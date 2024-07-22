@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.FilterChip
@@ -131,7 +132,7 @@ fun LibraryPlaylistList(
 
 
 @Composable
-private fun ImageGrid(
+fun ImageGrid(
     modifier: Modifier = Modifier,
     header: String,
     shapes: CornerBasedShape = MaterialTheme.shapes.extraSmall,
@@ -139,11 +140,13 @@ private fun ImageGrid(
     elevation: CardElevation = CardDefaults.cardElevation(
         defaultElevation = 10.dp
     ),
+    color: CardColors = CardDefaults.cardColors(),
 ) {
     Card(
         modifier = modifier,
         shape = shapes,
-        elevation = elevation
+        elevation = elevation,
+        colors = color
     ) {
         Row(
             modifier = Modifier

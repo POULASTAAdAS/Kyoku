@@ -53,6 +53,7 @@ fun LibraryTopAppbar(
     val hapticFeedback = LocalHapticFeedback.current
 
     TopAppBar(
+        scrollBehavior = scrollBehavior,
         modifier = Modifier.padding(start = MaterialTheme.dimens.small1),
         navigationIcon = {
             Card(

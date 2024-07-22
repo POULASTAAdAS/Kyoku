@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -87,7 +88,8 @@ private fun LibraryScreen(
 
                 }
             )
-        }
+        },
+        modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection)
     ) { internalPadding ->
         if (!state.canShowUi) Column(
             modifier = Modifier

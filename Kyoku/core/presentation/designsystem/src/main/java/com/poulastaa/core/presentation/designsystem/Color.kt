@@ -91,3 +91,5 @@ val listOfSuggestGenreCardColors = listOf(
     Color(0xFFFFAB91),
     Color(0xFF559288)
 )
+
+val BottomNavigationButtonColor = Color(0xFFE0C645)
