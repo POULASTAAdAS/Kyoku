@@ -1,23 +1,32 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.dao.ArtistDao
+import com.poulastaa.data.dao.PlaylistDao
+import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.dao.user.EmailAuthUserDao
 import com.poulastaa.data.dao.user.GoogleAuthUserDao
+import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.mappers.toUserResult
+import com.poulastaa.data.model.ArtistDto
+import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.home.HomeDto
+import com.poulastaa.domain.model.PlaylistSongPayload
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.table.ArtistTable
+import com.poulastaa.domain.table.PlaylistTable
+import com.poulastaa.domain.table.SongTable
+import com.poulastaa.domain.table.relation.SongArtistRelationTable
 import com.poulastaa.domain.table.relation.UserArtistRelationTable
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.poulastaa.plugins.query
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.jetbrains.exposed.sql.batchInsert
+import kotlinx.coroutines.*
+import org.jetbrains.exposed.sql.*
 
 class UserDatabaseRepository : UserRepository {
     override suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult? {
@@ -110,5 +119,89 @@ class UserDatabaseRepository : UserRepository {
                 }
             }
         }
+    }
+
+    override suspend fun getUserData(
+        userType: UserType,
+        userId: Long,
+    ): HomeDto = coroutineScope {
+        val playlistDef = async {
+            query {
+                UserPlaylistSongRelationTable.select {
+                    (UserPlaylistSongRelationTable.userId eq userId) and (UserPlaylistSongRelationTable.userType eq userType.name)
+                }.map {
+                    PlaylistSongPayload(
+                        playlistId = it[UserPlaylistSongRelationTable.playlistId],
+                        songId = it[UserPlaylistSongRelationTable.songId],
+                    )
+                }
+            }.groupBy { it.playlistId }.map {
+                async {
+                    query {
+                        PlaylistDao.find {
+                            PlaylistTable.id eq it.key
+                        }.first()
+                    } to query {
+                        SongDao.find {
+                            SongTable.id inList it.value.map { it.songId }
+                        }.toList()
+                    }
+                }
+            }.awaitAll().map {
+                PlaylistDto(
+                    id = it.first.id.value,
+                    name = it.first.name,
+                    listOfSong = it.second.map { songDao ->
+                        async {
+                            query {
+                                ArtistTable.join(
+                                    otherTable = SongArtistRelationTable,
+                                    joinType = JoinType.INNER,
+                                    additionalConstraint = {
+                                        SongArtistRelationTable.artistId eq ArtistTable.id as Column<*>
+                                    }
+                                ).slice(ArtistTable.name)
+                                    .select {
+                                        SongArtistRelationTable.songId eq SongTable.id as Column<*>
+                                    }.map { resultRow ->
+                                        resultRow[ArtistTable.name]
+                                    }
+                            } to songDao
+                        }
+                    }.awaitAll().map { pair ->
+                        pair.second.toSongDto(artist = pair.first.joinToString())
+                    }
+                )
+            }
+        }
+
+        val albumDef = async {
+            query {
+            }
+        }
+
+        val artistDef = async {
+            query {
+                UserArtistRelationTable.select {
+                    UserArtistRelationTable.userId eq userId and (UserArtistRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserArtistRelationTable.artistId]
+                }.let {
+                    query {
+                        ArtistDao.find {
+                            ArtistTable.id inList it
+                        }
+                    }
+                }.map {
+                    ArtistDto(
+                        id = it.id.value,
+                        name = it.name,
+                        coverImage = it.constructProfilePic()
+                    )
+                }
+            }
+        }
+
+        HomeDto()
     }
 }

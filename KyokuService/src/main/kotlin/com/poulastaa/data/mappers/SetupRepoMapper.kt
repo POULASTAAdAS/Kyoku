@@ -6,6 +6,7 @@ import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.model.ArtistDto
 import com.poulastaa.data.model.GenreDto
 import com.poulastaa.domain.model.ResultSong
+import com.poulastaa.domain.model.UserType
 
 fun SongDao.toResultSong() = ResultSong(
     id = this.id.value,
@@ -24,5 +25,11 @@ fun GenreDao.toGenreDto() = GenreDto(
 fun ArtistDao.toArtistDto() = ArtistDto(
     id = this.id.value,
     name = this.name,
-    coverImage =  this.constructProfilePic()
+    coverImage = this.constructProfilePic()
 )
+
+fun String.getUserType() = when (this) {
+    UserType.EMAIL_USER.name -> UserType.EMAIL_USER
+    UserType.GOOGLE_USER.name -> UserType.GOOGLE_USER
+    else -> null
+}

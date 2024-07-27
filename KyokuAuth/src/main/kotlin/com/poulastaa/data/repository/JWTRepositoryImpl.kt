@@ -29,6 +29,18 @@ class JWTRepositoryImpl(
     override fun getIssuer() = issuer
     override fun getRealm() = realm
 
+    override fun generateToken(
+        sub: String,
+        email: String,
+        claimName: String,
+        validationTime: Long,
+    ): String = generateJWTToken(
+        sub = sub,
+        claimName = claimName,
+        email = email,
+        validationTime = validationTime
+    )
+
     override fun generateAccessToken(
         sub: String,
         email: String,

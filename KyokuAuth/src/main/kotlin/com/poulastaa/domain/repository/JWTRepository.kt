@@ -12,6 +12,13 @@ import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_TIME
 
 interface JWTRepository {
+    fun generateToken(
+        sub: String,
+        email: String,
+        claimName: String = ACCESS_TOKEN_CLAIM_KEY,
+        validationTime: Long = ACCESS_TOKEN_DEFAULT_TIME,
+    ): String
+
     fun generateAccessToken(
         sub: String = "Authentication",
         email: String,

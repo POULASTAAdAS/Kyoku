@@ -4,6 +4,7 @@ import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 
 data class BottomSheetUiState(
     val isOpen: Boolean = false,
+    val isBottomSheetLoading: Boolean = true,
     val isQueue: Boolean = false,
     val flag: Boolean = false,
     val isInFavourite: Boolean = false,

@@ -4,6 +4,7 @@ import com.poulastaa.data.dao.other.Country
 import com.poulastaa.data.dao.user.EmailAuthUser
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.User
+import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
@@ -16,6 +17,7 @@ import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.invalidTokenList
 import com.poulastaa.plugins.dbQuery
 import com.poulastaa.utils.Constants.FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY
+import com.poulastaa.utils.Constants.GET_LOGIN_DATA_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
@@ -85,7 +87,7 @@ class ServiceRepositoryImpl(
     override suspend fun loginEmailUser(req: EmailLogInReq): EmailAuthRes {
         val refreshToken = jwtRepo.generateRefreshToken(email = req.email)
 
-        val response = authRepo.loginEmailUser(
+        var response = authRepo.loginEmailUser(
             email = req.email,
             password = req.password,
             refreshToken = refreshToken
@@ -97,6 +99,16 @@ class ServiceRepositoryImpl(
             UserAuthStatus.USER_FOUND_SET_GENRE,
             UserAuthStatus.USER_FOUND_STORE_B_DATE,
             -> {
+                val homeData = getLogInData(
+                    email = req.email,
+                    userType = UserType.EMAIL_USER,
+                    authKey = System.getenv("authKey")
+                )
+
+                response = response.copy(
+                    // todo
+                )
+
                 CoroutineScope(Dispatchers.IO).launch {
                     val verificationMailToken = jwtRepo.generateVerificationMailToken(email = req.email)
 
@@ -756,5 +768,20 @@ class ServiceRepositoryImpl(
             subject = "Password Reset Mail",
             content = content
         )
+    }
+
+    private suspend fun getLogInData(
+        email: String,
+        userType: UserType,
+        authKey: String,
+    ) {
+        val token = jwtRepo.generateToken(
+            sub = "GetLogInData",
+            email = email,
+            claimName = GET_LOGIN_DATA_TOKEN_CLAIM_KEY,
+            validationTime = 8000
+        )
+
+
     }
 }

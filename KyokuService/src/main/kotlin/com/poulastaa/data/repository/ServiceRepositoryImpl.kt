@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.mappers.getUserType
 import com.poulastaa.data.mappers.getYear
 import com.poulastaa.data.mappers.toPlaylistDto
 import com.poulastaa.data.model.PlaylistDto
@@ -13,6 +14,7 @@ import com.poulastaa.domain.repository.*
 import kotlinx.coroutines.*
 
 class ServiceRepositoryImpl(
+    private val jwt: JWTRepository,
     private val setupRepo: SetupRepository,
     private val kyokuRepo: DatabaseRepository,
     private val userRepo: UserRepository,
@@ -171,5 +173,21 @@ class ServiceRepositoryImpl(
             popularArtist = popularArtist,
             popularArtistSong = poplarArtistSongDef.await()
         )
+    }
+
+    override suspend fun getLoginData(
+        userType: String,
+        authKey: String,
+        token: String,
+    ): HomeDto {
+        if (authKey != System.getenv("authKey")) return HomeDto()
+
+        val email = jwt.verifyJWTToken(
+            token = token,
+            claim = System.getenv("getLoginData")
+        ) ?: return HomeDto()
+        val uType = userType.getUserType() ?: return HomeDto()
+
+        return userRepo.getUserData(uType, email)
     }
 }

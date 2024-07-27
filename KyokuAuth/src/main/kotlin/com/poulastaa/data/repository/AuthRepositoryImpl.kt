@@ -73,8 +73,6 @@ class AuthRepositoryImpl : AuthRepository {
                 status = UserAuthStatus.USER_FOUND_STORE_B_DATE
             )
 
-            // todo check for artist and genre entry
-
             else -> EmailAuthRes(
                 status = UserAuthStatus.USER_FOUND_HOME,
                 user = User(

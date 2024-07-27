@@ -18,6 +18,8 @@ object Constants {
     const val FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY = "forgotPassword"
     const val SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY = "submitPassword"
 
+    const val GET_LOGIN_DATA_TOKEN_CLAIM_KEY = "getLoginData"
+
     const val SMS_EMAIL_GOOGLE_SMTP_HOST = "smtp.gmail.com"
     const val SMS_EMAIL_PORT = "587"
 

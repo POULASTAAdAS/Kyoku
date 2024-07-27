@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.home.components
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -35,9 +36,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,6 +73,7 @@ fun HomeScreen(
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val config = LocalConfiguration.current
     val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
 
     val bottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -182,6 +186,9 @@ fun HomeScreen(
                                     )
                                 },
                                 onLongClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+
                                     onEvent(
                                         HomeUiEvent.OnItemLongClick(
                                             itemClickType = HomeItemClickType.POPULAR_SONG_MIX,
@@ -285,6 +292,9 @@ fun HomeScreen(
                                         )
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+
                                         onEvent(
                                             HomeUiEvent.OnItemLongClick(
                                                 id = artist.id,
@@ -328,6 +338,8 @@ fun HomeScreen(
                                         )
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
                                         onEvent(
                                             HomeUiEvent.OnItemLongClick(
                                                 id = album.id,
@@ -392,6 +404,8 @@ fun HomeScreen(
                                         )
                                     },
                                     onLongClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
                                         onEvent(
                                             HomeUiEvent.OnItemLongClick(
                                                 id = song.id,

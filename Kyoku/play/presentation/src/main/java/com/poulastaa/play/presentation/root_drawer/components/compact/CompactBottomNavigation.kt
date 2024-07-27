@@ -7,13 +7,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,17 +25,13 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.BottomNavigationButtonColor
 import com.poulastaa.core.presentation.designsystem.HomeSelectedIcon
 import com.poulastaa.core.presentation.designsystem.HomeUnSelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibrarySelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibraryUnSelectedIcon
-import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 
@@ -62,19 +56,8 @@ fun BoxScope.CompactBottomNavigation(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 65.dp)
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            if (isSystemInDarkTheme()) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.onBackground,
-                        )
-                    )
-                )
-                .navigationBarsPadding()
-                .padding(MaterialTheme.dimens.small1)
-                .padding(top = MaterialTheme.dimens.small1),
-            verticalAlignment = Alignment.Bottom
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .navigationBarsPadding(),
         ) {
             Spacer(modifier = Modifier.weight(.5f))
 
@@ -119,7 +102,7 @@ private fun NavigationButton(
         modifier = Modifier,
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(
-            contentColor = BottomNavigationButtonColor
+            contentColor = MaterialTheme.colorScheme.primary.copy(.9f)
         )
     ) {
         Icon(

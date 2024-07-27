@@ -12,7 +12,7 @@ import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
 import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
-import com.poulastaa.core.database.entity.relation.PopularArtistSongRelation
+import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
 import com.poulastaa.core.database.model.PopularArtistWithSongResult
 import com.poulastaa.core.database.model.PrevSongResult
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +44,7 @@ interface HomeDao {
     suspend fun insertArtistSongs(entrys: List<ArtistSongEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPopularArtistSongRelations(entrys: List<PopularArtistSongRelation>)
+    suspend fun insertPopularArtistSongRelations(entrys: List<PopularArtistSongRelationEntity>)
 
     @Query("select id from FavouriteArtistMixPrevEntity")
     suspend fun isNewUser(): List<Long>
@@ -71,9 +71,9 @@ interface HomeDao {
     @Query(
         """
         select PopularSongArtistEntity.id as artistId, PopularSongArtistEntity.name , PopularSongArtistEntity.coverImage as artistCover,
-        ArtistSongEntity.id as songId, ArtistSongEntity.title , ArtistSongEntity.coverImage  from PopularArtistSongRelation
-        join ArtistSongEntity on ArtistSongEntity.id = PopularArtistSongRelation.songId
-        join PopularSongArtistEntity on PopularArtistSongRelation.artistId = PopularSongArtistEntity.id
+        ArtistSongEntity.id as songId, ArtistSongEntity.title , ArtistSongEntity.coverImage  from PopularArtistSongRelationEntity
+        join ArtistSongEntity on ArtistSongEntity.id = PopularArtistSongRelationEntity.songId
+        join PopularSongArtistEntity on PopularArtistSongRelationEntity.artistId = PopularSongArtistEntity.id
         where ArtistSongEntity.id
     """
     )
@@ -88,4 +88,17 @@ interface HomeDao {
     """
     )
     fun getSavedPlaylists(): Flow<List<PrevSongResult>>
+
+    @Query(
+        """
+        select id from ArtistEntity where id = :artistId
+    """
+    )
+    suspend fun isArtistIsInLibrary(artistId: Long): Long?
+
+    @Query("select id from AlbumEntity where id = :albumId")
+    suspend fun isAlbumInLibrary(albumId: Long): Long?
+
+    @Query("select id from FavouriteEntity where id = :songId")
+    suspend fun isSongInFavourite(songId: Long): Long?
 }

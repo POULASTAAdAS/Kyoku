@@ -15,4 +15,8 @@ interface HomeRepository {
     suspend fun loadHomeData(): HomeData
 
     fun loadSavedPlaylist(): Flow<SavedPlaylist>
+
+    suspend fun isArtistIsInLibrary(artistId: Long): Boolean
+    suspend fun isAlbumInLibrary(albumId: Long): Boolean
+    suspend fun isSongInFavourite(songId: Long): Boolean
 }

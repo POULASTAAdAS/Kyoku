@@ -1,11 +1,8 @@
 package com.poulastaa.plugins
 
 import com.poulastaa.domain.repository.ServiceRepository
-import com.poulastaa.routes.getArtistImage
-import com.poulastaa.routes.getCoverImage
-import com.poulastaa.routes.homeReq
+import com.poulastaa.routes.*
 import com.poulastaa.routes.setup.*
-import com.poulastaa.routes.unAuthorized
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -23,6 +20,7 @@ fun Application.configureRouting() {
 }
 
 private fun Routing.home(service: ServiceRepository) {
+    getLogInData(service)
     homeReq(service)
 }
 

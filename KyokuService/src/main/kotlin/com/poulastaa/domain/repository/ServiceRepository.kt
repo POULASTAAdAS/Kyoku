@@ -40,6 +40,12 @@ interface ServiceRepository {
 
     suspend fun homeReq(
         userPayload: ReqUserPayload,
-        req: HomeReq
+        req: HomeReq,
+    ): HomeDto
+
+    suspend fun getLoginData(
+        userType: String,
+        authKey: String,
+        token: String,
     ): HomeDto
 }

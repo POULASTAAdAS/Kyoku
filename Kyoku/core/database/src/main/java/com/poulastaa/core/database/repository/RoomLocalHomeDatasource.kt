@@ -1,7 +1,7 @@
 package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.HomeDao
-import com.poulastaa.core.database.entity.relation.PopularArtistSongRelation
+import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
 import com.poulastaa.core.database.mapper.toArtistSongEntity
 import com.poulastaa.core.database.mapper.toDayTypeSongPrev
 import com.poulastaa.core.database.mapper.toDayTypeSongPrevEntity
@@ -101,7 +101,7 @@ class RoomLocalHomeDatasource @Inject constructor(
                     popularSongArtistsDef.await()
 
                     prevArtistSong.songs.map {
-                        PopularArtistSongRelation(
+                        PopularArtistSongRelationEntity(
                             artistId = prevArtistSong.artist.id,
                             songId = it.songId
                         )
@@ -178,4 +178,13 @@ class RoomLocalHomeDatasource @Inject constructor(
         it.groupBy { result -> result.id }
             .map { mapEntry -> mapEntry.toSavedPlaylist() }
     }.take(3)
+
+    override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
+        homeDao.isArtistIsInLibrary(artistId) != null
+
+    override suspend fun isAlbumInLibrary(albumId: Long): Boolean =
+        homeDao.isAlbumInLibrary(albumId) != null
+
+    override suspend fun isSongInFavourite(songId: Long): Boolean =
+        homeDao.isSongInFavourite(songId) != null
 }

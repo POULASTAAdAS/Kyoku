@@ -6,9 +6,11 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.DayTypeSongPrevEntity
 import com.poulastaa.core.database.entity.FavouriteArtistMixPrevEntity
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
@@ -17,7 +19,8 @@ import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
-import com.poulastaa.core.database.entity.relation.PopularArtistSongRelation
+import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
+import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 
@@ -39,9 +42,14 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 
         ArtistSongEntity::class,
         PopularSongArtistEntity::class,
-        PopularArtistSongRelation::class
+        PopularArtistSongRelationEntity::class,
+
+        AlbumEntity::class,
+        SongAlbumRelationEntity::class,
+
+        FavouriteEntity::class
     ],
-    version = 3,
+    version = 5,
     exportSchema = true
 )
 abstract class KyokuDatabase : RoomDatabase() {

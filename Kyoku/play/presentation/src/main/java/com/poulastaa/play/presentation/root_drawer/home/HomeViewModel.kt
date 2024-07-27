@@ -54,6 +54,7 @@ class HomeViewModel @Inject constructor(
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
+                                isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.popular_song_mix)
                                     .asString(event.context),
                                 urls = state.staticData.popularSongMix.map { it.coverImage },
@@ -66,6 +67,7 @@ class HomeViewModel @Inject constructor(
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
+                                isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.old_gem)
                                     .asString(event.context),
                                 urls = state.staticData.popularSongFromYourTime.map { it.coverImage },
@@ -78,6 +80,7 @@ class HomeViewModel @Inject constructor(
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
+                                isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.favourite_artist_mix)
                                     .asString(event.context),
                                 urls = state.staticData.favouriteArtistMix.map { it.coverImage },
@@ -91,18 +94,26 @@ class HomeViewModel @Inject constructor(
                             it.id == event.id
                         } ?: return
 
-                        // todo check if artist is in library
-
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
-                                flag = false, // todo
-                                id = artist.id,
-                                title = artist.name,
-                                urls = listOf(artist.coverImageUrl),
-                                itemType = event.itemClickType
                             )
                         )
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val isArtistInLibrary = homeRepo.isArtistIsInLibrary(artist.id)
+
+                            state = state.copy(
+                                bottomSheetUiState = state.bottomSheetUiState.copy(
+                                    isBottomSheetLoading = false,
+                                    flag = isArtistInLibrary, // if artist is already is in library
+                                    id = artist.id,
+                                    title = artist.name,
+                                    urls = listOf(artist.coverImageUrl),
+                                    itemType = event.itemClickType
+                                )
+                            )
+                        }
                     }
 
                     HomeItemClickType.POPULAR_ARTIST -> Unit
@@ -111,18 +122,26 @@ class HomeViewModel @Inject constructor(
                             it.id == event.id
                         } ?: return
 
-                        // todo check if album saved in library
-
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
-                                flag = false, // todo
-                                id = album.id,
-                                title = album.name,
-                                urls = listOf(album.coverImage),
-                                itemType = event.itemClickType
                             )
                         )
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val isAlbumInLibrary = homeRepo.isAlbumInLibrary(album.id)
+
+                            state = state.copy(
+                                bottomSheetUiState = state.bottomSheetUiState.copy(
+                                    isBottomSheetLoading = false,
+                                    flag = isAlbumInLibrary, // if album saved in library
+                                    id = album.id,
+                                    title = album.name,
+                                    urls = listOf(album.coverImage),
+                                    itemType = event.itemClickType
+                                )
+                            )
+                        }
                     }
 
                     HomeItemClickType.HISTORY_SONG -> Unit
@@ -136,15 +155,27 @@ class HomeViewModel @Inject constructor(
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
                                 isOpen = true,
-                                flag = false, // todo if anything playing false
-                                isQueue = false, // todo if is in playingQueue
-                                isInFavourite = false, // todo if is in favourite
-                                id = song.id,
-                                title = song.title,
-                                urls = listOf(song.coverImage),
-                                itemType = event.itemClickType
                             )
                         )
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                            val isSongInFavouriteDef = async { homeRepo.isSongInFavourite(song.id) }
+
+                            val isSongInFavourite = isSongInFavouriteDef.await()
+
+                            state = state.copy(
+                                bottomSheetUiState = state.bottomSheetUiState.copy(
+                                    isBottomSheetLoading = false,
+                                    flag = false, // todo if anything playing false
+                                    isQueue = false, // todo if is in playingQueue
+                                    isInFavourite = isSongInFavourite, // if is in favourite
+                                    id = song.id,
+                                    title = song.title,
+                                    urls = listOf(song.coverImage),
+                                    itemType = event.itemClickType
+                                )
+                            )
+                        }
                     }
 
                     else -> Unit

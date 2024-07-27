@@ -45,4 +45,10 @@ class OnlineFirstHomeRepository @Inject constructor(
     }.await()
 
     override fun loadSavedPlaylist(): Flow<SavedPlaylist> = local.loadSavedPlaylist()
+
+    override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
+        local.isArtistIsInLibrary(artistId)
+
+    override suspend fun isAlbumInLibrary(albumId: Long): Boolean = local.isAlbumInLibrary(albumId)
+    override suspend fun isSongInFavourite(songId: Long): Boolean = local.isSongInFavourite(songId)
 }

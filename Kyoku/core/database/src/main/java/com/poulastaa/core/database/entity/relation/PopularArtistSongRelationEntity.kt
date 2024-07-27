@@ -23,7 +23,7 @@ import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistE
         )
     ]
 )
-data class PopularArtistSongRelation(
+data class PopularArtistSongRelationEntity(
     @ColumnInfo(index = true)
     val artistId: Long,
     @ColumnInfo(index = true)
