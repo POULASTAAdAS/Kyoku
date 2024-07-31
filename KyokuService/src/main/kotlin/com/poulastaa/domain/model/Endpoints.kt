@@ -1,7 +1,7 @@
 package com.poulastaa.domain.model
 
 sealed class EndPoints(val route: String) {
-    data object GetLogInData: EndPoints(route = "/api/authorised/getLogInData")
+    data object GetLogInData : EndPoints(route = "/api/authorised/getLogInData")
 
     data object GetSpotifyPlaylistSong : EndPoints(route = "/api/authorised/spotifyPlaylist")
 

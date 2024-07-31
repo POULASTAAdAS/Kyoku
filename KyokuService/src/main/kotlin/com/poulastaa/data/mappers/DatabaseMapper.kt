@@ -11,8 +11,8 @@ fun ArtistDao.toArtistResult() = ResultArtist(
     profilePic = this.constructProfilePic() ?: ""
 )
 
-fun SongDao.toSongDto(artist:String) = SongDto(
-    id  = this.id.value,
+fun SongDao.toSongDto(artist: String) = SongDto(
+    id = this.id.value,
     coverImage = this.constructCoverImage(),
     title = this.title,
     artistName = artist,

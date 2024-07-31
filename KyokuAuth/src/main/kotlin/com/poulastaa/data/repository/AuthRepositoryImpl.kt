@@ -69,7 +69,12 @@ class AuthRepositoryImpl : AuthRepository {
             )
 
             user.bDate == null -> UserAuthRes(
-                status = UserAuthStatus.USER_FOUND_STORE_B_DATE
+                status = UserAuthStatus.USER_FOUND_STORE_B_DATE,
+                user = User(
+                    email = user.email,
+                    userName = user.userName,
+                    profilePic = user.constructProfilePic()
+                )
             )
 
             else -> UserAuthRes(
@@ -113,53 +118,55 @@ class AuthRepositoryImpl : AuthRepository {
     ): GoogleAuthResPayload {
         val user = findGoogleUser(payload.email)
 
-        if (user == null) {
-            val newUser = dbQuery {
-                GoogleAuthUser.new {
-                    this.userName = payload.userName
-                    this.sub = payload.sub
-                    this.email = payload.email
-                    this.updateProfilePic(payload.pictureUrl)
-                    this.countryId = countryId
+        return when {
+            user == null -> {
+                val newUser = dbQuery {
+                    GoogleAuthUser.new {
+                        this.userName = payload.userName
+                        this.sub = payload.sub
+                        this.email = payload.email
+                        this.updateProfilePic(payload.pictureUrl)
+                        this.countryId = countryId
+                    }
                 }
+
+                GoogleAuthResPayload(
+                    response = UserAuthRes(
+                        status = UserAuthStatus.CREATED,
+                        user = User(
+                            email = newUser.email,
+                            userName = newUser.userName,
+                            profilePic = newUser.constructProfilePic()
+                        )
+                    ),
+                    userId = newUser.id.value
+                )
             }
 
-            return GoogleAuthResPayload(
+            user.bDate == null -> GoogleAuthResPayload(
                 response = UserAuthRes(
-                    status = UserAuthStatus.CREATED,
+                    status = UserAuthStatus.USER_FOUND_STORE_B_DATE,
                     user = User(
-                        email = newUser.email,
-                        userName = newUser.userName,
-                        profilePic = newUser.constructProfilePic()
+                        email = user.email,
+                        userName = user.userName,
+                        profilePic = user.constructProfilePic()
                     )
                 ),
-                userId = newUser.id.value
+                userId = user.id.value
+            )
+
+            else -> GoogleAuthResPayload(
+                response = UserAuthRes(
+                    status = UserAuthStatus.USER_FOUND_HOME,
+                    user = User(
+                        email = user.email,
+                        userName = user.userName,
+                        profilePic = user.constructProfilePic()
+                    )
+                ),
+                userId = user.id.value
             )
         }
-
-        if (user.bDate == null) return GoogleAuthResPayload(
-            response = UserAuthRes(
-                status = UserAuthStatus.USER_FOUND_STORE_B_DATE,
-                user = User(
-                    email = user.email,
-                    userName = user.userName,
-                    profilePic = user.constructProfilePic()
-                )
-            ),
-            userId = user.id.value
-        )
-
-        return GoogleAuthResPayload(
-            response = UserAuthRes(
-                status = UserAuthStatus.USER_FOUND_HOME,
-                user = User(
-                    email = user.email,
-                    userName = user.userName,
-                    profilePic = user.constructProfilePic()
-                )
-            ),
-            userId = user.id.value
-        )
     }
 
 

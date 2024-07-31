@@ -15,6 +15,8 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleEmailLogin(
 ) {
     val response = service.loginEmailUser(req)
 
+    println(response)
+
     when (response.status) {
         UserAuthStatus.USER_FOUND_HOME,
         UserAuthStatus.USER_FOUND_SET_ARTIST,

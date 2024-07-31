@@ -14,11 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 import com.poulastaa.setup.presentation.components.LessSelectedToast
 import com.poulastaa.setup.presentation.components.NoInternetToast
 import com.poulastaa.setup.presentation.set_artist.ArtistUiEvent
 import com.poulastaa.setup.presentation.set_artist.ArtistUiState
-import com.poulastaa.core.presentation.ui.model.SpotifyUiArtist
 import kotlin.random.Random
 
 @Composable

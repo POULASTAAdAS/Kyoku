@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,6 +34,8 @@ class RootDrawerViewModel @Inject constructor(
             val userDef = async { ds.readLocalUser() }
             val savedScreen = savedScreenStringDef.await()
             val user = userDef.await()
+
+            Log.d("user", user.toString())
 
             state = state.copy(
                 saveScreen = savedScreen.toSaveScreen(),

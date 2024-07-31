@@ -13,12 +13,14 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import java.net.CookieManager
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
+    private val cookieManager: CookieManager,
+    private val ds: DataStoreRepository,
     private val remote: RemoteAuthDatasource,
     private val local: LocalAuthDatasource,
-    private val ds: DataStoreRepository,
     private val application: CoroutineScope,
 ) : AuthRepository {
     override suspend fun emailSingUp(
@@ -38,11 +40,8 @@ class AuthRepositoryImpl @Inject constructor(
             val storeUserDef = application.async {
                 ds.storeLocalUser(result.data.user.toUser())
             }
-            // todo send data to local
-
             storeUserDef.await()
         }
-
 
         return result.map { it.status }
     }
@@ -60,9 +59,17 @@ class AuthRepositoryImpl @Inject constructor(
             val storeUserDef = application.async {
                 ds.storeLocalUser(result.data.user.toUser())
             }
-            // todo send data to local
+            val storeDataDef = application.async {
+                if (result.data.status == UserAuthStatus.CONFLICT ||
+                    result.data.status == UserAuthStatus.USER_FOUND_STORE_B_DATE ||
+                    result.data.status == UserAuthStatus.USER_FOUND_SET_ARTIST ||
+                    result.data.status == UserAuthStatus.USER_FOUND_HOME ||
+                    result.data.status == UserAuthStatus.USER_FOUND_SET_GENRE
+                ) local.storeData(data = result.data.logInData)
+            }
 
             storeUserDef.await()
+            storeDataDef.await()
         }
 
         return result.map { it.status }
@@ -81,9 +88,28 @@ class AuthRepositoryImpl @Inject constructor(
             val storeUserDef = application.async {
                 ds.storeLocalUser(result.data.user.toUser())
             }
-            // todo send data to local
+            val storeDataDef = application.async {
+                if (result.data.status == UserAuthStatus.CONFLICT ||
+                    result.data.status == UserAuthStatus.USER_FOUND_STORE_B_DATE ||
+                    result.data.status == UserAuthStatus.USER_FOUND_SET_ARTIST ||
+                    result.data.status == UserAuthStatus.USER_FOUND_HOME ||
+                    result.data.status == UserAuthStatus.USER_FOUND_SET_GENRE
+                ) {
+                    val cookie = try {
+                        cookieManager.cookieStore.cookies[0].toString()
+                    } catch (e: Exception) {
+                        null
+                    }
+
+                    if (cookie != null) {
+                        async { ds.storeTokenOrCookie(cookie) }.await()
+                        local.storeData(data = result.data.logInData)
+                    }
+                }
+            }
 
             storeUserDef.await()
+            storeDataDef.await()
         }
 
         return result.map { it.status }
@@ -95,16 +121,17 @@ class AuthRepositoryImpl @Inject constructor(
         return if (response is Result.Success && response.data.status) {
             val accessToken =
                 application.async { ds.storeTokenOrCookie("Bearer ${response.data.accessToken}") }
-            val refreshToken = application.async { ds.storeRefreshToken(response.data.refreshToken) }
-            val signInScreen = application.async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
+            val refreshToken =
+                application.async { ds.storeRefreshToken(response.data.refreshToken) }
+            val signInScreen =
+                application.async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
 
             accessToken.await()
             refreshToken.await()
             signInScreen.await()
 
             true
-        }
-        else false
+        } else false
     }
 
 
@@ -114,16 +141,17 @@ class AuthRepositoryImpl @Inject constructor(
         return if (response is Result.Success && response.data.status) {
             val accessToken =
                 application.async { ds.storeTokenOrCookie("Bearer ${response.data.accessToken}") }
-            val refreshToken = application.async { ds.storeRefreshToken(response.data.refreshToken) }
-            val signInScreen = application.async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
+            val refreshToken =
+                application.async { ds.storeRefreshToken(response.data.refreshToken) }
+            val signInScreen =
+                application.async { ds.storeSignInState(ScreenEnum.GET_SPOTIFY_PLAYLIST) }
 
             accessToken.await()
             refreshToken.await()
             signInScreen.await()
 
             true
-        }
-        else false
+        } else false
     }
 
     override suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordSetStatus, DataError.Network> =

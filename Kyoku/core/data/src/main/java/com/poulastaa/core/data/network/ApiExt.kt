@@ -38,6 +38,7 @@ suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.
 
     return try {
         val response = makeCall(req)
+
         responseToResult<Response>(response, gson)
     } catch (e: Exception) {
         handleOtherException(e)

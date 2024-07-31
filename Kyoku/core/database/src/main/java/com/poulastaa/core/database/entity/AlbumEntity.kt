@@ -9,5 +9,4 @@ data class AlbumEntity(
     val id: Long,
     val name: String,
     val coverImage: String = "",
-    val index: Int = 0,
 )

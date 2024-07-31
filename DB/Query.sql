@@ -119,8 +119,6 @@ select * from emailauthuser;
 select * from googleauthuser;
 select * from userplaylistsongrelation;
 
-update  emailauthuser set bdate = null;
-
 
 
 

@@ -3,9 +3,9 @@ package com.poulastaa.domain.repository
 import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
-import com.poulastaa.data.model.auth.response.Payload
 import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
 import com.poulastaa.data.model.auth.response.ForgotPasswordSetStatus
+import com.poulastaa.data.model.auth.response.Payload
 import com.poulastaa.data.model.auth.response.UserAuthRes
 import com.poulastaa.data.model.payload.UpdatePasswordStatus
 

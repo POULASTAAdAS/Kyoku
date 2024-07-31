@@ -1,6 +1,5 @@
 package com.poulastaa.domain.table.relation
 
-import com.poulastaa.domain.table.AlbumTable
 import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.CountryTable
 import org.jetbrains.exposed.sql.ReferenceOption

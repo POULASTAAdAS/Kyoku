@@ -1,9 +1,9 @@
 package com.poulastaa.auth.data
 
 import android.util.Patterns
+import com.poulastaa.auth.domain.Validator
 import com.poulastaa.auth.domain.model.PasswordState
 import com.poulastaa.auth.domain.model.UsernameState
-import com.poulastaa.auth.domain.Validator
 import javax.inject.Inject
 
 class UserDataValidator @Inject constructor() : Validator {

@@ -10,7 +10,7 @@ fun String.toDrawerScreen() = when (this) {
     else -> DrawerScreen.Library
 }
 
-fun String.toSaveScreen() = when(this){
+fun String.toSaveScreen() = when (this) {
     SaveScreen.HOME.name -> SaveScreen.HOME
     else -> SaveScreen.LIBRARY
 }

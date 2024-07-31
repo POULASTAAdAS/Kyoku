@@ -8,5 +8,5 @@ data class UserResult(
     val password: String = "",
     val bDate: Long = -1,
     val countryId: Int = -1,
-    val userType: UserType
+    val userType: UserType,
 )

@@ -33,8 +33,12 @@ object DatabaseViewModelModule {
     @Provides
     @ViewModelScoped
     fun provideAuthDatasource(
+        commonDao: CommonDao,
         homeDao: HomeDao,
-    ): LocalAuthDatasource = RoomLocalAuthDatasource(homeDao)
+    ): LocalAuthDatasource = RoomLocalAuthDatasource(
+        commonDao = commonDao,
+        homeDao = homeDao,
+    )
 
     @Provides
     @ViewModelScoped

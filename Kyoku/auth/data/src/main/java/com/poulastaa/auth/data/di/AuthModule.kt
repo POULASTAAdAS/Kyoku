@@ -13,10 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
-import okhttp3.JavaNetCookieJar
-import okhttp3.OkHttpClient
 import java.net.CookieManager
-import javax.inject.Named
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -31,11 +28,13 @@ object AuthModule {
         remote: RemoteAuthDatasource,
         local: LocalAuthDatasource,
         ds: DataStoreRepository,
+        cookieManager: CookieManager,
         application: CoroutineScope,
     ): AuthRepository = AuthRepositoryImpl(
         remote = remote,
         local = local,
         ds = ds,
-        application = application
+        application = application,
+        cookieManager = cookieManager
     )
 }

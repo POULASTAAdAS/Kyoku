@@ -13,7 +13,6 @@ import com.poulastaa.core.data.model.PreArtistSongDto
 import com.poulastaa.core.data.model.PrevAlbumDto
 import com.poulastaa.core.data.model.PrevSongDetailDto
 import com.poulastaa.core.data.model.PrevSongDto
-import com.poulastaa.core.domain.User
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.AuthData
 import com.poulastaa.core.domain.model.EmailVerification
@@ -30,7 +29,7 @@ import com.poulastaa.core.domain.model.UserAuthStatus
 fun AuthDto.toAuthData() = AuthData(
     status = this.status.toUserAuthStatus(),
     user = this.user.toResponseUser(),
-    logInData = this.loginDto.toLoInData()
+    logInData = this.logInData.toLoInData()
 )
 
 

@@ -1,7 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.home.components
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable

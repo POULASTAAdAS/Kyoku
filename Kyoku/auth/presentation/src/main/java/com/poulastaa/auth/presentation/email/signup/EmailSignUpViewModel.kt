@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.auth.domain.Validator
 import com.poulastaa.auth.domain.model.PasswordState
 import com.poulastaa.auth.domain.model.UsernameState
-import com.poulastaa.auth.domain.Validator
+import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.auth.AuthRepository
 import com.poulastaa.core.domain.model.UserAuthStatus
-import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R

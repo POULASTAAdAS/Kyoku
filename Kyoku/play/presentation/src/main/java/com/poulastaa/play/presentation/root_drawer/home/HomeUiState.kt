@@ -1,9 +1,9 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
-import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.BottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 
 data class HomeUiState(
     val heading: String = "",
@@ -16,7 +16,7 @@ data class HomeUiState(
     val savedAlbums: List<UiPrevAlbum> = emptyList(),
     val staticData: UiHomeData = UiHomeData(),
 
-    val bottomSheetUiState: BottomSheetUiState = BottomSheetUiState()
+    val bottomSheetUiState: BottomSheetUiState = BottomSheetUiState(),
 ) {
     val canShowUi: Boolean
         get() = !isNewUser && !isDataLoading

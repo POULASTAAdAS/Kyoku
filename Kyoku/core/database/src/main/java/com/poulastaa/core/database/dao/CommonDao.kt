@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.SongEntity
@@ -18,7 +19,6 @@ interface CommonDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongs(songs: List<SongEntity>)
-
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArtist(artist: ArtistEntity)
@@ -43,6 +43,9 @@ interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongPlaylistRelation(list: List<SongPlaylistRelationEntity>)
 
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlbums(entity: List<AlbumEntity>)
 
     @Query("select id from SongEntity where coverImage = :url")
     suspend fun getSongOnUrl(url: String): Long?

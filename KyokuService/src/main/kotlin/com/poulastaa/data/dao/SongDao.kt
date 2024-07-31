@@ -27,7 +27,7 @@ class SongDao(id: EntityID<Long>) : LongEntity(id) {
     }"
 
 
-     fun constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.GetCoverImage.route}?master=${
+    fun constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.GetCoverImage.route}?master=${
         this.masterPlaylistPath.replace(MASTER_PLAYLIST_ROOT_DIR, "")
     }"
 }

@@ -169,28 +169,28 @@ class ServiceRepositoryImpl(
             UserAuthStatus.USER_FOUND_SET_GENRE,
             UserAuthStatus.USER_FOUND_SET_ARTIST,
             -> {
-                if (UserAuthStatus.USER_FOUND_STORE_B_DATE == response.response.status) {
-                    response.response to response.userId
-                } else {
-                    val logInData = getLogInData(
-                        email = payload.email,
-                        userType = UserType.GOOGLE_USER,
-                    )
+                val logInData = getLogInData(
+                    email = payload.email,
+                    userType = UserType.GOOGLE_USER,
+                )
 
-                    val res = response.response.copy(
-                        status = logInData.status,
+                val res = if (UserAuthStatus.USER_FOUND_STORE_B_DATE == response.response.status) {
+                    response.response.copy(
                         logInData = logInData.toLoInDto()
                     )
+                } else response.response.copy(
+                    status = logInData.status,
+                    logInData = logInData.toLoInDto()
+                )
 
-                    if (logInData.status == UserAuthStatus.USER_FOUND_HOME) CoroutineScope(Dispatchers.IO).launch {
-                        welcomeBackMail(
-                            to = payload.email,
-                            userName = payload.userName
-                        )
-                    }
-
-                    res to response.userId
+                if (logInData.status == UserAuthStatus.USER_FOUND_HOME) CoroutineScope(Dispatchers.IO).launch {
+                    welcomeBackMail(
+                        to = payload.email,
+                        userName = payload.userName
+                    )
                 }
+
+                res to response.userId
             }
 
             else -> UserAuthRes() to -1

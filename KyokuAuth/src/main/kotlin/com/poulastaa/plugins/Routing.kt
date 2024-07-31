@@ -3,9 +3,9 @@ package com.poulastaa.plugins
 import com.poulastaa.data.model.session.UserSession
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.routes.auth.auth
+import com.poulastaa.routes.forgot_password.resetPassword
 import com.poulastaa.routes.forgot_password.resetPasswordPage
 import com.poulastaa.routes.forgot_password.sendForgotPasswordLink
-import com.poulastaa.routes.forgot_password.resetPassword
 import com.poulastaa.routes.unAuthorised
 import com.poulastaa.routes.verify_mail.logInEmailVerificationCheck
 import com.poulastaa.routes.verify_mail.signUpEmailVerificationCheck

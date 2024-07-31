@@ -5,14 +5,12 @@ import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.PrevArtistSong
-import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 import java.time.LocalDateTime
