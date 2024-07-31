@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
@@ -7,21 +8,21 @@ import com.poulastaa.data.dao.user.EmailAuthUserDao
 import com.poulastaa.data.dao.user.GoogleAuthUserDao
 import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.mappers.toUserResult
+import com.poulastaa.data.model.AlbumDto
 import com.poulastaa.data.model.ArtistDto
+import com.poulastaa.data.model.LogInDto
 import com.poulastaa.data.model.PlaylistDto
-import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.PlaylistSongPayload
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
+import com.poulastaa.domain.repository.UserId
 import com.poulastaa.domain.repository.UserRepository
+import com.poulastaa.domain.table.AlbumTable
 import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.PlaylistTable
 import com.poulastaa.domain.table.SongTable
-import com.poulastaa.domain.table.relation.SongArtistRelationTable
-import com.poulastaa.domain.table.relation.UserArtistRelationTable
-import com.poulastaa.domain.table.relation.UserGenreRelationTable
-import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
+import com.poulastaa.domain.table.relation.*
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.poulastaa.plugins.query
@@ -43,6 +44,29 @@ class UserDatabaseRepository : UserRepository {
                 query {
                     EmailAuthUserDao.find {
                         EmailAuthUserTable.email eq payload.id
+                    }.singleOrNull()?.toUserResult()
+                }
+            }
+        }
+    }
+
+    override suspend fun getUserOnEmail(
+        email: String,
+        userType: UserType,
+    ): UserResult? {
+        return when (userType) {
+            UserType.GOOGLE_USER -> {
+                query {
+                    GoogleAuthUserDao.find {
+                        GoogleAuthUserTable.email eq email
+                    }.singleOrNull()?.toUserResult()
+                }
+            }
+
+            UserType.EMAIL_USER -> {
+                query {
+                    EmailAuthUserDao.find {
+                        EmailAuthUserTable.email eq email
                     }.singleOrNull()?.toUserResult()
                 }
             }
@@ -123,9 +147,25 @@ class UserDatabaseRepository : UserRepository {
 
     override suspend fun getUserData(
         userType: UserType,
-        userId: Long,
-    ): HomeDto = coroutineScope {
-        val playlistDef = async {
+        email: String,
+    ): Pair<LogInDto, UserId> = coroutineScope {
+        val userId = query {
+            when (userType) {
+                UserType.GOOGLE_USER -> {
+                    GoogleAuthUserDao.find {
+                        GoogleAuthUserTable.email eq email
+                    }.singleOrNull()?.id?.value
+                }
+
+                UserType.EMAIL_USER -> {
+                    EmailAuthUserDao.find {
+                        EmailAuthUserTable.email eq email
+                    }.singleOrNull()?.id?.value
+                }
+            }
+        } ?: return@coroutineScope LogInDto() to -1
+
+        val savedPlaylistDef = async {
             query {
                 UserPlaylistSongRelationTable.select {
                     (UserPlaylistSongRelationTable.userId eq userId) and (UserPlaylistSongRelationTable.userType eq userType.name)
@@ -162,7 +202,7 @@ class UserDatabaseRepository : UserRepository {
                                     }
                                 ).slice(ArtistTable.name)
                                     .select {
-                                        SongArtistRelationTable.songId eq SongTable.id as Column<*>
+                                        SongArtistRelationTable.songId eq songDao.id.value
                                     }.map { resultRow ->
                                         resultRow[ArtistTable.name]
                                     }
@@ -174,13 +214,42 @@ class UserDatabaseRepository : UserRepository {
                 )
             }
         }
-
-        val albumDef = async {
+        val savedAlbumDef = async {
             query {
+                UserAlbumRelationTable.select {
+                    (UserAlbumRelationTable.userId eq userId) and (UserAlbumRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserAlbumRelationTable.albumId]
+                }.let { albumIdList ->
+                    query {
+                        AlbumDao.find {
+                            AlbumTable.id inList albumIdList
+                        }.map { album ->
+                            async {
+                                query {
+                                    SongAlbumRelationTable.select {
+                                        SongAlbumRelationTable.albumId eq album.id.value
+                                    }.single().let {
+                                        it[SongAlbumRelationTable.songId]
+                                    }.let { songId ->
+                                        SongDao.find {
+                                            SongTable.id eq songId
+                                        }.single().constructCoverImage()
+                                    }
+                                } to album
+                            }
+                        }.awaitAll()
+                    }
+                }.map {
+                    AlbumDto(
+                        id = it.second.id.value,
+                        name = it.second.name,
+                        coverImage = it.first
+                    )
+                }
             }
         }
-
-        val artistDef = async {
+        val followArtistDef = async {
             query {
                 UserArtistRelationTable.select {
                     UserArtistRelationTable.userId eq userId and (UserArtistRelationTable.userType eq userType.name)
@@ -202,6 +271,10 @@ class UserDatabaseRepository : UserRepository {
             }
         }
 
-        HomeDto()
+        LogInDto(
+            savedPlaylist = savedPlaylistDef.await(),
+            savedAlbum = savedAlbumDef.await(),
+            savedArtist = followArtistDef.await()
+        ) to userId
     }
 }

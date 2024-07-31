@@ -1,7 +1,7 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.auth.res.Payload
-import com.poulastaa.data.model.auth.response.EmailAuthRes
+import com.poulastaa.data.model.auth.response.Payload
+import com.poulastaa.data.model.auth.response.UserAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
 import com.poulastaa.data.model.payload.GoogleAuthResPayload
 import com.poulastaa.data.model.payload.UpdateEmailVerificationPayload
@@ -20,7 +20,7 @@ interface AuthRepository {
         email: String,
         password: String,
         refreshToken: String,
-    ): EmailAuthRes
+    ): UserAuthRes
 
     suspend fun googleAuth(
         payload: Payload,

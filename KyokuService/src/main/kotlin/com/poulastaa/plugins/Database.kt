@@ -1,5 +1,6 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.domain.table.relation.UserAlbumRelationTable
 import com.poulastaa.domain.table.relation.UserArtistRelationTable
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
@@ -27,6 +28,7 @@ fun Application.configureDatabase() {
         SchemaUtils.create(UserPlaylistSongRelationTable)
         SchemaUtils.create(UserGenreRelationTable)
         SchemaUtils.create(UserArtistRelationTable)
+        SchemaUtils.create(UserAlbumRelationTable)
     }
 }
 

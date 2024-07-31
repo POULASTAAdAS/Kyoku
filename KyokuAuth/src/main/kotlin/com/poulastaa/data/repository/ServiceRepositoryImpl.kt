@@ -2,14 +2,15 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.data.dao.other.Country
 import com.poulastaa.data.dao.user.EmailAuthUser
+import com.poulastaa.data.mapper.toLoInDto
 import com.poulastaa.data.model.EndPoints
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.UserType
 import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
-import com.poulastaa.data.model.auth.res.Payload
 import com.poulastaa.data.model.auth.response.*
+import com.poulastaa.data.model.auth.response.login.ApiLogInDto
 import com.poulastaa.data.model.payload.UpdatePasswordStatus
 import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.other.CountryTable
@@ -22,9 +23,15 @@ import com.poulastaa.utils.Constants.SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.Constants.VERIFICATION_MAIL_TOKEN_CLAIM_KEY
 import com.poulastaa.utils.constructProfileUrl
 import com.poulastaa.utils.sendEmail
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.upperCase
 
 class ServiceRepositoryImpl(
@@ -36,12 +43,12 @@ class ServiceRepositoryImpl(
         "US" to "United States"
     )
 
-    override suspend fun createEmailUser(req: EmailSignUpReq): EmailAuthRes {
-        if (!validateEmail(req.email)) return EmailAuthRes(
+    override suspend fun createEmailUser(req: EmailSignUpReq): UserAuthRes {
+        if (!validateEmail(req.email)) return UserAuthRes(
             status = UserAuthStatus.EMAIL_NOT_VALID
         )
 
-        val country = req.countryCode.getCountryId() ?: return EmailAuthRes(
+        val country = req.countryCode.getCountryId() ?: return UserAuthRes(
             status = UserAuthStatus.SOMETHING_WENT_WRONG
         )
 
@@ -66,7 +73,7 @@ class ServiceRepositoryImpl(
                     )
                 }
 
-                EmailAuthRes(
+                UserAuthRes(
                     status = status,
                     user = User(
                         email = req.email,
@@ -77,14 +84,14 @@ class ServiceRepositoryImpl(
             }
 
             else -> {
-                EmailAuthRes(
+                UserAuthRes(
                     status = status
                 )
             }
         }
     }
 
-    override suspend fun loginEmailUser(req: EmailLogInReq): EmailAuthRes {
+    override suspend fun loginEmailUser(req: EmailLogInReq): UserAuthRes {
         val refreshToken = jwtRepo.generateRefreshToken(email = req.email)
 
         var response = authRepo.loginEmailUser(
@@ -99,15 +106,19 @@ class ServiceRepositoryImpl(
             UserAuthStatus.USER_FOUND_SET_GENRE,
             UserAuthStatus.USER_FOUND_STORE_B_DATE,
             -> {
-                val homeData = getLogInData(
-                    email = req.email,
-                    userType = UserType.EMAIL_USER,
-                    authKey = System.getenv("authKey")
-                )
+                response = if (UserAuthStatus.USER_FOUND_STORE_B_DATE == response.status) {
+                    response
+                } else {
+                    val logInData = getLogInData(
+                        email = req.email,
+                        userType = UserType.EMAIL_USER,
+                    )
 
-                response = response.copy(
-                    // todo
-                )
+                    response.copy(
+                        status = logInData.status,
+                        logInData = logInData.toLoInDto()
+                    )
+                }
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val verificationMailToken = jwtRepo.generateVerificationMailToken(email = req.email)
@@ -134,8 +145,8 @@ class ServiceRepositoryImpl(
         return response
     }
 
-    override suspend fun googleAuth(payload: Payload, countryCode: String): Pair<GoogleAuthRes, UserId> {
-        val country = countryCode.getCountryId() ?: return GoogleAuthRes(
+    override suspend fun googleAuth(payload: Payload, countryCode: String): Pair<UserAuthRes, UserId> {
+        val country = countryCode.getCountryId() ?: return UserAuthRes(
             status = UserAuthStatus.SOMETHING_WENT_WRONG
         ) to -1
 
@@ -153,23 +164,36 @@ class ServiceRepositoryImpl(
                 response.response to response.userId
             }
 
+            UserAuthStatus.USER_FOUND_HOME,
             UserAuthStatus.USER_FOUND_STORE_B_DATE,
             UserAuthStatus.USER_FOUND_SET_GENRE,
             UserAuthStatus.USER_FOUND_SET_ARTIST,
-            -> response.response to response.userId
-
-            UserAuthStatus.USER_FOUND_HOME -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    welcomeBackMail(
-                        to = payload.email,
-                        userName = payload.userName
+            -> {
+                if (UserAuthStatus.USER_FOUND_STORE_B_DATE == response.response.status) {
+                    response.response to response.userId
+                } else {
+                    val logInData = getLogInData(
+                        email = payload.email,
+                        userType = UserType.GOOGLE_USER,
                     )
-                }
 
-                response.response to response.userId
+                    val res = response.response.copy(
+                        status = logInData.status,
+                        logInData = logInData.toLoInDto()
+                    )
+
+                    if (logInData.status == UserAuthStatus.USER_FOUND_HOME) CoroutineScope(Dispatchers.IO).launch {
+                        welcomeBackMail(
+                            to = payload.email,
+                            userName = payload.userName
+                        )
+                    }
+
+                    res to response.userId
+                }
             }
 
-            else -> GoogleAuthRes() to -1
+            else -> UserAuthRes() to -1
         }
     }
 
@@ -329,7 +353,6 @@ class ServiceRepositoryImpl(
             CountryTable.name.upperCase() eq country
         }.singleOrNull()?.id?.value
     }
-
 
     private fun sendEmailSignUpVerificationMail(
         toEmail: String,
@@ -773,15 +796,34 @@ class ServiceRepositoryImpl(
     private suspend fun getLogInData(
         email: String,
         userType: UserType,
-        authKey: String,
-    ) {
+    ): ApiLogInDto = coroutineScope {
         val token = jwtRepo.generateToken(
             sub = "GetLogInData",
             email = email,
             claimName = GET_LOGIN_DATA_TOKEN_CLAIM_KEY,
-            validationTime = 8000
+            validationTime = 120000
         )
 
+        val client = HttpClient()
+        val serviceUrl = System.getenv("SERVICE_URL") + EndPoints.GetLogInData.route
 
+        val urlWithParams = URLBuilder(serviceUrl).apply {
+            parameters.append("token", token)
+            parameters.append("userType", userType.name)
+        }.buildString()
+
+        val result = client.get(urlWithParams)
+
+        client.close()
+        val jsonBody = result.bodyAsText()
+
+
+        val data = try {
+            Json.decodeFromString<ApiLogInDto>(jsonBody)
+        } catch (e: Exception) {
+            null
+        }
+
+        data ?: ApiLogInDto()
     }
 }

@@ -1,8 +1,8 @@
 package com.poulastaa.data.model.payload
 
-import com.poulastaa.data.model.auth.response.GoogleAuthRes
+import com.poulastaa.data.model.auth.response.UserAuthRes
 
 data class GoogleAuthResPayload(
-    val response: GoogleAuthRes,
+    val response: UserAuthRes,
     val userId: Long,
 )

@@ -1,4 +1,4 @@
-package com.poulastaa.data.model.auth.res
+package com.poulastaa.data.model.auth.response
 
 data class Payload(
     val sub: String,

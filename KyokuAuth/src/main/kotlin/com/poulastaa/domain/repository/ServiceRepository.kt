@@ -3,11 +3,10 @@ package com.poulastaa.domain.repository
 import com.poulastaa.data.model.VerifiedMailStatus
 import com.poulastaa.data.model.auth.req.EmailLogInReq
 import com.poulastaa.data.model.auth.req.EmailSignUpReq
-import com.poulastaa.data.model.auth.res.Payload
+import com.poulastaa.data.model.auth.response.Payload
 import com.poulastaa.data.model.auth.response.CheckEmailVerificationResponse
-import com.poulastaa.data.model.auth.response.EmailAuthRes
 import com.poulastaa.data.model.auth.response.ForgotPasswordSetStatus
-import com.poulastaa.data.model.auth.response.GoogleAuthRes
+import com.poulastaa.data.model.auth.response.UserAuthRes
 import com.poulastaa.data.model.payload.UpdatePasswordStatus
 
 typealias UserId = Long
@@ -16,16 +15,16 @@ typealias Email = String
 interface ServiceRepository {
     suspend fun createEmailUser(
         req: EmailSignUpReq,
-    ): EmailAuthRes
+    ): UserAuthRes
 
     suspend fun loginEmailUser(
         req: EmailLogInReq,
-    ): EmailAuthRes
+    ): UserAuthRes
 
     suspend fun googleAuth(
         payload: Payload,
         countryCode: String,
-    ): Pair<GoogleAuthRes, UserId>
+    ): Pair<UserAuthRes, UserId>
 
     suspend fun updateSignUpEmailVerificationStatus(
         token: String,

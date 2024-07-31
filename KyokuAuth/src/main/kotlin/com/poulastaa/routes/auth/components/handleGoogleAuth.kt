@@ -5,8 +5,8 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.data.model.auth.req.GoogleAuthReq
-import com.poulastaa.data.model.auth.res.Payload
-import com.poulastaa.data.model.auth.response.GoogleAuthRes
+import com.poulastaa.data.model.auth.response.Payload
+import com.poulastaa.data.model.auth.response.UserAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
 import com.poulastaa.data.model.session.UserSession
 import com.poulastaa.domain.repository.ServiceRepository
@@ -21,7 +21,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleAuth(
     req: GoogleAuthReq,
 ) {
     val token = req.verifyTokenId() ?: return call.respond(
-        message = GoogleAuthRes(
+        message = UserAuthRes(
             status = UserAuthStatus.TOKEN_NOT_VALID
         ),
         status = HttpStatusCode.Unauthorized
@@ -31,7 +31,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.handleGoogleAuth(
         token.toPayload()
     } catch (_: Exception) {
         return call.respond(
-            message = GoogleAuthRes(
+            message = UserAuthRes(
                 status = UserAuthStatus.SOMETHING_WENT_WRONG,
             ),
             status = HttpStatusCode.BadRequest

@@ -13,7 +13,6 @@ class JWTRepositoryImpl(
 ) : JWTRepository {
     private val issuer = getConfigProperty("jwt.issuer")
     private val audience = getConfigProperty("jwt.audience")
-    private val privateKeyString = getConfigProperty("jwt.privateKey")
 
     private val realm = getConfigProperty("jwt.realm")
 

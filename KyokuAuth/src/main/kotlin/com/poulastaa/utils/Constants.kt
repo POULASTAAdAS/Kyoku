@@ -3,7 +3,7 @@ package com.poulastaa.utils
 object Constants {
     private const val CURRENT_PROJECT_FOLDER = "G:"
 
-    private const val PROFILE_PIC_ROOT_DIR = "$CURRENT_PROJECT_FOLDER/data/profilePic"
+    const val PROFILE_PIC_ROOT_DIR = "$CURRENT_PROJECT_FOLDER/data/profilePic"
 
     private const val SECURITY_TYPE_EMAIL = "jwt-auth"
     private const val SECURITY_TYPE_SESSION = "session-auth"
@@ -18,7 +18,7 @@ object Constants {
     const val FORGOT_PASSWORD_MAIL_TOKEN_CLAIM_KEY = "forgotPassword"
     const val SUBMIT_NEW_PASSWORD_TOKEN_CLAIM_KEY = "submitPassword"
 
-    const val GET_LOGIN_DATA_TOKEN_CLAIM_KEY = "getLoginData"
+    const val GET_LOGIN_DATA_TOKEN_CLAIM_KEY = "getLoginDataKey"
 
     const val SMS_EMAIL_GOOGLE_SMTP_HOST = "smtp.gmail.com"
     const val SMS_EMAIL_PORT = "587"

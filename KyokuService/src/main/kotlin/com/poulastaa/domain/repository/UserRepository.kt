@@ -1,12 +1,18 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.home.HomeDto
+import com.poulastaa.data.model.LogInDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
 
+typealias UserId = Long
+
 interface UserRepository {
     suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult?
+    suspend fun getUserOnEmail(
+        email: String,
+        userType: UserType,
+    ): UserResult?
 
     fun createUserPlaylist(
         userId: Long,
@@ -35,6 +41,6 @@ interface UserRepository {
 
     suspend fun getUserData(
         userType: UserType,
-        userId: Long
-    ): HomeDto
+        email: String,
+    ): Pair<LogInDto, UserId>
 }

@@ -5,9 +5,8 @@ import com.poulastaa.data.dao.user.EmailAuthUser
 import com.poulastaa.data.dao.user.GoogleAuthUser
 import com.poulastaa.data.model.User
 import com.poulastaa.data.model.VerifiedMailStatus
-import com.poulastaa.data.model.auth.res.Payload
-import com.poulastaa.data.model.auth.response.EmailAuthRes
-import com.poulastaa.data.model.auth.response.GoogleAuthRes
+import com.poulastaa.data.model.auth.response.Payload
+import com.poulastaa.data.model.auth.response.UserAuthRes
 import com.poulastaa.data.model.auth.response.UserAuthStatus
 import com.poulastaa.data.model.payload.GoogleAuthResPayload
 import com.poulastaa.data.model.payload.UpdateEmailVerificationPayload
@@ -55,30 +54,30 @@ class AuthRepositoryImpl : AuthRepository {
         email: String,
         password: String,
         refreshToken: String,
-    ): EmailAuthRes {
-        val user = findEmailUser(email) ?: return EmailAuthRes(
+    ): UserAuthRes {
+        val user = findEmailUser(email) ?: return UserAuthRes(
             status = UserAuthStatus.USER_NOT_FOUND
         )
 
         val response = when {
-            user.password != password -> EmailAuthRes(
+            user.password != password -> UserAuthRes(
                 status = UserAuthStatus.PASSWORD_DOES_NOT_MATCH
             )
 
-            !user.emailVerified -> EmailAuthRes(
+            !user.emailVerified -> UserAuthRes(
                 status = UserAuthStatus.EMAIL_NOT_VERIFIED
             )
 
-            user.bDate == null -> EmailAuthRes(
+            user.bDate == null -> UserAuthRes(
                 status = UserAuthStatus.USER_FOUND_STORE_B_DATE
             )
 
-            else -> EmailAuthRes(
+            else -> UserAuthRes(
                 status = UserAuthStatus.USER_FOUND_HOME,
                 user = User(
                     email = user.email,
                     userName = user.userName,
-                    profilePic = user.profilePic
+                    profilePic = user.constructProfilePic()
                 )
             )
         }
@@ -120,18 +119,18 @@ class AuthRepositoryImpl : AuthRepository {
                     this.userName = payload.userName
                     this.sub = payload.sub
                     this.email = payload.email
-                    this.profilePicUrl = payload.pictureUrl
+                    this.updateProfilePic(payload.pictureUrl)
                     this.countryId = countryId
                 }
             }
 
             return GoogleAuthResPayload(
-                response = GoogleAuthRes(
+                response = UserAuthRes(
                     status = UserAuthStatus.CREATED,
                     user = User(
                         email = newUser.email,
                         userName = newUser.userName,
-                        profilePic = newUser.profilePicUrl
+                        profilePic = newUser.constructProfilePic()
                     )
                 ),
                 userId = newUser.id.value
@@ -139,26 +138,24 @@ class AuthRepositoryImpl : AuthRepository {
         }
 
         if (user.bDate == null) return GoogleAuthResPayload(
-            response = GoogleAuthRes(
+            response = UserAuthRes(
                 status = UserAuthStatus.USER_FOUND_STORE_B_DATE,
                 user = User(
                     email = user.email,
                     userName = user.userName,
-                    profilePic = user.profilePicUrl
+                    profilePic = user.constructProfilePic()
                 )
             ),
             userId = user.id.value
         )
 
-        // todo check for artist and genre entry
-
         return GoogleAuthResPayload(
-            response = GoogleAuthRes(
+            response = UserAuthRes(
                 status = UserAuthStatus.USER_FOUND_HOME,
                 user = User(
                     email = user.email,
                     userName = user.userName,
-                    profilePic = user.profilePicUrl
+                    profilePic = user.constructProfilePic()
                 )
             ),
             userId = user.id.value

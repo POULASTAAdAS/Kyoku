@@ -6,10 +6,9 @@ import com.poulastaa.auth.data.mapper.toUserAuthStatus
 import com.poulastaa.auth.data.model.req.EmailLogInReq
 import com.poulastaa.auth.data.model.req.EmailSignUpReq
 import com.poulastaa.auth.data.model.req.GoogleAuthReq
-import com.poulastaa.auth.data.model.res.EmailAuthDto
+import com.poulastaa.auth.data.model.res.AuthDto
 import com.poulastaa.auth.data.model.res.EmailVerificationDto
 import com.poulastaa.auth.data.model.res.ForgotPasswordSetStatusDao
-import com.poulastaa.auth.data.model.res.GoogleAuthDto
 import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.auth.domain.auth.ForgotPasswordSetStatus
 import com.poulastaa.auth.domain.auth.UserAuthStatus
@@ -42,7 +41,7 @@ class AuthRepositoryImpl @Inject constructor(
         username: String,
         countryCode: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.post<EmailSignUpReq, EmailAuthDto>(
+        val response = client.post<EmailSignUpReq, AuthDto>(
             route = EndPoints.Auth.route,
             body = EmailSignUpReq(
                 email = email,
@@ -68,7 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.post<EmailLogInReq, EmailAuthDto>(
+        val response = client.post<EmailLogInReq, AuthDto>(
             route = EndPoints.Auth.route,
             body = EmailLogInReq(
                 email = email,
@@ -91,7 +90,7 @@ class AuthRepositoryImpl @Inject constructor(
         token: String,
         countryCode: String,
     ): Result<UserAuthStatus, DataError.Network> {
-        val response = client.post<GoogleAuthReq, GoogleAuthDto>(
+        val response = client.post<GoogleAuthReq, AuthDto>(
             route = EndPoints.Auth.route,
             body = GoogleAuthReq(
                 token = token,

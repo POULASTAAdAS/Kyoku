@@ -43,7 +43,8 @@ fun provideServiceRepository() = module {
             kyokuRepo = get(),
             setupRepo = get(),
             userRepo = get(),
-            homeRepo = get()
+            homeRepo = get(),
+            jwt = get()
         )
     }
 }

@@ -3,15 +3,15 @@ package com.poulastaa.data.repository
 import com.poulastaa.data.mappers.getUserType
 import com.poulastaa.data.mappers.getYear
 import com.poulastaa.data.mappers.toPlaylistDto
-import com.poulastaa.data.model.PlaylistDto
-import com.poulastaa.data.model.ResponseStatus
-import com.poulastaa.data.model.SuggestArtistDao
-import com.poulastaa.data.model.SuggestGenreDto
+import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
 import com.poulastaa.domain.repository.*
+import com.poulastaa.domain.table.relation.UserGenreRelationTable
+import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
+import org.jetbrains.exposed.sql.select
 
 class ServiceRepositoryImpl(
     private val jwt: JWTRepository,
@@ -177,17 +177,86 @@ class ServiceRepositoryImpl(
 
     override suspend fun getLoginData(
         userType: String,
-        authKey: String,
         token: String,
-    ): HomeDto {
-        if (authKey != System.getenv("authKey")) return HomeDto()
-
+    ): LogInDto {
         val email = jwt.verifyJWTToken(
             token = token,
-            claim = System.getenv("getLoginData")
-        ) ?: return HomeDto()
-        val uType = userType.getUserType() ?: return HomeDto()
+            claim = "getLoginDataKey"
+        ) ?: return LogInDto()
 
-        return userRepo.getUserData(uType, email)
+        val uType = userType.getUserType() ?: return LogInDto()
+        val pair = userRepo.getUserData(uType, email)
+
+        val user = userRepo.getUserOnEmail(
+            email = email,
+            userType = uType
+        ) ?: return LogInDto()
+
+        return coroutineScope {
+            val popularSongMixDef = async { homeRepo.getPopularSongMixPrev(user.countryId) }
+            val popularSongFromYourTimeDef = async {
+                homeRepo.getPopularSongFromUserTimePrev(user.bDate.getYear(), user.countryId)
+            }
+            val favouriteArtistMixDef = async {
+                homeRepo.getFavouriteArtistMixPrev(
+                    userId = user.id,
+                    userType = user.userType,
+                    countryId = user.countryId
+                )
+            }
+            val poplarAlbumDef = async { homeRepo.getPopularAlbumPrev(user.countryId) }
+            val poplarArtistDef = async {
+                homeRepo.getPopularArtist(
+                    userId = user.id,
+                    userType = user.userType,
+                    countryId = user.countryId
+                )
+            }
+
+            val popularArtist = poplarArtistDef.await()
+
+            val poplarArtistSongDef = async {
+                homeRepo.getPopularArtistSongPrev(
+                    userId = user.id,
+                    userType = user.userType,
+                    excludeArtist = popularArtist.map {
+                        it.id
+                    },
+                    countryId = user.countryId
+                )
+            }
+
+            val savedGenreDef = async {
+                query {
+                    UserGenreRelationTable.select {
+                        UserGenreRelationTable.userId eq user.id
+                    }.empty()
+                }
+            }
+
+            val userAuthStatus = when {
+                pair.first.savedArtist.isEmpty() -> UserAuthStatus.USER_FOUND_SET_ARTIST
+                savedGenreDef.await() -> UserAuthStatus.USER_FOUND_SET_GENRE
+                else -> UserAuthStatus.USER_FOUND_HOME
+            }
+
+            if (userAuthStatus != UserAuthStatus.USER_FOUND_HOME) {
+                LogInDto(
+                    status = userAuthStatus
+                )
+            } else
+                LogInDto(
+                    status = userAuthStatus,
+                    popularSongMixPrev = popularSongMixDef.await(),
+                    popularSongFromYourTimePrev = popularSongFromYourTimeDef.await(),
+                    favouriteArtistMixPrev = favouriteArtistMixDef.await(),
+                    popularAlbum = poplarAlbumDef.await(),
+                    popularArtist = popularArtist,
+                    popularArtistSong = poplarArtistSongDef.await(),
+                    savedPlaylist = pair.first.savedPlaylist,
+                    savedAlbum = pair.first.savedAlbum,
+                    savedArtist = pair.first.savedArtist
+                )
+        }
     }
 }

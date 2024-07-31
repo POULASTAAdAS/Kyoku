@@ -115,10 +115,11 @@ join albumcountryrelation on albumcountryrelation.albumId = album.id
 where albumcountryrelation.countryId = 1 order by album.points desc limit 10;
 
 
+select * from emailauthuser;
+select * from googleauthuser;
+select * from userplaylistsongrelation;
 
-
-
-
+update  emailauthuser set bdate = null;
 
 
 

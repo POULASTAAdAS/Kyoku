@@ -1,5 +1,6 @@
 package com.poulastaa.domain.repository
 
+import com.poulastaa.data.model.LogInDto
 import com.poulastaa.data.model.PlaylistDto
 import com.poulastaa.data.model.SuggestArtistDao
 import com.poulastaa.data.model.SuggestGenreDto
@@ -45,7 +46,6 @@ interface ServiceRepository {
 
     suspend fun getLoginData(
         userType: String,
-        authKey: String,
         token: String,
-    ): HomeDto
+    ): LogInDto
 }
