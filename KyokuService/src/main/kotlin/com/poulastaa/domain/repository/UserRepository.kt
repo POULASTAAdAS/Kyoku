@@ -1,6 +1,7 @@
 package com.poulastaa.domain.repository
 
 import com.poulastaa.data.model.LogInDto
+import com.poulastaa.data.model.SongDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
@@ -43,4 +44,10 @@ interface UserRepository {
         userType: UserType,
         email: String,
     ): Pair<LogInDto, UserId>
+
+    suspend fun addToFavourite(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+    ): SongDto
 }

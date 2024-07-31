@@ -1,7 +1,10 @@
 package com.poulastaa.data.repository
 
 import com.poulastaa.data.dao.ArtistDao
+import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.mappers.toArtistResult
+import com.poulastaa.data.mappers.toSongDto
+import com.poulastaa.data.model.SongDto
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.table.ArtistTable
@@ -93,5 +96,33 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 }
             }
         }
+    }
+
+    override suspend fun getSongOnId(id: Long): SongDto {
+        val resultRow = query {
+            SongArtistRelationTable.select {
+                SongArtistRelationTable.songId eq id
+            }
+        }
+
+        if (query { resultRow.empty() }) return SongDto()
+
+        val artistName = query {
+            resultRow.map {
+                it[SongArtistRelationTable.artistId]
+            }.let {
+                ArtistDao.find {
+                    ArtistTable.id inList it
+                }.map {
+                    it.name
+                }
+            }
+        }.joinToString()
+
+        return query {
+            SongDao.find {
+                SongTable.id eq id
+            }.singleOrNull()?.toSongDto(artistName)
+        } ?: SongDto()
     }
 }

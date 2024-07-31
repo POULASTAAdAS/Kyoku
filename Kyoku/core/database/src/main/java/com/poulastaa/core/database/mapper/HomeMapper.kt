@@ -6,6 +6,7 @@ import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
 import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
 import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
+import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
 import com.poulastaa.core.database.model.PopularArtistWithSongResult
@@ -17,6 +18,7 @@ import com.poulastaa.core.domain.model.PrevArtistSong
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
+import com.poulastaa.core.domain.model.Song
 
 fun PrevSong.toPopularSongMixPrevEntity() = PopularSongMixPrevEntity(
     id = this.songId,
@@ -120,5 +122,3 @@ fun Map.Entry<Long, List<PrevSongResult>>.toSavedPlaylist() = PrevSavedPlaylist(
         it.coverImage
     }.take(4)
 )
-
-

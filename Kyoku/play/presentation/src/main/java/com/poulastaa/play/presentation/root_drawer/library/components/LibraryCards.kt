@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
@@ -31,12 +33,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -53,6 +57,48 @@ import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.root_drawer.library.LibraryUiEvent
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
+
+@Composable
+fun LibraryPlaylistExpandedGird(
+    modifier: Modifier = Modifier,
+    urls: List<String>,
+    size: Dp = 170.dp,
+    name: String,
+    header: String,
+) {
+    Card(
+        modifier = modifier
+            .wrapContentSize(),
+        shape = MaterialTheme.shapes.extraSmall,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        )
+    ) {
+        ImageGrid(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .size(size),
+            header = header,
+            urls = urls,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            )
+        )
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
+
+        Text(
+            text = name,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            maxLines = 2,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface,
+            letterSpacing = 1.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
 
 @Composable
@@ -370,15 +416,23 @@ private fun LibraryFilterChip(
 @Composable
 private fun Preview() {
     AppThem {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(MaterialTheme.dimens.large1)
-                .height(130.dp)
         ) {
-            LibraryPlaylistList(
-                modifier = Modifier.fillMaxSize(),
+            LibraryPlaylistExpandedGird(
+                modifier = Modifier,
+                urls = emptyList(),
+                name = "Playlist",
+                header = "",
+            )
+
+            Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
+
+            LibraryPlaylistExpandedGird(
+                modifier = Modifier,
                 urls = emptyList(),
                 name = "Playlist",
                 header = "",

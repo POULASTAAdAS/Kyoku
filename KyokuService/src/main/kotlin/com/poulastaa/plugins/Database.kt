@@ -1,9 +1,6 @@
 package com.poulastaa.plugins
 
-import com.poulastaa.domain.table.relation.UserAlbumRelationTable
-import com.poulastaa.domain.table.relation.UserArtistRelationTable
-import com.poulastaa.domain.table.relation.UserGenreRelationTable
-import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
+import com.poulastaa.domain.table.relation.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
@@ -29,6 +26,7 @@ fun Application.configureDatabase() {
         SchemaUtils.create(UserGenreRelationTable)
         SchemaUtils.create(UserArtistRelationTable)
         SchemaUtils.create(UserAlbumRelationTable)
+        SchemaUtils.create(UserFavouriteRelationTable)
     }
 }
 

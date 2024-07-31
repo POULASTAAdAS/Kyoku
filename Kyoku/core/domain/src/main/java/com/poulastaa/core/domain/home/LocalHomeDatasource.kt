@@ -3,6 +3,7 @@ package com.poulastaa.core.domain.home
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
+import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,9 @@ interface LocalHomeDatasource {
     suspend fun isArtistIsInLibrary(artistId: Long): Boolean
     suspend fun isAlbumInLibrary(albumId: Long): Boolean
     suspend fun isSongInFavourite(songId: Long): Boolean
+
+    suspend fun isSongInDatabase(id: Long): Boolean
+
+    suspend fun insertIntoFavourite(id: Long)
+    suspend fun addSong(song: Song)
 }

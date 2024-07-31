@@ -64,6 +64,32 @@ suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.
     }
 }
 
+suspend inline fun <reified Response : Any> OkHttpClient.get(
+    route: String,
+    params: List<Pair<String, String>>,
+    gson: Gson,
+): Result<Response, DataError.Network> {
+    val urlBuilder =
+        constructServiceRoute(route).toHttpUrlOrNull()?.newBuilder()
+            ?: return Result.Error(DataError.Network.UNKNOWN)
+
+    params.forEach {
+        urlBuilder.addQueryParameter(it.first, it.second)
+    }
+
+    val url = urlBuilder.build()
+    val req = Req.Builder().url(url).get().build()
+
+    return try {
+        val response = makeCall(req)
+        responseToResult<Response>(response, gson)
+    } catch (e: Exception) {
+        handleOtherException(e)
+    }
+}
+
+
+
 suspend inline fun <reified Response : Any> OkHttpClient.authGet(
     route: String,
     params: List<Pair<String, String>>,

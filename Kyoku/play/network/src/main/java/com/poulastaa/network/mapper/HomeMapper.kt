@@ -5,12 +5,14 @@ import com.poulastaa.core.data.model.PreArtistSongDto
 import com.poulastaa.core.data.model.PrevAlbumDto
 import com.poulastaa.core.data.model.PrevSongDetailDto
 import com.poulastaa.core.data.model.PrevSongDto
+import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.PrevArtistSong
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
+import com.poulastaa.core.domain.model.Song
 import com.poulastaa.network.model.NewHomeDto
 
 private fun PrevSongDto.toPrevSong() = PrevSong(
@@ -52,4 +54,13 @@ fun NewHomeDto.toNewHome() = NewHome(
     popularAlbum = this.popularAlbum.map { it.toPrevAlbum() },
     popularArtist = this.popularArtist.map { it.toArtist() },
     popularArtistSong = this.popularArtistSong.map { it.toPreArtistSong() }
+)
+
+fun SongDto.toSong() = Song(
+    id = this.id,
+    coverImage = this.coverImage,
+    title = this.title,
+    artistName = this.artistName,
+    releaseYear = this.releaseYear.toString(),
+    masterPlaylistUrl = this.masterPlaylistUrl
 )

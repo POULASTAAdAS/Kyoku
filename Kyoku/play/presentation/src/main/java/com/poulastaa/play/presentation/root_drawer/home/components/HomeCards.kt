@@ -265,6 +265,7 @@ fun GridImageCard(
             text = title,
             fontWeight = FontWeight.Medium,
             fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
@@ -592,16 +593,14 @@ private fun Preview() {
         ) {
             Row(
                 modifier = Modifier
-                    .height(70.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
                 data.forEach {
-                    SavedAlbumCard(
-                        uiAlbum = it,
+                    GridImageCard(
                         header = "",
-                        modifier = Modifier
-                            .weight(1f)
+                        urls = listOf(),
+                        title = it.name
                     )
                 }
             }

@@ -68,7 +68,11 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalHomeDatasource(
         homeDao: HomeDao,
-    ): LocalHomeDatasource = RoomLocalHomeDatasource(homeDao = homeDao)
+        commonDao: CommonDao,
+    ): LocalHomeDatasource = RoomLocalHomeDatasource(
+        commonDao = commonDao,
+        homeDao = homeDao
+    )
 
     @Provides
     @ViewModelScoped

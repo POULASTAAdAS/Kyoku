@@ -32,6 +32,15 @@ class LibraryViewModel @Inject constructor(
         populate()
     }
 
+    fun changeGridSizeIfExpanded() {
+        state = state.copy(grid = 5)
+    }
+
+    fun revertGridSize() {
+        if (state.grid == 3) return
+        state = state.copy(grid = 3)
+    }
+
     private val _uiEvent = Channel<LibraryUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
 

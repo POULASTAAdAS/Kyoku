@@ -51,4 +51,26 @@ class OnlineFirstHomeRepository @Inject constructor(
 
     override suspend fun isAlbumInLibrary(albumId: Long): Boolean = local.isAlbumInLibrary(albumId)
     override suspend fun isSongInFavourite(songId: Long): Boolean = local.isSongInFavourite(songId)
+
+    override suspend fun insertIntoFavourite(id: Long): Boolean {
+        // make api call get song
+        val result = remote.insertIntoFavourite(id)
+
+        return if (result is Result.Success) {
+            if (local.isSongInDatabase(id)) {  // if song in database insert into favourite
+                application.async { local.insertIntoFavourite(id) }.await()
+                true
+            } else { // else insert song then insert into favourite
+                if (result.data.id == -1L) return false
+
+                application.async { local.addSong(result.data) }.await()
+                application.async { local.insertIntoFavourite(id) }.await()
+                true
+            }
+        } else false
+    }
+
+    override suspend fun removeFromFavourite(id: Long): Boolean {
+        TODO("Not yet implemented")
+    }
 }

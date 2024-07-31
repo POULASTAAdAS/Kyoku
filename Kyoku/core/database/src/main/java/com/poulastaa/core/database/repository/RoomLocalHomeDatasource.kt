@@ -1,6 +1,8 @@
 package com.poulastaa.core.database.repository
 
+import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.HomeDao
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
 import com.poulastaa.core.database.mapper.toArtistSongEntity
 import com.poulastaa.core.database.mapper.toDayTypeSongPrev
@@ -17,11 +19,13 @@ import com.poulastaa.core.database.mapper.toPopularSongMixPrevEntity
 import com.poulastaa.core.database.mapper.toPopularSuggestArtistEntity
 import com.poulastaa.core.database.mapper.toPrevArtistSong
 import com.poulastaa.core.database.mapper.toSavedPlaylist
+import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.database.mapper.toSuggestArtist
 import com.poulastaa.core.domain.home.LocalHomeDatasource
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
+import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -33,6 +37,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RoomLocalHomeDatasource @Inject constructor(
+    private val commonDao: CommonDao,
     private val homeDao: HomeDao,
 ) : LocalHomeDatasource {
     override suspend fun storeNewHomeResponse(
@@ -187,4 +192,14 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override suspend fun isSongInFavourite(songId: Long): Boolean =
         homeDao.isSongInFavourite(songId) != null
+
+    override suspend fun isSongInDatabase(id: Long): Boolean = homeDao.getSong(id) != null
+
+    override suspend fun insertIntoFavourite(id: Long) = commonDao.insertIntoFavourite(
+        entry = FavouriteEntity(id)
+    )
+
+    override suspend fun addSong(song: Song) = commonDao.insertSong(
+        song = song.toSongEntity()
+    )
 }

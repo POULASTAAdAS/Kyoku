@@ -119,8 +119,11 @@ select * from emailauthuser;
 select * from googleauthuser;
 select * from userplaylistsongrelation;
 
+update  emailauthuser set bdate = 1042416000000;
 
 
+select * from song where id = 2580;
+select * from song where songartistrelation where songId = 2580;
 
 
 

@@ -11,13 +11,16 @@ data class LibraryUiState(
     val filterType: LibraryFilterType = LibraryFilterType.ALL,
     val viewType: LibraryViewType = LibraryViewType.GRID,
 
+    val grid: Int = 3,
+    val list: Int = 1,
+
     val data: LibraryUiData = LibraryUiData(),
 ) {
     val canShowUi: Boolean
         get() = !isDataLoading && !viewTypeReading
 
     val gridSize: Int
-        get() = if (viewType == LibraryViewType.GRID) 3 else 1
+        get() = if (viewType == LibraryViewType.GRID) this.grid else this.list
 }
 
 

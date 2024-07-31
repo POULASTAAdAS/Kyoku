@@ -259,4 +259,17 @@ class ServiceRepositoryImpl(
                 )
         }
     }
+
+    override suspend fun addToFavourite(
+        id: Long,
+        userPayload: ReqUserPayload,
+    ): SongDto {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return SongDto()
+
+        return userRepo.addToFavourite(
+            id = id,
+            userType = user.userType,
+            userId = user.id
+        )
+    }
 }

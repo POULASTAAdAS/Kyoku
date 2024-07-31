@@ -25,4 +25,6 @@ sealed class EndPoints(val route: String) {
     data object StoreArtist : EndPoints(route = "/api/authorised/storeArtist")
 
     data object NewHome : EndPoints(route = "/api/authorised/newHome")
+
+    data object AddToFavourite : EndPoints(route = "/api/authorised/addToFavourite")
 }

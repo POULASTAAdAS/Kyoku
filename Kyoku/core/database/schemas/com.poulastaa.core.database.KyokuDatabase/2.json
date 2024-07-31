@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "38a2d7dd079d4a6c4afe734c42f3eeae",
+    "identityHash": "6beb0de28dafc0797ced47cbc17fda61",
     "entities": [
       {
         "tableName": "SongEntity",
@@ -514,7 +514,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "PopularArtistSongRelation",
+        "tableName": "PopularArtistSongRelationEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` INTEGER NOT NULL, `songId` INTEGER NOT NULL, PRIMARY KEY(`artistId`, `songId`), FOREIGN KEY(`artistId`) REFERENCES `PopularSongArtistEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`songId`) REFERENCES `ArtistSongEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
@@ -539,22 +539,22 @@
         },
         "indices": [
           {
-            "name": "index_PopularArtistSongRelation_artistId",
+            "name": "index_PopularArtistSongRelationEntity_artistId",
             "unique": false,
             "columnNames": [
               "artistId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_PopularArtistSongRelation_artistId` ON `${TABLE_NAME}` (`artistId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PopularArtistSongRelationEntity_artistId` ON `${TABLE_NAME}` (`artistId`)"
           },
           {
-            "name": "index_PopularArtistSongRelation_songId",
+            "name": "index_PopularArtistSongRelationEntity_songId",
             "unique": false,
             "columnNames": [
               "songId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_PopularArtistSongRelation_songId` ON `${TABLE_NAME}` (`songId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PopularArtistSongRelationEntity_songId` ON `${TABLE_NAME}` (`songId`)"
           }
         ],
         "foreignKeys": [
@@ -581,12 +581,165 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "AlbumEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `coverImage` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverImage",
+            "columnName": "coverImage",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SongAlbumRelationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`albumId` INTEGER NOT NULL, `songId` INTEGER NOT NULL, PRIMARY KEY(`albumId`, `songId`), FOREIGN KEY(`albumId`) REFERENCES `AlbumEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`songId`) REFERENCES `SongEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "albumId",
+            "columnName": "albumId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "songId",
+            "columnName": "songId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "albumId",
+            "songId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_SongAlbumRelationEntity_albumId",
+            "unique": false,
+            "columnNames": [
+              "albumId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongAlbumRelationEntity_albumId` ON `${TABLE_NAME}` (`albumId`)"
+          },
+          {
+            "name": "index_SongAlbumRelationEntity_songId",
+            "unique": false,
+            "columnNames": [
+              "songId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SongAlbumRelationEntity_songId` ON `${TABLE_NAME}` (`songId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AlbumEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "albumId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "SongEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "songId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FavouriteEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`id`) REFERENCES `SongEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "SongEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "InternalFavouriteEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '38a2d7dd079d4a6c4afe734c42f3eeae')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6beb0de28dafc0797ced47cbc17fda61')"
     ]
   }
 }

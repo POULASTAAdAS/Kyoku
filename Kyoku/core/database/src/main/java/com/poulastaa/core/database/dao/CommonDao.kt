@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
@@ -43,6 +44,8 @@ interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongPlaylistRelation(list: List<SongPlaylistRelationEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoFavourite(entry: FavouriteEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAlbums(entity: List<AlbumEntity>)

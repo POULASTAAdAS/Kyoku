@@ -1,9 +1,6 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.LogInDto
-import com.poulastaa.data.model.PlaylistDto
-import com.poulastaa.data.model.SuggestArtistDao
-import com.poulastaa.data.model.SuggestGenreDto
+import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
@@ -48,4 +45,9 @@ interface ServiceRepository {
         userType: String,
         token: String,
     ): LogInDto
+
+    suspend fun addToFavourite(
+        id:Long,
+        userPayload: ReqUserPayload,
+    ): SongDto
 }

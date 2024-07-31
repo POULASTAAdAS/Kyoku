@@ -8,10 +8,7 @@ import com.poulastaa.data.dao.user.EmailAuthUserDao
 import com.poulastaa.data.dao.user.GoogleAuthUserDao
 import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.mappers.toUserResult
-import com.poulastaa.data.model.AlbumDto
-import com.poulastaa.data.model.ArtistDto
-import com.poulastaa.data.model.LogInDto
-import com.poulastaa.data.model.PlaylistDto
+import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.PlaylistSongPayload
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
@@ -276,5 +273,59 @@ class UserDatabaseRepository : UserRepository {
             savedAlbum = savedAlbumDef.await(),
             savedArtist = followArtistDef.await()
         ) to userId
+    }
+
+    override suspend fun addToFavourite(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+    ): SongDto = coroutineScope {
+        val insert = async {
+            if (
+                query {
+                    SongDao.find {
+                        SongTable.id eq id
+                    }.singleOrNull() == null
+                }
+            ) return@async SongDto()
+
+            query {
+                UserFavouriteRelationTable.insertIgnore {
+                    it[this.songId] = id
+                    it[this.userId] = userId
+                    it[this.userType] = userType.name
+                }
+            }
+        }
+
+        val song = async {
+            val resultRow = query {
+                SongArtistRelationTable.select {
+                    SongArtistRelationTable.songId eq id
+                }
+            }
+
+            val artistName = if (query { resultRow.empty() }) ""
+            else query {
+                resultRow.map {
+                    it[SongArtistRelationTable.artistId]
+                }.let {
+                    ArtistDao.find {
+                        ArtistTable.id inList it
+                    }.map {
+                        it.name
+                    }
+                }
+            }.joinToString()
+
+            query {
+                SongDao.find {
+                    SongTable.id eq id
+                }.singleOrNull()?.toSongDto(artistName)
+            } ?: SongDto()
+        }
+
+        insert.await()
+        song.await()
     }
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
+import android.content.res.Configuration
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,17 +26,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.core.presentation.ui.model.UiArtist
+import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.components.SuggestedArtistCard
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryFilterRow
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryHeader
@@ -43,10 +50,12 @@ import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPla
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPlaylistList
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryTopAppbar
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
+import com.poulastaa.play.presentation.root_drawer.library.model.LibraryUiData
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 
 @Composable
 fun LibraryCompactScreen(
+    isExpanded: Boolean = false,
     profileUrl: String,
     viewModel: LibraryViewModel = hiltViewModel(),
     onProfileClick: () -> Unit,
@@ -58,6 +67,11 @@ fun LibraryCompactScreen(
                 navigate(event.screen)
             }
         }
+    }
+
+    LaunchedEffect(key1 = isExpanded, key2 = Unit) {
+        if (isExpanded) viewModel.changeGridSizeIfExpanded()
+        else viewModel.revertGridSize()
     }
 
     LibraryScreen(
@@ -112,7 +126,7 @@ private fun LibraryScreen(
                 .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .padding(internalPadding),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
-            contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
+            contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
         ) {
             libraryItem(span = GridItemSpan(state.gridSize)) {
                 LibraryFilterRow(
@@ -124,7 +138,8 @@ private fun LibraryScreen(
             }
 
             if (state.filterType == LibraryFilterType.ALL ||
-                state.filterType == LibraryFilterType.PLAYLIST
+                state.filterType == LibraryFilterType.PLAYLIST &&
+                state.data.playlist.isNotEmpty()
             ) itemSection(
                 gridSize = state.gridSize,
                 type = state.viewType,
@@ -148,7 +163,8 @@ private fun LibraryScreen(
                 },
                 gridContent = {
                     LibraryPlaylistGird(
-                        modifier = Modifier.aspectRatio(1f),
+                        modifier = Modifier
+                            .aspectRatio(1f),
                         urls = it.urls,
                         name = it.name,
                         header = state.header,
@@ -157,7 +173,8 @@ private fun LibraryScreen(
             )
 
             if (state.filterType == LibraryFilterType.ALL ||
-                state.filterType == LibraryFilterType.ARTIST
+                state.filterType == LibraryFilterType.ARTIST &&
+                state.data.artist.isNotEmpty()
             ) itemSection(
                 gridSize = state.gridSize,
                 type = state.viewType,
@@ -233,4 +250,47 @@ private fun LazyGridScope.libraryItem(
         span = { span },
         content = content
     )
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 840,
+    heightDp = 560
+)
+@Preview(
+    widthDp = 840,
+    heightDp = 560
+)
+@PreviewLightDark
+@Composable
+private fun Preview() {
+    AppThem {
+        LibraryScreen(
+            state = LibraryUiState(
+                isDataLoading = false,
+                viewTypeReading = false,
+                filterType = LibraryFilterType.ALL,
+                viewType = LibraryViewType.GRID,
+                grid = 4,
+                data = LibraryUiData(
+                    artist = (1..10).map {
+                        UiArtist(
+                            name = "Artist $it"
+                        )
+                    },
+                    playlist = (1..10).map {
+                        UiPrevPlaylist(
+                            id = 1,
+                            name = "Playlist $it",
+                            urls = emptyList()
+                        )
+                    }
+                )
+            ),
+            profileUrl = "",
+            onProfileClick = { /*TODO*/ }
+        ) {
+
+        }
+    }
 }

@@ -101,4 +101,7 @@ interface HomeDao {
 
     @Query("select id from FavouriteEntity where id = :songId")
     suspend fun isSongInFavourite(songId: Long): Long?
+
+    @Query("select id from SongEntity where id = :id")
+    suspend fun getSong(id: Long): Long?
 }

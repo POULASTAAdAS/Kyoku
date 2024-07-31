@@ -20,8 +20,10 @@ import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -33,6 +35,9 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(HomeUiState())
         private set
+
+    private val _uiEvent = Channel<HomeUiAction>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         setHomeTopBarTitle()
@@ -190,12 +195,33 @@ class HomeViewModel @Inject constructor(
                         )
                     }
 
-                    else -> {
-                        state = state.copy(
-                            bottomSheetUiState = BottomSheetUiState()
-                        )
+                    // song
+                    is HomeUiEvent.BottomSheetUiEvent.AddSongToFavourite -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            if (homeRepo.insertIntoFavourite(event.id)) _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.song_added_to_favourite)
+                                )
+                            ) else _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
                     }
+
+                    is HomeUiEvent.BottomSheetUiEvent.RemoveSongToFavourite -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+
+                        }
+                    }
+
+                    else -> Unit
                 }
+
+                state = state.copy(
+                    bottomSheetUiState = BottomSheetUiState()
+                )
             }
         }
     }

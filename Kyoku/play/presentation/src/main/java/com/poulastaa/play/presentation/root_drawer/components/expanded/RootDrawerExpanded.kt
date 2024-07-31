@@ -33,6 +33,7 @@ import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
+import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -55,7 +56,7 @@ fun RootDrawerExpanded(
         Surface(
             modifier = Modifier
                 .wrapContentWidth()
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             ExpandedDrawerContent(
                 userName = state.username,
@@ -130,7 +131,7 @@ fun RootDrawerExpanded(
                         profileUrl = state.profilePicUrl,
                         onEvent = {
                             when (it) {
-                                TopBarToDrawerEvent.PROFILE_CLICK -> onEvent(RootDrawerUiEvent.OnDrawerToggle)
+                                TopBarToDrawerEvent.PROFILE_CLICK -> Unit
 
                                 TopBarToDrawerEvent.SEARCH_CLICK -> onEvent(
                                     RootDrawerUiEvent.Navigate(
@@ -143,17 +144,14 @@ fun RootDrawerExpanded(
                 }
 
                 composable(route = DrawerScreen.Library.route) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Library",
-                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    LibraryCompactScreen(
+                        isExpanded = true,
+                        profileUrl = state.profilePicUrl,
+                        onProfileClick = {},
+                        navigate = {
+
+                        }
+                    )
                 }
 
                 composable(route = DrawerScreen.Profile.route) {
