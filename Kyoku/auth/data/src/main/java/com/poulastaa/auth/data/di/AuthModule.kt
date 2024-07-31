@@ -1,16 +1,18 @@
 package com.poulastaa.auth.data.di
 
-import com.google.gson.Gson
 import com.poulastaa.auth.data.AuthRepositoryImpl
 import com.poulastaa.auth.data.UserDataValidator
 import com.poulastaa.auth.domain.Validator
-import com.poulastaa.auth.domain.auth.AuthRepository
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.auth.AuthRepository
+import com.poulastaa.core.domain.auth.LocalAuthDatasource
+import com.poulastaa.core.domain.auth.RemoteAuthDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import java.net.CookieManager
@@ -25,23 +27,15 @@ object AuthModule {
 
     @Provides
     @ViewModelScoped
-    @Named("AuthHttpClient")
-    fun provideOkHttpClient(cookieManager: CookieManager): OkHttpClient = OkHttpClient
-        .Builder()
-        .cookieJar(JavaNetCookieJar(cookieManager))
-        .build()
-
-    @Provides
-    @ViewModelScoped
     fun provideAuthRepository(
-        gson: Gson,
-        @Named("AuthHttpClient") client: OkHttpClient,
+        remote: RemoteAuthDatasource,
+        local: LocalAuthDatasource,
         ds: DataStoreRepository,
-        cookieManager: CookieManager,
+        application: CoroutineScope,
     ): AuthRepository = AuthRepositoryImpl(
-        gson = gson,
-        client = client,
+        remote = remote,
+        local = local,
         ds = ds,
-        cookieManager = cookieManager
+        application = application
     )
 }

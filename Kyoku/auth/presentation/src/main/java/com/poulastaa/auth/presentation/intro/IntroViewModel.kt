@@ -1,13 +1,12 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.auth.domain.auth.AuthRepository
-import com.poulastaa.auth.domain.auth.UserAuthStatus
+import com.poulastaa.core.domain.auth.AuthRepository
+import com.poulastaa.core.domain.model.UserAuthStatus
 import com.poulastaa.core.domain.ConfigProviderRepository
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ScreenEnum

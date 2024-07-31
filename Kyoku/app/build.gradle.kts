@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.auth.presentation)
     implementation(projects.auth.domain)
     implementation(projects.auth.data)
+    implementation(projects.auth.network)
 
     implementation(projects.play.presentation)
     implementation(projects.play.domain)
