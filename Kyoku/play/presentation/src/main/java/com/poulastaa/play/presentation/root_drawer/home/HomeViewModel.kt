@@ -193,6 +193,35 @@ class HomeViewModel @Inject constructor(
                 when (event) {
                     HomeUiEvent.BottomSheetUiEvent.Cancel -> Unit
 
+                    // artist
+                    is HomeUiEvent.BottomSheetUiEvent.FollowArtist -> {
+                        viewModelScope.launch {
+                            if (homeRepo.followArtist(event.id)) _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.artist_added_to_library)
+                                )
+                            ) else _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }
+
+                    is HomeUiEvent.BottomSheetUiEvent.UnFollowArtist -> {
+                        viewModelScope.launch {
+                            if (homeRepo.unFollowArtist(event.id)) _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.artist_removed_from_library)
+                                )
+                            ) else _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }
+
                     // song
                     is HomeUiEvent.BottomSheetUiEvent.AddSongToFavourite -> {
                         viewModelScope.launch(Dispatchers.IO) {

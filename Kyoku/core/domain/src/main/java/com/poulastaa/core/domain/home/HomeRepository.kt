@@ -23,4 +23,7 @@ interface HomeRepository {
 
     suspend fun insertIntoFavourite(id: Long): Boolean
     suspend fun removeFromFavourite(id: Long): Boolean
+
+    suspend fun followArtist(id: Long): Boolean
+    suspend fun unFollowArtist(id: Long): Boolean
 }

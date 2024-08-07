@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.home
 
+import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
@@ -26,6 +27,10 @@ interface LocalHomeDatasource {
     suspend fun isSongInDatabase(id: Long): Boolean
 
     suspend fun addSong(song: Song)
+
     suspend fun insertIntoFavourite(id: Long)
     suspend fun removeSongFromFavourite(id: Long)
+
+    suspend fun followArtist(artist: Artist)
+    suspend fun unFollowArtist(id: Long)
 }

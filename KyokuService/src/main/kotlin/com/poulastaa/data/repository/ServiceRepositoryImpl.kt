@@ -280,4 +280,16 @@ class ServiceRepositoryImpl(
 
         return userRepo.removeFromFavourite(id, email = user.email, userType = user.userType)
     }
+
+    override suspend fun addArtist(artistId: Long, payload: ReqUserPayload): ArtistDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return ArtistDto()
+
+        return userRepo.addArtist(artistId, user.email, user.userType)
+    }
+
+    override suspend fun removeArtist(id: Long, userPayload: ReqUserPayload): Boolean {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return false
+
+        return userRepo.removeFromFavourite(id, email = user.email, userType = user.userType)
+    }
 }

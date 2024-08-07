@@ -6,6 +6,7 @@ import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.dao.user.EmailAuthUserDao
 import com.poulastaa.data.dao.user.GoogleAuthUserDao
+import com.poulastaa.data.mappers.toArtistDto
 import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.mappers.toUserResult
 import com.poulastaa.data.model.*
@@ -27,7 +28,6 @@ import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import java.util.stream.LongStream
 
 class UserDatabaseRepository(
     private val database: DatabaseRepository,
@@ -147,7 +147,7 @@ class UserDatabaseRepository(
         userType: UserType,
         email: String,
     ): Pair<LogInDto, UserId> = coroutineScope {
-        val userId = getUserOnEmail(email,userType)?.id ?: return@coroutineScope LogInDto() to -1
+        val userId = getUserOnEmail(email, userType)?.id ?: return@coroutineScope LogInDto() to -1
 
         val savedPlaylistDef = async {
             query {
@@ -339,5 +339,41 @@ class UserDatabaseRepository(
 
             true
         }
+    }
+
+    override suspend fun addArtist(
+        artistId: Long,
+        email: String,
+        userType: UserType,
+    ): ArtistDto {
+        val artist = query {
+            ArtistDao.find {
+                ArtistTable.id eq artistId
+            }.singleOrNull()
+        } ?: return ArtistDto()
+
+        query {
+            UserArtistRelationTable.insertIgnore {
+                it[this.artistId] = artistId
+                it[this.userType] = userType.name
+                it[this.userId] = userId
+            }
+        }
+
+        return artist.toArtistDto()
+    }
+
+    override suspend fun removeArtist(
+        id: Long,
+        email: String,
+        userType: UserType,
+    ): Boolean = query {
+        UserArtistRelationTable.deleteWhere {
+            this.userId eq userId and
+                    (this.userType eq userType.name) and
+                    (this.artistId eq artistId)
+        }
+
+        true
     }
 }

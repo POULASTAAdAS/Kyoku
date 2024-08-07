@@ -28,7 +28,6 @@ interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArtists(artists: List<ArtistEntity>)
 
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlaylist(playlist: PlaylistEntity)
 
@@ -62,6 +61,9 @@ interface CommonDao {
 
     @Query("select id from FavouriteEntity limit 1")
     suspend fun isFavourite(): List<Long>
+
+    @Query("delete from ArtistEntity where id = :id")
+    suspend fun deleteArtist(id: Long)
 
     @Query(
         """

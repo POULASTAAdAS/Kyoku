@@ -55,4 +55,14 @@ interface ServiceRepository {
         id: Long,
         userPayload: ReqUserPayload,
     ): Boolean
+
+    suspend fun addArtist(
+        artistId: Long,
+        payload: ReqUserPayload,
+    ): ArtistDto
+
+    suspend fun removeArtist(
+        id: Long,
+        userPayload: ReqUserPayload,
+    ): Boolean
 }

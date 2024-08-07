@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.home
 
+import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.Song
@@ -11,4 +12,7 @@ interface RemoteHomeDatasource {
 
     suspend fun insertIntoFavourite(id: Long): Result<Song, DataError.Network>
     suspend fun removeFromFavourite(id: Long): Result<Unit, DataError.Network>
+
+    suspend fun followArtist(id: Long): Result<Artist, DataError.Network>
+    suspend fun unFollowArtist(id: Long): Result<Unit, DataError.Network>
 }

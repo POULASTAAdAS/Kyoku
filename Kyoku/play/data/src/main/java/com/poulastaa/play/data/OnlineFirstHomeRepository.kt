@@ -81,4 +81,26 @@ class OnlineFirstHomeRepository @Inject constructor(
 
         return false
     }
+
+    override suspend fun followArtist(id: Long): Boolean {
+        val result = remote.followArtist(id)
+
+        return if (result is Result.Success) {
+            if (result.data.id == -1L) return false
+
+            application.async { local.followArtist(result.data) }.await()
+            true
+        } else false
+    }
+
+    override suspend fun unFollowArtist(id: Long): Boolean {
+        val result = remote.unFollowArtist(id)
+
+        if (result is Result.Success) {
+            application.async { local.unFollowArtist(id) }.await()
+            return true
+        }
+
+        return false
+    }
 }

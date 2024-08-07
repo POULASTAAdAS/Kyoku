@@ -28,4 +28,7 @@ sealed class EndPoints(val route: String) {
 
     data object AddToFavourite : EndPoints(route = "/api/authorised/addToFavourite")
     data object RemoveFromFavourite : EndPoints(route = "/api/authorised/removeFromFavourite")
+
+    data object AddArtist : EndPoints(route = "/api/authorised/addArtist")
+    data object RemoveArtist : EndPoints(route = "/api/authorised/removeArtist")
 }

@@ -26,7 +26,7 @@ private fun PrevAlbumDto.toPrevAlbum() = PrevAlbum(
     coverImage = this.coverImage
 )
 
-private fun ArtistDto.toArtist() = Artist(
+fun ArtistDto.toArtist() = Artist(
     id = this.id,
     name = this.name,
     coverImage = this.coverImage

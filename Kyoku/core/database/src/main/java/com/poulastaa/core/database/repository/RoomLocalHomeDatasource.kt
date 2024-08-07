@@ -4,6 +4,7 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
+import com.poulastaa.core.database.mapper.toArtistEntity
 import com.poulastaa.core.database.mapper.toArtistSongEntity
 import com.poulastaa.core.database.mapper.toDayTypeSongPrev
 import com.poulastaa.core.database.mapper.toDayTypeSongPrevEntity
@@ -22,6 +23,7 @@ import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.database.mapper.toSuggestArtist
 import com.poulastaa.core.domain.home.LocalHomeDatasource
+import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
@@ -195,14 +197,18 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override suspend fun isSongInDatabase(id: Long): Boolean = homeDao.getSong(id) != null
 
-    override suspend fun addSong(song: Song) = commonDao.insertSong(
-        song = song.toSongEntity()
-    )
+    override suspend fun addSong(song: Song) =
+        commonDao.insertSong(song = song.toSongEntity())
 
-    override suspend fun insertIntoFavourite(id: Long) = commonDao.insertOneIntoFavourite(
-        entry = FavouriteEntity(id)
-    )
+    override suspend fun insertIntoFavourite(id: Long) =
+        commonDao.insertOneIntoFavourite(entry = FavouriteEntity(id))
 
     override suspend fun removeSongFromFavourite(id: Long) =
         commonDao.deleteSongFromFavourite(FavouriteEntity(id))
+
+    override suspend fun followArtist(artist: Artist) =
+        commonDao.insertArtist(artist.toArtistEntity())
+
+    override suspend fun unFollowArtist(id: Long) =
+        commonDao.deleteArtist(id)
 }
