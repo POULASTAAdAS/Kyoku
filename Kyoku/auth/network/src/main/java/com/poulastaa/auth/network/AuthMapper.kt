@@ -71,6 +71,7 @@ private fun LogInDto.toLoInData() = LogInData(
     savedPlaylist = this.savedPlaylist.map { it.toPlaylistData() },
     savedAlbum = this.savedAlbum.map { it.toAlbum() },
     savedArtist = this.savedArtist.map { it.toArtist() },
+    favouriteSong = this.favouriteSong.map { it.toSong() }
 )
 
 private fun PrevSongDto.toPrevSong() = PrevSong(

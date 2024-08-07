@@ -27,7 +27,9 @@ fun provideSetupRepository() = module {
 
 fun provideUserRepository() = module {
     single<UserRepository> {
-        UserDatabaseRepository()
+        UserDatabaseRepository(
+            database = get()
+        )
     }
 }
 

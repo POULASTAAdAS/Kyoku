@@ -214,7 +214,6 @@ class ServiceRepositoryImpl(
             }
 
             val popularArtist = poplarArtistDef.await()
-
             val poplarArtistSongDef = async {
                 homeRepo.getPopularArtistSongPrev(
                     userId = user.id,
@@ -253,9 +252,12 @@ class ServiceRepositoryImpl(
                     popularAlbum = poplarAlbumDef.await(),
                     popularArtist = popularArtist,
                     popularArtistSong = poplarArtistSongDef.await(),
+
+
                     savedPlaylist = pair.first.savedPlaylist,
                     savedAlbum = pair.first.savedAlbum,
-                    savedArtist = pair.first.savedArtist
+                    savedArtist = pair.first.savedArtist,
+                    favouriteSong = pair.first.favouriteSong
                 )
         }
     }

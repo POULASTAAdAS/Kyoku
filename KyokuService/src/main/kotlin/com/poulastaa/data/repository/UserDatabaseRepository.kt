@@ -13,6 +13,7 @@ import com.poulastaa.domain.model.PlaylistSongPayload
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
+import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.UserId
 import com.poulastaa.domain.repository.UserRepository
 import com.poulastaa.domain.table.AlbumTable
@@ -24,9 +25,14 @@ import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.insertIgnore
+import org.jetbrains.exposed.sql.select
 
-class UserDatabaseRepository : UserRepository {
+class UserDatabaseRepository(
+    private val database: DatabaseRepository,
+) : UserRepository {
     override suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult? {
         return when (payload.userType) {
             UserType.GOOGLE_USER -> {
@@ -190,20 +196,7 @@ class UserDatabaseRepository : UserRepository {
                     name = it.first.name,
                     listOfSong = it.second.map { songDao ->
                         async {
-                            query {
-                                ArtistTable.join(
-                                    otherTable = SongArtistRelationTable,
-                                    joinType = JoinType.INNER,
-                                    additionalConstraint = {
-                                        SongArtistRelationTable.artistId eq ArtistTable.id as Column<*>
-                                    }
-                                ).slice(ArtistTable.name)
-                                    .select {
-                                        SongArtistRelationTable.songId eq songDao.id.value
-                                    }.map { resultRow ->
-                                        resultRow[ArtistTable.name]
-                                    }
-                            } to songDao
+                            database.getArtistOnSongId(songDao.id.value) to songDao
                         }
                     }.awaitAll().map { pair ->
                         pair.second.toSongDto(artist = pair.first.joinToString())
@@ -267,11 +260,31 @@ class UserDatabaseRepository : UserRepository {
                 }
             }
         }
+        val favouriteSongDef = async {
+            query {
+                UserFavouriteRelationTable.select {
+                    UserFavouriteRelationTable.userId eq userId and (UserFavouriteRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserFavouriteRelationTable.songId]
+                }.let {
+                    SongDao.find {
+                        SongTable.id inList it
+                    }.map { songDao ->
+                        async {
+                            database.getArtistOnSongId(songDao.id.value) to songDao
+                        }
+                    }.awaitAll().map {
+                        it.second.toSongDto(it.first.joinToString { artist -> artist.name })
+                    }
+                }
+            }
+        }
 
         LogInDto(
             savedPlaylist = savedPlaylistDef.await(),
             savedAlbum = savedAlbumDef.await(),
-            savedArtist = followArtistDef.await()
+            savedArtist = followArtistDef.await(),
+            favouriteSong = favouriteSongDef.await()
         ) to userId
     }
 

@@ -45,7 +45,10 @@ interface CommonDao {
     suspend fun insertSongPlaylistRelation(list: List<SongPlaylistRelationEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertIntoFavourite(entry: FavouriteEntity)
+    suspend fun insertOneIntoFavourite(entry: FavouriteEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertMultipleIntoFavourite(entrys: List<FavouriteEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAlbums(entity: List<AlbumEntity>)

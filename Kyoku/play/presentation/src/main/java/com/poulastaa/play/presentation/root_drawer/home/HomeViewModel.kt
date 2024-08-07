@@ -122,6 +122,7 @@ class HomeViewModel @Inject constructor(
                     }
 
                     HomeItemClickType.POPULAR_ARTIST -> Unit
+
                     HomeItemClickType.SUGGEST_ALBUM -> {
                         val album = state.staticData.popularAlbum.firstOrNull {
                             it.id == event.id
@@ -150,6 +151,7 @@ class HomeViewModel @Inject constructor(
                     }
 
                     HomeItemClickType.HISTORY_SONG -> Unit
+
                     HomeItemClickType.SUGGEST_ARTIST_SONG -> {
                         val song = state.staticData.popularArtistSong.firstOrNull {
                             it.artist.id == event.artistId

@@ -14,5 +14,6 @@ fun ApiLogInDto.toLoInDto() = LogInDto(
 
     savedPlaylist = this.savedPlaylist,
     savedAlbum = this.savedAlbum,
-    savedArtist = this.savedArtist
+    savedArtist = this.savedArtist,
+    favouriteSong = this.favouriteSong
 )

@@ -2,6 +2,7 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.HomeDao
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toAlbumEntity
@@ -103,6 +104,7 @@ class RoomLocalAuthDatasource @Inject constructor(
                 }
             }.awaitAll()
         }
+
         val savedPlaylistDef = async {
             data.savedPlaylist.map { playlistData ->
                 async {
@@ -149,6 +151,16 @@ class RoomLocalAuthDatasource @Inject constructor(
 
             commonDao.insertArtists(entrys)
         }
+        val favouriteSongDef = async {
+            val songEntryList = data.favouriteSong.map { it.toSongEntity() }
+            async { commonDao.insertSongs(songEntryList) }.await()
+
+            commonDao.insertMultipleIntoFavourite(
+                entrys = songEntryList.map {
+                    FavouriteEntity(id = it.id)
+                }
+            )
+        }
 
 
         listOf(
@@ -161,7 +173,8 @@ class RoomLocalAuthDatasource @Inject constructor(
             popularArtistSongDef,
             savedPlaylistDef,
             savedAlbumDef,
-            savedArtistDef
+            savedArtistDef,
+            favouriteSongDef
         ).awaitAll()
     }
 }

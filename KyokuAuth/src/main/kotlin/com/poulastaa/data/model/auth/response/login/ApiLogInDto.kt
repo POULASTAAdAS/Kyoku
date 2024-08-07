@@ -17,4 +17,6 @@ data class ApiLogInDto(
     val savedPlaylist: List<PlaylistDto> = emptyList(),
     val savedAlbum: List<AlbumDto> = emptyList(),
     val savedArtist: List<ArtistDto> = emptyList(),
+
+    val favouriteSong: List<SongDto> = emptyList(),
 )

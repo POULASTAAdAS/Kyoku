@@ -12,4 +12,5 @@ data class LogInData(
     val savedPlaylist: List<PlaylistData> = emptyList(),
     val savedAlbum: List<PrevAlbum> = emptyList(),
     val savedArtist: List<Artist> = emptyList(),
+    val favouriteSong: List<Song> = emptyList(),
 )
