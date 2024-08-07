@@ -1,6 +1,7 @@
 package com.poulastaa.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -46,6 +47,9 @@ interface CommonDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOneIntoFavourite(entry: FavouriteEntity)
+
+    @Delete
+    suspend fun deleteSongFromFavourite(entry: FavouriteEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMultipleIntoFavourite(entrys: List<FavouriteEntity>)

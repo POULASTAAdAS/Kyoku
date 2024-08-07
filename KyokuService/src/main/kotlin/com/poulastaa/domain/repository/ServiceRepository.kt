@@ -47,7 +47,12 @@ interface ServiceRepository {
     ): LogInDto
 
     suspend fun addToFavourite(
-        id:Long,
+        id: Long,
         userPayload: ReqUserPayload,
     ): SongDto
+
+    suspend fun removeFromFavourite(
+        id: Long,
+        userPayload: ReqUserPayload,
+    ): Boolean
 }

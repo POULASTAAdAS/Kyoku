@@ -29,6 +29,7 @@ private fun Routing.common(service: ServiceRepository) {
     getCoverImage()
     getArtistImage()
     addToFavourite(service)
+    removeFromFavourite(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

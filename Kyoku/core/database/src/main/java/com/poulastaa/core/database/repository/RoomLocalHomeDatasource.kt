@@ -195,11 +195,14 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override suspend fun isSongInDatabase(id: Long): Boolean = homeDao.getSong(id) != null
 
+    override suspend fun addSong(song: Song) = commonDao.insertSong(
+        song = song.toSongEntity()
+    )
+
     override suspend fun insertIntoFavourite(id: Long) = commonDao.insertOneIntoFavourite(
         entry = FavouriteEntity(id)
     )
 
-    override suspend fun addSong(song: Song) = commonDao.insertSong(
-        song = song.toSongEntity()
-    )
+    override suspend fun removeSongFromFavourite(id: Long) =
+        commonDao.deleteSongFromFavourite(FavouriteEntity(id))
 }

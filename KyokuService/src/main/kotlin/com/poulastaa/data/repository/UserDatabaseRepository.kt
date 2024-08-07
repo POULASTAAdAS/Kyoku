@@ -25,30 +25,27 @@ import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.insertIgnore
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.util.stream.LongStream
 
 class UserDatabaseRepository(
     private val database: DatabaseRepository,
 ) : UserRepository {
-    override suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult? {
-        return when (payload.userType) {
-            UserType.GOOGLE_USER -> {
-                query {
-                    GoogleAuthUserDao.find {
-                        GoogleAuthUserTable.id eq payload.id.toLong()
-                    }.singleOrNull()?.toUserResult()
-                }
+    override suspend fun getUserOnPayload(payload: ReqUserPayload): UserResult? = when (payload.userType) {
+        UserType.GOOGLE_USER -> {
+            query {
+                GoogleAuthUserDao.find {
+                    GoogleAuthUserTable.id eq payload.id.toLong()
+                }.singleOrNull()?.toUserResult()
             }
+        }
 
-            UserType.EMAIL_USER -> {
-                query {
-                    EmailAuthUserDao.find {
-                        EmailAuthUserTable.email eq payload.id
-                    }.singleOrNull()?.toUserResult()
-                }
+        UserType.EMAIL_USER -> {
+            query {
+                EmailAuthUserDao.find {
+                    EmailAuthUserTable.email eq payload.id
+                }.singleOrNull()?.toUserResult()
             }
         }
     }
@@ -56,22 +53,20 @@ class UserDatabaseRepository(
     override suspend fun getUserOnEmail(
         email: String,
         userType: UserType,
-    ): UserResult? {
-        return when (userType) {
-            UserType.GOOGLE_USER -> {
-                query {
-                    GoogleAuthUserDao.find {
-                        GoogleAuthUserTable.email eq email
-                    }.singleOrNull()?.toUserResult()
-                }
+    ): UserResult? = when (userType) {
+        UserType.GOOGLE_USER -> {
+            query {
+                GoogleAuthUserDao.find {
+                    GoogleAuthUserTable.email eq email
+                }.singleOrNull()?.toUserResult()
             }
+        }
 
-            UserType.EMAIL_USER -> {
-                query {
-                    EmailAuthUserDao.find {
-                        EmailAuthUserTable.email eq email
-                    }.singleOrNull()?.toUserResult()
-                }
+        UserType.EMAIL_USER -> {
+            query {
+                EmailAuthUserDao.find {
+                    EmailAuthUserTable.email eq email
+                }.singleOrNull()?.toUserResult()
             }
         }
     }
@@ -152,21 +147,7 @@ class UserDatabaseRepository(
         userType: UserType,
         email: String,
     ): Pair<LogInDto, UserId> = coroutineScope {
-        val userId = query {
-            when (userType) {
-                UserType.GOOGLE_USER -> {
-                    GoogleAuthUserDao.find {
-                        GoogleAuthUserTable.email eq email
-                    }.singleOrNull()?.id?.value
-                }
-
-                UserType.EMAIL_USER -> {
-                    EmailAuthUserDao.find {
-                        EmailAuthUserTable.email eq email
-                    }.singleOrNull()?.id?.value
-                }
-            }
-        } ?: return@coroutineScope LogInDto() to -1
+        val userId = getUserOnEmail(email,userType)?.id ?: return@coroutineScope LogInDto() to -1
 
         val savedPlaylistDef = async {
             query {
@@ -340,5 +321,23 @@ class UserDatabaseRepository(
 
         insert.await()
         song.await()
+    }
+
+    override suspend fun removeFromFavourite(
+        id: Long,
+        email: String,
+        userType: UserType,
+    ): Boolean {
+        val user = getUserOnEmail(email = email, userType = userType) ?: return false
+
+        return query {
+            UserFavouriteRelationTable.deleteWhere {
+                this.userId eq user.id and
+                        (this.userType eq userType.name) and
+                        (this.songId eq id)
+            }
+
+            true
+        }
     }
 }

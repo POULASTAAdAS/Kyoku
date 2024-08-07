@@ -46,4 +46,14 @@ class OnlineFirstHomeDatasource @Inject constructor(
     ).map {
         it.toSong()
     }
+
+    override suspend fun removeFromFavourite(
+        id: Long,
+    ): Result<Unit, DataError.Network> = client.get<Unit>(
+        route = EndPoints.RemoveFromFavourite.route,
+        params = listOf(
+            "songId" to id.toString(),
+        ),
+        gson = gson
+    )
 }

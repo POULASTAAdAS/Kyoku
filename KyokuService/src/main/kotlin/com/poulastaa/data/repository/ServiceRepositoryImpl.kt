@@ -274,4 +274,10 @@ class ServiceRepositoryImpl(
             userId = user.id
         )
     }
+
+    override suspend fun removeFromFavourite(id: Long, userPayload: ReqUserPayload): Boolean {
+        val user = userRepo.getUserOnPayload(userPayload) ?: return false
+
+        return userRepo.removeFromFavourite(id, email = user.email, userType = user.userType)
+    }
 }

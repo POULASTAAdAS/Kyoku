@@ -10,4 +10,5 @@ interface RemoteHomeDatasource {
     suspend fun getNewHomeResponse(dayType: DayType): Result<NewHome, DataError.Network>
 
     suspend fun insertIntoFavourite(id: Long): Result<Song, DataError.Network>
+    suspend fun removeFromFavourite(id: Long): Result<Unit, DataError.Network>
 }

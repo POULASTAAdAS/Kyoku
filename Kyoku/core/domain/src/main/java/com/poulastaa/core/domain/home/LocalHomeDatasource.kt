@@ -25,6 +25,7 @@ interface LocalHomeDatasource {
 
     suspend fun isSongInDatabase(id: Long): Boolean
 
-    suspend fun insertIntoFavourite(id: Long)
     suspend fun addSong(song: Song)
+    suspend fun insertIntoFavourite(id: Long)
+    suspend fun removeSongFromFavourite(id: Long)
 }

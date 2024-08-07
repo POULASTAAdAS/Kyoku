@@ -191,11 +191,7 @@ class HomeViewModel @Inject constructor(
 
             is HomeUiEvent.BottomSheetUiEvent -> {
                 when (event) {
-                    HomeUiEvent.BottomSheetUiEvent.Cancel -> {
-                        state = state.copy(
-                            bottomSheetUiState = BottomSheetUiState()
-                        )
-                    }
+                    HomeUiEvent.BottomSheetUiEvent.Cancel -> Unit
 
                     // song
                     is HomeUiEvent.BottomSheetUiEvent.AddSongToFavourite -> {
@@ -214,7 +210,19 @@ class HomeViewModel @Inject constructor(
 
                     is HomeUiEvent.BottomSheetUiEvent.RemoveSongToFavourite -> {
                         viewModelScope.launch(Dispatchers.IO) {
+                            when (homeRepo.removeFromFavourite(event.id)) {
+                                true -> _uiEvent.send(
+                                    HomeUiAction.EmitToast(
+                                        UiText.StringResource(R.string.song_removed_from_favourite)
+                                    )
+                                )
 
+                                false -> _uiEvent.send(
+                                    HomeUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_something_went_wrong)
+                                    )
+                                )
+                            }
                         }
                     }
 

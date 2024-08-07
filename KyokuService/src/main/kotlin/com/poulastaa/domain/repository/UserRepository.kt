@@ -50,4 +50,10 @@ interface UserRepository {
         userId: Long,
         userType: UserType,
     ): SongDto
+
+    suspend fun removeFromFavourite(
+        id: Long,
+        email: String,
+        userType: UserType,
+    ): Boolean
 }

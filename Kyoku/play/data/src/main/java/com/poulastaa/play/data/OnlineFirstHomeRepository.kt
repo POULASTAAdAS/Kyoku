@@ -71,6 +71,14 @@ class OnlineFirstHomeRepository @Inject constructor(
     }
 
     override suspend fun removeFromFavourite(id: Long): Boolean {
-        TODO("Not yet implemented")
+        val result = remote.removeFromFavourite(id)
+
+        if (result is Result.Success) {
+            application.async { local.removeSongFromFavourite(id) }.await()
+
+            return true
+        }
+
+        return false
     }
 }
