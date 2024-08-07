@@ -8,4 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface LocalLibraryDataSource {
     fun getPlaylist(): Flow<SavedPlaylist>
     fun getArtist(): Flow<SavedArtist>
+    suspend fun isFavourite(): Boolean
 }

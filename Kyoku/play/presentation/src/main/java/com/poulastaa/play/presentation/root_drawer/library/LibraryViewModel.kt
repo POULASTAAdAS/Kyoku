@@ -92,6 +92,7 @@ class LibraryViewModel @Inject constructor(
     private fun populate() {
         readPlaylist()
         readArtist()
+        readFavourite()
     }
 
     private fun readPlaylist() {
@@ -120,6 +121,18 @@ class LibraryViewModel @Inject constructor(
                     isDataLoading = false
                 )
             }
+        }
+    }
+
+    private fun readFavourite() {
+        viewModelScope.launch {
+            val status = repo.isFavourite()
+
+            state = state.copy(
+                data = state.data.copy(
+                    isFavouriteEntry = status
+                )
+            )
         }
     }
 }

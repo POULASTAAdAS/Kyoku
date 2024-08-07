@@ -56,6 +56,9 @@ interface CommonDao {
     @Query("select id from SongEntity where coverImage = :url")
     suspend fun getSongOnUrl(url: String): Long?
 
+    @Query("select id from FavouriteEntity limit 1")
+    suspend fun isFavourite(): List<Long>
+
     @Query(
         """
     select `primary`, background, onBackground 

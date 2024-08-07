@@ -44,6 +44,7 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.components.SuggestedArtistCard
+import com.poulastaa.play.presentation.root_drawer.library.components.FavouriteCard
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryFilterRow
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryHeader
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPlaylistGird
@@ -128,13 +129,35 @@ private fun LibraryScreen(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
             contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
         ) {
-            libraryItem(span = GridItemSpan(state.gridSize)) {
+            fixedItem(state.gridSize) {
                 LibraryFilterRow(
                     modifier = Modifier.fillMaxWidth(),
                     filterType = state.filterType,
                     viewType = state.viewType,
                     onClick = onEvent
                 )
+            }
+
+            if (state.filterType == LibraryFilterType.ALL &&
+                state.data.isFavouriteEntry
+            ) {
+                fixedItem(state.gridSize) {
+                    when (state.viewType) {
+                        LibraryViewType.LIST -> FavouriteCard(
+                            modifier = Modifier
+                                .height(100.dp),
+                        ) {
+
+                        }
+
+                        LibraryViewType.GRID -> FavouriteCard(
+                            modifier = Modifier
+                                .height(100.dp)
+                        ) {
+
+                        }
+                    }
+                }
             }
 
             if (state.filterType == LibraryFilterType.ALL ||
@@ -227,7 +250,7 @@ private fun <T> LazyGridScope.itemSection(
     listContent: @Composable LazyGridItemScope.(T) -> Unit,
     gridContent: @Composable LazyGridItemScope.(T) -> Unit,
 ) {
-    libraryItem(span = GridItemSpan(gridSize)) {
+    fixedItem(gridSize) {
         LibraryHeader(
             header = stringResource(id = header),
             onAddClick = onHeaderClick
@@ -242,12 +265,12 @@ private fun <T> LazyGridScope.itemSection(
     }
 }
 
-private fun LazyGridScope.libraryItem(
-    span: GridItemSpan,
+private fun LazyGridScope.fixedItem(
+    span: Int,
     content: @Composable LazyGridItemScope. () -> Unit,
 ) {
     item(
-        span = { span },
+        span = { GridItemSpan(span) },
         content = content
     )
 }
@@ -284,7 +307,8 @@ private fun Preview() {
                             name = "Playlist $it",
                             urls = emptyList()
                         )
-                    }
+                    },
+                    isFavouriteEntry = true
                 )
             ),
             profileUrl = "",

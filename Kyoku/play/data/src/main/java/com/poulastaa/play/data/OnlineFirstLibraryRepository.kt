@@ -15,4 +15,6 @@ class OnlineFirstLibraryRepository @Inject constructor(
     override fun getPlaylist(): Flow<SavedPlaylist> = local.getPlaylist()
 
     override fun getArtist(): Flow<SavedArtist> = local.getArtist()
+
+    override suspend fun isFavourite(): Boolean = local.isFavourite()
 }

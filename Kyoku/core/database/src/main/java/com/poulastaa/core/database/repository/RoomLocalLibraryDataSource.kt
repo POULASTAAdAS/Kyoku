@@ -1,5 +1,6 @@
 package com.poulastaa.core.database.repository
 
+import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.mapper.toArtist
 import com.poulastaa.core.database.mapper.toSavedPlaylist
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RoomLocalLibraryDataSource @Inject constructor(
+    private val commonDao: CommonDao,
     private val libraryDao: LibraryDao,
 ) : LocalLibraryDataSource {
     override fun getPlaylist(): Flow<SavedPlaylist> = libraryDao.getAllSavedPlaylist().map {
@@ -23,4 +25,6 @@ class RoomLocalLibraryDataSource @Inject constructor(
             it.toArtist()
         }
     }
+
+    override suspend fun isFavourite(): Boolean = commonDao.isFavourite().isNotEmpty()
 }

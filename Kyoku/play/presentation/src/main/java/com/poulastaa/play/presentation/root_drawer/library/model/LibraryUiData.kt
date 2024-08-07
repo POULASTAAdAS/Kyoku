@@ -6,4 +6,5 @@ import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 data class LibraryUiData(
     val artist: List<UiArtist> = emptyList(),
     val playlist: List<UiPrevPlaylist> = emptyList(),
+    val isFavouriteEntry: Boolean = false,
 )

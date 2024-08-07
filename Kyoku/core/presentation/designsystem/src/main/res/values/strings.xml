@@ -93,4 +93,5 @@
     <string name="add_to_favourite">Add To Favourite</string>
     <string name="remove_from_favourite">Remove From Favourite</string>
     <string name="song_added_to_favourite">Song added to Favourite</string>
+    <string name="favourite">Favourite</string>
 </resources>
