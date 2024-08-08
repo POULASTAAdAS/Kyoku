@@ -4,6 +4,8 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
+import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
+import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toArtistEntity
 import com.poulastaa.core.database.mapper.toArtistSongEntity
 import com.poulastaa.core.database.mapper.toDayTypeSongPrev
@@ -23,15 +25,18 @@ import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.database.mapper.toSuggestArtist
 import com.poulastaa.core.domain.home.LocalHomeDatasource
+import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
@@ -119,13 +124,15 @@ class RoomLocalHomeDatasource @Inject constructor(
             }.awaitAll()
         }
 
-        popularSongMixPrevDef.await()
-        popularSongFromYourTimePrevDef.await()
-        favouriteArtistMixPrevDef.await()
         if (response.dayTypeSong.isNotEmpty()) dayTypeSongDef.await()
-        popularAlbumDef.await()
-        popularArtistDef.await()
-        popularArtistSongDef.await()
+        listOf(
+            popularSongMixPrevDef,
+            popularSongFromYourTimePrevDef,
+            favouriteArtistMixPrevDef,
+            popularAlbumDef,
+            popularArtistDef,
+            popularArtistSongDef
+        ).awaitAll()
     }
 
     override suspend fun isNewUser(): Boolean = homeDao.isNewUser().isEmpty()
@@ -181,10 +188,13 @@ class RoomLocalHomeDatasource @Inject constructor(
         )
     }
 
-    override fun loadSavedPlaylist(): Flow<SavedPlaylist> = homeDao.getSavedPlaylists().map {
+    override fun loadSavedPlaylist(): Flow<SavedPlaylist> = commonDao.getAllSavedPlaylist().map {
         it.groupBy { result -> result.id }
             .map { mapEntry -> mapEntry.toSavedPlaylist() }
     }.take(3)
+
+    override fun loadSavedAlbum(): Flow<SavedAlbum> =
+        commonDao.getAllSavedAlbum().take(2)
 
     override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
         homeDao.isArtistIsInLibrary(artistId) != null
@@ -211,4 +221,27 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override suspend fun unFollowArtist(id: Long) =
         commonDao.deleteArtist(id)
+
+    override suspend fun saveAlbum(data: AlbumWithSong): Unit = coroutineScope {
+        val albumEntry = data.album.toAlbumEntity()
+        val songEntry = data.listOfSong.map { it.toSongEntity() }
+
+        val albumDef = async { commonDao.insertAlbum(albumEntry) }
+        val songDef = async { commonDao.insertSongs(songEntry) }
+
+        albumDef.await()
+        songDef.await()
+
+        val relation = songEntry.map { it.id }.map {
+            SongAlbumRelationEntity(
+                albumId = albumEntry.id,
+                songId = it
+            )
+        }
+
+        commonDao.insertSongAlbumRelation(relation)
+    }
+
+    override suspend fun removeAlbum(id: Long) =
+        commonDao.deleteAlbum(id)
 }

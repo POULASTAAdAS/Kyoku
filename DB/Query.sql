@@ -121,17 +121,13 @@ select * from userplaylistsongrelation;
 
 update  emailauthuser set bdate = 1042416000000;
 
-
-
-
 select * from userfavouriterelation;
 
+select * from useralbumrelation;
 
+select * from googleauthuser;
 
-
-
-
-
+select * from songalbumrelation;
 
 
 

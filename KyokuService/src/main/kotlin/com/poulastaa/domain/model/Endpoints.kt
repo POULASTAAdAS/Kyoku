@@ -26,5 +26,8 @@ sealed class EndPoints(val route: String) {
     data object AddArtist : EndPoints(route = "/api/authorised/addArtist")
     data object RemoveArtist : EndPoints(route = "/api/authorised/removeArtist")
 
+    data object AddAlbum : EndPoints(route = "/api/authorised/addAlbum")
+    data object RemoveAlbum : EndPoints(route = "/api/authorised/removeAlbum")
+
     data object UnAuthorised : EndPoints(route = "/api/unauthorised")
 }

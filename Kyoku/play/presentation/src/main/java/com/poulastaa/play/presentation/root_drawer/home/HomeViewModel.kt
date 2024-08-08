@@ -16,6 +16,7 @@ import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
 import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.BottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
+import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,8 @@ class HomeViewModel @Inject constructor(
                 when (event.itemClickType) {
                     HomeItemClickType.SAVED_PLAYLIST -> Unit
                     HomeItemClickType.SAVED_ALBUM -> Unit
+
+
                     HomeItemClickType.POPULAR_SONG_MIX -> {
                         state = state.copy(
                             bottomSheetUiState = BottomSheetUiState(
@@ -222,6 +225,39 @@ class HomeViewModel @Inject constructor(
                         }
                     }
 
+                    // album
+                    is HomeUiEvent.BottomSheetUiEvent.SaveAlbum -> {
+                        viewModelScope.launch {
+                            if (homeRepo.saveAlbum(event.id)) _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.album_added_to_library)
+                                )
+                            ) else _uiEvent.send(
+                                HomeUiAction.EmitToast(
+                                    UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }
+
+                    is HomeUiEvent.BottomSheetUiEvent.RemoveSavedAlbum -> {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            when (homeRepo.removeAlbum(event.id)) {
+                                true -> _uiEvent.send(
+                                    HomeUiAction.EmitToast(
+                                        UiText.StringResource(R.string.album_removed_from_favourite)
+                                    )
+                                )
+
+                                false -> _uiEvent.send(
+                                    HomeUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_something_went_wrong)
+                                    )
+                                )
+                            }
+                        }
+                    }
+
                     // song
                     is HomeUiEvent.BottomSheetUiEvent.AddSongToFavourite -> {
                         viewModelScope.launch(Dispatchers.IO) {
@@ -290,6 +326,7 @@ class HomeViewModel @Inject constructor(
             if (newUserDef.await()) return@launch loadNewUserData()
             populateDef.await()
             loadSavedPlaylist()
+            loadSavedAlbum()
         }
     }
 
@@ -337,7 +374,23 @@ class HomeViewModel @Inject constructor(
                 }
             }.collectLatest {
                 state = state.copy(
-                    savedPlaylists = it
+                    savedPlaylists = it,
+                    isPlaylistLoaded = true
+                )
+            }
+        }
+    }
+
+    private fun loadSavedAlbum() {
+        viewModelScope.launch {
+            homeRepo.loadSavedAlbum().map {
+                it.map { result ->
+                    result.toUiAlbum()
+                }
+            }.collectLatest {
+                state = state.copy(
+                    savedAlbums = it,
+                    isAlbumLoaded = true
                 )
             }
         }

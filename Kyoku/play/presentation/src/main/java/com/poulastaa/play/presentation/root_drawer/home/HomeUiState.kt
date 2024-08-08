@@ -8,6 +8,8 @@ import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 data class HomeUiState(
     val heading: String = "",
     val isDataLoading: Boolean = true,
+    val isPlaylistLoaded: Boolean = false,
+    val isAlbumLoaded: Boolean = false,
     val isNewUser: Boolean = true,
 
     val header: String = "",
@@ -19,5 +21,5 @@ data class HomeUiState(
     val bottomSheetUiState: BottomSheetUiState = BottomSheetUiState(),
 ) {
     val canShowUi: Boolean
-        get() = !isNewUser && !isDataLoading
+        get() = !isNewUser && !isDataLoading && isPlaylistLoaded && isAlbumLoaded
 }

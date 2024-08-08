@@ -10,9 +10,13 @@ import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.SongEntity
+import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
+import com.poulastaa.core.database.model.PrevSongResult
 import com.poulastaa.core.database.model.SongColorResult
+import com.poulastaa.core.domain.model.PrevAlbum
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CommonDao {
@@ -56,6 +60,9 @@ interface CommonDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAlbums(entity: List<AlbumEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlbum(entity: AlbumEntity)
+
     @Query("select id from SongEntity where coverImage = :url")
     suspend fun getSongOnUrl(url: String): Long?
 
@@ -65,21 +72,32 @@ interface CommonDao {
     @Query("delete from ArtistEntity where id = :id")
     suspend fun deleteArtist(id: Long)
 
-    @Query(
-        """
-    select `primary`, background, onBackground 
-    from SongEntity 
-    where id = :songId
-    """
-    )
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSongAlbumRelation(entrys: List<SongAlbumRelationEntity>)
+
+    @Query("delete from AlbumEntity where id = :id")
+    suspend fun deleteAlbum(id: Long)
+
+    @Query(" select `primary`, background, onBackground from SongEntity  where id = :songId ")
     suspend fun getSongColorInfo(songId: Long): SongColorResult
 
     @Query(
         """
-        update SongEntity 
-        set `primary` = :primary , 
-        background = :background , onBackground = :onBackground
-        where id = :songId
+        select PlaylistEntity.id , PlaylistEntity.name ,  SongEntity.coverImage from SongEntity
+        join SongPlaylistRelationEntity on SongEntity.id = SongPlaylistRelationEntity.songId
+        join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
+        where PlaylistEntity.id order by PlaylistEntity.points
+    """
+    )
+    fun getAllSavedPlaylist(): Flow<List<PrevSongResult>>
+
+    @Query("select id as albumId , name as name , coverImage as coverImage from AlbumEntity")
+    fun getAllSavedAlbum(): Flow<List<PrevAlbum>>
+
+    @Query(
+        """
+        update SongEntity set `primary` = :primary ,background = :background ,
+        onBackground = :onBackground where id = :songId
     """
     )
     suspend fun updateCoverAndColor(

@@ -8,6 +8,7 @@ import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import com.poulastaa.core.domain.utils.asEmptyDataResult
 import com.poulastaa.core.domain.utils.map
@@ -45,6 +46,8 @@ class OnlineFirstHomeRepository @Inject constructor(
     }.await()
 
     override fun loadSavedPlaylist(): Flow<SavedPlaylist> = local.loadSavedPlaylist()
+
+    override fun loadSavedAlbum(): Flow<SavedAlbum> = local.loadSavedAlbum()
 
     override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
         local.isArtistIsInLibrary(artistId)
@@ -98,6 +101,30 @@ class OnlineFirstHomeRepository @Inject constructor(
 
         if (result is Result.Success) {
             application.async { local.unFollowArtist(id) }.await()
+            return true
+        }
+
+        return false
+    }
+
+    override suspend fun saveAlbum(id: Long): Boolean {
+        val result = remote.saveAlbum(id)
+
+        if (result is Result.Success) {
+            if (result.data.album.albumId == -1L) return false
+
+            application.async { local.saveAlbum(result.data) }.await()
+            return true
+        }
+
+        return false
+    }
+
+    override suspend fun removeAlbum(id: Long): Boolean {
+        val result = remote.removeAlbum(id)
+
+        if (result is Result.Success) {
+            application.async { local.removeAlbum(id) }.await()
             return true
         }
 

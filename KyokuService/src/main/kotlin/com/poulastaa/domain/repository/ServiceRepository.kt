@@ -65,4 +65,14 @@ interface ServiceRepository {
         id: Long,
         userPayload: ReqUserPayload,
     ): Boolean
+
+    suspend fun addAlbum(
+        albumId: Long,
+        payload: ReqUserPayload,
+    ): AlbumWithSongDto
+
+    suspend fun removeAlbum(
+        id: Long,
+        userPayload: ReqUserPayload,
+    ): Boolean
 }

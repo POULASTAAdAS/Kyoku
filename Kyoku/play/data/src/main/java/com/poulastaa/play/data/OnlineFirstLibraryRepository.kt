@@ -2,6 +2,8 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.model.PrevAlbum
+import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +15,8 @@ class OnlineFirstLibraryRepository @Inject constructor(
     private val application: CoroutineScope,
 ) : LibraryRepository {
     override fun getPlaylist(): Flow<SavedPlaylist> = local.getPlaylist()
+
+    override fun getAlbum(): Flow<SavedAlbum> = local.getAlbum()
 
     override fun getArtist(): Flow<SavedArtist> = local.getArtist()
 

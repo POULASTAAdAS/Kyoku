@@ -144,7 +144,7 @@ fun HomeScreen(
             if (state.savedAlbums.isNotEmpty()) item {
                 TopRow(
                     modifier = Modifier
-                        .height(60.dp)
+                        .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
                         .fillMaxWidth()
                         .windowInsetsPadding(
                             insets = WindowInsets(
@@ -539,6 +539,8 @@ private fun Preview() {
                 heading = "Good Morning",
                 isNewUser = false,
                 isDataLoading = false,
+                isPlaylistLoaded = true,
+                isAlbumLoaded = true,
                 header = "",
                 staticData = prevData,
                 savedPlaylists = (1..3).map {
@@ -548,7 +550,7 @@ private fun Preview() {
                         urls = emptyList()
                     )
                 },
-                savedAlbums = (1..3).map {
+                savedAlbums = (1..2).map {
                     UiPrevAlbum(
                         id = it.toLong(),
                         name = "Album $it",

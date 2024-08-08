@@ -450,7 +450,7 @@ fun ViewMore(
 }
 
 @Composable
-private fun CircularArtist(
+fun CircularArtist(
     modifier: Modifier = Modifier,
     header: String,
     url: String,
@@ -578,9 +578,9 @@ private fun ImageGrid(
 @Composable
 private fun Preview() {
     val data = (1..2).map {
-        UiPrevAlbum(
-            id = 2,
-            name = "My Album",
+        UiArtist(
+            id = 1,
+            name = "Artist $it",
         )
     }
 
@@ -593,14 +593,16 @@ private fun Preview() {
         ) {
             Row(
                 modifier = Modifier
+                    .height(120.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
                 data.forEach {
-                    GridImageCard(
+                    SuggestedArtistCard(
+                        modifier = Modifier.aspectRatio(1f),
                         header = "",
-                        urls = listOf(),
-                        title = it.name
+                        artist = it,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
                 }
             }

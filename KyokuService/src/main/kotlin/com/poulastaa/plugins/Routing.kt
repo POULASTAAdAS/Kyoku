@@ -34,6 +34,9 @@ private fun Routing.common(service: ServiceRepository) {
 
     followArtist(service)
     unFollowArtist(service)
+
+    addAlbum(service)
+    removeAlbum(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

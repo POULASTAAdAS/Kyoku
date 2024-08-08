@@ -39,7 +39,7 @@ fun Application.configureSecurity() {
         session<UserSession>(SECURITY_LIST[1]) {
             validate { it }
 
-            challenge { call.resolveResource(EndPoints.UnAuthorised.route) }
+            challenge { call.respondRedirect(EndPoints.UnAuthorised.route) }
         }
     }
 }

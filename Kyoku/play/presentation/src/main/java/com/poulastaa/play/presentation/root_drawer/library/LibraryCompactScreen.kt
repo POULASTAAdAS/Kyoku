@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +45,10 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.root_drawer.home.components.SuggestedArtistCard
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.play.presentation.root_drawer.library.components.FavouriteCard
+import com.poulastaa.play.presentation.root_drawer.library.components.LibraryAlbumGrid
+import com.poulastaa.play.presentation.root_drawer.library.components.LibraryAlbumList
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryFilterRow
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryHeader
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPlaylistGird
@@ -163,7 +167,8 @@ private fun LibraryScreen(
             if (state.filterType == LibraryFilterType.ALL ||
                 state.filterType == LibraryFilterType.PLAYLIST &&
                 state.data.playlist.isNotEmpty()
-            ) itemSection(
+            )  if (state.data.playlist.isNotEmpty())
+                itemSection(
                 gridSize = state.gridSize,
                 type = state.viewType,
                 data = state.data.playlist,
@@ -195,10 +200,44 @@ private fun LibraryScreen(
                 }
             )
 
+
+            if (state.filterType == LibraryFilterType.ALL ||
+                state.filterType == LibraryFilterType.ALBUM
+            ) if (state.data.album.isNotEmpty())
+                itemSection(
+                    gridSize = state.gridSize,
+                    type = state.viewType,
+                    data = state.data.album,
+                    header = R.string.album,
+                    onHeaderClick = {
+
+                    },
+                    listContent = {
+                        Row(
+                            modifier = Modifier
+                                .height(100.dp)
+                        ) {
+                            LibraryAlbumList(
+                                modifier = Modifier.fillMaxSize(),
+                                header = state.header,
+                                album = it
+                            )
+                        }
+                    },
+                    gridContent = {
+                        LibraryAlbumGrid(
+                            modifier = Modifier.aspectRatio(1f),
+                            header = state.header,
+                            album = it
+                        )
+                    }
+                )
+
             if (state.filterType == LibraryFilterType.ALL ||
                 state.filterType == LibraryFilterType.ARTIST &&
                 state.data.artist.isNotEmpty()
-            ) itemSection(
+            )  if (state.data.artist.isNotEmpty())
+                itemSection(
                 gridSize = state.gridSize,
                 type = state.viewType,
                 data = state.data.artist,
@@ -308,7 +347,13 @@ private fun Preview() {
                             urls = emptyList()
                         )
                     },
-                    isFavouriteEntry = true
+                    isFavouriteEntry = true,
+                    album = (1..10).map {
+                        UiPrevAlbum(
+                            id = 1,
+                            name = "Album $it",
+                        )
+                    }
                 )
             ),
             profileUrl = "",

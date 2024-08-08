@@ -5,6 +5,7 @@ import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.mapper.toArtist
 import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.flow.Flow
@@ -15,10 +16,12 @@ class RoomLocalLibraryDataSource @Inject constructor(
     private val commonDao: CommonDao,
     private val libraryDao: LibraryDao,
 ) : LocalLibraryDataSource {
-    override fun getPlaylist(): Flow<SavedPlaylist> = libraryDao.getAllSavedPlaylist().map {
+    override fun getPlaylist(): Flow<SavedPlaylist> = commonDao.getAllSavedPlaylist().map {
         it.groupBy { result -> result.id }
             .map { groped -> groped.toSavedPlaylist() }
     }
+
+    override fun getAlbum(): Flow<SavedAlbum> = commonDao.getAllSavedAlbum()
 
     override fun getArtist(): Flow<SavedArtist> = libraryDao.getAllSavedArtist().map { list ->
         list.map {

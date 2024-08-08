@@ -6,6 +6,7 @@ import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.dao.user.EmailAuthUserDao
 import com.poulastaa.data.dao.user.GoogleAuthUserDao
+import com.poulastaa.data.mappers.toAlbum
 import com.poulastaa.data.mappers.toArtistDto
 import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.mappers.toUserResult
@@ -200,7 +201,7 @@ class UserDatabaseRepository(
                                 query {
                                     SongAlbumRelationTable.select {
                                         SongAlbumRelationTable.albumId eq album.id.value
-                                    }.single().let {
+                                    }.limit(1).single().let {
                                         it[SongAlbumRelationTable.songId]
                                     }.let { songId ->
                                         SongDao.find {
@@ -372,6 +373,69 @@ class UserDatabaseRepository(
             this.userId eq userId and
                     (this.userType eq userType.name) and
                     (this.artistId eq artistId)
+        }
+
+        true
+    }
+
+    override suspend fun addAlbum(
+        albumId: Long,
+        email: String,
+        userType: UserType,
+    ): AlbumWithSongDto = coroutineScope {
+        val user = getUserOnEmail(email, userType) ?: return@coroutineScope AlbumWithSongDto()
+
+        val album = query {
+            AlbumDao.find {
+                AlbumTable.id eq albumId
+            }.singleOrNull()
+        } ?: return@coroutineScope AlbumWithSongDto()
+
+        val insertDef = async {
+            query {
+                UserAlbumRelationTable.insertIgnore {
+                    it[this.albumId] = album.id.value
+                    it[this.userType] = userType.name
+                    it[this.userId] = user.id
+                }
+            }
+        }
+        val songDef = async {
+            query {
+                SongAlbumRelationTable.select {
+                    SongAlbumRelationTable.albumId eq album.id.value
+                }.map {
+                    it[SongAlbumRelationTable.songId]
+                }.let {
+                    SongDao.find {
+                        SongTable.id inList it
+                    }
+                }.map {
+                    val artist = database.getArtistOnSongId(it.id.value)
+
+                    it.toSongDto(artist.joinToString { resultArtist -> resultArtist.name })
+                }
+            }
+        }
+
+        insertDef.await()
+        val songs = songDef.await()
+
+        AlbumWithSongDto(
+            albumDto = album.toAlbum(songs.getOrNull(0)?.coverImage ?: ""),
+            listOfSong = songs
+        )
+    }
+
+    override suspend fun removeAlbum(
+        id: Long,
+        email: String,
+        userType: UserType,
+    ): Boolean = query {
+        UserAlbumRelationTable.deleteWhere {
+            this.userId eq userId and
+                    (this.userType eq userType.name) and
+                    (this.albumId eq id)
         }
 
         true

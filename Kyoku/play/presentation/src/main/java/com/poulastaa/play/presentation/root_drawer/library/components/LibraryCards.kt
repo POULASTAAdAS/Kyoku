@@ -1,11 +1,10 @@
 package com.poulastaa.play.presentation.root_drawer.library.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -18,13 +17,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -37,17 +36,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.presentation.designsystem.AddIcon
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
@@ -57,54 +58,14 @@ import com.poulastaa.core.presentation.designsystem.FilterPlaylistIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SortTypeGridIcon
 import com.poulastaa.core.presentation.designsystem.SortTypeListIcon
+import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.imageReq
 import com.poulastaa.core.presentation.ui.imageReqSongCover
+import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.play.presentation.root_drawer.library.LibraryUiEvent
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
-
-@Composable
-fun LibraryPlaylistExpandedGird(
-    modifier: Modifier = Modifier,
-    urls: List<String>,
-    size: Dp = 170.dp,
-    name: String,
-    header: String,
-) {
-    Card(
-        modifier = modifier
-            .wrapContentSize(),
-        shape = MaterialTheme.shapes.extraSmall,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        )
-    ) {
-        ImageGrid(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .size(size),
-            header = header,
-            urls = urls,
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp
-            )
-        )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
-
-        Text(
-            text = name,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            maxLines = 2,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            letterSpacing = 1.sp,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
 
 @Composable
 fun LibraryPlaylistGird(
@@ -173,6 +134,149 @@ fun LibraryPlaylistList(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                letterSpacing = 1.sp,
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+fun LibraryAlbumGrid(
+    modifier: Modifier = Modifier,
+    header: String,
+    album: UiPrevAlbum,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Card(
+            modifier = Modifier.fillMaxSize(.78f),
+            shape = MaterialTheme.shapes.extraSmall,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            )
+        ) {
+            SubcomposeAsyncImage(
+                model = imageReq(
+                    header = header,
+                    url = album.coverImage
+                ),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            imageVector = UserIcon,
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                color = MaterialTheme.colorScheme.onBackground.copy(.7f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(MaterialTheme.dimens.small3)
+                        )
+                    }
+                },
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            strokeWidth = 1.5.dp,
+                            strokeCap = StrokeCap.Round,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+        Text(
+            text = album.name,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 1,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun LibraryAlbumList(
+    modifier: Modifier = Modifier,
+    header: String,
+    album: UiPrevAlbum,
+) {
+    Card(
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        )
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+        ) {
+
+            SubcomposeAsyncImage(
+                model = imageReq(
+                    header = header,
+                    url = album.coverImage
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clip(MaterialTheme.shapes.small),
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_music),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(
+                                color = MaterialTheme.colorScheme.onBackground.copy(.7f)
+                            ),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(MaterialTheme.dimens.small3)
+                        )
+                    }
+                },
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            strokeWidth = 1.5.dp,
+                            strokeCap = StrokeCap.Round,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            )
+
+            Text(
+                text = album.name,
+                modifier = Modifier,
+                maxLines = 2,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
                 letterSpacing = 1.sp,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis
@@ -417,7 +521,6 @@ private fun LibraryFilterChip(
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FavouriteCard(
     modifier: Modifier = Modifier,
@@ -477,12 +580,16 @@ private fun Preview() {
         Row(
             modifier = Modifier
                 .height(200.dp)
+                .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(MaterialTheme.dimens.large1)
         ) {
-            FavouriteCard(
-                modifier = Modifier,
-                onClick = {},
+            LibraryAlbumList(
+                modifier = Modifier.fillMaxWidth(),
+                header = "",
+                album = UiPrevAlbum(
+                    name = "Album"
+                )
             )
         }
     }

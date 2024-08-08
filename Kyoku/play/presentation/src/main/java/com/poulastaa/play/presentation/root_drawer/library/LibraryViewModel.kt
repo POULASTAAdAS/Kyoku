@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
+import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -90,9 +91,22 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun populate() {
-        readPlaylist()
-        readArtist()
         readFavourite()
+        readPlaylist()
+        readAlbum()
+        readArtist()
+    }
+
+    private fun readFavourite() {
+        viewModelScope.launch {
+            val status = repo.isFavourite()
+
+            state = state.copy(
+                data = state.data.copy(
+                    isFavouriteEntry = status
+                )
+            )
+        }
     }
 
     private fun readPlaylist() {
@@ -102,6 +116,20 @@ class LibraryViewModel @Inject constructor(
                     data = state.data.copy(
                         playlist = list.map {
                             it.toUiPlaylist()
+                        }
+                    )
+                )
+            }
+        }
+    }
+
+    private fun readAlbum() {
+        viewModelScope.launch {
+            repo.getAlbum().collectLatest { list ->
+                state = state.copy(
+                    data = state.data.copy(
+                        album = list.map {
+                            it.toUiAlbum()
                         }
                     )
                 )
@@ -121,18 +149,6 @@ class LibraryViewModel @Inject constructor(
                     isDataLoading = false
                 )
             }
-        }
-    }
-
-    private fun readFavourite() {
-        viewModelScope.launch {
-            val status = repo.isFavourite()
-
-            state = state.copy(
-                data = state.data.copy(
-                    isFavouriteEntry = status
-                )
-            )
         }
     }
 }

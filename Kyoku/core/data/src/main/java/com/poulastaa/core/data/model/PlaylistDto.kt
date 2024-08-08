@@ -1,4 +1,4 @@
-package com.poulastaa.auth.network.res
+package com.poulastaa.core.data.model
 
 import kotlinx.serialization.Serializable
 

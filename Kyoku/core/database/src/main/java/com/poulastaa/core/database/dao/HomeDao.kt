@@ -81,16 +81,6 @@ interface HomeDao {
 
     @Query(
         """
-        select PlaylistEntity.id , PlaylistEntity.name ,  SongEntity.coverImage from SongEntity
-        join SongPlaylistRelationEntity on SongEntity.id = SongPlaylistRelationEntity.songId
-        join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
-        where PlaylistEntity.id order by PlaylistEntity.points
-    """
-    )
-    fun getSavedPlaylists(): Flow<List<PrevSongResult>>
-
-    @Query(
-        """
         select id from ArtistEntity where id = :artistId
     """
     )

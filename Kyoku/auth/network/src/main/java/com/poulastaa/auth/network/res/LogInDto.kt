@@ -1,9 +1,12 @@
 package com.poulastaa.auth.network.res
 
+import com.poulastaa.core.data.model.AlbumDto
 import com.poulastaa.core.data.model.ArtistDto
+import com.poulastaa.core.data.model.PlaylistDto
 import com.poulastaa.core.data.model.PreArtistSongDto
 import com.poulastaa.core.data.model.PrevAlbumDto
 import com.poulastaa.core.data.model.PrevSongDto
+import com.poulastaa.core.data.model.SongDto
 import kotlinx.serialization.Serializable
 
 @Serializable

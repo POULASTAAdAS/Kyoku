@@ -1,11 +1,14 @@
 package com.poulastaa.network.mapper
 
+import com.poulastaa.core.data.model.AlbumDto
+import com.poulastaa.core.data.model.AlbumWithSongDto
 import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.model.PreArtistSongDto
 import com.poulastaa.core.data.model.PrevAlbumDto
 import com.poulastaa.core.data.model.PrevSongDetailDto
 import com.poulastaa.core.data.model.PrevSongDto
 import com.poulastaa.core.data.model.SongDto
+import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.PrevAlbum
@@ -22,6 +25,12 @@ private fun PrevSongDto.toPrevSong() = PrevSong(
 
 private fun PrevAlbumDto.toPrevAlbum() = PrevAlbum(
     albumId = this.albumId,
+    name = this.name,
+    coverImage = this.coverImage
+)
+
+private fun AlbumDto.toAlbum() = PrevAlbum(
+    albumId = this.id,
     name = this.name,
     coverImage = this.coverImage
 )
@@ -63,4 +72,9 @@ fun SongDto.toSong() = Song(
     artistName = this.artistName,
     releaseYear = this.releaseYear.toString(),
     masterPlaylistUrl = this.masterPlaylistUrl
+)
+
+fun AlbumWithSongDto.toAlbumWithSong() = AlbumWithSong(
+    album = this.albumDto.toAlbum(),
+    listOfSong = this.listOfSong.map { it.toSong() }
 )

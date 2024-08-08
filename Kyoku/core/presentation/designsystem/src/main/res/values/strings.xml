@@ -97,4 +97,6 @@
     <string name="song_removed_from_favourite">Song removed from Favourite</string>
     <string name="artist_added_to_library">Artist added to library</string>
     <string name="artist_removed_from_library">Artist removed from library\n</string>
+    <string name="album_added_to_library">Album added to library</string>
+    <string name="album_removed_from_favourite">Album removed from library</string>
 </resources>

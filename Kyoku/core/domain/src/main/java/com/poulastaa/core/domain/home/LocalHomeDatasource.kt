@@ -1,10 +1,12 @@
 package com.poulastaa.core.domain.home
 
+import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +21,7 @@ interface LocalHomeDatasource {
 
     suspend fun loadHomeStaticData(): HomeData
     fun loadSavedPlaylist(): Flow<SavedPlaylist>
+    fun loadSavedAlbum(): Flow<SavedAlbum>
 
     suspend fun isArtistIsInLibrary(artistId: Long): Boolean
     suspend fun isAlbumInLibrary(albumId: Long): Boolean
@@ -33,4 +36,7 @@ interface LocalHomeDatasource {
 
     suspend fun followArtist(artist: Artist)
     suspend fun unFollowArtist(id: Long)
+
+    suspend fun saveAlbum(data: AlbumWithSong)
+    suspend fun removeAlbum(id: Long)
 }

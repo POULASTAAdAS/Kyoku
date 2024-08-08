@@ -1,5 +1,6 @@
 package com.poulastaa.domain.repository
 
+import com.poulastaa.data.model.AlbumWithSongDto
 import com.poulastaa.data.model.ArtistDto
 import com.poulastaa.data.model.LogInDto
 import com.poulastaa.data.model.SongDto
@@ -65,6 +66,18 @@ interface UserRepository {
     ): ArtistDto
 
     suspend fun removeArtist(
+        id: Long,
+        email: String,
+        userType: UserType,
+    ): Boolean
+
+     suspend fun addAlbum(
+        albumId: Long,
+        email: String,
+        userType: UserType,
+    ): AlbumWithSongDto
+
+    suspend fun removeAlbum(
         id: Long,
         email: String,
         userType: UserType,
