@@ -50,6 +50,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
+import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheet
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiState
 import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
@@ -74,7 +75,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
-    val bottomSheetState = rememberModalBottomSheetState()
+    val itemBottomSheetState = rememberModalBottomSheetState()
+    val playlistBottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -439,28 +441,46 @@ fun HomeScreen(
         }
 
 
-        LaunchedEffect(key1 = state.bottomSheetUiState.isOpen) {
-            if (state.bottomSheetUiState.isOpen) scope.launch {
-                bottomSheetState.show()
+        LaunchedEffect(key1 = state.itemBottomSheetUiState.isOpen) {
+            if (state.itemBottomSheetUiState.isOpen) scope.launch {
+                itemBottomSheetState.show()
             }
         }
 
-        if (state.bottomSheetUiState.isOpen) ItemBottomSheet(
-            sheetState = bottomSheetState,
+        if (state.itemBottomSheetUiState.isOpen) ItemBottomSheet(
+            sheetState = itemBottomSheetState,
             header = state.header,
-            state = state.bottomSheetUiState,
+            state = state.itemBottomSheetUiState,
             onEvent = { event ->
                 scope.launch {
-                    bottomSheetState.hide()
+                    itemBottomSheetState.hide()
                 }.invokeOnCompletion {
                     onEvent(event)
                 }
             },
             onCancel = {
                 scope.launch {
-                    bottomSheetState.hide()
+                    itemBottomSheetState.hide()
                 }.invokeOnCompletion {
-                    onEvent(HomeUiEvent.BottomSheetUiEvent.Cancel)
+                    onEvent(HomeUiEvent.ItemBottomSheetUiEvent.Cancel)
+                }
+            }
+        )
+
+        LaunchedEffect(key1 = state.playlistBottomSheetUiState.isOpen) {
+            if (state.playlistBottomSheetUiState.isOpen) scope.launch {
+                playlistBottomSheetState.show()
+            }
+        }
+
+        if (state.playlistBottomSheetUiState.isOpen) PlaylistBottomSheet(
+            sheetState = playlistBottomSheetState,
+            exploreType = state.playlistBottomSheetUiState.exploreType,
+            closeBottomSheet = {
+                scope.launch {
+                    playlistBottomSheetState.hide()
+                }.invokeOnCompletion {
+                    onEvent(HomeUiEvent.PlaylistBottomSheetUiEvent.Cancel)
                 }
             }
         )
@@ -659,10 +679,10 @@ private val prevData = UiHomeData(
                 name = "Artist $it",
                 coverImageUrl = ""
             ),
-            listOfSong = (1..7).map {
+            listOfSong = (1..7).map { song ->
                 UiSongWithInfo(
-                    id = it.toLong(),
-                    title = "Song $it",
+                    id = song.toLong(),
+                    title = "Song $song",
                     coverImage = ""
                 )
             }

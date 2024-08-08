@@ -2,6 +2,7 @@ package com.poulastaa.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.poulastaa.core.database.dao.AddPlaylistDao
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
@@ -57,4 +58,5 @@ abstract class KyokuDatabase : RoomDatabase() {
     abstract val getSpotifyPlaylistDao: GetSpotifyPlaylistDao
     abstract val homeDao: HomeDao
     abstract val libraryDao: LibraryDao
+    abstract val addPlaylistDao: AddPlaylistDao
 }

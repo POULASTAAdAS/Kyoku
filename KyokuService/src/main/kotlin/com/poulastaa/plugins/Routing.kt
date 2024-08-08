@@ -37,6 +37,8 @@ private fun Routing.common(service: ServiceRepository) {
 
     addAlbum(service)
     removeAlbum(service)
+
+    savePlaylist(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

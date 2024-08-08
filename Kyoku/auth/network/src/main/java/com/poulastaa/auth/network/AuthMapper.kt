@@ -112,7 +112,7 @@ private fun SongDto.toSong() = Song(
     masterPlaylistUrl = this.masterPlaylistUrl
 )
 
-private fun PlaylistDto.toPlaylistData() = PlaylistData(
+fun PlaylistDto.toPlaylistData() = PlaylistData(
     id = this.id,
     name = this.name,
     listOfSong = this.listOfSong.map { it.toSong() }

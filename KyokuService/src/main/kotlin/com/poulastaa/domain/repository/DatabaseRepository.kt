@@ -2,6 +2,7 @@ package com.poulastaa.domain.repository
 
 import com.poulastaa.data.model.SongDto
 import com.poulastaa.domain.model.ResultArtist
+import com.poulastaa.domain.model.UserType
 
 interface DatabaseRepository {
     fun updateSongPointByOne(list: List<Long>)
@@ -13,6 +14,13 @@ interface DatabaseRepository {
     fun updateGenrePointByOne(list: List<Int>)
 
     suspend fun getSongOnId(
-        id:Long
+        id: Long,
     ): SongDto
+
+    suspend fun createPlaylist(
+        name: String,
+        userId: Long,
+        userType: UserType,
+        songIdList: List<Long>,
+    ): Long
 }

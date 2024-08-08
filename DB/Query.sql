@@ -119,17 +119,10 @@ select * from emailauthuser;
 select * from googleauthuser;
 select * from userplaylistsongrelation;
 
-update  emailauthuser set bdate = 1042416000000;
 
-select * from userfavouriterelation;
+select * from userplaylistsongrelation;
 
-select * from useralbumrelation;
-
-select * from googleauthuser;
-
-select * from songalbumrelation;
-
-
+select * from playlist;
 
 
 

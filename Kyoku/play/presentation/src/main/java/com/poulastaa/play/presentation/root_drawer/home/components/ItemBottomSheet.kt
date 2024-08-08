@@ -60,7 +60,7 @@ import com.poulastaa.core.presentation.designsystem.UnFollowArtistIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
-import com.poulastaa.play.presentation.root_drawer.home.model.BottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.home.model.ItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import kotlinx.coroutines.delay
@@ -70,7 +70,7 @@ import kotlinx.coroutines.delay
 fun ItemBottomSheet(
     sheetState: SheetState,
     header: String,
-    state: BottomSheetUiState,
+    state: ItemBottomSheetUiState,
     onEvent: (HomeUiEvent) -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -161,21 +161,21 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.play)} ${state.title}",
                             icon = PlayIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.PlayPopularSongMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.PlayPopularSongMix)
                         }
 
                         Option(
                             text = stringResource(id = R.string.add_as_playlist),
                             icon = AddAsPlaylistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.AddAsPlaylistPopularSongMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.AddAsPlaylistPopularSongMix)
                         }
 
                         Option(
                             text = "${stringResource(id = R.string.download)} ${state.title}",
                             icon = DownloadIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.DownloadPopularSongMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.DownloadPopularSongMix)
                         }
                     }
 
@@ -184,21 +184,21 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.play)} ${state.title}",
                             icon = PlayIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.PlayOldGem)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.PlayOldGem)
                         }
 
                         Option(
                             text = stringResource(id = R.string.add_as_playlist),
                             icon = AddAsPlaylistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.AddAsPlaylistOldGem)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.AddAsPlaylistOldGem)
                         }
 
                         Option(
                             text = "${stringResource(id = R.string.download)} ${state.title}",
                             icon = DownloadIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.DownloadOldGem)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.DownloadOldGem)
                         }
                     }
 
@@ -207,21 +207,21 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.play)} ${state.title}",
                             icon = PlayIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.PlayFavouriteArtistMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.PlayFavouriteArtistMix)
                         }
 
                         Option(
                             text = stringResource(id = R.string.add_as_playlist),
                             icon = AddAsPlaylistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.AddAsFavouriteArtistMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.AddAsFavouriteArtistMix)
                         }
 
                         Option(
                             text = "${stringResource(id = R.string.download)} ${state.title}",
                             icon = DownloadIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.DownloadFavouriteArtistMix)
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.DownloadFavouriteArtistMix)
                         }
                     }
 
@@ -230,12 +230,12 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.un_follow)} ${state.title}",
                             icon = UnFollowArtistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.UnFollowArtist(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.UnFollowArtist(state.id ?: -1L))
                         } else Option(
                             text = "${stringResource(id = R.string.follow)} ${state.title}",
                             icon = FollowArtistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.FollowArtist(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.FollowArtist(state.id ?: -1L))
                         }
 
 
@@ -243,7 +243,7 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.explore)} Artist",
                             icon = FilterArtistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.ExploreArtist(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(state.id ?: -1L))
                         }
                     }
 
@@ -252,7 +252,7 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.play)} ${state.title}",
                             icon = PlayIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.PlayAlbum(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.PlayAlbum(state.id ?: -1L))
                         }
 
                         if (state.flag) Option(
@@ -260,7 +260,7 @@ fun ItemBottomSheet(
                             icon = CancelIcon
                         ) {
                             onEvent(
-                                HomeUiEvent.BottomSheetUiEvent.RemoveSavedAlbum(
+                                HomeUiEvent.ItemBottomSheetUiEvent.RemoveSavedAlbum(
                                     state.id ?: -1L
                                 )
                             )
@@ -268,7 +268,7 @@ fun ItemBottomSheet(
                             text = stringResource(id = R.string.save_album),
                             icon = FilterAlbumIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.SaveAlbum(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.SaveAlbum(state.id ?: -1L))
                         }
                     }
 
@@ -277,12 +277,12 @@ fun ItemBottomSheet(
                             text = "${stringResource(id = R.string.play)} ${state.title}",
                             icon = PlayIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.PlaySong(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.PlaySong(state.id ?: -1L))
                         } else if (state.isQueue) Option(
                             text = stringResource(id = R.string.remove_from_queue),
                             icon = CancelIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.RemoveFromQueue(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.RemoveFromQueue(state.id ?: -1L))
 
                         } else {
                             Option(
@@ -290,7 +290,7 @@ fun ItemBottomSheet(
                                 icon = PlayNextIcon
                             ) {
                                 onEvent(
-                                    HomeUiEvent.BottomSheetUiEvent.PlayNextOnQueue(
+                                    HomeUiEvent.ItemBottomSheetUiEvent.PlayNextOnQueue(
                                         state.id ?: -1L
                                     )
                                 )
@@ -301,7 +301,7 @@ fun ItemBottomSheet(
                                 icon = PlayLastIcon
                             ) {
                                 onEvent(
-                                    HomeUiEvent.BottomSheetUiEvent.PlayLastOnQueue(
+                                    HomeUiEvent.ItemBottomSheetUiEvent.PlayLastOnQueue(
                                         state.id ?: -1L
                                     )
                                 )
@@ -313,7 +313,7 @@ fun ItemBottomSheet(
                             icon = NotFavouriteIcon
                         ) {
                             onEvent(
-                                HomeUiEvent.BottomSheetUiEvent.RemoveSongToFavourite(
+                                HomeUiEvent.ItemBottomSheetUiEvent.RemoveSongToFavourite(
                                     state.id ?: -1L
                                 )
                             )
@@ -323,7 +323,7 @@ fun ItemBottomSheet(
                             icon = FavouriteIcon
                         ) {
                             onEvent(
-                                HomeUiEvent.BottomSheetUiEvent.AddSongToFavourite(
+                                HomeUiEvent.ItemBottomSheetUiEvent.AddSongToFavourite(
                                     state.id ?: -1L
                                 )
                             )
@@ -334,7 +334,7 @@ fun ItemBottomSheet(
                             icon = FilterPlaylistIcon
                         ) {
                             onEvent(
-                                HomeUiEvent.BottomSheetUiEvent.AddSongToPlaylist(
+                                HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist(
                                     state.id ?: -1L
                                 )
                             )
@@ -344,7 +344,7 @@ fun ItemBottomSheet(
                             text = stringResource(id = R.string.view_artist),
                             icon = FilterArtistIcon
                         ) {
-                            onEvent(HomeUiEvent.BottomSheetUiEvent.ViewSongArtist(state.id ?: -1L))
+                            onEvent(HomeUiEvent.ItemBottomSheetUiEvent.ViewSongArtist(state.id ?: -1L))
                         }
                     }
 
@@ -396,7 +396,7 @@ private fun Preview() {
     }
 
     LaunchedEffect(key1 = Unit) {
-        delay(4000)
+        delay(1000)
         bool = false
     }
 
@@ -409,7 +409,7 @@ private fun Preview() {
             ItemBottomSheet(
                 sheetState = state,
                 header = "",
-                state = BottomSheetUiState(
+                state = ItemBottomSheetUiState(
                     isOpen = true,
                     title = "Title",
                     isBottomSheetLoading = bool,

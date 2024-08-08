@@ -4,6 +4,7 @@ import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 
 interface ServiceRepository {
     suspend fun getSpotifyPlaylist(
@@ -75,4 +76,9 @@ interface ServiceRepository {
         id: Long,
         userPayload: ReqUserPayload,
     ): Boolean
+
+    suspend fun savePlaylist(
+        req: SavePlaylistReq,
+        payload: ReqUserPayload,
+    ): PlaylistDto
 }

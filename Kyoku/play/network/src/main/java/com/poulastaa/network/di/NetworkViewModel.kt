@@ -1,7 +1,9 @@
 package com.poulastaa.network.di
 
 import com.google.gson.Gson
+import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.home.RemoteHomeDatasource
+import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import dagger.Module
 import dagger.Provides
@@ -19,6 +21,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteHomeDatasource = OnlineFirstHomeDatasource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideAddPlaylistRemoteDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteAddPlaylistDatasource = OnlineFirstAddPlaylistDatasource(
         client = client,
         gson = gson
     )

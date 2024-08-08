@@ -1,6 +1,7 @@
 package com.poulastaa.domain.repository
 
 import com.poulastaa.data.model.ArtistDto
+import com.poulastaa.data.model.SongDto
 import com.poulastaa.data.model.home.PreArtistSongDto
 import com.poulastaa.data.model.home.PrevAlbumDto
 import com.poulastaa.data.model.home.PrevSongDto
@@ -44,4 +45,8 @@ interface HomeRepository {
         excludeArtist: List<Long>,
         countryId: Int,
     ): List<PreArtistSongDto>
+
+    suspend fun getPopularSongMix(
+        countryId: Int,
+    ): List<SongDto>
 }

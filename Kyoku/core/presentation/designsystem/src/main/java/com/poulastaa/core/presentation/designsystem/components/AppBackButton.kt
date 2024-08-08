@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
@@ -18,6 +19,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun AppBackButton(
     modifier: Modifier = Modifier,
+    imageVector: ImageVector = ArrowBackIcon,
     onClick: () -> Unit,
 ) {
     IconButton(
@@ -30,7 +32,7 @@ fun AppBackButton(
     ) {
         Icon(
             modifier = Modifier.padding(MaterialTheme.dimens.small1),
-            imageVector = ArrowBackIcon,
+            imageVector = imageVector,
             contentDescription = null
         )
     }

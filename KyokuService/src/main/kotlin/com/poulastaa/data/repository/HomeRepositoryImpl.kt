@@ -3,42 +3,83 @@ package com.poulastaa.data.repository
 import com.poulastaa.data.mappers.constructArtistProfileUrl
 import com.poulastaa.data.mappers.constructSongCoverImage
 import com.poulastaa.data.model.ArtistDto
+import com.poulastaa.data.model.SongDto
 import com.poulastaa.data.model.home.PreArtistSongDto
 import com.poulastaa.data.model.home.PrevAlbumDto
 import com.poulastaa.data.model.home.PrevSongDetailDto
 import com.poulastaa.data.model.home.PrevSongDto
 import com.poulastaa.domain.model.DayType
 import com.poulastaa.domain.model.UserType
+import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.HomeRepository
 import com.poulastaa.domain.table.AlbumTable
 import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.SongTable
 import com.poulastaa.domain.table.relation.*
 import com.poulastaa.plugins.query
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
-class HomeRepositoryImpl : HomeRepository {
+class HomeRepositoryImpl(
+    private val database: DatabaseRepository,
+) : HomeRepository {
+    private fun getPopularSonMixQuery(countryId: Int) = SongTable
+        .join(
+            otherTable = SongCountryRelationTable,
+            joinType = JoinType.INNER,
+            additionalConstraint = {
+                SongTable.id eq SongCountryRelationTable.songId as Column<*>
+            }
+        ).select {
+            SongCountryRelationTable.countryId eq countryId
+        }.orderBy(SongTable.points to SortOrder.DESC)
+
+    private fun getPopularSongFromUserTimeQuery(
+        year: Int,
+        countryId: Int,
+    ) = SongTable.join(
+        otherTable = SongCountryRelationTable,
+        joinType = JoinType.INNER,
+        additionalConstraint = {
+            SongTable.id eq SongCountryRelationTable.songId as Column<*>
+        }
+    ).select {
+        SongCountryRelationTable.countryId eq countryId and (SongTable.year eq year)
+    }.orderBy(SongTable.points to SortOrder.DESC)
+
+    private fun getFavouriteArtistMixQuery(userId: Long, userType: String) = SongTable
+        .join(
+            otherTable = SongArtistRelationTable,
+            joinType = JoinType.INNER,
+            additionalConstraint = {
+                SongTable.id eq SongArtistRelationTable.songId as Column<*>
+            }
+        )
+        .join(
+            otherTable = ArtistTable,
+            joinType = JoinType.INNER,
+            additionalConstraint = {
+                ArtistTable.id eq SongArtistRelationTable.artistId as Column<*>
+            }
+        )
+        .join(
+            otherTable = UserArtistRelationTable,
+            joinType = JoinType.INNER,
+            additionalConstraint = {
+                UserArtistRelationTable.artistId as Column<*> eq ArtistTable.id
+            }
+        ).select {
+            UserArtistRelationTable.userId eq userId and
+                    (UserArtistRelationTable.userType eq userType)
+        }.orderBy(
+            Random() to SortOrder.ASC,
+            SongTable.points to SortOrder.DESC
+        )
+
     override suspend fun getPopularSongMixPrev(countryId: Int): List<PrevSongDto> = withContext(Dispatchers.IO) {
         query {
-            SongTable
-                .join(
-                    otherTable = SongCountryRelationTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        SongTable.id eq SongCountryRelationTable.songId as Column<*>
-                    }
-                )
-                .slice(
-                    SongTable.id,
-                    SongTable.coverImage
-                ).select {
-                    SongCountryRelationTable.countryId eq countryId
-                }.orderBy(SongTable.points to SortOrder.DESC)
+            getPopularSonMixQuery(countryId)
                 .limit(4)
                 .map {
                     PrevSongDto(
@@ -58,22 +99,10 @@ class HomeRepositoryImpl : HomeRepository {
                 val targetYear = year - 1 + index
 
                 query {
-                    SongTable
-                        .join(
-                            otherTable = SongCountryRelationTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                SongTable.id eq SongCountryRelationTable.songId as Column<*>
-                            }
-                        )
-                        .slice(
-                            SongTable.id,
-                            SongTable.coverImage
-                        ).select {
-                            SongCountryRelationTable.countryId eq countryId and (SongTable.year eq targetYear)
-                        }
-                        .orderBy(SongTable.points to SortOrder.DESC)
-                        .firstOrNull()
+                    getPopularSongFromUserTimeQuery(
+                        year = targetYear,
+                        countryId = countryId,
+                    ).firstOrNull()
                         ?.let {
                             PrevSongDto(
                                 songId = it[SongTable.id].value,
@@ -91,40 +120,7 @@ class HomeRepositoryImpl : HomeRepository {
         countryId: Int,
     ): List<PrevSongDto> = withContext(Dispatchers.IO) {
         query {
-            SongTable
-                .join(
-                    otherTable = SongArtistRelationTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        SongTable.id eq SongArtistRelationTable.songId as Column<*>
-                    }
-                )
-                .join(
-                    otherTable = ArtistTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        ArtistTable.id eq SongArtistRelationTable.artistId as Column<*>
-                    }
-                )
-                .join(
-                    otherTable = UserArtistRelationTable,
-                    joinType = JoinType.INNER,
-                    additionalConstraint = {
-                        UserArtistRelationTable.artistId as Column<*> eq ArtistTable.id
-                    }
-                )
-                .slice(
-                    SongTable.id,
-                    SongTable.coverImage,
-                    SongTable.points
-                ).select {
-                    UserArtistRelationTable.userId eq userId and
-                            (UserArtistRelationTable.userType eq userType.name)
-                }.orderBy(
-                    org.jetbrains.exposed.sql.Random() to SortOrder.ASC,
-                    SongTable.points to SortOrder.DESC
-                )
-                .orderBy()
+            getFavouriteArtistMixQuery(userId, userType.name)
                 .limit(4)
                 .map {
                     PrevSongDto(
@@ -332,6 +328,29 @@ class HomeRepositoryImpl : HomeRepository {
                         songs = it.second
                     )
                 }
+        }
+    }
+
+    override suspend fun getPopularSongMix(
+        countryId: Int,
+    ): List<SongDto> = coroutineScope {
+        query {
+            getPopularSonMixQuery(countryId)
+                .limit(kotlin.random.Random.nextInt(46, 56))
+                .map {
+                    async {
+                        val artist = database.getArtistOnSongId(it[SongTable.id].value)
+
+                        SongDto(
+                            id = it[SongTable.id].value,
+                            coverImage = it[SongTable.coverImage],
+                            title = it[SongTable.title],
+                            artistName = artist.joinToString { resultArtist -> resultArtist.name },
+                            releaseYear = it[SongTable.year],
+                            masterPlaylistUrl = it[SongTable.masterPlaylistPath]
+                        )
+                    }
+                }.awaitAll()
         }
     }
 }

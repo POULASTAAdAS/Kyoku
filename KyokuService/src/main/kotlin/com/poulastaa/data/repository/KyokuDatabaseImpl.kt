@@ -1,19 +1,23 @@
 package com.poulastaa.data.repository
 
 import com.poulastaa.data.dao.ArtistDao
+import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.mappers.toArtistResult
 import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.model.SongDto
 import com.poulastaa.domain.model.ResultArtist
+import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.GenreTable
 import com.poulastaa.domain.table.SongTable
 import com.poulastaa.domain.table.relation.SongArtistRelationTable
+import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
@@ -124,5 +128,35 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 SongTable.id eq id
             }.singleOrNull()?.toSongDto(artistName)
         } ?: SongDto()
+    }
+
+    override suspend fun createPlaylist(
+        name: String,
+        userId: Long,
+        userType: UserType,
+        songIdList: List<Long>,
+    ): Long = coroutineScope {
+        val playlist = async {
+            query {
+                PlaylistDao.new {
+                    this.name = name
+                }
+            }
+        }.await()
+
+        songIdList.map { id ->
+            async {
+                query {
+                    UserPlaylistSongRelationTable.insertIgnore {
+                        it[this.playlistId] = playlist.id.value
+                        it[this.songId] = id
+                        it[this.userType] = userType.name
+                        it[this.userId] = userId
+                    }
+                }
+            }
+        }.awaitAll()
+
+        playlist.id.value
     }
 }

@@ -35,7 +35,9 @@ fun provideUserRepository() = module {
 
 fun provideHomeRepository() = module {
     single<HomeRepository> {
-        HomeRepositoryImpl()
+        HomeRepositoryImpl(
+            database = get()
+        )
     }
 }
 

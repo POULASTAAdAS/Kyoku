@@ -16,36 +16,40 @@ sealed interface HomeUiEvent {
         val context: Context,
     ) : HomeUiEvent
 
-    sealed interface BottomSheetUiEvent : HomeUiEvent {
-        data object Cancel : BottomSheetUiEvent
+    sealed interface ItemBottomSheetUiEvent : HomeUiEvent {
+        data object Cancel : ItemBottomSheetUiEvent
 
-        data object PlayPopularSongMix : BottomSheetUiEvent
-        data object PlayOldGem : BottomSheetUiEvent
-        data object PlayFavouriteArtistMix : BottomSheetUiEvent
+        data object PlayPopularSongMix : ItemBottomSheetUiEvent
+        data object PlayOldGem : ItemBottomSheetUiEvent
+        data object PlayFavouriteArtistMix : ItemBottomSheetUiEvent
 
-        data object AddAsPlaylistPopularSongMix : BottomSheetUiEvent
-        data object AddAsPlaylistOldGem : BottomSheetUiEvent
-        data object AddAsFavouriteArtistMix : BottomSheetUiEvent
+        data object AddAsPlaylistPopularSongMix : ItemBottomSheetUiEvent
+        data object AddAsPlaylistOldGem : ItemBottomSheetUiEvent
+        data object AddAsFavouriteArtistMix : ItemBottomSheetUiEvent
 
-        data object DownloadPopularSongMix : BottomSheetUiEvent
-        data object DownloadOldGem : BottomSheetUiEvent
-        data object DownloadFavouriteArtistMix : BottomSheetUiEvent
+        data object DownloadPopularSongMix : ItemBottomSheetUiEvent
+        data object DownloadOldGem : ItemBottomSheetUiEvent
+        data object DownloadFavouriteArtistMix : ItemBottomSheetUiEvent
 
-        data class FollowArtist(val id: Long) : BottomSheetUiEvent
-        data class UnFollowArtist(val id: Long) : BottomSheetUiEvent
-        data class ExploreArtist(val id: Long) : BottomSheetUiEvent
+        data class FollowArtist(val id: Long) : ItemBottomSheetUiEvent
+        data class UnFollowArtist(val id: Long) : ItemBottomSheetUiEvent
+        data class ExploreArtist(val id: Long) : ItemBottomSheetUiEvent
 
-        data class PlayAlbum(val id: Long) : BottomSheetUiEvent
-        data class SaveAlbum(val id: Long) : BottomSheetUiEvent
-        data class RemoveSavedAlbum(val id: Long) : BottomSheetUiEvent
+        data class PlayAlbum(val id: Long) : ItemBottomSheetUiEvent
+        data class SaveAlbum(val id: Long) : ItemBottomSheetUiEvent
+        data class RemoveSavedAlbum(val id: Long) : ItemBottomSheetUiEvent
 
-        data class PlaySong(val id: Long) : BottomSheetUiEvent
-        data class RemoveFromQueue(val id: Long) : BottomSheetUiEvent
-        data class PlayNextOnQueue(val id: Long) : BottomSheetUiEvent
-        data class PlayLastOnQueue(val id: Long) : BottomSheetUiEvent
-        data class AddSongToPlaylist(val id: Long) : BottomSheetUiEvent
-        data class AddSongToFavourite(val id: Long) : BottomSheetUiEvent
-        data class RemoveSongToFavourite(val id: Long) : BottomSheetUiEvent
-        data class ViewSongArtist(val id: Long) : BottomSheetUiEvent
+        data class PlaySong(val id: Long) : ItemBottomSheetUiEvent
+        data class RemoveFromQueue(val id: Long) : ItemBottomSheetUiEvent
+        data class PlayNextOnQueue(val id: Long) : ItemBottomSheetUiEvent
+        data class PlayLastOnQueue(val id: Long) : ItemBottomSheetUiEvent
+        data class AddSongToPlaylist(val id: Long) : ItemBottomSheetUiEvent
+        data class AddSongToFavourite(val id: Long) : ItemBottomSheetUiEvent
+        data class RemoveSongToFavourite(val id: Long) : ItemBottomSheetUiEvent
+        data class ViewSongArtist(val id: Long) : ItemBottomSheetUiEvent
+    }
+
+    sealed interface PlaylistBottomSheetUiEvent : HomeUiEvent {
+        data object Cancel : PlaylistBottomSheetUiEvent
     }
 }

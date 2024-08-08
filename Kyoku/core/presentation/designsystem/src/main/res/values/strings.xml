@@ -99,4 +99,6 @@
     <string name="artist_removed_from_library">Artist removed from library\n</string>
     <string name="album_added_to_library">Album added to library</string>
     <string name="album_removed_from_favourite">Album removed from library</string>
+    <string name="added_as_playlist">added as playlist</string>
+    <string name="playlist_name_conflict">Playlist can\'t have same name</string>
 </resources>

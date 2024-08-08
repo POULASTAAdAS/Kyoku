@@ -7,6 +7,7 @@ import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.plugins.query
@@ -303,5 +304,46 @@ class ServiceRepositoryImpl(
         val user = userRepo.getUserOnPayload(userPayload) ?: return false
 
         return userRepo.removeAlbum(id, email = user.email, userType = user.userType)
+    }
+
+    override suspend fun savePlaylist(req: SavePlaylistReq, payload: ReqUserPayload): PlaylistDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return PlaylistDto()
+
+        val type = when (req.type) {
+            ExploreType.OLD_GEM.name -> ExploreType.OLD_GEM
+            ExploreType.POPULAR.name -> ExploreType.POPULAR
+            else -> ExploreType.ARTIST_MIX
+        }
+
+        return coroutineScope {
+            val oldSongDef = req.idList.map { async { kyokuRepo.getSongOnId(it) } }
+            val songDef = async {
+                when (type) {
+                    ExploreType.POPULAR -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
+                    ExploreType.OLD_GEM -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
+                    ExploreType.ARTIST_MIX -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
+                }
+            }
+
+            val oldSong: List<SongDto> = oldSongDef.awaitAll()
+            val song = songDef.await()
+
+            oldSong.forEach { old ->
+                if (!song.any { it.id == old.id }) song.add(old)
+            }
+
+            val playlistId = kyokuRepo.createPlaylist(
+                name = req.name,
+                userId = user.id,
+                userType = user.userType,
+                songIdList = song.map { it.id }
+            )
+
+            PlaylistDto(
+                id = playlistId,
+                name = req.name,
+                listOfSong = song.toList()
+            )
+        }
     }
 }
