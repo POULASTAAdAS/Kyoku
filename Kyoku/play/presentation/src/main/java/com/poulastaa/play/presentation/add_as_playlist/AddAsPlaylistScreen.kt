@@ -104,7 +104,8 @@ private fun AddAsPlaylistScreen(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 

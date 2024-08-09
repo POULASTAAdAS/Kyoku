@@ -2,6 +2,8 @@ package com.poulastaa.play.presentation.add_as_playlist
 
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -27,7 +29,8 @@ fun PlaylistBottomSheet(
             modifier = Modifier
                 .imePadding()
                 .padding(bottom = MaterialTheme.dimens.medium1)
-                .padding(horizontal = MaterialTheme.dimens.medium1),
+                .padding(horizontal = MaterialTheme.dimens.medium1)
+                .verticalScroll(rememberScrollState()),
             exploreType = exploreType,
             navigateBack = closeBottomSheet
         )
