@@ -35,7 +35,7 @@ private fun provideDataSource(url: String, driverClass: String): HikariDataSourc
         HikariConfig().apply {
             driverClassName = driverClass
             jdbcUrl = url
-            maximumPoolSize = 4
+            maximumPoolSize = 10
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
             validate()

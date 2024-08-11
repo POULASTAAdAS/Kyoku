@@ -62,15 +62,6 @@ class RootDrawerViewModel @Inject constructor(
                 }
             }
 
-            RootDrawerUiEvent.LogOut -> {
-//                viewModelScope.launch {
-//                    ds.logOut()
-//                    _uiEvent.send(
-//                        RootDrawerUiAction.Navigate(ScreenEnum.INTRO)
-//                    )
-//                }
-            }
-
             is RootDrawerUiEvent.SaveScreenToggle -> {
                 if (state.startDestination != event.screen.name.toDrawScreenRoute()) {
                     state = state.copy(

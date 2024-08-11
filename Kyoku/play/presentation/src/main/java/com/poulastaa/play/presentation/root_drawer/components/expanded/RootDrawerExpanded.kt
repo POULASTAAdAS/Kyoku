@@ -90,10 +90,6 @@ fun RootDrawerExpanded(
                     }
                 },
                 onSaveScreenToggle = onSaveScreenToggle,
-                onLogoutClick = {
-                    toggle = false
-                    onEvent(RootDrawerUiEvent.LogOut)
-                }
             )
         }
 

@@ -89,9 +89,6 @@ fun RootDrawerCompact(
 
                         else -> onEvent(it)
                     }
-                },
-                onLogoutClick = {
-                    onEvent(RootDrawerUiEvent.LogOut)
                 }
             )
         },
