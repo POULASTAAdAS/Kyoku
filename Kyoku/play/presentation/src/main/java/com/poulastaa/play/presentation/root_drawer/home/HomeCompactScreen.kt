@@ -6,12 +6,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.domain.TopBarToDrawerEvent
+import com.poulastaa.play.presentation.OtherScreens
 import com.poulastaa.play.presentation.root_drawer.home.components.HomeScreen
 
 @Composable
 fun HomeCompactScreen(
     profileUrl: String,
     viewModel: HomeViewModel = hiltViewModel(),
+    navigate: (OtherScreens) -> Unit,
     onEvent: (TopBarToDrawerEvent) -> Unit,
 ) {
     val context = LocalContext.current
@@ -23,6 +25,8 @@ fun HomeCompactScreen(
                 it.message.asString(context),
                 Toast.LENGTH_LONG
             ).show()
+
+            is HomeUiAction.Navigate -> navigate(it.screen)
         }
     }
 

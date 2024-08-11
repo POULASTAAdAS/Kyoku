@@ -90,7 +90,6 @@ class RootDrawerViewModel @Inject constructor(
     }
 
 
-
     private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {
         ds.storeSaveScreen(screen.name)
     }

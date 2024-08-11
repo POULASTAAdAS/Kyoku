@@ -2,7 +2,6 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
-import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
 import com.poulastaa.core.domain.utils.SavedPlaylist

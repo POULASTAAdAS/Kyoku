@@ -13,10 +13,10 @@ interface RemoteHomeDatasource {
     suspend fun getNewHomeResponse(dayType: DayType): Result<NewHome, DataError.Network>
 
     suspend fun insertIntoFavourite(id: Long): Result<Song, DataError.Network>
-    suspend fun removeFromFavourite(id: Long):  EmptyResult<DataError.Network>
+    suspend fun removeFromFavourite(id: Long): EmptyResult<DataError.Network>
 
     suspend fun followArtist(id: Long): Result<Artist, DataError.Network>
-    suspend fun unFollowArtist(id: Long):  EmptyResult<DataError.Network>
+    suspend fun unFollowArtist(id: Long): EmptyResult<DataError.Network>
 
     suspend fun saveAlbum(id: Long): Result<AlbumWithSong, DataError.Network>
     suspend fun removeAlbum(id: Long): EmptyResult<DataError.Network>

@@ -2,7 +2,6 @@ package com.poulastaa.core.domain.home
 
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
-import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.SavedAlbum
@@ -29,6 +28,6 @@ interface HomeRepository {
     suspend fun followArtist(id: Long): Boolean
     suspend fun unFollowArtist(id: Long): Boolean
 
-    suspend fun saveAlbum(id:Long): Boolean
+    suspend fun saveAlbum(id: Long): Boolean
     suspend fun removeAlbum(id: Long): Boolean
 }

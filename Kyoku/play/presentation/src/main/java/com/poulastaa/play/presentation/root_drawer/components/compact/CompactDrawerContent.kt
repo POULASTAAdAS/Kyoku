@@ -51,7 +51,6 @@ import coil.request.ImageRequest
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CalenderIcon
-import com.poulastaa.core.presentation.designsystem.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.dimens

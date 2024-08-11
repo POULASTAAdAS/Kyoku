@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,6 +12,7 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.play.presentation.OtherScreens
 import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
@@ -300,6 +300,19 @@ class HomeViewModel @Inject constructor(
                             ) else _uiEvent.send(
                                 HomeUiAction.EmitToast(
                                     UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }
+
+                    is HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.AddAsPlaylist(
+                                        songId = event.id,
+                                        artistId = event.artistId
+                                    )
                                 )
                             )
                         }

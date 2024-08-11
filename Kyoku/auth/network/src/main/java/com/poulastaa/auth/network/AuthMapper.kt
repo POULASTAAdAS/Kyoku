@@ -1,13 +1,13 @@
 package com.poulastaa.auth.network
 
-import com.poulastaa.core.data.model.AlbumDto
 import com.poulastaa.auth.network.res.AuthDto
 import com.poulastaa.auth.network.res.EmailVerificationDto
 import com.poulastaa.auth.network.res.LogInDto
-import com.poulastaa.core.data.model.PlaylistDto
 import com.poulastaa.auth.network.res.ResponseUserDto
 import com.poulastaa.auth.network.res.UserAuthStatusDto
+import com.poulastaa.core.data.model.AlbumDto
 import com.poulastaa.core.data.model.ArtistDto
+import com.poulastaa.core.data.model.PlaylistDto
 import com.poulastaa.core.data.model.PreArtistSongDto
 import com.poulastaa.core.data.model.PrevAlbumDto
 import com.poulastaa.core.data.model.PrevSongDetailDto

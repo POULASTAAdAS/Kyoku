@@ -1,7 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -167,38 +166,38 @@ private fun LibraryScreen(
             if (state.filterType == LibraryFilterType.ALL ||
                 state.filterType == LibraryFilterType.PLAYLIST &&
                 state.data.playlist.isNotEmpty()
-            )  if (state.data.playlist.isNotEmpty())
+            ) if (state.data.playlist.isNotEmpty())
                 itemSection(
-                gridSize = state.gridSize,
-                type = state.viewType,
-                data = state.data.playlist,
-                header = R.string.playlist,
-                onHeaderClick = {
+                    gridSize = state.gridSize,
+                    type = state.viewType,
+                    data = state.data.playlist,
+                    header = R.string.playlist,
+                    onHeaderClick = {
 
-                },
-                listContent = {
-                    Row(
-                        modifier = Modifier
-                            .height(100.dp)
-                    ) {
-                        LibraryPlaylistList(
-                            modifier = Modifier.fillMaxSize(),
+                    },
+                    listContent = {
+                        Row(
+                            modifier = Modifier
+                                .height(100.dp)
+                        ) {
+                            LibraryPlaylistList(
+                                modifier = Modifier.fillMaxSize(),
+                                urls = it.urls,
+                                name = it.name,
+                                header = state.header,
+                            )
+                        }
+                    },
+                    gridContent = {
+                        LibraryPlaylistGird(
+                            modifier = Modifier
+                                .aspectRatio(1f),
                             urls = it.urls,
                             name = it.name,
                             header = state.header,
                         )
                     }
-                },
-                gridContent = {
-                    LibraryPlaylistGird(
-                        modifier = Modifier
-                            .aspectRatio(1f),
-                        urls = it.urls,
-                        name = it.name,
-                        header = state.header,
-                    )
-                }
-            )
+                )
 
 
             if (state.filterType == LibraryFilterType.ALL ||
@@ -236,39 +235,39 @@ private fun LibraryScreen(
             if (state.filterType == LibraryFilterType.ALL ||
                 state.filterType == LibraryFilterType.ARTIST &&
                 state.data.artist.isNotEmpty()
-            )  if (state.data.artist.isNotEmpty())
+            ) if (state.data.artist.isNotEmpty())
                 itemSection(
-                gridSize = state.gridSize,
-                type = state.viewType,
-                data = state.data.artist,
-                header = R.string.artist,
-                onHeaderClick = {
+                    gridSize = state.gridSize,
+                    type = state.viewType,
+                    data = state.data.artist,
+                    header = R.string.artist,
+                    onHeaderClick = {
 
-                },
-                listContent = {
-                    Row(
-                        modifier = Modifier
-                            .height(160.dp)
-                    ) {
-                        SuggestedArtistCard(
+                    },
+                    listContent = {
+                        Row(
                             modifier = Modifier
-                                .aspectRatio(1f),
+                                .height(160.dp)
+                        ) {
+                            SuggestedArtistCard(
+                                modifier = Modifier
+                                    .aspectRatio(1f),
+                                artist = it,
+                                header = state.header,
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            )
+                        }
+                    },
+                    gridContent = {
+                        SuggestedArtistCard(
+                            modifier = Modifier.aspectRatio(1f),
                             artist = it,
                             header = state.header,
-                            fontSize = MaterialTheme.typography.titleMedium.fontSize
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            maxLine = 2
                         )
                     }
-                },
-                gridContent = {
-                    SuggestedArtistCard(
-                        modifier = Modifier.aspectRatio(1f),
-                        artist = it,
-                        header = state.header,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        maxLine = 2
-                    )
-                }
-            )
+                )
 
             item(
                 span = { GridItemSpan(state.gridSize) }

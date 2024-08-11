@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.components.expanded
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,10 +31,13 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
+import com.poulastaa.play.presentation.OtherScreens
+import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
+import com.poulastaa.play.presentation.settings.SettingsRootScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -125,8 +129,17 @@ fun RootDrawerExpanded(
                 composable(route = DrawerScreen.Home.route) {
                     HomeCompactScreen(
                         profileUrl = state.profilePicUrl,
-                        onEvent = {
-                            when (it) {
+                        navigate = { screen ->
+                            when (screen) {
+                                is OtherScreens.AddAsPlaylist -> {
+                                    navController.navigate(DrawerScreen.AddToPlaylist.route) {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            }
+                        },
+                        onEvent = { event ->
+                            when (event) {
                                 TopBarToDrawerEvent.PROFILE_CLICK -> Unit
 
                                 TopBarToDrawerEvent.SEARCH_CLICK -> onEvent(
@@ -148,6 +161,12 @@ fun RootDrawerExpanded(
 
                         }
                     )
+                }
+
+                composable(route = DrawerScreen.AddToPlaylist.route) {
+                    AddToPlaylistRootScreen {
+                        navController.popBackStack()
+                    }
                 }
 
                 composable(route = DrawerScreen.Profile.route) {
@@ -179,17 +198,25 @@ fun RootDrawerExpanded(
                 }
 
                 composable(route = DrawerScreen.Settings.route) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Settings",
-                            fontSize = MaterialTheme.typography.displayLarge.fontSize,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    SettingsRootScreen(
+                        navigate = {
+                            when (it) {
+                                ScreenEnum.INTRO -> onEvent(
+                                    RootDrawerUiEvent.Navigate(
+                                        screen = ScreenEnum.INTRO
+                                    )
+                                )
+
+                                else -> {
+                                    navController.popBackStack()
+                                    navController.navigate(it.name)
+                                }
+                            }
+                        },
+                        navigateBack = {
+                            navController.popBackStack()
+                        }
+                    )
                 }
             }
         }

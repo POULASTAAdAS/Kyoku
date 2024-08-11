@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
@@ -52,6 +53,10 @@ val UserIcon: ImageVector
 val ArrowBackIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ArrowBack
+
+val ArrowDownIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.KeyboardArrowDown
 
 val LinkIcon: ImageVector
     @Composable

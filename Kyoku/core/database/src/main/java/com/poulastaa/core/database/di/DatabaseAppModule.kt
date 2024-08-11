@@ -18,7 +18,7 @@ object DatabaseAppModule {
     @Singleton
     fun provideKyokuDatabase(
         @ApplicationContext context: Context,
-    ) = Room.databaseBuilder(
+    ): KyokuDatabase = Room.databaseBuilder(
         context = context,
         KyokuDatabase::class.java,
         "KyokuDatabase"

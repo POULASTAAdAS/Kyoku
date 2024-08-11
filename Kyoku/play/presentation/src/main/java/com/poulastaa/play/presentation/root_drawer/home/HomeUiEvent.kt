@@ -43,7 +43,11 @@ sealed interface HomeUiEvent {
         data class RemoveFromQueue(val id: Long) : ItemBottomSheetUiEvent
         data class PlayNextOnQueue(val id: Long) : ItemBottomSheetUiEvent
         data class PlayLastOnQueue(val id: Long) : ItemBottomSheetUiEvent
-        data class AddSongToPlaylist(val id: Long) : ItemBottomSheetUiEvent
+        data class AddSongToPlaylist(
+            val id: Long,
+            val artistId: Long?,
+        ) : ItemBottomSheetUiEvent
+
         data class AddSongToFavourite(val id: Long) : ItemBottomSheetUiEvent
         data class RemoveSongToFavourite(val id: Long) : ItemBottomSheetUiEvent
         data class ViewSongArtist(val id: Long) : ItemBottomSheetUiEvent

@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -55,7 +54,6 @@ import com.poulastaa.core.presentation.designsystem.HomeSelectedIcon
 import com.poulastaa.core.presentation.designsystem.HomeUnSelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibrarySelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibraryUnSelectedIcon
-import com.poulastaa.core.presentation.designsystem.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.ThreeLineIcon

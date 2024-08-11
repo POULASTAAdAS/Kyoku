@@ -6,10 +6,12 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.repository.RoomLocalAddPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAuthDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDataSource
+import com.poulastaa.core.database.repository.RoomLocalSettingDatasource
 import com.poulastaa.core.database.repository.RoomLocalSpotifyDataSource
 import com.poulastaa.core.database.repository.RoomLocalStoreArtistDataSource
 import com.poulastaa.core.domain.add_playlist.LocalAddPlaylistDatasource
@@ -18,6 +20,7 @@ import com.poulastaa.core.domain.auth.LocalAuthDatasource
 import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
 import com.poulastaa.core.domain.home.LocalHomeDatasource
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.setting.LocalSettingDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -107,5 +110,21 @@ object DatabaseViewModelModule {
     ): LocalAddPlaylistDatasource = RoomLocalAddPlaylistDatasource(
         commonDao = commonDao,
         addPlaylistDao = addPlaylistDao
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSettingDao(
+        database: KyokuDatabase,
+    ): SettingDao = database.settingDao
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalSettingDatasource(
+        settingDao: SettingDao,
+        database: KyokuDatabase,
+    ): LocalSettingDatasource = RoomLocalSettingDatasource(
+        database = database,
+        settingDao = settingDao
     )
 }

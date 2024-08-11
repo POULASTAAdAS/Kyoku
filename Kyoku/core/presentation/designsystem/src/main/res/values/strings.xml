@@ -101,4 +101,12 @@
     <string name="album_removed_from_favourite">Album removed from library</string>
     <string name="added_as_playlist">added as playlist</string>
     <string name="playlist_name_conflict">Playlist can\'t have same name</string>
+    <string name="setting">Setting</string>
+    <string name="account">Account</string>
+    <string name="logout_text">"Are you sure you want to logout ? "</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="new_playlist">New Playlist</string>
+    <string name="search_playlist">Search Playlist</string>
 </resources>

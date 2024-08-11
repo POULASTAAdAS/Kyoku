@@ -6,7 +6,6 @@ import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
 import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
 import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
-import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
 import com.poulastaa.core.database.model.PopularArtistWithSongResult
@@ -18,8 +17,6 @@ import com.poulastaa.core.domain.model.PrevArtistSong
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
-import com.poulastaa.core.domain.model.Song
-import kotlin.random.Random
 
 fun PrevSong.toPopularSongMixPrevEntity() = PopularSongMixPrevEntity(
     id = this.songId,

@@ -9,6 +9,7 @@ data class ItemBottomSheetUiState(
     val flag: Boolean = false,
     val isInFavourite: Boolean = false,
     val id: Long? = null,
+    val otherId: Long? = null,
     val title: String = "",
     val urls: List<String> = emptyList(),
     val itemType: HomeItemClickType = HomeItemClickType.NON,

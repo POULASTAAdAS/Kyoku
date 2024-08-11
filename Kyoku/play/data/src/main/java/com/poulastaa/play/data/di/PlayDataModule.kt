@@ -1,5 +1,6 @@
 package com.poulastaa.play.data.di
 
+import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.add_playlist.AddPlaylistRepository
 import com.poulastaa.core.domain.add_playlist.LocalAddPlaylistDatasource
 import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
@@ -8,6 +9,9 @@ import com.poulastaa.core.domain.home.LocalHomeDatasource
 import com.poulastaa.core.domain.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.setting.LocalSettingDatasource
+import com.poulastaa.core.domain.setting.SettingRepository
+import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
@@ -48,10 +52,22 @@ object PlayDataModule {
     fun provideAddPlaylistRepository(
         local: LocalAddPlaylistDatasource,
         remote: RemoteAddPlaylistDatasource,
-        applicationScope: CoroutineScope
+        applicationScope: CoroutineScope,
     ): AddPlaylistRepository = OnlineFirstAddPlaylistRepository(
         local = local,
         remote = remote,
+        application = applicationScope
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSettingRepository(
+        local: LocalSettingDatasource,
+        ds: DataStoreRepository,
+        applicationScope: CoroutineScope,
+    ): SettingRepository = OfflineFirstSettingRepository(
+        ds = ds,
+        local = local,
         application = applicationScope
     )
 }

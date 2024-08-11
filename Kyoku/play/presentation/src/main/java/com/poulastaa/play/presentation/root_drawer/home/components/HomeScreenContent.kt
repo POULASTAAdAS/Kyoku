@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.home.components
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -48,23 +47,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.model.UiArtist
-import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.add_as_playlist.AddAsPlaylistRootScreen
 import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheet
-import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiState
-import com.poulastaa.play.presentation.root_drawer.home.model.UiArtistWithSong
-import com.poulastaa.play.presentation.root_drawer.home.model.UiHomeData
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
-import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevSong
-import com.poulastaa.play.presentation.root_drawer.home.model.UiSongWithInfo
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import kotlinx.coroutines.launch
 
@@ -572,153 +561,3 @@ private fun TopRow(
         content = content
     )
 }
-
-//@PreviewLightDark
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    widthDp = 1000,
-    heightDp = 580
-)
-@Preview(
-    widthDp = 1000,
-    heightDp = 580
-)
-@Composable
-private fun Preview() {
-    AppThem {
-        HomeScreen(
-            state = HomeUiState(
-                heading = "Good Morning",
-                isNewUser = false,
-                isDataLoading = false,
-                isPlaylistLoaded = true,
-                isAlbumLoaded = true,
-                header = "",
-                staticData = prevData,
-                savedPlaylists = (1..3).map {
-                    UiPrevPlaylist(
-                        id = it.toLong(),
-                        name = "Playlist $it",
-                        urls = emptyList()
-                    )
-                },
-                savedAlbums = (1..2).map {
-                    UiPrevAlbum(
-                        id = it.toLong(),
-                        name = "Album $it",
-                    )
-                },
-                playlistBottomSheetUiState = PlaylistBottomSheetUiState(isOpen = true)
-            ),
-            profileUrl = "",
-            onProfileClick = { /*TODO*/ },
-            onSearchClick = { /*TODO*/ },
-            onEvent = {}
-        )
-    }
-}
-
-private val prevData = UiHomeData(
-    popularSongMix = listOf(
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        )
-    ),
-    popularSongFromYourTime = listOf(
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        )
-    ),
-    favouriteArtistMix = listOf(
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        )
-    ),
-    dayTypeSong = listOf(
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        ),
-        UiPrevSong(
-            id = 1,
-            coverImage = ""
-        )
-    ),
-    popularAlbum = (1..7).map {
-        UiPrevAlbum(
-            id = it.toLong(),
-            name = "Album $it",
-            coverImage = ""
-        )
-    },
-    suggestedArtist = (1..7).map {
-        UiArtist(
-            id = it.toLong(),
-            name = "Artist $it",
-            coverImageUrl = ""
-        )
-    },
-    popularArtistSong = (1..4).map {
-        UiArtistWithSong(
-            UiArtist(
-                id = it.toLong(),
-                name = "Artist $it",
-                coverImageUrl = ""
-            ),
-            listOfSong = (1..7).map { song ->
-                UiSongWithInfo(
-                    id = song.toLong(),
-                    title = "Song $song",
-                    coverImage = ""
-                )
-            }
-        )
-    }
-)
