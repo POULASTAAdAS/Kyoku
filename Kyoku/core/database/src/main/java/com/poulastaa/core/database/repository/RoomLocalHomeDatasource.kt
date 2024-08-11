@@ -190,11 +190,11 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override fun loadSavedPlaylist(): Flow<SavedPlaylist> = commonDao.getAllSavedPlaylist().map {
         it.groupBy { result -> result.id }
-            .map { mapEntry -> mapEntry.toSavedPlaylist() }
-    }.take(3)
+            .map { mapEntry -> mapEntry.toSavedPlaylist() }.take(3)
+    }
 
     override fun loadSavedAlbum(): Flow<SavedAlbum> =
-        commonDao.getAllSavedAlbum().take(2)
+        commonDao.getAllSavedAlbum().map { it.take(3) }
 
     override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
         homeDao.isArtistIsInLibrary(artistId) != null

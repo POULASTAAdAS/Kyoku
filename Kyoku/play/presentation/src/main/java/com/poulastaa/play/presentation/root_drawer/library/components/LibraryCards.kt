@@ -93,11 +93,12 @@ fun LibraryPlaylistGird(
             modifier = Modifier
                 .weight(.15f)
                 .align(Alignment.CenterHorizontally),
-            maxLines = 2,
+            maxLines = 1,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
             letterSpacing = 1.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

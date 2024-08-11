@@ -49,4 +49,15 @@ interface HomeRepository {
     suspend fun getPopularSongMix(
         countryId: Int,
     ): List<SongDto>
+
+    suspend fun getOldGem(
+        countryId: Int,
+        year: Int,
+    ): List<SongDto>
+
+    suspend fun getArtistSongMix(
+        countryId: Int,
+        userId: Long,
+        userType: UserType,
+    ): List<SongDto>
 }

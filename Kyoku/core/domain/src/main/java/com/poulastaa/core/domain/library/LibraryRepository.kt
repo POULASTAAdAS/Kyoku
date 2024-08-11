@@ -1,6 +1,5 @@
 package com.poulastaa.core.domain.library
 
-import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
 import com.poulastaa.core.domain.utils.SavedPlaylist

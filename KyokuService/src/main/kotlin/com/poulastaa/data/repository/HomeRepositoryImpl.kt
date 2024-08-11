@@ -2,6 +2,7 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.data.mappers.constructArtistProfileUrl
 import com.poulastaa.data.mappers.constructSongCoverImage
+import com.poulastaa.data.mappers.toSongDto
 import com.poulastaa.data.model.ArtistDto
 import com.poulastaa.data.model.SongDto
 import com.poulastaa.data.model.home.PreArtistSongDto
@@ -338,19 +339,41 @@ class HomeRepositoryImpl(
             getPopularSonMixQuery(countryId)
                 .limit(kotlin.random.Random.nextInt(46, 56))
                 .map {
-                    async {
-                        val artist = database.getArtistOnSongId(it[SongTable.id].value)
-
-                        SongDto(
-                            id = it[SongTable.id].value,
-                            coverImage = it[SongTable.coverImage],
-                            title = it[SongTable.title],
-                            artistName = artist.joinToString { resultArtist -> resultArtist.name },
-                            releaseYear = it[SongTable.year],
-                            masterPlaylistUrl = it[SongTable.masterPlaylistPath]
-                        )
-                    }
+                    async { it.toSongDto(database) }
                 }.awaitAll()
+        }
+    }
+
+    override suspend fun getOldGem(
+        countryId: Int,
+        year: Int,
+    ): List<SongDto> = coroutineScope {
+        (1..4).map { index ->
+            async {
+                val targetYear = year - 1 + index
+
+                query {
+                    getPopularSongFromUserTimeQuery(
+                        year = targetYear,
+                        countryId = countryId,
+                    ).limit(kotlin.random.Random.nextInt(10, 14))
+                        .map {
+                            async { it.toSongDto(database) }
+                        }.awaitAll()
+                }
+            }
+        }.awaitAll().flatten()
+    }
+
+    override suspend fun getArtistSongMix(
+        countryId: Int,
+        userId: Long,
+        userType: UserType,
+    ): List<SongDto> = coroutineScope {
+        query {
+            getFavouriteArtistMixQuery(userId, userType.name)
+                .limit(kotlin.random.Random.nextInt(45, 55))
+                .map { async { it.toSongDto(database) } }.awaitAll()
         }
     }
 }

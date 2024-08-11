@@ -19,6 +19,7 @@ import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.model.PrevSong
 import com.poulastaa.core.domain.model.PrevSongDetail
 import com.poulastaa.core.domain.model.Song
+import kotlin.random.Random
 
 fun PrevSong.toPopularSongMixPrevEntity() = PopularSongMixPrevEntity(
     id = this.songId,
@@ -118,7 +119,5 @@ fun Map.Entry<Long, List<PopularArtistWithSongResult>>.toPrevArtistSong() = Prev
 fun Map.Entry<Long, List<PrevSongResult>>.toSavedPlaylist() = PrevSavedPlaylist(
     id = this.key,
     name = this.value.first().name,
-    coverImageList = this.value.map {
-        it.coverImage
-    }.take(4)
+    coverImageList = this.value.filter { it.id == this.key }.map { it.coverImage }.take(4)
 )

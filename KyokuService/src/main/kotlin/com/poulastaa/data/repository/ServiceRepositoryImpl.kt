@@ -320,8 +320,12 @@ class ServiceRepositoryImpl(
             val songDef = async {
                 when (type) {
                     ExploreType.POPULAR -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
-                    ExploreType.OLD_GEM -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
-                    ExploreType.ARTIST_MIX -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
+                    ExploreType.OLD_GEM -> homeRepo.getOldGem(user.countryId, user.bDate.getYear()).toMutableList()
+                    ExploreType.ARTIST_MIX -> homeRepo.getArtistSongMix(
+                        countryId = user.countryId,
+                        userId = user.id,
+                        userType = user.userType
+                    ).toMutableList()
                 }
             }
 
