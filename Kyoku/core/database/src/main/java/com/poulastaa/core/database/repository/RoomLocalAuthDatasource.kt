@@ -133,7 +133,7 @@ class RoomLocalAuthDatasource @Inject constructor(
                         )
                     }
 
-                    commonDao.insertSongPlaylistRelation(relation)
+                    commonDao.insertSongPlaylistRelations(relation)
                 }
             }.awaitAll()
         }

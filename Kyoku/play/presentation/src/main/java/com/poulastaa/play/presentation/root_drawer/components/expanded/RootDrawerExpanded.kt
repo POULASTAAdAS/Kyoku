@@ -24,8 +24,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
@@ -132,7 +134,10 @@ fun RootDrawerExpanded(
                         navigate = { screen ->
                             when (screen) {
                                 is OtherScreens.AddAsPlaylist -> {
-                                    navController.navigate(DrawerScreen.AddToPlaylist.route) {
+                                    navController.navigate(
+                                        route = DrawerScreen.AddToPlaylist.route +
+                                                "/${screen.songId}"
+                                    ) {
                                         launchSingleTop = true
                                     }
                                 }
@@ -163,8 +168,18 @@ fun RootDrawerExpanded(
                     )
                 }
 
-                composable(route = DrawerScreen.AddToPlaylist.route) {
-                    AddToPlaylistRootScreen {
+                composable(
+                    route = DrawerScreen.AddToPlaylist.route + DrawerScreen.AddToPlaylist.SONG_ID,
+                    arguments = listOf(
+                        navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
+                            type = NavType.LongType
+                        }
+                    )
+                ) {
+                    val id =
+                        it.arguments?.getLong(DrawerScreen.AddToPlaylist.SONG_ID) ?: -1
+
+                    AddToPlaylistRootScreen(songId = id) {
                         navController.popBackStack()
                     }
                 }

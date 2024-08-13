@@ -7,4 +7,6 @@ sealed interface AddToPlaylistUiEvent {
     data object OnFevToggle : AddToPlaylistUiEvent
 
     data class OnPlaylistClick(val playlistId: Long) : AddToPlaylistUiEvent
+
+    data object OnSaveClick : AddToPlaylistUiEvent
 }

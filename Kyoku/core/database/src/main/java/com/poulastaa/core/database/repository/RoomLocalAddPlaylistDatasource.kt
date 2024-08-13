@@ -42,7 +42,7 @@ class RoomLocalAddPlaylistDatasource @Inject constructor(
                 playlistId = playlistEntry.id
             )
         }.let {
-            commonDao.insertSongPlaylistRelation(it)
+            commonDao.insertSongPlaylistRelations(it)
         }
     }
 }

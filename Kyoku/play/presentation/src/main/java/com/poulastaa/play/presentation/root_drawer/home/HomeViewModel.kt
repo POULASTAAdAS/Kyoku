@@ -310,8 +310,7 @@ class HomeViewModel @Inject constructor(
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
                                     OtherScreens.AddAsPlaylist(
-                                        songId = event.id,
-                                        artistId = event.artistId
+                                        songId = event.id
                                     )
                                 )
                             )

@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,8 +25,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
@@ -131,7 +134,9 @@ fun RootDrawerCompact(
                             navigate = { screen ->
                                 when (screen) {
                                     is OtherScreens.AddAsPlaylist -> {
-                                        navController.navigate(DrawerScreen.AddToPlaylist.route) {
+                                        navController.navigate(
+                                            route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
+                                        ) {
                                             launchSingleTop = true
                                         }
                                     }
@@ -163,8 +168,19 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    composable(route = DrawerScreen.AddToPlaylist.route) {
-                        AddToPlaylistRootScreen {
+                    composable(
+                        route = DrawerScreen.AddToPlaylist.route + DrawerScreen.AddToPlaylist.SONG_ID,
+                        arguments = listOf(
+                            navArgument("songId") {
+                                type = NavType.StringType
+                            }
+                        )
+                    ) {
+                        val id =
+                            it.arguments?.getString("songId")?.toLong()
+                                ?: -1
+
+                        AddToPlaylistRootScreen(songId = id) {
                             navController.popBackStack()
                         }
                     }

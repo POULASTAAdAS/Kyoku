@@ -46,7 +46,7 @@ class RoomLocalSpotifyDataSource @Inject constructor(
             SongPlaylistRelationEntity(it, playlistId)
         }
 
-        commonDao.insertSongPlaylistRelation(entrys)
+        commonDao.insertSongPlaylistRelations(entrys)
     }
 
     override suspend fun getSongOnUrl(url: String): songId? = commonDao.getSongOnUrl(url)

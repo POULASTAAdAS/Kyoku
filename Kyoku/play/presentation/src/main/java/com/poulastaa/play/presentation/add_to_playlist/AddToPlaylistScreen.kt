@@ -52,6 +52,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -84,8 +85,14 @@ import kotlin.random.Random
 @Composable
 fun AddToPlaylistRootScreen(
     viewModel: AddToPlaylistViewModel = hiltViewModel(),
+    songId:Long,
     navigateBack: () -> Unit
 ) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadData(songId)
+    }
+
     AddToPlaylistScreen(
         state = viewModel.state,
         onEvent = viewModel::onEvent,
@@ -178,7 +185,7 @@ private fun AddToPlaylistScreen(
                                 )
                             ),
                             placeholder = {
-                                Text(text = "search playlist")
+                                Text(text = stringResource(id = R.string.search_playlist))
                             },
                             textStyle = TextStyle(
                                 fontSize = MaterialTheme.typography.headlineSmall.fontSize

@@ -6,21 +6,29 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.add_to_playlist.AddToPlaylistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddToPlaylistViewModel @Inject constructor(
-    private val ds: DataStoreRepository
+    private val ds: DataStoreRepository,
+    private val repo: AddToPlaylistRepository
 ) : ViewModel() {
     var state by mutableStateOf(AddToPlaylistUiState())
         private set
 
-
     init {
         readHeader()
+    }
+
+    fun loadData(songId: Long) {
+        loadFavourite(songId)
+        loadPlaylist(songId)
     }
 
     fun onEvent(event: AddToPlaylistUiEvent) {
@@ -69,6 +77,18 @@ class AddToPlaylistViewModel @Inject constructor(
                     }
                 )
             }
+
+            AddToPlaylistUiEvent.OnSaveClick -> {
+                if (state.isMakingApiCall) return
+
+                state = state.copy(
+                    isMakingApiCall = true
+                )
+
+                viewModelScope.launch(Dispatchers.IO) {
+
+                }
+            }
         }
     }
 
@@ -82,7 +102,29 @@ class AddToPlaylistViewModel @Inject constructor(
         }
     }
 
-    private fun loadData() {
+    private fun loadFavourite(songId: Long) {
+        viewModelScope.launch {
+            val statusDef = async { repo.checkIfSongInFev(songId) }
+            val totalDef = async { repo.getTotalSongsInFev() }
 
+            val status = statusDef.await()
+            val total = totalDef.await()
+
+            state = state.copy(
+                favouriteData = state.favouriteData.copy(
+                    selectStatus = state.favouriteData.selectStatus.copy(
+                        old = status,
+                        new = status
+                    ),
+                    totalSongs = total
+                )
+            )
+        }
+    }
+
+    private fun loadPlaylist(songId: Long) {
+        viewModelScope.launch {
+
+        }
     }
 }
