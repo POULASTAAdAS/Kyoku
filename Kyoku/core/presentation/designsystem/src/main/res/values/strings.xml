@@ -109,4 +109,5 @@
     <string name="edit_playlist">Edit Playlist</string>
     <string name="new_playlist">New Playlist</string>
     <string name="search_playlist">Search Playlist</string>
+    <string name="playlist_updated">playlist are updated</string>
 </resources>

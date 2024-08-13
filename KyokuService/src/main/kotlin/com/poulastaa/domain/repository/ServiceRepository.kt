@@ -5,6 +5,7 @@ import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
+import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 
 interface ServiceRepository {
     suspend fun getSpotifyPlaylist(
@@ -81,4 +82,13 @@ interface ServiceRepository {
         req: SavePlaylistReq,
         payload: ReqUserPayload,
     ): PlaylistDto
+
+    suspend fun getSong(
+        songId: Long,
+    ): SongDto
+
+    suspend fun updatePlaylist(
+        req: UpdatePlaylistReq,
+        payload: ReqUserPayload,
+    ): Boolean
 }

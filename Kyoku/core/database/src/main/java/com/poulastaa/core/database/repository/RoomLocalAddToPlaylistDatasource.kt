@@ -9,6 +9,9 @@ import com.poulastaa.core.domain.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.add_to_playlist.PRESENT
 import com.poulastaa.core.domain.add_to_playlist.SIZE
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -37,13 +40,39 @@ class RoomLocalAddToPlaylistDatasource @Inject constructor(
                 )
             }
 
-    override suspend fun addSongToPlaylist(songId: Long, playlistId: Long) {
-        val entry = SongPlaylistRelationEntity(songId, playlistId)
-        commonDao.insertSongPlaylistRelation(entry)
+    override suspend fun checkIfSongInDatabase(songId: Long): Boolean =
+        addToPlaylistDao.checkIfSongInDatabase(songId) != null
+
+    override suspend fun editPlaylist(
+        songId: Long,
+        playlistIdList: Map<Long, Boolean>,
+    ) {
+        coroutineScope {
+            playlistIdList.map { (playlistId, opp) ->
+                async {
+                    when (opp) {
+                        true -> {
+                            val entry = SongPlaylistRelationEntity(songId, playlistId)
+                            commonDao.insertSongPlaylistRelation(entry)
+                        }
+
+                        false -> {
+                            val entry = SongPlaylistRelationEntity(songId, playlistId)
+                            commonDao.deleteSongPlaylistRelation(entry)
+                        }
+                    }
+                }
+            }.awaitAll()
+        }
     }
 
     override suspend fun addSongToFavourite(songId: Long) {
         val entry = FavouriteEntity(songId)
         commonDao.insertOneIntoFavourite(entry)
+    }
+
+    override suspend fun removeSongFromFavourite(songId: Long) {
+        val entry = FavouriteEntity(songId)
+        commonDao.deleteSongFromFavourite(entry)
     }
 }

@@ -7,7 +7,9 @@ interface LocalAddToPlaylistDatasource {
     suspend fun getTotalSongsInFev(): Int
     suspend fun getPlaylistData(songId: Long): List<Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>>
 
+    suspend fun checkIfSongInDatabase(songId: Long): Boolean
 
-    suspend fun addSongToPlaylist(songId: Long, playlistId: Long)
+    suspend fun editPlaylist(songId: Long, playlistIdList: Map<Long, Boolean>)
     suspend fun addSongToFavourite(songId: Long)
+    suspend fun removeSongFromFavourite(songId: Long)
 }

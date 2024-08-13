@@ -13,4 +13,7 @@ interface AddToPlaylistDao {
 
     @Query("select songId from SongPlaylistRelationEntity where songId = :songId and playlistId = :playlistId")
     suspend fun getSongPlaylistRelationEntryOnSongId(songId: Long, playlistId: Long): Long?
+
+    @Query("select id from SongEntity where id = :songId")
+    suspend fun checkIfSongInDatabase(songId: Long): Long?
 }

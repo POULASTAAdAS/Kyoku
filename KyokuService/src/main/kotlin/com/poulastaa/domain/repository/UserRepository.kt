@@ -59,7 +59,7 @@ interface UserRepository {
         userType: UserType,
     ): Boolean
 
-     suspend fun addArtist(
+    suspend fun addArtist(
         artistId: Long,
         email: String,
         userType: UserType,
@@ -71,7 +71,7 @@ interface UserRepository {
         userType: UserType,
     ): Boolean
 
-     suspend fun addAlbum(
+    suspend fun addAlbum(
         albumId: Long,
         email: String,
         userType: UserType,
@@ -82,4 +82,11 @@ interface UserRepository {
         email: String,
         userType: UserType,
     ): Boolean
+
+    suspend fun updatePlaylist(
+        userId: Long,
+        userType: UserType,
+        songId: Long,
+        map: Map<Long, Boolean>,
+    )
 }

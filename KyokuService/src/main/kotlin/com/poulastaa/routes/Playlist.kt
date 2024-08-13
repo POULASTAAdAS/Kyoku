@@ -2,6 +2,7 @@ package com.poulastaa.routes
 
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
+import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
 import com.poulastaa.utils.Constants.SECURITY_LIST
@@ -27,6 +28,27 @@ fun Route.savePlaylist(service: ServiceRepository) {
                     message = response,
                     status = HttpStatusCode.OK
                 )
+            }
+        }
+    }
+}
+
+fun Route.updatePlaylist(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.UpdatePlaylist.route) {
+            post {
+                val req = call.receiveNullable<UpdatePlaylistReq>()
+                    ?: return@post call.respondRedirect(EndPoints.UpdatePlaylist.route)
+
+                val payload =
+                    call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UpdatePlaylist.route)
+
+                val result = service.updatePlaylist(req, payload)
+
+                when (result) {
+                    true -> call.respond(HttpStatusCode.OK)
+                    false -> call.respond(HttpStatusCode.ServiceUnavailable)
+                }
             }
         }
     }

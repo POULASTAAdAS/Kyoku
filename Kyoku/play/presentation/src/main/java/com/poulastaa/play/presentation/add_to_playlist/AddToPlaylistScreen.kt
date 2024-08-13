@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.add_to_playlist
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistFloatingActionButton
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistHeading
@@ -45,6 +48,20 @@ fun AddToPlaylistRootScreen(
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.loadData(songId)
+    }
+
+    val context = LocalContext.current
+
+    ObserveAsEvent(flow = viewModel.uiEvent) {
+        when (it) {
+            is AddToPlaylistUiAction.EmitToast -> Toast.makeText(
+                context,
+                it.message.asString(context),
+                Toast.LENGTH_LONG
+            ).show()
+
+            AddToPlaylistUiAction.NavigateBack -> navigateBack()
+        }
     }
 
     AddToPlaylistScreen(

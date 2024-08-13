@@ -8,6 +8,7 @@ import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
+import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.plugins.query
@@ -349,5 +350,23 @@ class ServiceRepositoryImpl(
                 listOfSong = song.toList()
             )
         }
+    }
+
+    override suspend fun getSong(songId: Long): SongDto = kyokuRepo.getSongOnId(songId)
+
+    override suspend fun updatePlaylist(
+        req: UpdatePlaylistReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.updatePlaylist(
+            userId = user.id,
+            userType = user.userType,
+            songId = req.songId,
+            map = req.playlistIdList
+        )
+
+        return true
     }
 }

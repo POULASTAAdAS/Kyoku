@@ -6,6 +6,9 @@ import com.poulastaa.core.domain.add_to_playlist.PRESENT
 import com.poulastaa.core.domain.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.add_to_playlist.SIZE
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.EmptyResult
+import com.poulastaa.core.domain.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import javax.inject.Inject
@@ -24,11 +27,38 @@ class OnlineFirstAddToPlaylistRepository @Inject constructor(
     override suspend fun getPlaylistData(songId: Long): List<Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>> =
         application.async { local.getPlaylistData(songId) }.await()
 
-    override suspend fun addSongToPlaylist(songId: Long, playlistId: Long) {
 
-    }
+    override suspend fun saveSong(songId: Long): EmptyResult<DataError.Network> =
+        application.async {
+            if (local.checkIfSongInDatabase(songId)) return@async Result.Success(Unit)
+            saveSong(songId)
+        }.await()
 
-    override suspend fun addSongToFavourite(songId: Long) {
+    override suspend fun editPlaylist(
+        songId: Long,
+        playlistIdList: Map<Long, Boolean>,
+    ): EmptyResult<DataError.Network> = application.async {
+        val result = async { remote.editPlaylist(songId, playlistIdList) }.await()
+        if (result is Result.Success) local.editPlaylist(songId, playlistIdList)
 
-    }
+        result
+    }.await()
+
+
+    override suspend fun addSongToFavourite(
+        songId: Long
+    ): EmptyResult<DataError.Network> = application.async {
+        val result = async { remote.addSongToFavourite(songId) }.await()
+        if (result is Result.Success) local.addSongToFavourite(songId)
+
+        result
+    }.await()
+
+    override suspend fun removeSongFromFavourite(songId: Long): EmptyResult<DataError.Network> =
+        application.async {
+            val result = async { remote.removeSongToFavourite(songId) }.await()
+            if (result is Result.Success) local.removeSongFromFavourite(songId)
+
+            result
+        }.await()
 }

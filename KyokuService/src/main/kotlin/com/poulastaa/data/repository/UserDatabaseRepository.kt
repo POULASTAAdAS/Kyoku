@@ -440,4 +440,33 @@ class UserDatabaseRepository(
 
         true
     }
+
+    override suspend fun updatePlaylist(
+        userId: Long,
+        userType: UserType,
+        songId: Long,
+        map: Map<Long, Boolean>,
+    ): Unit = coroutineScope {
+        map.map { (playlistId, operation) ->
+            async {
+                query {
+                    when (operation) {
+                        true -> UserPlaylistSongRelationTable.insertIgnore {
+                            it[this.userId] = userId
+                            it[this.playlistId] = playlistId
+                            it[this.songId] = songId
+                            it[this.userType] = userType.name
+                        }
+
+                        false -> UserPlaylistSongRelationTable.deleteWhere {
+                            this.userId eq userId and
+                                    (this.playlistId eq playlistId) and
+                                    (this.songId eq songId) and
+                                    (this.userType eq userType.name)
+                        }
+                    }
+                }
+            }
+        }.awaitAll()
+    }
 }

@@ -7,10 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.add_to_playlist.AddToPlaylistRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +28,9 @@ class AddToPlaylistViewModel @Inject constructor(
     var state by mutableStateOf(AddToPlaylistUiState())
         private set
 
+    private val _uiEvent = Channel<AddToPlaylistUiAction>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     init {
         readHeader()
     }
@@ -29,7 +38,11 @@ class AddToPlaylistViewModel @Inject constructor(
     fun loadData(songId: Long) {
         if (songId == -1L) {
             viewModelScope.launch {
-
+                _uiEvent.send(
+                    AddToPlaylistUiAction.EmitToast(
+                        UiText.StringResource(R.string.error_something_went_wrong)
+                    )
+                )
             }
 
             return
@@ -147,7 +160,84 @@ class AddToPlaylistViewModel @Inject constructor(
                 )
 
                 viewModelScope.launch(Dispatchers.IO) {
+                    val saveSong = repo.saveSong(state.songId)
 
+                    if (saveSong is Result.Error) {
+                        when (saveSong.error) {
+                            DataError.Network.NO_INTERNET -> {
+                                _uiEvent.send(
+                                    AddToPlaylistUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_no_internet)
+                                    )
+                                )
+                            }
+
+                            else -> {
+                                _uiEvent.send(
+                                    AddToPlaylistUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_something_went_wrong)
+                                    )
+                                )
+                            }
+                        }
+
+                        state = state.copy(
+                            isMakingApiCall = false
+                        )
+
+                        return@launch
+                    }
+
+                    val fevDef = async {
+                        if (state.favouriteData.selectStatus.old != state.favouriteData.selectStatus.new)
+                            if (state.favouriteData.selectStatus.new) repo.addSongToFavourite(state.songId)
+                            else repo.removeSongFromFavourite(state.songId)
+                    }
+
+                    val playlistDef = async {
+                        state.playlistData.mapNotNull {
+                            if (it.selectStatus.old != it.selectStatus.new) it.playlist.id to it.selectStatus.new else null
+                        }.toMap().let {
+                            repo.editPlaylist(state.songId, it)
+                        }
+                    }
+
+
+                    fevDef.await()
+                    val playlist = playlistDef.await()
+
+
+                    if (playlist is Result.Error) {
+                        when (playlist.error) {
+                            DataError.Network.NO_INTERNET -> {
+                                _uiEvent.send(
+                                    AddToPlaylistUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_no_internet)
+                                    )
+                                )
+                            }
+
+                            else -> {
+                                _uiEvent.send(
+                                    AddToPlaylistUiAction.EmitToast(
+                                        UiText.StringResource(R.string.error_something_went_wrong)
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    state = state.copy(
+                        isMakingApiCall = false
+                    )
+
+                    _uiEvent.send(
+                        AddToPlaylistUiAction.EmitToast(
+                            UiText.StringResource(R.string.playlist_updated)
+                        )
+                    )
+
+                    _uiEvent.send(AddToPlaylistUiAction.NavigateBack)
                 }
             }
         }
