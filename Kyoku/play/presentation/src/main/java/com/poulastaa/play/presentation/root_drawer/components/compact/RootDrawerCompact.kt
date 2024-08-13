@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -169,15 +168,15 @@ fun RootDrawerCompact(
                     }
 
                     composable(
-                        route = DrawerScreen.AddToPlaylist.route + DrawerScreen.AddToPlaylist.SONG_ID,
+                        route = "${DrawerScreen.AddToPlaylist.route}${DrawerScreen.AddToPlaylist.ROUTE_EXT}",
                         arguments = listOf(
-                            navArgument("songId") {
+                            navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
                                 type = NavType.StringType
                             }
                         )
                     ) {
                         val id =
-                            it.arguments?.getString("songId")?.toLong()
+                            it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
                                 ?: -1
 
                         AddToPlaylistRootScreen(songId = id) {

@@ -6,9 +6,10 @@ import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.domain.add_to_playlist.LocalAddToPlaylistDatasource
+import com.poulastaa.core.domain.add_to_playlist.PRESENT
+import com.poulastaa.core.domain.add_to_playlist.SIZE
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class RoomLocalAddToPlaylistDatasource @Inject constructor(
@@ -20,12 +21,21 @@ class RoomLocalAddToPlaylistDatasource @Inject constructor(
 
     override suspend fun getTotalSongsInFev(): Int = addToPlaylistDao.getTotalFavouriteEntryCount()
 
-    override suspend fun getPlaylistData(): Flow<List<Pair<Int, PrevSavedPlaylist>>> =
-        commonDao.getAllSavedPlaylist().map {
-            it.groupBy { entry -> entry.id }.map { map ->
-                map.value.count() to map.toSavedPlaylist()
+    override suspend fun getPlaylistData(songId: Long): List<Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>> =
+        commonDao.getAllSavedPlaylist().first().groupBy { entry -> entry.id }
+            .map { map ->
+                val size = map.value.count()
+                val present =
+                    addToPlaylistDao.getSongPlaylistRelationEntryOnSongId(
+                        songId = songId,
+                        playlistId = map.key
+                    ) != null
+
+                Pair(
+                    Pair(size, present),
+                    map.toSavedPlaylist()
+                )
             }
-        }
 
     override suspend fun addSongToPlaylist(songId: Long, playlistId: Long) {
         val entry = SongPlaylistRelationEntity(songId, playlistId)

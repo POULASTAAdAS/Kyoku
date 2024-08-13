@@ -3,12 +3,15 @@ package com.poulastaa.play.presentation.add_to_playlist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 
 data class AddToPlaylistUiState(
+    val songId: Long = -1,
+
     val isLoading: Boolean = true,
     val isMakingApiCall: Boolean = false,
     val header: String = "",
     val isSearchEnable: Boolean = false,
     val query: String = "",
 
+    val oldPlaylistData: List<UiPlaylistData> = emptyList(),
     val playlistData: List<UiPlaylistData> = emptyList(),
     val favouriteData: UiFavouriteData = UiFavouriteData()
 )

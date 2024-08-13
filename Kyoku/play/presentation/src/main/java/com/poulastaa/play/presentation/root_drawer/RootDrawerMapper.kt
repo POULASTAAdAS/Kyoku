@@ -23,7 +23,7 @@ fun String.toDrawScreenRoute() = when (this) {
     else -> DrawerScreen.Library.route
 }
 
-fun PrevSavedPlaylist.toUiPlaylist() = UiPrevPlaylist(
+fun PrevSavedPlaylist.toUiPrevPlaylist() = UiPrevPlaylist(
     id = this.id,
     name = this.name,
     urls = this.coverImageList

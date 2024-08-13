@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.components.expanded
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -169,15 +168,16 @@ fun RootDrawerExpanded(
                 }
 
                 composable(
-                    route = DrawerScreen.AddToPlaylist.route + DrawerScreen.AddToPlaylist.SONG_ID,
+                    route = DrawerScreen.AddToPlaylist.route + DrawerScreen.AddToPlaylist.ROUTE_EXT,
                     arguments = listOf(
                         navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
-                            type = NavType.LongType
+                            type = NavType.StringType
                         }
                     )
                 ) {
                     val id =
-                        it.arguments?.getLong(DrawerScreen.AddToPlaylist.SONG_ID) ?: -1
+                        it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
+                            ?: -1
 
                     AddToPlaylistRootScreen(songId = id) {
                         navController.popBackStack()

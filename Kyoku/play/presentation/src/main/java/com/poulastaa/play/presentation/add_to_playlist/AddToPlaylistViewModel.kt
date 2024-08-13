@@ -27,6 +27,18 @@ class AddToPlaylistViewModel @Inject constructor(
     }
 
     fun loadData(songId: Long) {
+        if (songId == -1L) {
+            viewModelScope.launch {
+
+            }
+
+            return
+        }
+
+        state = state.copy(
+            songId = songId
+        )
+
         loadFavourite(songId)
         loadPlaylist(songId)
     }
@@ -35,47 +47,96 @@ class AddToPlaylistViewModel @Inject constructor(
         when (event) {
             AddToPlaylistUiEvent.EnableSearch -> {
                 state = state.copy(
-                    isSearchEnable = true
+                    isSearchEnable = true,
+                    oldPlaylistData = state.playlistData
                 )
             }
 
             AddToPlaylistUiEvent.CancelSearch -> {
                 state = state.copy(
-                    isSearchEnable = false
+                    query = "",
+                    isSearchEnable = false,
+                    playlistData = state.oldPlaylistData
+                )
+            }
+
+            is AddToPlaylistUiEvent.OnSearchQueryChange -> {
+                val query = event.query
+
+                state = state.copy(
+                    query = event.query
+                )
+
+                state = if (state.query.isNotBlank()) state.copy(
+                    playlistData = state.oldPlaylistData.mapNotNull {
+                        if (it.playlist.name.contains(query, ignoreCase = true)) it else null
+                    }
+                ) else state.copy(
+                    playlistData = state.oldPlaylistData
                 )
             }
 
             AddToPlaylistUiEvent.OnFevToggle -> {
                 val new = state.favouriteData.selectStatus.new.not()
+                val old = state.favouriteData.selectStatus.old
 
                 state = state.copy(
                     favouriteData = state.favouriteData.copy(
                         selectStatus = state.favouriteData.selectStatus.copy(
                             new = new
                         ),
-                        totalSongs = if (state.favouriteData.selectStatus.old != new) state.favouriteData.totalSongs.inc()
-                        else state.favouriteData.totalSongs.dec()
+                        totalSongs = if (old) {
+                            if (!new) state.favouriteData.totalSongs.dec()
+                            else state.favouriteData.totalSongs.inc()
+                        } else {
+                            if (new) state.favouriteData.totalSongs.inc()
+                            else state.favouriteData.totalSongs.dec()
+                        }
                     )
                 )
             }
 
             is AddToPlaylistUiEvent.OnPlaylistClick -> {
-                val new =
-                    state.playlistData.firstOrNull { it.playlist.id == event.playlistId }?.selectStatus?.new?.not()
-                        ?: return
+                val playlist =
+                    state.playlistData.first { it.playlist.id == event.playlistId }
+                val oldData =
+                    state.oldPlaylistData.first { it.playlist.id == event.playlistId }
 
-                state = state.copy(
-                    playlistData = state.playlistData.map {
-                        if (it.playlist.id == event.playlistId) {
-                            it.copy(
-                                selectStatus = it.selectStatus.copy(
-                                    new = new
-                                ),
-                                totalSongs = if (it.selectStatus.old != new) it.totalSongs.inc() else it.totalSongs.dec()
-                            )
-                        } else it
+                viewModelScope.launch(Dispatchers.Default) {
+                    val old = async {
+                        state.oldPlaylistData.map {
+                            if (it.playlist.id == event.playlistId) {
+                                it.copy(
+                                    selectStatus = toggleSelectStatus(it.selectStatus),
+                                    totalSongs = adjustTotalSongs(
+                                        it.totalSongs,
+                                        oldData.selectStatus
+                                    )
+                                )
+                            } else it
+                        }
                     }
-                )
+
+                    val new = async {
+                        state.playlistData.map {
+                            if (it.playlist.id == event.playlistId) {
+                                it.copy(
+                                    selectStatus = toggleSelectStatus(it.selectStatus),
+                                    totalSongs = adjustTotalSongs(
+                                        it.totalSongs,
+                                        playlist.selectStatus
+                                    )
+                                )
+                            } else it
+                        }
+                    }
+
+
+                    state = state.copy(
+                        oldPlaylistData = old.await(),
+                        playlistData = new.await()
+                    )
+                }
             }
 
             AddToPlaylistUiEvent.OnSaveClick -> {
@@ -122,9 +183,25 @@ class AddToPlaylistViewModel @Inject constructor(
         }
     }
 
-    private fun loadPlaylist(songId: Long) {
-        viewModelScope.launch {
+    private fun loadPlaylist(songId: Long) = viewModelScope.launch {
+        val data = repo.getPlaylistData(songId).map { it.toPlaylistData() }
 
-        }
+        state = state.copy(
+            playlistData = data,
+            oldPlaylistData = data
+        )
+    }
+
+    private fun toggleSelectStatus(
+        currentStatus: UiSelectStatus
+    ): UiSelectStatus = currentStatus.copy(new = currentStatus.new.not())
+
+    private fun adjustTotalSongs(
+        currentTotal: Int,
+        selectStatus: UiSelectStatus
+    ) = if (selectStatus.old) {
+        if (selectStatus.new) currentTotal.dec() else currentTotal.inc()
+    } else {
+        if (!selectStatus.new) currentTotal.inc() else currentTotal.dec()
     }
 }

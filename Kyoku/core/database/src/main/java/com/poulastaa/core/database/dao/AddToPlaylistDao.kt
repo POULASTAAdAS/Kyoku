@@ -10,4 +10,7 @@ interface AddToPlaylistDao {
 
     @Query("select count(*) from FavouriteEntity")
     suspend fun getTotalFavouriteEntryCount(): Int
+
+    @Query("select songId from SongPlaylistRelationEntity where songId = :songId and playlistId = :playlistId")
+    suspend fun getSongPlaylistRelationEntryOnSongId(songId: Long, playlistId: Long): Long?
 }

@@ -5,7 +5,8 @@ sealed class DrawerScreen(val route: String) {
     data object Library : DrawerScreen(route = "/library")
 
     data object AddToPlaylist : DrawerScreen(route = "/addToPlaylist") {
-        const val SONG_ID = "/{songId}"
+        const val ROUTE_EXT = "/{songId}"
+        const val SONG_ID = "songId"
     }
 
     data object Profile : DrawerScreen(route = "/profile")

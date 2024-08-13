@@ -4,6 +4,8 @@ sealed interface AddToPlaylistUiEvent {
     data object CancelSearch : AddToPlaylistUiEvent
     data object EnableSearch : AddToPlaylistUiEvent
 
+    data class OnSearchQueryChange(val query: String) : AddToPlaylistUiEvent
+
     data object OnFevToggle : AddToPlaylistUiEvent
 
     data class OnPlaylistClick(val playlistId: Long) : AddToPlaylistUiEvent

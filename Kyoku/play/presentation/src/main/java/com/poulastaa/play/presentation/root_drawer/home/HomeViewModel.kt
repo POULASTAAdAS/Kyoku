@@ -20,7 +20,7 @@ import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
 import com.poulastaa.play.presentation.root_drawer.home.model.ItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
-import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
+import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -424,7 +424,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepo.loadSavedPlaylist().map {
                 it.map { result ->
-                    result.toUiPlaylist()
+                    result.toUiPrevPlaylist()
                 }
             }.collectLatest {
                 state = state.copy(

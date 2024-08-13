@@ -9,7 +9,7 @@ import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
-import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
+import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -115,7 +115,7 @@ class LibraryViewModel @Inject constructor(
                 state = state.copy(
                     data = state.data.copy(
                         playlist = list.map {
-                            it.toUiPlaylist()
+                            it.toUiPrevPlaylist()
                         }
                     )
                 )
