@@ -7,6 +7,7 @@ import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.playlist.CreatePlaylistWithSongReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 import com.poulastaa.domain.repository.*
@@ -368,5 +369,32 @@ class ServiceRepositoryImpl(
         )
 
         return true
+    }
+
+    override suspend fun createPlaylist(
+        req: CreatePlaylistWithSongReq,
+        payload: ReqUserPayload,
+    ): PlaylistDto = coroutineScope {
+        val user = userRepo.getUserOnPayload(payload) ?: return@coroutineScope PlaylistDto()
+
+        val createPlaylistDef = async {
+            kyokuRepo.createPlaylist(
+                name = req.name,
+                userId = user.id,
+                userType = user.userType,
+                songIdList = listOf(req.songId)
+            )
+        }
+
+        val songDef = async {
+            kyokuRepo.getSongOnId(req.songId)
+        }
+
+
+        PlaylistDto(
+            id = createPlaylistDef.await(),
+            name = req.name,
+            listOfSong = listOf(songDef.await())
+        )
     }
 }

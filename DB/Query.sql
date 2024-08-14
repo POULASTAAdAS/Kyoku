@@ -124,6 +124,7 @@ select * from userplaylistsongrelation;
 
 select * from playlist;
 
+delete from playlist where id in (12, 13);
 
 
 

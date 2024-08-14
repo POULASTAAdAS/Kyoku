@@ -16,9 +16,11 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -32,12 +34,14 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
+import com.poulastaa.play.presentation.add_to_playlist.components.AddNewPlaylistBottomSheet
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistFloatingActionButton
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistHeading
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistNavigationIcon
 import com.poulastaa.play.presentation.add_to_playlist.components.AddToPlaylistTextField
 import com.poulastaa.play.presentation.add_to_playlist.components.PlaylistCard
 import com.poulastaa.play.presentation.add_to_playlist.components.addToPlaylistTopPart
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
@@ -81,6 +85,13 @@ private fun AddToPlaylistScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember {
         FocusRequester()
+    }
+    val addNewPlaylistBottomSheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) {
+        if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) addNewPlaylistBottomSheetState.show()
+        else addNewPlaylistBottomSheetState.hide()
     }
 
     Scaffold(
@@ -156,6 +167,19 @@ private fun AddToPlaylistScreen(
             }
         }
     }
+
+    if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) AddNewPlaylistBottomSheet(
+        sheetState = addNewPlaylistBottomSheetState,
+        state = state.addNewPlaylistBottomSheetState,
+        onEvent = { event ->
+            coroutineScope.launch {
+                if (event is AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnCancelClick)
+                    addNewPlaylistBottomSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(event)
+            }
+        }
+    )
 
     if (state.isSearchEnable) BackHandler {
         onEvent(AddToPlaylistUiEvent.CancelSearch)

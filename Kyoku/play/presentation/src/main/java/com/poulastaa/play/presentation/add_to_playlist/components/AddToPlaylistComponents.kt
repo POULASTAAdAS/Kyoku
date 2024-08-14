@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.CheckIcon
@@ -65,6 +66,7 @@ import com.poulastaa.core.presentation.designsystem.FavouriteIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistUiEvent
 import com.poulastaa.play.presentation.add_to_playlist.UiFavouriteData
 import com.poulastaa.play.presentation.add_to_playlist.UiPlaylistData
@@ -216,7 +218,23 @@ fun PlaylistCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        ImageGrid(
+        if (data.playlist.urls.size < 4) Card(
+            shape = MaterialTheme.shapes.small,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            )
+        ) {
+            AsyncImage(
+                model = imageReqSongCover(
+                    header = header,
+                    url = data.playlist.urls.getOrElse(0) { "" }
+                ),
+                modifier = Modifier
+                    .aspectRatio(1f),
+                contentDescription = null
+            )
+        }
+        else ImageGrid(
             modifier = Modifier.aspectRatio(1f),
             header = header,
             urls = data.playlist.urls
@@ -307,7 +325,7 @@ fun LazyListScope.addToPlaylistTopPart(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 NewPlaylistButton {
-
+                    onEvent(AddToPlaylistUiEvent.AddNewPlaylist)
                 }
 
                 DummySearch {

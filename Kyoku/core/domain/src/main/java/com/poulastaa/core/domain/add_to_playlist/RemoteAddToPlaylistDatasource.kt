@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.add_to_playlist
 
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
@@ -14,4 +15,9 @@ interface RemoteAddToPlaylistDatasource {
 
     suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network>
     suspend fun removeSongToFavourite(songId: Long): EmptyResult<DataError.Network>
+
+    suspend fun createPlaylist(
+        songId: Long,
+        name: String
+    ): Result<PlaylistData, DataError.Network>
 }

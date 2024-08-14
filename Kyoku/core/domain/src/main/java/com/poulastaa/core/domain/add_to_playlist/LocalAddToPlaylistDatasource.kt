@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.add_to_playlist
 
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 
 interface LocalAddToPlaylistDatasource {
@@ -12,4 +13,6 @@ interface LocalAddToPlaylistDatasource {
     suspend fun editPlaylist(songId: Long, playlistIdList: Map<Long, Boolean>)
     suspend fun addSongToFavourite(songId: Long)
     suspend fun removeSongFromFavourite(songId: Long)
+
+    suspend fun createPlaylist(data: PlaylistData)
 }

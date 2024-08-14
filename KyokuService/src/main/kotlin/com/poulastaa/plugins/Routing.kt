@@ -43,6 +43,8 @@ private fun Routing.common(service: ServiceRepository) {
     getSong(service)
     updatePlaylist(service)
     updateFavourite(service)
+
+    createPlaylist(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

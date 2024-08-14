@@ -110,4 +110,7 @@
     <string name="new_playlist">New Playlist</string>
     <string name="search_playlist">Search Playlist</string>
     <string name="playlist_updated">playlist are updated</string>
+    <string name="error_empty_playlist_name">playlist name can\'t be empty</string>
+    <string name="error_short_playlist_name">playlist name must contain at-lest 4 character</string>
+    <string name="playlist_created">playlist create</string>
 </resources>

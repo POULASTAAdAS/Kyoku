@@ -21,4 +21,9 @@ interface AddToPlaylistRepository {
 
     suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network>
     suspend fun removeSongFromFavourite(songId: Long): EmptyResult<DataError.Network>
+
+    suspend fun createPlaylist(
+        songId: Long,
+        name: String
+    ): EmptyResult<DataError.Network>
 }

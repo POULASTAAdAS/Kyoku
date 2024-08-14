@@ -1,6 +1,7 @@
 package com.poulastaa.routes
 
 import com.poulastaa.domain.model.EndPoints
+import com.poulastaa.domain.model.route_model.req.playlist.CreatePlaylistWithSongReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 import com.poulastaa.domain.repository.ServiceRepository
@@ -18,9 +19,9 @@ fun Route.savePlaylist(service: ServiceRepository) {
         route(EndPoints.SavePlaylist.route) {
             post {
                 val req = call.receiveNullable<SavePlaylistReq>()
-                    ?: return@post call.respondRedirect(EndPoints.SavePlaylist.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.SavePlaylist.route)
+                val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 val response = service.savePlaylist(req, payload)
 
@@ -38,10 +39,10 @@ fun Route.updatePlaylist(service: ServiceRepository) {
         route(EndPoints.UpdatePlaylist.route) {
             post {
                 val req = call.receiveNullable<UpdatePlaylistReq>()
-                    ?: return@post call.respondRedirect(EndPoints.UpdatePlaylist.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 val payload =
-                    call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UpdatePlaylist.route)
+                    call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 val result = service.updatePlaylist(req, payload)
 
@@ -49,6 +50,27 @@ fun Route.updatePlaylist(service: ServiceRepository) {
                     true -> call.respond(HttpStatusCode.OK)
                     false -> call.respond(HttpStatusCode.ServiceUnavailable)
                 }
+            }
+        }
+    }
+}
+
+fun Route.createPlaylist(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.CreatePlaylist.route) {
+            post {
+                val req = call.receiveNullable<CreatePlaylistWithSongReq>()
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val payload =
+                    call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val result = service.createPlaylist(req, payload)
+
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.OK
+                )
             }
         }
     }

@@ -9,6 +9,7 @@ import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.domain.utils.asEmptyDataResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import javax.inject.Inject
@@ -61,4 +62,15 @@ class OnlineFirstAddToPlaylistRepository @Inject constructor(
 
             result
         }.await()
+
+    override suspend fun createPlaylist(
+        songId: Long,
+        name: String
+    ): EmptyResult<DataError.Network> {
+        val result = remote.createPlaylist(songId, name)
+
+        if (result is Result.Success)
+            application.async { local.createPlaylist(result.data) }.await()
+        return result.asEmptyDataResult()
+    }
 }

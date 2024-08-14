@@ -4,6 +4,7 @@ import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.playlist.CreatePlaylistWithSongReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 
@@ -91,4 +92,9 @@ interface ServiceRepository {
         req: UpdatePlaylistReq,
         payload: ReqUserPayload,
     ): Boolean
+
+    suspend fun createPlaylist(
+        req: CreatePlaylistWithSongReq,
+        payload: ReqUserPayload,
+    ): PlaylistDto
 }

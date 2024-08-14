@@ -4,10 +4,13 @@ import com.poulastaa.core.database.dao.AddToPlaylistDao
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
+import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toSavedPlaylist
+import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.domain.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.add_to_playlist.PRESENT
 import com.poulastaa.core.domain.add_to_playlist.SIZE
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,9 +28,9 @@ class RoomLocalAddToPlaylistDatasource @Inject constructor(
     override suspend fun getTotalSongsInFev(): Int = addToPlaylistDao.getTotalFavouriteEntryCount()
 
     override suspend fun getPlaylistData(songId: Long): List<Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>> =
-        commonDao.getAllSavedPlaylist().first().groupBy { entry -> entry.id }
+        addToPlaylistDao.getAllSavedPlaylist().first().groupBy { entry -> entry.id }
             .map { map ->
-                val size = map.value.count()
+                val size = map.value.mapNotNull { it.coverImage }.count()
                 val present =
                     addToPlaylistDao.getSongPlaylistRelationEntryOnSongId(
                         songId = songId,
@@ -74,5 +77,24 @@ class RoomLocalAddToPlaylistDatasource @Inject constructor(
     override suspend fun removeSongFromFavourite(songId: Long) {
         val entry = FavouriteEntity(songId)
         commonDao.deleteSongFromFavourite(entry)
+    }
+
+    override suspend fun createPlaylist(data: PlaylistData) {
+        val entry = data.toPlaylistEntity()
+        val songEntry = data.listOfSong.map { it.toSongEntity() }
+
+        coroutineScope {
+            val song = async { commonDao.insertSongs(songEntry) }
+            val playlist = async { commonDao.insertPlaylist(entry) }
+
+            song.await()
+            playlist.await()
+
+            data.listOfSong.map {
+                SongPlaylistRelationEntity(it.id, entry.id)
+            }.let {
+                commonDao.insertSongPlaylistRelations(it)
+            }
+        }
     }
 }

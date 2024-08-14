@@ -18,6 +18,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -86,6 +87,14 @@ class AddToPlaylistViewModel @Inject constructor(
                     }
                 ) else state.copy(
                     playlistData = state.oldPlaylistData
+                )
+            }
+
+            AddToPlaylistUiEvent.AddNewPlaylist -> {
+                state = state.copy(
+                    addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
+                        isAddNewPlaylistBottomSheetOpen = true
+                    )
                 )
             }
 
@@ -240,6 +249,99 @@ class AddToPlaylistViewModel @Inject constructor(
                     _uiEvent.send(AddToPlaylistUiAction.NavigateBack)
                 }
             }
+
+            is AddToPlaylistUiEvent.AddNewPlaylistUiEvent -> {
+                when (event) {
+                    is AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnNameChange -> {
+                        state = state.copy(
+                            addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
+                                newPlaylistName = event.name
+                            )
+                        )
+                    }
+
+                    AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnCancelClick -> {
+                        state = state.copy(
+                            addNewPlaylistBottomSheetState = AddNewPlaylistBottomSheetUiState()
+                        )
+                    }
+
+                    AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnSaveClick -> {
+                        if (!validatePlaylistName(state.addNewPlaylistBottomSheetState.newPlaylistName)) return
+
+                        state = state.copy(
+                            addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
+                                isMakingApiCall = true
+                            )
+                        )
+
+                        viewModelScope.launch {
+                            val result = repo.createPlaylist(
+                                songId = state.songId,
+                                name = state.addNewPlaylistBottomSheetState.newPlaylistName
+                            )
+
+                            when (result) {
+                                is Result.Error -> {
+                                    when (result.error) {
+                                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                            AddToPlaylistUiAction.EmitToast(
+                                                UiText.StringResource(R.string.error_no_internet)
+                                            )
+                                        )
+
+                                        else -> _uiEvent.send(
+                                            AddToPlaylistUiAction.EmitToast(
+                                                UiText.StringResource(R.string.error_something_went_wrong)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                is Result.Success -> {
+                                    val data = repo.getPlaylistData(state.songId)
+                                        .map { it.toPlaylistData() }
+
+                                    withContext(Dispatchers.Default) {
+                                        val playlist = async {
+                                            data.map { entry ->
+                                                entry.copy(
+                                                    selectStatus = state.playlistData.firstOrNull { it.playlist.id == entry.playlist.id }?.selectStatus
+                                                        ?: entry.selectStatus
+                                                )
+                                            }
+                                        }
+
+                                        val oldPlaylist = async {
+                                            data.map { entry ->
+                                                entry.copy(
+                                                    selectStatus = state.oldPlaylistData.firstOrNull { it.playlist.id == entry.playlist.id }?.selectStatus
+                                                        ?: entry.selectStatus
+                                                )
+                                            }
+                                        }
+
+                                        state = state.copy(
+                                            playlistData = playlist.await(),
+                                            oldPlaylistData = oldPlaylist.await()
+                                        )
+                                    }
+
+                                    _uiEvent.send(
+                                        AddToPlaylistUiAction.EmitToast(
+                                            UiText.StringResource(R.string.playlist_created)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        state = state.copy(
+                            addNewPlaylistBottomSheetState = AddNewPlaylistBottomSheetUiState()
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -293,5 +395,32 @@ class AddToPlaylistViewModel @Inject constructor(
         if (selectStatus.new) currentTotal.dec() else currentTotal.inc()
     } else {
         if (!selectStatus.new) currentTotal.inc() else currentTotal.dec()
+    }
+
+
+    private fun validatePlaylistName(name: String): Boolean {
+        if (name.trim().isEmpty()) {
+            state = state.copy(
+                addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_empty_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        if (name.length < 4) {
+            state = state.copy(
+                addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_short_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        return true
     }
 }

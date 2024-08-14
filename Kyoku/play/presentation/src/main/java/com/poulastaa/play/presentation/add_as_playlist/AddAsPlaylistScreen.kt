@@ -46,6 +46,7 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
+import com.poulastaa.core.presentation.designsystem.components.RowButton
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
@@ -162,59 +163,17 @@ private fun AddAsPlaylistScreen(
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    onEvent(AddAsPlaylistUiEvent.OnCancel)
-                },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.primary.copy(.8f)
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(.6f)
-                )
-            ) {
-                Text(
-                    text = stringResource(id = R.string.cancel),
-                    modifier = Modifier.padding(MaterialTheme.dimens.small2),
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize
-                )
+        RowButton(
+            isMakingApiCall = state.isMakingApiCall,
+            cancel = {
+                focusManager.clearFocus()
+                onEvent(AddAsPlaylistUiEvent.OnCancel)
+            },
+            save = {
+                focusManager.clearFocus()
+                onEvent(AddAsPlaylistUiEvent.OnSubmit)
             }
-
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    onEvent(AddAsPlaylistUiEvent.OnSubmit)
-                },
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Box(modifier = Modifier) {
-                    Text(
-                        text = stringResource(id = R.string.save),
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .alpha(if (state.isMakingApiCall) 0f else 1f),
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
-
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .alpha(if (state.isMakingApiCall) 1f else 0f)
-                            .size(30.dp),
-                        color = MaterialTheme.colorScheme.inversePrimary,
-                        strokeWidth = 2.dp
-                    )
-                }
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
     }

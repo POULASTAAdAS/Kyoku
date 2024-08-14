@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.add_to_playlist
 
+import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 
 data class AddToPlaylistUiState(
@@ -11,9 +12,19 @@ data class AddToPlaylistUiState(
     val isSearchEnable: Boolean = false,
     val query: String = "",
 
+    val addNewPlaylistBottomSheetState: AddNewPlaylistBottomSheetUiState = AddNewPlaylistBottomSheetUiState(),
+
     val oldPlaylistData: List<UiPlaylistData> = emptyList(),
     val playlistData: List<UiPlaylistData> = emptyList(),
     val favouriteData: UiFavouriteData = UiFavouriteData()
+)
+
+data class AddNewPlaylistBottomSheetUiState(
+    val isAddNewPlaylistBottomSheetOpen: Boolean = false,
+    val newPlaylistName: String = "",
+    val isMakingApiCall: Boolean = false,
+    val isValidName: Boolean = true,
+    val errorMessage: UiText = UiText.DynamicString("")
 )
 
 
