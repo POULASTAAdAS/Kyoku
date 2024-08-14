@@ -307,9 +307,16 @@ class HomeViewModel @Inject constructor(
 
                     is HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist -> {
                         viewModelScope.launch {
+//                            state = state.copy(
+//                                addToPlaylistUiState = state.addToPlaylistUiState.copy(
+//                                    songId = event.id,
+//                                    isOpen = true
+//                                )
+//                            )
+
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.AddAsPlaylist(
+                                    screen = OtherScreens.AddAsPlaylist(
                                         songId = event.id
                                     )
                                 )
@@ -351,6 +358,21 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+
+
+            HomeUiEvent.OnAddToPlaylistOpen -> {
+//                state = state.copy(
+//                    addToPlaylistUiState = state.addToPlaylistUiState.copy(
+//                        isOpen = true
+//                    )
+//                )
+            }
+
+            HomeUiEvent.OnAddToPlaylistClose -> {
+//                state = state.copy(
+//                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+//                )
             }
         }
     }

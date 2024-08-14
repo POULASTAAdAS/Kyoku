@@ -60,7 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
-import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
+import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
 import com.poulastaa.core.presentation.designsystem.R
@@ -196,7 +196,7 @@ fun AddToPlaylistNavigationIcon(
     ) {
         Icon(
             imageVector = if (searchEnabled) ArrowBackIcon
-            else ArrowDownIcon,
+            else CancelIcon,
             contentDescription = null
         )
     }

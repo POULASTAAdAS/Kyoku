@@ -46,6 +46,7 @@ import kotlin.random.Random
 
 @Composable
 fun AddToPlaylistRootScreen(
+    modifier: Modifier  = Modifier,
     viewModel: AddToPlaylistViewModel = hiltViewModel(),
     songId: Long,
     navigateBack: () -> Unit
@@ -69,6 +70,7 @@ fun AddToPlaylistRootScreen(
     }
 
     AddToPlaylistScreen(
+        modifier = modifier,
         state = viewModel.state,
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
@@ -78,6 +80,7 @@ fun AddToPlaylistRootScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddToPlaylistScreen(
+    modifier: Modifier = Modifier,
     state: AddToPlaylistUiState,
     onEvent: (AddToPlaylistUiEvent) -> Unit,
     navigateBack: () -> Unit
@@ -95,6 +98,7 @@ private fun AddToPlaylistScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {

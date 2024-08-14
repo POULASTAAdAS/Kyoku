@@ -52,7 +52,6 @@ fun BoxScope.CompactBottomNavigation(
         val activity = LocalContext.current as Activity
         val screenWidth = calculateWindowSizeClass(activity = activity)
 
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()

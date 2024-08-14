@@ -351,8 +351,7 @@ fun ItemBottomSheet(
                         ) {
                             onEvent(
                                 HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist(
-                                    id = state.id ?: -1L,
-                                    artistId = state.otherId
+                                    id = state.id ?: -1L
                                 )
                             )
                         }

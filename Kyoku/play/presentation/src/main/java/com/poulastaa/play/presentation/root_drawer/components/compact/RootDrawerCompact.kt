@@ -1,5 +1,11 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +30,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
@@ -51,7 +55,6 @@ fun RootDrawerCompact(
     onEvent: (RootDrawerUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-
     var currentDestination by remember {
         mutableStateOf(state.startDestination)
     }
@@ -133,11 +136,12 @@ fun RootDrawerCompact(
                             navigate = { screen ->
                                 when (screen) {
                                     is OtherScreens.AddAsPlaylist -> {
-                                        navController.navigate(
-                                            route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
-                                        ) {
-                                            launchSingleTop = true
-                                        }
+                                        onEvent(RootDrawerUiEvent.AddSongToPlaylist(screen.songId))
+//                                        navController.navigate(
+//                                            route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
+//                                        ) {
+//                                            launchSingleTop = true
+//                                        }
                                     }
                                 }
                             },
@@ -167,22 +171,22 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    composable(
-                        route = "${DrawerScreen.AddToPlaylist.route}${DrawerScreen.AddToPlaylist.ROUTE_EXT}",
-                        arguments = listOf(
-                            navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
-                                type = NavType.StringType
-                            }
-                        )
-                    ) {
-                        val id =
-                            it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
-                                ?: -1
-
-                        AddToPlaylistRootScreen(songId = id) {
-                            navController.popBackStack()
-                        }
-                    }
+//                    composable(
+//                        route = "${DrawerScreen.AddToPlaylist.route}${DrawerScreen.AddToPlaylist.ROUTE_EXT}",
+//                        arguments = listOf(
+//                            navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
+//                                type = NavType.StringType
+//                            }
+//                        )
+//                    ) {
+//                        val id =
+//                            it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
+//                                ?: -1
+//
+//                        AddToPlaylistRootScreen(songId = id) {
+//                            navController.popBackStack()
+//                        }
+//                    }
 
                     composable(route = DrawerScreen.Profile.route) {
                         Column(
@@ -235,12 +239,29 @@ fun RootDrawerCompact(
                     }
                 }
 
-
                 CompactBottomNavigation(
                     currentDestination = currentDestination,
                     saveScreen = state.saveScreen,
                     onSaveScreenToggle = onSaveScreenToggle
                 )
+
+                AnimatedVisibility(
+                    visible = state.addToPlaylistUiState.isOpen,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                ) {
+                    val temp = remember {
+                        state.addToPlaylistUiState.isOpen
+                    }
+
+                    if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
+                        onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+                    }
+                }
+            }
+
+            if (state.addToPlaylistUiState.isOpen) BackHandler {
+                onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
             }
         }
     )

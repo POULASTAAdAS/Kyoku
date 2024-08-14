@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -76,15 +76,17 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
 
+
     Row {
         Scaffold(
             modifier = Modifier
                 .then(
-                    if (config.screenWidthDp > 980 && state.playlistBottomSheetUiState.isOpen) Modifier
+                    if (config.screenWidthDp > 980 &&
+                        state.playlistBottomSheetUiState.isOpen
+                    ) Modifier
                         .fillMaxWidth(.6f)
                         .fillMaxHeight()
-                    else Modifier
-                        .fillMaxSize()
+                    else Modifier.fillMaxSize()
                 )
                 .nestedScroll(appBarScrollBehavior.nestedScrollConnection),
             topBar = {
@@ -193,7 +195,6 @@ fun HomeScreen(
                                     onLongClick = {
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-
                                         onEvent(
                                             HomeUiEvent.OnItemLongClick(
                                                 itemClickType = HomeItemClickType.POPULAR_SONG_MIX,
@@ -298,7 +299,6 @@ fun HomeScreen(
                                         },
                                         onLongClick = {
                                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-
 
                                             onEvent(
                                                 HomeUiEvent.OnItemLongClick(
@@ -447,12 +447,8 @@ fun HomeScreen(
 
         AnimatedVisibility(
             visible = config.screenWidthDp > 980 && state.playlistBottomSheetUiState.isOpen,
-            enter = fadeIn() + slideInHorizontally(
-                initialOffsetX = { it }
-            ),
-            exit = fadeOut() + slideOutVertically(
-                targetOffsetY = { it }
-            )
+            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
+            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
         ) {
             AddAsPlaylistRootScreen(
                 modifier = Modifier
@@ -473,12 +469,14 @@ fun HomeScreen(
         key1 = state.playlistBottomSheetUiState.isOpen,
         key2 = config.screenWidthDp < 980
     ) {
-        if (state.playlistBottomSheetUiState.isOpen && config.screenWidthDp < 980) scope.launch {
+        if (state.playlistBottomSheetUiState.isOpen &&
+            config.screenWidthDp < 980
+        ) scope.launch {
             playlistBottomSheetState.show()
         }
     }
 
-    if (state.playlistBottomSheetUiState.isOpen && config.screenWidthDp < 980) PlaylistBottomSheet(
+    if (state.playlistBottomSheetUiState.isOpen && config.screenWidthDp < 980) PlaylistBottomSheet( // medium screen
         sheetState = playlistBottomSheetState,
         exploreType = state.playlistBottomSheetUiState.exploreType,
         closeBottomSheet = {
@@ -489,6 +487,7 @@ fun HomeScreen(
             }
         }
     )
+
 
     LaunchedEffect(key1 = state.itemBottomSheetUiState.isOpen) {
         if (state.itemBottomSheetUiState.isOpen) scope.launch {

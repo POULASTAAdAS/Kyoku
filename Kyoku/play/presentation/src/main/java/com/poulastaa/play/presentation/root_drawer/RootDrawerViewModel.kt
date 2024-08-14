@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,8 +34,6 @@ class RootDrawerViewModel @Inject constructor(
             val userDef = async { ds.readLocalUser() }
             val savedScreen = savedScreenStringDef.await()
             val user = userDef.await()
-
-            Log.d("user", user.toString())
 
             state = state.copy(
                 saveScreen = savedScreen.toSaveScreen(),
@@ -83,6 +81,21 @@ class RootDrawerViewModel @Inject constructor(
                         saveScreen = event.screen
                     )
                 }
+            }
+
+            is RootDrawerUiEvent.AddSongToPlaylist -> {
+                state = state.copy(
+                    addToPlaylistUiState = state.addToPlaylistUiState.copy(
+                        isOpen = true,
+                        songId = event.id
+                    )
+                )
+            }
+
+            RootDrawerUiEvent.AddSongToPlaylistCancel -> {
+                state = state.copy(
+                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+                )
             }
 
             else -> Unit

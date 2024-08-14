@@ -21,7 +21,13 @@ data class HomeUiState(
 
     val itemBottomSheetUiState: ItemBottomSheetUiState = ItemBottomSheetUiState(),
     val playlistBottomSheetUiState: PlaylistBottomSheetUiState = PlaylistBottomSheetUiState(),
+//    val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState()
 ) {
     val canShowUi: Boolean
         get() = !isNewUser && !isDataLoading && isPlaylistLoaded && isAlbumLoaded
 }
+
+data class HomeAddToPlaylistUiState(
+    val isOpen: Boolean = false,
+    val songId: Long = -1
+)
