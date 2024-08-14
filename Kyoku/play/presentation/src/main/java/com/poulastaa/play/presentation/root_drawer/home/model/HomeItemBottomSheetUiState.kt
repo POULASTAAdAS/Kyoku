@@ -2,7 +2,7 @@ package com.poulastaa.play.presentation.root_drawer.home.model
 
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 
-data class ItemBottomSheetUiState(
+data class HomeItemBottomSheetUiState(
     val isOpen: Boolean = false,
     val isBottomSheetLoading: Boolean = true,
     val isQueue: Boolean = false,

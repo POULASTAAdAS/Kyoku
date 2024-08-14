@@ -15,6 +15,7 @@ data class LibraryUiState(
     val list: Int = 1,
 
     val data: LibraryUiData = LibraryUiData(),
+    val libraryBottomSheet: LibraryBottomSheetUiState = LibraryBottomSheetUiState()
 ) {
     val canShowUi: Boolean
         get() = !isDataLoading && !viewTypeReading
@@ -23,4 +24,21 @@ data class LibraryUiState(
         get() = if (viewType == LibraryViewType.GRID) this.grid else this.list
 }
 
+
+data class LibraryBottomSheetUiState(
+    val isOpen: Boolean = false,
+    val isPinned: Boolean = false,
+    val id: Long = -1,
+    val type: LibraryBottomSheetLongClickType = LibraryBottomSheetLongClickType.LOAD,
+    val title: String = "",
+    val urls: List<String> = emptyList(),
+)
+
+enum class LibraryBottomSheetLongClickType {
+    LOAD,
+    ALBUM,
+    ARTIST,
+    PLAYLIST,
+    FAVOURITE
+}
 

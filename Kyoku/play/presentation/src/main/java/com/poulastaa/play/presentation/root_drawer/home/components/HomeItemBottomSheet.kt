@@ -60,17 +60,17 @@ import com.poulastaa.core.presentation.designsystem.UnFollowArtistIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
-import com.poulastaa.play.presentation.root_drawer.home.model.ItemBottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.home.model.HomeItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemBottomSheet(
+fun HomeItemBottomSheet(
     sheetState: SheetState,
     header: String,
-    state: ItemBottomSheetUiState,
+    state: HomeItemBottomSheetUiState,
     onEvent: (HomeUiEvent) -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -108,7 +108,7 @@ fun ItemBottomSheet(
                         .fillMaxWidth()
                         .height(70.dp)
                 ) {
-                    if (state.urls.size > 1) ImageGrid(
+                    ImageGrid(
                         modifier = Modifier.aspectRatio(1f),
                         header = header,
                         urls = state.urls,
@@ -117,23 +117,6 @@ fun ItemBottomSheet(
                         ),
                         shapes = MaterialTheme.shapes.extraSmall
                     )
-                    else Card(
-                        modifier = Modifier.aspectRatio(1f),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(.7f)
-                        ),
-                        shape = MaterialTheme.shapes.extraSmall
-                    ) {
-                        AsyncImage(
-                            model = imageReqSongCover(
-                                header = header,
-                                url = state.urls.firstOrNull() ?: ""
-                            ),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                    }
 
                     Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
 
@@ -387,11 +370,11 @@ fun Option(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = MaterialTheme.dimens.small1)
             .clip(CircleShape)
             .clickable {
                 onClick()
             }
-            .padding(vertical = MaterialTheme.dimens.small1)
     ) {
         Icon(
             imageVector = icon,
@@ -426,14 +409,14 @@ private fun Preview() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            ItemBottomSheet(
+            HomeItemBottomSheet(
                 sheetState = state,
                 header = "",
-                state = ItemBottomSheetUiState(
+                state = HomeItemBottomSheetUiState(
                     isOpen = true,
                     title = "Title",
                     isBottomSheetLoading = bool,
-                    itemType = HomeItemClickType.SUGGEST_ARTIST_SONG,
+                    itemType = HomeItemClickType.SUGGEST_ALBUM,
                     flag = false,
                     isQueue = true,
                     isInFavourite = false

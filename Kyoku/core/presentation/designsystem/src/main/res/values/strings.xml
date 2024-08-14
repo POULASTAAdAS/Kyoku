@@ -113,4 +113,8 @@
     <string name="error_empty_playlist_name">playlist name can\'t be empty</string>
     <string name="error_short_playlist_name">playlist name must contain at-lest 4 character</string>
     <string name="playlist_created">playlist create</string>
+    <string name="pin">Pin</string>
+    <string name="un_pin">Unpin</string>
+    <string name="remove">Remove</string>
+    <string name="view">View</string>
 </resources>

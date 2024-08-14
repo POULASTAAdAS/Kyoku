@@ -12,6 +12,7 @@ import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -60,9 +61,99 @@ class LibraryViewModel @Inject constructor(
 
             LibraryUiEvent.ToggleView -> {
                 state = state.copy(
-                    viewType = if (LibraryViewType.LIST == state.viewType) LibraryViewType.GRID else LibraryViewType.LIST
+                    viewType = if (LibraryViewType.LIST == state.viewType) LibraryViewType.GRID
+                    else LibraryViewType.LIST
                 )
             }
+
+            is LibraryUiEvent.OnItemLongClick -> {
+                viewModelScope.launch {
+                    when (event.type) {
+                        LibraryBottomSheetLongClickType.ALBUM -> {
+                            val pinnedDef = async { }
+
+                            val album = state.data.album.firstOrNull {
+                                it.id == event.id
+                            } ?: return@launch
+
+                            state = state.copy(
+                                libraryBottomSheet = state.libraryBottomSheet.copy(
+                                    isPinned = false, // todo
+                                    id = event.id,
+                                    type = event.type,
+                                    title = album.name,
+                                    urls = listOf(album.coverImage)
+                                )
+                            )
+                        }
+
+                        LibraryBottomSheetLongClickType.ARTIST -> {
+                            val pinnedDef = async { }
+
+                            val artist = state.data.artist.firstOrNull {
+                                it.id == event.id
+                            } ?: return@launch
+
+                            state = state.copy(
+                                libraryBottomSheet = state.libraryBottomSheet.copy(
+                                    isPinned = false, // todo
+                                    id = event.id,
+                                    type = event.type,
+                                    title = artist.name,
+                                    urls = listOf(artist.coverImageUrl)
+                                )
+                            )
+                        }
+
+                        LibraryBottomSheetLongClickType.PLAYLIST -> {
+                            val pinnedDef = async { }
+
+                            val playlist = state.data.playlist.firstOrNull {
+                                it.id == event.id
+                            } ?: return@launch
+
+                            state = state.copy(
+                                libraryBottomSheet = state.libraryBottomSheet.copy(
+                                    isPinned = false, // todo
+                                    id = event.id,
+                                    type = event.type,
+                                    title = playlist.name,
+                                    urls = playlist.urls
+                                )
+                            )
+                        }
+
+                        LibraryBottomSheetLongClickType.FAVOURITE -> {
+                            val pinnedDef = async { }
+
+                            state = state.copy(
+                                libraryBottomSheet = state.libraryBottomSheet.copy(
+                                    isPinned = false, // todo
+                                    id = event.id,
+                                    type = event.type,
+                                    title = "Favourite",
+                                )
+                            )
+                        }
+
+                        else -> return@launch
+                    }
+
+                    state = state.copy(
+                        libraryBottomSheet = state.libraryBottomSheet.copy(
+                            isOpen = true
+                        )
+                    )
+                }
+            }
+
+            LibraryUiEvent.OnItemBottomSheetCancel -> {
+                state = state.copy(
+                    libraryBottomSheet = LibraryBottomSheetUiState()
+                )
+            }
+
+            else -> Unit
         }
     }
 

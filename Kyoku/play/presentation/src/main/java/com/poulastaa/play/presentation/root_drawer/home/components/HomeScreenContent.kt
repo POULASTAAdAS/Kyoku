@@ -495,7 +495,7 @@ fun HomeScreen(
         }
     }
 
-    if (state.itemBottomSheetUiState.isOpen) ItemBottomSheet(
+    if (state.itemBottomSheetUiState.isOpen) HomeItemBottomSheet(
         sheetState = itemBottomSheetState,
         header = state.header,
         state = state.itemBottomSheetUiState,

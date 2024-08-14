@@ -179,3 +179,15 @@ val FavouriteIcon: ImageVector
 val NotFavouriteIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_remove_favourite)
+
+val PinIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_pin)
+
+val UnPinIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_un_pin)
+
+val ViewIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_view)

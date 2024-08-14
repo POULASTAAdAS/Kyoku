@@ -7,4 +7,46 @@ sealed interface LibraryUiEvent {
 
     data class ToggleFilterType(val type: LibraryFilterType) : LibraryUiEvent
     data object ToggleView : LibraryUiEvent
+
+    data class OnItemLongClick(
+        val id: Long,
+        val type: LibraryBottomSheetLongClickType
+    ) : LibraryUiEvent
+
+    data object OnItemBottomSheetCancel : LibraryUiEvent
+
+    sealed interface BottomSheetUiEvent : LibraryUiEvent {
+        sealed interface Favourite : BottomSheetUiEvent {
+            data class Play(val id: Long) : Favourite
+            data class Pin(val id: Long) : Favourite
+            data class UnPin(val id: Long) : Favourite
+            data class View(val id: Long) : Favourite
+            data class Download(val id: Long) : Favourite
+        }
+
+        sealed interface Album : BottomSheetUiEvent {
+            data class Play(val id: Long) : Album
+            data class Pin(val id: Long) : Album
+            data class UnPin(val id: Long) : Album
+            data class View(val id: Long) : Album
+            data class Download(val id: Long) : Album
+            data class Remove(val id: Long) : Album
+        }
+
+        sealed interface Playlist : BottomSheetUiEvent {
+            data class Play(val id: Long) : Playlist
+            data class Pin(val id: Long) : Playlist
+            data class UnPin(val id: Long) : Playlist
+            data class View(val id: Long) : Playlist
+            data class Download(val id: Long) : Playlist
+            data class Remove(val id: Long) : Playlist
+        }
+
+        sealed interface Artist : BottomSheetUiEvent {
+            data class Pin(val id: Long) : Artist
+            data class UnPin(val id: Long) : Artist
+            data class View(val id: Long) : Artist
+            data class UnFollow(val id: Long) : Artist
+        }
+    }
 }

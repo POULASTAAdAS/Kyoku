@@ -17,7 +17,7 @@ import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheetUiStat
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
 import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
-import com.poulastaa.play.presentation.root_drawer.home.model.ItemBottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.home.model.HomeItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
@@ -63,7 +63,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.POPULAR_SONG_MIX -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.popular_song_mix)
@@ -76,7 +76,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.OLD_GEM -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.old_gem)
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.favourite_artist_mix)
@@ -106,7 +106,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -135,7 +135,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -166,7 +166,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -346,7 +346,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 state = state.copy(
-                    itemBottomSheetUiState = ItemBottomSheetUiState()
+                    itemBottomSheetUiState = HomeItemBottomSheetUiState()
                 )
             }
 
