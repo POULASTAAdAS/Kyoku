@@ -127,10 +127,8 @@ select * from playlist;
 delete from playlist where id in (12, 13);
 
 
-
-
-
-
+select * from pinned;
+delete from pinned;
 
 
 

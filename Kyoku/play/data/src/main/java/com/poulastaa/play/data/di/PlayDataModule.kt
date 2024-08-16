@@ -48,10 +48,12 @@ object PlayDataModule {
         local: LocalLibraryDataSource,
         remote: RemoteLibraryDataSource,
         applicationScope: CoroutineScope,
+        ds: DataStoreRepository
     ): LibraryRepository = OnlineFirstLibraryRepository(
         local = local,
         remote = remote,
-        application = applicationScope
+        application = applicationScope,
+        ds = ds
     )
 
     @Provides

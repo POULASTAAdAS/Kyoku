@@ -1,5 +1,6 @@
 package com.poulastaa.plugins
 
+import com.poulastaa.domain.table.PinnedTable
 import com.poulastaa.domain.table.relation.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -27,6 +28,7 @@ fun Application.configureDatabase() {
         SchemaUtils.create(UserArtistRelationTable)
         SchemaUtils.create(UserAlbumRelationTable)
         SchemaUtils.create(UserFavouriteRelationTable)
+        SchemaUtils.create(PinnedTable)
     }
 }
 

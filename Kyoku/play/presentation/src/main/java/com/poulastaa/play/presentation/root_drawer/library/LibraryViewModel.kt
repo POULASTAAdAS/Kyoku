@@ -137,13 +137,9 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryBottomSheetLongClickType.FAVOURITE -> {
-                            val pinnedDef =
-                                async { ds.isFevPinned() }
-
-
                             state = state.copy(
                                 libraryBottomSheet = state.libraryBottomSheet.copy(
-                                    isPinned = pinnedDef.await(),
+                                    isPinned = state.data.isFevPinned,
                                     id = event.id,
                                     type = event.type,
                                     title = "Favourite",
@@ -232,7 +228,7 @@ class LibraryViewModel @Inject constructor(
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.UnPin -> handleUnPin(
                 id = event.id,
-                type = PinReqType.FAVOURITE,
+                type = PinReqType.ALBUM,
                 messageId = R.string.album_un_pined
             )
 
@@ -309,6 +305,7 @@ class LibraryViewModel @Inject constructor(
 
     private fun populate() {
         getPinnedData()
+        readFevPinnedState()
         readFavourite()
         readPlaylist()
         readAlbum()
@@ -459,7 +456,7 @@ class LibraryViewModel @Inject constructor(
         viewModelScope.launch {
             showToastJob?.cancel()
 
-            when (val result = repo.pinData(id, type)) {
+            when (val result = repo.unPinData(id, type)) {
                 is Result.Error -> {
                     when (result.error) {
                         DataError.Network.NO_INTERNET -> {
@@ -518,5 +515,17 @@ class LibraryViewModel @Inject constructor(
                 isVisible = false
             )
         )
+    }
+
+    private fun readFevPinnedState() {
+        viewModelScope.launch {
+            ds.isFevPinned().collectLatest {
+                state = state.copy(
+                    data = state.data.copy(
+                        isFevPinned = it
+                    )
+                )
+            }
+        }
     }
 }

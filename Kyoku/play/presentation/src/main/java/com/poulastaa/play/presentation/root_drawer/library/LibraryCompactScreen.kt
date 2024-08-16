@@ -3,7 +3,6 @@ package com.poulastaa.play.presentation.root_drawer.library
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -184,7 +183,10 @@ private fun LibraryScreen(
                     )
                 }
 
-                if (state.filterType == LibraryFilterType.ALL && state.data.pinned.isNotEmpty()) {
+                if (state.filterType == LibraryFilterType.ALL &&
+                    (state.data.pinned.isNotEmpty() ||
+                            state.data.isFevPinned)
+                ) {
                     itemSection(
                         gridSize = state.gridSize,
                         type = state.viewType,
@@ -367,6 +369,28 @@ private fun LibraryScreen(
                         }
                     )
 
+                    item(span = { GridItemSpan(state.gridSize) }) {
+                        FavouriteCard(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .combinedClickable(
+                                    onClick = {
+
+                                    },
+                                    onLongClick = {
+                                        onEvent(
+                                            LibraryUiEvent.OnItemLongClick(
+                                                id = -1,
+                                                type = LibraryBottomSheetLongClickType.FAVOURITE
+                                            )
+                                        )
+
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    }
+                                )
+                        )
+                    }
+
                     item(
                         span = { GridItemSpan(state.gridSize) }
                     ) {
@@ -374,6 +398,7 @@ private fun LibraryScreen(
                             thickness = 2.0.dp
                         )
                     }
+
                 }
 
                 if (state.filterType == LibraryFilterType.ALL &&

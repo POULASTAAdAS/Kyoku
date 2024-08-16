@@ -21,7 +21,7 @@ fun Route.pinData(service: ServiceRepository) {
                 val payload = call.getReqUserPayload() ?: return@put call.respondRedirect(EndPoints.UnAuthorised.route)
 
 
-                val result = service
+                val result = service.pinData(req, payload)
 
 
                 when (result) {
@@ -41,7 +41,7 @@ fun Route.unPinData(service: ServiceRepository) {
                     call.receiveNullable<PinReq>() ?: return@put call.respondRedirect(EndPoints.UnAuthorised.route)
                 val payload = call.getReqUserPayload() ?: return@put call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val result = service
+                val result = service.unPinData(req, payload)
 
                 when (result) {
                     true -> call.respond(HttpStatusCode.OK)

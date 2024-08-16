@@ -11,6 +11,7 @@ data class LibraryUiData(
     val artist: List<UiArtist> = emptyList(),
     val isFavouriteEntry: Boolean = false,
 
+    val isFevPinned: Boolean = false,
     val pinned: List<PinnedUiData> = emptyList()
 )
 

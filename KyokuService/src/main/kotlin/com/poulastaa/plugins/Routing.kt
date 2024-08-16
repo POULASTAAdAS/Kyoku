@@ -45,6 +45,9 @@ private fun Routing.common(service: ServiceRepository) {
     updateFavourite(service)
 
     createPlaylist(service)
+
+    pinData(service)
+    unPinData(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

@@ -1,5 +1,6 @@
 package com.poulastaa.core.data
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -127,13 +128,15 @@ class DataStoreRepositoryImpl @Inject constructor(
         it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
     }.first()
 
-    override suspend fun isFevPinned(): Boolean = dataStore.data.catch {
+    override fun isFevPinned(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
-    }.first().let {
+    }.map {
         it[PreferencesKeys.FEV_PINNED_STATE] ?: false
     }
 
     override suspend fun updateFevPinState(state: Boolean) {
+        Log.d("called", "called $state")
+
         dataStore.edit {
             it[PreferencesKeys.FEV_PINNED_STATE] = state
         }

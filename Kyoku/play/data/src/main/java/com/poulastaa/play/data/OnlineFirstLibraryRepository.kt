@@ -1,5 +1,6 @@
 package com.poulastaa.play.data
 
+import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.PinReqType
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
@@ -21,6 +22,7 @@ class OnlineFirstLibraryRepository @Inject constructor(
     private val local: LocalLibraryDataSource,
     private val remote: RemoteLibraryDataSource,
     private val application: CoroutineScope,
+    private val ds: DataStoreRepository
 ) : LibraryRepository {
     override fun getPlaylist(): Flow<SavedPlaylist> = local.getPlaylist()
 
@@ -38,8 +40,10 @@ class OnlineFirstLibraryRepository @Inject constructor(
     override suspend fun pinData(id: Long, pinnedType: PinReqType): EmptyResult<DataError.Network> {
         val result = remote.pinData(id, pinnedType)
         if (result is Result.Success) {
-            if (pinnedType == PinReqType.FAVOURITE) return result
-            else application.async { local.pinData(id, pinnedType) }.await()
+            application.async {
+                if (pinnedType == PinReqType.FAVOURITE) ds.updateFevPinState(true)
+                else local.pinData(id, pinnedType)
+            }.await()
         }
 
         return result
@@ -51,8 +55,10 @@ class OnlineFirstLibraryRepository @Inject constructor(
     ): EmptyResult<DataError.Network> {
         val result = remote.unPinData(id, pinnedType)
         if (result is Result.Success) {
-            if (pinnedType == PinReqType.FAVOURITE) return result
-            else application.async { local.unPinData(id, pinnedType) }.await()
+            application.async {
+                if (pinnedType == PinReqType.FAVOURITE) ds.updateFevPinState(false)
+                else local.unPinData(id, pinnedType)
+            }.await()
         }
 
         return result

@@ -36,5 +36,5 @@ interface LibraryDao {
     suspend fun pinData(entry: PinnedEntity)
 
     @Delete
-    suspend fun unData(entry: PinnedEntity)
+    suspend fun unPinData(entry: PinnedEntity)
 }

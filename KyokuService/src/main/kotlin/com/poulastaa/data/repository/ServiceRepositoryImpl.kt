@@ -2,11 +2,13 @@ package com.poulastaa.data.repository
 
 import com.poulastaa.data.mappers.getUserType
 import com.poulastaa.data.mappers.getYear
+import com.poulastaa.data.mappers.toPinnedType
 import com.poulastaa.data.mappers.toPlaylistDto
 import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.pin.PinReq
 import com.poulastaa.domain.model.route_model.req.playlist.CreatePlaylistWithSongReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
 import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
@@ -396,5 +398,37 @@ class ServiceRepositoryImpl(
             name = req.name,
             listOfSong = listOf(songDef.await())
         )
+    }
+
+    override suspend fun pinData(
+        req: PinReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.pinData(
+            id = req.id,
+            userId = user.id,
+            userType = user.userType,
+            pinnedType = req.type.toPinnedType()
+        )
+
+        return true
+    }
+
+    override suspend fun unPinData(
+        req: PinReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.unPinData(
+            id = req.id,
+            userId = user.id,
+            userType = user.userType,
+            pinnedType = req.type.toPinnedType()
+        )
+
+        return true
     }
 }

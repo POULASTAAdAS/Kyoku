@@ -18,10 +18,7 @@ import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.UserId
 import com.poulastaa.domain.repository.UserRepository
-import com.poulastaa.domain.table.AlbumTable
-import com.poulastaa.domain.table.ArtistTable
-import com.poulastaa.domain.table.PlaylistTable
-import com.poulastaa.domain.table.SongTable
+import com.poulastaa.domain.table.*
 import com.poulastaa.domain.table.relation.*
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
@@ -468,5 +465,37 @@ class UserDatabaseRepository(
                 }
             }
         }.awaitAll()
+    }
+
+    override suspend fun pinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    ) {
+        query {
+            PinnedTable.insertIgnore {
+                it[this.id] = id
+                it[this.userId] = userId
+                it[this.userType] = userType.name
+                it[this.pinnedType] = pinnedType.name
+            }
+        }
+    }
+
+    override suspend fun unPinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    ) {
+        query {
+            PinnedTable.deleteWhere {
+                this.id eq id and
+                        (this.userId eq userId) and
+                        (this.pinnedType eq pinnedType.name) and
+                        (this.userType eq userType.name)
+            }
+        }
     }
 }

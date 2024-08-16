@@ -63,5 +63,5 @@ class RoomLocalLibraryDataSource @Inject constructor(
         libraryDao.pinData(PinnedEntity(id, pinnedType.toPinnedType()))
 
     override suspend fun unPinData(id: Long, pinnedType: PinReqType) =
-        libraryDao.unData(PinnedEntity(id, pinnedType.toPinnedType()))
+        libraryDao.unPinData(PinnedEntity(id, pinnedType.toPinnedType()))
 }

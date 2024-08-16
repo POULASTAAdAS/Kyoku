@@ -1,5 +1,7 @@
 package com.poulastaa.data.mappers
 
+import com.poulastaa.data.model.PinnedType
+import com.poulastaa.domain.model.route_model.req.pin.PinReqType
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,4 +22,11 @@ fun Long.getYear(): Int {
     bYear += 13 // ingress year by 13
 
     return bYear
+}
+
+fun PinReqType.toPinnedType() = when (this) {
+    PinReqType.PLAYLIST -> PinnedType.PLAYLIST
+    PinReqType.ARTIST -> PinnedType.ARTIST
+    PinReqType.ALBUM -> PinnedType.ALBUM
+    PinReqType.FAVOURITE -> PinnedType.FAVOURITE
 }
