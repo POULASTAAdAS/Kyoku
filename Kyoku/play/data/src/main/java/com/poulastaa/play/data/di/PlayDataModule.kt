@@ -12,6 +12,7 @@ import com.poulastaa.core.domain.home.LocalHomeDatasource
 import com.poulastaa.core.domain.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.setting.SettingRepository
 import com.poulastaa.play.data.OfflineFirstSettingRepository
@@ -45,9 +46,11 @@ object PlayDataModule {
     @ViewModelScoped
     fun provideLibraryRepository(
         local: LocalLibraryDataSource,
+        remote: RemoteLibraryDataSource,
         applicationScope: CoroutineScope,
     ): LibraryRepository = OnlineFirstLibraryRepository(
         local = local,
+        remote = remote,
         application = applicationScope
     )
 

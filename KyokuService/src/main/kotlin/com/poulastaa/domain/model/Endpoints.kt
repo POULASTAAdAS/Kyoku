@@ -37,5 +37,8 @@ sealed class EndPoints(val route: String) {
 
     data object CreatePlaylist : EndPoints(route = "/api/authorised/createPlaylist")
 
+    data object PinData : EndPoints(route = "/api/authorised/pinData")
+    data object UnPinData : EndPoints(route = "/api/authorised/unPinData")
+
     data object UnAuthorised : EndPoints(route = "/api/unauthorised")
 }

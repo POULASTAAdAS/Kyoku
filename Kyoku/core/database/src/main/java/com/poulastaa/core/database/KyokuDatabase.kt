@@ -14,6 +14,7 @@ import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.DayTypeSongPrevEntity
 import com.poulastaa.core.database.entity.FavouriteArtistMixPrevEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
+import com.poulastaa.core.database.entity.PinnedEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
@@ -51,8 +52,9 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         SongAlbumRelationEntity::class,
 
         FavouriteEntity::class,
+        PinnedEntity::class
     ],
-    version = 3,
+    version = 1,
     exportSchema = true
 )
 abstract class KyokuDatabase : RoomDatabase() {

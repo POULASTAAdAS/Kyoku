@@ -117,4 +117,13 @@
     <string name="un_pin">Unpin</string>
     <string name="remove">Remove</string>
     <string name="view">View</string>
+    <string name="pinned">Pinned</string>
+    <string name="favourite_pinned">Favourite is now pinned</string>
+    <string name="favourite_un_pined">Favourite is Unpinned</string>
+    <string name="album_pinned">"Album is now pinned"</string>
+    <string name="album_un_pined">Album is now Unpinned</string>
+    <string name="playlist_un_pinned">Playlist is now Unpinned</string>
+    <string name="playlist_pinned">Playlist is now pinned</string>
+    <string name="artist_un_pinned">Artist is now Unpinned</string>
+    <string name="artist_pinned">Artist is now pinned</string>
 </resources>

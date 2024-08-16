@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.home.RemoteHomeDatasource
+import com.poulastaa.core.domain.library.RemoteLibraryDataSource
+import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
@@ -43,6 +45,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteAddToPlaylistDatasource = OnlineFirstAddToPlaylistDatasource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideLibraryRemoteDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteLibraryDataSource = OfflineFirstLibraryDatasource(
         client = client,
         gson = gson
     )

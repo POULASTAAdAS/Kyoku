@@ -112,4 +112,10 @@ interface CommonDao {
         background: String,
         onBackground: String,
     )
+
+    @Query("select * from AlbumEntity where id = :id")
+    suspend fun getAlbumById(id:Long): AlbumEntity
+
+    @Query("select * from ArtistEntity where id = :id")
+    suspend fun getArtistById(id:Long): ArtistEntity
 }
