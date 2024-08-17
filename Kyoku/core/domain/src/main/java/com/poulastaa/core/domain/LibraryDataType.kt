@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain
 
-enum class PinReqType {
+enum class LibraryDataType {
     PLAYLIST,
     ARTIST,
     ALBUM,

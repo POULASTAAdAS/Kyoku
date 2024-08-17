@@ -5,8 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PinnedEntity
+import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.domain.model.PinnedResult
 import com.poulastaa.core.domain.model.PinnedType
 import kotlinx.coroutines.flow.Flow
@@ -37,4 +40,22 @@ interface LibraryDao {
 
     @Delete
     suspend fun unPinData(entry: PinnedEntity)
+
+    @Query("select * from PlaylistEntity where id = :id")
+    suspend fun getPlaylistOnId(id: Long): PlaylistEntity?
+
+    @Delete
+    suspend fun deletePlaylist(entry: PlaylistEntity)
+
+
+    @Query("select * from ArtistEntity where id = :id")
+    suspend fun getArtistOnId(id: Long): ArtistEntity?
+
+    @Delete
+    suspend fun deleteArtist(entry: ArtistEntity)
+
+    @Query("select * from ALBUMENTITY where id = :id")
+    suspend fun getAlbumOnId(id: Long): AlbumEntity?
+    @Delete
+    suspend fun deleteAlbum(entry: AlbumEntity)
 }

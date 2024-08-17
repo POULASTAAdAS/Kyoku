@@ -48,6 +48,8 @@ private fun Routing.common(service: ServiceRepository) {
 
     pinData(service)
     unPinData(service)
+
+    deleteSavedData(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

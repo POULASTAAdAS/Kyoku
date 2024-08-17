@@ -369,7 +369,7 @@ private fun LibraryScreen(
                         }
                     )
 
-                    item(span = { GridItemSpan(state.gridSize) }) {
+                    if (state.data.isFevPinned) item(span = { GridItemSpan(state.gridSize) }) {
                         FavouriteCard(
                             modifier = Modifier
                                 .height(100.dp)

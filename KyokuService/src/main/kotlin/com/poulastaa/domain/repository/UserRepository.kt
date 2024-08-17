@@ -100,4 +100,11 @@ interface UserRepository {
         userType: UserType,
         pinnedType: PinnedType,
     )
+
+    suspend fun deleteSavedData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        dataType: PinnedType,
+    )
 }

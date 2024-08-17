@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain.library
 
-import com.poulastaa.core.domain.PinReqType
+import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedType
 import com.poulastaa.core.domain.utils.SavedAlbum
@@ -19,6 +19,8 @@ interface LocalLibraryDataSource {
 
     suspend fun checkIfPinned(id: Long, type: PinnedType): Boolean
 
-    suspend fun pinData(id: Long, pinnedType: PinReqType)
-    suspend fun unPinData(id: Long, pinnedType: PinReqType)
+    suspend fun pinData(id: Long, type: LibraryDataType)
+    suspend fun unPinData(id: Long, type: LibraryDataType)
+
+    suspend fun deleteSavedData(id: Long, type: LibraryDataType)
 }

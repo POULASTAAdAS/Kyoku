@@ -108,4 +108,10 @@ interface ServiceRepository {
         req: PinReq,
         payload: ReqUserPayload,
     ): Boolean
+
+    suspend fun deleteSavedData(
+        id: Long,
+        type: String,
+        payload: ReqUserPayload,
+    ): Boolean
 }

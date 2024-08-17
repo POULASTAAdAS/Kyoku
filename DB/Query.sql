@@ -123,30 +123,19 @@ select * from userplaylistsongrelation;
 select * from userplaylistsongrelation;
 
 select * from playlist;
-
-delete from playlist where id in (12, 13);
-
-
-select * from pinned;
-delete from pinned;
+select * from userplaylistsongrelation;
 
 
+select distinct(userid) from userplaylistsongrelation where playlistid = 3;
+select *  from userplaylistsongrelation;
+
+select * from useralbumrelation;
+select * from useralbumrelation;
 
 
+select * from userartistrelation;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+delete from userartistrelation where userid = 0;
 
 
 

@@ -1,5 +1,6 @@
 package com.poulastaa.data.repository
 
+import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
@@ -11,6 +12,7 @@ import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.table.ArtistTable
 import com.poulastaa.domain.table.GenreTable
+import com.poulastaa.domain.table.PlaylistTable
 import com.poulastaa.domain.table.SongTable
 import com.poulastaa.domain.table.relation.SongArtistRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
@@ -158,5 +160,23 @@ class KyokuDatabaseImpl : DatabaseRepository {
         }.awaitAll()
 
         playlist.id.value
+    }
+
+    override suspend fun getPlaylistOnId(id: Long): PlaylistDao? = query {
+        PlaylistDao.find {
+            PlaylistTable.id eq id
+        }.firstOrNull()
+    }
+
+    override suspend fun getAlbumOnId(albumId: Long): AlbumDao? = query {
+        AlbumDao.find {
+            ArtistTable.id eq albumId
+        }.firstOrNull()
+    }
+
+    override suspend fun getArtistOnId(artistId: Long): ArtistDao? = query {
+        ArtistDao.find {
+            ArtistTable.id eq artistId
+        }.firstOrNull()
     }
 }

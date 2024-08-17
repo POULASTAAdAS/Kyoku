@@ -431,4 +431,44 @@ class ServiceRepositoryImpl(
 
         return true
     }
+
+    override suspend fun deleteSavedData(
+        id: Long,
+        type: String,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        val pinnedType = when (type) {
+            PinnedType.ALBUM.name -> PinnedType.ALBUM
+            PinnedType.PLAYLIST.name -> PinnedType.PLAYLIST
+            PinnedType.ALBUM.name -> PinnedType.ALBUM
+            else -> PinnedType.FAVOURITE
+        }
+
+        coroutineScope {
+            val delete = async {
+                userRepo.deleteSavedData(
+                    id = id,
+                    userId = user.id,
+                    userType = user.userType,
+                    dataType = pinnedType
+                )
+            }
+
+            val unPin = async {
+                userRepo.unPinData(
+                    id = id,
+                    userId = user.id,
+                    userType = user.userType,
+                    pinnedType = pinnedType
+                )
+            }
+
+            delete.await()
+            unPin.await()
+        }
+
+        return true
+    }
 }

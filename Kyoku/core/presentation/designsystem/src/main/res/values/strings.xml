@@ -126,4 +126,7 @@
     <string name="playlist_pinned">Playlist is now pinned</string>
     <string name="artist_un_pinned">Artist is now Unpinned</string>
     <string name="artist_pinned">Artist is now pinned</string>
+    <string name="artist_un_followed">Artist Unfollowd</string>
+    <string name="playlist_deleted">Saved playlist deleted.</string>
+    <string name="album_deleted">Album deleted.</string>
 </resources>

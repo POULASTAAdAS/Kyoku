@@ -498,4 +498,55 @@ class UserDatabaseRepository(
             }
         }
     }
+
+    override suspend fun deleteSavedData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        dataType: PinnedType, // using PinnedType as saved data type
+    ) {
+        when (dataType) {
+            PinnedType.PLAYLIST -> {
+                val playlist = database.getPlaylistOnId(id) ?: return
+
+                query {
+                    val userIds = UserPlaylistSongRelationTable
+                        .slice(UserPlaylistSongRelationTable.userId)
+                        .select {
+                            UserPlaylistSongRelationTable.playlistId eq id
+                        }.withDistinct()
+                        .map { it[UserPlaylistSongRelationTable.userId] }
+
+                    if (userIds.size > 1) UserPlaylistSongRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.playlistId eq id)
+                    }
+                    else playlist.delete()
+                }
+            }
+
+            PinnedType.ALBUM -> {
+                query {
+                    UserAlbumRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.albumId eq id)
+                    }
+                }
+            }
+
+            PinnedType.ARTIST -> {
+                query {
+                    UserArtistRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.artistId eq id)
+                    }
+                }
+            }
+
+            else -> Unit
+        }
+    }
 }

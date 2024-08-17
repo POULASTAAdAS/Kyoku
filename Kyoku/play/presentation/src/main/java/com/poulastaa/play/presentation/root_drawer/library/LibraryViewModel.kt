@@ -7,10 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.PinReqType
+import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.model.PinnedType
 import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
@@ -192,17 +193,19 @@ class LibraryViewModel @Inject constructor(
 
             }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Favourite.Pin -> handlePin(
-                id = event.id,
-                type = PinReqType.FAVOURITE,
-                messageId = R.string.favourite_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Favourite.Pin -> {
+                viewModelScope.launch {
+                    val result = repo.pinData(event.id, LibraryDataType.FAVOURITE)
+                    handleResult(result, R.string.favourite_pinned)
+                }
+            }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Favourite.UnPin -> handleUnPin(
-                id = event.id,
-                type = PinReqType.FAVOURITE,
-                messageId = R.string.favourite_un_pined
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Favourite.UnPin -> {
+                viewModelScope.launch {
+                    val result = repo.unPinData(event.id, LibraryDataType.FAVOURITE)
+                    handleResult(result, R.string.favourite_un_pined)
+                }
+            }
 
             is LibraryUiEvent.BottomSheetUiEvent.Favourite.View -> {
 
@@ -220,24 +223,29 @@ class LibraryViewModel @Inject constructor(
 
             }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Album.Pin -> handlePin(
-                id = event.id,
-                type = PinReqType.ALBUM,
-                messageId = R.string.album_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Album.Pin -> {
+                viewModelScope.launch {
+                    val result = repo.pinData(event.id, LibraryDataType.ALBUM)
+                    handleResult(result, R.string.album_pinned)
+                }
+            }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Album.UnPin -> handleUnPin(
-                id = event.id,
-                type = PinReqType.ALBUM,
-                messageId = R.string.album_un_pined
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Album.UnPin -> {
+                viewModelScope.launch {
+                    val result = repo.unPinData(event.id, LibraryDataType.ALBUM)
+                    handleResult(result, R.string.album_un_pined)
+                }
+            }
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.View -> {
 
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.Remove -> {
-
+                viewModelScope.launch {
+                    val result = repo.deleteSavedData(event.id, LibraryDataType.ALBUM)
+                    handleResult(result, R.string.album_deleted)
+                }
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.Download -> {
@@ -252,17 +260,19 @@ class LibraryViewModel @Inject constructor(
 
             }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Playlist.Pin -> handlePin(
-                id = event.id,
-                type = PinReqType.PLAYLIST,
-                messageId = R.string.playlist_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Playlist.Pin -> {
+                viewModelScope.launch {
+                    val result = repo.pinData(event.id, LibraryDataType.PLAYLIST)
+                    handleResult(result, R.string.playlist_pinned)
+                }
+            }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Playlist.UnPin -> handleUnPin(
-                id = event.id,
-                type = PinReqType.PLAYLIST,
-                messageId = R.string.playlist_un_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Playlist.UnPin -> {
+                viewModelScope.launch {
+                    val result = repo.unPinData(event.id, LibraryDataType.PLAYLIST)
+                    handleResult(result, R.string.playlist_un_pinned)
+                }
+            }
 
             is LibraryUiEvent.BottomSheetUiEvent.Playlist.View -> {
 
@@ -273,31 +283,39 @@ class LibraryViewModel @Inject constructor(
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Playlist.Remove -> {
-
+                viewModelScope.launch {
+                    val result = repo.deleteSavedData(event.id, LibraryDataType.PLAYLIST)
+                    handleResult(result, R.string.playlist_deleted)
+                }
             }
         }
     }
 
     private fun handleArtistBottomSheetUiEvent(event: LibraryUiEvent.BottomSheetUiEvent.Artist) {
         when (event) {
-            is LibraryUiEvent.BottomSheetUiEvent.Artist.Pin -> handlePin(
-                id = event.id,
-                type = PinReqType.ARTIST,
-                messageId = R.string.artist_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Artist.Pin -> {
+                viewModelScope.launch {
+                    val result = repo.pinData(event.id, LibraryDataType.ARTIST)
+                    handleResult(result, R.string.artist_pinned)
+                }
+            }
 
-            is LibraryUiEvent.BottomSheetUiEvent.Artist.UnPin -> handleUnPin(
-                id = event.id,
-                type = PinReqType.ARTIST,
-                messageId = R.string.artist_un_pinned
-            )
+            is LibraryUiEvent.BottomSheetUiEvent.Artist.UnPin -> {
+                viewModelScope.launch {
+                    val result = repo.unPinData(event.id, LibraryDataType.ARTIST)
+                    handleResult(result, R.string.artist_un_pinned)
+                }
+            }
 
             is LibraryUiEvent.BottomSheetUiEvent.Artist.View -> {
 
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Artist.UnFollow -> {
-
+                viewModelScope.launch {
+                    val result = repo.deleteSavedData(event.id, LibraryDataType.ARTIST)
+                    handleResult(result, R.string.artist_un_followed)
+                }
             }
         }
     }
@@ -402,94 +420,45 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
-    private fun handlePin(
-        id: Long,
-        type: PinReqType,
+    private fun handleResult(
+        result: EmptyResult<DataError.Network>,
         @StringRes messageId: Int
     ) {
-        viewModelScope.launch {
-            showToastJob?.cancel()
+        showToastJob?.cancel()
 
-            when (val result = repo.pinData(id, type)) {
-                is Result.Error -> {
-                    when (result.error) {
-                        DataError.Network.NO_INTERNET -> {
-                            showToastJob = showToast(
-                                LibraryUiToast(
-                                    isVisible = true,
-                                    message = UiText.StringResource(R.string.error_no_internet),
-                                    type = LibraryToastType.ERROR
-                                )
+        when (result) {
+            is Result.Error -> {
+                when (result.error) {
+                    DataError.Network.NO_INTERNET -> {
+                        showToastJob = showToast(
+                            LibraryUiToast(
+                                isVisible = true,
+                                message = UiText.StringResource(R.string.error_no_internet),
+                                type = LibraryToastType.ERROR
                             )
-                        }
-
-                        else -> {
-                            showToastJob = showToast(
-                                LibraryUiToast(
-                                    isVisible = true,
-                                    message = UiText.StringResource(R.string.error_something_went_wrong),
-                                    type = LibraryToastType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-
-                is Result.Success -> {
-                    showToastJob = showToast(
-                        LibraryUiToast(
-                            isVisible = true,
-                            message = UiText.StringResource(messageId),
-                            type = LibraryToastType.SUCCESS
                         )
-                    )
+                    }
+
+                    else -> {
+                        showToastJob = showToast(
+                            LibraryUiToast(
+                                isVisible = true,
+                                message = UiText.StringResource(R.string.error_something_went_wrong),
+                                type = LibraryToastType.ERROR
+                            )
+                        )
+                    }
                 }
             }
-        }
-    }
 
-    private fun handleUnPin(
-        id: Long,
-        type: PinReqType,
-        @StringRes messageId: Int
-    ) {
-        viewModelScope.launch {
-            showToastJob?.cancel()
-
-            when (val result = repo.unPinData(id, type)) {
-                is Result.Error -> {
-                    when (result.error) {
-                        DataError.Network.NO_INTERNET -> {
-                            showToastJob = showToast(
-                                LibraryUiToast(
-                                    isVisible = true,
-                                    message = UiText.StringResource(R.string.error_no_internet),
-                                    type = LibraryToastType.ERROR
-                                )
-                            )
-                        }
-
-                        else -> {
-                            showToastJob = showToast(
-                                LibraryUiToast(
-                                    isVisible = true,
-                                    message = UiText.StringResource(R.string.error_something_went_wrong),
-                                    type = LibraryToastType.ERROR
-                                )
-                            )
-                        }
-                    }
-                }
-
-                is Result.Success -> {
-                    showToastJob = showToast(
-                        LibraryUiToast(
-                            isVisible = true,
-                            message = UiText.StringResource(messageId),
-                            type = LibraryToastType.SUCCESS
-                        )
+            is Result.Success -> {
+                showToastJob = showToast(
+                    LibraryUiToast(
+                        isVisible = true,
+                        message = UiText.StringResource(messageId),
+                        type = LibraryToastType.SUCCESS
                     )
-                }
+                )
             }
         }
     }

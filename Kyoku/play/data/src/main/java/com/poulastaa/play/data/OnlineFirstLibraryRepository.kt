@@ -1,7 +1,7 @@
 package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.PinReqType
+import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.library.RemoteLibraryDataSource
@@ -37,12 +37,12 @@ class OnlineFirstLibraryRepository @Inject constructor(
     override suspend fun checkIfPinned(id: Long, type: PinnedType): Boolean =
         local.checkIfPinned(id, type)
 
-    override suspend fun pinData(id: Long, pinnedType: PinReqType): EmptyResult<DataError.Network> {
-        val result = remote.pinData(id, pinnedType)
+    override suspend fun pinData(id: Long, type: LibraryDataType): EmptyResult<DataError.Network> {
+        val result = remote.pinData(id, type)
         if (result is Result.Success) {
             application.async {
-                if (pinnedType == PinReqType.FAVOURITE) ds.updateFevPinState(true)
-                else local.pinData(id, pinnedType)
+                if (type == LibraryDataType.FAVOURITE) ds.updateFevPinState(true)
+                else local.pinData(id, type)
             }.await()
         }
 
@@ -51,17 +51,35 @@ class OnlineFirstLibraryRepository @Inject constructor(
 
     override suspend fun unPinData(
         id: Long,
-        pinnedType: PinReqType
+        type: LibraryDataType
     ): EmptyResult<DataError.Network> {
-        val result = remote.unPinData(id, pinnedType)
+        val result = remote.unPinData(id, type)
         if (result is Result.Success) {
             application.async {
-                if (pinnedType == PinReqType.FAVOURITE) ds.updateFevPinState(false)
-                else local.unPinData(id, pinnedType)
+                if (type == LibraryDataType.FAVOURITE) ds.updateFevPinState(false)
+                else local.unPinData(id, type)
             }.await()
         }
 
         return result
     }
 
+    override suspend fun deleteSavedData(
+        id: Long,
+        type: LibraryDataType
+    ): EmptyResult<DataError.Network> {
+        val result = remote.deleteSavedData(id, type)
+        if (result is Result.Success) application.async {
+            val unPin = async {
+                if (type == LibraryDataType.FAVOURITE) ds.updateFevPinState(false)
+                else local.unPinData(id, type)
+            }
+            val delete = async { local.deleteSavedData(id, type) }
+
+            unPin.await()
+            delete.await()
+        }.await()
+
+        return result
+    }
 }

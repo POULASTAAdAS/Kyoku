@@ -135,8 +135,6 @@ class DataStoreRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateFevPinState(state: Boolean) {
-        Log.d("called", "called $state")
-
         dataStore.edit {
             it[PreferencesKeys.FEV_PINNED_STATE] = state
         }

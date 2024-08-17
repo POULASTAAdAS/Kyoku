@@ -7,7 +7,7 @@ import com.poulastaa.core.database.mapper.toArtist
 import com.poulastaa.core.database.mapper.toPinnedData
 import com.poulastaa.core.database.mapper.toPinnedType
 import com.poulastaa.core.database.mapper.toSavedPlaylist
-import com.poulastaa.core.domain.PinReqType
+import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedType
@@ -59,9 +59,30 @@ class RoomLocalLibraryDataSource @Inject constructor(
     override suspend fun checkIfPinned(id: Long, type: PinnedType): Boolean =
         libraryDao.checkIfPinned(id, type) != null
 
-    override suspend fun pinData(id: Long, pinnedType: PinReqType) =
-        libraryDao.pinData(PinnedEntity(id, pinnedType.toPinnedType()))
+    override suspend fun pinData(id: Long, type: LibraryDataType) =
+        libraryDao.pinData(PinnedEntity(id, type.toPinnedType()))
 
-    override suspend fun unPinData(id: Long, pinnedType: PinReqType) =
-        libraryDao.unPinData(PinnedEntity(id, pinnedType.toPinnedType()))
+    override suspend fun unPinData(id: Long, type: LibraryDataType) =
+        libraryDao.unPinData(PinnedEntity(id, type.toPinnedType()))
+
+    override suspend fun deleteSavedData(id: Long, type: LibraryDataType) {
+        when (type) {
+            LibraryDataType.PLAYLIST -> {
+                val playlist = libraryDao.getPlaylistOnId(id) ?: return
+                libraryDao.deletePlaylist(playlist)
+            }
+
+            LibraryDataType.ARTIST -> {
+                val artist = libraryDao.getArtistOnId(id) ?: return
+                libraryDao.deleteArtist(artist)
+            }
+
+            LibraryDataType.ALBUM -> {
+                val album = libraryDao.getAlbumOnId(id) ?: return
+                libraryDao.deleteAlbum(album)
+            }
+
+            else -> return
+        }
+    }
 }

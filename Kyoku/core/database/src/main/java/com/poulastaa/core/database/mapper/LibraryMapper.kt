@@ -2,7 +2,7 @@ package com.poulastaa.core.database.mapper
 
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
-import com.poulastaa.core.domain.PinReqType
+import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedResult
@@ -35,9 +35,9 @@ fun ArtistEntity.toPinnedData() = PinnedData(
     pinnedType = PinnedType.ARTIST
 )
 
-fun PinReqType.toPinnedType() = when (this) {
-    PinReqType.PLAYLIST -> PinnedType.PLAYLIST
-    PinReqType.ARTIST -> PinnedType.ARTIST
-    PinReqType.ALBUM -> PinnedType.ALBUM
-    PinReqType.FAVOURITE -> throw IllegalArgumentException("Favourite cannot be pinned")
+fun LibraryDataType.toPinnedType() = when (this) {
+    LibraryDataType.PLAYLIST -> PinnedType.PLAYLIST
+    LibraryDataType.ARTIST -> PinnedType.ARTIST
+    LibraryDataType.ALBUM -> PinnedType.ALBUM
+    LibraryDataType.FAVOURITE -> throw IllegalArgumentException("Favourite cannot be pinned")
 }
