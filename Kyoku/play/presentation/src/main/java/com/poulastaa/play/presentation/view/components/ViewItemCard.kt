@@ -91,7 +91,9 @@ fun ViewItemCard(
             Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
 
             Column(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(.8f),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -118,8 +120,8 @@ fun ViewItemCard(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(MaterialTheme.dimens.small1),
-                    tint = MaterialTheme.colorScheme.onBackground.copy(.8f)
+                        .padding(MaterialTheme.dimens.small2),
+                    tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
                 )
             }
         }

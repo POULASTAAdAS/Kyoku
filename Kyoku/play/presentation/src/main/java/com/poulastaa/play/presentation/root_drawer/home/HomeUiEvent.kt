@@ -53,7 +53,4 @@ sealed interface HomeUiEvent {
     sealed interface PlaylistBottomSheetUiEvent : HomeUiEvent {
         data object Cancel : PlaylistBottomSheetUiEvent
     }
-
-    data object OnAddToPlaylistOpen : HomeUiEvent
-    data object OnAddToPlaylistClose : HomeUiEvent
 }

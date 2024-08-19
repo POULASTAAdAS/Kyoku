@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -76,7 +77,6 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
 
-
     Row {
         Scaffold(
             modifier = Modifier
@@ -142,6 +142,14 @@ fun HomeScreen(
                                 uiPlaylist = playlist,
                                 modifier = Modifier
                                     .weight(1f)
+                                    .clickable {
+                                        onEvent(
+                                            HomeUiEvent.OnItemClick(
+                                                playlist.id,
+                                                HomeItemClickType.SAVED_PLAYLIST
+                                            )
+                                        )
+                                    }
                             )
                         }
                     }
@@ -164,11 +172,20 @@ fun HomeScreen(
                         state.savedAlbums.take(
                             if (config.screenWidthDp < 500) 2
                             else state.savedPlaylists.size
-                        ).forEach { playlist ->
+                        ).forEach { album ->
                             SavedAlbumCard(
                                 header = state.header,
-                                uiAlbum = playlist,
-                                modifier = Modifier.weight(1f)
+                                uiAlbum = album,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable {
+                                        onEvent(
+                                            HomeUiEvent.OnItemClick(
+                                                album.id,
+                                                HomeItemClickType.SAVED_ALBUM
+                                            )
+                                        )
+                                    }
                             )
                         }
                     }

@@ -1,7 +1,7 @@
 package com.poulastaa.play.data
 
 import com.poulastaa.core.ViewData
-import com.poulastaa.core.domain.ViewSong
+import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.view.LocalViewDatasource
 import com.poulastaa.core.domain.view.RemoteViewDatasource
 import com.poulastaa.core.domain.view.ViewRepository
@@ -14,26 +14,36 @@ class OfflineFirstViewRepository @Inject constructor(
     private val application: CoroutineScope
 ) : ViewRepository {
     override suspend fun getPlaylistOnId(id: Long): ViewData {
-        return ViewData()
+        val localPlaylist = local.getPlaylistOnId(id)
+        if (localPlaylist.listOfSong.isNotEmpty()) return localPlaylist
+
+        val remotePlaylist = remote.getPlaylistOnId(id)
+//        application.async { local.savePlaylist(remotePlaylist) }.await()
+        return remotePlaylist
     }
 
     override suspend fun getAlbumOnId(id: Long): ViewData {
-        return ViewData()
+        val localAlbum = local.getAlbumOnId(id)
+        if (localAlbum.listOfSong.isNotEmpty()) return localAlbum
+
+        val remoteAlbum = remote.getAlbumOnId(id)
+//        application.async { local.saveAlbum(remoteAlbum) }.await()
+        return remoteAlbum
     }
 
-    override suspend fun getFev(): List<ViewSong> {
+    override suspend fun getFev(): List<PlaylistSong> {
         return listOf()
     }
 
-    override suspend fun getOldMix(): List<ViewSong> {
+    override suspend fun getOldMix(): List<PlaylistSong> {
         return listOf()
     }
 
-    override suspend fun getArtistMix(): List<ViewSong> {
+    override suspend fun getArtistMix(): List<PlaylistSong> {
         return listOf()
     }
 
-    override suspend fun getPopularMix(): List<ViewSong> {
+    override suspend fun getPopularMix(): List<PlaylistSong> {
         return listOf()
     }
 }

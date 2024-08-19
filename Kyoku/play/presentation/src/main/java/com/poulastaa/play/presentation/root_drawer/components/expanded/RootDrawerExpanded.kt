@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.components.expanded
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -49,6 +50,7 @@ import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
+import com.poulastaa.play.presentation.view.ViewCompactScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -155,25 +157,19 @@ fun RootDrawerExpanded(
                                 profileUrl = state.profilePicUrl,
                                 navigate = { screen ->
                                     when (screen) {
-                                        is OtherScreens.AddAsPlaylist -> {
-                                            onEvent(RootDrawerUiEvent.AddSongToPlaylist(screen.songId))
-//                                        navController.navigate(
-//                                            route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
-//                                        ) {
-//                                            launchSingleTop = true
-//                                        }
-                                        }
-                                    }
+                                        is OtherScreens.AddAsPlaylist -> onEvent(
+                                            RootDrawerUiEvent.AddSongToPlaylist(
+                                                screen.songId
+                                            )
+                                        )
 
-//                            when (screen) {
-//                                is OtherScreens.AddAsPlaylist -> {
-//                                    navController.navigate(
-//                                        route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
-//                                    ) {
-//                                        launchSingleTop = true
-//                                    }
-//                                }
-//                            }
+                                        is OtherScreens.View -> onEvent(
+                                            RootDrawerUiEvent.View(
+                                                screen.id,
+                                                screen.type
+                                            )
+                                        )
+                                    }
                                 },
                                 onEvent = { event ->
                                     when (event) {
@@ -199,23 +195,6 @@ fun RootDrawerExpanded(
                                 }
                             )
                         }
-
-//                composable(
-//                    route = "${DrawerScreen.AddToPlaylist.route}${DrawerScreen.AddToPlaylist.ROUTE_EXT}",
-//                    arguments = listOf(
-//                        navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
-//                            type = NavType.StringType
-//                        }
-//                    )
-//                ) {
-//                    val id =
-//                        it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
-//                            ?: -1
-//
-//                    AddToPlaylistRootScreen(songId = id) {
-//                        navController.popBackStack()
-//                    }
-//                }
 
                         composable(route = DrawerScreen.Profile.route) {
                             Column(
@@ -271,7 +250,7 @@ fun RootDrawerExpanded(
                     AnimatedVisibility( // expand screen
                         visible = state.addToPlaylistUiState.isOpen && config.screenWidthDp > 980,
                         enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
-                        exit = fadeOut() +  slideOutHorizontally(targetOffsetX = { it })
+                        exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
                     ) {
                         val temp = remember {
                             state.addToPlaylistUiState.isOpen

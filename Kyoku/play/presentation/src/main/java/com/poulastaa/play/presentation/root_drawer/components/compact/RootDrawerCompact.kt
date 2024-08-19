@@ -43,6 +43,7 @@ import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
+import com.poulastaa.play.presentation.view.ViewCompactScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -135,14 +136,18 @@ fun RootDrawerCompact(
                             profileUrl = state.profilePicUrl,
                             navigate = { screen ->
                                 when (screen) {
-                                    is OtherScreens.AddAsPlaylist -> {
-                                        onEvent(RootDrawerUiEvent.AddSongToPlaylist(screen.songId))
-//                                        navController.navigate(
-//                                            route = "${DrawerScreen.AddToPlaylist.route}/${screen.songId}"
-//                                        ) {
-//                                            launchSingleTop = true
-//                                        }
-                                    }
+                                    is OtherScreens.AddAsPlaylist -> onEvent(
+                                        RootDrawerUiEvent.AddSongToPlaylist(
+                                            screen.songId
+                                        )
+                                    )
+
+                                    is OtherScreens.View -> onEvent(
+                                        RootDrawerUiEvent.View(
+                                            screen.id,
+                                            screen.type
+                                        )
+                                    )
                                 }
                             },
                             onEvent = { event ->
@@ -170,23 +175,6 @@ fun RootDrawerCompact(
                             }
                         )
                     }
-
-//                    composable(
-//                        route = "${DrawerScreen.AddToPlaylist.route}${DrawerScreen.AddToPlaylist.ROUTE_EXT}",
-//                        arguments = listOf(
-//                            navArgument(DrawerScreen.AddToPlaylist.SONG_ID) {
-//                                type = NavType.StringType
-//                            }
-//                        )
-//                    ) {
-//                        val id =
-//                            it.arguments?.getString(DrawerScreen.AddToPlaylist.SONG_ID)?.toLong()
-//                                ?: -1
-//
-//                        AddToPlaylistRootScreen(songId = id) {
-//                            navController.popBackStack()
-//                        }
-//                    }
 
                     composable(route = DrawerScreen.Profile.route) {
                         Column(
@@ -258,10 +246,25 @@ fun RootDrawerCompact(
                         onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
                     }
                 }
+
+                AnimatedVisibility(
+                    visible = state.viewUiState.isOpen,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    ViewCompactScreen(
+                        id = state.viewUiState.songId,
+                        type = state.viewUiState.type,
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.ViewCancel)
+                        }
+                    )
+                }
             }
 
-            if (state.addToPlaylistUiState.isOpen) BackHandler {
-                onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+            if (state.addToPlaylistUiState.isOpen || state.viewUiState.isOpen) BackHandler {
+                if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+                else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.ViewCancel)
             }
         }
     )

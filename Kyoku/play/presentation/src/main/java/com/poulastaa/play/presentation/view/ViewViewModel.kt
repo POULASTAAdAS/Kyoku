@@ -33,7 +33,7 @@ class ViewViewModel @Inject constructor(
                 )
 
                 ViewDataType.ALBUM -> state.copy(
-                    data = repo.getAlbumOnId(id).toViewUiSong()
+                    data = repo.getAlbumOnId(id).toViewUiAlbum()
                 )
 
                 ViewDataType.FEV -> state.copy(
@@ -54,8 +54,10 @@ class ViewViewModel @Inject constructor(
             }
 
             withContext(Dispatchers.Main) {
-                state = state.copy(
-                    isDataLoading = false
+                state = if (state.data.name.isBlank()) state.copy(
+                    loadingState = ViewLoadingState.ERROR
+                ) else state.copy(
+                    loadingState = ViewLoadingState.LOADED
                 )
             }
         }

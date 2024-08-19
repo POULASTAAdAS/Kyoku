@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -95,6 +96,25 @@ class RootDrawerViewModel @Inject constructor(
             RootDrawerUiEvent.AddSongToPlaylistCancel -> {
                 state = state.copy(
                     addToPlaylistUiState = HomeAddToPlaylistUiState()
+                )
+            }
+
+            is RootDrawerUiEvent.View -> {
+                Log.d("called", event.toString())
+
+                state = state.copy(
+                    viewUiState = HomeViewUiState(
+                        isOpen = true,
+                        songId = event.id,
+                        type = event.type,
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+                )
+            }
+
+            RootDrawerUiEvent.ViewCancel -> {
+                state = state.copy(
+                    viewUiState = HomeViewUiState()
                 )
             }
 

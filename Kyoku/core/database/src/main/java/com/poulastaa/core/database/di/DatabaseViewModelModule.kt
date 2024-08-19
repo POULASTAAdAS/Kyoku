@@ -8,6 +8,7 @@ import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.SettingDao
+import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.RoomLocalAddPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAddToPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAuthDatasource
@@ -151,11 +152,19 @@ object DatabaseViewModelModule {
 
     @Provides
     @ViewModelScoped
+    fun provideViewDao(
+        database: KyokuDatabase,
+    ): ViewDao = database.viewDao
+
+    @Provides
+    @ViewModelScoped
     fun provideLocalViewDatasource(
         commonDao: CommonDao,
-        libraryDao: LibraryDao
+        libraryDao: LibraryDao,
+        viewDao: ViewDao
     ): LocalViewDatasource = RoomLocalViewDatasource(
         commonDao = commonDao,
-        libraryDao = libraryDao
+        libraryDao = libraryDao,
+        viewDao = viewDao
     )
 }

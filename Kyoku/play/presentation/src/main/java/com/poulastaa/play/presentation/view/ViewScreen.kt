@@ -9,11 +9,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,6 +60,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ViewCompactScreen(
+    modifier: Modifier = Modifier,
     id: Long,
     type: ViewDataType,
     viewModel: ViewViewModel = hiltViewModel(),
@@ -70,6 +73,7 @@ fun ViewCompactScreen(
     }
 
     ViewScreen(
+        modifier = modifier,
         state = viewModel.state,
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
@@ -79,6 +83,7 @@ fun ViewCompactScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ViewScreen(
+    modifier: Modifier = Modifier,
     state: ViewUiState,
     onEvent: (ViewUiEvent) -> Unit,
     navigateBack: () -> Unit
@@ -92,10 +97,11 @@ private fun ViewScreen(
                 scrollBehavior = scroll,
                 navigateBack = navigateBack
             )
-        }
+        },
+        modifier = modifier
     ) { innerPadding ->
         AnimatedContent(
-            state.isDataLoading,
+            state.loadingState,
             label = "view Animated Content",
             transitionSpec = {
                 fadeIn(
@@ -104,7 +110,7 @@ private fun ViewScreen(
             }
         ) { isDataLoading ->
             when (isDataLoading) {
-                true -> Column(
+                ViewLoadingState.LOADING -> Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -114,12 +120,14 @@ private fun ViewScreen(
                     content = { ViewLoadingAnimation() }
                 )
 
-                false -> LazyColumn(
+                ViewLoadingState.LOADED -> LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                         .padding(innerPadding)
-                        .nestedScroll(scroll.nestedScrollConnection),
+                        .nestedScroll(scroll.nestedScrollConnection)
+                        .navigationBarsPadding(),
+                    contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1)
                 ) {
                     item {
                         Column(
@@ -137,9 +145,7 @@ private fun ViewScreen(
                             ) {
                                 ImageGrid(
                                     header = state.header,
-                                    urls = state.data.listOfSong.shuffled()
-                                        .take(4)
-                                        .map { it.coverImage }
+                                    urls = state.data.urls
                                 )
                             }
                         }
@@ -153,7 +159,7 @@ private fun ViewScreen(
                         ) {
                             Text(
                                 text = state.data.name,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -227,6 +233,10 @@ private fun ViewScreen(
                         )
                     }
                 }
+
+                ViewLoadingState.ERROR -> {
+
+                }
             }
         }
     }
@@ -254,12 +264,12 @@ private fun CustomButton(
 @Composable
 private fun Preview() {
     var loading by remember {
-        mutableStateOf(false)
+        mutableStateOf(ViewLoadingState.LOADING)
     }
 
     LaunchedEffect(key1 = Unit) {
         delay(2000)
-        loading = false
+        loading = ViewLoadingState.LOADED
     }
 
     AppThem {
@@ -275,7 +285,7 @@ private fun Preview() {
                     name = "Playlist"
                 ),
                 topBarTitle = "Playlist",
-                isDataLoading = loading
+                loadingState = loading
             ), onEvent = {}) {
 
         }

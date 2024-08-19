@@ -2,7 +2,7 @@ package com.poulastaa.play.presentation.view
 
 
 data class ViewUiState(
-    val isDataLoading: Boolean = true,
+    val loadingState: ViewLoadingState = ViewLoadingState.LOADING,
     val topBarTitle: String = "",
 
     val isMakingAPiCall: Boolean = false,
@@ -13,6 +13,7 @@ data class ViewUiState(
 data class ViewUiData(
     val id: Long = -1,
     val name: String = "",
+    val urls: List<String> = emptyList(),
     val listOfSong: List<ViewUiSong> = emptyList()
 )
 
@@ -23,3 +24,9 @@ data class ViewUiSong(
     val artist: String = "",
     val isExpanded: Boolean = false
 )
+
+enum class ViewLoadingState {
+    LOADING,
+    LOADED,
+    ERROR
+}

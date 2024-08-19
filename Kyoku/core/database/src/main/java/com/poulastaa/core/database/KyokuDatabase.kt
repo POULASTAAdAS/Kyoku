@@ -9,6 +9,7 @@ import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.SettingDao
+import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.DayTypeSongPrevEntity
@@ -65,4 +66,5 @@ abstract class KyokuDatabase : RoomDatabase() {
     abstract val addPlaylistDao: AddPlaylistDao
     abstract val settingDao: SettingDao
     abstract val addToPlaylist: AddToPlaylistDao
+    abstract val viewDao: ViewDao
 }

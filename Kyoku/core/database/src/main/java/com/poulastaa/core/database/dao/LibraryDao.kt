@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
-import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PinnedEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.domain.model.PinnedResult
@@ -56,6 +55,7 @@ interface LibraryDao {
 
     @Query("select * from ALBUMENTITY where id = :id")
     suspend fun getAlbumOnId(id: Long): AlbumEntity?
+
     @Delete
     suspend fun deleteAlbum(entry: AlbumEntity)
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,6 +22,7 @@ import com.poulastaa.play.presentation.root_drawer.home.model.HomeItemBottomShee
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
+import com.poulastaa.play.presentation.view.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -52,7 +54,83 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.OnItemClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (event.itemClickType) {
+                        HomeItemClickType.SAVED_PLAYLIST -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.PLAYLIST
+                                    )
+                                )
+                            )
+                        }
 
+                        HomeItemClickType.SAVED_ALBUM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ALBUM
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.POPULAR_SONG_MIX -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.POPULAR_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.OLD_GEM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.OLD_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ARTIST_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.SUGGEST_ALBUM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    OtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ALBUM
+                                    )
+                                )
+                            )
+                        }
+
+                        else -> Unit
+
+//                        HomeItemClickType.SUGGEST_ARTIST -> TODO()
+//                        HomeItemClickType.POPULAR_ARTIST -> TODO()
+//                        HomeItemClickType.HISTORY_SONG -> TODO()
+//                        HomeItemClickType.SUGGEST_ARTIST_SONG -> TODO()
+//                        HomeItemClickType.NON -> TODO()
+                    }
+                }
             }
 
             is HomeUiEvent.OnItemLongClick -> {
@@ -307,13 +385,6 @@ class HomeViewModel @Inject constructor(
 
                     is HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist -> {
                         viewModelScope.launch {
-//                            state = state.copy(
-//                                addToPlaylistUiState = state.addToPlaylistUiState.copy(
-//                                    songId = event.id,
-//                                    isOpen = true
-//                                )
-//                            )
-
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
                                     screen = OtherScreens.AddAsPlaylist(
@@ -358,21 +429,6 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
-            }
-
-
-            HomeUiEvent.OnAddToPlaylistOpen -> {
-//                state = state.copy(
-//                    addToPlaylistUiState = state.addToPlaylistUiState.copy(
-//                        isOpen = true
-//                    )
-//                )
-            }
-
-            HomeUiEvent.OnAddToPlaylistClose -> {
-//                state = state.copy(
-//                    addToPlaylistUiState = HomeAddToPlaylistUiState()
-//                )
             }
         }
     }
