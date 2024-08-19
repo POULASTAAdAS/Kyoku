@@ -8,6 +8,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
@@ -191,3 +192,15 @@ val UnPinIcon: ImageVector
 val ViewIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_view)
+
+val ThreeDotIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.MoreVert
+
+val ShuffleIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_shuffle)
+
+val MoveIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_move)

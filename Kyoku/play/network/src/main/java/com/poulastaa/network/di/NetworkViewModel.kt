@@ -5,10 +5,12 @@ import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.library.RemoteLibraryDataSource
+import com.poulastaa.core.domain.view.RemoteViewDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
+import com.poulastaa.network.OnlineFirstViewDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +57,17 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteLibraryDataSource = OfflineFirstLibraryDatasource(
+        client = client,
+        gson = gson
+    )
+
+
+    @Provides
+    @ViewModelScoped
+    fun provideViewRemoteDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteViewDatasource = OnlineFirstViewDatasource(
         client = client,
         gson = gson
     )
