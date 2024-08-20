@@ -4,8 +4,10 @@ import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.routes.*
 import com.poulastaa.routes.setup.*
 import io.ktor.server.application.*
+import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 fun Application.configureRouting() {
     routing {
@@ -14,6 +16,11 @@ fun Application.configureRouting() {
         setUpRoutes(service)
         common(service)
         home(service)
+
+        staticFiles(
+            remotePath = ".well-known",
+            dir = File("certs")
+        )
 
         unAuthorized()
     }

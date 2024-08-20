@@ -8,6 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,7 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -52,6 +55,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DownloadIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.SadIcon
 import com.poulastaa.core.presentation.designsystem.ShuffleIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
@@ -234,8 +239,40 @@ private fun ViewScreen(
                     }
                 }
 
-                ViewLoadingState.ERROR -> {
+                ViewLoadingState.ERROR -> Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(horizontal = MaterialTheme.dimens.medium3),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = SadIcon,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .padding(MaterialTheme.dimens.large1),
+                        tint = MaterialTheme.colorScheme.primary.copy(.5f)
+                    )
 
+                    Card(
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
+                        ),
+                        shape = MaterialTheme.shapes.extraSmall,
+                        colors = CardDefaults.cardColors(
+                            contentColor = MaterialTheme.colorScheme.errorContainer
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.error_something_went_wrong),
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(MaterialTheme.dimens.medium1),
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }
@@ -264,12 +301,12 @@ private fun CustomButton(
 @Composable
 private fun Preview() {
     var loading by remember {
-        mutableStateOf(ViewLoadingState.LOADING)
+        mutableStateOf(ViewLoadingState.ERROR)
     }
 
     LaunchedEffect(key1 = Unit) {
         delay(2000)
-        loading = ViewLoadingState.LOADED
+        loading = ViewLoadingState.ERROR
     }
 
     AppThem {

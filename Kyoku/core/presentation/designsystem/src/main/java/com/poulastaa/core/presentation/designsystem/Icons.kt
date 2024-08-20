@@ -204,3 +204,7 @@ val ShuffleIcon: ImageVector
 val MoveIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_move)
+
+val SadIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_sad)
