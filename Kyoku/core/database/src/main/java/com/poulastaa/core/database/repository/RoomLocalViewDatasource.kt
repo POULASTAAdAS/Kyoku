@@ -7,6 +7,8 @@ import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.mapper.toPlaylistSong
 import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.database.mapper.toViewData
+import com.poulastaa.core.domain.AlbumData
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.view.LocalViewDatasource
@@ -67,5 +69,13 @@ class RoomLocalViewDatasource @Inject constructor(
 
     override suspend fun saveSongs(list: List<Song>) {
         list.map { it.toSongEntity() }.let { commonDao.insertSongs(it) }
+    }
+
+    override suspend fun savePlaylist(data: PlaylistData) {
+
+    }
+
+    override suspend fun saveAlbum(data: AlbumData) {
+
     }
 }

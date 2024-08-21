@@ -1,6 +1,6 @@
 package com.poulastaa.play.presentation
 
-import com.poulastaa.play.presentation.view.ViewDataType
+import com.poulastaa.play.presentation.view.components.ViewDataType
 
 
 sealed interface OtherScreens {

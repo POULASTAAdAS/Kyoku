@@ -1,4 +1,4 @@
-package com.poulastaa.play.presentation.view
+package com.poulastaa.play.presentation.view.components
 
 enum class ViewDataType {
     PLAYLIST,

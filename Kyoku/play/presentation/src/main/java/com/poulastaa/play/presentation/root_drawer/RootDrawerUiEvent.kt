@@ -2,7 +2,7 @@ package com.poulastaa.play.presentation.root_drawer
 
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.SaveScreen
-import com.poulastaa.play.presentation.view.ViewDataType
+import com.poulastaa.play.presentation.view.components.ViewDataType
 
 sealed interface RootDrawerUiEvent {
     data object OnDrawerToggle : RootDrawerUiEvent

@@ -1,6 +1,8 @@
 package com.poulastaa.core.domain.view
 
 import com.poulastaa.core.ViewData
+import com.poulastaa.core.domain.AlbumData
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
 
@@ -19,6 +21,8 @@ interface LocalViewDatasource {
     suspend fun getPopularMix(): List<PlaylistSong>
 
     suspend fun saveSongs(list: List<Song>)
+    suspend fun savePlaylist(data: PlaylistData)
+    suspend fun saveAlbum(data: AlbumData)
 
     enum class ReqType {
         DAY_TYPE,
