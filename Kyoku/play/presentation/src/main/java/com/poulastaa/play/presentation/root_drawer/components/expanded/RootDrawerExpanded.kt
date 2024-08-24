@@ -3,8 +3,10 @@ package com.poulastaa.play.presentation.root_drawer.components.expanded
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -145,7 +147,8 @@ fun RootDrawerExpanded(
                         modifier = Modifier
                             .then(
                                 if (config.screenWidthDp > 980 &&
-                                    state.addToPlaylistUiState.isOpen
+                                    (state.addToPlaylistUiState.isOpen ||
+                                            state.viewUiState.isOpen)
                                 ) Modifier
                                     .fillMaxWidth(.6f)
                                     .fillMaxHeight()
@@ -263,11 +266,25 @@ fun RootDrawerExpanded(
                             onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
                         }
                     }
+
+                    AnimatedVisibility(
+                        visible = state.viewUiState.isOpen && config.screenWidthDp > 960,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        ViewCompactScreen(
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                            id = state.viewUiState.songId,
+                            type = state.viewUiState.type,
+                            navigateBack = {
+                                onEvent(RootDrawerUiEvent.ViewCancel)
+                            }
+                        )
+                    }
                 }
 
                 this@Row.AnimatedVisibility( // medium screen
                     visible = state.addToPlaylistUiState.isOpen && config.screenWidthDp < 980,
-                    modifier = Modifier.fillMaxSize(),
                     enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                     exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                 ) {
@@ -279,11 +296,27 @@ fun RootDrawerExpanded(
                         onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
                     }
                 }
+
+                this@Row.AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.viewUiState.isOpen && config.screenWidthDp < 980,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    ViewCompactScreen(
+                        id = state.viewUiState.songId,
+                        type = state.viewUiState.type,
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.ViewCancel)
+                        }
+                    )
+                }
             }
         }
     }
 
-    if (state.addToPlaylistUiState.isOpen) BackHandler {
-        onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+    if (state.addToPlaylistUiState.isOpen || state.viewUiState.isOpen) BackHandler {
+        if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+        else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.ViewCancel)
     }
 }

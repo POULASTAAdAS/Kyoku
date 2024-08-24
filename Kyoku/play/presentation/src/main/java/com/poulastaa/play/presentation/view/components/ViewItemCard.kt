@@ -118,9 +118,6 @@ fun ViewItemCard(
                 Icon(
                     imageVector = ThreeDotIcon,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(MaterialTheme.dimens.small2),
                     tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
                 )
             }

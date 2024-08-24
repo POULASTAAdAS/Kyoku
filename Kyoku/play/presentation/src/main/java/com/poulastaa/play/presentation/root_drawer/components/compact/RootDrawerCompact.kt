@@ -1,9 +1,12 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -248,9 +251,10 @@ fun RootDrawerCompact(
                 }
 
                 AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
                     visible = state.viewUiState.isOpen,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                 ) {
                     ViewCompactScreen(
                         id = state.viewUiState.songId,

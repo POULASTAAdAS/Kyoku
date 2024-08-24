@@ -1,7 +1,5 @@
 package com.poulastaa.play.presentation.view
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -46,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -95,6 +94,7 @@ private fun ViewScreen(
     navigateBack: () -> Unit
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val config = LocalConfiguration.current
 
     Scaffold(
         topBar = {
@@ -115,8 +115,6 @@ private fun ViewScreen(
                 ) togetherWith fadeOut(animationSpec = tween(800))
             }
         ) { isDataLoading ->
-            Log.d("loadingState", isDataLoading.toString())
-
             when (isDataLoading) {
                 ViewLoadingState.LOADING -> Column(
                     modifier = Modifier
@@ -135,12 +133,18 @@ private fun ViewScreen(
                         .padding(innerPadding)
                         .nestedScroll(scroll.nestedScrollConnection)
                         .navigationBarsPadding(),
-                    contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1)
+                    contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
                 ) {
                     item {
                         Column(
                             modifier = Modifier
-                                .padding(horizontal = MaterialTheme.dimens.medium1)
+                                .then(
+                                    if (config.screenWidthDp < 600)
+                                        Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
+                                    else Modifier
+                                        .aspectRatio(1.6f)
+                                ),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Card(
                                 modifier = Modifier
@@ -162,14 +166,14 @@ private fun ViewScreen(
                     item {
                         Column(
                             modifier = Modifier
-                                .fillMaxWidth(.8f)
+                                .fillMaxWidth()
                                 .padding(horizontal = MaterialTheme.dimens.medium1)
                         ) {
                             Text(
                                 text = state.data.name,
                                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                                 fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
+                                maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
                             )
 
@@ -304,7 +308,7 @@ private fun CustomButton(
 @Composable
 private fun Preview() {
     var loading by remember {
-        mutableStateOf(ViewLoadingState.ERROR)
+        mutableStateOf(ViewLoadingState.LOADED)
     }
 
     LaunchedEffect(key1 = Unit) {
