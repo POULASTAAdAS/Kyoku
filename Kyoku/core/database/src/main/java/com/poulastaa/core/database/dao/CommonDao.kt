@@ -7,8 +7,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
+import com.poulastaa.core.database.entity.DayTypeSongEntity
+import com.poulastaa.core.database.entity.FavouriteArtistMixEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
+import com.poulastaa.core.database.entity.PopularSongFromYourTimeEntity
+import com.poulastaa.core.database.entity.PopularSongMixEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
@@ -118,4 +122,16 @@ interface CommonDao {
 
     @Query("select * from ArtistEntity where id = :id")
     suspend fun getArtistById(id: Long): ArtistEntity
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoDayType(entrys: List<DayTypeSongEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoArtistMix(entrys: List<FavouriteArtistMixEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoOldMix(entrys: List<PopularSongFromYourTimeEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoPopularSongMix(entrys: List<PopularSongMixEntity>)
 }

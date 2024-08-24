@@ -160,11 +160,9 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalViewDatasource(
         commonDao: CommonDao,
-        libraryDao: LibraryDao,
         viewDao: ViewDao
     ): LocalViewDatasource = RoomLocalViewDatasource(
         commonDao = commonDao,
-        libraryDao = libraryDao,
         viewDao = viewDao
     )
 }

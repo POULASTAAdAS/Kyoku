@@ -20,6 +20,10 @@ interface DatabaseRepository {
         id: Long,
     ): SongDto
 
+    suspend fun getSongOnIdList(
+        list: List<Long>,
+    ): List<SongDto>
+
     suspend fun createPlaylist(
         name: String,
         userId: Long,
@@ -30,4 +34,14 @@ interface DatabaseRepository {
     suspend fun getPlaylistOnId(id: Long): PlaylistDao?
     suspend fun getAlbumOnId(albumId: Long): AlbumDao?
     suspend fun getArtistOnId(artistId: Long): ArtistDao?
+
+    suspend fun getPlaylistSong(
+        playlistId: Long,
+        userId: Long,
+        userType: UserType,
+    ): List<SongDto>
+
+    suspend fun getAlbumSong(
+        albumId: Long,
+    ): List<SongDto>
 }

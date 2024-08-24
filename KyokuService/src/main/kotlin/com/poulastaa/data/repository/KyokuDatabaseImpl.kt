@@ -10,18 +10,13 @@ import com.poulastaa.data.model.SongDto
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
-import com.poulastaa.domain.table.ArtistTable
-import com.poulastaa.domain.table.GenreTable
-import com.poulastaa.domain.table.PlaylistTable
-import com.poulastaa.domain.table.SongTable
+import com.poulastaa.domain.table.*
+import com.poulastaa.domain.table.relation.SongAlbumRelationTable
 import com.poulastaa.domain.table.relation.SongArtistRelationTable
 import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.insertIgnore
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.*
 
 class KyokuDatabaseImpl : DatabaseRepository {
     override fun updateSongPointByOne(list: List<Long>) {
@@ -104,32 +99,28 @@ class KyokuDatabaseImpl : DatabaseRepository {
         }
     }
 
-    override suspend fun getSongOnId(id: Long): SongDto {
-        val resultRow = query {
-            SongArtistRelationTable.select {
-                SongArtistRelationTable.songId eq id
-            }
+    override suspend fun getSongOnId(id: Long): SongDto = query {
+        SongDao.find {
+            SongTable.id eq id
+        }.singleOrNull()?.let {
+            val artist = getArtistOnSongId(it.id.value).joinToString { artist -> artist.name }
+
+            it.toSongDto(artist)
         }
+    } ?: SongDto()
 
-        if (query { resultRow.empty() }) return SongDto()
-
-        val artistName = query {
-            resultRow.map {
-                it[SongArtistRelationTable.artistId]
-            }.let {
-                ArtistDao.find {
-                    ArtistTable.id inList it
-                }.map {
-                    it.name
-                }
-            }
-        }.joinToString()
-
-        return query {
+    override suspend fun getSongOnIdList(list: List<Long>): List<SongDto> = coroutineScope {
+        query {
             SongDao.find {
-                SongTable.id eq id
-            }.singleOrNull()?.toSongDto(artistName)
-        } ?: SongDto()
+                SongTable.id inList list
+            }.map {
+                async {
+                    val artist = getArtistOnSongId(it.id.value).joinToString { artist -> artist.name }
+
+                    it.toSongDto(artist)
+                }
+            }.awaitAll()
+        }
     }
 
     override suspend fun createPlaylist(
@@ -170,7 +161,7 @@ class KyokuDatabaseImpl : DatabaseRepository {
 
     override suspend fun getAlbumOnId(albumId: Long): AlbumDao? = query {
         AlbumDao.find {
-            ArtistTable.id eq albumId
+            AlbumTable.id eq albumId
         }.firstOrNull()
     }
 
@@ -179,4 +170,52 @@ class KyokuDatabaseImpl : DatabaseRepository {
             ArtistTable.id eq artistId
         }.firstOrNull()
     }
+
+    override suspend fun getPlaylistSong(
+        playlistId: Long,
+        userId: Long,
+        userType: UserType,
+    ): List<SongDto> = coroutineScope {
+        query {
+            UserPlaylistSongRelationTable
+                .slice(UserPlaylistSongRelationTable.songId)
+                .select {
+                    UserPlaylistSongRelationTable.playlistId eq playlistId and
+                            (UserPlaylistSongRelationTable.userId eq userId) and
+                            (UserPlaylistSongRelationTable.userType eq userType.name)
+                }.map { it[UserPlaylistSongRelationTable.songId] }.let {
+                    SongDao.find {
+                        SongTable.id inList it
+                    }.map {
+                        async {
+                            val artist = getArtistOnSongId(it.id.value).joinToString { artist -> artist.name }
+                            it.toSongDto(artist)
+                        }
+                    }.awaitAll()
+                }
+        }
+    }
+
+
+    override suspend fun getAlbumSong(
+        albumId: Long,
+    ): List<SongDto> =
+        coroutineScope {
+            query {
+                SongAlbumRelationTable.slice(SongAlbumRelationTable.songId).select {
+                    SongAlbumRelationTable.albumId eq albumId
+                }.map {
+                    it[SongAlbumRelationTable.songId]
+                }.let {
+                    SongDao.find {
+                        SongTable.id inList it
+                    }.map {
+                        async {
+                            val artist = getArtistOnSongId(it.id.value).joinToString { artist -> artist.name }
+                            it.toSongDto(artist)
+                        }
+                    }.awaitAll()
+                }
+            }
+        }
 }

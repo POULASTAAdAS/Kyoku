@@ -1,9 +1,6 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.mappers.getUserType
-import com.poulastaa.data.mappers.getYear
-import com.poulastaa.data.mappers.toPinnedType
-import com.poulastaa.data.mappers.toPlaylistDto
+import com.poulastaa.data.mappers.*
 import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
@@ -17,6 +14,8 @@ import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.select
+import java.time.Instant
+import java.time.ZoneId
 
 class ServiceRepositoryImpl(
     private val jwt: JWTRepository,
@@ -470,5 +469,125 @@ class ServiceRepositoryImpl(
         }
 
         return true
+    }
+
+    override suspend fun getListOfData(
+        req: GetDataReq,
+        payload: ReqUserPayload,
+    ): Any = coroutineScope {
+        val user = userRepo.getUserOnPayload(payload) ?: return@coroutineScope PlaylistDto()
+
+        when (req.type) {
+            GetDataType.PLAYLIST -> {
+                val playlistDef = async { kyokuRepo.getPlaylistOnId(req.id) }
+                val playlistSongDef = async {
+                    kyokuRepo.getPlaylistSong(
+                        playlistId = req.id,
+                        userId = user.id,
+                        userType = user.userType
+                    )
+                }
+
+                val playlist = playlistDef.await() ?: return@coroutineScope PlaylistDto()
+
+                PlaylistDto(
+                    id = playlist.id.value,
+                    name = playlist.name,
+                    listOfSong = playlistSongDef.await()
+                )
+            }
+
+            GetDataType.ALBUM -> {
+                val albumDef = async { kyokuRepo.getAlbumOnId(req.id) }
+                val albumSongDef = async { kyokuRepo.getAlbumSong(req.id) }
+
+                val album = albumDef.await() ?: return@coroutineScope AlbumWithSongDto()
+                val albumSong = albumSongDef.await()
+
+                AlbumWithSongDto(
+                    albumDto = album.toAlbum(albumSong.first().coverImage),
+                    listOfSong = albumSong
+                )
+            }
+
+            GetDataType.FEV -> userRepo.getUserFavouriteSong(
+                userId = user.id,
+                userType = user.userType.name
+            )
+
+            GetDataType.ARTIST_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getArtistSongMix(
+                        countryId = user.countryId,
+                        userId = user.id,
+                        userType = user.userType
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+
+            GetDataType.OLD_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getOldGem(
+                        countryId = user.countryId,
+                        year = Instant.ofEpochMilli(user.bDate).atZone(ZoneId.systemDefault()).year
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+
+            GetDataType.POPULAR_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getPopularSongMix(
+                        countryId = user.countryId
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                println(filterList)
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+        }
     }
 }

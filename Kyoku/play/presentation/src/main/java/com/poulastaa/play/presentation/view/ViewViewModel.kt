@@ -6,10 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.domain.utils.map
 import com.poulastaa.core.domain.view.ViewRepository
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,40 +32,90 @@ class ViewViewModel @Inject constructor(
         type: ViewDataType
     ) {
         viewModelScope.launch {
-            state = when (type) {
-                ViewDataType.PLAYLIST -> state.copy(
-                    data = repo.getPlaylistOnId(id).toViewUiSong()
-                )
+            when (type) {
+                ViewDataType.PLAYLIST -> repo.getPlaylistOnId(id)
 
-                ViewDataType.ALBUM -> state.copy(
-                    data = repo.getAlbumOnId(id).toViewUiAlbum()
-                )
+                ViewDataType.ALBUM -> repo.getAlbumOnId(id)
 
-                ViewDataType.FEV -> state.copy(
-                    data = repo.getFev().toOtherData()
-                )
+                ViewDataType.FEV -> repo.getFev().map { it.toViewData() }
 
-                ViewDataType.ARTIST_MIX -> state.copy(
-                    data = repo.getArtistMix().toOtherData()
-                )
+                ViewDataType.ARTIST_MIX -> repo.getArtistMix().map { it.toViewData() }
 
-                ViewDataType.POPULAR_MIX -> state.copy(
-                    data = repo.getPopularMix().toOtherData()
-                )
+                ViewDataType.POPULAR_MIX -> repo.getPopularMix().map { it.toViewData() }
 
-                ViewDataType.OLD_MIX -> state.copy(
-                    data = repo.getOldMix().toOtherData()
-                )
-            }
+                ViewDataType.OLD_MIX -> repo.getOldMix().map { it.toViewData() }
+            }.let { result ->
+                async {
+                    when (result) {
+                        is Result.Error -> {
+                            state = when (result.error) {
+                                DataError.Network.NO_INTERNET -> {
+                                    state.copy(
+                                        loadingState = ViewLoadingState.ERROR
+                                    )
+                                }
 
-            withContext(Dispatchers.Main) {
-                state = if (state.data.name.isBlank()) state.copy(
-                    loadingState = ViewLoadingState.ERROR
-                ) else state.copy(
-                    loadingState = ViewLoadingState.LOADED
-                )
+                                else -> {
+                                    state.copy(
+                                        loadingState = ViewLoadingState.ERROR
+                                    )
+                                }
+                            }
+                        }
+
+                        is Result.Success -> {
+                            withContext(Dispatchers.Main) {
+                                when (type) {
+                                    ViewDataType.PLAYLIST,
+                                    ViewDataType.ALBUM -> {
+                                        state = state.copy(
+                                            data = result.data.toViewUiData(),
+                                        )
+                                    }
+
+                                    ViewDataType.FEV -> {
+                                        state = state.copy(
+                                            data = result.data.listOfSong.toOtherData().copy(
+                                                name = "Favourite"
+                                            )
+                                        )
+                                    }
+
+                                    ViewDataType.ARTIST_MIX -> {
+                                        state = state.copy(
+                                            data = result.data.listOfSong.toOtherData().copy(
+                                                name = "Artist Mix"
+                                            )
+                                        )
+                                    }
+
+                                    ViewDataType.POPULAR_MIX -> {
+                                        state = state.copy(
+                                            data = result.data.listOfSong.toOtherData().copy(
+                                                name = "Popular Song Mix"
+                                            )
+                                        )
+                                    }
+
+                                    ViewDataType.OLD_MIX -> {
+                                        state = state.copy(
+                                            data = result.data.listOfSong.toOtherData().copy(
+                                                name = "Popular Song From Your Time"
+                                            )
+                                        )
+                                    }
+                                }
+
+                                state =state.copy(
+                                    loadingState = ViewLoadingState.LOADED
+                                )
+                            }
+                        }
+                    }
+                }.await()
             }
         }
+
         readHeader()
     }
 

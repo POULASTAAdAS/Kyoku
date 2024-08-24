@@ -2,6 +2,9 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.domain.utils.map
 import com.poulastaa.core.domain.view.LocalViewDatasource
 import com.poulastaa.core.domain.view.RemoteViewDatasource
 import com.poulastaa.core.domain.view.ViewRepository
@@ -16,47 +19,84 @@ class OfflineFirstViewRepository @Inject constructor(
     private val remote: RemoteViewDatasource,
     private val application: CoroutineScope
 ) : ViewRepository {
-    override suspend fun getPlaylistOnId(id: Long): ViewData {
+    override suspend fun getPlaylistOnId(id: Long): Result<ViewData, DataError.Network> {
         val localPlaylist = local.getPlaylistOnId(id)
-        if (localPlaylist.listOfSong.isNotEmpty()) return localPlaylist
+        if (localPlaylist.listOfSong.isNotEmpty()) return Result.Success(localPlaylist)
 
         val remotePlaylist = remote.getPlaylistOnId(id)
-        application.async { local.savePlaylist(remotePlaylist) }.await()
+        if (remotePlaylist is Result.Success)
+            application.async { local.savePlaylist(remotePlaylist.data) }.await()
 
-        return remotePlaylist.toViewData()
+        return remotePlaylist.map { it.toViewData() }
     }
 
-    override suspend fun getAlbumOnId(id: Long): ViewData {
+    override suspend fun getAlbumOnId(id: Long): Result<ViewData, DataError.Network> {
         val localAlbum = local.getAlbumOnId(id)
-        if (localAlbum.listOfSong.isNotEmpty()) return localAlbum
+        if (localAlbum.listOfSong.isNotEmpty()) return Result.Success(localAlbum)
 
         val remoteAlbum = remote.getAlbumOnId(id)
-        application.async { local.saveAlbum(remoteAlbum) }.await()
-        return remoteAlbum.toViewData()
+        if (remoteAlbum is Result.Success)
+            application.async { local.saveAlbum(remoteAlbum.data) }.await()
+
+        return remoteAlbum.map { it.toViewData() }
     }
 
-    override suspend fun getFev(): List<PlaylistSong> {
+    override suspend fun getFev(): Result<List<PlaylistSong>, DataError.Network> {
         val songIdList = local.getFevSongIdList()
-        if (songIdList.isEmpty()) return emptyList()
-
+        if (songIdList.isEmpty()) return Result.Success(emptyList())
 
         val foundSongList = local.getSongOnIdList(songIdList)
+
         val notFoundIdList =
             songIdList.filterNot { it in foundSongList.map { entry -> entry.id } }
 
-        if (notFoundIdList.isEmpty()) return foundSongList
+        if (notFoundIdList.isEmpty()) return Result.Success(foundSongList)
 
         val responseSong = remote.getSongOnIdList(notFoundIdList)
-        application.async { local.saveSongs(responseSong) }.await()
+        if (responseSong is Result.Success) application.async {
+            local.insertSongs(
+                responseSong.data,
+                LocalViewDatasource.ReqType.FEV
+            )
+        }.await()
 
-        return foundSongList + responseSong.map { it.toPlaylistSong() }
+        return responseSong.map { foundSongList + it.map { song -> song.toPlaylistSong() } }
     }
 
-    override suspend fun getOldMix(): List<PlaylistSong> { // todo
-        return listOf()
+    override suspend fun getOldMix(): Result<List<PlaylistSong>, DataError.Network> {
+        val songIdList = local.getSongIdList(LocalViewDatasource.ReqType.OLD_MIX_SONG)
+
+        return if (songIdList.isEmpty()) {
+            val prevSongIdList =
+                application.async { local.getSongIdList(LocalViewDatasource.ReqType.OLD_MIX_SONG) }
+                    .await()
+            val songList = remote.getOldMix(prevSongIdList)
+
+            if (songList is Result.Success) application.async {
+                local.insertSongs(
+                    songList.data,
+                    LocalViewDatasource.ReqType.OLD_MIX_SONG
+                )
+            }.await()
+
+            songList.map { it.map { song -> song.toPlaylistSong() } }
+        } else {
+            val foundSongList = local.getSongOnIdList(songIdList)
+
+            val notFoundIdList =
+                songIdList.filterNot { it in foundSongList.map { entry -> entry.id } }
+            if (notFoundIdList.isEmpty()) return Result.Success(foundSongList)
+
+            val responseSong = remote.getSongOnIdList(notFoundIdList)
+
+            if (responseSong is Result.Success)
+                application.async { local.insertSongs(responseSong.data) }.await()
+
+            responseSong.map { foundSongList + it.map { song -> song.toPlaylistSong() } }
+        }
     }
 
-    override suspend fun getArtistMix(): List<PlaylistSong> {
+    override suspend fun getArtistMix(): Result<List<PlaylistSong>, DataError.Network> {
         val songIdList = local.getSongIdList(LocalViewDatasource.ReqType.ARTIST_MIX)
 
         return if (songIdList.isEmpty()) {
@@ -64,24 +104,31 @@ class OfflineFirstViewRepository @Inject constructor(
                 application.async { local.getSongIdList(LocalViewDatasource.ReqType.ARTIST_MIX) }
                     .await()
             val songList = remote.getArtistMix(prevSongIdList)
-            application.async { local.saveSongs(songList) }.await()
 
-            songList.map { it.toPlaylistSong() }
+            if (songList is Result.Success) application.async {
+                local.insertSongs(
+                    songList.data,
+                    LocalViewDatasource.ReqType.ARTIST_MIX
+                )
+            }.await()
+
+            songList.map { it.map { song -> song.toPlaylistSong() } }
         } else {
             val foundSongList = local.getSongOnIdList(songIdList)
 
             val notFoundIdList =
                 songIdList.filterNot { it in foundSongList.map { entry -> entry.id } }
-            if (notFoundIdList.isEmpty()) return foundSongList
+            if (notFoundIdList.isEmpty()) return Result.Success(foundSongList)
 
             val responseSong = remote.getSongOnIdList(notFoundIdList)
-            application.async { local.saveSongs(responseSong) }.await()
+            if (responseSong is Result.Success) application.async { local.insertSongs(responseSong.data) }
+                .await()
 
-            foundSongList + responseSong.map { it.toPlaylistSong() }
+            responseSong.map { foundSongList + it.map { song -> song.toPlaylistSong() } }
         }
     }
 
-    override suspend fun getPopularMix(): List<PlaylistSong> {
+    override suspend fun getPopularMix(): Result<List<PlaylistSong>, DataError.Network> {
         val songIdList = local.getSongIdList(LocalViewDatasource.ReqType.POPULAR_MIX)
 
         return if (songIdList.isEmpty()) {
@@ -90,20 +137,26 @@ class OfflineFirstViewRepository @Inject constructor(
                     .await()
 
             val songList = remote.getPopularMix(prevSongIdList)
-            application.async { local.saveSongs(songList) }.await()
+            if (songList is Result.Success) application.async {
+                local.insertSongs(
+                    songList.data,
+                    LocalViewDatasource.ReqType.POPULAR_MIX
+                )
+            }.await()
 
-            return songList.map { it.toPlaylistSong() }
+            return songList.map { it.map { song -> song.toPlaylistSong() } }
         } else {
             val foundSongList = local.getSongOnIdList(songIdList)
 
             val notFoundIdList =
                 songIdList.filterNot { it in foundSongList.map { entry -> entry.id } }
-            if (notFoundIdList.isEmpty()) return foundSongList
+            if (notFoundIdList.isEmpty()) return Result.Success(foundSongList)
 
             val responseSong = remote.getSongOnIdList(notFoundIdList)
-            application.async { local.saveSongs(responseSong) }.await()
+            if (responseSong is Result.Success)
+                application.async { local.insertSongs(responseSong.data) }.await()
 
-            foundSongList + responseSong.map { it.toPlaylistSong() }
+            responseSong.map { foundSongList + it.map { song -> song.toPlaylistSong() } }
         }
     }
 }

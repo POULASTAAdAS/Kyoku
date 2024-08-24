@@ -107,4 +107,9 @@ interface UserRepository {
         userType: UserType,
         dataType: PinnedType,
     )
+
+    suspend fun getUserFavouriteSong(
+        userId: Long,
+        userType: String,
+    ): List<SongDto>
 }

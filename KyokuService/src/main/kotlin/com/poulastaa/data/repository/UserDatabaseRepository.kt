@@ -239,25 +239,7 @@ class UserDatabaseRepository(
                 }
             }
         }
-        val favouriteSongDef = async {
-            query {
-                UserFavouriteRelationTable.select {
-                    UserFavouriteRelationTable.userId eq userId and (UserFavouriteRelationTable.userType eq userType.name)
-                }.map {
-                    it[UserFavouriteRelationTable.songId]
-                }.let {
-                    SongDao.find {
-                        SongTable.id inList it
-                    }.map { songDao ->
-                        async {
-                            database.getArtistOnSongId(songDao.id.value) to songDao
-                        }
-                    }.awaitAll().map {
-                        it.second.toSongDto(it.first.joinToString { artist -> artist.name })
-                    }
-                }
-            }
-        }
+        val favouriteSongDef = async { getUserFavouriteSong(userId, userType.name) }
 
         LogInDto(
             savedPlaylist = savedPlaylistDef.await(),
@@ -547,6 +529,29 @@ class UserDatabaseRepository(
             }
 
             else -> Unit
+        }
+    }
+
+    override suspend fun getUserFavouriteSong(
+        userId: Long,
+        userType: String,
+    ): List<SongDto> = coroutineScope {
+        query {
+            UserFavouriteRelationTable.select {
+                UserFavouriteRelationTable.userId eq userId and (UserFavouriteRelationTable.userType eq userType)
+            }.map {
+                it[UserFavouriteRelationTable.songId]
+            }.let {
+                SongDao.find {
+                    SongTable.id inList it
+                }.map { songDao ->
+                    async {
+                        database.getArtistOnSongId(songDao.id.value) to songDao
+                    }
+                }.awaitAll().map {
+                    it.second.toSongDto(it.first.joinToString { artist -> artist.name })
+                }
+            }
         }
     }
 }

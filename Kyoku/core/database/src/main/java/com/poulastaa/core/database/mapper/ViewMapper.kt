@@ -1,8 +1,10 @@
 package com.poulastaa.core.database.mapper
 
 import com.poulastaa.core.ViewData
+import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.model.PlaylistResult
+import com.poulastaa.core.domain.AlbumData
 import com.poulastaa.core.domain.model.PlaylistSong
 
 fun List<PlaylistResult>.toViewData(id: Long) = ViewData(
@@ -16,4 +18,10 @@ fun SongEntity.toPlaylistSong() = PlaylistSong(
     coverImage = this.coverImage,
     title = this.title,
     artist = this.artistName
+)
+
+fun AlbumData.toAlbumEntity() = AlbumEntity(
+    id = this.id,
+    name = this.name,
+    coverImage = this.coverImage
 )

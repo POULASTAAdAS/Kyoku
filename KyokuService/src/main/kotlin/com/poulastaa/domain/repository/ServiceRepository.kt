@@ -114,4 +114,9 @@ interface ServiceRepository {
         type: String,
         payload: ReqUserPayload,
     ): Boolean
+
+    suspend fun getListOfData(
+        req: GetDataReq,
+        payload: ReqUserPayload,
+    ): Any
 }

@@ -57,6 +57,8 @@ private fun Routing.common(service: ServiceRepository) {
     unPinData(service)
 
     deleteSavedData(service)
+
+    getListOfData(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

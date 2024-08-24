@@ -3,29 +3,27 @@ package com.poulastaa.play.presentation.view
 import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
 
-fun PlaylistSong.toViewUiSong() = ViewUiSong(
+fun PlaylistSong.toViewUiData() = ViewUiSong(
     id = this.id,
     name = this.title,
     coverImage = this.coverImage,
     artist = this.artist
 )
 
-fun ViewData.toViewUiSong() = ViewUiData(
+@JvmName("viewDataToViewUiData")
+fun ViewData.toViewUiData() = ViewUiData(
     id = this.id,
     name = this.name,
     urls = this.listOfSong.shuffled().take(4).map { it.coverImage },
-    listOfSong = this.listOfSong.map { it.toViewUiSong() }
+    listOfSong = this.listOfSong.map { it.toViewUiData() }
 )
-
-fun ViewData.toViewUiAlbum() = ViewUiData(
-    id = this.id,
-    name = this.name,
-    urls = this.listOfSong.take(1).map { it.coverImage },
-    listOfSong = this.listOfSong.map { it.toViewUiSong() }
-)
-
 
 fun List<PlaylistSong>.toOtherData() = ViewUiData(
     urls = this.shuffled().take(4).map { it.coverImage },
-    listOfSong = this.map { it.toViewUiSong() }
+    listOfSong = this.map { it.toViewUiData() }
+)
+
+@JvmName("playlistSongToViewUiData")
+fun List<PlaylistSong>.toViewData() = ViewData(
+    listOfSong = this
 )

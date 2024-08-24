@@ -100,8 +100,6 @@ class RootDrawerViewModel @Inject constructor(
             }
 
             is RootDrawerUiEvent.View -> {
-                Log.d("called", event.toString())
-
                 state = state.copy(
                     viewUiState = HomeViewUiState(
                         isOpen = true,

@@ -1,5 +1,7 @@
 package com.poulastaa.play.presentation.view
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -44,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,8 +74,6 @@ fun ViewCompactScreen(
     viewModel: ViewViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-    val context = LocalContext.current
-
     LaunchedEffect(key1 = id, key2 = type) {
         viewModel.loadData(id = id, type = type)
     }
@@ -108,7 +107,7 @@ private fun ViewScreen(
         modifier = modifier
     ) { innerPadding ->
         AnimatedContent(
-            state.loadingState,
+            targetState = state.loadingState,
             label = "view Animated Content",
             transitionSpec = {
                 fadeIn(
@@ -116,6 +115,8 @@ private fun ViewScreen(
                 ) togetherWith fadeOut(animationSpec = tween(800))
             }
         ) { isDataLoading ->
+            Log.d("loadingState", isDataLoading.toString())
+
             when (isDataLoading) {
                 ViewLoadingState.LOADING -> Column(
                     modifier = Modifier
