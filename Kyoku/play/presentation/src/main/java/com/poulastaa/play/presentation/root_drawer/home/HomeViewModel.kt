@@ -12,7 +12,6 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
-import com.poulastaa.play.presentation.OtherScreens
 import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
@@ -58,7 +57,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.SAVED_PLAYLIST -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.PLAYLIST
                                     )
@@ -69,7 +68,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.SAVED_ALBUM -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.ALBUM
                                     )
@@ -80,7 +79,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.POPULAR_SONG_MIX -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.POPULAR_MIX
                                     )
@@ -91,7 +90,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.OLD_GEM -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.OLD_MIX
                                     )
@@ -102,7 +101,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.ARTIST_MIX
                                     )
@@ -113,7 +112,7 @@ class HomeViewModel @Inject constructor(
                         HomeItemClickType.SUGGEST_ALBUM -> {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    OtherScreens.View(
+                                    HomeOtherScreens.View(
                                         id = event.id ?: -1L,
                                         type = ViewDataType.ALBUM
                                     )
@@ -386,7 +385,7 @@ class HomeViewModel @Inject constructor(
                         viewModelScope.launch {
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
-                                    screen = OtherScreens.AddAsPlaylist(
+                                    screen = HomeOtherScreens.AddAsPlaylist(
                                         songId = event.id
                                     )
                                 )

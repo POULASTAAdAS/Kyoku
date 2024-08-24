@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.components.expanded
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -45,12 +44,13 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
-import com.poulastaa.play.presentation.OtherScreens
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
+import com.poulastaa.play.presentation.root_drawer.home.HomeOtherScreens
 import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
+import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
 
@@ -160,13 +160,13 @@ fun RootDrawerExpanded(
                                 profileUrl = state.profilePicUrl,
                                 navigate = { screen ->
                                     when (screen) {
-                                        is OtherScreens.AddAsPlaylist -> onEvent(
+                                        is HomeOtherScreens.AddAsPlaylist -> onEvent(
                                             RootDrawerUiEvent.AddSongToPlaylist(
                                                 screen.songId
                                             )
                                         )
 
-                                        is OtherScreens.View -> onEvent(
+                                        is HomeOtherScreens.View -> onEvent(
                                             RootDrawerUiEvent.View(
                                                 screen.id,
                                                 screen.type
@@ -193,8 +193,15 @@ fun RootDrawerExpanded(
                                 isExpanded = true,
                                 profileUrl = state.profilePicUrl,
                                 onProfileClick = {},
-                                navigate = {
-
+                                navigate = { screen ->
+                                    when (screen) {
+                                        is LibraryOtherScreen.View -> onEvent(
+                                            RootDrawerUiEvent.View(
+                                                screen.id,
+                                                screen.type
+                                            )
+                                        )
+                                    }
                                 }
                             )
                         }

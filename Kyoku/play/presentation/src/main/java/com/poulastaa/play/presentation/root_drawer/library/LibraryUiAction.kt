@@ -5,5 +5,5 @@ import com.poulastaa.core.presentation.ui.UiText
 
 sealed interface LibraryUiAction {
     data class EmitToast(val message: UiText) : LibraryUiAction
-    data class Navigate(val screen: ScreenEnum) : LibraryUiAction
+    data class Navigate(val screen: LibraryOtherScreen) : LibraryUiAction
 }

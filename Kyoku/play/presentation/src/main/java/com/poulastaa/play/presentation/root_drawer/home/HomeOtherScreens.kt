@@ -1,15 +1,15 @@
-package com.poulastaa.play.presentation
+package com.poulastaa.play.presentation.root_drawer.home
 
 import com.poulastaa.play.presentation.view.components.ViewDataType
 
 
-sealed interface OtherScreens {
+sealed interface HomeOtherScreens {
     data class AddAsPlaylist(
         val songId: Long
-    ) : OtherScreens
+    ) : HomeOtherScreens
 
     data class View(
         val id: Long = -1,
         val type: ViewDataType
-    ) : OtherScreens
+    ) : HomeOtherScreens
 }

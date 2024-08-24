@@ -8,6 +8,18 @@ sealed interface LibraryUiEvent {
     data class ToggleFilterType(val type: LibraryFilterType) : LibraryUiEvent
     data object ToggleView : LibraryUiEvent
 
+    sealed interface OnClick : LibraryUiEvent {
+        data object Favourite : OnClick
+        data class Album(val id: Long) : OnClick
+        data class Playlist(val id: Long) : OnClick
+        data class Artist(val id: Long) : OnClick
+
+        data object PinnedHeader : OnClick
+        data object PlaylistHeader : OnClick
+        data object AlbumHeader : OnClick
+        data object ArtistHeader : OnClick
+    }
+
     data class OnItemLongClick(
         val id: Long,
         val type: LibraryBottomSheetLongClickType

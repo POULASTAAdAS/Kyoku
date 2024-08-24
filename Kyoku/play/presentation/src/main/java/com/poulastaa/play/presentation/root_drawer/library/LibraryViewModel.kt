@@ -18,6 +18,7 @@ import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
+import com.poulastaa.play.presentation.view.components.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -76,6 +77,64 @@ class LibraryViewModel @Inject constructor(
                     viewType = if (LibraryViewType.LIST == state.viewType) LibraryViewType.GRID
                     else LibraryViewType.LIST
                 )
+            }
+
+            is LibraryUiEvent.OnClick -> {
+                viewModelScope.launch {
+                    when (event) {
+                        LibraryUiEvent.OnClick.PinnedHeader -> {
+
+                        }
+
+                        LibraryUiEvent.OnClick.AlbumHeader -> {
+
+                        }
+
+                        is LibraryUiEvent.OnClick.Album -> {
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.View(
+                                        id = event.id,
+                                        type = ViewDataType.ALBUM
+                                    )
+                                )
+                            )
+                        }
+
+                        LibraryUiEvent.OnClick.ArtistHeader -> {
+
+                        }
+
+                        is LibraryUiEvent.OnClick.Artist -> {
+
+                        }
+
+                        LibraryUiEvent.OnClick.Favourite -> {
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.View(
+                                        type = ViewDataType.FEV
+                                    )
+                                )
+                            )
+                        }
+
+                        is LibraryUiEvent.OnClick.Playlist -> {
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.View(
+                                        id = event.id,
+                                        type = ViewDataType.PLAYLIST
+                                    )
+                                )
+                            )
+                        }
+
+                        LibraryUiEvent.OnClick.PlaylistHeader -> {
+
+                        }
+                    }
+                }
             }
 
             is LibraryUiEvent.OnItemLongClick -> {
@@ -208,7 +267,15 @@ class LibraryViewModel @Inject constructor(
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Favourite.View -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.View(
+                                type = ViewDataType.FEV
+                            )
+                        )
+                    )
+                }
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Favourite.Download -> {
@@ -238,7 +305,16 @@ class LibraryViewModel @Inject constructor(
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.View -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.View(
+                                id = event.id,
+                                type = ViewDataType.ALBUM
+                            )
+                        )
+                    )
+                }
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Album.Remove -> {
@@ -275,7 +351,16 @@ class LibraryViewModel @Inject constructor(
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Playlist.View -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.View(
+                                id = event.id,
+                                type = ViewDataType.PLAYLIST
+                            )
+                        )
+                    )
+                }
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Playlist.Download -> {

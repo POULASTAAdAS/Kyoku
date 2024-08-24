@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.model.PinnedType
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
@@ -79,15 +78,13 @@ fun LibraryCompactScreen(
     profileUrl: String,
     viewModel: LibraryViewModel = hiltViewModel(),
     onProfileClick: () -> Unit,
-    navigate: (ScreenEnum) -> Unit,
+    navigate: (LibraryOtherScreen) -> Unit,
 ) {
     val context = LocalContext.current
 
     ObserveAsEvent(flow = viewModel.uiEvent) { event ->
         when (event) {
-            is LibraryUiAction.Navigate -> {
-                navigate(event.screen)
-            }
+            is LibraryUiAction.Navigate -> navigate(event.screen)
 
             is LibraryUiAction.EmitToast -> Toast.makeText(
                 context,
@@ -132,7 +129,7 @@ private fun LibraryScreen(
                 profileUrl = profileUrl,
                 onProfileClick = onProfileClick,
                 onSearchClick = {
-
+                    onEvent(LibraryUiEvent.OnSearchClick)
                 }
             )
         },
@@ -193,7 +190,7 @@ private fun LibraryScreen(
                         data = state.data.pinned,
                         header = R.string.pinned,
                         onHeaderClick = {
-
+                            onEvent(LibraryUiEvent.OnClick.PinnedHeader)
                         },
                         listContent = {
                             Row(
@@ -208,7 +205,7 @@ private fun LibraryScreen(
                                                 .clip(MaterialTheme.shapes.small)
                                                 .combinedClickable(
                                                     onClick = {
-
+                                                        onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
                                                     },
                                                     onLongClick = {
                                                         onEvent(
@@ -236,7 +233,7 @@ private fun LibraryScreen(
                                                 .clip(MaterialTheme.shapes.small)
                                                 .combinedClickable(
                                                     onClick = {
-
+                                                        onEvent(LibraryUiEvent.OnClick.Artist(it.id))
                                                     },
                                                     onLongClick = {
                                                         onEvent(
@@ -264,7 +261,7 @@ private fun LibraryScreen(
                                                 .clip(MaterialTheme.shapes.small)
                                                 .combinedClickable(
                                                     onClick = {
-
+                                                        onEvent(LibraryUiEvent.OnClick.Album(it.id))
                                                     },
                                                     onLongClick = {
                                                         onEvent(
@@ -295,7 +292,7 @@ private fun LibraryScreen(
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-
+                                                    onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
@@ -321,7 +318,7 @@ private fun LibraryScreen(
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-
+                                                    onEvent(LibraryUiEvent.OnClick.Artist(it.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
@@ -348,7 +345,7 @@ private fun LibraryScreen(
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-
+                                                    onEvent(LibraryUiEvent.OnClick.Album(it.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
@@ -375,7 +372,7 @@ private fun LibraryScreen(
                                 .height(100.dp)
                                 .combinedClickable(
                                     onClick = {
-
+                                        onEvent(LibraryUiEvent.OnClick.Favourite)
                                     },
                                     onLongClick = {
                                         onEvent(
@@ -398,7 +395,6 @@ private fun LibraryScreen(
                             thickness = 2.0.dp
                         )
                     }
-
                 }
 
                 if (state.filterType == LibraryFilterType.ALL &&
@@ -411,7 +407,7 @@ private fun LibraryScreen(
                                     .height(100.dp)
                                     .combinedClickable(
                                         onClick = {
-
+                                            onEvent(LibraryUiEvent.OnClick.Favourite)
                                         },
                                         onLongClick = {
                                             onEvent(
@@ -431,7 +427,7 @@ private fun LibraryScreen(
                                     .height(100.dp)
                                     .combinedClickable(
                                         onClick = {
-
+                                            onEvent(LibraryUiEvent.OnClick.Favourite)
                                         },
                                         onLongClick = {
                                             onEvent(
@@ -459,7 +455,7 @@ private fun LibraryScreen(
                         data = state.data.playlist,
                         header = R.string.playlist,
                         onHeaderClick = {
-
+                            onEvent(LibraryUiEvent.OnClick.PlaylistHeader)
                         },
                         listContent = {
                             Row(
@@ -472,7 +468,7 @@ private fun LibraryScreen(
                                         .clip(MaterialTheme.shapes.small)
                                         .combinedClickable(
                                             onClick = {
-
+                                                onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
                                             },
                                             onLongClick = {
                                                 onEvent(
@@ -498,7 +494,7 @@ private fun LibraryScreen(
                                     .clip(MaterialTheme.shapes.small)
                                     .combinedClickable(
                                         onClick = {
-
+                                            onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
                                         },
                                         onLongClick = {
                                             onEvent(
@@ -528,7 +524,7 @@ private fun LibraryScreen(
                         data = state.data.album,
                         header = R.string.album,
                         onHeaderClick = {
-
+                            onEvent(LibraryUiEvent.OnClick.AlbumHeader)
                         },
                         listContent = {
                             Row(
@@ -541,7 +537,7 @@ private fun LibraryScreen(
                                         .clip(MaterialTheme.shapes.small)
                                         .combinedClickable(
                                             onClick = {
-
+                                                onEvent(LibraryUiEvent.OnClick.Album(it.id))
                                             },
                                             onLongClick = {
                                                 onEvent(
@@ -566,7 +562,7 @@ private fun LibraryScreen(
                                     .clip(MaterialTheme.shapes.small)
                                     .combinedClickable(
                                         onClick = {
-
+                                            onEvent(LibraryUiEvent.OnClick.Album(it.id))
                                         },
                                         onLongClick = {
                                             onEvent(
@@ -595,7 +591,7 @@ private fun LibraryScreen(
                         data = state.data.artist,
                         header = R.string.artist,
                         onHeaderClick = {
-
+                            onEvent(LibraryUiEvent.OnClick.ArtistHeader)
                         },
                         listContent = {
                             Row(
@@ -608,7 +604,7 @@ private fun LibraryScreen(
                                         .clip(MaterialTheme.shapes.small)
                                         .combinedClickable(
                                             onClick = {
-
+                                                onEvent(LibraryUiEvent.OnClick.Artist(it.id))
                                             },
                                             onLongClick = {
                                                 onEvent(
@@ -634,7 +630,7 @@ private fun LibraryScreen(
                                     .clip(MaterialTheme.shapes.small)
                                     .combinedClickable(
                                         onClick = {
-
+                                            onEvent(LibraryUiEvent.OnClick.Artist(it.id))
                                         },
                                         onLongClick = {
                                             onEvent(
