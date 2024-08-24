@@ -10,6 +10,7 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
 import com.poulastaa.core.domain.view.ViewRepository
+import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -51,13 +52,13 @@ class ViewViewModel @Inject constructor(
                             state = when (result.error) {
                                 DataError.Network.NO_INTERNET -> {
                                     state.copy(
-                                        loadingState = ViewLoadingState.ERROR
+                                        loadingState = DataLoadingState.ERROR
                                     )
                                 }
 
                                 else -> {
                                     state.copy(
-                                        loadingState = ViewLoadingState.ERROR
+                                        loadingState = DataLoadingState.ERROR
                                     )
                                 }
                             }
@@ -106,8 +107,8 @@ class ViewViewModel @Inject constructor(
                                     }
                                 }
 
-                                state =state.copy(
-                                    loadingState = ViewLoadingState.LOADED
+                                state = state.copy(
+                                    loadingState = DataLoadingState.LOADED
                                 )
                             }
                         }

@@ -59,6 +59,8 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SadIcon
 import com.poulastaa.core.presentation.designsystem.ShuffleIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.model.ViewUiSong
+import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import com.poulastaa.play.presentation.view.components.ViewItemCard
@@ -116,7 +118,7 @@ private fun ViewScreen(
             }
         ) { isDataLoading ->
             when (isDataLoading) {
-                ViewLoadingState.LOADING -> Column(
+                DataLoadingState.LOADING -> Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -126,7 +128,7 @@ private fun ViewScreen(
                     content = { ViewLoadingAnimation() }
                 )
 
-                ViewLoadingState.LOADED -> LazyColumn(
+                DataLoadingState.LOADED -> LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -246,7 +248,7 @@ private fun ViewScreen(
                     }
                 }
 
-                ViewLoadingState.ERROR -> Column(
+                DataLoadingState.ERROR -> Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -308,12 +310,12 @@ private fun CustomButton(
 @Composable
 private fun Preview() {
     var loading by remember {
-        mutableStateOf(ViewLoadingState.LOADED)
+        mutableStateOf(DataLoadingState.LOADED)
     }
 
     LaunchedEffect(key1 = Unit) {
         delay(2000)
-        loading = ViewLoadingState.ERROR
+        loading = DataLoadingState.ERROR
     }
 
     AppThem {

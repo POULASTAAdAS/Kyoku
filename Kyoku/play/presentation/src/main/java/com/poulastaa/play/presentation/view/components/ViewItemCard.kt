@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,7 +35,7 @@ import com.poulastaa.core.presentation.designsystem.MoveIcon
 import com.poulastaa.core.presentation.designsystem.ThreeDotIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
-import com.poulastaa.play.presentation.view.ViewUiSong
+import com.poulastaa.core.presentation.ui.model.ViewUiSong
 
 @Composable
 fun ViewItemCard(
