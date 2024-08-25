@@ -1,4 +1,4 @@
-package com.poulastaa.play.presentation.view.components
+package com.poulastaa.play.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,7 +38,7 @@ import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.core.presentation.ui.model.ViewUiSong
 
 @Composable
-fun ViewItemCard(
+fun SongDetailsMovableCard(
     modifier: Modifier = Modifier,
     header: String,
     song: ViewUiSong,
@@ -64,6 +64,8 @@ fun ViewItemCard(
                     indication = null
                 )
         )
+
+        Spacer(modifier = Modifier.width(MaterialTheme.dimens.small1))
 
         Row(
             modifier = modifier,
@@ -131,7 +133,7 @@ private fun Preview() {
         Column(
             modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
         ) {
-            ViewItemCard(
+            SongDetailsMovableCard(
                 song = ViewUiSong(
                     name = "That cool song",
                     artist = "That cool artist"

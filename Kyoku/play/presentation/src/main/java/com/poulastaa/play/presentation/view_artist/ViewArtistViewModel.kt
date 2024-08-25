@@ -17,7 +17,6 @@ class ViewArtistViewModel @Inject constructor() : ViewModel() {
     private val _uiEvent = Channel<ViewArtistUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-
     fun loadData(artistId: Long) {
 
     }

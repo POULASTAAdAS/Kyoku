@@ -4,6 +4,6 @@ sealed interface ViewArtistUiEvent {
     data class OnSongClick(val id: Long) : ViewArtistUiEvent
     data object ExploreArtistClick : ViewArtistUiEvent
 
-    data object FollowArtistClick : ViewArtistUiEvent
+    data object FollowArtistToggleClick : ViewArtistUiEvent
     data object UnFollowArtistClick : ViewArtistUiEvent
 }

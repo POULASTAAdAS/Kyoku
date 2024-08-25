@@ -1,15 +1,18 @@
 package com.poulastaa.play.presentation.view_artist
 
+import com.poulastaa.core.presentation.ui.model.ArtistUiSong
 import com.poulastaa.core.presentation.ui.model.UiArtist
-import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.DataLoadingState
 
 data class ViewArtistUiState(
     val loadingState: DataLoadingState = DataLoadingState.LOADING,
+    val header: String = "",
     val data: UiArtistData = UiArtistData()
 )
 
 data class UiArtistData(
+    val isArtistFollowed: Boolean = false,
+    val popularity: Long = 0,
     val artist: UiArtist = UiArtist(),
-    val listOfSong: List<ViewUiSong> = emptyList()
+    val listOfSong: List<ArtistUiSong> = emptyList()
 )
