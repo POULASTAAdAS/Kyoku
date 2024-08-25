@@ -1,8 +1,8 @@
 package com.poulastaa.play.presentation.add_to_playlist
 
-import com.poulastaa.core.domain.add_to_playlist.PRESENT
-import com.poulastaa.core.domain.add_to_playlist.SIZE
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
+import com.poulastaa.core.domain.repository.add_to_playlist.PRESENT
+import com.poulastaa.core.domain.repository.add_to_playlist.SIZE
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
 
 fun Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>.toPlaylistData() = UiPlaylistData(

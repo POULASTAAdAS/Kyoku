@@ -123,6 +123,9 @@ interface CommonDao {
     @Query("select * from ArtistEntity where id = :id")
     suspend fun getArtistById(id: Long): ArtistEntity
 
+    @Query("select * from ArtistEntity where id = :id")
+    suspend fun getArtistByIdOrNull(id: Long): ArtistEntity?
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoDayType(entrys: List<DayTypeSongEntity>)
 

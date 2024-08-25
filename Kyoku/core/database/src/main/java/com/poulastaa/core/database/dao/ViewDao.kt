@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.model.PlaylistResult
-import com.poulastaa.core.domain.model.PlaylistSong
 
 @Dao
 interface ViewDao {
@@ -50,7 +49,7 @@ interface ViewDao {
     suspend fun getFevSongIds(): List<Long>
 
     @Query("select * from SongEntity where id in (:list)")
-    suspend fun getSongOnIdList(list:List<Long>): List<SongEntity>
+    suspend fun getSongOnIdList(list: List<Long>): List<SongEntity>
 
     @Query("select id from FavouriteArtistMixPrevEntity")
     suspend fun getPrevFevArtistMixSongIds(): List<Long>

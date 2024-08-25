@@ -9,10 +9,10 @@ import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
-import com.poulastaa.core.domain.view.RemoteViewDatasource
 import com.poulastaa.network.mapper.toAlbumWithSong
 import com.poulastaa.network.mapper.toPlaylistData
 import com.poulastaa.network.mapper.toSong

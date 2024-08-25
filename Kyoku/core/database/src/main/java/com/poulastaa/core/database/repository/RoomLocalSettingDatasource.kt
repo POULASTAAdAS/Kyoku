@@ -2,7 +2,7 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.SettingDao
-import com.poulastaa.core.domain.setting.LocalSettingDatasource
+import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import javax.inject.Inject
 
 class RoomLocalSettingDatasource @Inject constructor(

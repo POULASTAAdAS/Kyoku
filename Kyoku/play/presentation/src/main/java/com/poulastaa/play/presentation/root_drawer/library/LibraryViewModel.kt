@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.LibraryDataType
-import com.poulastaa.core.domain.library.LibraryRepository
 import com.poulastaa.core.domain.model.PinnedType
+import com.poulastaa.core.domain.repository.library.LibraryRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

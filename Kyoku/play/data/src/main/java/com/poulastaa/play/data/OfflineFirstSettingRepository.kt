@@ -1,8 +1,8 @@
 package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.setting.LocalSettingDatasource
-import com.poulastaa.core.domain.setting.SettingRepository
+import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
+import com.poulastaa.core.domain.repository.setting.SettingRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import javax.inject.Inject

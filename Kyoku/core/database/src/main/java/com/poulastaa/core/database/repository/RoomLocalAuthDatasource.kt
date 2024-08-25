@@ -17,9 +17,9 @@ import com.poulastaa.core.database.mapper.toPopularSongFromYourTimePrevEntity
 import com.poulastaa.core.database.mapper.toPopularSongMixPrevEntity
 import com.poulastaa.core.database.mapper.toPopularSuggestArtistEntity
 import com.poulastaa.core.database.mapper.toSongEntity
-import com.poulastaa.core.domain.auth.LocalAuthDatasource
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.LogInData
+import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope

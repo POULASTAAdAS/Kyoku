@@ -6,9 +6,9 @@ import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
-import com.poulastaa.core.domain.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
@@ -74,13 +74,14 @@ class OnlineFirstAddToPlaylistDatasource @Inject constructor(
 
     override suspend fun createPlaylist(
         songId: Long,
-        name:String
-    ): Result<PlaylistData, DataError.Network> = client.post<CreatePlaylistWithSongReq,PlaylistDto>(
-        route = EndPoints.CreatePlaylist.route,
-        body = CreatePlaylistWithSongReq(
-            name = name,
-            songId = songId
-        ),
-        gson = gson
-    ).map { it.toPlaylistData() }
+        name: String
+    ): Result<PlaylistData, DataError.Network> =
+        client.post<CreatePlaylistWithSongReq, PlaylistDto>(
+            route = EndPoints.CreatePlaylist.route,
+            body = CreatePlaylistWithSongReq(
+                name = name,
+                songId = songId
+            ),
+            gson = gson
+        ).map { it.toPlaylistData() }
 }

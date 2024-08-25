@@ -1,7 +1,6 @@
 package com.poulastaa.network.mapper
 
 import com.poulastaa.core.data.model.PlaylistDto
-import com.poulastaa.core.domain.model.PinnedType
 import com.poulastaa.core.domain.model.PlaylistData
 
 fun PlaylistDto.toPlaylistData() = PlaylistData(

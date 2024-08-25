@@ -1,9 +1,9 @@
 package com.poulastaa.setup.data
 
-import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.RemoteSpotifyDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.SpotifyRepository
 import com.poulastaa.core.domain.model.PlaylistWithSongInfo
+import com.poulastaa.core.domain.repository.get_spotify_playlist.LocalSpotifyDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.RemoteSpotifyDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.SpotifyRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

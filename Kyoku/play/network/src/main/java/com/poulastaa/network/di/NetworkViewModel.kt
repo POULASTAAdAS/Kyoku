@@ -1,11 +1,11 @@
 package com.poulastaa.network.di
 
 import com.google.gson.Gson
-import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
-import com.poulastaa.core.domain.add_to_playlist.RemoteAddToPlaylistDatasource
-import com.poulastaa.core.domain.home.RemoteHomeDatasource
-import com.poulastaa.core.domain.library.RemoteLibraryDataSource
-import com.poulastaa.core.domain.view.RemoteViewDatasource
+import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
+import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
+import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
+import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
+import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource

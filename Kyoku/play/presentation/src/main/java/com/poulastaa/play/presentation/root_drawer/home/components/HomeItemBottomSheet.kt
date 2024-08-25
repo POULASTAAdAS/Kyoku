@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.poulastaa.core.presentation.designsystem.AddAsPlaylistIcon
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CancelIcon
@@ -58,7 +56,6 @@ import com.poulastaa.core.presentation.designsystem.PlayNextIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UnFollowArtistIcon
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.root_drawer.home.HomeUiEvent
 import com.poulastaa.play.presentation.root_drawer.home.model.HomeItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid

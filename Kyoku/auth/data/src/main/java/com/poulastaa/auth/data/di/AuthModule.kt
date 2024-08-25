@@ -4,9 +4,9 @@ import com.poulastaa.auth.data.AuthRepositoryImpl
 import com.poulastaa.auth.data.UserDataValidator
 import com.poulastaa.auth.domain.Validator
 import com.poulastaa.core.domain.DataStoreRepository
-import com.poulastaa.core.domain.auth.AuthRepository
-import com.poulastaa.core.domain.auth.LocalAuthDatasource
-import com.poulastaa.core.domain.auth.RemoteAuthDatasource
+import com.poulastaa.core.domain.repository.auth.AuthRepository
+import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
+import com.poulastaa.core.domain.repository.auth.RemoteAuthDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

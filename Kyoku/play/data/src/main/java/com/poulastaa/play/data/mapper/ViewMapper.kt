@@ -1,7 +1,6 @@
 package com.poulastaa.play.data.mapper
 
 import com.poulastaa.core.ViewData
-import com.poulastaa.core.domain.AlbumData
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong

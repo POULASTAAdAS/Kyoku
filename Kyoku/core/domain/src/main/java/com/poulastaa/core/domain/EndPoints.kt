@@ -48,4 +48,8 @@ sealed class EndPoints(val route: String) {
     data object DeleteSavedData : EndPoints(route = "/api/authorised/deleteSavedData")
 
     data object GetTypeData : EndPoints(route = "/api/authorised/getTypeData")
+
+    data object ExploreArtist : EndPoints(route = "/api/authorised/exploreArtist")
+    data object FollowArtist : EndPoints(route = "/api/authorised/followArtist")
+    data object UnFollowArtist : EndPoints(route = "/api/authorised/unFollowArtist")
 }

@@ -10,10 +10,10 @@ import com.poulastaa.auth.network.res.ForgotPasswordSetStatusDto
 import com.poulastaa.core.data.network.authGet
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
-import com.poulastaa.core.domain.auth.RemoteAuthDatasource
 import com.poulastaa.core.domain.model.AuthData
 import com.poulastaa.core.domain.model.EmailVerification
 import com.poulastaa.core.domain.model.ForgotPasswordSetStatus
+import com.poulastaa.core.domain.repository.auth.RemoteAuthDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map

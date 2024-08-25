@@ -17,7 +17,7 @@ import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
-import com.poulastaa.core.domain.view.LocalViewDatasource
+import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject

@@ -3,7 +3,6 @@ package com.poulastaa.play.presentation.root_drawer.library
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable

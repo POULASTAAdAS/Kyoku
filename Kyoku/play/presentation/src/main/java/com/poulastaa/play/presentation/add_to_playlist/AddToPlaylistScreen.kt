@@ -46,7 +46,7 @@ import kotlin.random.Random
 
 @Composable
 fun AddToPlaylistRootScreen(
-    modifier: Modifier  = Modifier,
+    modifier: Modifier = Modifier,
     viewModel: AddToPlaylistViewModel = hiltViewModel(),
     songId: Long,
     navigateBack: () -> Unit

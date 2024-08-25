@@ -5,7 +5,7 @@ import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.put
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.LibraryDataType
-import com.poulastaa.core.domain.library.RemoteLibraryDataSource
+import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.asEmptyDataResult

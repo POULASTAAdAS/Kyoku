@@ -2,12 +2,12 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.repository.view.LocalViewDatasource
+import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
+import com.poulastaa.core.domain.repository.view.ViewRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
-import com.poulastaa.core.domain.view.LocalViewDatasource
-import com.poulastaa.core.domain.view.RemoteViewDatasource
-import com.poulastaa.core.domain.view.ViewRepository
 import com.poulastaa.play.data.mapper.toPlaylistSong
 import com.poulastaa.play.data.mapper.toViewData
 import kotlinx.coroutines.CoroutineScope

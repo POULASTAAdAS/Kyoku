@@ -1,10 +1,10 @@
 package com.poulastaa.play.data
 
-import com.poulastaa.core.domain.home.HomeRepository
-import com.poulastaa.core.domain.home.LocalHomeDatasource
-import com.poulastaa.core.domain.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
+import com.poulastaa.core.domain.repository.home.HomeRepository
+import com.poulastaa.core.domain.repository.home.LocalHomeDatasource
+import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

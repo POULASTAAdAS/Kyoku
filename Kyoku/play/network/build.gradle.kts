@@ -16,7 +16,7 @@ dependencies {
 
     implementation(libs.pagingRuntimeKtx)
     implementation(libs.pagingCompose)
-    
+
     implementation(projects.core.domain)
     implementation(projects.core.data)
 }

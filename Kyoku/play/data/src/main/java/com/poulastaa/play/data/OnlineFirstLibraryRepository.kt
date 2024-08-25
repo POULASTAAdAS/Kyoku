@@ -2,11 +2,11 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.LibraryDataType
-import com.poulastaa.core.domain.library.LibraryRepository
-import com.poulastaa.core.domain.library.LocalLibraryDataSource
-import com.poulastaa.core.domain.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedType
+import com.poulastaa.core.domain.repository.library.LibraryRepository
+import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
+import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

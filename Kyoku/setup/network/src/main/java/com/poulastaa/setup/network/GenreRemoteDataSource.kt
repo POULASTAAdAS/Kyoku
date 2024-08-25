@@ -4,9 +4,9 @@ import com.google.gson.Gson
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.data.network.put
 import com.poulastaa.core.domain.EndPoints
-import com.poulastaa.core.domain.genre.GenreId
-import com.poulastaa.core.domain.genre.RemoteGenreDataSource
 import com.poulastaa.core.domain.model.Genre
+import com.poulastaa.core.domain.repository.genre.GenreId
+import com.poulastaa.core.domain.repository.genre.RemoteGenreDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

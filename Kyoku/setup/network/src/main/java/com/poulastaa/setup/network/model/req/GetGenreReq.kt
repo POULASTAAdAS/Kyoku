@@ -1,6 +1,6 @@
 package com.poulastaa.setup.network.model.req
 
-import com.poulastaa.core.domain.genre.GenreId
+import com.poulastaa.core.domain.repository.genre.GenreId
 import kotlinx.serialization.Serializable
 
 @Serializable
