@@ -37,8 +37,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
@@ -53,6 +55,7 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
+import com.poulastaa.play.presentation.view_artist.ViewArtistExpandedRootScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -174,7 +177,9 @@ fun RootDrawerExpanded(
                                         )
 
                                         is HomeOtherScreens.ViewArtist -> {
-
+                                            navController.navigate(
+                                                route = DrawerScreen.ViewArtist.route + "/${screen.id}"
+                                            )
                                         }
                                     }
                                 },
@@ -207,7 +212,9 @@ fun RootDrawerExpanded(
                                         )
 
                                         is LibraryOtherScreen.ViewArtist -> {
-
+                                            navController.navigate(
+                                                route = DrawerScreen.ViewArtist.route + "/${screen.id}"
+                                            )
                                         }
                                     }
                                 }
@@ -263,6 +270,27 @@ fun RootDrawerExpanded(
                                 }
                             )
                         }
+                        composable(
+                            route = DrawerScreen.ViewArtist.route + DrawerScreen.ViewArtist.PARAM,
+                            arguments = listOf(
+                                navArgument("id") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) {
+                            val id = it.arguments?.getLong("id") ?: -1
+
+                            ViewArtistExpandedRootScreen(
+                                artistId = id,
+                                navigateToArtistDetail = {
+
+                                },
+                                navigateBack = {
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
                     }
 
                     AnimatedVisibility( // expand screen

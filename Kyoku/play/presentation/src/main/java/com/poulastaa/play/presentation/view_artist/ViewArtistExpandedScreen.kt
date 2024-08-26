@@ -1,10 +1,15 @@
 package com.poulastaa.play.presentation.view_artist
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,10 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
+import com.poulastaa.core.presentation.designsystem.components.ExpandedErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.model.ArtistUiSong
 import com.poulastaa.core.presentation.ui.model.UiArtist
@@ -37,13 +44,14 @@ import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.ArtistSongDetailsCard
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view_artist.components.ExploreArtistButton
-import com.poulastaa.play.presentation.view_artist.components.ViewArtistCompactLoading
+import com.poulastaa.play.presentation.view_artist.components.ViewArtistExpandedLoading
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistNameRow
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistTopBar
 import kotlinx.coroutines.delay
 
+
 @Composable
-fun ViewArtistCompactRootScreen(
+fun ViewArtistExpandedRootScreen(
     modifier: Modifier = Modifier,
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),
@@ -87,22 +95,19 @@ private fun ViewArtistScreen(
             label = "view artist animation transition"
         ) {
             when (it) {
-                DataLoadingState.LOADING -> ViewArtistCompactLoading(
+                DataLoadingState.LOADING -> ViewArtistExpandedLoading(
                     modifier = Modifier.padding(innerPadding)
                 )
 
                 DataLoadingState.LOADED -> Content(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(innerPadding),
+                    paddingValues = innerPadding,
                     scrollBehavior = scroll,
                     state = state,
                     navigateToArtistDetail = navigateToArtistDetail,
                     onEvent = onEvent
                 )
 
-                DataLoadingState.ERROR -> CompactErrorScreen()
+                DataLoadingState.ERROR -> ExpandedErrorScreen()
             }
         }
     }
@@ -113,33 +118,41 @@ private fun ViewArtistScreen(
 private fun Content(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
+    paddingValues: PaddingValues,
     state: ViewArtistUiState,
     navigateToArtistDetail: (artistId: Long) -> Unit,
     onEvent: (ViewArtistUiEvent) -> Unit
 ) {
-    LazyColumn(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
+    Row(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .fillMaxSize()
+            .padding(paddingValues)
     ) {
-        item {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(.4f),
+            verticalArrangement = Arrangement.Center
+        ) {
             Card(
                 modifier = Modifier
                     .padding(horizontal = MaterialTheme.dimens.large2),
-                shape = MaterialTheme.shapes.small
+                shape = MaterialTheme.shapes.small,
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                )
             ) {
                 ImageGrid(
                     header = state.header,
                     urls = listOf(state.data.artist.coverImageUrl)
                 )
             }
-        }
 
-        item {
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
-        }
 
-        item {
             ViewArtistNameRow(
+                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.medium1),
                 popularity = state.data.popularity,
                 name = state.data.artist.name,
                 isArtistFollowed = state.data.isArtistFollowed,
@@ -147,64 +160,59 @@ private fun Content(
                     onEvent(ViewArtistUiEvent.FollowArtistToggleClick)
                 }
             )
-        }
 
-        item {
             Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-        }
 
-        item {
             ExploreArtistButton(
-                modifier = Modifier.fillMaxWidth(.5f),
+                modifier = Modifier.fillMaxWidth(.6f),
                 name = state.data.artist.name
             ) {
                 navigateToArtistDetail(state.data.artist.id)
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-        }
+        LazyColumn(
+            modifier = Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
+        ) {
+            items(state.data.listOfSong) { song ->
+                ArtistSongDetailsCard(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .clickable {
+                            onEvent(ViewArtistUiEvent.OnSongClick(song.id))
+                        },
+                    header = state.header,
+                    song = song,
+                    onThreeDotCLick = {
 
-        items(state.data.listOfSong) { song ->
-            ArtistSongDetailsCard(
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .clickable {
-                        onEvent(ViewArtistUiEvent.OnSongClick(song.id))
-                    },
-                header = state.header,
-                song = song,
-                onThreeDotCLick = {
-
-                }
-            )
-        }
-
-        item {
-            ExploreArtistButton(
-                name = state.data.artist.name
-            ) {
-                navigateToArtistDetail(state.data.artist.id)
+                    }
+                )
             }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
         }
     }
 }
 
-@PreviewLightDark
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 840,
+    heightDp = 560
+)
+@Preview(
+    widthDp = 840,
+    heightDp = 560
+)
 @Composable
 private fun Preview() {
     AppThem {
         var loadingState by remember {
-            mutableStateOf(DataLoadingState.LOADED)
+            mutableStateOf(DataLoadingState.LOADING)
         }
 
         LaunchedEffect(key1 = Unit) {
-            delay(500)
+            delay(2000)
             loadingState = DataLoadingState.LOADED
         }
 
@@ -221,7 +229,7 @@ private fun Preview() {
                         )
                     },
                 ),
-                loadingState = DataLoadingState.LOADED
+                loadingState = loadingState
             ),
             onEvent = {},
             navigateToArtistDetail = {},

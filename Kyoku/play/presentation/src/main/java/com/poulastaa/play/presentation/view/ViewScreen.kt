@@ -53,7 +53,7 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DownloadIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
 import com.poulastaa.core.presentation.designsystem.ShuffleIcon
-import com.poulastaa.core.presentation.designsystem.components.ErrorScreen
+import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.DataLoadingState
@@ -244,7 +244,7 @@ private fun ViewScreen(
                     }
                 }
 
-                DataLoadingState.ERROR -> ErrorScreen()
+                DataLoadingState.ERROR -> CompactErrorScreen()
             }
         }
     }
