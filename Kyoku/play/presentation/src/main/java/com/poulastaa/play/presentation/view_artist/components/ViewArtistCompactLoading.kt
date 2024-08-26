@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
@@ -39,12 +40,18 @@ fun ViewArtistCompactLoading(modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .padding(horizontal = MaterialTheme.dimens.medium1)
             .verticalScroll(rememberScrollState())
-            .then(modifier)
+            .then(modifier),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
             modifier = Modifier
-                .aspectRatio(1f)
-                .padding(MaterialTheme.dimens.large1),
+                .then(
+                    if (LocalConfiguration.current.screenWidthDp > 680) Modifier
+                        .size(400.dp)
+                    else Modifier
+                        .aspectRatio(1f)
+                        .padding(MaterialTheme.dimens.large2)
+                ),
             shape = MaterialTheme.shapes.small,
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 10.dp

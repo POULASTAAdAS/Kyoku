@@ -1,7 +1,12 @@
 package com.poulastaa.play.presentation.view_artist
 
-import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,29 +30,21 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.components.ExpandedErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.model.ArtistUiSong
-import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.ArtistSongDetailsCard
+import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view_artist.components.ExploreArtistButton
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistExpandedLoading
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistNameRow
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistTopBar
-import kotlinx.coroutines.delay
 
 
 @Composable
@@ -55,20 +52,52 @@ fun ViewArtistExpandedRootScreen(
     modifier: Modifier = Modifier,
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),
-    navigateToArtistDetail: (artistId: Long) -> Unit,
+    onArtistDetailScreenOpen: () -> Unit,
     navigateBack: () -> Unit
 ) {
     LaunchedEffect(key1 = artistId) {
         viewModel.loadData(artistId)
     }
 
-    ViewArtistScreen(
-        modifier = modifier,
-        state = viewModel.state,
-        onEvent = viewModel::onEvent,
-        navigateToArtistDetail = navigateToArtistDetail,
-        navigateBack = navigateBack
-    )
+    Row {
+        ViewArtistScreen(
+            modifier = modifier
+                .then(
+                    if (viewModel.state.isExploreArtistOpen) Modifier.fillMaxWidth(.6f)
+                    else Modifier.fillMaxSize()
+                ),
+            state = viewModel.state,
+            onEvent = viewModel::onEvent,
+            navigateToArtistDetail = onArtistDetailScreenOpen,
+            navigateBack = navigateBack
+        )
+
+        AnimatedVisibility(
+            visible = viewModel.state.isExploreArtistOpen,
+            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
+            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
+        ) {
+            if (viewModel.state.isExploreArtistOpen) {
+                ExploreArtistRootScreen(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    artistId = viewModel.state.artistId,
+                    navigate = {
+
+                    },
+                    navigateBack = {
+                        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
+                    }
+                )
+
+                onArtistDetailScreenOpen()
+            }
+        }
+    }
+
+    if (viewModel.state.isExploreArtistOpen) BackHandler {
+        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,7 +106,7 @@ private fun ViewArtistScreen(
     modifier: Modifier = Modifier,
     state: ViewArtistUiState,
     onEvent: (ViewArtistUiEvent) -> Unit,
-    navigateToArtistDetail: (artistId: Long) -> Unit,
+    navigateToArtistDetail: () -> Unit,
     navigateBack: () -> Unit
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -85,7 +114,10 @@ private fun ViewArtistScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            ViewArtistTopBar(scrollBehavior = scroll) {
+            ViewArtistTopBar(
+                scrollBehavior = scroll,
+                title = state.data.artist.name
+            ) {
                 navigateBack()
             }
         }
@@ -116,11 +148,10 @@ private fun ViewArtistScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
-    modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     paddingValues: PaddingValues,
     state: ViewArtistUiState,
-    navigateToArtistDetail: (artistId: Long) -> Unit,
+    navigateToArtistDetail: () -> Unit,
     onEvent: (ViewArtistUiEvent) -> Unit
 ) {
     Row(
@@ -167,7 +198,8 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(.6f),
                 name = state.data.artist.name
             ) {
-                navigateToArtistDetail(state.data.artist.id)
+                navigateToArtistDetail()
+                onEvent(ViewArtistUiEvent.ExploreArtistOpenClick)
             }
         }
 
@@ -191,49 +223,5 @@ private fun Content(
                 )
             }
         }
-    }
-}
-
-
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    widthDp = 840,
-    heightDp = 560
-)
-@Preview(
-    widthDp = 840,
-    heightDp = 560
-)
-@Composable
-private fun Preview() {
-    AppThem {
-        var loadingState by remember {
-            mutableStateOf(DataLoadingState.LOADING)
-        }
-
-        LaunchedEffect(key1 = Unit) {
-            delay(2000)
-            loadingState = DataLoadingState.LOADED
-        }
-
-        ViewArtistScreen(
-            state = ViewArtistUiState(
-                data = UiArtistData(
-                    artist = UiArtist(
-                        name = "That Cool Artist"
-                    ),
-                    listOfSong = (1..10).map {
-                        ArtistUiSong(
-                            title = "That Cool Song: $it",
-                            popularity = it.toLong()
-                        )
-                    },
-                ),
-                loadingState = loadingState
-            ),
-            onEvent = {},
-            navigateToArtistDetail = {},
-            navigateBack = {}
-        )
     }
 }

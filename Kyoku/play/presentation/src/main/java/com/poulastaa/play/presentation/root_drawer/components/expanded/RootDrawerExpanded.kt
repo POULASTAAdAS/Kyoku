@@ -55,6 +55,7 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
+import com.poulastaa.play.presentation.view_artist.ViewArtistCompactRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistExpandedRootScreen
 
 @Composable
@@ -270,27 +271,36 @@ fun RootDrawerExpanded(
                                 }
                             )
                         }
+
                         composable(
                             route = DrawerScreen.ViewArtist.route + DrawerScreen.ViewArtist.PARAM,
                             arguments = listOf(
                                 navArgument("id") {
-                                    type = NavType.StringType
+                                    type = NavType.LongType
                                 }
                             )
                         ) {
                             val id = it.arguments?.getLong("id") ?: -1
 
-                            ViewArtistExpandedRootScreen(
+                            if (state.addToPlaylistUiState.isOpen || state.viewUiState.isOpen) ViewArtistCompactRootScreen(
                                 artistId = id,
-                                navigateToArtistDetail = {
-
+                                onArtistDetailScreenOpen = {
+                                    onEvent(RootDrawerUiEvent.OnArtistDetailsScreenOpen)
+                                },
+                                navigateBack = {
+                                    navController.popBackStack()
+                                }
+                            )
+                            else ViewArtistExpandedRootScreen(
+                                artistId = id,
+                                onArtistDetailScreenOpen = {
+                                    onEvent(RootDrawerUiEvent.OnArtistDetailsScreenOpen)
                                 },
                                 navigateBack = {
                                     navController.popBackStack()
                                 }
                             )
                         }
-
                     }
 
                     AnimatedVisibility( // expand screen

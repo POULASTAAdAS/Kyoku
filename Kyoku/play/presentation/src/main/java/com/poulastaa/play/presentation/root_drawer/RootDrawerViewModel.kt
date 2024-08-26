@@ -115,6 +115,13 @@ class RootDrawerViewModel @Inject constructor(
                 )
             }
 
+            RootDrawerUiEvent.OnArtistDetailsScreenOpen -> {
+                state = state.copy(
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState()
+                )
+            }
+
             else -> Unit
         }
     }

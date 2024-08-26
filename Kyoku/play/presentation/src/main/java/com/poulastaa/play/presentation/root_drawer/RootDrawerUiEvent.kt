@@ -15,4 +15,6 @@ sealed interface RootDrawerUiEvent {
 
     data class View(val id: Long, val type: ViewDataType) : RootDrawerUiEvent
     data object ViewCancel : RootDrawerUiEvent
+
+    data object OnArtistDetailsScreenOpen : RootDrawerUiEvent
 }

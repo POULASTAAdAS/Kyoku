@@ -25,7 +25,6 @@ fun ExploreArtistButton(
     ) {
         OutlinedButton(
             onClick = onCLick,
-            modifier = modifier,
             border = BorderStroke(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.primary.copy(.7f)
@@ -36,7 +35,8 @@ fun ExploreArtistButton(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
             )
         }
     }

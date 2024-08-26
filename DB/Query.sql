@@ -138,12 +138,13 @@ select * from userartistrelation;
 delete from userartistrelation where userid = 0;
 
 
+select * from artist;
+select * from userartistrelation;
+select count(*) from userartistrelation where artistid = 10613;
 
-
-
-
-
-
+select song.id, song.title, song.coverImage , song.points from songartistrelation
+join song on song.id = songartistrelation.songId
+order by song.points desc;
 
 
 

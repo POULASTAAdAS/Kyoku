@@ -119,4 +119,9 @@ interface ServiceRepository {
         req: GetDataReq,
         payload: ReqUserPayload,
     ): Any
+
+    suspend fun getViewArtistData(
+        artistId: Long,
+        payload: ReqUserPayload,
+    ): ViewArtistDto
 }

@@ -1,22 +1,25 @@
 package com.poulastaa.play.presentation.view_artist.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import com.poulastaa.core.presentation.designsystem.FollowArtistIcon
-import com.poulastaa.core.presentation.designsystem.UnFollowArtistIcon
+import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.R
 
 @Composable
 fun ViewArtistNameRow(
@@ -31,7 +34,7 @@ fun ViewArtistNameRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(.8f),
+            modifier = Modifier.fillMaxWidth(.75f),
         ) {
             Text(
                 text = name,
@@ -62,21 +65,31 @@ private fun FollowArtistButton(
     isArtistFollowed: Boolean,
     onClick: () -> Unit
 ) {
-    IconButton(
+    OutlinedButton(
         onClick = onClick,
-        colors = IconButtonDefaults.iconButtonColors(
-            containerColor = if (isArtistFollowed)
+        border = BorderStroke(
+            width = if (isArtistFollowed) 1.3.dp else 2.dp,
+            color = if (isArtistFollowed) MaterialTheme.colorScheme.onBackground.copy(.2f)
+            else MaterialTheme.colorScheme.primary.copy(.8f),
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = if (isArtistFollowed) MaterialTheme.colorScheme.onBackground.copy(.15f) else
                 Color.Transparent
-            else MaterialTheme.colorScheme.onBackground.copy(.2f),
-            contentColor = if (isArtistFollowed)
-                MaterialTheme.colorScheme.onBackground.copy(.7f)
-            else MaterialTheme.colorScheme.primary.copy(.4f)
         )
     ) {
-        Icon(
-            imageVector = if (isArtistFollowed) UnFollowArtistIcon
-            else FollowArtistIcon,
-            contentDescription = null,
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.un_follow),
+                modifier = Modifier.alpha(if (isArtistFollowed) 1f else 0f)
+            )
+
+            Text(
+                text = stringResource(id = R.string.follow),
+                modifier = Modifier.alpha(if (isArtistFollowed) 0f else 1f)
+            )
+        }
     }
 }

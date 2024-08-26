@@ -590,4 +590,20 @@ class ServiceRepositoryImpl(
             }
         }
     }
+
+    override suspend fun getViewArtistData(artistId: Long, payload: ReqUserPayload): ViewArtistDto {
+        userRepo.getUserOnPayload(payload) ?: return ViewArtistDto()
+
+        return coroutineScope {
+            val artist = async { kyokuRepo.getArtistOnId(artistId) }
+            val listOfSong = async { kyokuRepo.getMostPoplarArtistSongsPrev(artistId) }
+            val artistPopularity = async { kyokuRepo.getArtistPopularity(artistId) }
+
+            ViewArtistDto(
+                followers = artistPopularity.await(),
+                artist = artist.await()?.toArtistDto() ?: return@coroutineScope ViewArtistDto(),
+                listOfSong = listOfSong.await()
+            )
+        }
+    }
 }

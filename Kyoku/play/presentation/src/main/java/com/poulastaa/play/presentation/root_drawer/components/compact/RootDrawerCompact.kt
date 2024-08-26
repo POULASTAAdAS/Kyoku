@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandIn
@@ -156,6 +157,9 @@ fun RootDrawerCompact(
                                     )
 
                                     is HomeOtherScreens.ViewArtist -> {
+                                        Log.d("artistId nav", screen.id.toString())
+
+
                                         navController.navigate(
                                             route = DrawerScreen.ViewArtist.route + "/${screen.id}"
                                         )
@@ -255,7 +259,7 @@ fun RootDrawerCompact(
                         route = DrawerScreen.ViewArtist.route + DrawerScreen.ViewArtist.PARAM,
                         arguments = listOf(
                             navArgument("id") {
-                                type = NavType.StringType
+                                type = NavType.LongType
                             }
                         )
                     ) {
@@ -263,8 +267,8 @@ fun RootDrawerCompact(
 
                         ViewArtistCompactRootScreen(
                             artistId = id,
-                            navigateToArtistDetail = {
-
+                            onArtistDetailScreenOpen = {
+                                onEvent(RootDrawerUiEvent.OnArtistDetailsScreenOpen)
                             },
                             navigateBack = {
                                 navController.popBackStack()

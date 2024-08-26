@@ -14,7 +14,7 @@ data class RootDrawerUiState(
     val profilePicUrl: String = "",
 
     val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState(),
-    val viewUiState: HomeViewUiState = HomeViewUiState()
+    val viewUiState: HomeViewUiState = HomeViewUiState(),
 )
 
 data class HomeViewUiState(

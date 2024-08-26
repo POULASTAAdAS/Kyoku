@@ -25,7 +25,7 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
     override suspend fun getData(
         artistId: Long
     ): Result<ViewArtistData, DataError.Network> = client.get<ViewArtistDto>(
-        route = EndPoints.ExploreArtist.route,
+        route = EndPoints.ViewArtist.route,
         params = listOf("artistId" to artistId.toString()),
         gson = gson
     ).map { it.toViewArtistData() }

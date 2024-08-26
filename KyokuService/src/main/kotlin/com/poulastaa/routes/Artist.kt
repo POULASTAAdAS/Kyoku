@@ -51,3 +51,22 @@ fun Route.unFollowArtist(service: ServiceRepository) {
         }
     }
 }
+
+fun Route.viewArtist(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.ViewArtist.route) {
+            get {
+                val req = call.parameters["artistId"]?.toLong()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val result = service.getViewArtistData(req, payload)
+
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
