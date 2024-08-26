@@ -56,7 +56,7 @@ import com.poulastaa.play.presentation.view_artist.components.ViewArtistTopBar
 import kotlinx.coroutines.delay
 
 @Composable
-fun ViewArtistRootScreen(
+fun ViewArtistCompactRootScreen(
     modifier: Modifier = Modifier,
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),

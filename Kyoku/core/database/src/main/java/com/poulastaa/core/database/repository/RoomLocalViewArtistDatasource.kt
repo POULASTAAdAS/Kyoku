@@ -13,15 +13,8 @@ class RoomLocalViewArtistDatasource @Inject constructor(
     override suspend fun getArtist(artistId: Long): Artist? =
         commonDao.getArtistByIdOrNull(artistId)?.toArtist()
 
-    override suspend fun saveArtist(artist: Artist) {
+    override suspend fun followArtist(artist: Artist) =
         commonDao.insertArtist(artist.toArtistEntity())
-    }
 
-    override suspend fun followArtist(artistId: Long) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun onFollowArtist(artistId: Long) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun unFollowArtist(artistId: Long) = commonDao.deleteArtist(artistId)
 }

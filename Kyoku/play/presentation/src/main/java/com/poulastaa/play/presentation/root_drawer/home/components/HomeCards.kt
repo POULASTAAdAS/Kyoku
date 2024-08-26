@@ -366,7 +366,6 @@ fun MoreFromArtist(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small)
             .padding(MaterialTheme.dimens.small2)
             .then(modifier)
     ) {

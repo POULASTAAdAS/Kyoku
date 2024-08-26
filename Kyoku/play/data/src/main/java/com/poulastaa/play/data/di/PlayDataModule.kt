@@ -18,12 +18,16 @@ import com.poulastaa.core.domain.repository.setting.SettingRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view.ViewRepository
+import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.RemoveViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.ViewArtistRepository
 import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OfflineFirstViewRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstAddToPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
+import com.poulastaa.play.data.OnlineFirstViewArtistRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -107,4 +111,17 @@ object PlayDataModule {
         remote = remote,
         application = applicationScope
     )
+
+    @Provides
+    @ViewModelScoped
+    fun provideViewArtistRepository(
+        local: LocalViewArtistDatasource,
+        remote: RemoveViewArtistDatasource,
+        applicationScope: CoroutineScope,
+    ): ViewArtistRepository = OnlineFirstViewArtistRepository(
+        local = local,
+        remote = remote,
+        application = applicationScope
+    )
+
 }

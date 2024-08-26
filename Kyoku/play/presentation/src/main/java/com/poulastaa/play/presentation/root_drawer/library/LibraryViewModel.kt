@@ -106,7 +106,13 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         is LibraryUiEvent.OnClick.Artist -> {
-
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.ViewArtist(
+                                        id = event.id
+                                    )
+                                )
+                            )
                         }
 
                         LibraryUiEvent.OnClick.Favourite -> {
@@ -393,7 +399,15 @@ class LibraryViewModel @Inject constructor(
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Artist.View -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.ViewArtist(
+                                id = event.id
+                            )
+                        )
+                    )
+                }
             }
 
             is LibraryUiEvent.BottomSheetUiEvent.Artist.UnFollow -> {

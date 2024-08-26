@@ -7,4 +7,6 @@ sealed interface LibraryOtherScreen {
         val id: Long = -1,
         val type: ViewDataType
     ) : LibraryOtherScreen
+
+    data class ViewArtist(val id: Long) : LibraryOtherScreen
 }

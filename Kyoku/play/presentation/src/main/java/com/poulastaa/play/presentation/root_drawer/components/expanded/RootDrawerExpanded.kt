@@ -172,6 +172,10 @@ fun RootDrawerExpanded(
                                                 screen.type
                                             )
                                         )
+
+                                        is HomeOtherScreens.ViewArtist -> {
+
+                                        }
                                     }
                                 },
                                 onEvent = { event ->
@@ -201,6 +205,10 @@ fun RootDrawerExpanded(
                                                 screen.type
                                             )
                                         )
+
+                                        is LibraryOtherScreen.ViewArtist -> {
+
+                                        }
                                     }
                                 }
                             )
@@ -258,7 +266,8 @@ fun RootDrawerExpanded(
                     }
 
                     AnimatedVisibility( // expand screen
-                        visible = state.addToPlaylistUiState.isOpen && config.screenWidthDp > 980,
+                        visible =
+                        state.addToPlaylistUiState.isOpen && config.screenWidthDp > 980,
                         enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
                         exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
                     ) {
@@ -275,7 +284,8 @@ fun RootDrawerExpanded(
                     }
 
                     AnimatedVisibility(
-                        visible = state.viewUiState.isOpen && config.screenWidthDp > 960,
+                        visible =
+                        state.viewUiState.isOpen && config.screenWidthDp > 960,
                         enter = fadeIn(),
                         exit = fadeOut()
                     ) {

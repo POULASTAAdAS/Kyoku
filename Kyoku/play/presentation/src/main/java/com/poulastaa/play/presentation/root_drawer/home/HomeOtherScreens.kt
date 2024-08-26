@@ -12,4 +12,6 @@ sealed interface HomeOtherScreens {
         val id: Long = -1,
         val type: ViewDataType
     ) : HomeOtherScreens
+
+    data class ViewArtist(val id: Long) : HomeOtherScreens
 }

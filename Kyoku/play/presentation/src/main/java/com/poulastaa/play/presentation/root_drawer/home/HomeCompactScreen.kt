@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -444,8 +445,16 @@ private fun HomeScreen(
                 ) { songData ->
                     MoreFromArtist(
                         modifier = Modifier
+                            .clip(CircleShape)
                             .height(60.dp)
-                            .padding(end = MaterialTheme.dimens.small2),
+                            .padding(end = MaterialTheme.dimens.small2)
+                            .clickable {
+                                onEvent(
+                                    HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
+                                        id = songData.artist.id
+                                    )
+                                )
+                            },
                         header = state.header,
                         artist = songData.artist
                     )
@@ -491,7 +500,16 @@ private fun HomeScreen(
 
                         item {
                             ViewMore(
-                                modifier = Modifier.size(150.dp)
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(150.dp)
+                                    .clickable {
+                                        onEvent(
+                                            HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
+                                                id = songData.artist.id
+                                            )
+                                        )
+                                    }
                             )
                         }
                     }

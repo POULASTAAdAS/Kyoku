@@ -5,6 +5,7 @@ import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.domain.DataLoadingState
 
 data class ViewArtistUiState(
+    val isInternetError: Boolean = false,
     val loadingState: DataLoadingState = DataLoadingState.LOADING,
     val header: String = "",
     val data: UiArtistData = UiArtistData()

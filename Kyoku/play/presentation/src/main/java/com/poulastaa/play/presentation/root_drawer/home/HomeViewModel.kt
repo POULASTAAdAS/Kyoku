@@ -120,9 +120,17 @@ class HomeViewModel @Inject constructor(
                             )
                         }
 
-                        else -> Unit
+                        HomeItemClickType.SUGGEST_ARTIST -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.ViewArtist(
+                                        id = event.id ?: -1L
+                                    )
+                                )
+                            )
+                        }
 
-//                        HomeItemClickType.SUGGEST_ARTIST -> TODO()
+                        else -> Unit
 //                        HomeItemClickType.POPULAR_ARTIST -> TODO()
 //                        HomeItemClickType.HISTORY_SONG -> TODO()
 //                        HomeItemClickType.SUGGEST_ARTIST_SONG -> TODO()
@@ -328,6 +336,18 @@ class HomeViewModel @Inject constructor(
                             ) else _uiEvent.send(
                                 HomeUiAction.EmitToast(
                                     UiText.StringResource(R.string.error_something_went_wrong)
+                                )
+                            )
+                        }
+                    }
+
+                    is HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    screen = HomeOtherScreens.ViewArtist(
+                                        id = event.id
+                                    )
                                 )
                             )
                         }
