@@ -11,10 +11,11 @@ sealed interface RootDrawerUiEvent {
     data class SaveScreenToggle(val screen: SaveScreen) : RootDrawerUiEvent
 
     data class AddSongToPlaylist(val id: Long) : RootDrawerUiEvent
-    data object AddSongToPlaylistCancel : RootDrawerUiEvent
+    data object OnAddSongToPlaylistCancel : RootDrawerUiEvent
 
     data class View(val id: Long, val type: ViewDataType) : RootDrawerUiEvent
-    data object ViewCancel : RootDrawerUiEvent
+    data object OnViewCancel : RootDrawerUiEvent
 
-    data object OnArtistDetailsScreenOpen : RootDrawerUiEvent
+    data class OnExploreArtistOpen(val id: Long) : RootDrawerUiEvent
+    data object OnExploreArtistCancel : RootDrawerUiEvent
 }

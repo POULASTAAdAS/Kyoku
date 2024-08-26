@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
@@ -38,10 +39,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
+import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
@@ -267,8 +270,8 @@ fun RootDrawerCompact(
 
                         ViewArtistCompactRootScreen(
                             artistId = id,
-                            onArtistDetailScreenOpen = {
-                                onEvent(RootDrawerUiEvent.OnArtistDetailsScreenOpen)
+                            onArtistDetailScreenOpen = { artistId ->
+                                onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                             },
                             navigateBack = {
                                 navController.popBackStack()
@@ -293,7 +296,7 @@ fun RootDrawerCompact(
                     }
 
                     if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
-                        onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
+                        onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                     }
                 }
 
@@ -307,15 +310,37 @@ fun RootDrawerCompact(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
                         navigateBack = {
-                            onEvent(RootDrawerUiEvent.ViewCancel)
+                            onEvent(RootDrawerUiEvent.OnViewCancel)
+                        }
+                    )
+                }
+
+
+                AnimatedVisibility(
+                    visible = state.exploreArtistUiState.isOpen,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                ) {
+                    ExploreArtistRootScreen(
+                        modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                        artistId = state.exploreArtistUiState.artistId,
+                        navigate = {
+
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
                         }
                     )
                 }
             }
 
-            if (state.addToPlaylistUiState.isOpen || state.viewUiState.isOpen) BackHandler {
-                if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.AddSongToPlaylistCancel)
-                else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.ViewCancel)
+            if (state.addToPlaylistUiState.isOpen ||
+                state.viewUiState.isOpen ||
+                state.exploreArtistUiState.isOpen
+            ) BackHandler {
+                if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+                else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
+                else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
             }
         }
     )

@@ -1,12 +1,6 @@
 package com.poulastaa.play.presentation.view_artist
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +33,6 @@ import com.poulastaa.core.presentation.designsystem.components.ExpandedErrorScre
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.ArtistSongDetailsCard
-import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view_artist.components.ExploreArtistButton
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistExpandedLoading
@@ -52,52 +45,22 @@ fun ViewArtistExpandedRootScreen(
     modifier: Modifier = Modifier,
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),
-    onArtistDetailScreenOpen: () -> Unit,
+    navigateToArtistDetail: (id: Long) -> Unit,
     navigateBack: () -> Unit
 ) {
     LaunchedEffect(key1 = artistId) {
         viewModel.loadData(artistId)
     }
 
-    Row {
-        ViewArtistScreen(
-            modifier = modifier
-                .then(
-                    if (viewModel.state.isExploreArtistOpen) Modifier.fillMaxWidth(.6f)
-                    else Modifier.fillMaxSize()
-                ),
-            state = viewModel.state,
-            onEvent = viewModel::onEvent,
-            navigateToArtistDetail = onArtistDetailScreenOpen,
-            navigateBack = navigateBack
-        )
-
-        AnimatedVisibility(
-            visible = viewModel.state.isExploreArtistOpen,
-            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
-            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
-        ) {
-            if (viewModel.state.isExploreArtistOpen) {
-                ExploreArtistRootScreen(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    artistId = viewModel.state.artistId,
-                    navigate = {
-
-                    },
-                    navigateBack = {
-                        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
-                    }
-                )
-
-                onArtistDetailScreenOpen()
-            }
-        }
-    }
-
-    if (viewModel.state.isExploreArtistOpen) BackHandler {
-        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
-    }
+    ViewArtistScreen(
+        modifier = modifier,
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        navigateToArtistDetail = {
+            navigateToArtistDetail(viewModel.state.artistId)
+        },
+        navigateBack = navigateBack
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,11 +159,9 @@ private fun Content(
 
             ExploreArtistButton(
                 modifier = Modifier.fillMaxWidth(.6f),
-                name = state.data.artist.name
-            ) {
-                navigateToArtistDetail()
-                onEvent(ViewArtistUiEvent.ExploreArtistOpenClick)
-            }
+                name = state.data.artist.name,
+                onCLick = navigateToArtistDetail
+            )
         }
 
         LazyColumn(

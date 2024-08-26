@@ -1,15 +1,8 @@
 package com.poulastaa.play.presentation.view_artist
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,7 +34,6 @@ import com.poulastaa.core.presentation.designsystem.components.CompactErrorScree
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.ArtistSongDetailsCard
-import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view_artist.components.ExploreArtistButton
 import com.poulastaa.play.presentation.view_artist.components.ViewArtistCompactLoading
@@ -53,45 +45,22 @@ fun ViewArtistCompactRootScreen(
     modifier: Modifier = Modifier,
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),
-    onArtistDetailScreenOpen: () -> Unit,
+    onArtistDetailScreenOpen: (id: Long) -> Unit,
     navigateBack: () -> Unit
 ) {
     LaunchedEffect(key1 = artistId) {
         viewModel.loadData(artistId)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        ViewArtistScreen(
-            modifier = modifier,
-            state = viewModel.state,
-            onEvent = viewModel::onEvent,
-            navigateBack = navigateBack
-        )
-
-        AnimatedVisibility(
-            visible = viewModel.state.isExploreArtistOpen,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
-        ) {
-            if (viewModel.state.isExploreArtistOpen) {
-                ExploreArtistRootScreen(
-                    artistId = viewModel.state.artistId,
-                    navigate = {
-
-                    },
-                    navigateBack = {
-                        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
-                    }
-                )
-
-                onArtistDetailScreenOpen()
-            }
-        }
-    }
-
-    if (viewModel.state.isExploreArtistOpen) BackHandler {
-        viewModel.onEvent(ViewArtistUiEvent.ExploreArtistCloseClick)
-    }
+    ViewArtistScreen(
+        modifier = modifier,
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        navigateToArtistDetail = {
+            onArtistDetailScreenOpen(viewModel.state.artistId)
+        },
+        navigateBack = navigateBack
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,6 +69,7 @@ private fun ViewArtistScreen(
     modifier: Modifier = Modifier,
     state: ViewArtistUiState,
     onEvent: (ViewArtistUiEvent) -> Unit,
+    navigateToArtistDetail: () -> Unit,
     navigateBack: () -> Unit
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -131,6 +101,7 @@ private fun ViewArtistScreen(
                         .padding(innerPadding),
                     scrollBehavior = scroll,
                     state = state,
+                    navigateToArtistDetail = navigateToArtistDetail,
                     onEvent = onEvent
                 )
 
@@ -146,6 +117,7 @@ private fun Content(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior,
     state: ViewArtistUiState,
+    navigateToArtistDetail: () -> Unit,
     onEvent: (ViewArtistUiEvent) -> Unit
 ) {
     val config = LocalConfiguration.current
@@ -197,10 +169,9 @@ private fun Content(
         item {
             ExploreArtistButton(
                 modifier = Modifier.fillMaxWidth(.5f),
-                name = state.data.artist.name
-            ) {
-                onEvent(ViewArtistUiEvent.ExploreArtistOpenClick)
-            }
+                name = state.data.artist.name,
+                onCLick = navigateToArtistDetail
+            )
         }
 
         item {
@@ -233,10 +204,9 @@ private fun Content(
                 ExploreArtistButton(
                     modifier = Modifier
                         .padding(MaterialTheme.dimens.small3),
-                    name = state.data.artist.name
-                ) {
-                    onEvent(ViewArtistUiEvent.ExploreArtistOpenClick)
-                }
+                    name = state.data.artist.name,
+                    onCLick = navigateToArtistDetail
+                )
             }
         }
 

@@ -83,18 +83,6 @@ class ViewArtistViewModel @Inject constructor(
 
     fun onEvent(event: ViewArtistUiEvent) {
         when (event) {
-            ViewArtistUiEvent.ExploreArtistOpenClick -> {
-                state = state.copy(
-                    isExploreArtistOpen = true
-                )
-            }
-
-            ViewArtistUiEvent.ExploreArtistCloseClick -> {
-                state = state.copy(
-                    isExploreArtistOpen = false
-                )
-            }
-
             ViewArtistUiEvent.FollowArtistToggleClick -> {
                 viewModelScope.launch {
                     val followStatus = state.data.isArtistFollowed

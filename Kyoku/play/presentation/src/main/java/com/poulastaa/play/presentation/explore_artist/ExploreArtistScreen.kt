@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.explore_artist
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,8 @@ fun ExploreArtistRootScreen(
     navigateBack: () -> Unit
 ) {
     val context = LocalContext.current
+
+    Log.d("calld", "called")
 
     ObserveAsEvent(flow = viewModel.uiEvent) { event ->
         when (event) {
@@ -63,17 +66,21 @@ fun ExploreArtistScreen(
 
     Scaffold(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.surfaceContainer),
+            .fillMaxSize(),
         topBar = {
 
         }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(innerPadding)
                 .nestedScroll(scroll.nestedScrollConnection)
         ) {
+            item {
 
+            }
         }
     }
 }

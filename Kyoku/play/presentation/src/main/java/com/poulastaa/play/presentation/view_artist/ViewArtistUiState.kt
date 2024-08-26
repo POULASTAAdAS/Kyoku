@@ -12,7 +12,6 @@ data class ViewArtistUiState(
     val data: UiArtistData = UiArtistData(),
 
     val toast: ViewArtistToast = ViewArtistToast(),
-    val isExploreArtistOpen: Boolean = false
 )
 
 data class UiArtistData(
