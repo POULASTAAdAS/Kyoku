@@ -61,7 +61,7 @@ fun ViewArtistNameRow(
 }
 
 @Composable
-private fun FollowArtistButton(
+fun FollowArtistButton(
     isArtistFollowed: Boolean,
     onClick: () -> Unit
 ) {
