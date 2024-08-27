@@ -6,7 +6,7 @@ import com.poulastaa.core.data.network.get
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.ViewArtistData
-import com.poulastaa.core.domain.repository.view_artist.RemoveViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class OnlineFirstViewArtistDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson
-) : RemoveViewArtistDatasource {
+) : RemoteViewArtistDatasource {
     override suspend fun getData(
         artistId: Long
     ): Result<ViewArtistData, DataError.Network> = client.get<ViewArtistDto>(

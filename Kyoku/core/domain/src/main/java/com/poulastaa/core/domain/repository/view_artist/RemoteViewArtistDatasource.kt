@@ -6,7 +6,7 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
 
-interface RemoveViewArtistDatasource {
+interface RemoteViewArtistDatasource {
     suspend fun getData(artistId: Long): Result<ViewArtistData, DataError.Network>
 
     suspend fun followArtist(artistId: Long): Result<Artist, DataError.Network>

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -28,17 +27,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.core.presentation.designsystem.AppThem
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
-import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.presentation.explore_artist.components.ExploreArtistItem
 import com.poulastaa.play.presentation.explore_artist.components.ExploreArtistTopBar
-import java.time.LocalDate
 
 @Composable
 fun ExploreArtistRootScreen(
@@ -69,6 +66,8 @@ fun ExploreArtistRootScreen(
     ExploreArtistScreen(
         modifier = modifier,
         state = viewModel.state,
+        album = viewModel.album.collectAsLazyPagingItems(),
+        song = viewModel.song.collectAsLazyPagingItems(),
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
     )
@@ -79,6 +78,8 @@ fun ExploreArtistRootScreen(
 fun ExploreArtistScreen(
     modifier: Modifier = Modifier,
     state: ExploreArtistUiState,
+    album: LazyPagingItems<ExploreArtistSingleUiData>,
+    song: LazyPagingItems<ExploreArtistSingleUiData>,
     onEvent: (ExploreArtistUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
@@ -102,7 +103,7 @@ fun ExploreArtistScreen(
         }
     ) { innerPadding ->
         AnimatedContent(
-            targetState = state.data.song.isEmpty() && state.data.album.isEmpty(),
+            targetState = song.itemCount == 0 && album.itemCount == 0,
             label = ""
         ) { loadingState ->
             when (loadingState) {
@@ -126,7 +127,7 @@ fun ExploreArtistScreen(
                             .nestedScroll(scroll.nestedScrollConnection),
                         contentPadding = PaddingValues(horizontal = MaterialTheme.dimens.medium1)
                     ) {
-                        if (state.data.album.isNotEmpty()) {
+                        if (album.itemCount > 0) {
                             item {
                                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
@@ -145,21 +146,23 @@ fun ExploreArtistScreen(
                                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
                             }
 
-                            items(state.data.album) { album ->
-                                ExploreArtistItem(
-                                    modifier = Modifier.clickable {
-                                        onEvent(ExploreArtistUiEvent.OnAlbumClick(album.id))
-                                    },
-                                    header = state.header,
-                                    item = album,
-                                    onThreeDotCLick = {
-                                        onEvent(ExploreArtistUiEvent.OnAlbumThreeDotClick(album.id))
-                                    }
-                                )
+                            items(album.itemCount) { index ->
+                                album[index]?.let { album ->
+                                    ExploreArtistItem(
+                                        modifier = Modifier.clickable {
+                                            onEvent(ExploreArtistUiEvent.OnAlbumClick(album.id))
+                                        },
+                                        header = state.header,
+                                        item = album,
+                                        onThreeDotCLick = {
+                                            onEvent(ExploreArtistUiEvent.OnAlbumThreeDotClick(album.id))
+                                        }
+                                    )
+                                }
                             }
                         }
 
-                        if (state.data.song.isNotEmpty()) {
+                        if (song.itemCount > 0) {
                             item {
                                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
 
@@ -177,17 +180,19 @@ fun ExploreArtistScreen(
                                 Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
                             }
 
-                            items(state.data.song) { song ->
-                                ExploreArtistItem(
-                                    modifier = Modifier.clickable {
-                                        onEvent(ExploreArtistUiEvent.OnSongClick(song.id))
-                                    },
-                                    header = state.header,
-                                    item = song,
-                                    onThreeDotCLick = {
-                                        onEvent(ExploreArtistUiEvent.OnSongThreeDotClick(song.id))
-                                    }
-                                )
+                            items(song.itemCount) { index ->
+                                song[index]?.let { song ->
+                                    ExploreArtistItem(
+                                        modifier = Modifier.clickable {
+                                            onEvent(ExploreArtistUiEvent.OnSongClick(song.id))
+                                        },
+                                        header = state.header,
+                                        item = song,
+                                        onThreeDotCLick = {
+                                            onEvent(ExploreArtistUiEvent.OnSongThreeDotClick(song.id))
+                                        }
+                                    )
+                                }
                             }
 
                             item {
@@ -197,36 +202,6 @@ fun ExploreArtistScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        ExploreArtistScreen(state = ExploreArtistUiState(
-            artist = UiArtist(
-                name = "That Cool Artist"
-            ),
-            data = ExploreArtistData(
-                album = (1..3).map {
-                    ExploreArtistSingleUiData(
-                        title = "Album $it",
-                        coverImage = "",
-                        releaseYear = LocalDate.now().year
-                    )
-                },
-                song = (1..10).map {
-                    ExploreArtistSingleUiData(
-                        title = "Song $it",
-                        coverImage = "",
-                        releaseYear = LocalDate.now().year
-                    )
-                }
-            )
-        ), onEvent = {}) {
-
         }
     }
 }

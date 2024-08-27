@@ -7,6 +7,9 @@ import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDataso
 import com.poulastaa.core.domain.repository.add_to_playlist.AddToPlaylistRepository
 import com.poulastaa.core.domain.repository.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
+import com.poulastaa.core.domain.repository.explore_artist.ExploreArtistRepository
+import com.poulastaa.core.domain.repository.explore_artist.LocalExploreArtistDatasource
+import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
 import com.poulastaa.core.domain.repository.home.HomeRepository
 import com.poulastaa.core.domain.repository.home.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
@@ -19,8 +22,9 @@ import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view.ViewRepository
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
-import com.poulastaa.core.domain.repository.view_artist.RemoveViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.core.domain.repository.view_artist.ViewArtistRepository
+import com.poulastaa.play.OnlineFirstExploreArtistDatasource
 import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OfflineFirstViewRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
@@ -116,7 +120,7 @@ object PlayDataModule {
     @ViewModelScoped
     fun provideViewArtistRepository(
         local: LocalViewArtistDatasource,
-        remote: RemoveViewArtistDatasource,
+        remote: RemoteViewArtistDatasource,
         applicationScope: CoroutineScope,
     ): ViewArtistRepository = OnlineFirstViewArtistRepository(
         local = local,
@@ -124,4 +128,16 @@ object PlayDataModule {
         application = applicationScope
     )
 
+
+    @Provides
+    @ViewModelScoped
+    fun provideExploreArtistRepository(
+        local: LocalExploreArtistDatasource,
+        remote: RemoteExploreArtistDatasource,
+        applicationScope: CoroutineScope,
+    ): ExploreArtistRepository = OnlineFirstExploreArtistDatasource(
+        local = local,
+        remote = remote,
+        application = applicationScope
+    )
 }

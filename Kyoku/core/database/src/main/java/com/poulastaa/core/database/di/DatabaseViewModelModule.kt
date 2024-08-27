@@ -12,6 +12,7 @@ import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.RoomLocalAddPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAddToPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAuthDatasource
+import com.poulastaa.core.database.repository.RoomLocalExploreArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDataSource
 import com.poulastaa.core.database.repository.RoomLocalSettingDatasource
@@ -23,6 +24,7 @@ import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasou
 import com.poulastaa.core.domain.repository.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
 import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
+import com.poulastaa.core.domain.repository.explore_artist.LocalExploreArtistDatasource
 import com.poulastaa.core.domain.repository.get_spotify_playlist.LocalSpotifyDataSource
 import com.poulastaa.core.domain.repository.home.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
@@ -172,6 +174,11 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalViewArtistDatasource(
         commonDao: CommonDao,
-        viewDao: ViewDao
     ): LocalViewArtistDatasource = RoomLocalViewArtistDatasource(commonDao = commonDao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalExploreArtistDatasource(
+        commonDao: CommonDao,
+    ): LocalExploreArtistDatasource = RoomLocalExploreArtistDatasource(commonDao = commonDao)
 }

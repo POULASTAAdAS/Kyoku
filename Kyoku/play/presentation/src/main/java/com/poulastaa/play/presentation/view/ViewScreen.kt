@@ -97,7 +97,6 @@ private fun ViewScreen(
     Scaffold(
         topBar = {
             ViewTopBar(
-                title = state.topBarTitle,
                 scrollBehavior = scroll,
                 navigateBack = navigateBack
             )

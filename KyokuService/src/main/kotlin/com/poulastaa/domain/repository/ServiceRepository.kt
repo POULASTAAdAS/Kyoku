@@ -124,4 +124,23 @@ interface ServiceRepository {
         artistId: Long,
         payload: ReqUserPayload,
     ): ViewArtistDto
+
+    suspend fun getArtistOnId(
+        artistId: Long,
+        payload: ReqUserPayload,
+    ): ArtistDto
+
+    suspend fun getArtistSongPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto
+
+    suspend fun getArtistAlbumPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto
 }

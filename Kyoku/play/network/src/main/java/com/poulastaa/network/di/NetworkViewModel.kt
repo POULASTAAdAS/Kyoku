@@ -3,13 +3,15 @@ package com.poulastaa.network.di
 import com.google.gson.Gson
 import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
+import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
-import com.poulastaa.core.domain.repository.view_artist.RemoveViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
+import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
@@ -78,8 +80,18 @@ object NetworkViewModel {
     fun provideViewArtistRemoteDatasource(
         client: OkHttpClient,
         gson: Gson,
-    ): RemoveViewArtistDatasource = OnlineFirstViewArtistDatasource(
+    ): RemoteViewArtistDatasource = OnlineFirstViewArtistDatasource(
         client = client,
         gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideExploreArtistRemoteDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteExploreArtistDatasource = OnlineFirstExploreArtistDatasource(
+        client = client,
+        gson = gson,
     )
 }

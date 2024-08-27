@@ -606,4 +606,30 @@ class ServiceRepositoryImpl(
             )
         }
     }
+
+    override suspend fun getArtistOnId(artistId: Long, payload: ReqUserPayload): ArtistDto {
+        userRepo.getUserOnPayload(payload) ?: return ArtistDto()
+
+        return kyokuRepo.getArtistOnId(artistId)?.toArtistDto() ?: ArtistDto()
+    }
+
+    override suspend fun getArtistSongPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto {
+        userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
+        return kyokuRepo.getArtistSongPagingData(artistId, page, size)
+    }
+
+    override suspend fun getArtistAlbumPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto {
+          userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
+        return kyokuRepo.getArtistAlbumPagingData(artistId, page, size)
+    }
 }

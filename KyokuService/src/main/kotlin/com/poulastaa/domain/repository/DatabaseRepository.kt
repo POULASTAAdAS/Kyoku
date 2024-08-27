@@ -3,6 +3,7 @@ package com.poulastaa.domain.repository
 import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
+import com.poulastaa.data.model.ArtistPagerDataDto
 import com.poulastaa.data.model.SongDto
 import com.poulastaa.data.model.ViewArtistSongDto
 import com.poulastaa.domain.model.ResultArtist
@@ -49,4 +50,16 @@ interface DatabaseRepository {
     suspend fun getArtistPopularity(artistId: Long): Long
 
     suspend fun getMostPoplarArtistSongsPrev(artistId: Long): List<ViewArtistSongDto>
+
+    suspend fun getArtistSongPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+    ): ArtistPagerDataDto
+
+    suspend fun getArtistAlbumPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+    ): ArtistPagerDataDto
 }

@@ -18,7 +18,6 @@ import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewTopBar(
-    title: String,
     scrollBehavior: TopAppBarScrollBehavior,
     navigateBack: () -> Unit
 ) {
@@ -47,7 +46,6 @@ private fun Preview() {
                 .background(MaterialTheme.colorScheme.surfaceContainer)
         ) {
             ViewTopBar(
-                title = "Playlist",
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
             ) {
 

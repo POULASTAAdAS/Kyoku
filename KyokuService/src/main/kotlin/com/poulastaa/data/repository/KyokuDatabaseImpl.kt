@@ -7,19 +7,19 @@ import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.mappers.constructSongCoverImage
 import com.poulastaa.data.mappers.toArtistResult
 import com.poulastaa.data.mappers.toSongDto
+import com.poulastaa.data.model.ArtistPagerDataDto
+import com.poulastaa.data.model.ArtistSingleDataDto
 import com.poulastaa.data.model.SongDto
 import com.poulastaa.data.model.ViewArtistSongDto
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.table.*
-import com.poulastaa.domain.table.relation.SongAlbumRelationTable
-import com.poulastaa.domain.table.relation.SongArtistRelationTable
-import com.poulastaa.domain.table.relation.UserArtistRelationTable
-import com.poulastaa.domain.table.relation.UserPlaylistSongRelationTable
+import com.poulastaa.domain.table.relation.*
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import java.time.LocalDate
 import kotlin.random.Random
 
 class KyokuDatabaseImpl : DatabaseRepository {
@@ -256,5 +256,92 @@ class KyokuDatabaseImpl : DatabaseRepository {
                     popularity = it[SongTable.points],
                 )
             }
+    }
+
+    override suspend fun getArtistSongPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+    ): ArtistPagerDataDto = query {
+        SongArtistRelationTable
+            .join(
+                otherTable = SongTable,
+                joinType = JoinType.INNER,
+                additionalConstraint = {
+                    SongTable.id as Column<*> eq SongArtistRelationTable.songId
+                }
+            ).slice(
+                SongTable.id,
+                SongTable.title,
+                SongTable.coverImage,
+                SongTable.year
+            ).select {
+                SongArtistRelationTable.artistId eq artistId
+            }.orderBy(SongTable.year to SortOrder.DESC)
+            .map {
+                ArtistSingleDataDto(
+                    id = it[SongTable.id].value,
+                    title = it[SongTable.title],
+                    coverImage = it[SongTable.coverImage].constructSongCoverImage(),
+                    releaseYear = it[SongTable.year]
+                )
+            }
+            .drop(if (page == 1) 0 else page * size)
+            .take(size)
+            .let {
+                ArtistPagerDataDto(list = it)
+            }
+    }
+
+    override suspend fun getArtistAlbumPagingData(artistId: Long, page: Int, size: Int): ArtistPagerDataDto {
+        val coverImage = Max(SongTable.coverImage, SongTable.coverImage.columnType)
+        val year = Max(SongTable.year, SongTable.year.columnType)
+
+
+        return query {
+            ArtistAlbumRelationTable
+                .join(
+                    otherTable = AlbumTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        AlbumTable.id as Column<*> eq ArtistAlbumRelationTable.albumId
+                    }
+                )
+                .join(
+                    otherTable = SongAlbumRelationTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongAlbumRelationTable.albumId eq AlbumTable.id as Column<*>
+                    }
+                )
+                .join(
+                    otherTable = SongTable,
+                    joinType = JoinType.INNER,
+                    additionalConstraint = {
+                        SongTable.id as Column<*> eq SongAlbumRelationTable.songId
+                    }
+                )
+                .slice(
+                    AlbumTable.id,
+                    AlbumTable.name,
+                    coverImage,
+                    year
+                ).select {
+                    ArtistAlbumRelationTable.artistId eq artistId
+                }.groupBy(AlbumTable.id)
+                .orderBy(Max(SongTable.year, SongTable.year.columnType) to SortOrder.DESC)
+                .map {
+                    ArtistSingleDataDto(
+                        id = it[AlbumTable.id].value,
+                        title = it[AlbumTable.name],
+                        coverImage = it[coverImage]?.constructSongCoverImage() ?: "",
+                        releaseYear = it[year] ?: LocalDate.now().year
+                    )
+                }.drop(if (page == 1) 0 else page * size)
+                .take(size)
+                .let {
+                    ArtistPagerDataDto(list = it)
+                }
+        }
     }
 }

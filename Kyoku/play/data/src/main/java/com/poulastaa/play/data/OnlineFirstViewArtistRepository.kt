@@ -2,7 +2,7 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.model.ViewArtistData
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
-import com.poulastaa.core.domain.repository.view_artist.RemoveViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.core.domain.repository.view_artist.ViewArtistRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class OnlineFirstViewArtistRepository @Inject constructor(
     private val local: LocalViewArtistDatasource,
-    private val remote: RemoveViewArtistDatasource,
+    private val remote: RemoteViewArtistDatasource,
     private val application: CoroutineScope
 ) : ViewArtistRepository {
     override suspend fun getData(artistId: Long): Result<ViewArtistData, DataError.Network> =

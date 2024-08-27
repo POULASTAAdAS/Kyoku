@@ -289,8 +289,8 @@ fun RootDrawerExpanded(
                                 (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                             ) ViewArtistCompactRootScreen(
                                 artistId = id,
-                                onArtistDetailScreenOpen = {
-                                    onEvent(RootDrawerUiEvent.OnExploreArtistOpen(1))
+                                onArtistDetailScreenOpen = { artistId ->
+                                    onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                                 },
                                 navigateBack = {
                                     navController.popBackStack()
