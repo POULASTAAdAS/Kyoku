@@ -112,28 +112,226 @@ class ExploreArtistViewModel @Inject constructor(
 
     fun onEvent(event: ExploreArtistUiEvent) {
         when (event) {
-            is ExploreArtistUiEvent.OnAlbumClick -> {
-                viewModelScope.launch {
-                    _uiEvent.send(
-                        ExploreArtistUiAction.Navigate(
-                            ExploreArtistOtherScreen.ViewAlbum(
-                                id = event.id
+            is ExploreArtistUiEvent.OnItemClick -> {
+                when (event.type) {
+                    ExploreArtistUiEvent.Type.SONG -> {
+
+                    }
+
+                    ExploreArtistUiEvent.Type.ALBUM -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                ExploreArtistUiAction.Navigate(
+                                    ExploreArtistOtherScreen.ViewAlbum(
+                                        id = event.id
+                                    )
+                                )
                             )
-                        )
-                    )
+                        }
+                    }
                 }
             }
 
-            is ExploreArtistUiEvent.OnAlbumThreeDotClick -> {
+            is ExploreArtistUiEvent.ThreeDotEvent -> {
+                when (event) {
+                    is ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotOpen -> {
+                        when (event.type) {
+                            ExploreArtistUiEvent.Type.SONG -> {
+                                viewModelScope.launch {
+                                    val isInFavourite = async { repo.isSongInFavourite(event.id) }
 
-            }
+                                    val threeDotOperations =
+                                        mutableListOf<ExploreArtistThreeDotEvent>().apply {
+                                            if (state.isPlayingQueue) {
+                                                add(SongThreeDotEvent.PLAY_NEXT)
+                                                add(SongThreeDotEvent.PLAY_LAST)
+                                            } else add(SongThreeDotEvent.PLAY)
+                                            add(SongThreeDotEvent.ADD_TO_PLAYLIST)
+                                            if (!isInFavourite.await()) add(SongThreeDotEvent.ADD_TO_FAVOURITE)
+                                        }
 
-            is ExploreArtistUiEvent.OnSongClick -> {
+                                    _song.value = _song.value.map {
+                                        if (it.id == event.id) it.copy(isExpanded = true)
+                                        else it
+                                    }
 
-            }
+                                    state = state.copy(
+                                        list = threeDotOperations
+                                    )
+                                }
+                            }
 
-            is ExploreArtistUiEvent.OnSongThreeDotClick -> {
+                            ExploreArtistUiEvent.Type.ALBUM -> {
+                                viewModelScope.launch {
+                                    val isSaved = async { repo.isAlbumSaved(event.id) }
 
+                                    val threeDotOperations =
+                                        mutableListOf<ExploreArtistThreeDotEvent>().apply {
+                                            add(AlbumThreeDotEvent.PLAY)
+                                            if (!isSaved.await()) add(AlbumThreeDotEvent.SAVE_ALBUM)
+                                        }
+
+                                    _album.value = _album.value.map {
+                                        if (it.id == event.id) it.copy(isExpanded = true)
+                                        else it
+                                    }
+
+                                    state = state.copy(
+                                        list = threeDotOperations
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    is ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotClose -> {
+                        state = state.copy(
+                            list = emptyList()
+                        )
+
+                        when (event.type) {
+                            ExploreArtistUiEvent.Type.SONG -> {
+                                _song.value = _song.value.map {
+                                    if (it.id == event.id) it.copy(isExpanded = false)
+                                    else it
+                                }
+                            }
+
+                            ExploreArtistUiEvent.Type.ALBUM -> {
+                                _album.value = _album.value.map {
+                                    if (it.id == event.id) it.copy(isExpanded = false)
+                                    else it
+                                }
+                            }
+                        }
+                    }
+
+                    is ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotEventClick -> {
+                        when (event.type) {
+                            AlbumThreeDotEvent.PLAY -> {
+
+                            }
+
+                            AlbumThreeDotEvent.SAVE_ALBUM -> {
+                                viewModelScope.launch {
+                                    when (val result = repo.addSongToFavourite(event.id)) {
+                                        is Result.Error -> {
+                                            when (result.error) {
+                                                DataError.Network.NO_INTERNET -> {
+                                                    _uiEvent.send(
+                                                        ExploreArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_no_internet
+                                                            )
+                                                        )
+                                                    )
+                                                }
+
+                                                else -> {
+                                                    _uiEvent.send(
+                                                        ExploreArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_something_went_wrong
+                                                            )
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        is Result.Success -> {
+                                            _uiEvent.send(
+                                                ExploreArtistUiAction.EmitToast(
+                                                    UiText.StringResource(
+                                                        R.string.album_added_to_library
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            // song event
+                            SongThreeDotEvent.PLAY -> {
+
+                            }
+
+                            SongThreeDotEvent.PLAY_NEXT -> {
+
+                            }
+
+                            SongThreeDotEvent.PLAY_LAST -> {
+
+                            }
+
+                            SongThreeDotEvent.ADD_TO_PLAYLIST -> {
+                                viewModelScope.launch {
+                                    _uiEvent.send(
+                                        ExploreArtistUiAction.Navigate(
+                                            ExploreArtistOtherScreen.AddSongToPlaylist(
+                                                id = event.id
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+
+                            SongThreeDotEvent.ADD_TO_FAVOURITE -> {
+                                viewModelScope.launch {
+                                    when (val result = repo.addSongToFavourite(event.id)) {
+                                        is Result.Error -> {
+                                            when (result.error) {
+                                                DataError.Network.NO_INTERNET -> {
+                                                    _uiEvent.send(
+                                                        ExploreArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_no_internet
+                                                            )
+                                                        )
+                                                    )
+                                                }
+
+                                                else -> {
+                                                    _uiEvent.send(
+                                                        ExploreArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_something_went_wrong
+                                                            )
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        is Result.Success -> {
+                                            _uiEvent.send(
+                                                ExploreArtistUiAction.EmitToast(
+                                                    UiText.StringResource(
+                                                        R.string.song_added_to_favourite
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            SongThreeDotEvent.VIEW_ARTISTS -> {
+                                viewModelScope.launch {
+                                    _uiEvent.send(
+                                        ExploreArtistUiAction.Navigate(
+                                            ExploreArtistOtherScreen.AddSongToPlaylist(
+                                                id = event.id
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

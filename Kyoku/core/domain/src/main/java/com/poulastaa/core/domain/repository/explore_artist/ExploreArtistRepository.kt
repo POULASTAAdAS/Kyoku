@@ -16,4 +16,10 @@ interface ExploreArtistRepository {
 
     suspend fun getArtistSong(artistId: Long): Flow<PagingData<ArtistSingleData>>
     suspend fun getArtistAlbum(artistId: Long): Flow<PagingData<ArtistSingleData>>
+
+    suspend fun isSongInFavourite(songId: Long): Boolean
+    suspend fun isAlbumSaved(albumId: Long): Boolean
+
+    suspend fun saveAlbum(albumId: Long): EmptyResult<DataError.Network>
+    suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network>
 }

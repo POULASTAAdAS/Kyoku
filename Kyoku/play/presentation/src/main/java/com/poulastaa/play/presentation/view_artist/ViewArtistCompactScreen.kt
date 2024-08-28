@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.view_artist
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,10 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.ArtistSongDetailsCard
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
@@ -46,10 +49,25 @@ fun ViewArtistCompactRootScreen(
     artistId: Long,
     viewModel: ViewArtistViewModel = hiltViewModel(),
     onArtistDetailScreenOpen: (id: Long) -> Unit,
+    navigate: (ViewArtistOtherScreen) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = artistId) {
         viewModel.loadData(artistId)
+    }
+
+    ObserveAsEvent(flow = viewModel.uiEvent) {
+        when (it) {
+            is ViewArtistUiAction.EmitToast -> Toast.makeText(
+                context,
+                it.message.asString(context),
+                Toast.LENGTH_LONG
+            ).show()
+
+            is ViewArtistUiAction.Navigate -> navigate(it.screen)
+        }
     }
 
     ViewArtistScreen(
@@ -186,10 +204,9 @@ private fun Content(
                         onEvent(ViewArtistUiEvent.OnSongClick(song.id))
                     },
                 header = state.header,
+                list = state.threeDotOperations,
                 song = song,
-                onThreeDotCLick = {
-
-                }
+                onEvent = onEvent
             )
         }
 

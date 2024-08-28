@@ -16,7 +16,7 @@ fun ViewData.toViewUiData() = ViewUiData(
     id = this.id,
     name = this.name,
     urls = this.listOfSong.shuffled().take(4).map { it.coverImage },
-    listOfSong = this.listOfSong.map { it.toViewUiData() }
+    listOfSong = this.listOfSong.map { it.toViewUiData() },
 )
 
 fun List<PlaylistSong>.toOtherData() = ViewUiData(

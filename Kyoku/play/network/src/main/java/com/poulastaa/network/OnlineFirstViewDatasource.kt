@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.poulastaa.core.data.model.AlbumWithSongDto
 import com.poulastaa.core.data.model.PlaylistDto
 import com.poulastaa.core.data.model.SongDto
+import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.AlbumWithSong
@@ -101,5 +102,16 @@ class OnlineFirstViewDatasource @Inject constructor(
 
     override suspend fun getSongOnIdList(
         list: List<Long>
-    ): Result<List<Song>, DataError.Network> = Result.Success(emptyList())
+    ): Result<List<Song>, DataError.Network> = throw Exception("not implemented")
+
+
+    override suspend fun addSongToFavourite(
+        songId: Long
+    ): Result<Song, DataError.Network> = client.get<SongDto>(
+        route = EndPoints.AddToFavourite.route,
+        params = listOf("songId" to songId.toString()),
+        gson = gson
+    ).map {
+        it.toSong()
+    }
 }

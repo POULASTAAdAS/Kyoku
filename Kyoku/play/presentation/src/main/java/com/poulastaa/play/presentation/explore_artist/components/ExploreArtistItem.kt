@@ -1,6 +1,8 @@
 package com.poulastaa.play.presentation.explore_artist.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,14 +32,20 @@ import coil.compose.AsyncImage
 import com.poulastaa.core.presentation.designsystem.ThreeDotIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
+import com.poulastaa.play.presentation.explore_artist.AlbumThreeDotEvent
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistSingleUiData
+import com.poulastaa.play.presentation.explore_artist.ExploreArtistThreeDotEvent
+import com.poulastaa.play.presentation.explore_artist.ExploreArtistUiEvent
+import com.poulastaa.play.presentation.explore_artist.SongThreeDotEvent
 
 @Composable
 fun ExploreArtistItem(
     modifier: Modifier = Modifier,
     header: String,
+    type: ExploreArtistUiEvent.Type,
+    list: List<ExploreArtistThreeDotEvent>,
     item: ExploreArtistSingleUiData,
-    onThreeDotCLick: () -> Unit
+    onEvent: (ExploreArtistUiEvent.ThreeDotEvent) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -89,12 +99,68 @@ fun ExploreArtistItem(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(onClick = onThreeDotCLick) {
-            Icon(
-                imageVector = ThreeDotIcon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
-            )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = {
+                    onEvent(ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotOpen(item.id, type))
+                }
+            ) {
+                Icon(
+                    imageVector = ThreeDotIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
+                )
+            }
+
+            DropdownMenu(
+                expanded = item.isExpanded,
+                onDismissRequest = {
+                    onEvent(
+                        ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotClose(
+                            item.id,
+                            type
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(horizontal = MaterialTheme.dimens.small2)
+            ) {
+
+                when (type) {
+                    ExploreArtistUiEvent.Type.SONG -> {
+                        list.forEach { it as SongThreeDotEvent
+                            DropdownMenuItem(
+                                text = { Text(text = it.value) },
+                                onClick = {
+                                    onEvent(
+                                        ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotEventClick(
+                                            id = item.id,
+                                            type = it
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+
+                    ExploreArtistUiEvent.Type.ALBUM -> {
+                        list.forEach { it as AlbumThreeDotEvent
+                            DropdownMenuItem(
+                                text = { Text(text = it.value) },
+                                onClick = {
+                                    onEvent(
+                                        ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotEventClick(
+                                            id = item.id,
+                                            type = it
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

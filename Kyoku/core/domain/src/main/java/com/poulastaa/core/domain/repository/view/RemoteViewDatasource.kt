@@ -17,4 +17,5 @@ interface RemoteViewDatasource {
     suspend fun getPopularMix(prevList: List<Long>): Result<List<Song>, DataError.Network>
 
     suspend fun getSongOnIdList(list: List<Long>): Result<List<Song>, DataError.Network>
+    suspend fun addSongToFavourite(songId: Long): Result<Song, DataError.Network>
 }

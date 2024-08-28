@@ -294,6 +294,9 @@ fun RootDrawerExpanded(
                                 onArtistDetailScreenOpen = { artistId ->
                                     onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                                 },
+                                navigate = {
+
+                                },
                                 navigateBack = {
                                     navController.popBackStack()
                                 }
@@ -302,6 +305,9 @@ fun RootDrawerExpanded(
                                 artistId = id,
                                 navigateToArtistDetail = { artistId ->
                                     onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
+                                },
+                                navigate = {
+                                    
                                 },
                                 navigateBack = {
                                     navController.popBackStack()
@@ -337,6 +343,9 @@ fun RootDrawerExpanded(
                             modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                             id = state.viewUiState.songId,
                             type = state.viewUiState.type,
+                            navigate = {
+
+                            },
                             navigateBack = {
                                 onEvent(RootDrawerUiEvent.OnViewCancel)
                             }
@@ -399,6 +408,9 @@ fun RootDrawerExpanded(
                     ViewCompactScreen(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
+                        navigate = {
+
+                        },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnViewCancel)
                         }

@@ -137,4 +137,7 @@ interface CommonDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIntoPopularSongMix(entrys: List<PopularSongMixEntity>)
+
+    @Query("select id from FavouriteEntity where id = :id")
+    suspend fun isSongInFavourite(id: Long): Long?
 }

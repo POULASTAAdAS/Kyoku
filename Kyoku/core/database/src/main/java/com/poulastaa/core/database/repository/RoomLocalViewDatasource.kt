@@ -33,8 +33,13 @@ class RoomLocalViewDatasource @Inject constructor(
             }.firstOrNull() ?: ViewData()
 
     override suspend fun getAlbumOnId(id: Long): ViewData =
-        viewDao.getAlbumOnId(id).groupBy { it.playlistId }
+        viewDao.getAlbumForViewData(id).groupBy { it.playlistId }
             .map { it.value.toViewData(it.key) }.firstOrNull() ?: ViewData()
+
+    override suspend fun isAlbumOnLibrary(id: Long): Boolean = viewDao.getAlbumOnId(id) != null
+
+    override suspend fun isSongInFavourite(songId: Long): Boolean =
+        commonDao.isSongInFavourite(songId) != null
 
     override suspend fun getSongIdList(type: LocalViewDatasource.ReqType): List<Long> =
         when (type) {
@@ -62,15 +67,15 @@ class RoomLocalViewDatasource @Inject constructor(
     override suspend fun getFevSongIdList(): List<Long> = viewDao.getFevSongIds()
 
     override suspend fun getOldMix(): List<PlaylistSong> {
-        return listOf()
+        TODO("not implemented")
     }
 
     override suspend fun getArtistMix(): List<PlaylistSong> {
-        return listOf()
+        TODO("not implemented")
     }
 
     override suspend fun getPopularMix(): List<PlaylistSong> {
-        return listOf()
+        TODO("not implemented")
     }
 
     override suspend fun insertSongs(list: List<Song>, type: LocalViewDatasource.ReqType?) {

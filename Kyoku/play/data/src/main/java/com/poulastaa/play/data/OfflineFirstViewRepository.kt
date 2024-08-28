@@ -6,12 +6,15 @@ import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view.ViewRepository
 import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.domain.utils.asEmptyDataResult
 import com.poulastaa.core.domain.utils.map
 import com.poulastaa.play.data.mapper.toPlaylistSong
 import com.poulastaa.play.data.mapper.toViewData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class OfflineFirstViewRepository @Inject constructor(
@@ -31,9 +34,23 @@ class OfflineFirstViewRepository @Inject constructor(
         val localAlbum = local.getAlbumOnId(id)
         if (localAlbum.listOfSong.isNotEmpty()) return Result.Success(localAlbum)
 
-        val remoteAlbum = remote.getAlbumOnId(id)
-        return remoteAlbum.map { it.toViewData() }
+        return coroutineScope {
+            val remoteAlbumDef = async { remote.getAlbumOnId(id) }
+            val isAlbumOnLibrary = async { local.isAlbumOnLibrary(id) }
+
+            val remoteAlbum = remoteAlbumDef.await()
+
+            if (isAlbumOnLibrary.await() && remoteAlbum is Result.Success)
+                local.saveAlbum(remoteAlbum.data)
+
+            remoteAlbum.map { it.toViewData() }
+        }
     }
+
+    override suspend fun isSavedAlbum(id: Long): Boolean =
+        local.isAlbumOnLibrary(id)
+
+    override suspend fun isSongInFavourite(songId: Long) = local.isSongInFavourite(songId)
 
     override suspend fun getFev(): Result<List<PlaylistSong>, DataError.Network> {
         val songIdList = local.getFevSongIdList()
@@ -152,5 +169,17 @@ class OfflineFirstViewRepository @Inject constructor(
 
             responseSong.map { foundSongList + it.map { song -> song.toPlaylistSong() } }
         }
+    }
+
+    override suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network> {
+        val result = remote.addSongToFavourite(songId)
+        if (result is Result.Success) application.async {
+            local.insertSongs(
+                listOf(result.data),
+                LocalViewDatasource.ReqType.FEV
+            )
+        }.await()
+
+        return result.asEmptyDataResult()
     }
 }

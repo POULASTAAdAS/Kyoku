@@ -12,6 +12,7 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.domain.ViewSongOperation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -142,6 +143,132 @@ class ViewArtistViewModel @Inject constructor(
 
             is ViewArtistUiEvent.OnSongClick -> {
 
+            }
+
+            is ViewArtistUiEvent.ThreeDotEvent -> {
+                when (event) {
+                    is ViewArtistUiEvent.ThreeDotEvent.OnClick -> {
+                        viewModelScope.launch {
+                            val entry =
+                                state.data.listOfSong.find { it.id == event.id } ?: return@launch
+
+                            val isInFavourite = async { repo.isSongInFavourite(entry.id) }
+
+                            val threeDotOperations = mutableListOf<ViewSongOperation>().apply {
+                                if (state.isPlayingQueue) {
+                                    add(ViewSongOperation.PLAY_NEXT)
+                                    add(ViewSongOperation.PLAY_LAST)
+                                } else add(ViewSongOperation.PLAY)
+                                add(ViewSongOperation.ADD_TO_PLAYLIST)
+                                if (!isInFavourite.await()) add(ViewSongOperation.ADD_TO_FAVOURITE)
+                            }
+
+                            state = state.copy(
+                                data = state.data.copy(
+                                    listOfSong = state.data.listOfSong.map { song ->
+                                        if (song.id == event.id) song.copy(
+                                            isExpanded = !song.isExpanded
+                                        ) else song
+                                    }
+                                ),
+                                threeDotOperations = threeDotOperations
+                            )
+                        }
+                    }
+
+                    is ViewArtistUiEvent.ThreeDotEvent.OnCloseClick -> {
+                        state = state.copy(
+                            data = state.data.copy(
+                                listOfSong = state.data.listOfSong.map { song ->
+                                    if (song.id == event.id) song.copy(
+                                        isExpanded = false
+                                    ) else song
+                                }
+                            ),
+                            threeDotOperations = emptyList()
+                        )
+                    }
+
+                    is ViewArtistUiEvent.ThreeDotEvent.OnThreeDotItemClick -> {
+                        when (event.operation) {
+                            ViewSongOperation.PLAY -> {
+
+                            }
+
+                            ViewSongOperation.PLAY_NEXT -> {
+
+                            }
+
+                            ViewSongOperation.PLAY_LAST -> {
+
+                            }
+
+                            ViewSongOperation.ADD_TO_PLAYLIST -> {
+                                viewModelScope.launch {
+                                    _uiEvent.send(
+                                        ViewArtistUiAction.Navigate(
+                                            ViewArtistOtherScreen.AddSongToPlaylist(
+                                                id = event.id
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+
+                            ViewSongOperation.ADD_TO_FAVOURITE -> {
+                                viewModelScope.launch {
+                                    when (val result = repo.addSongToFavourite(event.id)) {
+                                        is Result.Error -> {
+                                            when (result.error) {
+                                                DataError.Network.NO_INTERNET -> {
+                                                    _uiEvent.send(
+                                                        ViewArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_no_internet
+                                                            )
+                                                        )
+                                                    )
+                                                }
+
+                                                else -> {
+                                                    _uiEvent.send(
+                                                        ViewArtistUiAction.EmitToast(
+                                                            UiText.StringResource(
+                                                                R.string.error_something_went_wrong
+                                                            )
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        is Result.Success -> {
+                                            _uiEvent.send(
+                                                ViewArtistUiAction.EmitToast(
+                                                    UiText.StringResource(
+                                                        R.string.add_to_favourite
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            ViewSongOperation.VIEW_ARTISTS -> {
+                                viewModelScope.launch {
+                                    _uiEvent.send(
+                                        ViewArtistUiAction.Navigate(
+                                            ViewArtistOtherScreen.ViewArtist(
+                                                id = event.id
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

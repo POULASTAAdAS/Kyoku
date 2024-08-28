@@ -44,4 +44,23 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
 
     override suspend fun getArtistAlbum(artistId: Long): Flow<PagingData<ArtistSingleData>> =
         remote.getArtistAlbum(artistId)
+
+    override suspend fun isSongInFavourite(songId: Long): Boolean = local.isSongInFavourite(songId)
+    override suspend fun isAlbumSaved(albumId: Long): Boolean = local.isAlbumSaved(albumId)
+
+
+    override suspend fun saveAlbum(albumId: Long): EmptyResult<DataError.Network> {
+        val result = remote.saveAlbum(albumId)
+        if (result is Result.Success) application.async { local.saveAlbum(result.data) }.await()
+
+        return result.asEmptyDataResult()
+    }
+
+    override suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network> {
+        val result = remote.addSongToFavourite(songId)
+        if (result is Result.Success) application.async { local.addSongToFavourite(result.data) }
+            .await()
+
+        return result.asEmptyDataResult()
+    }
 }

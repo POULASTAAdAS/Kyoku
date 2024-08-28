@@ -2,6 +2,7 @@ package com.poulastaa.play.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,13 +35,16 @@ import com.poulastaa.core.presentation.designsystem.ThreeDotIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.core.presentation.ui.model.ArtistUiSong
+import com.poulastaa.play.domain.ViewSongOperation
+import com.poulastaa.play.presentation.view_artist.ViewArtistUiEvent
 
 @Composable
 fun ArtistSongDetailsCard(
     modifier: Modifier = Modifier,
     header: String,
+    list: List<ViewSongOperation>,
     song: ArtistUiSong,
-    onThreeDotCLick: () -> Unit
+    onEvent: (ViewArtistUiEvent.ThreeDotEvent) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -91,12 +97,40 @@ fun ArtistSongDetailsCard(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(onClick = onThreeDotCLick) {
-            Icon(
-                imageVector = ThreeDotIcon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
-            )
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(
+                onClick = {
+                    onEvent(ViewArtistUiEvent.ThreeDotEvent.OnClick(song.id))
+                }
+            ) {
+                Icon(
+                    imageVector = ThreeDotIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground.copy(.6f)
+                )
+            }
+
+            DropdownMenu(
+                expanded = song.isExpanded,
+                onDismissRequest = { onEvent(ViewArtistUiEvent.ThreeDotEvent.OnCloseClick(song.id)) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(horizontal = MaterialTheme.dimens.small2)
+            ) {
+                list.forEach {
+                    DropdownMenuItem(
+                        text = { Text(text = it.value) },
+                        onClick = {
+                            onEvent(
+                                ViewArtistUiEvent.ThreeDotEvent.OnThreeDotItemClick(
+                                    id = song.id,
+                                    operation = it
+                                )
+                            )
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -111,9 +145,17 @@ private fun Preview() {
         ) {
             ArtistSongDetailsCard(
                 header = "",
+                list = listOf(
+                    ViewSongOperation.PLAY_NEXT,
+                    ViewSongOperation.PLAY_NEXT,
+                    ViewSongOperation.PLAY_NEXT,
+                    ViewSongOperation.PLAY_NEXT,
+                    ViewSongOperation.PLAY_NEXT,
+                ),
                 song = ArtistUiSong(
                     title = "That Cool Title",
-                    popularity = 100
+                    popularity = 100,
+                    isExpanded = true
                 )
             ) {
 

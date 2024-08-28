@@ -10,12 +10,19 @@ import com.poulastaa.core.domain.repository.view.ViewRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.domain.ViewSongOperation
 import com.poulastaa.play.presentation.view.components.ViewDataType
+import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
+import com.poulastaa.play.presentation.view_artist.ViewArtistUiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,6 +34,9 @@ class ViewViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(ViewUiState())
         private set
+
+    private val _uiEvent = Channel<ViewUiAction>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     fun loadData(
         id: Long,
@@ -67,9 +77,17 @@ class ViewViewModel @Inject constructor(
                         is Result.Success -> {
                             withContext(Dispatchers.Main) {
                                 when (type) {
-                                    ViewDataType.PLAYLIST,
-                                    ViewDataType.ALBUM -> {
+                                    ViewDataType.PLAYLIST -> {
                                         state = state.copy(
+                                            data = result.data.toViewUiData(),
+                                        )
+                                    }
+
+                                    ViewDataType.ALBUM -> {
+                                        val isSavedAlbum = repo.isSavedAlbum(id)
+
+                                        state = state.copy(
+                                            isSavedData = isSavedAlbum,
                                             data = result.data.toViewUiData(),
                                         )
                                     }
@@ -143,7 +161,126 @@ class ViewViewModel @Inject constructor(
             }
 
             is ViewUiEvent.OnThreeDotClick -> {
+                viewModelScope.launch {
+                    val entry =
+                        state.data.listOfSong.find { it.id == event.songId } ?: return@launch
 
+                    val isInFavourite = async { repo.isSongInFavourite(entry.id) }
+
+                    val threeDotOperations = mutableListOf<ViewSongOperation>().apply {
+                        if (state.isPlayingQueue) {
+                            add(ViewSongOperation.PLAY_NEXT)
+                            add(ViewSongOperation.PLAY_LAST)
+                        } else add(ViewSongOperation.PLAY)
+                        add(ViewSongOperation.ADD_TO_PLAYLIST)
+                        if (!isInFavourite.await()) add(ViewSongOperation.ADD_TO_FAVOURITE)
+                        add(ViewSongOperation.VIEW_ARTISTS)
+                    }
+
+                    state = state.copy(
+                        data = state.data.copy(
+                            listOfSong = state.data.listOfSong.map { song ->
+                                if (song.id == event.songId) song.copy(
+                                    isExpanded = !song.isExpanded
+                                ) else song
+                            }
+                        ),
+                        threeDotOperations = threeDotOperations
+                    )
+                }
+            }
+
+            is ViewUiEvent.OnThreeDotClose -> {
+                state = state.copy(
+                    data = state.data.copy(
+                        listOfSong = state.data.listOfSong.map { song ->
+                            if (song.id == event.songId) song.copy(
+                                isExpanded = false
+                            ) else song
+                        }
+                    ),
+                    threeDotOperations = emptyList()
+                )
+            }
+
+            is ViewUiEvent.OnThreeDotItemClick -> {
+                when (event.operation) {
+                    ViewSongOperation.PLAY -> {
+
+                    }
+
+                    ViewSongOperation.PLAY_NEXT -> {
+
+                    }
+
+                    ViewSongOperation.PLAY_LAST -> {
+
+                    }
+
+                    ViewSongOperation.ADD_TO_PLAYLIST -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                ViewUiAction.Navigate(
+                                    ViewOtherScreen.ViewArtist(
+                                        id = event.id
+                                    )
+                                )
+                            )
+                        }
+                    }
+
+                    ViewSongOperation.ADD_TO_FAVOURITE -> {
+                        viewModelScope.launch {
+                            when (val result = repo.addSongToFavourite(event.id)) {
+                                is Result.Error -> {
+                                    when (result.error) {
+                                        DataError.Network.NO_INTERNET -> {
+                                            _uiEvent.send(
+                                                ViewUiAction.EmitToast(
+                                                    UiText.StringResource(
+                                                        R.string.error_no_internet
+                                                    )
+                                                )
+                                            )
+                                        }
+
+                                        else -> {
+                                            _uiEvent.send(
+                                                ViewUiAction.EmitToast(
+                                                    UiText.StringResource(
+                                                        R.string.error_something_went_wrong
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+
+                                is Result.Success -> {
+                                    _uiEvent.send(
+                                        ViewUiAction.EmitToast(
+                                            UiText.StringResource(
+                                                R.string.add_to_favourite
+                                            )
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    ViewSongOperation.VIEW_ARTISTS -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                ViewUiAction.Navigate(
+                                    ViewOtherScreen.ViewArtist(
+                                        id = event.id
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }

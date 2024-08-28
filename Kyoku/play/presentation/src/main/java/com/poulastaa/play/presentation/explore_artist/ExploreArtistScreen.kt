@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -147,13 +146,18 @@ fun ExploreArtistScreen(
                                 album[index]?.let { album ->
                                     ExploreArtistItem(
                                         modifier = Modifier.clickable {
-                                            onEvent(ExploreArtistUiEvent.OnAlbumClick(album.id))
+                                            onEvent(
+                                                ExploreArtistUiEvent.OnItemClick(
+                                                    id = album.id,
+                                                    type = ExploreArtistUiEvent.Type.ALBUM
+                                                )
+                                            )
                                         },
                                         header = state.header,
+                                        type = ExploreArtistUiEvent.Type.ALBUM,
+                                        list = state.list,
                                         item = album,
-                                        onThreeDotCLick = {
-                                            onEvent(ExploreArtistUiEvent.OnAlbumThreeDotClick(album.id))
-                                        }
+                                        onEvent = onEvent
                                     )
                                 }
                             }
@@ -181,13 +185,16 @@ fun ExploreArtistScreen(
                                 song[index]?.let { song ->
                                     ExploreArtistItem(
                                         modifier = Modifier.clickable {
-                                            onEvent(ExploreArtistUiEvent.OnSongClick(song.id))
+                                            ExploreArtistUiEvent.OnItemClick(
+                                                id = song.id,
+                                                type = ExploreArtistUiEvent.Type.SONG
+                                            )
                                         },
                                         header = state.header,
+                                        type = ExploreArtistUiEvent.Type.SONG,
+                                        list = state.list,
                                         item = song,
-                                        onThreeDotCLick = {
-                                            onEvent(ExploreArtistUiEvent.OnSongThreeDotClick(song.id))
-                                        }
+                                        onEvent = onEvent
                                     )
                                 }
                             }

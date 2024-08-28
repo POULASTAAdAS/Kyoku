@@ -9,6 +9,10 @@ interface ViewArtistRepository {
     suspend fun getData(artistId: Long): Result<ViewArtistData, DataError.Network>
     suspend fun isArtistAlreadyFollowed(artistId: Long): Boolean
 
+    suspend fun isSongInFavourite(songId: Long): Boolean
+
     suspend fun followArtist(artistId: Long): EmptyResult<DataError.Network>
     suspend fun unFollowArtist(artistId: Long): EmptyResult<DataError.Network>
+
+    suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network>
 }

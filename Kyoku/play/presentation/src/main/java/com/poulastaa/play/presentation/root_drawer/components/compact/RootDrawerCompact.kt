@@ -275,6 +275,9 @@ fun RootDrawerCompact(
                             onArtistDetailScreenOpen = { artistId ->
                                 onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                             },
+                            navigate = {
+
+                            },
                             navigateBack = {
                                 navController.popBackStack()
                             }
@@ -340,6 +343,9 @@ fun RootDrawerCompact(
                     ViewCompactScreen(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
+                        navigate = {
+
+                        },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnViewCancel)
                         }

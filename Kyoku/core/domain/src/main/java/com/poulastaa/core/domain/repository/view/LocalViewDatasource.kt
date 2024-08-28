@@ -10,6 +10,10 @@ interface LocalViewDatasource {
     suspend fun getPlaylistOnId(id: Long): ViewData
     suspend fun getAlbumOnId(id: Long): ViewData
 
+    suspend fun isAlbumOnLibrary(id: Long): Boolean
+
+    suspend fun isSongInFavourite(songId: Long): Boolean
+
     suspend fun getSongIdList(type: ReqType): List<Long>
     suspend fun getSongOnIdList(list: List<Long>): List<PlaylistSong>
 

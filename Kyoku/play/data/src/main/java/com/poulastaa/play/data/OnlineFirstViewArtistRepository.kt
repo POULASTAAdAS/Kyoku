@@ -23,6 +23,8 @@ class OnlineFirstViewArtistRepository @Inject constructor(
     override suspend fun isArtistAlreadyFollowed(artistId: Long): Boolean =
         application.async { local.getArtist(artistId) != null }.await()
 
+    override suspend fun isSongInFavourite(songId: Long): Boolean = local.isSongInFavourite(songId)
+
     override suspend fun followArtist(artistId: Long): EmptyResult<DataError.Network> {
         val result = remote.followArtist(artistId)
         if (result is Result.Success) application.async { local.followArtist(result.data) }.await()
@@ -35,5 +37,13 @@ class OnlineFirstViewArtistRepository @Inject constructor(
         if (remote is Result.Success) application.async { local.unFollowArtist(artistId) }.await()
 
         return remote
+    }
+
+    override suspend fun addSongToFavourite(songId: Long): EmptyResult<DataError.Network> {
+        val result = remote.addSongToFavourite(songId)
+        if (result is Result.Success) application.async { local.addSongToFavourite(result.data) }
+            .await()
+
+        return result.asEmptyDataResult()
     }
 }

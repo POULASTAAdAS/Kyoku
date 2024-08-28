@@ -1,9 +1,7 @@
 package com.poulastaa.play.presentation.explore_artist.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -28,7 +25,6 @@ import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.root_drawer.home.components.CircularArtist
-import com.poulastaa.play.presentation.view_artist.components.FollowArtistButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +46,7 @@ fun ExploreArtistTopBar(
                     CircularArtist(
                         header = header,
                         url = coverImage,
-                        modifier = Modifier.size(75.dp)
+                        modifier = Modifier.size(60.dp)
                     )
 
                     Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))

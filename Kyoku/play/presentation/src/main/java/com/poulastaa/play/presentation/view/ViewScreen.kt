@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.view
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -55,8 +57,10 @@ import com.poulastaa.core.presentation.designsystem.PlayIcon
 import com.poulastaa.core.presentation.designsystem.ShuffleIcon
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.presentation.SongDetailsCard
 import com.poulastaa.play.presentation.SongDetailsMovableCard
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view.components.ViewDataType
@@ -69,10 +73,24 @@ fun ViewCompactScreen(
     id: Long,
     type: ViewDataType,
     viewModel: ViewViewModel = hiltViewModel(),
+    navigate: (ViewOtherScreen) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = id, key2 = type) {
         viewModel.loadData(id = id, type = type)
+    }
+
+    ObserveAsEvent(flow = viewModel.uiEvent) {
+        when (it) {
+            is ViewUiAction.Navigate -> navigate(it.screen)
+            is ViewUiAction.EmitToast -> Toast.makeText(
+                context,
+                it.message.asString(context),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     ViewScreen(
@@ -226,18 +244,43 @@ private fun ViewScreen(
                         }
                     }
 
-                    items(state.data.listOfSong) {
-                        SongDetailsMovableCard(
+                    items(state.data.listOfSong) { song ->
+                        if (state.isSavedData)
+                            SongDetailsMovableCard(
+                                modifier = Modifier.clickable {
+                                    onEvent(ViewUiEvent.OnSongClick(song.id))
+                                },
+                                header = state.header,
+                                song = song,
+                                list = state.threeDotOperations,
+                                onMove = {
+                                    onEvent(ViewUiEvent.OnMoveClick(song.id))
+                                },
+                                onThreeDotOpenClick = {
+                                    onEvent(ViewUiEvent.OnThreeDotClick(song.id))
+                                },
+                                onThreeDotOperationClick = {
+                                    onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
+                                },
+                                onThreeDotClose = {
+                                    onEvent(ViewUiEvent.OnThreeDotClose(song.id))
+                                }
+                            )
+                        else SongDetailsCard(
                             modifier = Modifier.clickable {
-                                onEvent(ViewUiEvent.OnSongClick(it.id))
+                                onEvent(ViewUiEvent.OnSongClick(song.id))
                             },
                             header = state.header,
-                            song = it,
-                            onMove = {
-                                onEvent(ViewUiEvent.OnMoveClick(it.id))
+                            song = song,
+                            list = state.threeDotOperations,
+                            onThreeDotOpenClick = {
+                                onEvent(ViewUiEvent.OnThreeDotClick(song.id))
                             },
-                            onThreeDotCLick = {
-                                onEvent(ViewUiEvent.OnThreeDotClick(it.id))
+                            onThreeDotOperationClick = {
+                                onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
+                            },
+                            onThreeDotClose = {
+                                onEvent(ViewUiEvent.OnThreeDotClose(song.id))
                             }
                         )
                     }

@@ -180,5 +180,9 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalExploreArtistDatasource(
         commonDao: CommonDao,
-    ): LocalExploreArtistDatasource = RoomLocalExploreArtistDatasource(commonDao = commonDao)
+        viewDao: ViewDao
+    ): LocalExploreArtistDatasource = RoomLocalExploreArtistDatasource(
+        commonDao = commonDao,
+        viewDao = viewDao
+    )
 }
