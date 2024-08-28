@@ -24,9 +24,6 @@ class OfflineFirstViewRepository @Inject constructor(
         if (localPlaylist.listOfSong.isNotEmpty()) return Result.Success(localPlaylist)
 
         val remotePlaylist = remote.getPlaylistOnId(id)
-        if (remotePlaylist is Result.Success)
-            application.async { local.savePlaylist(remotePlaylist.data) }.await()
-
         return remotePlaylist.map { it.toViewData() }
     }
 
@@ -35,9 +32,6 @@ class OfflineFirstViewRepository @Inject constructor(
         if (localAlbum.listOfSong.isNotEmpty()) return Result.Success(localAlbum)
 
         val remoteAlbum = remote.getAlbumOnId(id)
-        if (remoteAlbum is Result.Success)
-            application.async { local.saveAlbum(remoteAlbum.data) }.await()
-
         return remoteAlbum.map { it.toViewData() }
     }
 

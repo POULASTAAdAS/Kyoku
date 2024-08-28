@@ -47,6 +47,7 @@ import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
+import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
@@ -56,6 +57,7 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
+import com.poulastaa.play.presentation.view.components.ViewDataType
 import com.poulastaa.play.presentation.view_artist.ViewArtistCompactRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistExpandedRootScreen
 
@@ -350,7 +352,20 @@ fun RootDrawerExpanded(
                             modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                             artistId = state.exploreArtistUiState.artistId,
                             navigate = {
+                                when (it) {
+                                    is ExploreArtistOtherScreen.AddSongToPlaylist -> {
 
+                                    }
+
+                                    is ExploreArtistOtherScreen.ViewAlbum -> {
+                                        onEvent(
+                                            RootDrawerUiEvent.View(
+                                                id = it.id,
+                                                type = ViewDataType.ALBUM
+                                            )
+                                        )
+                                    }
+                                }
                             },
                             navigateBack = {
                                 onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
@@ -400,7 +415,20 @@ fun RootDrawerExpanded(
                         modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                         artistId = state.exploreArtistUiState.artistId,
                         navigate = {
+                            when (it) {
+                                is ExploreArtistOtherScreen.AddSongToPlaylist -> {
 
+                                }
+
+                                is ExploreArtistOtherScreen.ViewAlbum -> {
+                                    onEvent(
+                                        RootDrawerUiEvent.View(
+                                            id = it.id,
+                                            type = ViewDataType.ALBUM
+                                        )
+                                    )
+                                }
+                            }
                         },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnExploreArtistCancel)

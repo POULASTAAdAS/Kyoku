@@ -113,7 +113,15 @@ class ExploreArtistViewModel @Inject constructor(
     fun onEvent(event: ExploreArtistUiEvent) {
         when (event) {
             is ExploreArtistUiEvent.OnAlbumClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ExploreArtistUiAction.Navigate(
+                            ExploreArtistOtherScreen.ViewAlbum(
+                                id = event.id
+                            )
+                        )
+                    )
+                }
             }
 
             is ExploreArtistUiEvent.OnAlbumThreeDotClick -> {
