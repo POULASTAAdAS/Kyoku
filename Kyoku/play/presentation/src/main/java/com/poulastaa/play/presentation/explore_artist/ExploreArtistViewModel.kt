@@ -5,8 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -17,8 +15,6 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.core.presentation.ui.model.UiArtist
-import com.poulastaa.paging_source.ExploreArtistAlbumPagerSource
-import com.poulastaa.paging_source.ExploreArtistSongPagerSource
 import com.poulastaa.play.presentation.root_drawer.library.toUiArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -34,8 +30,6 @@ import javax.inject.Inject
 class ExploreArtistViewModel @Inject constructor(
     private val ds: DataStoreRepository,
     private val repo: ExploreArtistRepository,
-    private val pagerSong: ExploreArtistSongPagerSource,
-    private val pagerAlbum: ExploreArtistAlbumPagerSource
 ) : ViewModel() {
     var state by mutableStateOf(ExploreArtistUiState())
         private set
@@ -61,7 +55,6 @@ class ExploreArtistViewModel @Inject constructor(
         if (state.artist.id != artistId) {
             state = state.copy(
                 artist = UiArtist(),
-                isFollowed = false
             )
 
             _song.value = PagingData.empty()
@@ -69,7 +62,6 @@ class ExploreArtistViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            val isFollowed = async { repo.isArtistFollowed(artistId) }
             val resultDef = async { repo.getArtist(artistId) }
 
             when (val result = resultDef.await()) {
@@ -95,7 +87,6 @@ class ExploreArtistViewModel @Inject constructor(
 
                 is Result.Success -> {
                     state = state.copy(
-                        isFollowed = isFollowed.await(),
                         artist = result.data.toUiArtist()
                     )
                 }
@@ -103,34 +94,16 @@ class ExploreArtistViewModel @Inject constructor(
         }
 
         viewModelScope.launch { // get paging album
-            pagerAlbum.init(artistId)
-
-            Pager(
-                config = PagingConfig(
-                    pageSize = 10,
-                    enablePlaceholders = false
-                ),
-                initialKey = 1,
-                pagingSourceFactory = { pagerAlbum }
-            ).flow.cachedIn(viewModelScope).collectLatest {
-                _album.value = it.map { data ->
+            repo.getArtistSong(artistId).cachedIn(viewModelScope).collectLatest {
+                _song.value = it.map { data ->
                     data.toExploreArtistSingleUiData()
                 }
             }
         }
 
         viewModelScope.launch {  // get paging song
-            pagerSong.init(artistId)
-
-            Pager(
-                config = PagingConfig(
-                    pageSize = 10,
-                    enablePlaceholders = false
-                ),
-                initialKey = 1,
-                pagingSourceFactory = { pagerSong }
-            ).flow.cachedIn(viewModelScope).collectLatest {
-                _song.value = it.map { data ->
+            repo.getArtistAlbum(artistId).cachedIn(viewModelScope).collectLatest {
+                _album.value = it.map { data ->
                     data.toExploreArtistSingleUiData()
                 }
             }
@@ -144,10 +117,6 @@ class ExploreArtistViewModel @Inject constructor(
             }
 
             is ExploreArtistUiEvent.OnAlbumThreeDotClick -> {
-
-            }
-
-            ExploreArtistUiEvent.OnFollowToggle -> {
 
             }
 

@@ -6,6 +6,4 @@ sealed interface ExploreArtistUiEvent {
 
     data class OnAlbumClick(val id: Long) : ExploreArtistUiEvent
     data class OnAlbumThreeDotClick(val id: Long) : ExploreArtistUiEvent
-
-    data object OnFollowToggle : ExploreArtistUiEvent
 }

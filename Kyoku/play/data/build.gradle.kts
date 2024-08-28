@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
+    implementation(libs.pagingCommon)
 
     implementation(projects.core.domain)
     implementation(projects.play.domain)

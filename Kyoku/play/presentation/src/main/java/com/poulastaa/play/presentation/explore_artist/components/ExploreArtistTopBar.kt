@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -36,8 +37,6 @@ fun ExploreArtistTopBar(
     header: String,
     title: String,
     coverImage: String,
-    isFollowed: Boolean,
-    onFollowToggle: () -> Unit,
     navigateBack: () -> Unit
 ) {
     LargeTopAppBar(
@@ -71,20 +70,6 @@ fun ExploreArtistTopBar(
                 onClick = navigateBack
             )
         },
-        actions = {
-            AnimatedVisibility(visible = (!scroll.isPinned && title.isNotEmpty())) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(.35f)
-                        .padding(end = MaterialTheme.dimens.medium1)
-                ) {
-                    FollowArtistButton(
-                        isArtistFollowed = isFollowed,
-                        onClick = onFollowToggle
-                    )
-                }
-            }
-        },
         colors = TopAppBarDefaults.largeTopAppBarColors(
             containerColor = Color.Transparent
         )
@@ -104,8 +89,6 @@ private fun Preview() {
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 coverImage = "",
                 header = "",
-                isFollowed = false,
-                onFollowToggle = {}
             ) {
 
             }

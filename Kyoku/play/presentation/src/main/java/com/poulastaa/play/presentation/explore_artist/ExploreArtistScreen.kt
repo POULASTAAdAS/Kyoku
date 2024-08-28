@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -94,10 +95,6 @@ fun ExploreArtistScreen(
                 header = state.header,
                 title = state.artist.name,
                 coverImage = state.artist.coverImageUrl,
-                isFollowed = state.isFollowed,
-                onFollowToggle = {
-                    onEvent(ExploreArtistUiEvent.OnFollowToggle)
-                },
                 navigateBack = navigateBack
             )
         }

@@ -1,4 +1,4 @@
-package com.poulastaa.play.domain
+package com.poulastaa.core.domain.utils
 
 data object NoInternetException : Exception() {
     private fun readResolve(): Any = NoInternetException

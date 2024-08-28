@@ -4,8 +4,6 @@ import com.poulastaa.core.presentation.ui.model.UiArtist
 
 data class ExploreArtistUiState(
     val header: String = "",
-
-    val isFollowed: Boolean = false,
     val artist: UiArtist = UiArtist()
 )
 

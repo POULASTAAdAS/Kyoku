@@ -1,6 +1,8 @@
 package com.poulastaa.play
 
+import androidx.paging.PagingData
 import com.poulastaa.core.domain.model.Artist
+import com.poulastaa.core.domain.model.ArtistSingleData
 import com.poulastaa.core.domain.repository.explore_artist.ExploreArtistRepository
 import com.poulastaa.core.domain.repository.explore_artist.LocalExploreArtistDatasource
 import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
@@ -16,15 +18,12 @@ import javax.inject.Inject
 class OnlineFirstExploreArtistDatasource @Inject constructor(
     private val local: LocalExploreArtistDatasource,
     private val remote: RemoteExploreArtistDatasource,
-    private val application: CoroutineScope
+    private val application: CoroutineScope,
 ) : ExploreArtistRepository {
     override suspend fun getArtist(artistId: Long): Result<Artist, DataError.Network> {
         val artist = local.getArtist(artistId) ?: return remote.getArtist(artistId)
         return Result.Success(artist)
     }
-
-    override suspend fun isArtistFollowed(artistId: Long): Boolean =
-        local.getArtist(artistId) != null
 
     override suspend fun followArtist(artistId: Long): EmptyResult<DataError.Network> {
         val result = remote.followArtist(artistId)
@@ -39,4 +38,10 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
 
         return result.asEmptyDataResult()
     }
+
+    override suspend fun getArtistSong(artistId: Long): Flow<PagingData<ArtistSingleData>> =
+        remote.getArtistSong(artistId)
+
+    override suspend fun getArtistAlbum(artistId: Long): Flow<PagingData<ArtistSingleData>> =
+        remote.getArtistAlbum(artistId)
 }

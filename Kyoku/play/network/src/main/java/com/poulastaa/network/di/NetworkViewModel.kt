@@ -15,6 +15,8 @@ import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
+import com.poulastaa.paging_source.ExploreArtistAlbumPagerSource
+import com.poulastaa.paging_source.ExploreArtistSongPagerSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -87,11 +89,35 @@ object NetworkViewModel {
 
     @Provides
     @ViewModelScoped
+    fun provideExploreArtistAlbumPagerSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): ExploreArtistAlbumPagerSource = ExploreArtistAlbumPagerSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideExploreArtistSongPagerSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): ExploreArtistSongPagerSource = ExploreArtistSongPagerSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
     fun provideExploreArtistRemoteDatasource(
         client: OkHttpClient,
         gson: Gson,
+        pagerAlbum: ExploreArtistAlbumPagerSource,
+        pagerSong: ExploreArtistSongPagerSource
     ): RemoteExploreArtistDatasource = OnlineFirstExploreArtistDatasource(
         client = client,
         gson = gson,
+        pagerAlbum = pagerAlbum,
+        pagerSong = pagerSong,
     )
 }

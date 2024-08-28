@@ -1,5 +1,8 @@
 package com.poulastaa.network
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.gson.Gson
 import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.network.get
@@ -13,15 +16,19 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.asEmptyDataResult
 import com.poulastaa.core.domain.utils.map
 import com.poulastaa.network.mapper.toArtist
-import com.poulastaa.network.mapper.toArtistSingleData
-import com.poulastaa.network.model.ArtistPagerDataDto
+import com.poulastaa.paging_source.ExploreArtistAlbumPagerSource
+import com.poulastaa.paging_source.ExploreArtistSongPagerSource
+import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 class OnlineFirstExploreArtistDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
+    private val pagerAlbum: ExploreArtistAlbumPagerSource,
+    private val pagerSong: ExploreArtistSongPagerSource,
 ) : RemoteExploreArtistDatasource {
+
     override suspend fun getArtist(
         artistId: Long
     ): Result<Artist, DataError.Network> = client.get<ArtistDto>(
@@ -46,35 +53,27 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
         gson = gson
     ).asEmptyDataResult()
 
-    override suspend fun getArtistSong(
-        artistId: Long,
-        page: Int,
-        size: Long
-    ): Result<List<ArtistSingleData>, DataError.Network> = client.get<ArtistPagerDataDto>(
-        route = EndPoints.GetArtistSong.route,
-        params = listOf(
-            "page" to page.toString(),
-            "size" to 10.toString(),
-            "artistId" to artistId.toString()
-        ),
-        gson = gson
-    ).map {
-        it.list.map { dto -> dto.toArtistSingleData() }
+    override suspend fun getArtistSong(artistId: Long): Flow<PagingData<ArtistSingleData>> {
+        pagerSong.init(artistId)
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            initialKey = 1,
+            pagingSourceFactory = { pagerSong }
+        ).flow
     }
 
-    override suspend fun getArtistAlbum(
-        artistId: Long,
-        page: Int,
-        size: Long
-    ): Result<List<ArtistSingleData>, DataError.Network> = client.get<ArtistPagerDataDto>(
-        route = EndPoints.GetArtistAlbum.route,
-        params = listOf(
-            "page" to page.toString(),
-            "size" to 10.toString(),
-            "artistId" to artistId.toString()
-        ),
-        gson = gson
-    ).map {
-        it.list.map { dto -> dto.toArtistSingleData() }
+    override suspend fun getArtistAlbum(artistId: Long): Flow<PagingData<ArtistSingleData>> {
+        pagerAlbum.init(artistId)
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            initialKey = 1,
+            pagingSourceFactory = { pagerAlbum }
+        ).flow
     }
 }

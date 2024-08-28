@@ -111,6 +111,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 
 pagingRuntimeKtx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
 pagingCompose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+pagingCommon = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 credentialsPlayServicesAuth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
