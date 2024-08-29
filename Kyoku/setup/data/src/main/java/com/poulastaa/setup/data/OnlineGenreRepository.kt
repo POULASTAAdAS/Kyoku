@@ -1,9 +1,9 @@
 package com.poulastaa.setup.data
 
-import com.poulastaa.core.domain.genre.GenreId
-import com.poulastaa.core.domain.genre.GenreRepository
-import com.poulastaa.core.domain.genre.RemoteGenreDataSource
 import com.poulastaa.core.domain.model.Genre
+import com.poulastaa.core.domain.repository.genre.GenreId
+import com.poulastaa.core.domain.repository.genre.GenreRepository
+import com.poulastaa.core.domain.repository.genre.RemoteGenreDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

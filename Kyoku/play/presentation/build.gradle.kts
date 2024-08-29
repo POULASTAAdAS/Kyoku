@@ -10,8 +10,10 @@ android {
 dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.activity.compose)
-
     implementation(libs.material3WindowSizeClass)
+
+    implementation(libs.pagingRuntimeKtx)
+    implementation(libs.pagingCompose)
 
     implementation(projects.core.domain)
     implementation(projects.play.domain)

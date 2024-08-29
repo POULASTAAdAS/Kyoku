@@ -7,12 +7,12 @@ import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
-import com.poulastaa.core.domain.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

@@ -2,6 +2,8 @@ package com.poulastaa.play.presentation.root_drawer
 
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
+import com.poulastaa.play.presentation.view.components.ViewDataType
 
 data class RootDrawerUiState(
     val saveScreen: SaveScreen = SaveScreen.HOME,
@@ -11,5 +13,18 @@ data class RootDrawerUiState(
     val username: String = "User",
     val profilePicUrl: String = "",
 
-    val isDrawerOpen: Boolean = false,
+    val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState(),
+    val viewUiState: HomeViewUiState = HomeViewUiState(),
+    val exploreArtistUiState: ExploreArtistUiState = ExploreArtistUiState()
+)
+
+data class HomeViewUiState(
+    val isOpen: Boolean = false,
+    val songId: Long = -1,
+    val type: ViewDataType = ViewDataType.PLAYLIST
+)
+
+data class ExploreArtistUiState(
+    val isOpen: Boolean = false,
+    val artistId: Long = -1
 )

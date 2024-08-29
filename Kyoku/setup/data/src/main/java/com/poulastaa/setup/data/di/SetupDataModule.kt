@@ -1,15 +1,15 @@
 package com.poulastaa.setup.data.di
 
-import com.poulastaa.core.domain.artist.ArtistRepository
-import com.poulastaa.core.domain.artist.LocalArtistDataSource
-import com.poulastaa.core.domain.artist.RemoteArtistDataSource
-import com.poulastaa.core.domain.b_date.BDateRepository
-import com.poulastaa.core.domain.b_date.RemoteBDateDataSource
-import com.poulastaa.core.domain.genre.GenreRepository
-import com.poulastaa.core.domain.genre.RemoteGenreDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.RemoteSpotifyDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.SpotifyRepository
+import com.poulastaa.core.domain.repository.artist.ArtistRepository
+import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
+import com.poulastaa.core.domain.repository.artist.RemoteArtistDataSource
+import com.poulastaa.core.domain.repository.b_date.BDateRepository
+import com.poulastaa.core.domain.repository.b_date.RemoteBDateDataSource
+import com.poulastaa.core.domain.repository.genre.GenreRepository
+import com.poulastaa.core.domain.repository.genre.RemoteGenreDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.LocalSpotifyDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.RemoteSpotifyDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.SpotifyRepository
 import com.poulastaa.setup.data.OnlineBDateRepository
 import com.poulastaa.setup.data.OnlineFirstArtistRepository
 import com.poulastaa.setup.data.OnlineFirstSpotifyRepository

@@ -1,11 +1,8 @@
 package com.poulastaa.play.presentation.add_as_playlist
 
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +25,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -46,6 +38,7 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
+import com.poulastaa.core.presentation.designsystem.components.RowButton
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
@@ -162,59 +155,17 @@ private fun AddAsPlaylistScreen(
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium2))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    onEvent(AddAsPlaylistUiEvent.OnCancel)
-                },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.primary.copy(.8f)
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary.copy(.6f)
-                )
-            ) {
-                Text(
-                    text = stringResource(id = R.string.cancel),
-                    modifier = Modifier.padding(MaterialTheme.dimens.small2),
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize
-                )
+        RowButton(
+            isMakingApiCall = state.isMakingApiCall,
+            cancel = {
+                focusManager.clearFocus()
+                onEvent(AddAsPlaylistUiEvent.OnCancel)
+            },
+            save = {
+                focusManager.clearFocus()
+                onEvent(AddAsPlaylistUiEvent.OnSubmit)
             }
-
-            Button(
-                onClick = {
-                    focusManager.clearFocus()
-                    onEvent(AddAsPlaylistUiEvent.OnSubmit)
-                },
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Box(modifier = Modifier) {
-                    Text(
-                        text = stringResource(id = R.string.save),
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .alpha(if (state.isMakingApiCall) 0f else 1f),
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize
-                    )
-
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .alpha(if (state.isMakingApiCall) 1f else 0f)
-                            .size(30.dp),
-                        color = MaterialTheme.colorScheme.inversePrimary,
-                        strokeWidth = 2.dp
-                    )
-                }
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
     }

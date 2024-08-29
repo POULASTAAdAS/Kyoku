@@ -6,12 +6,12 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPlaylistSong
 import com.poulastaa.core.database.mapper.toSongsEntity
-import com.poulastaa.core.domain.get_spotify_playlist.LocalSpotifyDataSource
-import com.poulastaa.core.domain.get_spotify_playlist.playlistId
-import com.poulastaa.core.domain.get_spotify_playlist.songId
 import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.model.PlaylistWithSongInfo
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.repository.get_spotify_playlist.LocalSpotifyDataSource
+import com.poulastaa.core.domain.repository.get_spotify_playlist.playlistId
+import com.poulastaa.core.domain.repository.get_spotify_playlist.songId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -46,7 +46,7 @@ class RoomLocalSpotifyDataSource @Inject constructor(
             SongPlaylistRelationEntity(it, playlistId)
         }
 
-        commonDao.insertSongPlaylistRelation(entrys)
+        commonDao.insertSongPlaylistRelations(entrys)
     }
 
     override suspend fun getSongOnUrl(url: String): songId? = commonDao.getSongOnUrl(url)

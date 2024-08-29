@@ -7,8 +7,12 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
+import com.poulastaa.core.database.entity.DayTypeSongEntity
+import com.poulastaa.core.database.entity.FavouriteArtistMixEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
+import com.poulastaa.core.database.entity.PopularSongFromYourTimeEntity
+import com.poulastaa.core.database.entity.PopularSongMixEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
 import com.poulastaa.core.database.entity.relation.SongArtistRelationEntity
@@ -46,7 +50,13 @@ interface CommonDao {
     suspend fun insertSongArtistRelations(list: List<SongArtistRelationEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSongPlaylistRelation(list: List<SongPlaylistRelationEntity>)
+    suspend fun insertSongPlaylistRelations(list: List<SongPlaylistRelationEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSongPlaylistRelation(entry: SongPlaylistRelationEntity)
+
+    @Delete
+    suspend fun deleteSongPlaylistRelation(entry: SongPlaylistRelationEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOneIntoFavourite(entry: FavouriteEntity)
@@ -106,4 +116,28 @@ interface CommonDao {
         background: String,
         onBackground: String,
     )
+
+    @Query("select * from AlbumEntity where id = :id")
+    suspend fun getAlbumById(id: Long): AlbumEntity
+
+    @Query("select * from ArtistEntity where id = :id")
+    suspend fun getArtistById(id: Long): ArtistEntity
+
+    @Query("select * from ArtistEntity where id = :id")
+    suspend fun getArtistByIdOrNull(id: Long): ArtistEntity?
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoDayType(entrys: List<DayTypeSongEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoArtistMix(entrys: List<FavouriteArtistMixEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoOldMix(entrys: List<PopularSongFromYourTimeEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIntoPopularSongMix(entrys: List<PopularSongMixEntity>)
+
+    @Query("select id from FavouriteEntity where id = :id")
+    suspend fun isSongInFavourite(id: Long): Long?
 }

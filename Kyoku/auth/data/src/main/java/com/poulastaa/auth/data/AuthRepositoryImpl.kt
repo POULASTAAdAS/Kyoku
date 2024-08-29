@@ -3,11 +3,11 @@ package com.poulastaa.auth.data
 import com.poulastaa.auth.data.mapper.toUser
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.domain.auth.AuthRepository
-import com.poulastaa.core.domain.auth.LocalAuthDatasource
-import com.poulastaa.core.domain.auth.RemoteAuthDatasource
 import com.poulastaa.core.domain.model.ForgotPasswordSetStatus
 import com.poulastaa.core.domain.model.UserAuthStatus
+import com.poulastaa.core.domain.repository.auth.AuthRepository
+import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
+import com.poulastaa.core.domain.repository.auth.RemoteAuthDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map

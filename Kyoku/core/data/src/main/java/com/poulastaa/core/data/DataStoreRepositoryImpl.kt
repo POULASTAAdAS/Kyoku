@@ -31,6 +31,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
         val SAVED_SCREEN = stringPreferencesKey(name = "saved_screen")
         val LIBRARY_VIEW_TYPE = booleanPreferencesKey(name = "library_view_type")
+        val FEV_PINNED_STATE = booleanPreferencesKey(name = "fev_pinned_state")
     }
 
     override suspend fun storeSignInState(state: ScreenEnum) {
@@ -125,6 +126,18 @@ class DataStoreRepositoryImpl @Inject constructor(
     }.map {
         it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
     }.first()
+
+    override fun isFevPinned(): Flow<Boolean> = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        it[PreferencesKeys.FEV_PINNED_STATE] ?: false
+    }
+
+    override suspend fun updateFevPinState(state: Boolean) {
+        dataStore.edit {
+            it[PreferencesKeys.FEV_PINNED_STATE] = state
+        }
+    }
 
     override suspend fun logOut() {
         dataStore.edit {

@@ -1,9 +1,6 @@
 package com.poulastaa.domain.repository
 
-import com.poulastaa.data.model.AlbumWithSongDto
-import com.poulastaa.data.model.ArtistDto
-import com.poulastaa.data.model.LogInDto
-import com.poulastaa.data.model.SongDto
+import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.UserResult
 import com.poulastaa.domain.model.UserType
@@ -59,7 +56,7 @@ interface UserRepository {
         userType: UserType,
     ): Boolean
 
-     suspend fun addArtist(
+    suspend fun addArtist(
         artistId: Long,
         email: String,
         userType: UserType,
@@ -71,7 +68,7 @@ interface UserRepository {
         userType: UserType,
     ): Boolean
 
-     suspend fun addAlbum(
+    suspend fun addAlbum(
         albumId: Long,
         email: String,
         userType: UserType,
@@ -82,4 +79,37 @@ interface UserRepository {
         email: String,
         userType: UserType,
     ): Boolean
+
+    suspend fun updatePlaylist(
+        userId: Long,
+        userType: UserType,
+        songId: Long,
+        map: Map<Long, Boolean>,
+    )
+
+    suspend fun pinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    )
+
+    suspend fun unPinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    )
+
+    suspend fun deleteSavedData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        dataType: PinnedType,
+    )
+
+    suspend fun getUserFavouriteSong(
+        userId: Long,
+        userType: String,
+    ): List<SongDto>
 }

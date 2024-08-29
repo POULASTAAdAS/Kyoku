@@ -123,64 +123,49 @@ select * from userplaylistsongrelation;
 select * from userplaylistsongrelation;
 
 select * from playlist;
+select * from userplaylistsongrelation;
+
+
+select distinct(userid) from userplaylistsongrelation where playlistid = 3;
+select *  from userplaylistsongrelation;
+
+select * from useralbumrelation;
+select * from useralbumrelation;
+
+
+select * from userartistrelation;
+
+delete from userartistrelation where userid = 0;
+
+
+select * from artist;
+select * from userartistrelation;
+select count(*) from userartistrelation where artistid = 10613;
+
+select song.id, song.title, song.coverImage , song.points , artist.name from songartistrelation
+join song on song.id = songartistrelation.songId
+join artist on artist.id = songartistrelation.artistId
+where songartistrelation.artistId = 10613
+order by song.points desc;
 
 
 
+select album.id , album.name , song.coverImage , song.year from artistalbumrelation
+join album on album.id  = artistalbumrelation.albumId
+join songalbumrelation on songalbumrelation.albumId = album.id
+join song on song.id = songalbumrelation.songId
+where artistalbumrelation.artistId = 2967
+GROUP BY album.id, album.name, song.coverImage, song.year
+order by song.year desc;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT album.id, album.name, MAX(song.coverImage) AS coverImage, MAX(song.year) AS year
+FROM artistalbumrelation
+JOIN album ON album.id = artistalbumrelation.albumId
+JOIN songalbumrelation ON songalbumrelation.albumId = album.id
+JOIN song ON song.id = songalbumrelation.songId
+WHERE artistalbumrelation.artistId = 2967
+GROUP BY album.id, album.name
+ORDER BY year DESC;
 
 
 

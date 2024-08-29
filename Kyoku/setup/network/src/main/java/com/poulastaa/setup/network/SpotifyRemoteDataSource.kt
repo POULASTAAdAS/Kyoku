@@ -3,8 +3,8 @@ package com.poulastaa.setup.network
 import com.google.gson.Gson
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
-import com.poulastaa.core.domain.get_spotify_playlist.RemoteSpotifyDataSource
 import com.poulastaa.core.domain.model.PlaylistWithSong
+import com.poulastaa.core.domain.repository.get_spotify_playlist.RemoteSpotifyDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map

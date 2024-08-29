@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,8 +36,6 @@ class RootDrawerViewModel @Inject constructor(
             val savedScreen = savedScreenStringDef.await()
             val user = userDef.await()
 
-            Log.d("user", user.toString())
-
             state = state.copy(
                 saveScreen = savedScreen.toSaveScreen(),
                 startDestination = savedScreen.toDrawerScreen().route,
@@ -62,15 +61,6 @@ class RootDrawerViewModel @Inject constructor(
                 }
             }
 
-            RootDrawerUiEvent.LogOut -> {
-//                viewModelScope.launch {
-//                    ds.logOut()
-//                    _uiEvent.send(
-//                        RootDrawerUiAction.Navigate(ScreenEnum.INTRO)
-//                    )
-//                }
-            }
-
             is RootDrawerUiEvent.SaveScreenToggle -> {
                 if (state.startDestination != event.screen.name.toDrawScreenRoute()) {
                     state = state.copy(
@@ -94,10 +84,58 @@ class RootDrawerViewModel @Inject constructor(
                 }
             }
 
+            is RootDrawerUiEvent.AddSongToPlaylist -> {
+                state = state.copy(
+                    addToPlaylistUiState = state.addToPlaylistUiState.copy(
+                        isOpen = true,
+                        songId = event.id
+                    )
+                )
+            }
+
+            RootDrawerUiEvent.OnAddSongToPlaylistCancel -> {
+                state = state.copy(
+                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+                )
+            }
+
+            is RootDrawerUiEvent.View -> {
+                state = state.copy(
+                    viewUiState = HomeViewUiState(
+                        isOpen = true,
+                        songId = event.id,
+                        type = event.type,
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+                )
+            }
+
+            RootDrawerUiEvent.OnViewCancel -> {
+                state = state.copy(
+                    viewUiState = HomeViewUiState()
+                )
+            }
+
+            is RootDrawerUiEvent.OnExploreArtistOpen -> {
+                state = state.copy(
+                    exploreArtistUiState = state.exploreArtistUiState.copy(
+                        isOpen = true,
+                        artistId = event.id
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState()
+                )
+            }
+
+            RootDrawerUiEvent.OnExploreArtistCancel -> {
+                state = state.copy(
+                    exploreArtistUiState = ExploreArtistUiState()
+                )
+            }
+
             else -> Unit
         }
     }
-
 
 
     private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {

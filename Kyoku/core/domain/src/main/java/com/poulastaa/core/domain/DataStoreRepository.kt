@@ -21,5 +21,8 @@ interface DataStoreRepository {
     suspend fun storeLibraryViewType(isGrid: Boolean)
     suspend fun readLibraryViewType(): Boolean
 
+    fun isFevPinned(): Flow<Boolean>
+    suspend fun updateFevPinState(state: Boolean)
+
     suspend fun logOut()
 }

@@ -1,9 +1,9 @@
 package com.poulastaa.setup.data
 
-import com.poulastaa.core.domain.artist.ArtistRepository
-import com.poulastaa.core.domain.artist.LocalArtistDataSource
-import com.poulastaa.core.domain.artist.RemoteArtistDataSource
 import com.poulastaa.core.domain.model.Artist
+import com.poulastaa.core.domain.repository.artist.ArtistRepository
+import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
+import com.poulastaa.core.domain.repository.artist.RemoteArtistDataSource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

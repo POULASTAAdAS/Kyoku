@@ -14,8 +14,6 @@ import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
 import com.poulastaa.core.database.entity.relation.PopularArtistSongRelationEntity
 import com.poulastaa.core.database.model.PopularArtistWithSongResult
-import com.poulastaa.core.database.model.PrevSongResult
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HomeDao {

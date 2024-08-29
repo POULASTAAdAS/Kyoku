@@ -24,13 +24,13 @@ import com.poulastaa.core.database.mapper.toPrevArtistSong
 import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.database.mapper.toSuggestArtist
-import com.poulastaa.core.domain.home.LocalHomeDatasource
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.DayType
 import com.poulastaa.core.domain.model.HomeData
 import com.poulastaa.core.domain.model.NewHome
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.repository.home.LocalHomeDatasource
 import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedPlaylist
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +39,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -190,11 +189,11 @@ class RoomLocalHomeDatasource @Inject constructor(
 
     override fun loadSavedPlaylist(): Flow<SavedPlaylist> = commonDao.getAllSavedPlaylist().map {
         it.groupBy { result -> result.id }
-            .map { mapEntry -> mapEntry.toSavedPlaylist() }
-    }.take(3)
+            .map { mapEntry -> mapEntry.toSavedPlaylist() }.take(3)
+    }
 
     override fun loadSavedAlbum(): Flow<SavedAlbum> =
-        commonDao.getAllSavedAlbum().take(2)
+        commonDao.getAllSavedAlbum().map { it.take(3) }
 
     override suspend fun isArtistIsInLibrary(artistId: Long): Boolean =
         homeDao.isArtistIsInLibrary(artistId) != null

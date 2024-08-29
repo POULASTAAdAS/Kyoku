@@ -2,7 +2,7 @@ package com.poulastaa.auth.network.di
 
 import com.google.gson.Gson
 import com.poulastaa.auth.network.OnlineFirstAuthDatasource
-import com.poulastaa.core.domain.auth.RemoteAuthDatasource
+import com.poulastaa.core.domain.repository.auth.RemoteAuthDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

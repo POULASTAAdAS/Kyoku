@@ -1,18 +1,21 @@
 package com.poulastaa.data.repository
 
-import com.poulastaa.data.mappers.getUserType
-import com.poulastaa.data.mappers.getYear
-import com.poulastaa.data.mappers.toPlaylistDto
+import com.poulastaa.data.mappers.*
 import com.poulastaa.data.model.*
 import com.poulastaa.data.model.home.HomeDto
 import com.poulastaa.domain.model.ReqUserPayload
 import com.poulastaa.domain.model.route_model.req.home.HomeReq
+import com.poulastaa.domain.model.route_model.req.pin.PinReq
+import com.poulastaa.domain.model.route_model.req.playlist.CreatePlaylistWithSongReq
 import com.poulastaa.domain.model.route_model.req.playlist.SavePlaylistReq
+import com.poulastaa.domain.model.route_model.req.playlist.UpdatePlaylistReq
 import com.poulastaa.domain.repository.*
 import com.poulastaa.domain.table.relation.UserGenreRelationTable
 import com.poulastaa.plugins.query
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.select
+import java.time.Instant
+import java.time.ZoneId
 
 class ServiceRepositoryImpl(
     private val jwt: JWTRepository,
@@ -320,8 +323,12 @@ class ServiceRepositoryImpl(
             val songDef = async {
                 when (type) {
                     ExploreType.POPULAR -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
-                    ExploreType.OLD_GEM -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
-                    ExploreType.ARTIST_MIX -> homeRepo.getPopularSongMix(user.countryId).toMutableList()
+                    ExploreType.OLD_GEM -> homeRepo.getOldGem(user.countryId, user.bDate.getYear()).toMutableList()
+                    ExploreType.ARTIST_MIX -> homeRepo.getArtistSongMix(
+                        countryId = user.countryId,
+                        userId = user.id,
+                        userType = user.userType
+                    ).toMutableList()
                 }
             }
 
@@ -345,5 +352,284 @@ class ServiceRepositoryImpl(
                 listOfSong = song.toList()
             )
         }
+    }
+
+    override suspend fun getSong(songId: Long): SongDto = kyokuRepo.getSongOnId(songId)
+
+    override suspend fun updatePlaylist(
+        req: UpdatePlaylistReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.updatePlaylist(
+            userId = user.id,
+            userType = user.userType,
+            songId = req.songId,
+            map = req.playlistIdList
+        )
+
+        return true
+    }
+
+    override suspend fun createPlaylist(
+        req: CreatePlaylistWithSongReq,
+        payload: ReqUserPayload,
+    ): PlaylistDto = coroutineScope {
+        val user = userRepo.getUserOnPayload(payload) ?: return@coroutineScope PlaylistDto()
+
+        val createPlaylistDef = async {
+            kyokuRepo.createPlaylist(
+                name = req.name,
+                userId = user.id,
+                userType = user.userType,
+                songIdList = listOf(req.songId)
+            )
+        }
+
+        val songDef = async {
+            kyokuRepo.getSongOnId(req.songId)
+        }
+
+
+        PlaylistDto(
+            id = createPlaylistDef.await(),
+            name = req.name,
+            listOfSong = listOf(songDef.await())
+        )
+    }
+
+    override suspend fun pinData(
+        req: PinReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.pinData(
+            id = req.id,
+            userId = user.id,
+            userType = user.userType,
+            pinnedType = req.type.toPinnedType()
+        )
+
+        return true
+    }
+
+    override suspend fun unPinData(
+        req: PinReq,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        userRepo.unPinData(
+            id = req.id,
+            userId = user.id,
+            userType = user.userType,
+            pinnedType = req.type.toPinnedType()
+        )
+
+        return true
+    }
+
+    override suspend fun deleteSavedData(
+        id: Long,
+        type: String,
+        payload: ReqUserPayload,
+    ): Boolean {
+        val user = userRepo.getUserOnPayload(payload) ?: return false
+
+        val pinnedType = when (type) {
+            PinnedType.ALBUM.name -> PinnedType.ALBUM
+            PinnedType.PLAYLIST.name -> PinnedType.PLAYLIST
+            PinnedType.ALBUM.name -> PinnedType.ALBUM
+            else -> PinnedType.FAVOURITE
+        }
+
+        coroutineScope {
+            val delete = async {
+                userRepo.deleteSavedData(
+                    id = id,
+                    userId = user.id,
+                    userType = user.userType,
+                    dataType = pinnedType
+                )
+            }
+
+            val unPin = async {
+                userRepo.unPinData(
+                    id = id,
+                    userId = user.id,
+                    userType = user.userType,
+                    pinnedType = pinnedType
+                )
+            }
+
+            delete.await()
+            unPin.await()
+        }
+
+        return true
+    }
+
+    override suspend fun getListOfData(
+        req: GetDataReq,
+        payload: ReqUserPayload,
+    ): Any = coroutineScope {
+        val user = userRepo.getUserOnPayload(payload) ?: return@coroutineScope PlaylistDto()
+
+        when (req.type) {
+            GetDataType.PLAYLIST -> {
+                val playlistDef = async { kyokuRepo.getPlaylistOnId(req.id) }
+                val playlistSongDef = async {
+                    kyokuRepo.getPlaylistSong(
+                        playlistId = req.id,
+                        userId = user.id,
+                        userType = user.userType
+                    )
+                }
+
+                val playlist = playlistDef.await() ?: return@coroutineScope PlaylistDto()
+
+                PlaylistDto(
+                    id = playlist.id.value,
+                    name = playlist.name,
+                    listOfSong = playlistSongDef.await()
+                )
+            }
+
+            GetDataType.ALBUM -> {
+                val albumDef = async { kyokuRepo.getAlbumOnId(req.id) }
+                val albumSongDef = async { kyokuRepo.getAlbumSong(req.id) }
+
+                val album = albumDef.await() ?: return@coroutineScope AlbumWithSongDto()
+                val albumSong = albumSongDef.await()
+
+                AlbumWithSongDto(
+                    albumDto = album.toAlbum(albumSong.first().coverImage),
+                    listOfSong = albumSong
+                )
+            }
+
+            GetDataType.FEV -> userRepo.getUserFavouriteSong(
+                userId = user.id,
+                userType = user.userType.name
+            )
+
+            GetDataType.ARTIST_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getArtistSongMix(
+                        countryId = user.countryId,
+                        userId = user.id,
+                        userType = user.userType
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+
+            GetDataType.OLD_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getOldGem(
+                        countryId = user.countryId,
+                        year = Instant.ofEpochMilli(user.bDate).atZone(ZoneId.systemDefault()).year
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+
+            GetDataType.POPULAR_MIX -> {
+                val prevSongList = async {
+                    kyokuRepo.getSongOnIdList(req.listOfId)
+                }
+
+                val generateSongDef = async {
+                    homeRepo.getPopularSongMix(
+                        countryId = user.countryId
+                    )
+                }
+
+                val preSong = prevSongList.await()
+                val preSongIdList = preSong.map { it.id }
+
+                val filterList = generateSongDef.await().filterNot {
+                    it.id in preSongIdList
+                }
+
+                println(filterList)
+
+                PlaylistDto(
+                    listOfSong = preSong + filterList
+                )
+            }
+        }
+    }
+
+    override suspend fun getViewArtistData(artistId: Long, payload: ReqUserPayload): ViewArtistDto {
+        userRepo.getUserOnPayload(payload) ?: return ViewArtistDto()
+
+        return coroutineScope {
+            val artist = async { kyokuRepo.getArtistOnId(artistId) }
+            val listOfSong = async { kyokuRepo.getMostPoplarArtistSongsPrev(artistId) }
+            val artistPopularity = async { kyokuRepo.getArtistPopularity(artistId) }
+
+            ViewArtistDto(
+                followers = artistPopularity.await(),
+                artist = artist.await()?.toArtistDto() ?: return@coroutineScope ViewArtistDto(),
+                listOfSong = listOfSong.await()
+            )
+        }
+    }
+
+    override suspend fun getArtistOnId(artistId: Long, payload: ReqUserPayload): ArtistDto {
+        userRepo.getUserOnPayload(payload) ?: return ArtistDto()
+
+        return kyokuRepo.getArtistOnId(artistId)?.toArtistDto() ?: ArtistDto()
+    }
+
+    override suspend fun getArtistSongPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto {
+        userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
+        return kyokuRepo.getArtistSongPagingData(artistId, page, size)
+    }
+
+    override suspend fun getArtistAlbumPagingData(
+        artistId: Long,
+        page: Int,
+        size: Int,
+        payload: ReqUserPayload,
+    ): ArtistPagerDataDto {
+          userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
+        return kyokuRepo.getArtistAlbumPagingData(artistId, page, size)
     }
 }

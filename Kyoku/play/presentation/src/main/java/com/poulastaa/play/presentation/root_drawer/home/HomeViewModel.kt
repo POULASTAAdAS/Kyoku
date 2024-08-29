@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ExploreType
-import com.poulastaa.core.domain.home.HomeRepository
+import com.poulastaa.core.domain.repository.home.HomeRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
@@ -16,10 +17,11 @@ import com.poulastaa.play.presentation.add_as_playlist.PlaylistBottomSheetUiStat
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getCurrentTime
 import com.poulastaa.play.presentation.root_drawer.home.mapper.getDayType
 import com.poulastaa.play.presentation.root_drawer.home.mapper.toUiHomeData
-import com.poulastaa.play.presentation.root_drawer.home.model.ItemBottomSheetUiState
+import com.poulastaa.play.presentation.root_drawer.home.model.HomeItemBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.model.HomeItemClickType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
-import com.poulastaa.play.presentation.root_drawer.toUiPlaylist
+import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
+import com.poulastaa.play.presentation.view.components.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -51,7 +53,91 @@ class HomeViewModel @Inject constructor(
     fun onEvent(event: HomeUiEvent) {
         when (event) {
             is HomeUiEvent.OnItemClick -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (event.itemClickType) {
+                        HomeItemClickType.SAVED_PLAYLIST -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.PLAYLIST
+                                    )
+                                )
+                            )
+                        }
 
+                        HomeItemClickType.SAVED_ALBUM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ALBUM
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.POPULAR_SONG_MIX -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.POPULAR_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.OLD_GEM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.OLD_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ARTIST_MIX
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.SUGGEST_ALBUM -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.View(
+                                        id = event.id ?: -1L,
+                                        type = ViewDataType.ALBUM
+                                    )
+                                )
+                            )
+                        }
+
+                        HomeItemClickType.SUGGEST_ARTIST -> {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.ViewArtist(
+                                        id = event.id ?: -1L
+                                    )
+                                )
+                            )
+                        }
+
+                        else -> Unit
+//                        HomeItemClickType.POPULAR_ARTIST -> TODO()
+//                        HomeItemClickType.HISTORY_SONG -> TODO()
+//                        HomeItemClickType.SUGGEST_ARTIST_SONG -> TODO()
+//                        HomeItemClickType.NON -> TODO()
+                    }
+                }
             }
 
             is HomeUiEvent.OnItemLongClick -> {
@@ -62,7 +148,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.POPULAR_SONG_MIX -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.popular_song_mix)
@@ -75,7 +161,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.OLD_GEM -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.old_gem)
@@ -88,7 +174,7 @@ class HomeViewModel @Inject constructor(
 
                     HomeItemClickType.FAVOURITE_ARTIST_MIX -> {
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                                 isBottomSheetLoading = false,
                                 title = UiText.StringResource(R.string.favourite_artist_mix)
@@ -105,7 +191,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -134,7 +220,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -165,7 +251,7 @@ class HomeViewModel @Inject constructor(
                         } ?: return
 
                         state = state.copy(
-                            itemBottomSheetUiState = ItemBottomSheetUiState(
+                            itemBottomSheetUiState = HomeItemBottomSheetUiState(
                                 isOpen = true,
                             )
                         )
@@ -256,6 +342,18 @@ class HomeViewModel @Inject constructor(
                         }
                     }
 
+                    is HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    screen = HomeOtherScreens.ViewArtist(
+                                        id = event.id
+                                    )
+                                )
+                            )
+                        }
+                    }
+
                     // album
                     is HomeUiEvent.ItemBottomSheetUiEvent.SaveAlbum -> {
                         viewModelScope.launch {
@@ -304,6 +402,18 @@ class HomeViewModel @Inject constructor(
                         }
                     }
 
+                    is HomeUiEvent.ItemBottomSheetUiEvent.AddSongToPlaylist -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    screen = HomeOtherScreens.AddAsPlaylist(
+                                        songId = event.id
+                                    )
+                                )
+                            )
+                        }
+                    }
+
                     is HomeUiEvent.ItemBottomSheetUiEvent.RemoveSongToFavourite -> {
                         viewModelScope.launch(Dispatchers.IO) {
                             when (homeRepo.removeFromFavourite(event.id)) {
@@ -326,7 +436,7 @@ class HomeViewModel @Inject constructor(
                 }
 
                 state = state.copy(
-                    itemBottomSheetUiState = ItemBottomSheetUiState()
+                    itemBottomSheetUiState = HomeItemBottomSheetUiState()
                 )
             }
 
@@ -411,7 +521,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepo.loadSavedPlaylist().map {
                 it.map { result ->
-                    result.toUiPlaylist()
+                    result.toUiPrevPlaylist()
                 }
             }.collectLatest {
                 state = state.copy(

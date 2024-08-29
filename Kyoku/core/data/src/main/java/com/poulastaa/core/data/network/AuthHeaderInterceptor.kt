@@ -1,6 +1,5 @@
 package com.poulastaa.core.data.network
 
-import android.util.Log
 import com.poulastaa.core.data.model.TokenDto
 import com.poulastaa.core.data.model.TokenStatusDto
 import com.poulastaa.core.domain.DataStoreRepository

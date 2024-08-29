@@ -2,10 +2,10 @@ package com.poulastaa.play.data
 
 import com.poulastaa.core.domain.AddPlaylistResType
 import com.poulastaa.core.domain.ExploreType
-import com.poulastaa.core.domain.add_playlist.AddPlaylistRepository
-import com.poulastaa.core.domain.add_playlist.LocalAddPlaylistDatasource
-import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.model.PrevSong
+import com.poulastaa.core.domain.repository.add_playlist.AddPlaylistRepository
+import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
+import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map

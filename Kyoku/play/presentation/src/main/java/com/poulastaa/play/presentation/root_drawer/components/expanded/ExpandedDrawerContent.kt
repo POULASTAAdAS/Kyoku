@@ -54,7 +54,6 @@ import com.poulastaa.core.presentation.designsystem.HomeSelectedIcon
 import com.poulastaa.core.presentation.designsystem.HomeUnSelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibrarySelectedIcon
 import com.poulastaa.core.presentation.designsystem.LibraryUnSelectedIcon
-import com.poulastaa.core.presentation.designsystem.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.ThreeLineIcon
@@ -72,7 +71,6 @@ fun ExpandedDrawerContent(
     onExpandToggle: () -> Unit,
     onSaveScreenToggle: (SaveScreen) -> Unit,
     navigate: (RootDrawerUiEvent.Navigate) -> Unit,
-    onLogoutClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -143,6 +141,8 @@ fun ExpandedDrawerContent(
                 }
             )
 
+            Spacer(modifier = Modifier.weight(1f))
+
             Others(
                 isExpanded = isExpanded,
                 isExpandSmall = isExpandSmall,
@@ -156,16 +156,18 @@ fun ExpandedDrawerContent(
                 }
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            CardItem(
-                icon = LogoutIcon,
-                label = stringResource(id = R.string.logout_label),
-                isExpandSmall = isExpandSmall,
-                shape = 30.dp,
-                isSelected = false,
-                onClick = onLogoutClick
-            )
+            AnimatedVisibility(visible = !isExpanded) {
+                CardItem(
+                    icon = SettingsIcon,
+                    label = stringResource(id = R.string.settings_label),
+                    isExpandSmall = isExpandSmall,
+                    shape = 30.dp,
+                    isSelected = false,
+                    onClick = {
+                        navigate(RootDrawerUiEvent.Navigate(ScreenEnum.SETTINGS))
+                    }
+                )
+            }
         }
     }
 }
@@ -244,52 +246,56 @@ private fun Profile(
     onClick: () -> Unit,
 ) {
     AnimatedVisibility(visible = isExpanded) {
-        Card(
-            modifier = modifier,
-            shape = MaterialTheme.shapes.large,
-            onClick = onClick
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(profilePicUrl)
-                    .placeholder(R.drawable.ic_user)
-                    .build(),
-                contentDescription = null,
-                modifier = Modifier
-                    .weight(.7f)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(MaterialTheme.dimens.small1)
-                    .clip(CircleShape)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(.3f)
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(.7f),
-                        shape = CircleShape
-                    )
-            )
+        Column {
+            Card(
+                modifier = modifier,
+                shape = MaterialTheme.shapes.large,
+                onClick = onClick
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(profilePicUrl)
+                        .placeholder(R.drawable.ic_user)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .weight(.7f)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(MaterialTheme.dimens.small1)
+                        .clip(CircleShape)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(.3f)
+                        )
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(.7f),
+                            shape = CircleShape
+                        )
+                )
 
-            Text(
-                text = userName,
-                modifier = Modifier
-                    .weight(.2f)
-                    .align(Alignment.CenterHorizontally),
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = userName,
+                    modifier = Modifier
+                        .weight(.2f)
+                        .align(Alignment.CenterHorizontally),
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
 
-            Text(
-                text = stringResource(id = R.string.view_profile),
-                modifier = Modifier
-                    .weight(.2f)
-                    .align(Alignment.CenterHorizontally),
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                color = MaterialTheme.colorScheme.onBackground.copy(.5f),
-                textAlign = TextAlign.Center
-            )
+                Text(
+                    text = stringResource(id = R.string.view_profile),
+                    modifier = Modifier
+                        .weight(.2f)
+                        .align(Alignment.CenterHorizontally),
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    color = MaterialTheme.colorScheme.onBackground.copy(.5f),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(MaterialTheme.dimens.large1))
         }
     }
 }
@@ -353,8 +359,6 @@ private fun Preview() {
             navigate = {},
             onSaveScreenToggle = {},
             saveScreen = SaveScreen.HOME
-        ) {
-
-        }
+        )
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
@@ -52,6 +54,10 @@ val UserIcon: ImageVector
 val ArrowBackIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ArrowBack
+
+val ArrowDownIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.KeyboardArrowDown
 
 val LinkIcon: ImageVector
     @Composable
@@ -174,3 +180,31 @@ val FavouriteIcon: ImageVector
 val NotFavouriteIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_remove_favourite)
+
+val PinIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_pin)
+
+val UnPinIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_un_pin)
+
+val ViewIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_view)
+
+val ThreeDotIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.MoreVert
+
+val ShuffleIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_shuffle)
+
+val MoveIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_move)
+
+val SadIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_sad)

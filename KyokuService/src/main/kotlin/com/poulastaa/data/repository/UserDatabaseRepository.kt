@@ -18,10 +18,7 @@ import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
 import com.poulastaa.domain.repository.UserId
 import com.poulastaa.domain.repository.UserRepository
-import com.poulastaa.domain.table.AlbumTable
-import com.poulastaa.domain.table.ArtistTable
-import com.poulastaa.domain.table.PlaylistTable
-import com.poulastaa.domain.table.SongTable
+import com.poulastaa.domain.table.*
 import com.poulastaa.domain.table.relation.*
 import com.poulastaa.domain.table.user.EmailAuthUserTable
 import com.poulastaa.domain.table.user.GoogleAuthUserTable
@@ -242,25 +239,7 @@ class UserDatabaseRepository(
                 }
             }
         }
-        val favouriteSongDef = async {
-            query {
-                UserFavouriteRelationTable.select {
-                    UserFavouriteRelationTable.userId eq userId and (UserFavouriteRelationTable.userType eq userType.name)
-                }.map {
-                    it[UserFavouriteRelationTable.songId]
-                }.let {
-                    SongDao.find {
-                        SongTable.id inList it
-                    }.map { songDao ->
-                        async {
-                            database.getArtistOnSongId(songDao.id.value) to songDao
-                        }
-                    }.awaitAll().map {
-                        it.second.toSongDto(it.first.joinToString { artist -> artist.name })
-                    }
-                }
-            }
-        }
+        val favouriteSongDef = async { getUserFavouriteSong(userId, userType.name) }
 
         LogInDto(
             savedPlaylist = savedPlaylistDef.await(),
@@ -439,5 +418,140 @@ class UserDatabaseRepository(
         }
 
         true
+    }
+
+    override suspend fun updatePlaylist(
+        userId: Long,
+        userType: UserType,
+        songId: Long,
+        map: Map<Long, Boolean>,
+    ): Unit = coroutineScope {
+        map.map { (playlistId, operation) ->
+            async {
+                query {
+                    when (operation) {
+                        true -> UserPlaylistSongRelationTable.insertIgnore {
+                            it[this.userId] = userId
+                            it[this.playlistId] = playlistId
+                            it[this.songId] = songId
+                            it[this.userType] = userType.name
+                        }
+
+                        false -> UserPlaylistSongRelationTable.deleteWhere {
+                            this.userId eq userId and
+                                    (this.playlistId eq playlistId) and
+                                    (this.songId eq songId) and
+                                    (this.userType eq userType.name)
+                        }
+                    }
+                }
+            }
+        }.awaitAll()
+    }
+
+    override suspend fun pinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    ) {
+        query {
+            PinnedTable.insertIgnore {
+                it[this.id] = id
+                it[this.userId] = userId
+                it[this.userType] = userType.name
+                it[this.pinnedType] = pinnedType.name
+            }
+        }
+    }
+
+    override suspend fun unPinData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        pinnedType: PinnedType,
+    ) {
+        query {
+            PinnedTable.deleteWhere {
+                this.id eq id and
+                        (this.userId eq userId) and
+                        (this.pinnedType eq pinnedType.name) and
+                        (this.userType eq userType.name)
+            }
+        }
+    }
+
+    override suspend fun deleteSavedData(
+        id: Long,
+        userId: Long,
+        userType: UserType,
+        dataType: PinnedType, // using PinnedType as saved data type
+    ) {
+        when (dataType) {
+            PinnedType.PLAYLIST -> {
+                val playlist = database.getPlaylistOnId(id) ?: return
+
+                query {
+                    val userIds = UserPlaylistSongRelationTable
+                        .slice(UserPlaylistSongRelationTable.userId)
+                        .select {
+                            UserPlaylistSongRelationTable.playlistId eq id
+                        }.withDistinct()
+                        .map { it[UserPlaylistSongRelationTable.userId] }
+
+                    if (userIds.size > 1) UserPlaylistSongRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.playlistId eq id)
+                    }
+                    else playlist.delete()
+                }
+            }
+
+            PinnedType.ALBUM -> {
+                query {
+                    UserAlbumRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.albumId eq id)
+                    }
+                }
+            }
+
+            PinnedType.ARTIST -> {
+                query {
+                    UserArtistRelationTable.deleteWhere {
+                        this.userId eq userId and
+                                (this.userType eq userType.name) and
+                                (this.artistId eq id)
+                    }
+                }
+            }
+
+            else -> Unit
+        }
+    }
+
+    override suspend fun getUserFavouriteSong(
+        userId: Long,
+        userType: String,
+    ): List<SongDto> = coroutineScope {
+        query {
+            UserFavouriteRelationTable.select {
+                UserFavouriteRelationTable.userId eq userId and (UserFavouriteRelationTable.userType eq userType)
+            }.map {
+                it[UserFavouriteRelationTable.songId]
+            }.let {
+                SongDao.find {
+                    SongTable.id inList it
+                }.map { songDao ->
+                    async {
+                        database.getArtistOnSongId(songDao.id.value) to songDao
+                    }
+                }.awaitAll().map {
+                    it.second.toSongDto(it.first.joinToString { artist -> artist.name })
+                }
+            }
+        }
     }
 }

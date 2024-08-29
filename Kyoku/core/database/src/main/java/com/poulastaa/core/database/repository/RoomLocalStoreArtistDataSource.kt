@@ -2,8 +2,8 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.mapper.toArtistEntity
-import com.poulastaa.core.domain.artist.LocalArtistDataSource
 import com.poulastaa.core.domain.model.Artist
+import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
 import javax.inject.Inject
 
 class RoomLocalStoreArtistDataSource @Inject constructor(

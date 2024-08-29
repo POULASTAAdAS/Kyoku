@@ -1,10 +1,10 @@
 package com.poulastaa.data.model
 
-import com.poulastaa.domain.model.UserType
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetDataReq(
-    val token: String,
-    val userType: UserType,
+    val id: Long = -1,
+    val listOfId: List<Long> = emptyList(),
+    val type: GetDataType
 )

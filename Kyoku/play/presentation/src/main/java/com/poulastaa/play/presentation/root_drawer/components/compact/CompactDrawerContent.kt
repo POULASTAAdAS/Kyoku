@@ -51,7 +51,6 @@ import coil.request.ImageRequest
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CalenderIcon
-import com.poulastaa.core.presentation.designsystem.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -62,7 +61,6 @@ fun CompactDrawerContent(
     userName: String,
     profilePicUrl: String,
     navigate: (RootDrawerUiEvent.Navigate) -> Unit,
-    onLogoutClick: () -> Unit,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -131,21 +129,6 @@ fun CompactDrawerContent(
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
-            DrawerItem(
-                modifier = Modifier.fillMaxWidth(.6f),
-                title = stringResource(id = R.string.logout_title),
-                icon = LogoutIcon,
-                onClick = {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onLogoutClick()
-                },
-                colors = NavigationDrawerItemDefaults.colors(
-                    unselectedContainerColor = MaterialTheme.colorScheme.primary.copy(.85f),
-                    unselectedTextColor = MaterialTheme.colorScheme.background,
-                    unselectedIconColor = MaterialTheme.colorScheme.background
-                )
-            )
         }
     }
 }
@@ -268,6 +251,6 @@ private fun Preview() {
             userName = "Poulastaa",
             profilePicUrl = "",
             navigate = {}
-        ) {}
+        )
     }
 }

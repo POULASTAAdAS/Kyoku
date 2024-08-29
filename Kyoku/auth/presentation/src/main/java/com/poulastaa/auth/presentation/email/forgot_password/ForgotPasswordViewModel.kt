@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.Validator
-import com.poulastaa.core.domain.auth.AuthRepository
 import com.poulastaa.core.domain.model.ForgotPasswordSetStatus
+import com.poulastaa.core.domain.repository.auth.AuthRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R

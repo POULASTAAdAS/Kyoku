@@ -3,11 +3,10 @@ package com.poulastaa.network
 import com.google.gson.Gson
 import com.poulastaa.core.data.model.PlaylistDto
 import com.poulastaa.core.data.network.post
-import com.poulastaa.core.domain.AddPlaylistResType
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.ExploreType
-import com.poulastaa.core.domain.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.model.PlaylistData
+import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.map

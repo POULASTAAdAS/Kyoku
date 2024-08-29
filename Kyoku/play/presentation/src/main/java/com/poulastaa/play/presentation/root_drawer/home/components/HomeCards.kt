@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -366,7 +365,6 @@ fun MoreFromArtist(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small)
             .padding(MaterialTheme.dimens.small2)
             .then(modifier)
     ) {
@@ -494,8 +492,9 @@ fun CircularArtist(
                     CircularProgressIndicator(
                         strokeWidth = 1.5.dp,
                         strokeCap = StrokeCap.Round,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(20.dp)
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier
+                            .size(40.dp)
                     )
                 }
             }

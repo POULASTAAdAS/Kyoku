@@ -93,11 +93,12 @@ fun LibraryPlaylistGird(
             modifier = Modifier
                 .weight(.15f)
                 .align(Alignment.CenterHorizontally),
-            maxLines = 2,
+            maxLines = 1,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
             letterSpacing = 1.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -303,56 +304,68 @@ fun ImageGrid(
         elevation = elevation,
         colors = color
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(.5f)
-        ) {
+        if (urls.size < 4) {
             AsyncImage(
                 model = imageReqSongCover(
                     header = header,
                     url = urls.getOrElse(0) { "" }
                 ),
                 modifier = Modifier
-                    .fillMaxWidth(.5f)
-                    .fillMaxHeight(),
+                    .aspectRatio(1f),
                 contentDescription = null
             )
-
-            AsyncImage(
-                model = imageReqSongCover(
-                    header = header,
-                    url = urls.getOrElse(1) { "" }
-                ),
+        } else {
+            Row(
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentDescription = null
-            )
-        }
+                    .fillMaxWidth()
+                    .fillMaxHeight(.5f)
+            ) {
+                AsyncImage(
+                    model = imageReqSongCover(
+                        header = header,
+                        url = urls.getOrElse(0) { "" }
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(.5f)
+                        .fillMaxHeight(),
+                    contentDescription = null
+                )
 
-        Row(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            AsyncImage(
-                model = imageReqSongCover(
-                    header = header,
-                    url = urls.getOrElse(2) { "" }
-                ),
-                modifier = Modifier
-                    .fillMaxWidth(.5f)
-                    .fillMaxHeight(),
-                contentDescription = null
-            )
+                AsyncImage(
+                    model = imageReqSongCover(
+                        header = header,
+                        url = urls.getOrElse(1) { "" }
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentDescription = null
+                )
+            }
 
-            AsyncImage(
-                model = imageReqSongCover(
-                    header = header,
-                    url = urls.getOrElse(3) { "" }
-                ),
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentDescription = null
-            )
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                AsyncImage(
+                    model = imageReqSongCover(
+                        header = header,
+                        url = urls.getOrElse(2) { "" }
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth(.5f)
+                        .fillMaxHeight(),
+                    contentDescription = null
+                )
+
+                AsyncImage(
+                    model = imageReqSongCover(
+                        header = header,
+                        url = urls.getOrElse(3) { "" }
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentDescription = null
+                )
+            }
         }
     }
 }
@@ -524,7 +537,6 @@ private fun LibraryFilterChip(
 @Composable
 fun FavouriteCard(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -532,7 +544,6 @@ fun FavouriteCard(
             defaultElevation = 10.dp
         ),
         shape = MaterialTheme.shapes.small,
-        onClick = onClick
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
