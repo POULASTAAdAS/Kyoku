@@ -207,6 +207,17 @@ class ExploreArtistViewModel @Inject constructor(
                     }
 
                     is ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotEventClick -> {
+                        _song.value = _song.value.map {
+                            if (it.id == event.id) it.copy(isExpanded = false)
+                            else it
+                        }
+
+                        _album.value = _album.value.map {
+                            if (it.id == event.id) it.copy(isExpanded = false)
+                            else it
+                        }
+
+
                         when (event.type) {
                             AlbumThreeDotEvent.PLAY -> {
 
@@ -214,7 +225,7 @@ class ExploreArtistViewModel @Inject constructor(
 
                             AlbumThreeDotEvent.SAVE_ALBUM -> {
                                 viewModelScope.launch {
-                                    when (val result = repo.addSongToFavourite(event.id)) {
+                                    when (val result = repo.saveAlbum(event.id)) {
                                         is Result.Error -> {
                                             when (result.error) {
                                                 DataError.Network.NO_INTERNET -> {

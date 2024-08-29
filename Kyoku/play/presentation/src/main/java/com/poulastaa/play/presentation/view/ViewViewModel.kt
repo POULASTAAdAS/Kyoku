@@ -15,8 +15,6 @@ import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.domain.ViewSongOperation
 import com.poulastaa.play.presentation.view.components.ViewDataType
-import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
-import com.poulastaa.play.presentation.view_artist.ViewArtistUiAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -204,6 +202,18 @@ class ViewViewModel @Inject constructor(
             }
 
             is ViewUiEvent.OnThreeDotItemClick -> {
+                state = state.copy(
+                    data = state.data.copy(
+                        listOfSong = state.data.listOfSong.map { song ->
+                            if (song.id == event.id) song.copy(
+                                isExpanded = false
+                            ) else song
+                        }
+                    ),
+                    threeDotOperations = emptyList()
+                )
+
+
                 when (event.operation) {
                     ViewSongOperation.PLAY -> {
 
@@ -221,7 +231,7 @@ class ViewViewModel @Inject constructor(
                         viewModelScope.launch {
                             _uiEvent.send(
                                 ViewUiAction.Navigate(
-                                    ViewOtherScreen.ViewArtist(
+                                    ViewOtherScreen.AddSongToPlaylist(
                                         id = event.id
                                     )
                                 )
@@ -273,7 +283,7 @@ class ViewViewModel @Inject constructor(
                         viewModelScope.launch {
                             _uiEvent.send(
                                 ViewUiAction.Navigate(
-                                    ViewOtherScreen.ViewArtist(
+                                    ViewOtherScreen.ViewSongArtists(
                                         id = event.id
                                     )
                                 )

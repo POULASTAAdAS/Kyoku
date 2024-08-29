@@ -57,9 +57,11 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
+import com.poulastaa.play.presentation.view.ViewOtherScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import com.poulastaa.play.presentation.view_artist.ViewArtistCompactRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistExpandedRootScreen
+import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
 
 @Composable
 fun RootDrawerExpanded(
@@ -294,7 +296,18 @@ fun RootDrawerExpanded(
                                 onArtistDetailScreenOpen = { artistId ->
                                     onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                                 },
-                                navigate = {
+                                navigate = { screen ->
+                                    when (screen) {
+                                        is ViewArtistOtherScreen.AddSongToPlaylist -> onEvent(
+                                            RootDrawerUiEvent.AddSongToPlaylist(
+                                                id = screen.id
+                                            )
+                                        )
+
+                                        is ViewArtistOtherScreen.ViewArtist -> {
+
+                                        }
+                                    }
 
                                 },
                                 navigateBack = {
@@ -306,8 +319,19 @@ fun RootDrawerExpanded(
                                 navigateToArtistDetail = { artistId ->
                                     onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                                 },
-                                navigate = {
-                                    
+                                navigate = { screen ->
+                                    when (screen) {
+                                        is ViewArtistOtherScreen.AddSongToPlaylist -> onEvent(
+                                            RootDrawerUiEvent.AddSongToPlaylist(
+                                                id = screen.id
+                                            )
+                                        )
+
+                                        is ViewArtistOtherScreen.ViewArtist -> {
+
+                                        }
+                                    }
+
                                 },
                                 navigateBack = {
                                     navController.popBackStack()
@@ -344,7 +368,17 @@ fun RootDrawerExpanded(
                             id = state.viewUiState.songId,
                             type = state.viewUiState.type,
                             navigate = {
+                                when (it) {
+                                    is ViewOtherScreen.AddSongToPlaylist -> onEvent(
+                                        RootDrawerUiEvent.AddSongToPlaylist(
+                                            id = it.id
+                                        )
+                                    )
 
+                                    is ViewOtherScreen.ViewSongArtists -> {
+
+                                    }
+                                }
                             },
                             navigateBack = {
                                 onEvent(RootDrawerUiEvent.OnViewCancel)
@@ -362,18 +396,18 @@ fun RootDrawerExpanded(
                             artistId = state.exploreArtistUiState.artistId,
                             navigate = {
                                 when (it) {
-                                    is ExploreArtistOtherScreen.AddSongToPlaylist -> {
-
-                                    }
-
-                                    is ExploreArtistOtherScreen.ViewAlbum -> {
-                                        onEvent(
-                                            RootDrawerUiEvent.View(
-                                                id = it.id,
-                                                type = ViewDataType.ALBUM
-                                            )
+                                    is ExploreArtistOtherScreen.AddSongToPlaylist -> onEvent(
+                                        RootDrawerUiEvent.AddSongToPlaylist(
+                                            id = it.id
                                         )
-                                    }
+                                    )
+
+                                    is ExploreArtistOtherScreen.ViewAlbum -> onEvent(
+                                        RootDrawerUiEvent.View(
+                                            id = it.id,
+                                            type = ViewDataType.ALBUM
+                                        )
+                                    )
                                 }
                             },
                             navigateBack = {
@@ -409,7 +443,17 @@ fun RootDrawerExpanded(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
                         navigate = {
+                            when (it) {
+                                is ViewOtherScreen.AddSongToPlaylist -> onEvent(
+                                    RootDrawerUiEvent.AddSongToPlaylist(
+                                        id = it.id
+                                    )
+                                )
 
+                                is ViewOtherScreen.ViewSongArtists -> {
+
+                                }
+                            }
                         },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnViewCancel)

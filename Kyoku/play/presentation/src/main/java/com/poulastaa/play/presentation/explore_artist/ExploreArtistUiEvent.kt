@@ -27,9 +27,9 @@ enum class AlbumThreeDotEvent(val value: String) : ExploreArtistThreeDotEvent {
 
 enum class SongThreeDotEvent(val value: String) : ExploreArtistThreeDotEvent {
     PLAY("play"),
-    PLAY_NEXT("play_next"),
-    PLAY_LAST("play_last"),
-    ADD_TO_PLAYLIST("add_to_playlist"),
-    ADD_TO_FAVOURITE("add_to_favourite"),
-    VIEW_ARTISTS("view_artists")
+    PLAY_NEXT("play next"),
+    PLAY_LAST("play last"),
+    ADD_TO_PLAYLIST("add to playlist"),
+    ADD_TO_FAVOURITE("add to favourite"),
+    VIEW_ARTISTS("view artists")
 }

@@ -190,6 +190,17 @@ class ViewArtistViewModel @Inject constructor(
                     }
 
                     is ViewArtistUiEvent.ThreeDotEvent.OnThreeDotItemClick -> {
+                        state = state.copy(
+                            data = state.data.copy(
+                                listOfSong = state.data.listOfSong.map { song ->
+                                    if (song.id == event.id) song.copy(
+                                        isExpanded = false
+                                    ) else song
+                                }
+                            ),
+                            threeDotOperations = emptyList()
+                        )
+
                         when (event.operation) {
                             ViewSongOperation.PLAY -> {
 
@@ -204,6 +215,8 @@ class ViewArtistViewModel @Inject constructor(
                             }
 
                             ViewSongOperation.ADD_TO_PLAYLIST -> {
+
+
                                 viewModelScope.launch {
                                     _uiEvent.send(
                                         ViewArtistUiAction.Navigate(

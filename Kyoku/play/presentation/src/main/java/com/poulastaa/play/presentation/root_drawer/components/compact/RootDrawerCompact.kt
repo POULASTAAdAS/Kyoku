@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
@@ -39,7 +38,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
@@ -54,8 +52,10 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
+import com.poulastaa.play.presentation.view.ViewOtherScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import com.poulastaa.play.presentation.view_artist.ViewArtistCompactRootScreen
+import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -275,8 +275,18 @@ fun RootDrawerCompact(
                             onArtistDetailScreenOpen = { artistId ->
                                 onEvent(RootDrawerUiEvent.OnExploreArtistOpen(artistId))
                             },
-                            navigate = {
+                            navigate = { screen ->
+                                when (screen) {
+                                    is ViewArtistOtherScreen.AddSongToPlaylist -> onEvent(
+                                        RootDrawerUiEvent.AddSongToPlaylist(
+                                            id = screen.id
+                                        )
+                                    )
 
+                                    is ViewArtistOtherScreen.ViewArtist -> {
+
+                                    }
+                                }
                             },
                             navigateBack = {
                                 navController.popBackStack()
@@ -314,9 +324,11 @@ fun RootDrawerCompact(
                         artistId = state.exploreArtistUiState.artistId,
                         navigate = {
                             when (it) {
-                                is ExploreArtistOtherScreen.AddSongToPlaylist -> {
-
-                                }
+                                is ExploreArtistOtherScreen.AddSongToPlaylist -> onEvent(
+                                    RootDrawerUiEvent.AddSongToPlaylist(
+                                        id = it.id
+                                    )
+                                )
 
                                 is ExploreArtistOtherScreen.ViewAlbum -> {
                                     onEvent(
@@ -344,7 +356,17 @@ fun RootDrawerCompact(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
                         navigate = {
+                            when (it) {
+                                is ViewOtherScreen.AddSongToPlaylist -> onEvent(
+                                    RootDrawerUiEvent.AddSongToPlaylist(
+                                        id = it.id
+                                    )
+                                )
 
+                                is ViewOtherScreen.ViewSongArtists -> {
+
+                                }
+                            }
                         },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnViewCancel)
