@@ -637,12 +637,30 @@ class ServiceRepositoryImpl(
         return kyokuRepo.getArtistAlbumPagingData(artistId, page, size)
     }
 
-    override suspend fun <T> getSyncData(
+    override suspend fun getSyncData(
         req: UpdateSavedDataReq,
         payload: ReqUserPayload,
-    ): SyncDto<T> {
+    ): SyncDto<Any> {
         val user = userRepo.getUserOnPayload(payload) ?: return SyncDto()
 
+        return when (req.type) {
+            UpdateSavedDataType.ALBUM -> userRepo.getSyncAlbum(
+                userId = user.id,
+                userType = user.userType,
+                albumIdList = req.list
+            )
 
+            UpdateSavedDataType.PLAYLIST -> userRepo.getSyncPlaylist(
+                userId = user.id,
+                userType = user.userType,
+                playlistIdList = req.list
+            )
+
+            UpdateSavedDataType.ARTIST -> userRepo.getSyncArtist(
+                userId = user.id,
+                userType = user.userType,
+                artistIdList = req.list
+            )
+        }
     }
 }

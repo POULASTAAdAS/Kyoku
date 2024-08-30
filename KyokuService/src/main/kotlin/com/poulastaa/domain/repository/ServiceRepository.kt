@@ -144,8 +144,8 @@ interface ServiceRepository {
         payload: ReqUserPayload,
     ): ArtistPagerDataDto
 
-    suspend fun <T> getSyncData(
+    suspend fun getSyncData(
         req: UpdateSavedDataReq,
         payload: ReqUserPayload,
-    ): SyncDto<T>
+    ): SyncDto<Any>
 }

@@ -22,27 +22,39 @@ fun Route.syncData(service: ServiceRepository) {
                 val payload = call.getReqUserPayload()
                     ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val result = when (req.type) {
-                    UpdateSavedDataType.ALBUM -> service.getSyncData<AlbumWithSongDto>(
-                        req = req,
-                        payload = payload
-                    )
-
-                    UpdateSavedDataType.PLAYLIST -> service.getSyncData<PlaylistDto>(
-                        req = req,
-                        payload = payload
-                    )
-
-                    UpdateSavedDataType.ARTIST -> service.getSyncData<ArtistDto>(
-                        req = req,
-                        payload = payload
-                    )
-                }
-
-                call.respond(
-                    message = result,
-                    status = HttpStatusCode.OK
+                val result = service.getSyncData(
+                    req = req,
+                    payload = payload
                 )
+
+                when (req.type) {
+                    UpdateSavedDataType.ALBUM -> {
+                        val res = result as SyncDto<AlbumWithSongDto>
+
+                        call.respond(
+                            message = res,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+
+                    UpdateSavedDataType.PLAYLIST -> {
+                        val res = result as SyncDto<PlaylistDto>
+
+                        call.respond(
+                            message = res,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+
+                    UpdateSavedDataType.ARTIST -> {
+                        val res = result as SyncDto<ArtistDto>
+
+                        call.respond(
+                            message = res,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+                }
             }
         }
     }
