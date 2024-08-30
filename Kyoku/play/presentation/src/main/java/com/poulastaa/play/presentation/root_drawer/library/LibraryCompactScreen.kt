@@ -3,6 +3,7 @@ package com.poulastaa.play.presentation.root_drawer.library
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -135,70 +136,361 @@ private fun LibraryScreen(
         },
         modifier = Modifier.nestedScroll(appBarScrollBehavior.nestedScrollConnection)
     ) { internalPadding ->
-        if (!state.canShowUi) Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                .padding(internalPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary.copy(.7f),
-                strokeWidth = 4.dp,
-                modifier = Modifier.size(56.dp),
-                strokeCap = StrokeCap.Round
-            )
-        } else Column(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-        ) {
-            LibraryToast(data = state.toast, internalPadding)
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(state.gridSize),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                    .then(
-                        if (state.toast.isVisible) Modifier
-                            .padding(
-                                start = internalPadding.calculateStartPadding(LayoutDirection.Ltr),
-                                bottom = internalPadding.calculateBottomPadding(),
-                                end = internalPadding.calculateStartPadding(LayoutDirection.Rtl)
-                            )
-                        else Modifier.padding(internalPadding)
-                    ),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
-                contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
-            ) {
-                fixedItem(state.gridSize) {
-                    LibraryFilterRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        filterType = state.filterType,
-                        viewType = state.viewType,
-                        onClick = onEvent
+        AnimatedContent(state.canShowUi, label = "library ui") {
+            when (it) {
+                false -> Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(internalPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary.copy(.7f),
+                        strokeWidth = 4.dp,
+                        modifier = Modifier.size(56.dp),
+                        strokeCap = StrokeCap.Round
                     )
                 }
 
-                if (state.filterType == LibraryFilterType.ALL &&
-                    (state.data.pinned.isNotEmpty() ||
-                            state.data.isFevPinned)
+                true -> Column(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
                 ) {
-                    itemSection(
-                        gridSize = state.gridSize,
-                        type = state.viewType,
-                        data = state.data.pinned,
-                        header = R.string.pinned,
-                        onHeaderClick = {
-                            onEvent(LibraryUiEvent.OnClick.PinnedHeader)
-                        },
-                        listContent = {
-                            Row(
-                                modifier = Modifier
-                                    .height(100.dp)
+                    LibraryToast(data = state.toast, internalPadding)
+
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(state.gridSize),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = MaterialTheme.colorScheme.surfaceContainer)
+                            .then(
+                                if (state.toast.isVisible) Modifier
+                                    .padding(
+                                        start = internalPadding.calculateStartPadding(
+                                            LayoutDirection.Ltr
+                                        ),
+                                        bottom = internalPadding.calculateBottomPadding(),
+                                        end = internalPadding.calculateStartPadding(LayoutDirection.Rtl)
+                                    )
+                                else Modifier.padding(internalPadding)
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
+                        contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
+                    ) {
+                        fixedItem(state.gridSize) {
+                            LibraryFilterRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                filterType = state.filterType,
+                                viewType = state.viewType,
+                                onClick = onEvent
+                            )
+                        }
+
+                        if (state.filterType == LibraryFilterType.ALL &&
+                            (state.data.pinned.isNotEmpty() ||
+                                    state.data.isFevPinned)
+                        ) {
+                            itemSection(
+                                gridSize = state.gridSize,
+                                type = state.viewType,
+                                data = state.data.pinned,
+                                header = R.string.pinned,
+                                onHeaderClick = {
+                                    onEvent(LibraryUiEvent.OnClick.PinnedHeader)
+                                },
+                                listContent = {
+                                    Row(
+                                        modifier = Modifier
+                                            .height(100.dp)
+                                    ) {
+                                        when (it.pinnedType) {
+                                            PinnedType.PLAYLIST -> {
+                                                LibraryPlaylistList(
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .clip(MaterialTheme.shapes.small)
+                                                        .combinedClickable(
+                                                            onClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnClick.Playlist(
+                                                                        it.id
+                                                                    )
+                                                                )
+                                                            },
+                                                            onLongClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnItemLongClick(
+                                                                        id = it.id,
+                                                                        type = LibraryBottomSheetLongClickType.PLAYLIST
+                                                                    )
+                                                                )
+
+                                                                haptic.performHapticFeedback(
+                                                                    HapticFeedbackType.LongPress
+                                                                )
+                                                            }
+                                                        ),
+                                                    urls = it.urls,
+                                                    name = it.name,
+                                                    header = state.header,
+                                                )
+                                            }
+
+                                            PinnedType.ARTIST -> {
+                                                SuggestedArtistCard(
+                                                    modifier = Modifier
+                                                        .aspectRatio(1f)
+                                                        .clip(MaterialTheme.shapes.small)
+                                                        .combinedClickable(
+                                                            onClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnClick.Artist(
+                                                                        it.id
+                                                                    )
+                                                                )
+                                                            },
+                                                            onLongClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnItemLongClick(
+                                                                        id = it.id,
+                                                                        type = LibraryBottomSheetLongClickType.ARTIST
+                                                                    )
+                                                                )
+
+                                                                haptic.performHapticFeedback(
+                                                                    HapticFeedbackType.LongPress
+                                                                )
+                                                            }
+                                                        ),
+                                                    artist = it.toUiArtist(),
+                                                    header = state.header,
+                                                    fontSize = MaterialTheme.typography.titleMedium.fontSize
+                                                )
+                                            }
+
+                                            PinnedType.ALBUM -> {
+                                                LibraryAlbumList(
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .clip(MaterialTheme.shapes.small)
+                                                        .combinedClickable(
+                                                            onClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnClick.Album(
+                                                                        it.id
+                                                                    )
+                                                                )
+                                                            },
+                                                            onLongClick = {
+                                                                onEvent(
+                                                                    LibraryUiEvent.OnItemLongClick(
+                                                                        id = it.id,
+                                                                        type = LibraryBottomSheetLongClickType.ALBUM
+                                                                    )
+                                                                )
+
+                                                                haptic.performHapticFeedback(
+                                                                    HapticFeedbackType.LongPress
+                                                                )
+                                                            }
+                                                        ),
+                                                    header = state.header,
+                                                    album = it.toUiAlbum()
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                                gridContent = {
+                                    when (it.pinnedType) {
+                                        PinnedType.PLAYLIST -> {
+                                            LibraryPlaylistGird(
+                                                modifier = Modifier
+                                                    .aspectRatio(1f)
+                                                    .clip(MaterialTheme.shapes.small)
+                                                    .combinedClickable(
+                                                        onClick = {
+                                                            onEvent(
+                                                                LibraryUiEvent.OnClick.Playlist(
+                                                                    it.id
+                                                                )
+                                                            )
+                                                        },
+                                                        onLongClick = {
+                                                            onEvent(
+                                                                LibraryUiEvent.OnItemLongClick(
+                                                                    id = it.id,
+                                                                    type = LibraryBottomSheetLongClickType.PLAYLIST
+                                                                )
+                                                            )
+
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.LongPress
+                                                            )
+                                                        }
+                                                    ),
+                                                urls = it.urls,
+                                                name = it.name,
+                                                header = state.header,
+                                            )
+                                        }
+
+                                        PinnedType.ARTIST -> {
+                                            SuggestedArtistCard(
+                                                modifier = Modifier
+                                                    .aspectRatio(1f)
+                                                    .clip(MaterialTheme.shapes.small)
+                                                    .combinedClickable(
+                                                        onClick = {
+                                                            onEvent(LibraryUiEvent.OnClick.Artist(it.id))
+                                                        },
+                                                        onLongClick = {
+                                                            onEvent(
+                                                                LibraryUiEvent.OnItemLongClick(
+                                                                    id = it.id,
+                                                                    type = LibraryBottomSheetLongClickType.ARTIST
+                                                                )
+                                                            )
+
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.LongPress
+                                                            )
+                                                        }
+                                                    ),
+                                                artist = it.toUiArtist(),
+                                                header = state.header,
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                                maxLine = 2
+                                            )
+                                        }
+
+                                        PinnedType.ALBUM -> {
+                                            LibraryAlbumGrid(
+                                                modifier = Modifier
+                                                    .aspectRatio(1f)
+                                                    .clip(MaterialTheme.shapes.small)
+                                                    .combinedClickable(
+                                                        onClick = {
+                                                            onEvent(LibraryUiEvent.OnClick.Album(it.id))
+                                                        },
+                                                        onLongClick = {
+                                                            onEvent(
+                                                                LibraryUiEvent.OnItemLongClick(
+                                                                    id = it.id,
+                                                                    type = LibraryBottomSheetLongClickType.ALBUM
+                                                                )
+                                                            )
+
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.LongPress
+                                                            )
+                                                        }
+                                                    ),
+                                                header = state.header,
+                                                album = it.toUiAlbum()
+                                            )
+                                        }
+                                    }
+                                }
+                            )
+
+                            if (state.data.isFevPinned) item(span = { GridItemSpan(state.gridSize) }) {
+                                FavouriteCard(
+                                    modifier = Modifier
+                                        .height(100.dp)
+                                        .combinedClickable(
+                                            onClick = {
+                                                onEvent(LibraryUiEvent.OnClick.Favourite)
+                                            },
+                                            onLongClick = {
+                                                onEvent(
+                                                    LibraryUiEvent.OnItemLongClick(
+                                                        id = -1,
+                                                        type = LibraryBottomSheetLongClickType.FAVOURITE
+                                                    )
+                                                )
+
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            }
+                                        )
+                                )
+                            }
+
+                            item(
+                                span = { GridItemSpan(state.gridSize) }
                             ) {
-                                when (it.pinnedType) {
-                                    PinnedType.PLAYLIST -> {
+                                HorizontalDivider(
+                                    thickness = 2.0.dp
+                                )
+                            }
+                        }
+
+                        if (state.filterType == LibraryFilterType.ALL &&
+                            state.data.isFavouriteEntry
+                        ) {
+                            fixedItem(state.gridSize) {
+                                when (state.viewType) {
+                                    LibraryViewType.LIST -> FavouriteCard(
+                                        modifier = Modifier
+                                            .height(100.dp)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    onEvent(LibraryUiEvent.OnClick.Favourite)
+                                                },
+                                                onLongClick = {
+                                                    onEvent(
+                                                        LibraryUiEvent.OnItemLongClick(
+                                                            id = -1,
+                                                            type = LibraryBottomSheetLongClickType.FAVOURITE
+                                                        )
+                                                    )
+
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                }
+                                            ),
+                                    )
+
+                                    LibraryViewType.GRID -> FavouriteCard(
+                                        modifier = Modifier
+                                            .height(100.dp)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    onEvent(LibraryUiEvent.OnClick.Favourite)
+                                                },
+                                                onLongClick = {
+                                                    onEvent(
+                                                        LibraryUiEvent.OnItemLongClick(
+                                                            id = -1,
+                                                            type = LibraryBottomSheetLongClickType.FAVOURITE
+                                                        )
+                                                    )
+
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                }
+                                            )
+                                    )
+                                }
+                            }
+                        }
+
+                        if (state.filterType == LibraryFilterType.ALL ||
+                            state.filterType == LibraryFilterType.PLAYLIST &&
+                            state.data.playlist.isNotEmpty()
+                        ) if (state.data.playlist.isNotEmpty())
+                            itemSection(
+                                gridSize = state.gridSize,
+                                type = state.viewType,
+                                data = state.data.playlist,
+                                header = R.string.playlist,
+                                onHeaderClick = {
+                                    onEvent(LibraryUiEvent.OnClick.PlaylistHeader)
+                                },
+                                listContent = {
+                                    Row(
+                                        modifier = Modifier
+                                            .height(100.dp)
+                                    ) {
                                         LibraryPlaylistList(
                                             modifier = Modifier
                                                 .fillMaxSize()
@@ -225,67 +517,8 @@ private fun LibraryScreen(
                                             header = state.header,
                                         )
                                     }
-
-                                    PinnedType.ARTIST -> {
-                                        SuggestedArtistCard(
-                                            modifier = Modifier
-                                                .aspectRatio(1f)
-                                                .clip(MaterialTheme.shapes.small)
-                                                .combinedClickable(
-                                                    onClick = {
-                                                        onEvent(LibraryUiEvent.OnClick.Artist(it.id))
-                                                    },
-                                                    onLongClick = {
-                                                        onEvent(
-                                                            LibraryUiEvent.OnItemLongClick(
-                                                                id = it.id,
-                                                                type = LibraryBottomSheetLongClickType.ARTIST
-                                                            )
-                                                        )
-
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.LongPress
-                                                        )
-                                                    }
-                                                ),
-                                            artist = it.toUiArtist(),
-                                            header = state.header,
-                                            fontSize = MaterialTheme.typography.titleMedium.fontSize
-                                        )
-                                    }
-
-                                    PinnedType.ALBUM -> {
-                                        LibraryAlbumList(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .clip(MaterialTheme.shapes.small)
-                                                .combinedClickable(
-                                                    onClick = {
-                                                        onEvent(LibraryUiEvent.OnClick.Album(it.id))
-                                                    },
-                                                    onLongClick = {
-                                                        onEvent(
-                                                            LibraryUiEvent.OnItemLongClick(
-                                                                id = it.id,
-                                                                type = LibraryBottomSheetLongClickType.ALBUM
-                                                            )
-                                                        )
-
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.LongPress
-                                                        )
-                                                    }
-                                                ),
-                                            header = state.header,
-                                            album = it.toUiAlbum()
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                        gridContent = {
-                            when (it.pinnedType) {
-                                PinnedType.PLAYLIST -> {
+                                },
+                                gridContent = {
                                     LibraryPlaylistGird(
                                         modifier = Modifier
                                             .aspectRatio(1f)
@@ -310,35 +543,52 @@ private fun LibraryScreen(
                                         header = state.header,
                                     )
                                 }
+                            )
 
-                                PinnedType.ARTIST -> {
-                                    SuggestedArtistCard(
+
+                        if (state.filterType == LibraryFilterType.ALL ||
+                            state.filterType == LibraryFilterType.ALBUM
+                        ) if (state.data.album.isNotEmpty())
+                            itemSection(
+                                gridSize = state.gridSize,
+                                type = state.viewType,
+                                data = state.data.album,
+                                header = R.string.album,
+                                onHeaderClick = {
+                                    onEvent(LibraryUiEvent.OnClick.AlbumHeader)
+                                },
+                                listContent = {
+                                    Row(
                                         modifier = Modifier
-                                            .aspectRatio(1f)
-                                            .clip(MaterialTheme.shapes.small)
-                                            .combinedClickable(
-                                                onClick = {
-                                                    onEvent(LibraryUiEvent.OnClick.Artist(it.id))
-                                                },
-                                                onLongClick = {
-                                                    onEvent(
-                                                        LibraryUiEvent.OnItemLongClick(
-                                                            id = it.id,
-                                                            type = LibraryBottomSheetLongClickType.ARTIST
+                                            .height(100.dp)
+                                    ) {
+                                        LibraryAlbumList(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .clip(MaterialTheme.shapes.small)
+                                                .combinedClickable(
+                                                    onClick = {
+                                                        onEvent(LibraryUiEvent.OnClick.Album(it.id))
+                                                    },
+                                                    onLongClick = {
+                                                        onEvent(
+                                                            LibraryUiEvent.OnItemLongClick(
+                                                                id = it.id,
+                                                                type = LibraryBottomSheetLongClickType.ALBUM
+                                                            )
                                                         )
-                                                    )
 
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                }
-                                            ),
-                                        artist = it.toUiArtist(),
-                                        header = state.header,
-                                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                        maxLine = 2
-                                    )
-                                }
-
-                                PinnedType.ALBUM -> {
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
+                                                    }
+                                                ),
+                                            header = state.header,
+                                            album = it
+                                        )
+                                    }
+                                },
+                                gridContent = {
                                     LibraryAlbumGrid(
                                         modifier = Modifier
                                             .aspectRatio(1f)
@@ -359,302 +609,89 @@ private fun LibraryScreen(
                                                 }
                                             ),
                                         header = state.header,
-                                        album = it.toUiAlbum()
+                                        album = it
                                     )
                                 }
-                            }
-                        }
-                    )
+                            )
 
-                    if (state.data.isFevPinned) item(span = { GridItemSpan(state.gridSize) }) {
-                        FavouriteCard(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .combinedClickable(
-                                    onClick = {
-                                        onEvent(LibraryUiEvent.OnClick.Favourite)
-                                    },
-                                    onLongClick = {
-                                        onEvent(
-                                            LibraryUiEvent.OnItemLongClick(
-                                                id = -1,
-                                                type = LibraryBottomSheetLongClickType.FAVOURITE
-                                            )
+                        if (state.filterType == LibraryFilterType.ALL ||
+                            state.filterType == LibraryFilterType.ARTIST &&
+                            state.data.artist.isNotEmpty()
+                        ) if (state.data.artist.isNotEmpty())
+                            itemSection(
+                                gridSize = state.gridSize,
+                                type = state.viewType,
+                                data = state.data.artist,
+                                header = R.string.artist,
+                                onHeaderClick = {
+                                    onEvent(LibraryUiEvent.OnClick.ArtistHeader)
+                                },
+                                listContent = {
+                                    Row(
+                                        modifier = Modifier
+                                            .height(160.dp)
+                                    ) {
+                                        SuggestedArtistCard(
+                                            modifier = Modifier
+                                                .aspectRatio(1f)
+                                                .clip(MaterialTheme.shapes.small)
+                                                .combinedClickable(
+                                                    onClick = {
+                                                        onEvent(LibraryUiEvent.OnClick.Artist(it.id))
+                                                    },
+                                                    onLongClick = {
+                                                        onEvent(
+                                                            LibraryUiEvent.OnItemLongClick(
+                                                                id = it.id,
+                                                                type = LibraryBottomSheetLongClickType.ARTIST
+                                                            )
+                                                        )
+
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
+                                                    }
+                                                ),
+                                            artist = it,
+                                            header = state.header,
+                                            fontSize = MaterialTheme.typography.titleMedium.fontSize
                                         )
-
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     }
-                                )
-                        )
-                    }
+                                },
+                                gridContent = {
+                                    SuggestedArtistCard(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .clip(MaterialTheme.shapes.small)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    onEvent(LibraryUiEvent.OnClick.Artist(it.id))
+                                                },
+                                                onLongClick = {
+                                                    onEvent(
+                                                        LibraryUiEvent.OnItemLongClick(
+                                                            id = it.id,
+                                                            type = LibraryBottomSheetLongClickType.ARTIST
+                                                        )
+                                                    )
 
-                    item(
-                        span = { GridItemSpan(state.gridSize) }
-                    ) {
-                        HorizontalDivider(
-                            thickness = 2.0.dp
-                        )
-                    }
-                }
-
-                if (state.filterType == LibraryFilterType.ALL &&
-                    state.data.isFavouriteEntry
-                ) {
-                    fixedItem(state.gridSize) {
-                        when (state.viewType) {
-                            LibraryViewType.LIST -> FavouriteCard(
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(LibraryUiEvent.OnClick.Favourite)
-                                        },
-                                        onLongClick = {
-                                            onEvent(
-                                                LibraryUiEvent.OnItemLongClick(
-                                                    id = -1,
-                                                    type = LibraryBottomSheetLongClickType.FAVOURITE
-                                                )
-                                            )
-
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    ),
-                            )
-
-                            LibraryViewType.GRID -> FavouriteCard(
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(LibraryUiEvent.OnClick.Favourite)
-                                        },
-                                        onLongClick = {
-                                            onEvent(
-                                                LibraryUiEvent.OnItemLongClick(
-                                                    id = -1,
-                                                    type = LibraryBottomSheetLongClickType.FAVOURITE
-                                                )
-                                            )
-
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                }
+                                            ),
+                                        artist = it,
+                                        header = state.header,
+                                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                        maxLine = 2
                                     )
+                                }
                             )
+
+                        item(
+                            span = { GridItemSpan(state.gridSize) }
+                        ) {
+                            Spacer(modifier = Modifier.height(56.dp))
                         }
                     }
-                }
-
-                if (state.filterType == LibraryFilterType.ALL ||
-                    state.filterType == LibraryFilterType.PLAYLIST &&
-                    state.data.playlist.isNotEmpty()
-                ) if (state.data.playlist.isNotEmpty())
-                    itemSection(
-                        gridSize = state.gridSize,
-                        type = state.viewType,
-                        data = state.data.playlist,
-                        header = R.string.playlist,
-                        onHeaderClick = {
-                            onEvent(LibraryUiEvent.OnClick.PlaylistHeader)
-                        },
-                        listContent = {
-                            Row(
-                                modifier = Modifier
-                                    .height(100.dp)
-                            ) {
-                                LibraryPlaylistList(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(MaterialTheme.shapes.small)
-                                        .combinedClickable(
-                                            onClick = {
-                                                onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
-                                            },
-                                            onLongClick = {
-                                                onEvent(
-                                                    LibraryUiEvent.OnItemLongClick(
-                                                        id = it.id,
-                                                        type = LibraryBottomSheetLongClickType.PLAYLIST
-                                                    )
-                                                )
-
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            }
-                                        ),
-                                    urls = it.urls,
-                                    name = it.name,
-                                    header = state.header,
-                                )
-                            }
-                        },
-                        gridContent = {
-                            LibraryPlaylistGird(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
-                                        },
-                                        onLongClick = {
-                                            onEvent(
-                                                LibraryUiEvent.OnItemLongClick(
-                                                    id = it.id,
-                                                    type = LibraryBottomSheetLongClickType.PLAYLIST
-                                                )
-                                            )
-
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    ),
-                                urls = it.urls,
-                                name = it.name,
-                                header = state.header,
-                            )
-                        }
-                    )
-
-
-                if (state.filterType == LibraryFilterType.ALL ||
-                    state.filterType == LibraryFilterType.ALBUM
-                ) if (state.data.album.isNotEmpty())
-                    itemSection(
-                        gridSize = state.gridSize,
-                        type = state.viewType,
-                        data = state.data.album,
-                        header = R.string.album,
-                        onHeaderClick = {
-                            onEvent(LibraryUiEvent.OnClick.AlbumHeader)
-                        },
-                        listContent = {
-                            Row(
-                                modifier = Modifier
-                                    .height(100.dp)
-                            ) {
-                                LibraryAlbumList(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(MaterialTheme.shapes.small)
-                                        .combinedClickable(
-                                            onClick = {
-                                                onEvent(LibraryUiEvent.OnClick.Album(it.id))
-                                            },
-                                            onLongClick = {
-                                                onEvent(
-                                                    LibraryUiEvent.OnItemLongClick(
-                                                        id = it.id,
-                                                        type = LibraryBottomSheetLongClickType.ALBUM
-                                                    )
-                                                )
-
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            }
-                                        ),
-                                    header = state.header,
-                                    album = it
-                                )
-                            }
-                        },
-                        gridContent = {
-                            LibraryAlbumGrid(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(LibraryUiEvent.OnClick.Album(it.id))
-                                        },
-                                        onLongClick = {
-                                            onEvent(
-                                                LibraryUiEvent.OnItemLongClick(
-                                                    id = it.id,
-                                                    type = LibraryBottomSheetLongClickType.ALBUM
-                                                )
-                                            )
-
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    ),
-                                header = state.header,
-                                album = it
-                            )
-                        }
-                    )
-
-                if (state.filterType == LibraryFilterType.ALL ||
-                    state.filterType == LibraryFilterType.ARTIST &&
-                    state.data.artist.isNotEmpty()
-                ) if (state.data.artist.isNotEmpty())
-                    itemSection(
-                        gridSize = state.gridSize,
-                        type = state.viewType,
-                        data = state.data.artist,
-                        header = R.string.artist,
-                        onHeaderClick = {
-                            onEvent(LibraryUiEvent.OnClick.ArtistHeader)
-                        },
-                        listContent = {
-                            Row(
-                                modifier = Modifier
-                                    .height(160.dp)
-                            ) {
-                                SuggestedArtistCard(
-                                    modifier = Modifier
-                                        .aspectRatio(1f)
-                                        .clip(MaterialTheme.shapes.small)
-                                        .combinedClickable(
-                                            onClick = {
-                                                onEvent(LibraryUiEvent.OnClick.Artist(it.id))
-                                            },
-                                            onLongClick = {
-                                                onEvent(
-                                                    LibraryUiEvent.OnItemLongClick(
-                                                        id = it.id,
-                                                        type = LibraryBottomSheetLongClickType.ARTIST
-                                                    )
-                                                )
-
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            }
-                                        ),
-                                    artist = it,
-                                    header = state.header,
-                                    fontSize = MaterialTheme.typography.titleMedium.fontSize
-                                )
-                            }
-                        },
-                        gridContent = {
-                            SuggestedArtistCard(
-                                modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .clip(MaterialTheme.shapes.small)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(LibraryUiEvent.OnClick.Artist(it.id))
-                                        },
-                                        onLongClick = {
-                                            onEvent(
-                                                LibraryUiEvent.OnItemLongClick(
-                                                    id = it.id,
-                                                    type = LibraryBottomSheetLongClickType.ARTIST
-                                                )
-                                            )
-
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    ),
-                                artist = it,
-                                header = state.header,
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                maxLine = 2
-                            )
-                        }
-                    )
-
-                item(
-                    span = { GridItemSpan(state.gridSize) }
-                ) {
-                    Spacer(modifier = Modifier.height(56.dp))
                 }
             }
         }

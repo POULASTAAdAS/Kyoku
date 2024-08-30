@@ -8,7 +8,6 @@ import com.poulastaa.play.presentation.view.components.ViewDataType
 data class RootDrawerUiState(
     val saveScreen: SaveScreen = SaveScreen.HOME,
     val startDestination: String = DrawerScreen.Home.route,
-    val isScreenLoaded: Boolean = false,
 
     val username: String = "User",
     val profilePicUrl: String = "",

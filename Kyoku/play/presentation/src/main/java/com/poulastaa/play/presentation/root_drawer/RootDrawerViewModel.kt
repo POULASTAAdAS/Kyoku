@@ -45,7 +45,6 @@ class RootDrawerViewModel @Inject constructor(
             state = state.copy(
                 saveScreen = savedScreen.toSaveScreen(),
                 startDestination = savedScreen.toDrawerScreen().route,
-                isScreenLoaded = true,
                 username = user.name,
                 profilePicUrl = user.profilePic
             )
