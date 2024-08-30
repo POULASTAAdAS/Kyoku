@@ -36,7 +36,6 @@ val CompactMediumDimens = Dimens( // default
 
 
 val CompactDimens = Dimens(
-    // todo not tested
     small1 = 4.dp,
     small2 = 6.dp,
     small3 = 8.dp,

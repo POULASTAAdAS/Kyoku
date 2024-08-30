@@ -1,6 +1,7 @@
 package com.poulastaa.play.data.work
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.poulastaa.core.domain.repository.work.WorkRepository
@@ -9,6 +10,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 
+@HiltWorker
 class UpdatePlaylistWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,

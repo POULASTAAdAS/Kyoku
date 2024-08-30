@@ -1,7 +1,6 @@
 package com.poulastaa.play.data.work
 
 import android.content.Context
-import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.NetworkType
@@ -44,8 +43,6 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .isNotEmpty()
         }
 
-        Log.d("called", "isSyncScheduled : $isSyncScheduled") // todo delete
-
         if (isSyncScheduled) return
 
         val workReq = PeriodicWorkRequestBuilder<UpdateAlbumsWorker>(
@@ -55,12 +52,15 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.EXPONENTIAL,
-            backoffDelay = 2000L,
+            backoffPolicy = BackoffPolicy.LINEAR,
+            backoffDelay = 5000L,
             timeUnit = TimeUnit.MILLISECONDS
-        ).setInitialDelay(
+        )/*.setInitialDelay( // todo change
             duration = 30,
             timeUnit = TimeUnit.MINUTES
+        )*/.setInitialDelay(
+            duration = 5,
+            timeUnit = TimeUnit.SECONDS
         ).addTag(WorkType.ALBUM_SYNC.name)
             .build()
 
@@ -83,14 +83,17 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.EXPONENTIAL,
-            backoffDelay = 2000L,
+            backoffPolicy = BackoffPolicy.LINEAR,
+            backoffDelay = 5000L,
             timeUnit = TimeUnit.MILLISECONDS
-        ).setInitialDelay(
+        )/*.setInitialDelay( // todo change
             duration = 30,
             timeUnit = TimeUnit.MINUTES
-        )
-            .addTag(WorkType.PLAYLIST_SYNC.name)
+        )*/
+            .setInitialDelay(
+                duration = 5,
+                timeUnit = TimeUnit.SECONDS
+            ).addTag(WorkType.PLAYLIST_SYNC.name)
             .build()
 
 
@@ -115,14 +118,18 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.EXPONENTIAL,
-            backoffDelay = 2000L,
+            backoffPolicy = BackoffPolicy.LINEAR, // todo change
+            backoffDelay = 5000L,
             timeUnit = TimeUnit.MILLISECONDS
-        ).setInitialDelay(
+        )/*.setInitialDelay( // todo change
             duration = 30,
             timeUnit = TimeUnit.MINUTES
-        )
-            .addTag(WorkType.ARTIST_SYNC.name)
+        )*/
+
+            .setInitialDelay(
+                duration = 5,
+                timeUnit = TimeUnit.SECONDS
+            ).addTag(WorkType.ARTIST_SYNC.name)
             .build()
 
 

@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.CommonDao
+import com.poulastaa.core.database.dao.WorkDao
+import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
+import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,8 +23,8 @@ object DatabaseAppModule {
         @ApplicationContext context: Context,
     ): KyokuDatabase = Room.databaseBuilder(
         context = context,
-        KyokuDatabase::class.java,
-        "KyokuDatabase"
+        klass = KyokuDatabase::class.java,
+        name = "KyokuDatabase"
     ).fallbackToDestructiveMigration()
         .build()
 
@@ -30,4 +33,20 @@ object DatabaseAppModule {
     fun provideCommonDao(
         database: KyokuDatabase,
     ): CommonDao = database.commonDao
+
+    @Provides
+    @Singleton
+    fun provideWorkDao(
+        database: KyokuDatabase,
+    ): WorkDao = database.workDao
+
+    @Provides
+    @Singleton
+    fun provideLocalWorkDatasource(
+        commonDao: CommonDao,
+        workDao: WorkDao
+    ): LocalWorkDatasource = RoomLocalWorkDatasource(
+        commonDao = commonDao,
+        workDao = workDao
+    )
 }

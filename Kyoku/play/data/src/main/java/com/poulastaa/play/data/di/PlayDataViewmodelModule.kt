@@ -46,10 +46,11 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object PlayDataModule {
+object PlayDataViewmodelModule {
     @Provides
     @ViewModelScoped
     fun provideHomeRepository(
@@ -147,27 +148,5 @@ object PlayDataModule {
         local = local,
         remote = remote,
         application = applicationScope
-    )
-
-    @Provides
-    @ViewModelScoped
-    fun provideOnlineWorkRepository(
-        local: LocalWorkDatasource,
-        remote: RemoteWorkDatasource,
-        applicationScope: CoroutineScope,
-    ): WorkRepository = OnlineWorkRepository(
-        local = local,
-        remote = remote,
-        applicationScope = applicationScope
-    )
-
-    @Provides
-    @ViewModelScoped
-    fun provideSyncLibraryWorkerScheduler(
-        @ApplicationContext context: Context,
-        applicationScope: CoroutineScope
-    ): SyncLibraryScheduler = SyncLibraryWorkerScheduler(
-        context = context,
-        applicationScope = applicationScope
     )
 }

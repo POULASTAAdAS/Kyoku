@@ -9,7 +9,6 @@ import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.dao.ViewDao
-import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.repository.RoomLocalAddPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAddToPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAuthDatasource
@@ -21,7 +20,6 @@ import com.poulastaa.core.database.repository.RoomLocalSpotifyDataSource
 import com.poulastaa.core.database.repository.RoomLocalStoreArtistDataSource
 import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewDatasource
-import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
@@ -33,12 +31,12 @@ import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
-import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -159,12 +157,6 @@ object DatabaseViewModelModule {
 
     @Provides
     @ViewModelScoped
-    fun provideViewDao(
-        database: KyokuDatabase,
-    ): ViewDao = database.viewDao
-
-    @Provides
-    @ViewModelScoped
     fun provideLocalViewDatasource(
         commonDao: CommonDao,
         viewDao: ViewDao
@@ -191,17 +183,7 @@ object DatabaseViewModelModule {
 
     @Provides
     @ViewModelScoped
-    fun provideWorkDao(
+    fun provideViewDao(
         database: KyokuDatabase,
-    ): WorkDao = database.workDao
-
-    @Provides
-    @ViewModelScoped
-    fun provideLocalWorkDatasource(
-        commonDao: CommonDao,
-        workDao: WorkDao
-    ): LocalWorkDatasource = RoomLocalWorkDatasource(
-        commonDao = commonDao,
-        workDao = workDao
-    )
+    ): ViewDao = database.viewDao
 }

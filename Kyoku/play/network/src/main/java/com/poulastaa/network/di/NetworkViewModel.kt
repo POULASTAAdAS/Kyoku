@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import okhttp3.OkHttpClient
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -121,15 +122,5 @@ object NetworkViewModel {
         gson = gson,
         pagerAlbum = pagerAlbum,
         pagerSong = pagerSong,
-    )
-
-    @Provides
-    @ViewModelScoped
-    fun provideWorkRemoteSource(
-        client: OkHttpClient,
-        gson: Gson,
-    ): RemoteWorkDatasource = OnlineFirstWorkDatasource(
-        client = client,
-        gson = gson
     )
 }

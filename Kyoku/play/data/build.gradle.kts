@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.pagingCommon)
     implementation(libs.androidx.work)
+    implementation(libs.hilt.work)
 
     implementation(projects.core.domain)
     implementation(projects.play.domain)

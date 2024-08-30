@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class RootDrawerViewModel @Inject constructor(
@@ -31,7 +31,7 @@ class RootDrawerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            syncScheduler.scheduleSync(30.minutes)
+            syncScheduler.scheduleSync(3.seconds) // todo change
         }
 
         viewModelScope.launch {
