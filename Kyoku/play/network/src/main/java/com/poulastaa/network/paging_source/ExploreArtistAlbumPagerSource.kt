@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.ArtistSingleData
-import com.poulastaa.core.domain.repository.explore_artist.ExploreArtistRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.NoInternetException
 import com.poulastaa.core.domain.utils.OtherRemoteException

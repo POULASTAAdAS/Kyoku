@@ -1,7 +1,7 @@
 package com.poulastaa.core.domain.repository.view
 
-import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result

@@ -31,7 +31,7 @@ class RootDrawerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            syncScheduler.scheduleSync(30.minutes) // todo change
+            syncScheduler.scheduleSync(30.minutes)
         }
 
         viewModelScope.launch {

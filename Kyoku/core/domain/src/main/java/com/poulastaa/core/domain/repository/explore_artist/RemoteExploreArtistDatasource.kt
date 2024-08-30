@@ -19,6 +19,6 @@ interface RemoteExploreArtistDatasource {
     suspend fun getArtistSong(artistId: Long): Flow<PagingData<ArtistSingleData>>
     suspend fun getArtistAlbum(artistId: Long): Flow<PagingData<ArtistSingleData>>
 
-    suspend fun saveAlbum(albumId: Long): Result<AlbumWithSong,DataError.Network>
+    suspend fun saveAlbum(albumId: Long): Result<AlbumWithSong, DataError.Network>
     suspend fun addSongToFavourite(songId: Long): Result<Song, DataError.Network>
 }

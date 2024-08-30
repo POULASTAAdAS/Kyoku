@@ -8,7 +8,6 @@ import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
-import com.poulastaa.core.domain.repository.work.RemoteWorkDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
@@ -16,7 +15,6 @@ import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
-import com.poulastaa.network.OnlineFirstWorkDatasource
 import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import dagger.Module
@@ -25,7 +23,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import okhttp3.OkHttpClient
-import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)

@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku
 
 import android.app.Application
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
@@ -18,7 +17,6 @@ class Kyoku : Application(), Configuration.Provider {
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
-            .setMinimumLoggingLevel(Log.INFO)
             .setWorkerFactory(workerFactory)
             .build()
 

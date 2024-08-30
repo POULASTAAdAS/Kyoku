@@ -1,10 +1,10 @@
 package com.poulastaa.core.domain.repository.view
 
-import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.model.ViewData
 
 interface LocalViewDatasource {
     suspend fun getPlaylistOnId(id: Long): ViewData

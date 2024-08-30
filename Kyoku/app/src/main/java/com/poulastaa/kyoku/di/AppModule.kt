@@ -2,13 +2,10 @@ package com.poulastaa.kyoku.di
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
 import com.google.gson.Gson
 import com.poulastaa.core.data.ConfigProviderRepositoryImpl
 import com.poulastaa.core.data.DataStoreRepositoryImpl

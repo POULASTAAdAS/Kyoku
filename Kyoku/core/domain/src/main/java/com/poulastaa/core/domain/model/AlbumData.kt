@@ -1,7 +1,5 @@
 package com.poulastaa.core.domain.model
 
-import com.poulastaa.core.domain.model.Song
-
 data class AlbumData(
     val id: Long = -1,
     val name: String = "",

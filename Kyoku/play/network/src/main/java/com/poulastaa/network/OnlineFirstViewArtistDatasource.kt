@@ -53,7 +53,7 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
         songId: Long
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.AddToFavourite.route,
-        params = listOf("songId" to songId.toString(),),
+        params = listOf("songId" to songId.toString()),
         gson = gson
     ).map {
         it.toSong()

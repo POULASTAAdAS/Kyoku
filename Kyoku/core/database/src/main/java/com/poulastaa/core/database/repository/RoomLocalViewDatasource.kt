@@ -1,6 +1,5 @@
 package com.poulastaa.core.database.repository
 
-import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.DayTypeSongEntity
@@ -17,6 +16,7 @@ import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope

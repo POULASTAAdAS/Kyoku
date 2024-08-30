@@ -1,6 +1,5 @@
 package com.poulastaa.play.data
 
-import android.util.Log
 import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
 import com.poulastaa.core.domain.repository.work.RemoteWorkDatasource
 import com.poulastaa.core.domain.repository.work.WorkRepository
