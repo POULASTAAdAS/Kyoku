@@ -5,6 +5,7 @@ import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.await
 import com.poulastaa.play.domain.SyncLibraryScheduler
@@ -40,8 +41,13 @@ class SyncLibraryWorkerScheduler @Inject constructor(
         val isSyncScheduled = withContext(Dispatchers.IO) {
             workManager.getWorkInfosByTag(WorkType.ALBUM_SYNC.name)
                 .get()
-                .isNotEmpty()
+                .any {
+                    it.state == WorkInfo.State.ENQUEUED ||
+                            it.state == WorkInfo.State.RUNNING ||
+                            it.state == WorkInfo.State.SUCCEEDED
+                }
         }
+
 
         if (isSyncScheduled) return
 
@@ -52,15 +58,12 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.LINEAR,
-            backoffDelay = 5000L,
-            timeUnit = TimeUnit.MILLISECONDS
-        )/*.setInitialDelay( // todo change
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 2000L,
+            timeUnit = TimeUnit.SECONDS
+        ).setInitialDelay(
             duration = 30,
             timeUnit = TimeUnit.MINUTES
-        )*/.setInitialDelay(
-            duration = 5,
-            timeUnit = TimeUnit.SECONDS
         ).addTag(WorkType.ALBUM_SYNC.name)
             .build()
 
@@ -71,7 +74,11 @@ class SyncLibraryWorkerScheduler @Inject constructor(
         val isSyncScheduled = withContext(Dispatchers.IO) {
             workManager.getWorkInfosByTag(WorkType.PLAYLIST_SYNC.name)
                 .get()
-                .isNotEmpty()
+                .any {
+                    it.state == WorkInfo.State.ENQUEUED ||
+                            it.state == WorkInfo.State.RUNNING ||
+                            it.state == WorkInfo.State.SUCCEEDED
+                }
         }
 
         if (isSyncScheduled) return
@@ -83,17 +90,13 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.LINEAR,
-            backoffDelay = 5000L,
-            timeUnit = TimeUnit.MILLISECONDS
-        )/*.setInitialDelay( // todo change
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 2000L,
+            timeUnit = TimeUnit.SECONDS
+        ).setInitialDelay(
             duration = 30,
             timeUnit = TimeUnit.MINUTES
-        )*/
-            .setInitialDelay(
-                duration = 5,
-                timeUnit = TimeUnit.SECONDS
-            ).addTag(WorkType.PLAYLIST_SYNC.name)
+        ).addTag(WorkType.PLAYLIST_SYNC.name)
             .build()
 
 
@@ -106,7 +109,11 @@ class SyncLibraryWorkerScheduler @Inject constructor(
         val isSyncScheduled = withContext(Dispatchers.IO) {
             workManager.getWorkInfosByTag(WorkType.ARTIST_SYNC.name)
                 .get()
-                .isNotEmpty()
+                .any {
+                    it.state == WorkInfo.State.ENQUEUED ||
+                            it.state == WorkInfo.State.RUNNING ||
+                            it.state == WorkInfo.State.SUCCEEDED
+                }
         }
 
         if (isSyncScheduled) return
@@ -118,18 +125,13 @@ class SyncLibraryWorkerScheduler @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.LINEAR, // todo change
-            backoffDelay = 5000L,
-            timeUnit = TimeUnit.MILLISECONDS
-        )/*.setInitialDelay( // todo change
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 2000L,
+            timeUnit = TimeUnit.SECONDS
+        ).setInitialDelay(
             duration = 30,
             timeUnit = TimeUnit.MINUTES
-        )*/
-
-            .setInitialDelay(
-                duration = 5,
-                timeUnit = TimeUnit.SECONDS
-            ).addTag(WorkType.ARTIST_SYNC.name)
+        ).addTag(WorkType.ARTIST_SYNC.name)
             .build()
 
 
@@ -139,9 +141,22 @@ class SyncLibraryWorkerScheduler @Inject constructor(
     }
 
     override suspend fun cancelAllSyncs() {
-        WorkManager.getInstance(context)
-            .cancelAllWork()
-            .await()
+        applicationScope.launch {
+            val remove = async {
+                WorkManager.getInstance(context)
+                    .cancelAllWork()
+                    .await()
+            }
+
+            val prune = async {
+                WorkManager.getInstance(context)
+                    .pruneWork()
+                    .await()
+            }
+
+            remove.await()
+            prune.await()
+        }
     }
 
     private enum class WorkType {

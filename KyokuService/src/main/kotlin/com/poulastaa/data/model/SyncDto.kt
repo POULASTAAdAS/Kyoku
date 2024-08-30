@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SyncDto<T>(
-    val removeIdList: List<Long>,
-    val newAlbumList: List<T>,
+    val removeIdList: List<Long> = emptyList(),
+    val newAlbumList: List<T> = emptyList(),
 )

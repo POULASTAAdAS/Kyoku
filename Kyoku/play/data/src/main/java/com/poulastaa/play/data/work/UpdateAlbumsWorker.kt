@@ -17,7 +17,9 @@ class UpdateAlbumsWorker @AssistedInject constructor(
     private val work: WorkRepository
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
-        if (runAttemptCount >= 5) return Result.failure()
+        Log.d("attempt", "UpdateAlbumsWorker: $runAttemptCount")
+
+        if (runAttemptCount >= 2) return Result.failure()
 
         return when (val result = work.getUpdatedAlbums()) {
             is com.poulastaa.core.domain.utils.Result.Error -> result.error.toWorkResult()

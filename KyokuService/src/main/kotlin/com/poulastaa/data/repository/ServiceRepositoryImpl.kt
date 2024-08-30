@@ -636,4 +636,13 @@ class ServiceRepositoryImpl(
         userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
         return kyokuRepo.getArtistAlbumPagingData(artistId, page, size)
     }
+
+    override suspend fun <T> getSyncData(
+        req: UpdateSavedDataReq,
+        payload: ReqUserPayload,
+    ): SyncDto<T> {
+        val user = userRepo.getUserOnPayload(payload) ?: return SyncDto()
+
+
+    }
 }
