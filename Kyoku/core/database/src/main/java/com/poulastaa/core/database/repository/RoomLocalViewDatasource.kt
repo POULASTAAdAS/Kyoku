@@ -1,6 +1,6 @@
 package com.poulastaa.core.database.repository
 
-import com.poulastaa.core.ViewData
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.DayTypeSongEntity

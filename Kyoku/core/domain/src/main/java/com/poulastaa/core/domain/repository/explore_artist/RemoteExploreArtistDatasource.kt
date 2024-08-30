@@ -1,7 +1,6 @@
 package com.poulastaa.core.domain.repository.explore_artist
 
 import androidx.paging.PagingData
-import com.poulastaa.core.domain.AlbumData
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.ArtistSingleData

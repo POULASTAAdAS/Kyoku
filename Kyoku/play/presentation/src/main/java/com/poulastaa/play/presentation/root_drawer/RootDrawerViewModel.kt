@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.domain.SyncLibraryScheduler
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,15 +19,21 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 
 @HiltViewModel
 class RootDrawerViewModel @Inject constructor(
     private val ds: DataStoreRepository,
+    private val syncScheduler: SyncLibraryScheduler
 ) : ViewModel() {
     var state by mutableStateOf(RootDrawerUiState())
         private set
 
     init {
+        viewModelScope.launch {
+            syncScheduler.scheduleSync(30.minutes)
+        }
+
         viewModelScope.launch {
             val savedScreenStringDef = async {
                 ds.readSaveScreen().first()

@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain
 
+import com.poulastaa.core.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface DataStoreRepository {

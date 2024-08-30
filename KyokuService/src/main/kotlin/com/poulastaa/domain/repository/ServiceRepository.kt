@@ -66,7 +66,7 @@ interface ServiceRepository {
     ): ArtistDto
 
     suspend fun removeArtist(
-        id: Long,
+        artistId: Long,
         userPayload: ReqUserPayload,
     ): Boolean
 
@@ -143,4 +143,9 @@ interface ServiceRepository {
         size: Int,
         payload: ReqUserPayload,
     ): ArtistPagerDataDto
+
+    suspend fun <T> getSyncData(
+        req: UpdateSavedDataReq,
+        payload: ReqUserPayload,
+    ): SyncDto<T>
 }

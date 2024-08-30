@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain
+package com.poulastaa.core.domain.model
 
 import com.poulastaa.core.domain.model.Song
 

@@ -22,8 +22,8 @@ import com.poulastaa.core.domain.utils.map
 import com.poulastaa.network.mapper.toAlbumWithSong
 import com.poulastaa.network.mapper.toArtist
 import com.poulastaa.network.mapper.toSong
-import com.poulastaa.paging_source.ExploreArtistAlbumPagerSource
-import com.poulastaa.paging_source.ExploreArtistSongPagerSource
+import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
+import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import javax.inject.Inject

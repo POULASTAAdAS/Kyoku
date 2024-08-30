@@ -164,15 +164,13 @@ JOIN album ON album.id = artistalbumrelation.albumId
 JOIN songalbumrelation ON songalbumrelation.albumId = album.id
 JOIN song ON song.id = songalbumrelation.songId
 WHERE artistalbumrelation.artistId = 2967
-GROUP BY album.id, album.name
+GROUP BY album.id
 ORDER BY year DESC;
 
 
 
 
-
-
-
+select * from userartistrelation;
 
 
 

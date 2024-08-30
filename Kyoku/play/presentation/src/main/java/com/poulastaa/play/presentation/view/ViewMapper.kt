@@ -1,6 +1,6 @@
 package com.poulastaa.play.presentation.view
 
-import com.poulastaa.core.ViewData
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.presentation.ui.model.ViewUiSong
 

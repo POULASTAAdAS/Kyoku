@@ -1,4 +1,4 @@
-package com.poulastaa.paging_source
+package com.poulastaa.network.paging_source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

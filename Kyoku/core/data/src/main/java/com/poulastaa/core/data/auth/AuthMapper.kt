@@ -1,7 +1,7 @@
 package com.poulastaa.core.data.auth
 
 import com.poulastaa.core.data.auth.model.UserSerializable
-import com.poulastaa.core.domain.User
+import com.poulastaa.core.domain.model.User
 
 fun User.toUserSerializable() = UserSerializable(
     name = this.name,

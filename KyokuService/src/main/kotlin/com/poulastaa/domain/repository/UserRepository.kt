@@ -63,8 +63,8 @@ interface UserRepository {
     ): ArtistDto
 
     suspend fun removeArtist(
-        id: Long,
-        email: String,
+        artistId: Long,
+        userId: Long,
         userType: UserType,
     ): Boolean
 

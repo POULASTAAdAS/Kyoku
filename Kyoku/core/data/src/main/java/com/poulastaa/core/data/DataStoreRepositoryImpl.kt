@@ -11,7 +11,7 @@ import com.poulastaa.core.data.auth.toUser
 import com.poulastaa.core.data.auth.toUserSerializable
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ScreenEnum
-import com.poulastaa.core.domain.User
+import com.poulastaa.core.domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

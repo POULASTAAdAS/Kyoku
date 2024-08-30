@@ -291,10 +291,14 @@ class ServiceRepositoryImpl(
         return userRepo.addArtist(artistId, user.email, user.userType)
     }
 
-    override suspend fun removeArtist(id: Long, userPayload: ReqUserPayload): Boolean {
+    override suspend fun removeArtist(artistId: Long, userPayload: ReqUserPayload): Boolean {
         val user = userRepo.getUserOnPayload(userPayload) ?: return false
 
-        return userRepo.removeFromFavourite(id, email = user.email, userType = user.userType)
+        return userRepo.removeArtist(
+            artistId = artistId,
+            userId = user.id,
+            userType = user.userType
+        )
     }
 
     override suspend fun addAlbum(albumId: Long, payload: ReqUserPayload): AlbumWithSongDto {
@@ -629,7 +633,7 @@ class ServiceRepositoryImpl(
         size: Int,
         payload: ReqUserPayload,
     ): ArtistPagerDataDto {
-          userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
+        userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
         return kyokuRepo.getArtistAlbumPagingData(artistId, page, size)
     }
 }

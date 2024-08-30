@@ -1,6 +1,4 @@
-package com.poulastaa.core
-
-import com.poulastaa.core.domain.model.PlaylistSong
+package com.poulastaa.core.domain.model
 
 data class ViewData(
     val id: Long = -1,

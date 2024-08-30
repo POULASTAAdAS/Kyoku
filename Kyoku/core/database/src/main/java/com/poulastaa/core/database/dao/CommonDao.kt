@@ -88,6 +88,7 @@ interface CommonDao {
     @Query("delete from AlbumEntity where id = :id")
     suspend fun deleteAlbum(id: Long)
 
+
     @Query(" select `primary`, background, onBackground from SongEntity  where id = :songId ")
     suspend fun getSongColorInfo(songId: Long): SongColorResult
 
@@ -140,4 +141,5 @@ interface CommonDao {
 
     @Query("select id from FavouriteEntity where id = :id")
     suspend fun isSongInFavourite(id: Long): Long?
+
 }

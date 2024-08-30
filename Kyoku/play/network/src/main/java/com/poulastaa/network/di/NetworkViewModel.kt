@@ -8,6 +8,7 @@ import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
+import com.poulastaa.core.domain.repository.work.RemoteWorkDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
@@ -15,8 +16,9 @@ import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
-import com.poulastaa.paging_source.ExploreArtistAlbumPagerSource
-import com.poulastaa.paging_source.ExploreArtistSongPagerSource
+import com.poulastaa.network.OnlineFirstWorkDatasource
+import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
+import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -119,5 +121,15 @@ object NetworkViewModel {
         gson = gson,
         pagerAlbum = pagerAlbum,
         pagerSong = pagerSong,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideWorkRemoteSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteWorkDatasource = OnlineFirstWorkDatasource(
+        client = client,
+        gson = gson
     )
 }

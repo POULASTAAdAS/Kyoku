@@ -344,8 +344,8 @@ class UserDatabaseRepository(
     }
 
     override suspend fun removeArtist(
-        id: Long,
-        email: String,
+        artistId: Long,
+        userId: Long,
         userType: UserType,
     ): Boolean = query {
         UserArtistRelationTable.deleteWhere {

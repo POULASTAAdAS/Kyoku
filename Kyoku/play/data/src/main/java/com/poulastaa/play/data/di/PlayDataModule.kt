@@ -1,5 +1,6 @@
 package com.poulastaa.play.data.di
 
+import android.content.Context
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.repository.add_playlist.AddPlaylistRepository
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
@@ -24,18 +25,25 @@ import com.poulastaa.core.domain.repository.view.ViewRepository
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.core.domain.repository.view_artist.ViewArtistRepository
-import com.poulastaa.play.OnlineFirstExploreArtistDatasource
+import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
+import com.poulastaa.core.domain.repository.work.RemoteWorkDatasource
+import com.poulastaa.core.domain.repository.work.WorkRepository
 import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OfflineFirstViewRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstAddToPlaylistRepository
+import com.poulastaa.play.data.OnlineFirstExploreArtistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
 import com.poulastaa.play.data.OnlineFirstViewArtistRepository
+import com.poulastaa.play.data.OnlineWorkRepository
+import com.poulastaa.play.data.work.SyncLibraryWorkerScheduler
+import com.poulastaa.play.domain.SyncLibraryScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 
@@ -135,9 +143,31 @@ object PlayDataModule {
         local: LocalExploreArtistDatasource,
         remote: RemoteExploreArtistDatasource,
         applicationScope: CoroutineScope,
-    ): ExploreArtistRepository = OnlineFirstExploreArtistDatasource(
+    ): ExploreArtistRepository = OnlineFirstExploreArtistRepository(
         local = local,
         remote = remote,
         application = applicationScope
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideOnlineWorkRepository(
+        local: LocalWorkDatasource,
+        remote: RemoteWorkDatasource,
+        applicationScope: CoroutineScope,
+    ): WorkRepository = OnlineWorkRepository(
+        local = local,
+        remote = remote,
+        applicationScope = applicationScope
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSyncLibraryWorkerScheduler(
+        @ApplicationContext context: Context,
+        applicationScope: CoroutineScope
+    ): SyncLibraryScheduler = SyncLibraryWorkerScheduler(
+        context = context,
+        applicationScope = applicationScope
     )
 }

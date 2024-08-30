@@ -756,7 +756,7 @@ private fun Preview() {
                 )
             ),
             profileUrl = "",
-            onProfileClick = { /*TODO*/ }
+            onProfileClick = { }
         ) {
 
         }

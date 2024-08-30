@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
     implementation(libs.pagingCommon)
+    implementation(libs.androidx.work)
 
     implementation(projects.core.domain)
     implementation(projects.play.domain)

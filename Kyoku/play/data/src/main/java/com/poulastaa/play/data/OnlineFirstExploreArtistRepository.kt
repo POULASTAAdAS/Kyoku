@@ -1,4 +1,4 @@
-package com.poulastaa.play
+package com.poulastaa.play.data
 
 import androidx.paging.PagingData
 import com.poulastaa.core.domain.model.Artist
@@ -15,7 +15,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class OnlineFirstExploreArtistDatasource @Inject constructor(
+class OnlineFirstExploreArtistRepository @Inject constructor(
     private val local: LocalExploreArtistDatasource,
     private val remote: RemoteExploreArtistDatasource,
     private val application: CoroutineScope,
