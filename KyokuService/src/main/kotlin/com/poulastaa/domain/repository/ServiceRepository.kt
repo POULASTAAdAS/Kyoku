@@ -148,4 +148,12 @@ interface ServiceRepository {
         req: UpdateSavedDataReq,
         payload: ReqUserPayload,
     ): SyncDto<Any>
+
+    suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingType,
+        payload: ReqUserPayload,
+    ): PagingAlbumResDto
 }

@@ -14,6 +14,8 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.SnackBarType
+import com.poulastaa.core.presentation.ui.SnackBarUiState
 import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
@@ -530,20 +532,20 @@ class LibraryViewModel @Inject constructor(
                 when (result.error) {
                     DataError.Network.NO_INTERNET -> {
                         showToastJob = showToast(
-                            LibraryUiToast(
+                            SnackBarUiState(
                                 isVisible = true,
                                 message = UiText.StringResource(R.string.error_no_internet),
-                                type = LibraryToastType.ERROR
+                                type = SnackBarType.ERROR
                             )
                         )
                     }
 
                     else -> {
                         showToastJob = showToast(
-                            LibraryUiToast(
+                            SnackBarUiState(
                                 isVisible = true,
                                 message = UiText.StringResource(R.string.error_something_went_wrong),
-                                type = LibraryToastType.ERROR
+                                type = SnackBarType.ERROR
                             )
                         )
                     }
@@ -552,17 +554,17 @@ class LibraryViewModel @Inject constructor(
 
             is Result.Success -> {
                 showToastJob = showToast(
-                    LibraryUiToast(
+                    SnackBarUiState(
                         isVisible = true,
                         message = UiText.StringResource(messageId),
-                        type = LibraryToastType.SUCCESS
+                        type = SnackBarType.SUCCESS
                     )
                 )
             }
         }
     }
 
-    private fun showToast(toast: LibraryUiToast) = viewModelScope.launch {
+    private fun showToast(toast: SnackBarUiState) = viewModelScope.launch {
         state = state.copy(
             toast = state.toast.copy(
                 message = toast.message,

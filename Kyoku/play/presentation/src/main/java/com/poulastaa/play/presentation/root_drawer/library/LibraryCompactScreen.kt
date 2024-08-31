@@ -53,6 +53,7 @@ import com.poulastaa.core.domain.model.PinnedType
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.CustomSnackBar
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
@@ -66,7 +67,6 @@ import com.poulastaa.play.presentation.root_drawer.library.components.LibraryHea
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryItemBottomSheet
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPlaylistGird
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryPlaylistList
-import com.poulastaa.play.presentation.root_drawer.library.components.LibraryToast
 import com.poulastaa.play.presentation.root_drawer.library.components.LibraryTopAppbar
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryUiData
@@ -157,7 +157,7 @@ private fun LibraryScreen(
                 true -> Column(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
                 ) {
-                    LibraryToast(data = state.toast, internalPadding)
+                    CustomSnackBar(data = state.toast, internalPadding)
 
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(state.gridSize),
@@ -343,7 +343,11 @@ private fun LibraryScreen(
                                                     .clip(MaterialTheme.shapes.small)
                                                     .combinedClickable(
                                                         onClick = {
-                                                            onEvent(LibraryUiEvent.OnClick.Artist(pinnedUiData.id))
+                                                            onEvent(
+                                                                LibraryUiEvent.OnClick.Artist(
+                                                                    pinnedUiData.id
+                                                                )
+                                                            )
                                                         },
                                                         onLongClick = {
                                                             onEvent(
@@ -372,7 +376,11 @@ private fun LibraryScreen(
                                                     .clip(MaterialTheme.shapes.small)
                                                     .combinedClickable(
                                                         onClick = {
-                                                            onEvent(LibraryUiEvent.OnClick.Album(pinnedUiData.id))
+                                                            onEvent(
+                                                                LibraryUiEvent.OnClick.Album(
+                                                                    pinnedUiData.id
+                                                                )
+                                                            )
                                                         },
                                                         onLongClick = {
                                                             onEvent(
@@ -525,7 +533,11 @@ private fun LibraryScreen(
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-                                                    onEvent(LibraryUiEvent.OnClick.Playlist(prevPlaylist.id))
+                                                    onEvent(
+                                                        LibraryUiEvent.OnClick.Playlist(
+                                                            prevPlaylist.id
+                                                        )
+                                                    )
                                                 },
                                                 onLongClick = {
                                                     onEvent(
@@ -749,7 +761,6 @@ private fun LazyGridScope.fixedItem(
         content = content
     )
 }
-
 
 
 @Preview(

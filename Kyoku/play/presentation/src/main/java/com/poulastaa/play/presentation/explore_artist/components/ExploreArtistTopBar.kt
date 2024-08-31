@@ -62,7 +62,7 @@ fun ExploreArtistTopBar(
         },
         navigationIcon = {
             AppBackButton(
-                imageVector = CancelIcon,
+                icon = CancelIcon,
                 onClick = navigateBack
             )
         },

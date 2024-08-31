@@ -104,7 +104,7 @@ private fun AddAsPlaylistScreen(
 
         Box(modifier = Modifier.fillMaxWidth()) {
             AppBackButton(
-                imageVector = CancelIcon,
+                icon = CancelIcon,
                 onClick = navigateBack
             )
 

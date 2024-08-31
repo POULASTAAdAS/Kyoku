@@ -155,7 +155,7 @@ private fun Preview() {
                 song = ArtistUiSong(
                     title = "That Cool Title",
                     popularity = 100,
-                    isExpanded = true
+                    isExpanded = false
                 )
             ) {
 

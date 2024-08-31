@@ -7,10 +7,7 @@ import com.poulastaa.data.dao.SongDao
 import com.poulastaa.data.mappers.constructSongCoverImage
 import com.poulastaa.data.mappers.toArtistResult
 import com.poulastaa.data.mappers.toSongDto
-import com.poulastaa.data.model.ArtistPagerDataDto
-import com.poulastaa.data.model.ArtistSingleDataDto
-import com.poulastaa.data.model.SongDto
-import com.poulastaa.data.model.ViewArtistSongDto
+import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
@@ -342,6 +339,145 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 .let {
                     ArtistPagerDataDto(list = it)
                 }
+        }
+    }
+
+    override suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingType,
+    ): List<PagingAlbumDto> {
+        return coroutineScope {
+            when (type) {
+                AlbumPagingType.NAME -> {
+                    query {
+                        val fieldSet = AlbumTable.join(
+                            otherTable = SongAlbumRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                AlbumTable.id as Column<*> eq SongAlbumRelationTable.albumId
+                            }
+                        ).join(
+                            otherTable = SongTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongTable.id as Column<*> eq SongAlbumRelationTable.songId
+                            }
+                        ).slice(
+                            AlbumTable.id,
+                            AlbumTable.name,
+                            AlbumTable.points,
+                            SongTable.year,
+                            SongTable.coverImage
+                        )
+
+                        val valueSet = if (query.isEmpty()) fieldSet.selectAll()
+                        else fieldSet.select {
+                            AlbumTable.name like "$query%"
+                        }
+
+                        valueSet
+                            .orderBy(SongTable.year to SortOrder.DESC, AlbumTable.points to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                    }
+                }
+
+                AlbumPagingType.BY_YEAR -> {
+                    query {
+                        val fieldSet = AlbumTable.join(
+                            otherTable = SongAlbumRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.albumId eq AlbumTable.id as Column<*>
+                            }
+                        ).join(
+                            otherTable = SongTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.songId eq SongTable.id as Column<*>
+                            }
+                        ).slice(
+                            AlbumTable.id,
+                            AlbumTable.name,
+                            SongTable.coverImage,
+                            SongTable.year
+                        )
+
+                        val valueSet = if (query.isEmpty()) fieldSet.selectAll()
+                        else fieldSet.select {
+                            AlbumTable.name like "$query%"
+                        }
+
+                        valueSet.orderBy(SongTable.year to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                    }
+                }
+
+                AlbumPagingType.BY_POPULARITY -> {
+                    query {
+                        SongTable.join(
+                            otherTable = SongAlbumRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.songId eq SongTable.id as Column<*>
+                            }
+                        ).join(
+                            otherTable = AlbumTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.albumId eq AlbumTable.id as Column<*>
+                            }
+                        ).slice(
+                            AlbumTable.id,
+                            AlbumTable.name,
+                            SongTable.coverImage,
+                            SongTable.year,
+                            AlbumTable.points
+                        ).select {
+                            AlbumTable.name like "$query%"
+                        }.orderBy(AlbumTable.points to SortOrder.DESC, SongTable.year to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                    }
+                }
+            }.map { res ->
+                query {
+                    AlbumDto(
+                        id = res[AlbumTable.id].value,
+                        name = res[AlbumTable.name],
+                        coverImage = res[SongTable.coverImage].constructSongCoverImage(),
+                    ) to res[SongTable.year]
+                }
+            }.map { (album, year) ->
+                async {
+                    val artist = async { getArtistOnAlbumId(albumId = album.id) }
+
+                    PagingAlbumDto(
+                        id = album.id,
+                        name = album.name,
+                        coverImage = album.coverImage,
+                        artist = artist.await(),
+                        releaseYear = year.toString()
+                    )
+                }
+            }.awaitAll()
+        }
+    }
+
+    private suspend fun getArtistOnAlbumId(albumId: Long) = query {
+        ArtistAlbumRelationTable.select {
+            ArtistAlbumRelationTable.albumId eq albumId
+        }.map {
+            it[ArtistAlbumRelationTable.artistId]
+        }.let {
+            ArtistDao.find {
+                ArtistTable.id inList it
+            }.joinToString {
+                it.name
+            }
         }
     }
 }

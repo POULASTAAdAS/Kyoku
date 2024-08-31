@@ -1,4 +1,4 @@
-package com.poulastaa.play.presentation.root_drawer.library.components
+package com.poulastaa.core.presentation.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -34,14 +34,11 @@ import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.WarningIcon
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.UiText
-import com.poulastaa.play.presentation.root_drawer.library.LibraryToastType
-import com.poulastaa.play.presentation.root_drawer.library.LibraryUiToast
 import kotlinx.coroutines.delay
 
 @Composable
-fun LibraryToast(
-    data: LibraryUiToast,
+fun CustomSnackBar(
+    data: SnackBarUiState,
     paddingValues: PaddingValues
 ) {
     AnimatedVisibility(
@@ -56,9 +53,9 @@ fun LibraryToast(
                 .fillMaxWidth()
                 .background(
                     color = when (data.type) {
-                        LibraryToastType.ERROR -> MaterialTheme.colorScheme.error
-                        LibraryToastType.SUCCESS -> MaterialTheme.colorScheme.primary.copy(.8f)
-                        LibraryToastType.DEFAULT -> MaterialTheme.colorScheme.secondaryContainer
+                        SnackBarType.ERROR -> MaterialTheme.colorScheme.error
+                        SnackBarType.SUCCESS -> MaterialTheme.colorScheme.primary.copy(.8f)
+                        SnackBarType.DEFAULT -> MaterialTheme.colorScheme.secondaryContainer
                     }
                 )
                 .padding(top = paddingValues.calculateTopPadding())
@@ -67,7 +64,7 @@ fun LibraryToast(
             verticalAlignment = Alignment.CenterVertically
         ) {
             when (data.type) {
-                LibraryToastType.ERROR -> {
+                SnackBarType.ERROR -> {
                     Icon(
                         imageVector = WarningIcon,
                         contentDescription = null,
@@ -77,7 +74,7 @@ fun LibraryToast(
                     Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
                 }
 
-                LibraryToastType.SUCCESS -> {
+                SnackBarType.SUCCESS -> {
                     Icon(
                         imageVector = CheckIcon,
                         contentDescription = null,
@@ -91,16 +88,16 @@ fun LibraryToast(
                     Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
                 }
 
-                LibraryToastType.DEFAULT -> Unit
+                SnackBarType.DEFAULT -> Unit
             }
 
             Text(
                 text = data.message.asString(),
                 fontWeight = FontWeight.SemiBold,
                 color = when (data.type) {
-                    LibraryToastType.ERROR -> MaterialTheme.colorScheme.onError
-                    LibraryToastType.SUCCESS -> MaterialTheme.colorScheme.onSecondary
-                    LibraryToastType.DEFAULT -> MaterialTheme.colorScheme.onBackground
+                    SnackBarType.ERROR -> MaterialTheme.colorScheme.onError
+                    SnackBarType.SUCCESS -> MaterialTheme.colorScheme.onSecondary
+                    SnackBarType.DEFAULT -> MaterialTheme.colorScheme.onBackground
                 },
             )
         }
@@ -113,10 +110,10 @@ fun LibraryToast(
 private fun Preview1() {
     var data by remember {
         mutableStateOf(
-            LibraryUiToast(
+            SnackBarUiState(
                 isVisible = true,
                 message = UiText.DynamicString("Playlist is now pinned"),
-                type = LibraryToastType.ERROR
+                type = SnackBarType.ERROR
             )
         )
     }
@@ -133,7 +130,7 @@ private fun Preview1() {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            LibraryToast(data = data, PaddingValues())
+            CustomSnackBar(data = data, PaddingValues())
         }
     }
 }

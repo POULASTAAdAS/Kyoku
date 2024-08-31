@@ -65,6 +65,7 @@ import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SearchIcon
+import com.poulastaa.core.presentation.designsystem.components.DummySearch
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistUiEvent
@@ -328,7 +329,9 @@ fun LazyListScope.addToPlaylistTopPart(
                     onEvent(AddToPlaylistUiEvent.AddNewPlaylist)
                 }
 
-                DummySearch {
+                DummySearch(
+                    header = stringResource(id = R.string.search_playlist)
+                ) {
                     onEvent(AddToPlaylistUiEvent.EnableSearch)
                 }
 
@@ -425,38 +428,7 @@ private fun FavouriteCard(
     }
 }
 
-@Composable
-private fun DummySearch(
-    onClick: () -> Unit
-) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-        shape = MaterialTheme.shapes.extraSmall,
-        onClick = onClick
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.dimens.small1)
-        ) {
-            Icon(
-                modifier = Modifier.padding(start = MaterialTheme.dimens.small1),
-                imageVector = SearchIcon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground.copy(.7f)
-            )
 
-            Text(
-                text = stringResource(id = R.string.search_playlist),
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                color = MaterialTheme.colorScheme.onBackground.copy(.7f)
-            )
-        }
-    }
-
-}
 
 @Composable
 private fun TextColumn(

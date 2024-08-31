@@ -1,5 +1,6 @@
 package com.poulastaa.routes
 
+import com.poulastaa.data.model.AlbumPagingType
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
@@ -47,6 +48,48 @@ fun Route.removeAlbum(service: ServiceRepository) {
 
                 if (status) call.respond(HttpStatusCode.OK)
                 else call.respond(HttpStatusCode.ServiceUnavailable)
+            }
+        }
+    }
+}
+
+fun Route.getAlbumPagingData(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.GetAlbumPaging.route) {
+            get {
+                val page = call.parameters["page"]?.toInt()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                val size = call.parameters["size"]?.toInt()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val query = call.parameters["query"]
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val type = call.parameters["type"]
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val reqType = when (type) {
+                    AlbumPagingType.NAME.name -> AlbumPagingType.NAME
+                    AlbumPagingType.BY_YEAR.name -> AlbumPagingType.BY_YEAR
+                    AlbumPagingType.BY_POPULARITY.name -> AlbumPagingType.BY_POPULARITY
+                    else -> return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                }
+
+                val payload = call.getReqUserPayload()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val result = service.getAlbumPaging(
+                    page = page,
+                    size = size,
+                    query = query,
+                    type = reqType,
+                    payload = payload
+                )
+
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.OK
+                )
             }
         }
     }

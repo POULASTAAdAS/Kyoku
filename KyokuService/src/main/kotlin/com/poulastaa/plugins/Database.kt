@@ -5,11 +5,14 @@ import com.poulastaa.domain.table.relation.*
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
+import io.ktor.server.application.hooks.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.core.component.getScopeId
+import org.koin.core.component.getScopeName
 
 fun Application.configureDatabase() {
     val driverClass = environment.config.property("storage.driverClassName").getString()
@@ -39,7 +42,8 @@ private fun provideDataSource(
     HikariConfig().apply {
         driverClassName = driverClass
         jdbcUrl = url
-        maximumPoolSize = 20
+        maximumPoolSize = 50
+        connectionTimeout = 60_000
         isAutoCommit = false
         transactionIsolation = "TRANSACTION_REPEATABLE_READ"
         validate()

@@ -3,9 +3,7 @@ package com.poulastaa.domain.repository
 import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
-import com.poulastaa.data.model.ArtistPagerDataDto
-import com.poulastaa.data.model.SongDto
-import com.poulastaa.data.model.ViewArtistSongDto
+import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
 
@@ -62,4 +60,11 @@ interface DatabaseRepository {
         page: Int,
         size: Int,
     ): ArtistPagerDataDto
+
+    suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingType,
+    ): List<PagingAlbumDto>
 }

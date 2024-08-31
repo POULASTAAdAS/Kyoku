@@ -86,9 +86,7 @@ private fun AddToPlaylistScreen(
     navigateBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember {
-        FocusRequester()
-    }
+    val focusRequester = remember { FocusRequester() }
     val addNewPlaylistBottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 

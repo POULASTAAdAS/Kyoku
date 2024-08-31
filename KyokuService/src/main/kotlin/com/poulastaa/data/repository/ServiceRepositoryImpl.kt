@@ -663,4 +663,23 @@ class ServiceRepositoryImpl(
             )
         }
     }
+
+    override suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingType,
+        payload: ReqUserPayload,
+    ): PagingAlbumResDto {
+        userRepo.getUserOnPayload(payload) ?: return PagingAlbumResDto()
+
+        return PagingAlbumResDto(
+            list = kyokuRepo.getAlbumPaging(
+                page = page,
+                size = size,
+                query = query,
+                type = type,
+            )
+        )
+    }
 }

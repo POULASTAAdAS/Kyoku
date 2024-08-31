@@ -168,21 +168,12 @@ GROUP BY album.id
 ORDER BY year DESC;
 
 
+select * from album order by points desc limit 30; 
 
-
-select * from userartistrelation;
-
-
-
-
-
-
-
-
-
-
-
-
+select album.id , album.name , song.coverImage , song.year from song 
+join songalbumrelation on songalbumrelation.songId = song.id
+join album on songalbumrelation.albumId = album.id
+order by song.year desc;
 
 
 

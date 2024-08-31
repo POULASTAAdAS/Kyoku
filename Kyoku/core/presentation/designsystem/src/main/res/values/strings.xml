@@ -130,4 +130,6 @@
     <string name="playlist_deleted">Saved playlist deleted.</string>
     <string name="album_deleted">Album deleted.</string>
     <string name="songs">Songs</string>
+    <string name="explore_albums">Explore Albums</string>
+    <string name="search_album">search album</string>
 </resources>
