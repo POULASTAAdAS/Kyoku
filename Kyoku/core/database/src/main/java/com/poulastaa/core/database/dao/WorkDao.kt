@@ -1,7 +1,9 @@
 package com.poulastaa.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
+import com.poulastaa.core.database.entity.FavouriteEntity
 
 @Dao
 interface WorkDao {
@@ -22,4 +24,7 @@ interface WorkDao {
 
     @Query("delete from ArtistEntity where id in (:list)")
     suspend fun deleteArtists(list: List<Long>)
+
+    @Delete
+    suspend fun deleteFavourites(list: List<FavouriteEntity>)
 }

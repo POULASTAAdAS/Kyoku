@@ -47,7 +47,7 @@ class RoomLocalViewDatasource @Inject constructor(
             LocalViewDatasource.ReqType.OLD_MIX_SONG -> viewDao.getOldMixSongIds()
             LocalViewDatasource.ReqType.ARTIST_MIX -> viewDao.getFevArtistMixSongIds()
             LocalViewDatasource.ReqType.POPULAR_MIX -> viewDao.getPopularSongMixSongIds()
-            LocalViewDatasource.ReqType.FEV -> viewDao.getFevSongIds()
+            LocalViewDatasource.ReqType.FEV -> commonDao.getFevSongIds()
         }
 
     override suspend fun getPrevSongIdList(type: LocalViewDatasource.ReqType): List<Long> =
@@ -64,7 +64,7 @@ class RoomLocalViewDatasource @Inject constructor(
             it.toPlaylistSong()
         }
 
-    override suspend fun getFevSongIdList(): List<Long> = viewDao.getFevSongIds()
+    override suspend fun getFevSongIdList(): List<Long> = commonDao.getFevSongIds()
 
     override suspend fun getOldMix(): List<PlaylistSong> {
         TODO("not implemented")

@@ -302,8 +302,8 @@ private fun LibraryScreen(
                                         }
                                     }
                                 },
-                                gridContent = {
-                                    when (it.pinnedType) {
+                                gridContent = { pinnedUiData ->
+                                    when (pinnedUiData.pinnedType) {
                                         PinnedType.PLAYLIST -> {
                                             LibraryPlaylistGird(
                                                 modifier = Modifier
@@ -313,14 +313,14 @@ private fun LibraryScreen(
                                                         onClick = {
                                                             onEvent(
                                                                 LibraryUiEvent.OnClick.Playlist(
-                                                                    it.id
+                                                                    pinnedUiData.id
                                                                 )
                                                             )
                                                         },
                                                         onLongClick = {
                                                             onEvent(
                                                                 LibraryUiEvent.OnItemLongClick(
-                                                                    id = it.id,
+                                                                    id = pinnedUiData.id,
                                                                     type = LibraryBottomSheetLongClickType.PLAYLIST
                                                                 )
                                                             )
@@ -330,8 +330,8 @@ private fun LibraryScreen(
                                                             )
                                                         }
                                                     ),
-                                                urls = it.urls,
-                                                name = it.name,
+                                                urls = pinnedUiData.urls,
+                                                name = pinnedUiData.name,
                                                 header = state.header,
                                             )
                                         }
@@ -343,12 +343,12 @@ private fun LibraryScreen(
                                                     .clip(MaterialTheme.shapes.small)
                                                     .combinedClickable(
                                                         onClick = {
-                                                            onEvent(LibraryUiEvent.OnClick.Artist(it.id))
+                                                            onEvent(LibraryUiEvent.OnClick.Artist(pinnedUiData.id))
                                                         },
                                                         onLongClick = {
                                                             onEvent(
                                                                 LibraryUiEvent.OnItemLongClick(
-                                                                    id = it.id,
+                                                                    id = pinnedUiData.id,
                                                                     type = LibraryBottomSheetLongClickType.ARTIST
                                                                 )
                                                             )
@@ -358,7 +358,7 @@ private fun LibraryScreen(
                                                             )
                                                         }
                                                     ),
-                                                artist = it.toUiArtist(),
+                                                artist = pinnedUiData.toUiArtist(),
                                                 header = state.header,
                                                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                                 maxLine = 2
@@ -372,12 +372,12 @@ private fun LibraryScreen(
                                                     .clip(MaterialTheme.shapes.small)
                                                     .combinedClickable(
                                                         onClick = {
-                                                            onEvent(LibraryUiEvent.OnClick.Album(it.id))
+                                                            onEvent(LibraryUiEvent.OnClick.Album(pinnedUiData.id))
                                                         },
                                                         onLongClick = {
                                                             onEvent(
                                                                 LibraryUiEvent.OnItemLongClick(
-                                                                    id = it.id,
+                                                                    id = pinnedUiData.id,
                                                                     type = LibraryBottomSheetLongClickType.ALBUM
                                                                 )
                                                             )
@@ -388,7 +388,7 @@ private fun LibraryScreen(
                                                         }
                                                     ),
                                                 header = state.header,
-                                                album = it.toUiAlbum()
+                                                album = pinnedUiData.toUiAlbum()
                                             )
                                         }
                                     }
@@ -518,19 +518,19 @@ private fun LibraryScreen(
                                         )
                                     }
                                 },
-                                gridContent = {
+                                gridContent = { prevPlaylist ->
                                     LibraryPlaylistGird(
                                         modifier = Modifier
                                             .aspectRatio(1f)
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-                                                    onEvent(LibraryUiEvent.OnClick.Playlist(it.id))
+                                                    onEvent(LibraryUiEvent.OnClick.Playlist(prevPlaylist.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
                                                         LibraryUiEvent.OnItemLongClick(
-                                                            id = it.id,
+                                                            id = prevPlaylist.id,
                                                             type = LibraryBottomSheetLongClickType.PLAYLIST
                                                         )
                                                     )
@@ -538,8 +538,8 @@ private fun LibraryScreen(
                                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                 }
                                             ),
-                                        urls = it.urls,
-                                        name = it.name,
+                                        urls = prevPlaylist.urls,
+                                        name = prevPlaylist.name,
                                         header = state.header,
                                     )
                                 }
@@ -588,19 +588,19 @@ private fun LibraryScreen(
                                         )
                                     }
                                 },
-                                gridContent = {
+                                gridContent = { album ->
                                     LibraryAlbumGrid(
                                         modifier = Modifier
                                             .aspectRatio(1f)
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-                                                    onEvent(LibraryUiEvent.OnClick.Album(it.id))
+                                                    onEvent(LibraryUiEvent.OnClick.Album(album.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
                                                         LibraryUiEvent.OnItemLongClick(
-                                                            id = it.id,
+                                                            id = album.id,
                                                             type = LibraryBottomSheetLongClickType.ALBUM
                                                         )
                                                     )
@@ -609,7 +609,7 @@ private fun LibraryScreen(
                                                 }
                                             ),
                                         header = state.header,
-                                        album = it
+                                        album = album
                                     )
                                 }
                             )
@@ -658,19 +658,19 @@ private fun LibraryScreen(
                                         )
                                     }
                                 },
-                                gridContent = {
+                                gridContent = { artist ->
                                     SuggestedArtistCard(
                                         modifier = Modifier
                                             .aspectRatio(1f)
                                             .clip(MaterialTheme.shapes.small)
                                             .combinedClickable(
                                                 onClick = {
-                                                    onEvent(LibraryUiEvent.OnClick.Artist(it.id))
+                                                    onEvent(LibraryUiEvent.OnClick.Artist(artist.id))
                                                 },
                                                 onLongClick = {
                                                     onEvent(
                                                         LibraryUiEvent.OnItemLongClick(
-                                                            id = it.id,
+                                                            id = artist.id,
                                                             type = LibraryBottomSheetLongClickType.ARTIST
                                                         )
                                                     )
@@ -678,7 +678,7 @@ private fun LibraryScreen(
                                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                 }
                                             ),
-                                        artist = it,
+                                        artist = artist,
                                         header = state.header,
                                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                         maxLine = 2
@@ -749,6 +749,8 @@ private fun LazyGridScope.fixedItem(
         content = content
     )
 }
+
+
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,

@@ -2,6 +2,7 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.WorkDao
+import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toArtistEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
@@ -9,6 +10,7 @@ import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.PlaylistWithSong
+import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -16,7 +18,7 @@ import javax.inject.Inject
 
 class RoomLocalWorkDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val workDao: WorkDao
+    private val workDao: WorkDao,
 ) : LocalWorkDatasource {
     override suspend fun getAllAlbumId(): List<Long> = workDao.getAllSavedAlbumId()
 
@@ -69,4 +71,18 @@ class RoomLocalWorkDatasource @Inject constructor(
     }
 
     override suspend fun removeArtists(list: List<Long>) = workDao.deleteArtists(list)
+
+    override suspend fun getAllFavouriteId(): List<Long> = commonDao.getFevSongIds()
+
+    override suspend fun saveFavourite(entry: List<Song>) {
+        entry.map { it.toSongEntity() }.let {
+            commonDao.insertSongs(it)
+        }
+    }
+
+    override suspend fun removeFavourite(list: List<Long>) {
+        list.map { FavouriteEntity(it) }.let {
+            workDao.deleteFavourites(it)
+        }
+    }
 }

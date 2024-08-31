@@ -33,8 +33,8 @@ class OnlineWorkRepository @Inject constructor(
 
     override suspend fun getUpdatedPlaylists(): EmptyResult<DataError.Network> {
         val albumIdList = local.getAllPlaylistId()
-
         val result = remote.getUpdatedPlaylists(albumIdList)
+
         if (result is Result.Success) {
             val remove = applicationScope.async { local.removePlaylist(result.data.removeIdList) }
             val add = applicationScope.async { local.savePlaylists(result.data.newAlbumList) }
@@ -48,11 +48,26 @@ class OnlineWorkRepository @Inject constructor(
 
     override suspend fun getUpdatedArtists(): EmptyResult<DataError.Network> {
         val albumIdList = local.getAllArtistsId()
-
         val result = remote.getUpdatedArtists(albumIdList)
+
         if (result is Result.Success) {
             val remove = applicationScope.async { local.removeArtists(result.data.removeIdList) }
             val add = applicationScope.async { local.saveArtists(result.data.newAlbumList) }
+
+            remove.await()
+            add.await()
+        }
+
+        return result.asEmptyDataResult()
+    }
+
+    override suspend fun getUpdatedFavourite(): EmptyResult<DataError.Network> {
+        val favouriteIds = local.getAllFavouriteId()
+        val result = remote.getUpdatedFavourite(favouriteIds)
+
+        if (result is Result.Success) {
+            val remove = applicationScope.async { local.removeFavourite(result.data.removeIdList) }
+            val add = applicationScope.async { local.saveFavourite(result.data.newAlbumList) }
 
             remove.await()
             add.await()

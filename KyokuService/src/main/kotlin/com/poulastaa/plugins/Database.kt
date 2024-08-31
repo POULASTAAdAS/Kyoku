@@ -32,17 +32,19 @@ fun Application.configureDatabase() {
     }
 }
 
-private fun provideDataSource(url: String, driverClass: String): HikariDataSource =
-    HikariDataSource(
-        HikariConfig().apply {
-            driverClassName = driverClass
-            jdbcUrl = url
-            maximumPoolSize = 10
-            isAutoCommit = false
-            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-            validate()
-        }
-    )
+private fun provideDataSource(
+    url: String,
+    driverClass: String,
+): HikariDataSource = HikariDataSource(
+    HikariConfig().apply {
+        driverClassName = driverClass
+        jdbcUrl = url
+        maximumPoolSize = 20
+        isAutoCommit = false
+        transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+        validate()
+    }
+)
 
 suspend fun <T> query(block: suspend () -> T): T {
     return try {

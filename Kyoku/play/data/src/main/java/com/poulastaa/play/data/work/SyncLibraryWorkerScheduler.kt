@@ -30,10 +30,12 @@ class SyncLibraryWorkerScheduler @Inject constructor(
             val album = async { updateAlbumWorker(interval) }
             val playlist = async { updatePlaylistWorker(interval) }
             val artist = async { updateArtistWorker(interval) }
+            val favourite = async { updateFavouriteWorker(interval) }
 
             album.await()
             playlist.await()
             artist.await()
+            favourite.await()
         }
     }
 
@@ -119,6 +121,41 @@ class SyncLibraryWorkerScheduler @Inject constructor(
         if (isSyncScheduled) return
 
         val workReq = PeriodicWorkRequestBuilder<UpdateArtistWorker>(
+            repeatInterval = interval.toJavaDuration()
+        ).setConstraints(
+            constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+        ).setBackoffCriteria(
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 2000L,
+            timeUnit = TimeUnit.SECONDS
+        ).setInitialDelay(
+            duration = 30,
+            timeUnit = TimeUnit.MINUTES
+        ).addTag(WorkType.ARTIST_SYNC.name)
+            .build()
+
+
+        applicationScope.launch {
+            workManager.enqueue(workReq).await()
+        }.join()
+    }
+
+    private suspend fun updateFavouriteWorker(interval: Duration) {
+        val isSyncScheduled = withContext(Dispatchers.IO) {
+            workManager.getWorkInfosByTag(WorkType.ARTIST_SYNC.name)
+                .get()
+                .any {
+                    it.state == WorkInfo.State.ENQUEUED ||
+                            it.state == WorkInfo.State.RUNNING ||
+                            it.state == WorkInfo.State.SUCCEEDED
+                }
+        }
+
+        if (isSyncScheduled) return
+
+        val workReq = PeriodicWorkRequestBuilder<UpdateFavouriteWorker>(
             repeatInterval = interval.toJavaDuration()
         ).setConstraints(
             constraints = Constraints.Builder()

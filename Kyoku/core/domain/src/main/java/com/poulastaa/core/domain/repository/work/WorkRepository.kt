@@ -7,4 +7,5 @@ interface WorkRepository {
     suspend fun getUpdatedAlbums(): EmptyResult<DataError.Network>
     suspend fun getUpdatedPlaylists(): EmptyResult<DataError.Network>
     suspend fun getUpdatedArtists(): EmptyResult<DataError.Network>
+    suspend fun getUpdatedFavourite(): EmptyResult<DataError.Network>
 }
