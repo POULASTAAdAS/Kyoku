@@ -346,11 +346,11 @@ class KyokuDatabaseImpl : DatabaseRepository {
         page: Int,
         size: Int,
         query: String,
-        type: AlbumPagingType,
+        type: AlbumPagingTypeDto,
     ): List<PagingAlbumDto> {
         return coroutineScope {
             when (type) {
-                AlbumPagingType.NAME -> {
+                AlbumPagingTypeDto.NAME -> {
                     query {
                         val fieldSet = AlbumTable.join(
                             otherTable = SongAlbumRelationTable,
@@ -384,7 +384,7 @@ class KyokuDatabaseImpl : DatabaseRepository {
                     }
                 }
 
-                AlbumPagingType.BY_YEAR -> {
+                AlbumPagingTypeDto.BY_YEAR -> {
                     query {
                         val fieldSet = AlbumTable.join(
                             otherTable = SongAlbumRelationTable,
@@ -416,7 +416,7 @@ class KyokuDatabaseImpl : DatabaseRepository {
                     }
                 }
 
-                AlbumPagingType.BY_POPULARITY -> {
+                AlbumPagingTypeDto.BY_POPULARITY -> {
                     query {
                         SongTable.join(
                             otherTable = SongAlbumRelationTable,

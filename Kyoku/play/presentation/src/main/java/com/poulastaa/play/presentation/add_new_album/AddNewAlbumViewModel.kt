@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.repository.new_album.NewAlbumRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddNewAlbumViewModel @Inject constructor(
-    private val ds: DataStoreRepository
+    private val ds: DataStoreRepository,
+    private val repo: NewAlbumRepository
 ) : ViewModel() {
     var state by mutableStateOf(AddAlbumUiState())
         private set
@@ -45,7 +47,7 @@ class AddNewAlbumViewModel @Inject constructor(
                 )
             }
 
-            else ->{
+            else -> {
 
             }
         }

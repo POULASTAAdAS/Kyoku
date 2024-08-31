@@ -1,6 +1,6 @@
 package com.poulastaa.routes
 
-import com.poulastaa.data.model.AlbumPagingType
+import com.poulastaa.data.model.AlbumPagingTypeDto
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.ServiceRepository
 import com.poulastaa.domain.route_ext.getReqUserPayload
@@ -69,9 +69,9 @@ fun Route.getAlbumPagingData(service: ServiceRepository) {
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
                 val reqType = when (type) {
-                    AlbumPagingType.NAME.name -> AlbumPagingType.NAME
-                    AlbumPagingType.BY_YEAR.name -> AlbumPagingType.BY_YEAR
-                    AlbumPagingType.BY_POPULARITY.name -> AlbumPagingType.BY_POPULARITY
+                    AlbumPagingTypeDto.NAME.name -> AlbumPagingTypeDto.NAME
+                    AlbumPagingTypeDto.BY_YEAR.name -> AlbumPagingTypeDto.BY_YEAR
+                    AlbumPagingTypeDto.BY_POPULARITY.name -> AlbumPagingTypeDto.BY_POPULARITY
                     else -> return@get call.respondRedirect(EndPoints.UnAuthorised.route)
                 }
 

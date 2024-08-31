@@ -6,6 +6,7 @@ import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistD
 import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
+import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
@@ -13,10 +14,12 @@ import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
 import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
+import com.poulastaa.network.OnlineFirstNewAlbumDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
 import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
+import com.poulastaa.network.paging_source.NewAlbumPagerSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -119,5 +122,27 @@ object NetworkViewModel {
         gson = gson,
         pagerAlbum = pagerAlbum,
         pagerSong = pagerSong,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewAlbumPagerSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): NewAlbumPagerSource = NewAlbumPagerSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewAlbumDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        pager: NewAlbumPagerSource,
+    ): RemoteNewAlbumDataSource = OnlineFirstNewAlbumDatasource(
+        client = client,
+        gson = gson,
+        pager = pager,
     )
 }

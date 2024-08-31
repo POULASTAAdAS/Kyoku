@@ -668,7 +668,7 @@ class ServiceRepositoryImpl(
         page: Int,
         size: Int,
         query: String,
-        type: AlbumPagingType,
+        type: AlbumPagingTypeDto,
         payload: ReqUserPayload,
     ): PagingAlbumResDto {
         userRepo.getUserOnPayload(payload) ?: return PagingAlbumResDto()

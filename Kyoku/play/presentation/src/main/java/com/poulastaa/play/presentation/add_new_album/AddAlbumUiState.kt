@@ -17,7 +17,6 @@ data class AddAlbumUiState(
     val toast: SnackBarUiState = SnackBarUiState()
 )
 
-
 data class AddAlbumUiAlbum(
     val id: Long = -1,
     val name: String = "",
