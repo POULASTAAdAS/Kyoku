@@ -170,29 +170,10 @@ ORDER BY year DESC;
 
 select * from album order by points desc limit 30; 
 
-select album.id , album.name , song.coverImage , song.year from song 
+select album.id , album.name , song.coverImage , song.year , album.points from song 
 join songalbumrelation on songalbumrelation.songId = song.id
 join album on songalbumrelation.albumId = album.id
-order by song.year desc;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+order by  album.points desc , song.year desc;
 
 
 

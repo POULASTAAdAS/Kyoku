@@ -36,6 +36,8 @@ import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
+import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
+import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
@@ -180,6 +182,10 @@ fun RootDrawerCompact(
                                             route = DrawerScreen.ViewArtist.route + "/${screen.id}"
                                         )
                                     }
+
+                                    LibraryOtherScreen.NewAlbum -> {
+                                        onEvent(RootDrawerUiEvent.NewAlbum)
+                                    }
                                 }
                             }
                         )
@@ -317,6 +323,31 @@ fun RootDrawerCompact(
                         },
                         navigateBack = {
                             onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+                        }
+                    )
+                }
+
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.newAlbumUiState.isOpen,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    AddNewAlbumRootScreen(
+                        navigate = {
+                            when (it) {
+                                is AddNewAlbumOtherScreen.ViewAlbum -> {
+                                    onEvent(
+                                        RootDrawerUiEvent.View(
+                                            id = it.id,
+                                            type = ViewDataType.ALBUM
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.NewAlbumCancel)
                         }
                     )
                 }

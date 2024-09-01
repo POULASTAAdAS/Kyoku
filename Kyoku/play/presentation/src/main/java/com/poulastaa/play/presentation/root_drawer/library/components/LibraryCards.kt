@@ -59,6 +59,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SortTypeGridIcon
 import com.poulastaa.core.presentation.designsystem.SortTypeListIcon
 import com.poulastaa.core.presentation.designsystem.UserIcon
+import com.poulastaa.core.presentation.designsystem.components.AppFilterChip
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReq
 import com.poulastaa.core.presentation.ui.imageReqSongCover
@@ -403,7 +404,7 @@ fun LibraryFilterRow(
                 )
             )
 
-            LibraryFilterChip(
+            AppFilterChip(
                 text = stringResource(id = R.string.album),
                 icon = FilterAlbumIcon,
                 selected = filterType == LibraryFilterType.ALBUM,
@@ -412,7 +413,7 @@ fun LibraryFilterRow(
                 }
             )
 
-            LibraryFilterChip(
+            AppFilterChip(
                 text = stringResource(id = R.string.artist),
                 icon = FilterArtistIcon,
                 selected = filterType == LibraryFilterType.ARTIST,
@@ -421,7 +422,7 @@ fun LibraryFilterRow(
                 }
             )
 
-            LibraryFilterChip(
+            AppFilterChip(
                 text = stringResource(id = R.string.playlist),
                 icon = FilterPlaylistIcon,
                 selected = filterType == LibraryFilterType.PLAYLIST,
@@ -498,39 +499,6 @@ fun LibraryHeader(
                 .background(MaterialTheme.colorScheme.primary.copy(.5f))
         )
     }
-}
-
-@Composable
-private fun LibraryFilterChip(
-    text: String,
-    icon: ImageVector,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = {
-            Text(
-                text = text,
-                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                letterSpacing = 1.sp
-            )
-        },
-        leadingIcon = {
-            if (selected) Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(FilterChipDefaults.IconSize)
-            )
-        },
-        shape = MaterialTheme.shapes.extraSmall,
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = MaterialTheme.colorScheme.primary.copy(.8f),
-            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-            selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
-        )
-    )
 }
 
 

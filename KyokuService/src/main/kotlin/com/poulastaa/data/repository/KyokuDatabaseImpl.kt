@@ -351,37 +351,23 @@ class KyokuDatabaseImpl : DatabaseRepository {
         return coroutineScope {
             when (type) {
                 AlbumPagingTypeDto.NAME -> {
-                    query {
-                        val fieldSet = AlbumTable.join(
-                            otherTable = SongAlbumRelationTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                AlbumTable.id as Column<*> eq SongAlbumRelationTable.albumId
-                            }
-                        ).join(
-                            otherTable = SongTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                SongTable.id as Column<*> eq SongAlbumRelationTable.songId
-                            }
-                        ).slice(
-                            AlbumTable.id,
-                            AlbumTable.name,
-                            AlbumTable.points,
-                            SongTable.year,
-                            SongTable.coverImage
-                        )
-
-                        val valueSet = if (query.isEmpty()) fieldSet.selectAll()
-                        else fieldSet.select {
+                    return@coroutineScope if (query.isNotBlank()) query {
+                        AlbumDao.find {
                             AlbumTable.name like "$query%"
-                        }
-
-                        valueSet
-                            .orderBy(SongTable.year to SortOrder.DESC, AlbumTable.points to SortOrder.DESC)
+                        }.orderBy(AlbumTable.points to SortOrder.DESC)
                             .drop(if (page == 1) 0 else page * size)
-                            .take(size)
-                    }
+                            .take(size).toList()
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
+                    else query {
+                        AlbumDao.all()
+                            .orderBy(AlbumTable.name to SortOrder.ASC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size).toList()
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
                 }
 
                 AlbumPagingTypeDto.BY_YEAR -> {
@@ -410,60 +396,49 @@ class KyokuDatabaseImpl : DatabaseRepository {
                             AlbumTable.name like "$query%"
                         }
 
-                        valueSet.orderBy(SongTable.year to SortOrder.DESC)
+                        valueSet
+                            .orderBy(SongTable.year to SortOrder.DESC)
                             .drop(if (page == 1) 0 else page * size)
                             .take(size)
+                            .map { res ->
+                                AlbumDto(
+                                    id = res[AlbumTable.id].value,
+                                    name = res[AlbumTable.name],
+                                    coverImage = res[SongTable.coverImage].constructSongCoverImage(),
+                                ) to res[SongTable.year]
+                            }.map { (album, year) ->
+                                async {
+                                    val artist = async { getArtistOnAlbumId(albumId = album.id) }
+
+                                    PagingAlbumDto(
+                                        id = album.id,
+                                        name = album.name,
+                                        coverImage = album.coverImage,
+                                        artist = artist.await(),
+                                        releaseYear = year.toString()
+                                    )
+                                }
+                            }.awaitAll()
                     }
                 }
 
                 AlbumPagingTypeDto.BY_POPULARITY -> {
                     query {
-                        SongTable.join(
-                            otherTable = SongAlbumRelationTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                SongAlbumRelationTable.songId eq SongTable.id as Column<*>
-                            }
-                        ).join(
-                            otherTable = AlbumTable,
-                            joinType = JoinType.INNER,
-                            additionalConstraint = {
-                                SongAlbumRelationTable.albumId eq AlbumTable.id as Column<*>
-                            }
-                        ).slice(
-                            AlbumTable.id,
-                            AlbumTable.name,
-                            SongTable.coverImage,
-                            SongTable.year,
-                            AlbumTable.points
-                        ).select {
-                            AlbumTable.name like "$query%"
-                        }.orderBy(AlbumTable.points to SortOrder.DESC, SongTable.year to SortOrder.DESC)
+                        if (query.isEmpty()) AlbumDao.all()
+                            .orderBy(AlbumTable.points to SortOrder.DESC)
                             .drop(if (page == 1) 0 else page * size)
                             .take(size)
-                    }
+                            .toList()
+                        else AlbumDao.find {
+                            AlbumTable.name like "$query%"
+                        }.orderBy(AlbumTable.points to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
                 }
-            }.map { res ->
-                query {
-                    AlbumDto(
-                        id = res[AlbumTable.id].value,
-                        name = res[AlbumTable.name],
-                        coverImage = res[SongTable.coverImage].constructSongCoverImage(),
-                    ) to res[SongTable.year]
-                }
-            }.map { (album, year) ->
-                async {
-                    val artist = async { getArtistOnAlbumId(albumId = album.id) }
-
-                    PagingAlbumDto(
-                        id = album.id,
-                        name = album.name,
-                        coverImage = album.coverImage,
-                        artist = artist.await(),
-                        releaseYear = year.toString()
-                    )
-                }
-            }.awaitAll()
+            }
         }
     }
 
@@ -480,4 +455,41 @@ class KyokuDatabaseImpl : DatabaseRepository {
             }
         }
     }
+
+    private suspend fun AlbumDao.toPagingAlbumDto() =
+        coroutineScope {
+            async {
+                val pair = async {
+                    query {
+                        SongAlbumRelationTable.join(
+                            otherTable = SongTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongTable.id as Column<*> eq SongAlbumRelationTable.songId
+                            }
+                        ).slice(
+                            SongTable.coverImage,
+                            SongTable.year
+                        ).select {
+                            SongAlbumRelationTable.albumId eq this@toPagingAlbumDto.id.value
+                        }.first().let {
+                            it[SongTable.coverImage] to it[SongTable.year]
+                        }
+                    }
+                }
+
+                val artistDef = async { getArtistOnAlbumId(albumId = this@toPagingAlbumDto.id.value) }
+
+                val (cover, year) = pair.await()
+                val artist = artistDef.await()
+
+                PagingAlbumDto(
+                    id = this@toPagingAlbumDto.id.value,
+                    name = this@toPagingAlbumDto.name,
+                    coverImage = cover.constructSongCoverImage(),
+                    artist = artist,
+                    releaseYear = year.toString()
+                )
+            }
+        }
 }

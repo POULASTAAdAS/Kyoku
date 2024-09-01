@@ -6,12 +6,17 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,13 +27,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,27 +50,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import com.poulastaa.core.presentation.designsystem.AppThem
+import com.poulastaa.core.domain.model.AlbumPagingType
+import com.poulastaa.core.presentation.designsystem.CalenderIcon
+import com.poulastaa.core.presentation.designsystem.PopularIcon
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ThreeDotIcon
-import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
+import com.poulastaa.core.presentation.designsystem.UserIcon
+import com.poulastaa.core.presentation.designsystem.components.AppFilterChip
 import com.poulastaa.core.presentation.designsystem.components.DummySearch
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.CustomSnackBar
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.imageReqSongCover
-import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.add_new_album.components.AddNewAlbumLoadingAnimation
 import com.poulastaa.play.presentation.add_new_album.components.AddNewAlbumTopBar
-import java.time.LocalDate
-import kotlin.random.Random
 
 @Composable
 fun AddNewAlbumRootScreen(
@@ -83,6 +94,7 @@ fun AddNewAlbumRootScreen(
     AddNewAlbumScreen(
         modifier = modifier,
         state = viewModel.state,
+        album = viewModel.album.collectAsLazyPagingItems(),
         onEvent = viewModel::onEvent,
         navigateBack = {
             if (viewModel.state.isSearchEnabled) viewModel.onEvent(AddAlbumUiEvent.OnSearchToggle)
@@ -91,27 +103,36 @@ fun AddNewAlbumRootScreen(
         }
     )
 
-    BackHandler(
-        enabled = viewModel.state.isSearchEnabled ||
-                viewModel.state.isMassSelectEnabled,
+    if (viewModel.state.isSearchEnabled ||
+        viewModel.state.isMassSelectEnabled
+    ) BackHandler(
         onBack = {
             if (viewModel.state.isSearchEnabled) viewModel.onEvent(AddAlbumUiEvent.OnSearchToggle)
             else viewModel.onEvent(AddAlbumUiEvent.OnMassSelectToggle)
         }
-    )
+    ) else BackHandler {
+        navigateBack()
+    }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 private fun AddNewAlbumScreen(
     modifier: Modifier = Modifier,
     state: AddAlbumUiState,
+    album: LazyPagingItems<AddAlbumUiAlbum>,
     onEvent: (AddAlbumUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val focusRequester = remember { FocusRequester() }
+
+    var topBarVisible by remember { mutableStateOf(true) }
 
     Scaffold(
         modifier = modifier,
@@ -122,20 +143,47 @@ private fun AddNewAlbumScreen(
                 searchQuery = state.searchQuery,
                 focusRequester = focusRequester,
                 isMassSelectEnabled = state.isMassSelectEnabled,
+                isMakingApiCall = state.isMakingApiCall,
                 onSearchChange = {
                     onEvent(AddAlbumUiEvent.OnSearchQueryChange(it))
+                },
+                onSaveClick = {
+                    onEvent(AddAlbumUiEvent.OnSaveClick)
                 },
                 navigateBack = navigateBack
             )
         },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = !state.isMassSelectEnabled &&
+                        !state.isSearchEnabled && topBarVisible,
+                enter = fadeIn() + slideInHorizontally { it },
+                exit = fadeOut() + slideOutHorizontally { it }
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        onEvent(AddAlbumUiEvent.OnSearchToggle)
+                    },
+                    content = {
+                        Icon(
+                            imageVector = SearchIcon,
+                            contentDescription = null
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                )
+            }
+        },
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) { paddingValues ->
-        AnimatedContent(state.loadingState, label = "add_new_album") { loadingState ->
+        AnimatedContent(
+            album.itemCount == 0,
+            label = "add_new_album"
+        ) { loadingState ->
             when (loadingState) {
-                DataLoadingState.LOADING -> AddNewAlbumLoadingAnimation(paddingValues)
-                DataLoadingState.ERROR -> CompactErrorScreen()
+                true -> AddNewAlbumLoadingAnimation(paddingValues)
 
-                DataLoadingState.LOADED -> {
+                false -> {
                     Column {
                         CustomSnackBar(state.toast, paddingValues)
 
@@ -144,6 +192,10 @@ private fun AddNewAlbumScreen(
                                 .fillMaxSize()
                                 .padding(paddingValues)
                                 .padding(horizontal = MaterialTheme.dimens.medium1)
+                                .nestedScroll(scroll.nestedScrollConnection)
+                                .onGloballyPositioned {
+                                    topBarVisible = scroll.state.collapsedFraction == 0f
+                                }
                         ) {
                             item {
                                 AddNewAlbumDummySearch(
@@ -153,26 +205,100 @@ private fun AddNewAlbumScreen(
                                 )
                             }
 
-                            items(data) { album ->
-                                AlbumCard(
-                                    modifier = Modifier.clickable(
-                                        onClick = {
-                                            if (state.isMassSelectEnabled)
+                            item {
+                                Column {
+                                    FlowRow(
+                                        modifier = Modifier
+                                            .padding(vertical = MaterialTheme.dimens.medium1),
+                                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                                    ) {
+                                        AppFilterChip(
+                                            text = stringResource(R.string.by_popularity),
+                                            icon = PopularIcon,
+                                            selected = state.type == AlbumPagingType.BY_POPULARITY,
+                                            onClick = {
+                                                onEvent(
+                                                    AddAlbumUiEvent.OnFilterTypeChange(
+                                                        AlbumPagingType.BY_POPULARITY
+                                                    )
+                                                )
+                                            }
+                                        )
+
+                                        AppFilterChip(
+                                            text = stringResource(R.string.by_name),
+                                            icon = UserIcon,
+                                            selected = state.type == AlbumPagingType.NAME,
+                                            onClick = {
+                                                onEvent(
+                                                    AddAlbumUiEvent.OnFilterTypeChange(
+                                                        AlbumPagingType.NAME
+                                                    )
+                                                )
+                                            }
+                                        )
+
+                                        AppFilterChip(
+                                            text = stringResource(R.string.by_year),
+                                            icon = CalenderIcon,
+                                            selected = state.type == AlbumPagingType.BY_YEAR,
+                                            onClick = {
+                                                onEvent(
+                                                    AddAlbumUiEvent.OnFilterTypeChange(
+                                                        AlbumPagingType.BY_YEAR
+                                                    )
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            items(album.itemCount) { index ->
+                                album[index]?.let { album ->
+                                    AlbumCard(
+                                        modifier = Modifier.combinedClickable(
+                                            onClick = {
+                                                if (state.isMassSelectEnabled)
+                                                    onEvent(
+                                                        AddAlbumUiEvent.OnCheckChange(
+                                                            album.id,
+                                                            !album.isSelected
+                                                        )
+                                                    )
+                                                else {
+                                                    if (state.isSearchEnabled)
+                                                        onEvent(AddAlbumUiEvent.OnSearchToggle)
+                                                    onEvent(AddAlbumUiEvent.OnAlbumClick(album.id))
+                                                }
+                                            },
+                                            onLongClick = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                                onEvent(AddAlbumUiEvent.OnMassSelectToggle)
                                                 onEvent(
                                                     AddAlbumUiEvent.OnCheckChange(
                                                         album.id,
-                                                        !album.isSelected
+                                                        status = true
                                                     )
                                                 )
-                                            else onEvent(AddAlbumUiEvent.OnAlbumClick(album.id))
-                                        }
-                                    ),
-                                    header = state.header,
-                                    list = state.threeDotOperations,
-                                    isMassSelectEnabled = state.isMassSelectEnabled,
-                                    album = album,
-                                    onEvent = onEvent
-                                )
+                                            }
+                                        ),
+                                        header = state.header,
+                                        list = state.threeDotOperations,
+                                        isMassSelectEnabled = state.isMassSelectEnabled,
+                                        album = album,
+                                        onCheckChange = {
+                                            onEvent(
+                                                AddAlbumUiEvent.OnCheckChange(
+                                                    album.id,
+                                                    status = it
+                                                )
+                                            )
+                                        },
+                                        onEvent = onEvent
+                                    )
+                                }
                             }
                         }
                     }
@@ -215,8 +341,6 @@ private fun AddNewAlbumDummySearch(
                 header = stringResource(R.string.search_album),
                 onClick = onClick
             )
-
-            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
         }
     }
 }
@@ -228,6 +352,7 @@ private fun AlbumCard(
     list: List<AddAlbumOperation>,
     album: AddAlbumUiAlbum,
     isMassSelectEnabled: Boolean,
+    onCheckChange: (Boolean) -> Unit,
     onEvent: (AddAlbumUiEvent.ThreeDotEvent) -> Unit
 ) {
     Row(
@@ -241,7 +366,7 @@ private fun AlbumCard(
         AnimatedVisibility(isMassSelectEnabled) {
             Checkbox(
                 checked = album.isSelected,
-                onCheckedChange = {}
+                onCheckedChange = onCheckChange
             )
         }
 
@@ -307,7 +432,8 @@ private fun AlbumCard(
                 enabled = !isMassSelectEnabled,
                 onClick = {
                     onEvent(AddAlbumUiEvent.ThreeDotEvent.OnClick(album.id))
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
                     imageVector = ThreeDotIcon,
@@ -334,43 +460,4 @@ private fun AlbumCard(
             }
         }
     }
-}
-
-
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    var search by remember { mutableStateOf(false) }
-
-    AppThem {
-        AddNewAlbumScreen(
-            state = AddAlbumUiState(
-                isSearchEnabled = search,
-                loadingState = DataLoadingState.LOADED,
-                threeDotOperations = listOf(
-                    AddAlbumOperation.PLAY,
-                    AddAlbumOperation.SAVE_ALBUM,
-                ),
-                isMassSelectEnabled = false,
-            ),
-            onEvent = {
-                if (it is AddAlbumUiEvent.OnSearchToggle) {
-                    search = true
-                }
-            }
-        ) {
-            search = false
-        }
-    }
-}
-
-private val data = (1..10).map {
-    AddAlbumUiAlbum(
-        id = it.toLong(),
-        name = "Album  $it",
-        artist = "That cool artist $it",
-        releaseYear = LocalDate.now().year.toString(),
-        isExtended = false,
-        isSelected = Random.nextBoolean()
-    )
 }

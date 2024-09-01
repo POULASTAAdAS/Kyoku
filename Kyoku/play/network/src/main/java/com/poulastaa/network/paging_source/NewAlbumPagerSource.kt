@@ -41,7 +41,7 @@ class NewAlbumPagerSource @Inject constructor(
         val page = params.key ?: 1
 
         val result = client.get<PagingAlbumResDto>(
-            route = EndPoints.GetArtistSong.route,
+            route = EndPoints.GetAlbumPaging.route,
             params = listOf(
                 "page" to page.toString(),
                 "size" to 15.toString(),

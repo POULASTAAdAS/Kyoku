@@ -208,3 +208,8 @@ val MoveIcon: ImageVector
 val SadIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_sad)
+
+
+val PopularIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_popular)

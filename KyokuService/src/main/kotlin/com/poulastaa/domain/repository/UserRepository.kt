@@ -69,10 +69,10 @@ interface UserRepository {
     ): Boolean
 
     suspend fun addAlbum(
-        albumId: Long,
+        list: List<Long>,
         email: String,
         userType: UserType,
-    ): AlbumWithSongDto
+    ): List<AlbumWithSongDto>
 
     suspend fun removeAlbum(
         id: Long,

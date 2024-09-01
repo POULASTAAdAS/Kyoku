@@ -132,4 +132,7 @@
     <string name="songs">Songs</string>
     <string name="explore_albums">Explore Albums</string>
     <string name="search_album">search album</string>
+    <string name="by_popularity">by popularity</string>
+    <string name="by_year">by year</string>
+    <string name="by_name">by name</string>
 </resources>

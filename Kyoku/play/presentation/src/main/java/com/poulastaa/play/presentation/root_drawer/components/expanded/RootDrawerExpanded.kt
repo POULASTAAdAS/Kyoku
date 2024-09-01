@@ -41,6 +41,8 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
+import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
+import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
@@ -132,6 +134,7 @@ fun RootDrawerExpanded(
                                 if (config.screenWidthDp > 980 &&
                                     (state.addToPlaylistUiState.isOpen ||
                                             state.viewUiState.isOpen ||
+                                            state.newAlbumUiState.isOpen ||
                                             state.exploreArtistUiState.isOpen)
                                 ) Modifier
                                     .fillMaxWidth(.6f)
@@ -196,6 +199,10 @@ fun RootDrawerExpanded(
                                             navController.navigate(
                                                 route = DrawerScreen.ViewArtist.route + "/${screen.id}"
                                             )
+                                        }
+
+                                        LibraryOtherScreen.NewAlbum -> {
+                                            onEvent(RootDrawerUiEvent.NewAlbum)
                                         }
                                     }
                                 }
@@ -264,6 +271,7 @@ fun RootDrawerExpanded(
 
                             if (state.addToPlaylistUiState.isOpen ||
                                 state.viewUiState.isOpen ||
+                                state.newAlbumUiState.isOpen ||
                                 (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                             ) ViewArtistCompactRootScreen(
                                 artistId = id,
@@ -361,6 +369,32 @@ fun RootDrawerExpanded(
                     }
 
                     AnimatedVisibility(
+                        modifier = Modifier.fillMaxSize(),
+                        visible = state.newAlbumUiState.isOpen && config.screenWidthDp > 980,
+                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                    ) {
+                        AddNewAlbumRootScreen(
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                            navigate = {
+                                when (it) {
+                                    is AddNewAlbumOtherScreen.ViewAlbum -> {
+                                        onEvent(
+                                            RootDrawerUiEvent.View(
+                                                id = it.id,
+                                                type = ViewDataType.ALBUM
+                                            )
+                                        )
+                                    }
+                                }
+                            },
+                            navigateBack = {
+                                onEvent(RootDrawerUiEvent.NewAlbumCancel)
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(
                         visible = state.exploreArtistUiState.isOpen && config.screenWidthDp > 960,
                         enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
                         exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
@@ -404,6 +438,33 @@ fun RootDrawerExpanded(
                     if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
                         onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                     }
+                }
+
+
+                this@Row.AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.newAlbumUiState.isOpen && config.screenWidthDp < 980,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    AddNewAlbumRootScreen(
+                        modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                        navigate = {
+                            when (it) {
+                                is AddNewAlbumOtherScreen.ViewAlbum -> {
+                                    onEvent(
+                                        RootDrawerUiEvent.View(
+                                            id = it.id,
+                                            type = ViewDataType.ALBUM
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.NewAlbumCancel)
+                        }
+                    )
                 }
 
                 this@Row.AnimatedVisibility(

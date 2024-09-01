@@ -4,10 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.gson.Gson
-import com.poulastaa.core.data.model.AlbumWithSongDto
 import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
+import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.Artist
@@ -22,6 +22,8 @@ import com.poulastaa.core.domain.utils.map
 import com.poulastaa.network.mapper.toAlbumWithSong
 import com.poulastaa.network.mapper.toArtist
 import com.poulastaa.network.mapper.toSong
+import com.poulastaa.network.model.AddAlbumDto
+import com.poulastaa.network.model.AddAlbumReq
 import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import kotlinx.coroutines.flow.Flow
@@ -93,14 +95,15 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
         it.toSong()
     }
 
-
     override suspend fun saveAlbum(
         albumId: Long
-    ): Result<AlbumWithSong, DataError.Network> = client.get<AlbumWithSongDto>(
+    ): Result<AlbumWithSong, DataError.Network> = client.post<AddAlbumReq, AddAlbumDto>(
         route = EndPoints.AddAlbum.route,
-        params = listOf(
-            "albumId" to albumId.toString(),
+        body = AddAlbumReq(
+            list = listOf(albumId)
         ),
         gson = gson
-    ).map { it.toAlbumWithSong() }
+    ).map {
+        it.list.first().toAlbumWithSong()
+    }
 }

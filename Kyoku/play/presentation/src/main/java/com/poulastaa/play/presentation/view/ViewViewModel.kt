@@ -40,6 +40,10 @@ class ViewViewModel @Inject constructor(
         id: Long,
         type: ViewDataType
     ) {
+        state = state.copy(
+            type = type
+        )
+
         viewModelScope.launch {
             when (type) {
                 ViewDataType.PLAYLIST -> repo.getPlaylistOnId(id)

@@ -6,15 +6,20 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -26,7 +31,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -37,11 +44,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
 import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
+import com.poulastaa.core.presentation.designsystem.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +60,9 @@ fun AddNewAlbumTopBar(
     isSearch: Boolean,
     searchQuery: String,
     isMassSelectEnabled: Boolean,
+    isMakingApiCall: Boolean,
     onSearchChange: (String) -> Unit,
+    onSaveClick: () -> Unit,
     navigateBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -146,7 +157,29 @@ fun AddNewAlbumTopBar(
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent
-        )
+        ),
+        actions = {
+            AnimatedVisibility(isMassSelectEnabled) {
+                Box(contentAlignment = Alignment.Center) {
+                    OutlinedButton(
+                        modifier = Modifier
+                            .padding(end = MaterialTheme.dimens.small3)
+                            .alpha(if (isMakingApiCall) 0f else 1f),
+                        onClick = onSaveClick,
+                        border = BorderStroke(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(.7f)
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.save))
+                    }
+
+                    CircularProgressIndicator(
+                        modifier = Modifier.alpha(if (isMakingApiCall) 1f else 0f)
+                    )
+                }
+            }
+        }
     )
 }
 
@@ -166,7 +199,9 @@ private fun Preview() {
                 focusRequester = remember { FocusRequester() },
                 searchQuery = "",
                 onSearchChange = {},
+                isMakingApiCall = false,
                 isMassSelectEnabled = false,
+                onSaveClick = {},
                 navigateBack = {
                     search = !search
                 }

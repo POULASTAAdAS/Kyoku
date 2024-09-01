@@ -89,7 +89,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.AlbumHeader -> {
-
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.NewAlbum
+                                )
+                            )
                         }
 
                         is LibraryUiEvent.OnClick.Album -> {

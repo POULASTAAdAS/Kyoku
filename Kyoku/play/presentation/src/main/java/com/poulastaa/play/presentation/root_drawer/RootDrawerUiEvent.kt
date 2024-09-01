@@ -18,4 +18,7 @@ sealed interface RootDrawerUiEvent {
 
     data class OnExploreArtistOpen(val id: Long) : RootDrawerUiEvent
     data object OnExploreArtistCancel : RootDrawerUiEvent
+
+    data object NewAlbum : RootDrawerUiEvent
+    data object NewAlbumCancel : RootDrawerUiEvent
 }

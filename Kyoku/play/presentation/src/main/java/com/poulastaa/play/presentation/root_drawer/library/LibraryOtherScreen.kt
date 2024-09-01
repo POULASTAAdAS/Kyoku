@@ -9,4 +9,6 @@ sealed interface LibraryOtherScreen {
     ) : LibraryOtherScreen
 
     data class ViewArtist(val id: Long) : LibraryOtherScreen
+
+    data object NewAlbum : LibraryOtherScreen
 }

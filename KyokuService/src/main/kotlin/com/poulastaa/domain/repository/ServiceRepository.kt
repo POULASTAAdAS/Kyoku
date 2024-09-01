@@ -71,9 +71,9 @@ interface ServiceRepository {
     ): Boolean
 
     suspend fun addAlbum(
-        albumId: Long,
+        list: List<Long>,
         payload: ReqUserPayload,
-    ): AlbumWithSongDto
+    ): AddAlbumDto
 
     suspend fun removeAlbum(
         id: Long,

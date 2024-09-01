@@ -1,5 +1,6 @@
 package com.poulastaa.routes
 
+import com.poulastaa.data.model.AddAlbumReq
 import com.poulastaa.data.model.AlbumPagingTypeDto
 import com.poulastaa.domain.model.EndPoints
 import com.poulastaa.domain.repository.ServiceRepository
@@ -8,6 +9,7 @@ import com.poulastaa.utils.Constants.SECURITY_LIST
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -16,14 +18,14 @@ fun Route.addAlbum(
 ) {
     authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.AddAlbum.route) {
-            get {
-                val albumId =
-                    call.parameters["albumId"]?.toLong()
-                        ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+            post {
+                val req =
+                    call.receiveNullable<AddAlbumReq>()
+                        ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+                val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val album = service.addAlbum(albumId, payload)
+                val album = service.addAlbum(req.list, payload)
 
                 call.respond(
                     message = album,

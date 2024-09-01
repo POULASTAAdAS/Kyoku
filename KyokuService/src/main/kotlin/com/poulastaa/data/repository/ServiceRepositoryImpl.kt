@@ -301,10 +301,12 @@ class ServiceRepositoryImpl(
         )
     }
 
-    override suspend fun addAlbum(albumId: Long, payload: ReqUserPayload): AlbumWithSongDto {
-        val user = userRepo.getUserOnPayload(payload) ?: return AlbumWithSongDto()
+    override suspend fun addAlbum(list: List<Long>, payload: ReqUserPayload): AddAlbumDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return AddAlbumDto()
 
-        return userRepo.addAlbum(albumId, email = user.email, userType = user.userType)
+        return AddAlbumDto(
+            list = userRepo.addAlbum(list, email = user.email, userType = user.userType)
+        )
     }
 
     override suspend fun removeAlbum(id: Long, userPayload: ReqUserPayload): Boolean {

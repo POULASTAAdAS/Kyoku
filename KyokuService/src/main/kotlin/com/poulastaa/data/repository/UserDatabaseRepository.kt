@@ -358,52 +358,55 @@ class UserDatabaseRepository(
     }
 
     override suspend fun addAlbum(
-        albumId: Long,
+        list: List<Long>,
         email: String,
         userType: UserType,
-    ): AlbumWithSongDto = coroutineScope {
-        val user = getUserOnEmail(email, userType) ?: return@coroutineScope AlbumWithSongDto()
+    ): List<AlbumWithSongDto> = coroutineScope {
+        val user = getUserOnEmail(email, userType) ?: return@coroutineScope emptyList()
 
-        val album = query {
+        query {
             AlbumDao.find {
-                AlbumTable.id eq albumId
-            }.singleOrNull()
-        } ?: return@coroutineScope AlbumWithSongDto()
-
-        val insertDef = async {
-            query {
-                UserAlbumRelationTable.insertIgnore {
-                    it[this.albumId] = album.id.value
-                    it[this.userType] = userType.name
-                    it[this.userId] = user.id
-                }
-            }
-        }
-        val songDef = async {
-            query {
-                SongAlbumRelationTable.select {
-                    SongAlbumRelationTable.albumId eq album.id.value
-                }.map {
-                    it[SongAlbumRelationTable.songId]
-                }.let {
-                    SongDao.find {
-                        SongTable.id inList it
+                AlbumTable.id inList list
+            }.toList()
+        }.map { album ->
+            async {
+                val insertDef = async {
+                    query {
+                        UserAlbumRelationTable.insertIgnore {
+                            it[this.albumId] = album.id.value
+                            it[this.userType] = userType.name
+                            it[this.userId] = user.id
+                        }
                     }
-                }.map {
-                    val artist = database.getArtistOnSongId(it.id.value)
-
-                    it.toSongDto(artist.joinToString { resultArtist -> resultArtist.name })
                 }
+
+                val songDef = async {
+                    query {
+                        SongAlbumRelationTable.select {
+                            SongAlbumRelationTable.albumId eq album.id.value
+                        }.map {
+                            it[SongAlbumRelationTable.songId]
+                        }.let {
+                            SongDao.find {
+                                SongTable.id inList it
+                            }
+                        }.map {
+                            val artist = database.getArtistOnSongId(it.id.value)
+
+                            it.toSongDto(artist.joinToString { resultArtist -> resultArtist.name })
+                        }
+                    }
+                }
+
+                insertDef.await()
+                val songs = songDef.await()
+
+                AlbumWithSongDto(
+                    albumDto = album.toAlbum(songs.getOrNull(0)?.coverImage ?: ""),
+                    listOfSong = songs
+                )
             }
-        }
-
-        insertDef.await()
-        val songs = songDef.await()
-
-        AlbumWithSongDto(
-            albumDto = album.toAlbum(songs.getOrNull(0)?.coverImage ?: ""),
-            listOfSong = songs
-        )
+        }.awaitAll()
     }
 
     override suspend fun removeAlbum(

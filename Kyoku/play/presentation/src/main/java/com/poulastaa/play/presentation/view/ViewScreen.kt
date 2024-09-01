@@ -172,7 +172,11 @@ private fun ViewScreen(
                             ) {
                                 ImageGrid(
                                     header = state.header,
-                                    urls = state.data.urls
+                                    urls = if (state.type == ViewDataType.ALBUM) listOf(
+                                        state.data.urls.getOrElse(
+                                            index = 0
+                                        ) { "" })
+                                    else state.data.urls
                                 )
                             }
                         }

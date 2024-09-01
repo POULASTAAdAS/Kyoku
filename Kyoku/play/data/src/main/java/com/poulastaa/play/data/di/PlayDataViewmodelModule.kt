@@ -16,6 +16,9 @@ import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.LibraryRepository
 import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
+import com.poulastaa.core.domain.repository.new_album.LocalNewAlbumDataSource
+import com.poulastaa.core.domain.repository.new_album.NewAlbumRepository
+import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.setting.SettingRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -31,6 +34,7 @@ import com.poulastaa.play.data.OnlineFirstAddToPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstExploreArtistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
+import com.poulastaa.play.data.OnlineFirstNewAlbumRepository
 import com.poulastaa.play.data.OnlineFirstViewArtistRepository
 import dagger.Module
 import dagger.Provides
@@ -139,5 +143,17 @@ object PlayDataViewmodelModule {
         local = local,
         remote = remote,
         application = applicationScope
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewAlbumRepository(
+        local: LocalNewAlbumDataSource,
+        remote: RemoteNewAlbumDataSource,
+        applicationScope: CoroutineScope,
+    ): NewAlbumRepository = OnlineFirstNewAlbumRepository(
+        local = local,
+        remote = remote,
+        applicationScope = applicationScope
     )
 }

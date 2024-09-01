@@ -4,11 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -47,19 +49,25 @@ fun AddNewAlbumLoadingAnimation(
             )
         }
 
-        Spacer(Modifier.height(MaterialTheme.dimens.large1))
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(.4f)
-                .height(20.dp),
-            shape = MaterialTheme.shapes.extraSmall
-        ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .shimmerEffect()
-            )
+        Row {
+            repeat(3) {
+                Card(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(24.dp),
+                    shape = MaterialTheme.shapes.extraSmall
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .shimmerEffect()
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
+            }
         }
 
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
