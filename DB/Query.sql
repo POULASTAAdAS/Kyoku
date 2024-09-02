@@ -177,7 +177,10 @@ order by  album.points desc , song.year desc;
 
 
 
-
+select album.id , album.name , song.coverImage , song.year , album.points from album 
+join songalbumrelation on songalbumrelation.albumId = album.id
+join album on songalbumrelation.albumId = album.id
+order by  album.points desc , song.year desc;
 
 
 

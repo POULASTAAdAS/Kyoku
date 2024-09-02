@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.add_new_album
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -183,6 +184,8 @@ class AddNewAlbumViewModel @Inject constructor(
                 state = state.copy(
                     header = it
                 )
+
+                Log.d("token " , it)
             }
         }
     }

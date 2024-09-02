@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.intro
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -64,6 +65,8 @@ class IntroViewModel @Inject constructor(
             is IntroUiEvent.OnTokenReceive -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val countryCode = event.activity.resources.configuration.locales[0].country
+
+                    Log.d("toke ", event.token)
 
                     val result = auth.googleAuth(
                         token = event.token,
