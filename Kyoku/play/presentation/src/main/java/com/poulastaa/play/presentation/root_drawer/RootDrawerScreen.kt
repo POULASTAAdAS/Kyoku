@@ -9,6 +9,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -72,6 +73,7 @@ private fun AppDrawer(
 ) {
     val context = LocalContext.current
     val windowSize = calculateWindowSizeClass(activity = context as Activity)
+    val config = LocalConfiguration.current
 
     AppScreenWindowSize(
         windowSizeClass = windowSize,
@@ -98,7 +100,7 @@ private fun AppDrawer(
             )
         },
         expandedContent = {
-            RootDrawerExpanded(
+            if (config.screenWidthDp > 600) RootDrawerExpanded(
                 navController = navController,
                 state = state,
                 onSaveScreenToggle = {
