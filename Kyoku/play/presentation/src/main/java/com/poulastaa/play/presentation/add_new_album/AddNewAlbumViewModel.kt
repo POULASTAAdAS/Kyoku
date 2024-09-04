@@ -184,8 +184,6 @@ class AddNewAlbumViewModel @Inject constructor(
                 state = state.copy(
                     header = it
                 )
-
-                Log.d("token " , it)
             }
         }
     }

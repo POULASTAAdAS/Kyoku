@@ -177,7 +177,7 @@ private fun AddNewAlbumScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainer
     ) { paddingValues ->
         AnimatedContent(
-            album.itemCount == 0,
+            targetState = album.itemCount == 0,
             label = "add_new_album"
         ) { loadingState ->
             when (loadingState) {

@@ -9,13 +9,14 @@ data class RootDrawerUiState(
     val saveScreen: SaveScreen = SaveScreen.HOME,
     val startDestination: String = DrawerScreen.Home.route,
 
+
     val username: String = "User",
     val profilePicUrl: String = "",
 
     val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState(),
     val viewUiState: HomeViewUiState = HomeViewUiState(),
     val exploreArtistUiState: ExploreArtistUiState = ExploreArtistUiState(),
-    val newAlbumUiState: NewAlbumUiState = NewAlbumUiState()
+    val newAlbumUiState: NewAlbumUiState = NewAlbumUiState(),
 )
 
 data class HomeViewUiState(

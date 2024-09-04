@@ -12,7 +12,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.components.AppScreenWindowSize
@@ -30,7 +29,6 @@ fun RootDrawerScreen(
 
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val navController = rememberNavController()
 
     ObserveAsEvent(flow = viewModel.uiEvent) { event ->
         when (event) {
@@ -48,7 +46,6 @@ fun RootDrawerScreen(
 
     AppDrawer(
         drawerState = drawerState,
-        navController = navController,
         state = viewModel.state,
         onEvent = {
             if (it == RootDrawerUiEvent.OnDrawerToggle) {
@@ -67,13 +64,13 @@ fun RootDrawerScreen(
 @Composable
 private fun AppDrawer(
     drawerState: DrawerState,
-    navController: NavHostController,
     state: RootDrawerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val windowSize = calculateWindowSizeClass(activity = context as Activity)
     val config = LocalConfiguration.current
+    val navController = rememberNavController()
 
     AppScreenWindowSize(
         windowSizeClass = windowSize,
@@ -100,7 +97,7 @@ private fun AppDrawer(
             )
         },
         expandedContent = {
-            if (config.screenWidthDp > 600) RootDrawerExpanded(
+            RootDrawerExpanded(
                 navController = navController,
                 state = state,
                 onSaveScreenToggle = {

@@ -135,4 +135,6 @@
     <string name="by_popularity">Trending</string>
     <string name="by_year">artist</string>
     <string name="by_name">release year</string>
+    <string name="search_artist">search artist</string>
+    <string name="international">International</string>
 </resources>
