@@ -38,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -313,7 +312,8 @@ fun ImageGrid(
                 ),
                 modifier = Modifier
                     .aspectRatio(1f),
-                contentDescription = null
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground.copy(.3f))
             )
         } else {
             Row(
@@ -563,12 +563,9 @@ private fun Preview() {
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(MaterialTheme.dimens.large1)
         ) {
-            LibraryAlbumList(
-                modifier = Modifier.fillMaxWidth(),
+            ImageGrid(
                 header = "",
-                album = UiPrevAlbum(
-                    name = "Album"
-                )
+                urls = listOf("")
             )
         }
     }

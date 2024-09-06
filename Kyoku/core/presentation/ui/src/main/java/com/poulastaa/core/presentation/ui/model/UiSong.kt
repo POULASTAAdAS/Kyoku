@@ -1,4 +1,4 @@
-package com.poulastaa.setup.presentation.get_spotify_playlist.model
+package com.poulastaa.core.presentation.ui.model
 
 data class UiSong(
     val id: Long,

@@ -29,7 +29,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyPlaylistUiEvent
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyPlaylistUiState
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
-import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiSong
+import com.poulastaa.core.presentation.ui.model.UiSong
 import kotlin.random.Random
 
 @Composable

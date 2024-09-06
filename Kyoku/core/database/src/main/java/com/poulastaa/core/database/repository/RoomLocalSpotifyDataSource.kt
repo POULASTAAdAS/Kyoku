@@ -11,7 +11,7 @@ import com.poulastaa.core.domain.model.PlaylistWithSongInfo
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.repository.get_spotify_playlist.LocalSpotifyDataSource
 import com.poulastaa.core.domain.repository.get_spotify_playlist.playlistId
-import com.poulastaa.core.domain.repository.get_spotify_playlist.songId
+import com.poulastaa.core.domain.repository.get_spotify_playlist.SongId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class RoomLocalSpotifyDataSource @Inject constructor(
     private val commonDao: CommonDao,
     private val spotifyDao: GetSpotifyPlaylistDao,
 ) : LocalSpotifyDataSource {
-    override suspend fun insertSongs(songs: List<Song>): List<songId> = try {
+    override suspend fun insertSongs(songs: List<Song>): List<SongId> = try {
         val entrys = songs.toSongsEntity()
 
         commonDao.insertSongs(entrys)
@@ -39,7 +39,7 @@ class RoomLocalSpotifyDataSource @Inject constructor(
     }
 
     override suspend fun createRelationOnSongAndPlaylist(
-        songIdList: List<songId>,
+        songIdList: List<SongId>,
         playlistId: playlistId,
     ) {
         val entrys = songIdList.map {
@@ -49,7 +49,7 @@ class RoomLocalSpotifyDataSource @Inject constructor(
         commonDao.insertSongPlaylistRelations(entrys)
     }
 
-    override suspend fun getSongOnUrl(url: String): songId? = commonDao.getSongOnUrl(url)
+    override suspend fun getSongOnUrl(url: String): SongId? = commonDao.getSongOnUrl(url)
 
     override fun getAllPlaylistWithSong(): Flow<List<PlaylistWithSongInfo>> =
         spotifyDao.getAllPlaylist().map { rawRes ->
