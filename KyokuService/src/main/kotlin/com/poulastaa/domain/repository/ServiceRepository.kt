@@ -164,4 +164,8 @@ interface ServiceRepository {
         type: ArtistPagingTypeDto,
         payload: ReqUserPayload,
     ): PagingArtistResDto
+
+    suspend fun getCreatePlaylistData(
+        payload: ReqUserPayload,
+    ): CreatePlaylistDto
 }

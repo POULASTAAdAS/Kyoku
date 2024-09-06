@@ -2,43 +2,6 @@ use kyoku;
 
 SET SQL_SAFE_UPDATES = 0;
 
-select * from country;
-select * from genre;
-select * from artist;
-select * from album;
-select * from song;
-
-select * from ArtistCountryRelation;
-select * from ArtistGenreRelation;
-select * from ArtistAlbumRelation;
-
-select * from SongArtistRelation;
-select * from SongAlbumRelation;
-
-
-select count(*) from ArtistCountryRelation;
-select count(*) from ArtistGenreRelation;
-select count(*) from ArtistAlbumRelation;
-
-
-select * from emailauthuser;
-select * from googleauthuser;
-delete from googleauthuser;
-
-select * from loginverificationmail;
-
-select * from playlist;
-select * from userplaylistsongrelation;
-select * from usergenrerelation;
-select * from userartistrelation;
-
-delete from playlist;
-delete from usergenrerelation;
-delete from userartistrelation;
-
-
-
-
 
 -- getPopularSongMix
 select * from song
@@ -115,29 +78,6 @@ join albumcountryrelation on albumcountryrelation.albumId = album.id
 where albumcountryrelation.countryId = 1 order by album.points desc limit 10;
 
 
-select * from emailauthuser;
-select * from googleauthuser;
-select * from userplaylistsongrelation;
-
-
-select * from userplaylistsongrelation;
-
-select * from playlist;
-select * from userplaylistsongrelation;
-
-
-select distinct(userid) from userplaylistsongrelation where playlistid = 3;
-select *  from userplaylistsongrelation;
-
-select * from useralbumrelation;
-select * from useralbumrelation;
-
-
-select * from userartistrelation;
-
-delete from userartistrelation where userid = 0;
-
-
 select * from artist;
 select * from userartistrelation;
 select count(*) from userartistrelation where artistid = 10613;
@@ -167,14 +107,10 @@ WHERE artistalbumrelation.artistId = 2967
 GROUP BY album.id
 ORDER BY year DESC;
 
-
-select * from album order by points desc limit 30; 
-
 select album.id , album.name , song.coverImage , song.year , album.points from song 
 join songalbumrelation on songalbumrelation.songId = song.id
 join album on songalbumrelation.albumId = album.id
 order by  album.points desc , song.year desc;
-
 
 
 select album.id , album.name , song.coverImage , song.year , album.points from album 
@@ -182,30 +118,10 @@ join songalbumrelation on songalbumrelation.albumId = album.id
 join album on songalbumrelation.albumId = album.id
 order by  album.points desc , song.year desc;
 
-select * from artist where name like 'tayl%';
-select * from songartistrelation where artistId = 2;
-
-select * from artist order by points desc;
-
-update artist set points = 3 where id = 4394;
+select * from playlist;
 
 
-select * from artist where id in (
-	select artistid from userartistrelation where userid = 11
-);
-
-
-
-
-
-
-
-
-
-
-
-
-
+select * from artist order by random() limit 20;
 
 
 

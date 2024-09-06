@@ -94,10 +94,11 @@ interface CommonDao {
 
     @Query(
         """
-        select PlaylistEntity.id , PlaylistEntity.name ,  SongEntity.coverImage from SongEntity
-        join SongPlaylistRelationEntity on SongEntity.id = SongPlaylistRelationEntity.songId
-        join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
-        where PlaylistEntity.id order by PlaylistEntity.points
+         SELECT PlaylistEntity.id, PlaylistEntity.name, SongEntity.coverImage
+        FROM PlaylistEntity
+        LEFT JOIN SongPlaylistRelationEntity ON PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
+        LEFT JOIN SongEntity ON SongEntity.id = SongPlaylistRelationEntity.songId
+        ORDER BY PlaylistEntity.id DESC
     """
     )
     fun getAllSavedPlaylist(): Flow<List<PrevSongResult>>

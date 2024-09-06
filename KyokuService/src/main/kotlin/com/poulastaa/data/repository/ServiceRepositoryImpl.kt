@@ -257,7 +257,6 @@ class ServiceRepositoryImpl(
                     popularArtist = popularArtist,
                     popularArtistSong = poplarArtistSongDef.await(),
 
-
                     savedPlaylist = pair.first.savedPlaylist,
                     savedAlbum = pair.first.savedAlbum,
                     savedArtist = pair.first.savedArtist,
@@ -704,6 +703,16 @@ class ServiceRepositoryImpl(
                 query = query,
                 type = type,
             )
+        )
+    }
+
+    override suspend fun getCreatePlaylistData(payload: ReqUserPayload): CreatePlaylistDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return CreatePlaylistDto()
+
+        return kyokuRepo.getCreatePlaylistData(
+            userId = user.id,
+            userType = user.userType,
+            countryId = user.countryId
         )
     }
 }

@@ -75,4 +75,10 @@ interface DatabaseRepository {
         countryId: Int,
         type: ArtistPagingTypeDto,
     ): List<ArtistDto>
+
+    suspend fun getCreatePlaylistData(
+        userId: Long,
+        userType: UserType,
+        countryId: Int,
+    ): CreatePlaylistDto
 }

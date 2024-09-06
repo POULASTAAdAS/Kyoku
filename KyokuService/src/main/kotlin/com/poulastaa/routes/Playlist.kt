@@ -75,3 +75,21 @@ fun Route.createPlaylist(service: ServiceRepository) {
         }
     }
 }
+
+fun Route.getCreatePlaylistData(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.GetCreatePlaylistData.route) {
+            get {
+                val payload = call.getReqUserPayload()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val result = service.getCreatePlaylistData(payload)
+
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}

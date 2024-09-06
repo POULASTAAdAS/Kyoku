@@ -136,6 +136,16 @@ class KyokuDatabaseImpl : DatabaseRepository {
             }
         }.await()
 
+        CoroutineScope(Dispatchers.IO).launch {
+            query {
+                UserPlaylistRelationTable.insertIgnore {
+                    it[this.playlistId] = playlist.id.value
+                    it[this.userType] = userType.name
+                    it[this.userId] = userId
+                }
+            }
+        }
+
         songIdList.map { id ->
             async {
                 query {
@@ -507,6 +517,124 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 }
             }
         }
+    }
+
+    override suspend fun getCreatePlaylistData(
+        userId: Long,
+        userType: UserType,
+        countryId: Int,
+    ): CreatePlaylistDto = coroutineScope {
+        val favouriteDef = async {
+            query {
+                UserFavouriteRelationTable
+                    .slice(UserFavouriteRelationTable.songId)
+                    .select {
+                        UserFavouriteRelationTable.userId eq userId and
+                                (UserFavouriteRelationTable.userType eq userType.name)
+                    }.limit(Random.nextInt(30, 35))
+                    .map { it[UserFavouriteRelationTable.songId] }
+            }.let { getSongOnIdList(it) }
+        }
+
+        val recentHistoryDef = async {
+            // todo
+
+            emptyList<SongDto>()
+        }
+
+        val internationalDef = async {
+            val albumIdDef = async {
+                query {
+                    AlbumCountryRelationTable
+                        .slice(AlbumCountryRelationTable.albumId)
+                        .select {
+                            AlbumCountryRelationTable.countryId neq countryId
+                        }
+                        .limit(Random.nextInt(15, 20))
+                        .map { it[AlbumCountryRelationTable.albumId] }
+                }
+            }
+            val artistDef = async {
+                query {
+                    ArtistCountryRelationTable
+                        .slice(ArtistCountryRelationTable.artistId)
+                        .select {
+                            ArtistCountryRelationTable.countryId neq countryId
+                        }
+                        .limit(Random.nextInt(10, 15))
+                        .map { it[ArtistCountryRelationTable.artistId] }
+                }
+            }
+
+            val artistSongDef = async {
+                query {
+                    SongArtistRelationTable
+                        .slice(SongArtistRelationTable.songId)
+                        .select {
+                            SongArtistRelationTable.artistId inList artistDef.await()
+                        }
+                        .orderBy(org.jetbrains.exposed.sql.Random())
+                        .limit(Random.nextInt(30, 40))
+                        .map { it[SongArtistRelationTable.songId] }
+                        .let { getSongOnIdList(it) }
+                }
+            }
+            val albumSongDef = async {
+                query {
+                    SongAlbumRelationTable
+                        .slice(SongAlbumRelationTable.songId)
+                        .select {
+                            SongAlbumRelationTable.albumId inList albumIdDef.await()
+                        }
+                        .orderBy(org.jetbrains.exposed.sql.Random())
+                        .limit(Random.nextInt(30, 40))
+                        .map { it[SongAlbumRelationTable.songId] }
+                        .let { getSongOnIdList(it) }
+                }
+            }
+
+            val artistSong = artistSongDef.await()
+            val albumSong = albumSongDef.await()
+
+            albumSong.filterNot { artistSong.contains(it) }
+                .shuffled(Random)
+                .take(Random.nextInt(35, 40))
+        }
+
+        val mostPopularDef = async {
+            query {
+                SongDao.all()
+                    .orderBy(SongTable.points to SortOrder.DESC)
+                    .limit(Random.nextInt(35, 45))
+                    .map { dao ->
+                        async {
+                            val artist = getArtistOnSongId(dao.id.value)
+                            dao.toSongDto(artist.joinToString { it.name })
+                        }
+                    }.awaitAll()
+            }
+        }
+
+
+        val fevPair = CreatePlaylistTypeDto.YOUR_FAVOURITES to favouriteDef.await()
+        val suggestPair = CreatePlaylistTypeDto.SUGGESTED_FOR_YOU to mostPopularDef.await()
+        val likePair = CreatePlaylistTypeDto.YOU_MAY_ALSO_LIKE to internationalDef.await()
+        val historyPair = CreatePlaylistTypeDto.RECENT_HISTORY to recentHistoryDef.await()
+
+        val newFevPair =
+            if (fevPair.second.size < 20) CreatePlaylistTypeDto.YOUR_FAVOURITES to
+                    fevPair.second + (suggestPair.second + likePair.second + historyPair.second).shuffled(Random)
+                .take(Random.nextInt(18, 25))
+            else fevPair
+
+        val data = listOf(
+            newFevPair,
+            suggestPair,
+            likePair,
+            historyPair
+        )
+
+        CreatePlaylistDto(data = data)
     }
 
     private suspend fun AlbumDao.toPagingAlbumDto() =

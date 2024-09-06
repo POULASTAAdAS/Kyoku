@@ -70,6 +70,8 @@ private fun Routing.common(service: ServiceRepository) {
 
     getAlbumPagingData(service)
     getArtistPagingData(service)
+
+    getCreatePlaylistData(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

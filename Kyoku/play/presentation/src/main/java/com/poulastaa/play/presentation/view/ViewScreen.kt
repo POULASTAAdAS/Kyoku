@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,9 +27,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,23 +46,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.DownloadIcon
+import com.poulastaa.core.presentation.designsystem.MusicImage
 import com.poulastaa.core.presentation.designsystem.PlayIcon
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ShuffleIcon
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
-import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.SongDetailsCard
 import com.poulastaa.play.presentation.SongDetailsMovableCard
@@ -141,116 +149,182 @@ private fun ViewScreen(
                     content = { ViewLoadingAnimation() }
                 )
 
-                DataLoadingState.LOADED -> LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(innerPadding)
-                        .nestedScroll(scroll.nestedScrollConnection)
-                        .navigationBarsPadding(),
-                    contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
-                ) {
-                    item {
-                        Column(
+                DataLoadingState.LOADED -> {
+                    if (state.type == ViewDataType.PLAYLIST && state.data.listOfSong.isEmpty()) Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(innerPadding)
+                            .padding(horizontal = MaterialTheme.dimens.medium1)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Card(
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 10.dp
+                            ),
+                            shape = MaterialTheme.shapes.small,
                             modifier = Modifier
-                                .then(
-                                    if (config.screenWidthDp < 600)
-                                        Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
-                                    else Modifier
-                                        .aspectRatio(1.6f)
-                                ),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .size(240.dp)
                         ) {
-                            Card(
+                            Image(
+                                painter = MusicImage,
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .padding(MaterialTheme.dimens.large2),
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 10.dp
-                                ),
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                ImageGrid(
-                                    header = state.header,
-                                    urls = if (state.type == ViewDataType.ALBUM) listOf(
-                                        state.data.urls.getOrElse(
-                                            index = 0
-                                        ) { "" })
-                                    else state.data.urls
-                                )
-                            }
-                        }
-                    }
-
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = MaterialTheme.dimens.medium1)
-                        ) {
-                            Text(
-                                text = state.data.name,
-                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-
-                            Text(
-                                text = "${state.data.listOfSong.size} songs",
-                                fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                                color = MaterialTheme.colorScheme.onBackground.copy(.7f)
-                            )
-                        }
-                    }
-
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = MaterialTheme.dimens.medium1),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CustomButton(
-                                imageVector = DownloadIcon,
-                                modifier = Modifier
-                                    .border(
-                                        width = 1.5.dp,
-                                        color = MaterialTheme.colorScheme.primary.copy(.5f),
-                                        shape = CircleShape
+                                    .fillMaxSize()
+                                    .padding(MaterialTheme.dimens.large1),
+                                colorFilter = ColorFilter.tint(
+                                    color = MaterialTheme.colorScheme.onBackground.copy(
+                                        .2f
                                     )
-                                    .size(35.dp)
+                                )
+                            )
+                        }
+
+                        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+                        Text(
+                            text = state.data.name,
+                            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Spacer(Modifier.weight(.4f))
+
+                        Text(
+                            text = stringResource(R.string.build_your_playlist),
+                            fontWeight = FontWeight.SemiBold,
+                        )
+
+                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
+
+                        FilledTonalButton(
+                            onClick = {},
+                            modifier = Modifier
+                                .fillMaxWidth(.5f),
+                            elevation = ButtonDefaults.filledTonalButtonElevation(
+                                defaultElevation = 8.dp
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.explore),
+                                modifier = Modifier.padding(MaterialTheme.dimens.small1),
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 2.sp
+                            )
+                        }
+
+                        Spacer(Modifier.weight(1f))
+                    }
+                    else LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(innerPadding)
+                            .nestedScroll(scroll.nestedScrollConnection)
+                            .navigationBarsPadding(),
+                        contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
+                    ) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .then(
+                                        if (config.screenWidthDp < 600)
+                                            Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
+                                        else Modifier
+                                            .aspectRatio(1.6f)
+                                    ),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                onEvent(ViewUiEvent.OnDownloadClick)
+                                Card(
+                                    modifier = Modifier
+                                        .aspectRatio(1f)
+                                        .padding(MaterialTheme.dimens.large2),
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 10.dp
+                                    ),
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    ImageGrid(
+                                        header = state.header,
+                                        urls = if (state.type == ViewDataType.ALBUM) listOf(
+                                            state.data.urls.getOrElse(index = 0) { "" }
+                                        ) else state.data.urls
+                                    )
+                                }
                             }
+                        }
 
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            CustomButton(imageVector = ShuffleIcon) {
-                                onEvent(ViewUiEvent.OnShuffleClick)
-                            }
-
-                            Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
-
-                            IconButton(
-                                onClick = {
-                                    onEvent(ViewUiEvent.OnPlayClick)
-                                },
-                                modifier = Modifier.size(70.dp)
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = MaterialTheme.dimens.medium1)
                             ) {
-                                Icon(
-                                    imageVector = PlayIcon,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary.copy(.6f),
-                                    modifier = Modifier.fillMaxSize()
+                                Text(
+                                    text = state.data.name,
+                                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+
+                                Text(
+                                    text = "${state.data.listOfSong.size} songs",
+                                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(.7f)
                                 )
                             }
                         }
-                    }
 
-                    items(state.data.listOfSong) { song ->
-                        if (state.isSavedData)
-                            SongDetailsMovableCard(
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = MaterialTheme.dimens.medium1),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CustomButton(
+                                    imageVector = DownloadIcon,
+                                    modifier = Modifier
+                                        .border(
+                                            width = 1.5.dp,
+                                            color = MaterialTheme.colorScheme.primary.copy(.5f),
+                                            shape = CircleShape
+                                        )
+                                        .size(35.dp)
+                                ) {
+                                    onEvent(ViewUiEvent.OnDownloadClick)
+                                }
+
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                CustomButton(imageVector = ShuffleIcon) {
+                                    onEvent(ViewUiEvent.OnShuffleClick)
+                                }
+
+                                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                                IconButton(
+                                    onClick = {
+                                        onEvent(ViewUiEvent.OnPlayClick)
+                                    },
+                                    modifier = Modifier.size(70.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = PlayIcon,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary.copy(.6f),
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+                        }
+
+                        items(state.data.listOfSong) { song ->
+                            if (state.isSavedData) SongDetailsMovableCard(
                                 modifier = Modifier.clickable {
                                     onEvent(ViewUiEvent.OnSongClick(song.id))
                                 },
@@ -270,23 +344,24 @@ private fun ViewScreen(
                                     onEvent(ViewUiEvent.OnThreeDotClose(song.id))
                                 }
                             )
-                        else SongDetailsCard(
-                            modifier = Modifier.clickable {
-                                onEvent(ViewUiEvent.OnSongClick(song.id))
-                            },
-                            header = state.header,
-                            song = song,
-                            list = state.threeDotOperations,
-                            onThreeDotOpenClick = {
-                                onEvent(ViewUiEvent.OnThreeDotClick(song.id))
-                            },
-                            onThreeDotOperationClick = {
-                                onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
-                            },
-                            onThreeDotClose = {
-                                onEvent(ViewUiEvent.OnThreeDotClose(song.id))
-                            }
-                        )
+                            else SongDetailsCard(
+                                modifier = Modifier.clickable {
+                                    onEvent(ViewUiEvent.OnSongClick(song.id))
+                                },
+                                header = state.header,
+                                song = song,
+                                list = state.threeDotOperations,
+                                onThreeDotOpenClick = {
+                                    onEvent(ViewUiEvent.OnThreeDotClick(song.id))
+                                },
+                                onThreeDotOperationClick = {
+                                    onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
+                                },
+                                onThreeDotClose = {
+                                    onEvent(ViewUiEvent.OnThreeDotClose(song.id))
+                                }
+                            )
+                        }
                     }
                 }
 
@@ -330,17 +405,13 @@ private fun Preview() {
         ViewScreen(
             state = ViewUiState(
                 data = ViewUiData(
-                    listOfSong = (1..10).map {
-                        ViewUiSong(
-                            name = "Name: $it",
-                            artist = "Artist: $it"
-                        )
-                    },
                     name = "Playlist"
                 ),
                 topBarTitle = "Playlist",
-                loadingState = loading
-            ), onEvent = {}) {
+                loadingState = loading,
+                type = ViewDataType.PLAYLIST
+            ), onEvent = {}
+        ) {
 
         }
     }

@@ -18,8 +18,6 @@ sealed class EndPoints(val route: String) {
 
     data object NewHome : EndPoints(route = "/api/authorised/newHome")
 
-    data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
-
     data object AddToFavourite : EndPoints(route = "/api/authorised/addToFavourite")
     data object RemoveFromFavourite : EndPoints(route = "/api/authorised/removeFromFavourite")
 
@@ -56,4 +54,9 @@ sealed class EndPoints(val route: String) {
 
     data object GetAlbumPaging : EndPoints(route = "/api/authorised/getAlbumPaging")
     data object GetArtistPaging : EndPoints(route = "/api/authorised/getArtistPaging")
+
+    data object GetCreatePlaylistData : EndPoints(route = "/api/authorised/getCreatePlaylistData")
+
+
+    data object PlaySongMaster : EndPoints(route = "/api/authorised/playSong/master")
 }

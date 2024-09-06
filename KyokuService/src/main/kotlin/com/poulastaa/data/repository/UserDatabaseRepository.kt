@@ -147,7 +147,7 @@ class UserDatabaseRepository(
     ): Pair<LogInDto, UserId> = coroutineScope {
         val userId = getUserOnEmail(email, userType)?.id ?: return@coroutineScope LogInDto() to -1
 
-        val savedPlaylistDef = async {
+        val savedPlaylistWithSongDef = async {
             query {
                 UserPlaylistSongRelationTable.select {
                     (UserPlaylistSongRelationTable.userId eq userId) and (UserPlaylistSongRelationTable.userType eq userType.name)
@@ -181,6 +181,19 @@ class UserDatabaseRepository(
                         pair.second.toSongDto(artist = pair.first.joinToString())
                     }
                 )
+            }
+        }
+
+        val savedEmptyPlaylistIdsDef = async {
+            query {
+                UserPlaylistRelationTable
+                    .slice(UserPlaylistRelationTable.playlistId)
+                    .select {
+                        UserPlaylistRelationTable.userId eq userId and
+                                (UserPlaylistRelationTable.userType eq userType.name)
+                    }.map {
+                        it[UserPlaylistRelationTable.playlistId]
+                    }
             }
         }
         val savedAlbumDef = async {
@@ -241,8 +254,29 @@ class UserDatabaseRepository(
         }
         val favouriteSongDef = async { getUserFavouriteSong(userId, userType.name) }
 
+        val savedPlaylistWithSong = savedPlaylistWithSongDef.await()
+        val savedEmptyPlaylistIds = savedEmptyPlaylistIdsDef.await()
+
+        val emptyPlaylistDef = async {
+            val idList = savedPlaylistWithSong.map { it.id }
+
+            savedEmptyPlaylistIds.filterNot { idList.contains(it) }
+                .let {
+                    query {
+                        PlaylistDao.find {
+                            PlaylistTable.id inList it
+                        }.map { playlist ->
+                            PlaylistDto(
+                                id = playlist.id.value,
+                                name = playlist.name,
+                            )
+                        }
+                    }
+                }
+        }
+
         LogInDto(
-            savedPlaylist = savedPlaylistDef.await(),
+            savedPlaylist = savedPlaylistWithSong + emptyPlaylistDef.await(),
             savedAlbum = savedAlbumDef.await(),
             savedArtist = followArtistDef.await(),
             favouriteSong = favouriteSongDef.await()
@@ -625,25 +659,54 @@ class UserDatabaseRepository(
 
         val removeList = playlistIdList.filterNot { savedPlaylistIdList.contains(it) }
 
-        val newList = savedPlaylistIdList.filterNot { playlistIdList.contains(it) }
-            .map {
-                async {
-                    val playlist = async { database.getPlaylistOnId(it)!! }
-                    val song = async { database.getPlaylistSong(it, userId, userType) }
+        val newListDef = async {
+            savedPlaylistIdList.filterNot { playlistIdList.contains(it) }
+                .map {
+                    async {
+                        val playlist = async { database.getPlaylistOnId(it)!! }
+                        val song = async { database.getPlaylistSong(it, userId, userType) }
 
-                    playlist.await() to song.await()
+                        playlist.await() to song.await()
+                    }
+                }.awaitAll()
+        }
+
+        val allPlaylistDef = async {
+            val idList = query {
+                UserPlaylistRelationTable
+                    .slice(UserPlaylistRelationTable.playlistId)
+                    .select {
+                        UserPlaylistRelationTable.userId eq userId and
+                                (UserPlaylistRelationTable.userType eq userType.name)
+                    }.map {
+                        it[UserPlaylistRelationTable.playlistId]
+                    }
+            }
+
+            idList.filterNot { savedPlaylistIdList.contains(it) }
+                .let {
+                    query {
+                        PlaylistDao.find {
+                            PlaylistTable.id inList it
+                        }
+                    }.map { playlist ->
+                        PlaylistDto(
+                            id = playlist.id.value,
+                            name = playlist.name
+                        )
+                    }
                 }
-            }.awaitAll()
+        }
 
         SyncDto(
             removeIdList = removeList,
-            newAlbumList = newList.map {
+            newAlbumList = newListDef.await().map {
                 PlaylistDto(
                     id = it.first.id.value,
                     name = it.first.name,
                     listOfSong = it.second
                 )
-            }
+            } + allPlaylistDef.await()
         )
     }
 

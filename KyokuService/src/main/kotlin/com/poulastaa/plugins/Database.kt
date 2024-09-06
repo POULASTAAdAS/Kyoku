@@ -27,6 +27,7 @@ fun Application.configureDatabase() {
 
     transaction(db) {
         SchemaUtils.create(UserPlaylistSongRelationTable)
+        SchemaUtils.create(UserPlaylistRelationTable)
         SchemaUtils.create(UserGenreRelationTable)
         SchemaUtils.create(UserArtistRelationTable)
         SchemaUtils.create(UserAlbumRelationTable)
