@@ -43,6 +43,8 @@ import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
+import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
+import com.poulastaa.play.presentation.add_new_artist.AddNewArtistRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
@@ -77,7 +79,6 @@ fun RootDrawerExpanded(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surfaceContainer),
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
         verticalAlignment = Alignment.Top
     ) {
         Surface(
@@ -120,10 +121,7 @@ fun RootDrawerExpanded(
             )
         }
 
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        Surface {
             Box {
                 Row {
                     NavHost(
@@ -135,6 +133,7 @@ fun RootDrawerExpanded(
                                     (state.addToPlaylistUiState.isOpen ||
                                             state.viewUiState.isOpen ||
                                             state.newAlbumUiState.isOpen ||
+                                            state.newArtisUiState.isOpen ||
                                             state.exploreArtistUiState.isOpen)
                                 ) Modifier
                                     .fillMaxWidth(.6f)
@@ -195,15 +194,13 @@ fun RootDrawerExpanded(
                                             )
                                         )
 
-                                        is LibraryOtherScreen.ViewArtist -> {
-                                            navController.navigate(
-                                                route = DrawerScreen.ViewArtist.route + "/${screen.id}"
-                                            )
-                                        }
+                                        is LibraryOtherScreen.ViewArtist -> navController.navigate(
+                                            route = DrawerScreen.ViewArtist.route + "/${screen.id}"
+                                        )
 
-                                        LibraryOtherScreen.NewAlbum -> {
-                                            onEvent(RootDrawerUiEvent.NewAlbum)
-                                        }
+                                        LibraryOtherScreen.NewAlbum -> onEvent(RootDrawerUiEvent.NewAlbum)
+
+                                        LibraryOtherScreen.NewArtist -> onEvent(RootDrawerUiEvent.NewArtist)
                                     }
                                 }
                             )
@@ -272,6 +269,7 @@ fun RootDrawerExpanded(
                             if (state.addToPlaylistUiState.isOpen ||
                                 state.viewUiState.isOpen ||
                                 state.newAlbumUiState.isOpen ||
+                                state.newArtisUiState.isOpen ||
                                 (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                             ) ViewArtistCompactRootScreen(
                                 artistId = id,
@@ -328,11 +326,7 @@ fun RootDrawerExpanded(
                         enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
                         exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
                     ) {
-                        val temp = remember {
-                            state.addToPlaylistUiState.isOpen
-                        }
-
-                        if (temp) AddToPlaylistRootScreen(
+                        AddToPlaylistRootScreen(
                             songId = state.addToPlaylistUiState.songId,
                             modifier = Modifier.padding(start = MaterialTheme.dimens.small2)
                         ) {
@@ -423,24 +417,31 @@ fun RootDrawerExpanded(
                             }
                         )
                     }
+
+                    AnimatedVisibility(
+                        modifier = Modifier.fillMaxSize(),
+                        visible = state.newArtisUiState.isOpen && config.screenWidthDp > 980,
+                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                    ) {
+                        AddNewArtistRootScreen(
+                            navigate = {
+                                when (it) {
+                                    is AddNewArtistOtherScreen.ViewArtist -> onEvent(
+                                        RootDrawerUiEvent.OnExploreArtistOpen(
+                                            id = it.id
+                                        )
+                                    )
+                                }
+                            },
+                            navigateBack = {
+                                onEvent(RootDrawerUiEvent.NewArtistCancel)
+                            }
+                        )
+                    }
                 }
 
                 // medium screen
-                this@Row.AnimatedVisibility(
-                    visible = state.addToPlaylistUiState.isOpen && config.screenWidthDp < 980,
-                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
-                ) {
-                    val temp = remember {
-                        state.addToPlaylistUiState.isOpen
-                    }
-
-                    if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
-                        onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
-                    }
-                }
-
-
                 this@Row.AnimatedVisibility(
                     modifier = Modifier.fillMaxSize(),
                     visible = state.newAlbumUiState.isOpen && config.screenWidthDp < 980,
@@ -448,7 +449,6 @@ fun RootDrawerExpanded(
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                 ) {
                     AddNewAlbumRootScreen(
-                        modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                         navigate = {
                             when (it) {
                                 is AddNewAlbumOtherScreen.ViewAlbum -> {
@@ -469,28 +469,22 @@ fun RootDrawerExpanded(
 
                 this@Row.AnimatedVisibility(
                     modifier = Modifier.fillMaxSize(),
-                    visible = state.viewUiState.isOpen && config.screenWidthDp < 980,
+                    visible = state.newArtisUiState.isOpen && config.screenWidthDp < 980,
                     enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                 ) {
-                    ViewCompactScreen(
-                        id = state.viewUiState.songId,
-                        type = state.viewUiState.type,
+                    AddNewArtistRootScreen(
                         navigate = {
                             when (it) {
-                                is ViewOtherScreen.AddSongToPlaylist -> onEvent(
-                                    RootDrawerUiEvent.AddSongToPlaylist(
+                                is AddNewArtistOtherScreen.ViewArtist -> onEvent(
+                                    RootDrawerUiEvent.OnExploreArtistOpen(
                                         id = it.id
                                     )
                                 )
-
-                                is ViewOtherScreen.ViewSongArtists -> {
-
-                                }
                             }
                         },
                         navigateBack = {
-                            onEvent(RootDrawerUiEvent.OnViewCancel)
+                            onEvent(RootDrawerUiEvent.NewArtistCancel)
                         }
                     )
                 }
@@ -525,16 +519,59 @@ fun RootDrawerExpanded(
                         }
                     )
                 }
+
+                this@Row.AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.viewUiState.isOpen && config.screenWidthDp < 980,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    ViewCompactScreen(
+                        id = state.viewUiState.songId,
+                        type = state.viewUiState.type,
+                        navigate = {
+                            when (it) {
+                                is ViewOtherScreen.AddSongToPlaylist -> onEvent(
+                                    RootDrawerUiEvent.AddSongToPlaylist(
+                                        id = it.id
+                                    )
+                                )
+
+                                is ViewOtherScreen.ViewSongArtists -> {
+                                    // todo add screen
+                                }
+                            }
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.OnViewCancel)
+                        }
+                    )
+                }
+
+                this@Row.AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.addToPlaylistUiState.isOpen && config.screenWidthDp < 980,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                ) {
+                    AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
+                        onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+                    }
+                }
             }
         }
     }
 
     if (state.addToPlaylistUiState.isOpen ||
         state.viewUiState.isOpen ||
-        state.exploreArtistUiState.isOpen
+        state.exploreArtistUiState.isOpen ||
+        state.newArtisUiState.isOpen ||
+        state.newAlbumUiState.isOpen
     ) BackHandler {
         if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+        else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
+        else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
     }
 }

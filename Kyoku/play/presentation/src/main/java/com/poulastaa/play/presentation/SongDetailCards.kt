@@ -125,7 +125,10 @@ fun SongDetailsMovableCard(
             Box(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                IconButton(onClick = onThreeDotOpenClick) {
+                IconButton(
+                    onClick = onThreeDotOpenClick,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
                     Icon(
                         imageVector = ThreeDotIcon,
                         contentDescription = null,

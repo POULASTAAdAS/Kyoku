@@ -322,25 +322,33 @@ class UserDatabaseRepository(
     }
 
     override suspend fun addArtist(
-        artistId: Long,
-        email: String,
+        list: List<Long>,
+        userId: Long,
         userType: UserType,
-    ): ArtistDto {
-        val artist = query {
+    ): List<ArtistDto> {
+        val daoList = query {
             ArtistDao.find {
-                ArtistTable.id eq artistId
-            }.singleOrNull()
-        } ?: return ArtistDto()
-
-        query {
-            UserArtistRelationTable.insertIgnore {
-                it[this.artistId] = artistId
-                it[this.userType] = userType.name
-                it[this.userId] = userId
-            }
+                ArtistTable.id inList list
+            }.toList()
         }
 
-        return artist.toArtistDto()
+        if (daoList.isEmpty()) return emptyList()
+
+        coroutineScope {
+            daoList.map { dto ->
+                async {
+                    query {
+                        UserArtistRelationTable.insertIgnore {
+                            it[this.artistId] = dto.id.value
+                            it[this.userType] = userType.name
+                            it[this.userId] = userId
+                        }
+                    }
+                }
+            }.awaitAll()
+        }
+
+        return daoList.map { it.toArtistDto() }
     }
 
     override suspend fun removeArtist(

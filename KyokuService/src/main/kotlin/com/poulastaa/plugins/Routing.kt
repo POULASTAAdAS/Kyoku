@@ -69,6 +69,7 @@ private fun Routing.common(service: ServiceRepository) {
     syncData(service)
 
     getAlbumPagingData(service)
+    getArtistPagingData(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

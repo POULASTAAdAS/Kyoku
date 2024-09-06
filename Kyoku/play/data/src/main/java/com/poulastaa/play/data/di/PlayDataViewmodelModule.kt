@@ -1,5 +1,6 @@
 package com.poulastaa.play.data.di
 
+import android.app.Application
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.repository.add_playlist.AddPlaylistRepository
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
@@ -19,6 +20,9 @@ import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.new_album.LocalNewAlbumDataSource
 import com.poulastaa.core.domain.repository.new_album.NewAlbumRepository
 import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
+import com.poulastaa.core.domain.repository.new_artist.LocalNewArtistDataSource
+import com.poulastaa.core.domain.repository.new_artist.NewArtistRepository
+import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.setting.SettingRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -35,6 +39,7 @@ import com.poulastaa.play.data.OnlineFirstExploreArtistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
 import com.poulastaa.play.data.OnlineFirstNewAlbumRepository
+import com.poulastaa.play.data.OnlineFirstNewArtistRepository
 import com.poulastaa.play.data.OnlineFirstViewArtistRepository
 import dagger.Module
 import dagger.Provides
@@ -155,5 +160,17 @@ object PlayDataViewmodelModule {
         local = local,
         remote = remote,
         applicationScope = applicationScope
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewArtistRepository(
+        local: LocalNewArtistDataSource,
+        remote: RemoteNewArtistDataSource,
+        applicationScope: CoroutineScope,
+    ): NewArtistRepository = OnlineFirstNewArtistRepository(
+        local = local,
+        remote = remote,
+        applicationScope = applicationScope,
     )
 }

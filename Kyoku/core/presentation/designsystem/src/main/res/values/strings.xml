@@ -137,4 +137,5 @@
     <string name="by_name">release year</string>
     <string name="search_artist">search artist</string>
     <string name="international">International</string>
+    <string name="explore_artist">Explore Artist</string>
 </resources>

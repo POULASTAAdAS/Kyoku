@@ -6,8 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.repository.new_artist.NewArtistRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.SnackBarType
 import com.poulastaa.core.presentation.ui.SnackBarUiState
 import com.poulastaa.core.presentation.ui.UiText
@@ -24,7 +29,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddNewArtistVewModel @Inject constructor(
-    private val ds: DataStoreRepository
+    private val ds: DataStoreRepository,
+    private val repo: NewArtistRepository
 ) : ViewModel() {
     var state by mutableStateOf(AddNewArtistUiState())
         private set
@@ -140,7 +146,16 @@ class AddNewArtistVewModel @Inject constructor(
     }
 
     private fun loadData() = viewModelScope.launch {
+        _artist.value = PagingData.empty()
 
+        repo.getPagingArtist(
+            query = state.searchQuery.trim(),
+            type = state.type,
+        ).cachedIn(viewModelScope).collectLatest {
+            _artist.value = it.map { data ->
+                data.toPagingArtist()
+            }
+        }
     }
 
     private fun showSnackBar(type: SnackBarType, message: UiText) = viewModelScope.launch {
@@ -169,7 +184,40 @@ class AddNewArtistVewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            when (val result = repo.saveArtist(saveArtistIdList.toList())) {
+                is Result.Error -> {
+                    when (result.error) {
+                        DataError.Network.NO_INTERNET -> {
+                            showSnackBarJob?.cancel()
+                            showSnackBarJob = showSnackBar(
+                                type = SnackBarType.ERROR,
+                                message = UiText.StringResource(R.string.error_no_internet)
+                            )
+                        }
 
+                        else -> {
+                            showSnackBarJob?.cancel()
+                            showSnackBarJob = showSnackBar(
+                                type = SnackBarType.ERROR,
+                                message = UiText.StringResource(R.string.error_something_went_wrong)
+                            )
+                        }
+                    }
+                }
+
+                is Result.Success -> {
+                    showSnackBarJob?.cancel()
+                    showSnackBarJob = showSnackBar(
+                        type = SnackBarType.SUCCESS,
+                        message = UiText.StringResource(R.string.artist_added_to_library)
+                    )
+                }
+            }
+
+            saveArtistIdList.clear()
+            state = state.copy(
+                isMakingApiCall = false
+            )
         }
     }
 }

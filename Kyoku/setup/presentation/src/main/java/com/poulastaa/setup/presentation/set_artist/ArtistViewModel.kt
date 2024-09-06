@@ -146,13 +146,7 @@ class ArtistViewModel @Inject constructor(
     }
 
     private fun getArtist() = viewModelScope.launch {
-        val response = repository.getArtist(
-            state.data.map {
-                it.id
-            }
-        )
-
-        when (response) {
+        when (val response = repository.getArtist(state.data.map { it.id })) {
             is Result.Error -> {
                 when (response.error) {
                     DataError.Network.NO_INTERNET -> {

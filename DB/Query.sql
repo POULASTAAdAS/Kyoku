@@ -182,19 +182,17 @@ join songalbumrelation on songalbumrelation.albumId = album.id
 join album on songalbumrelation.albumId = album.id
 order by  album.points desc , song.year desc;
 
+select * from artist where name like 'tayl%';
+select * from songartistrelation where artistId = 2;
+
+select * from artist order by points desc;
+
+update artist set points = 3 where id = 4394;
 
 
-
-
-
-
-
-
-
-
-
-
-
+select * from artist where id in (
+	select artistid from userartistrelation where userid = 11
+);
 
 
 

@@ -108,7 +108,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.ArtistHeader -> {
-
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.NewArtist
+                                )
+                            )
                         }
 
                         is LibraryUiEvent.OnClick.Artist -> {

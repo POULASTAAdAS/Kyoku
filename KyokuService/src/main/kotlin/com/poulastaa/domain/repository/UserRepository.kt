@@ -57,10 +57,10 @@ interface UserRepository {
     ): Boolean
 
     suspend fun addArtist(
-        artistId: Long,
-        email: String,
+        list: List<Long>,
+        userId: Long,
         userType: UserType,
-    ): ArtistDto
+    ): List<ArtistDto>
 
     suspend fun removeArtist(
         artistId: Long,

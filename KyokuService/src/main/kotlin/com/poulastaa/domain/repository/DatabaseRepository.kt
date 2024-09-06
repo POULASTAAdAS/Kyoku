@@ -67,4 +67,12 @@ interface DatabaseRepository {
         query: String,
         type: AlbumPagingTypeDto,
     ): List<PagingAlbumDto>
+
+    suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        countryId: Int,
+        type: ArtistPagingTypeDto,
+    ): List<ArtistDto>
 }

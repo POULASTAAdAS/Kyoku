@@ -9,7 +9,6 @@ data class RootDrawerUiState(
     val saveScreen: SaveScreen = SaveScreen.HOME,
     val startDestination: String = DrawerScreen.Home.route,
 
-
     val username: String = "User",
     val profilePicUrl: String = "",
 
@@ -17,6 +16,7 @@ data class RootDrawerUiState(
     val viewUiState: HomeViewUiState = HomeViewUiState(),
     val exploreArtistUiState: ExploreArtistUiState = ExploreArtistUiState(),
     val newAlbumUiState: NewAlbumUiState = NewAlbumUiState(),
+    val newArtisUiState: NewArtistUiState = NewArtistUiState(),
 )
 
 data class HomeViewUiState(
@@ -31,5 +31,9 @@ data class ExploreArtistUiState(
 )
 
 data class NewAlbumUiState(
+    val isOpen: Boolean = false,
+)
+
+data class NewArtistUiState(
     val isOpen: Boolean = false,
 )

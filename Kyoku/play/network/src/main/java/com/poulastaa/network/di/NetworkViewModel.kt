@@ -7,6 +7,7 @@ import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDa
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
+import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
@@ -15,11 +16,13 @@ import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
 import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstNewAlbumDatasource
+import com.poulastaa.network.OnlineFirstNewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
 import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import com.poulastaa.network.paging_source.NewAlbumPagerSource
+import com.poulastaa.network.paging_source.NewArtistPagerSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -141,6 +144,28 @@ object NetworkViewModel {
         gson: Gson,
         pager: NewAlbumPagerSource,
     ): RemoteNewAlbumDataSource = OnlineFirstNewAlbumDatasource(
+        client = client,
+        gson = gson,
+        pager = pager,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewArtistPagerSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): NewArtistPagerSource = NewArtistPagerSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideNewArtistDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        pager: NewArtistPagerSource,
+    ): RemoteNewArtistDataSource = OnlineFirstNewArtistDatasource(
         client = client,
         gson = gson,
         pager = pager,

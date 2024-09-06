@@ -101,7 +101,8 @@ fun ArtistSongDetailsCard(
             IconButton(
                 onClick = {
                     onEvent(ViewArtistUiEvent.ThreeDotEvent.OnClick(song.id))
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
                     imageVector = ThreeDotIcon,

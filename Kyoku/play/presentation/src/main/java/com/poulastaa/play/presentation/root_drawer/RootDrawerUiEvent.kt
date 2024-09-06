@@ -21,4 +21,7 @@ sealed interface RootDrawerUiEvent {
 
     data object NewAlbum : RootDrawerUiEvent
     data object NewAlbumCancel : RootDrawerUiEvent
+
+    data object NewArtist : RootDrawerUiEvent
+    data object NewArtistCancel : RootDrawerUiEvent
 }

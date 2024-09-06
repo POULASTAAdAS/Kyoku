@@ -146,13 +146,34 @@ class RootDrawerViewModel @Inject constructor(
                     ),
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
                     viewUiState = HomeViewUiState(),
-                    exploreArtistUiState = ExploreArtistUiState()
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newArtisUiState = NewArtistUiState()
                 )
             }
 
             RootDrawerUiEvent.NewAlbumCancel -> {
                 state = state.copy(
                     newAlbumUiState = state.newAlbumUiState.copy(
+                        isOpen = false
+                    )
+                )
+            }
+
+            is RootDrawerUiEvent.NewArtist -> {
+                state = state.copy(
+                    newArtisUiState = state.newArtisUiState.copy(
+                        isOpen = true
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState(),
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newAlbumUiState = NewAlbumUiState()
+                )
+            }
+
+            RootDrawerUiEvent.NewArtistCancel -> {
+                state = state.copy(
+                    newArtisUiState = state.newArtisUiState.copy(
                         isOpen = false
                     )
                 )

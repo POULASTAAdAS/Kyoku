@@ -102,7 +102,8 @@ fun ExploreArtistItem(
             IconButton(
                 onClick = {
                     onEvent(ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotOpen(item.id, type))
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
                     imageVector = ThreeDotIcon,

@@ -38,6 +38,8 @@ import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
+import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
+import com.poulastaa.play.presentation.add_new_artist.AddNewArtistRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
@@ -177,15 +179,13 @@ fun RootDrawerCompact(
                                         )
                                     )
 
-                                    is LibraryOtherScreen.ViewArtist -> {
-                                        navController.navigate(
-                                            route = DrawerScreen.ViewArtist.route + "/${screen.id}"
-                                        )
-                                    }
+                                    is LibraryOtherScreen.ViewArtist -> navController.navigate(
+                                        route = DrawerScreen.ViewArtist.route + "/${screen.id}"
+                                    )
 
-                                    LibraryOtherScreen.NewAlbum -> {
-                                        onEvent(RootDrawerUiEvent.NewAlbum)
-                                    }
+                                    LibraryOtherScreen.NewAlbum -> onEvent(RootDrawerUiEvent.NewAlbum)
+
+                                    LibraryOtherScreen.NewArtist -> onEvent(RootDrawerUiEvent.NewArtist)
                                 }
                             }
                         )
@@ -283,17 +283,50 @@ fun RootDrawerCompact(
                 )
 
                 AnimatedVisibility(
-                    visible = state.addToPlaylistUiState.isOpen,
-                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
-                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.newAlbumUiState.isOpen,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                 ) {
-                    val temp = remember {
-                        state.addToPlaylistUiState.isOpen
-                    }
+                    AddNewAlbumRootScreen(
+                        navigate = {
+                            when (it) {
+                                is AddNewAlbumOtherScreen.ViewAlbum -> {
+                                    onEvent(
+                                        RootDrawerUiEvent.View(
+                                            id = it.id,
+                                            type = ViewDataType.ALBUM
+                                        )
+                                    )
+                                }
+                            }
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.NewAlbumCancel)
+                        }
+                    )
+                }
 
-                    if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
-                        onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
-                    }
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.newArtisUiState.isOpen,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    AddNewArtistRootScreen(
+                        navigate = {
+                            when (it) {
+                                is AddNewArtistOtherScreen.ViewArtist -> onEvent(
+                                    RootDrawerUiEvent.OnExploreArtistOpen(
+                                        id = it.id
+                                    )
+                                )
+                            }
+                        },
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.NewArtistCancel)
+                        }
+                    )
                 }
 
                 AnimatedVisibility(
@@ -329,31 +362,6 @@ fun RootDrawerCompact(
 
                 AnimatedVisibility(
                     modifier = Modifier.fillMaxSize(),
-                    visible = state.newAlbumUiState.isOpen,
-                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
-                ) {
-                    AddNewAlbumRootScreen(
-                        navigate = {
-                            when (it) {
-                                is AddNewAlbumOtherScreen.ViewAlbum -> {
-                                    onEvent(
-                                        RootDrawerUiEvent.View(
-                                            id = it.id,
-                                            type = ViewDataType.ALBUM
-                                        )
-                                    )
-                                }
-                            }
-                        },
-                        navigateBack = {
-                            onEvent(RootDrawerUiEvent.NewAlbumCancel)
-                        }
-                    )
-                }
-
-                AnimatedVisibility(
-                    modifier = Modifier.fillMaxSize(),
                     visible = state.viewUiState.isOpen,
                     enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
@@ -379,15 +387,33 @@ fun RootDrawerCompact(
                         }
                     )
                 }
+
+                AnimatedVisibility(
+                    visible = state.addToPlaylistUiState.isOpen,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                    exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+                ) {
+                    val temp = remember {
+                        state.addToPlaylistUiState.isOpen
+                    }
+
+                    if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
+                        onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+                    }
+                }
             }
 
             if (state.addToPlaylistUiState.isOpen ||
                 state.viewUiState.isOpen ||
-                state.exploreArtistUiState.isOpen
+                state.exploreArtistUiState.isOpen ||
+                state.newArtisUiState.isOpen ||
+                state.newAlbumUiState.isOpen
             ) BackHandler {
                 if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                 else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
                 else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+                else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
+                else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
             }
         }
     )

@@ -23,6 +23,8 @@ import com.poulastaa.network.mapper.toNewHome
 import com.poulastaa.network.mapper.toSong
 import com.poulastaa.network.model.AddAlbumDto
 import com.poulastaa.network.model.AddAlbumReq
+import com.poulastaa.network.model.AddArtistDto
+import com.poulastaa.network.model.AddArtistReq
 import com.poulastaa.network.model.NewHomeDto
 import com.poulastaa.network.model.NewHomeReq
 import okhttp3.OkHttpClient
@@ -68,13 +70,13 @@ class OnlineFirstHomeDatasource @Inject constructor(
 
     override suspend fun followArtist(
         id: Long,
-    ): Result<Artist, DataError.Network> = client.get<ArtistDto>(
+    ): Result<Artist, DataError.Network> = client.post<AddArtistReq, AddArtistDto>(
         route = EndPoints.AddArtist.route,
-        params = listOf(
-            "artistId" to id.toString(),
-        ),
+        body = AddArtistReq(listOf(id)),
         gson = gson
-    ).map { it.toArtist() }
+    ).map {
+        it.list.first().toArtist()
+    }
 
     override suspend fun unFollowArtist(
         id: Long,

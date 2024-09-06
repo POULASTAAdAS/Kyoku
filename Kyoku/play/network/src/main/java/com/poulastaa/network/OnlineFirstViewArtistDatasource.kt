@@ -1,9 +1,9 @@
 package com.poulastaa.network
 
 import com.google.gson.Gson
-import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
+import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
 import com.poulastaa.core.domain.model.Artist
 import com.poulastaa.core.domain.model.Song
@@ -17,6 +17,8 @@ import com.poulastaa.core.domain.utils.map
 import com.poulastaa.network.mapper.toArtist
 import com.poulastaa.network.mapper.toSong
 import com.poulastaa.network.mapper.toViewArtistData
+import com.poulastaa.network.model.AddArtistDto
+import com.poulastaa.network.model.AddArtistReq
 import com.poulastaa.network.model.ViewArtistDto
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -35,11 +37,13 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
 
     override suspend fun followArtist(
         artistId: Long
-    ): Result<Artist, DataError.Network> = client.get<ArtistDto>(
+    ): Result<Artist, DataError.Network> = client.post<AddArtistReq, AddArtistDto>(
         route = EndPoints.AddArtist.route,
-        params = listOf("artistId" to artistId.toString()),
+        body = AddArtistReq(listOf(artistId)),
         gson = gson
-    ).map { it.toArtist() }
+    ).map {
+        it.list.first().toArtist()
+    }
 
     override suspend fun unFollowArtist(
         artistId: Long

@@ -285,10 +285,12 @@ class ServiceRepositoryImpl(
         return userRepo.removeFromFavourite(id, email = user.email, userType = user.userType)
     }
 
-    override suspend fun addArtist(artistId: Long, payload: ReqUserPayload): ArtistDto {
-        val user = userRepo.getUserOnPayload(payload) ?: return ArtistDto()
+    override suspend fun addArtist(list: List<Long>, payload: ReqUserPayload): AddArtistDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return AddArtistDto()
 
-        return userRepo.addArtist(artistId, user.email, user.userType)
+        return AddArtistDto(
+            list = userRepo.addArtist(list, user.id, user.userType)
+        )
     }
 
     override suspend fun removeArtist(artistId: Long, userPayload: ReqUserPayload): Boolean {
@@ -447,7 +449,7 @@ class ServiceRepositoryImpl(
         val pinnedType = when (type) {
             PinnedType.ALBUM.name -> PinnedType.ALBUM
             PinnedType.PLAYLIST.name -> PinnedType.PLAYLIST
-            PinnedType.ALBUM.name -> PinnedType.ALBUM
+            PinnedType.ARTIST.name -> PinnedType.ARTIST
             else -> PinnedType.FAVOURITE
         }
 
@@ -679,6 +681,26 @@ class ServiceRepositoryImpl(
             list = kyokuRepo.getAlbumPaging(
                 page = page,
                 size = size,
+                query = query,
+                type = type,
+            )
+        )
+    }
+
+    override suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: ArtistPagingTypeDto,
+        payload: ReqUserPayload,
+    ): PagingArtistResDto {
+        val user = userRepo.getUserOnPayload(payload) ?: return PagingArtistResDto()
+
+        return PagingArtistResDto(
+            list = kyokuRepo.getArtistPaging(
+                page = page,
+                size = size,
+                countryId = user.countryId,
                 query = query,
                 type = type,
             )

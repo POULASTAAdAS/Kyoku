@@ -61,9 +61,9 @@ interface ServiceRepository {
     ): Boolean
 
     suspend fun addArtist(
-        artistId: Long,
+        list: List<Long>,
         payload: ReqUserPayload,
-    ): ArtistDto
+    ): AddArtistDto
 
     suspend fun removeArtist(
         artistId: Long,
@@ -156,4 +156,12 @@ interface ServiceRepository {
         type: AlbumPagingTypeDto,
         payload: ReqUserPayload,
     ): PagingAlbumResDto
+
+    suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: ArtistPagingTypeDto,
+        payload: ReqUserPayload,
+    ): PagingArtistResDto
 }

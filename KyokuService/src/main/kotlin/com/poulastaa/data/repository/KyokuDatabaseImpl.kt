@@ -4,9 +4,7 @@ import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
-import com.poulastaa.data.mappers.constructSongCoverImage
-import com.poulastaa.data.mappers.toArtistResult
-import com.poulastaa.data.mappers.toSongDto
+import com.poulastaa.data.mappers.*
 import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
@@ -452,6 +450,61 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 ArtistTable.id inList it
             }.joinToString {
                 it.name
+            }
+        }
+    }
+
+    override suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        countryId: Int,
+        type: ArtistPagingTypeDto,
+    ): List<ArtistDto> = coroutineScope {
+        when (type) {
+            ArtistPagingTypeDto.ALL -> {
+                query {
+                    ArtistDao.find {
+                        ArtistTable.name like "$query%"
+                    }.orderBy(ArtistTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map {
+                            it.toArtistDto()
+                        }
+                }
+            }
+
+            ArtistPagingTypeDto.INTERNATIONAL -> {
+                query {
+                    ArtistTable
+                        .join(
+                            otherTable = ArtistCountryRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                ArtistTable.id as Column<*> eq ArtistCountryRelationTable.artistId
+                            }
+                        )
+                        .slice(
+                            ArtistTable.id,
+                            ArtistTable.name,
+                            ArtistTable.profilePicUrl,
+                            ArtistTable.points
+                        ).select {
+                            ArtistTable.name like "$query%" and
+                                    (ArtistCountryRelationTable.countryId neq countryId)
+                        }
+                        .orderBy(ArtistTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map {
+                            ArtistDto(
+                                id = it[ArtistTable.id].value,
+                                name = it[ArtistTable.name],
+                                coverImage = it[ArtistTable.profilePicUrl]?.constructArtistProfileUrl() ?: ""
+                            )
+                        }
+                }
             }
         }
     }
