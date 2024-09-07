@@ -537,10 +537,8 @@ class KyokuDatabaseImpl : DatabaseRepository {
         }
 
         val recentHistoryDef = async {
-            // todo
-
             emptyList<SongDto>()
-        }
+        } // todo
 
         val internationalDef = async {
             val albumIdDef = async {
@@ -635,6 +633,93 @@ class KyokuDatabaseImpl : DatabaseRepository {
         )
 
         CreatePlaylistDto(data = data)
+    }
+
+    override suspend fun getSongPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: SongPagingTypeDto,
+    ): List<SongDto> = coroutineScope {
+        when (type) {
+            SongPagingTypeDto.TITLE -> {
+                query {
+                    SongDao.find {
+                        SongTable.title like "$query%"
+                    }.orderBy(SongTable.year to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .toList()
+                }.map { dao ->
+                    async {
+                        val artist = getArtistOnSongId(dao.id.value)
+                        dao.toSongDto(artist.joinToString { it.name })
+                    }
+                }.awaitAll()
+            }
+
+            SongPagingTypeDto.POPULARITY -> {
+                query {
+                    SongDao.find {
+                        SongTable.title like "$query%"
+                    }.orderBy(SongTable.year to SortOrder.DESC, SongTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .toList()
+                }.map { dao ->
+                    async {
+                        val artist = getArtistOnSongId(dao.id.value)
+                        dao.toSongDto(artist.joinToString { it.name })
+                    }
+                }.awaitAll()
+            }
+
+            SongPagingTypeDto.ARTIST -> {
+                query {
+                    SongTable
+                        .join(
+                            otherTable = SongArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongArtistRelationTable.songId eq SongTable.id as Column<*>
+                            }
+                        ).join(
+                            otherTable = ArtistTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongArtistRelationTable.artistId eq ArtistTable.id as Column<*>
+                            }
+                        )
+                        .slice(
+                            SongTable.id,
+                            SongTable.title,
+                            SongTable.coverImage,
+                            SongTable.masterPlaylistPath,
+                            SongTable.year,
+                            SongTable.points,
+                        )
+                        .select {
+                            (ArtistTable.name like "$query%")
+                        }.drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map { resultRow ->
+                            async {
+                                val artist =
+                                    getArtistOnSongId(resultRow[SongTable.id].value).sortedBy { it.name.contains(query) }
+
+                                SongDto(
+                                    id = resultRow[SongTable.id].value,
+                                    title = resultRow[SongTable.title],
+                                    coverImage = resultRow[SongTable.coverImage].constructSongCoverImage(),
+                                    releaseYear = resultRow[SongTable.year],
+                                    artistName = artist.joinToString { it.name },
+                                    masterPlaylistUrl = resultRow[SongTable.masterPlaylistPath].constructMasterPlaylistUrl()
+                                )
+                            }
+                        }.awaitAll()
+                }
+            }
+        }
     }
 
     private suspend fun AlbumDao.toPagingAlbumDto() =

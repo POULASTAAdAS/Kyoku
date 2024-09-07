@@ -168,4 +168,12 @@ interface ServiceRepository {
     suspend fun getCreatePlaylistData(
         payload: ReqUserPayload,
     ): CreatePlaylistDto
+
+    suspend fun getCreatePlaylistPagerData(
+        page: Int,
+        size: Int,
+        query: String,
+        type: CreatePlaylistPagerFilterTypeDto,
+        payload: ReqUserPayload,
+    ): CreatePlaylistPagingDtoWrapper
 }

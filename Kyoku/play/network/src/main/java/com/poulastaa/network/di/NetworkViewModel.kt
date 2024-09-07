@@ -21,6 +21,7 @@ import com.poulastaa.network.OnlineFirstNewAlbumDatasource
 import com.poulastaa.network.OnlineFirstNewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
+import com.poulastaa.network.paging_source.CreatePlaylistPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistAlbumPagerSource
 import com.poulastaa.network.paging_source.ExploreArtistSongPagerSource
 import com.poulastaa.network.paging_source.NewAlbumPagerSource
@@ -175,11 +176,23 @@ object NetworkViewModel {
 
     @Provides
     @ViewModelScoped
+    fun provideCreatePlaylistPagerSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): CreatePlaylistPagerSource = CreatePlaylistPagerSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
     fun provideCreatePlaylistDatasource(
         client: OkHttpClient,
         gson: Gson,
+        pager: CreatePlaylistPagerSource
     ): RemoteCreatePlaylistDatasource = OnlineFirstCreatePlaylistDatasource(
         client = client,
         gson = gson,
+        pager = pager
     )
 }

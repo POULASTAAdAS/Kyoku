@@ -148,7 +148,7 @@ private fun HomeScreen(
             }
         ) { paddingValues ->
             AnimatedContent(state.canShowUi, label = "") { canShowUi ->
-                when(canShowUi){
+                when (canShowUi) {
                     false -> {
                         Column(
                             modifier = Modifier
@@ -167,7 +167,7 @@ private fun HomeScreen(
                         }
                     }
 
-                    true ->{
+                    true -> {
                         LazyColumn(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -370,7 +370,9 @@ private fun HomeScreen(
                                                         )
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
 
                                                         onEvent(
                                                             HomeUiEvent.OnItemLongClick(
@@ -415,7 +417,9 @@ private fun HomeScreen(
                                                         )
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
 
                                                         onEvent(
                                                             HomeUiEvent.OnItemLongClick(
@@ -489,7 +493,9 @@ private fun HomeScreen(
                                                         )
                                                     },
                                                     onLongClick = {
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
 
                                                         onEvent(
                                                             HomeUiEvent.OnItemLongClick(

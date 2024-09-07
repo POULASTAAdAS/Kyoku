@@ -1,7 +1,6 @@
 package com.poulastaa.network
 
 import com.google.gson.Gson
-import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post

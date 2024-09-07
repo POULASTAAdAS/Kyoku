@@ -1,7 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
 import com.poulastaa.core.presentation.ui.SnackBarUiState
-import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryUiData
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType

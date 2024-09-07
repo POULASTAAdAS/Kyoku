@@ -50,7 +50,6 @@ interface ViewDao {
     suspend fun getDayTypeMixSongIds(): List<Long>
 
 
-
     @Query("select * from SongEntity where id in (:list)")
     suspend fun getSongOnIdList(list: List<Long>): List<SongEntity>
 

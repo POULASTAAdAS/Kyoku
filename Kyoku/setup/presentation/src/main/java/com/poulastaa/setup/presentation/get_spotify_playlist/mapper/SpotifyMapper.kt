@@ -2,8 +2,8 @@ package com.poulastaa.setup.presentation.get_spotify_playlist.mapper
 
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.PlaylistWithSongInfo
-import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 import com.poulastaa.core.presentation.ui.model.UiSong
+import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 
 fun PlaylistSong.toUiSong() = UiSong(
     id = id,

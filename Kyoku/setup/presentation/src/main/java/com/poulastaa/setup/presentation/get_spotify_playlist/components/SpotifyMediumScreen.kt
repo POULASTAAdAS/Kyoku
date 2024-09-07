@@ -37,10 +37,10 @@ import com.poulastaa.core.presentation.designsystem.LinkIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.model.UiSong
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyPlaylistUiEvent
 import com.poulastaa.setup.presentation.get_spotify_playlist.SpotifyPlaylistUiState
 import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
-import com.poulastaa.core.presentation.ui.model.UiSong
 import kotlin.random.Random
 
 

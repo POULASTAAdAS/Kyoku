@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.create_playlist
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,23 +26,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.poulastaa.core.domain.model.CreatePlaylistType
-import com.poulastaa.core.presentation.designsystem.AppThem
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
-import com.poulastaa.core.presentation.ui.model.UiSong
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.create_playlist.components.CommonHorizontalPager
+import com.poulastaa.play.presentation.create_playlist.components.CreatePlaylistLoadingScreen
+import com.poulastaa.play.presentation.create_playlist.components.CreatePlaylistSearchContent
+import com.poulastaa.play.presentation.create_playlist.components.CreatePlaylistSearchToBar
 
 @Composable
 fun CreatePlaylistRootScreen(
@@ -69,9 +75,14 @@ fun CreatePlaylistRootScreen(
     CreatePlaylistScreen(
         modifier = modifier,
         state = viewModel.state,
+        data = viewModel.pagingData.collectAsLazyPagingItems(),
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
     )
+
+    if (viewModel.state.isSearchEnabled) BackHandler {
+        viewModel.onEvent(CreatePlaylistUiEvent.OnSearchToggle)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,15 +90,17 @@ fun CreatePlaylistRootScreen(
 private fun CreatePlaylistScreen(
     modifier: Modifier = Modifier,
     state: CreatePlaylistUiState,
+    data: LazyPagingItems<CreatePlaylistPagingUiData>,
     onEvent: (CreatePlaylistUiEvent) -> Unit,
     navigateBack: () -> Unit
 ) {
     val horizontalPager = rememberPagerState { state.generatedData.size }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
-            AnimatedContent(
-                targetState = horizontalPager.currentPage != 0,
+            if (state.generatedData.isNotEmpty()) AnimatedContent(
+                targetState = horizontalPager.currentPage != horizontalPager.pageCount - 1,
                 label = ""
             ) {
                 when (it) {
@@ -111,7 +124,14 @@ private fun CreatePlaylistScreen(
                     }
 
                     false -> {
-
+                        CreatePlaylistSearchToBar(
+                            title = stringResource(R.string.search),
+                            isSearchEnable = state.isSearchEnabled,
+                            searchQuery = state.searchQuery,
+                            focusRequester = focusRequester,
+                            onEvent = onEvent,
+                            navigateBack = navigateBack
+                        )
                     }
                 }
             }
@@ -123,9 +143,9 @@ private fun CreatePlaylistScreen(
             label = "",
         ) { loadingState ->
             when (loadingState) {
-                DataLoadingState.LOADING -> {
-
-                }
+                DataLoadingState.LOADING -> CreatePlaylistLoadingScreen(
+                    navigateBack = navigateBack
+                )
 
                 DataLoadingState.LOADED -> {
                     Column(
@@ -139,9 +159,8 @@ private fun CreatePlaylistScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                            reverseLayout = true
                         ) { index ->
-                            AnimatedContent(index != 0, label = "") {
+                            AnimatedContent(index != horizontalPager.pageCount - 1, label = "") {
                                 when (it) {
                                     true -> CommonHorizontalPager(
                                         state = state.generatedData[index],
@@ -149,9 +168,12 @@ private fun CreatePlaylistScreen(
                                         onEvent = onEvent
                                     )
 
-                                    false -> {
-
-                                    }
+                                    false -> CreatePlaylistSearchContent(
+                                        header = state.header,
+                                        filterType = state.filterType,
+                                        data = data,
+                                        onEvent = onEvent
+                                    )
                                 }
                             }
                         }
@@ -181,7 +203,7 @@ fun PagerIndicator(
     pagerState: PagerState
 ) {
     repeat(pagerState.pageCount) {
-        val color = if (pagerState.pageCount - 1 - it == pagerState.currentPage)
+        val color = if (it == pagerState.currentPage)
             MaterialTheme.colorScheme.primary.copy(.7f)
         else MaterialTheme.colorScheme.onBackground.copy(.3f)
 
@@ -191,68 +213,6 @@ fun PagerIndicator(
                 .clip(CircleShape)
                 .background(color = color)
                 .size(10.dp)
-        )
-    }
-}
-
-
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        CreatePlaylistScreen(
-            modifier = Modifier.fillMaxSize(),
-            state = CreatePlaylistUiState(
-                loadingState = DataLoadingState.LOADED,
-                generatedData = listOf(
-                    CreatePlaylistData(
-                        type = CreatePlaylistType.RECENT_HISTORY,
-                        list = (1..10).map {
-                            UiSong(
-                                id = it.toLong(),
-                                title = "That Cool title $it",
-                                artist = "That Cool Artist $it",
-                                coverImage = ""
-                            )
-                        }
-                    ),
-                    CreatePlaylistData(
-                        type = CreatePlaylistType.YOUR_FAVOURITES,
-                        list = (1..10).map {
-                            UiSong(
-                                id = it.toLong(),
-                                title = "That Cool title $it",
-                                artist = "That Cool Artist $it",
-                                coverImage = ""
-                            )
-                        }
-                    ),
-                    CreatePlaylistData(
-                        type = CreatePlaylistType.SUGGESTED_FOR_YOU,
-                        list = (1..10).map {
-                            UiSong(
-                                id = it.toLong(),
-                                title = "That Cool title $it",
-                                artist = "That Cool Artist $it",
-                                coverImage = ""
-                            )
-                        }
-                    ),
-                    CreatePlaylistData(
-                        type = CreatePlaylistType.YOU_MAY_ALSO_LIKE,
-                        list = (1..10).map {
-                            UiSong(
-                                id = it.toLong(),
-                                title = "That Cool title $it",
-                                artist = "That Cool Artist $it",
-                                coverImage = ""
-                            )
-                        }
-                    )
-                )
-            ),
-            onEvent = {},
-            navigateBack = {},
         )
     }
 }

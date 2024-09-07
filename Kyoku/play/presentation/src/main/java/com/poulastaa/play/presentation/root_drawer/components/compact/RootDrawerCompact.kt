@@ -41,6 +41,7 @@ import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
+import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
@@ -399,13 +400,23 @@ fun RootDrawerCompact(
                     enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                     exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                 ) {
-                    val temp = remember {
-                        state.addToPlaylistUiState.isOpen
-                    }
-
-                    if (temp) AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
+                    AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
                         onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                     }
+                }
+
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.createPlaylistUiState.isOpen,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    CreatePlaylistRootScreen(
+                        playlistId = state.createPlaylistUiState.playlistId,
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
+                        }
+                    )
                 }
             }
 

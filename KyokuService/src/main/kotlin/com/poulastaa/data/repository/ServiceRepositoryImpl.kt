@@ -16,6 +16,7 @@ import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.select
 import java.time.Instant
 import java.time.ZoneId
+import kotlin.random.Random
 
 class ServiceRepositoryImpl(
     private val jwt: JWTRepository,
@@ -714,5 +715,94 @@ class ServiceRepositoryImpl(
             userType = user.userType,
             countryId = user.countryId
         )
+    }
+
+    override suspend fun getCreatePlaylistPagerData(
+        page: Int,
+        size: Int,
+        query: String,
+        type: CreatePlaylistPagerFilterTypeDto,
+        payload: ReqUserPayload,
+    ): CreatePlaylistPagingDtoWrapper {
+        userRepo.getUserOnPayload(payload) ?: return CreatePlaylistPagingDtoWrapper()
+
+        return coroutineScope {
+            when (type) {
+                CreatePlaylistPagerFilterTypeDto.ALL -> {
+                    val songDef = async {
+                        kyokuRepo.getSongPaging(
+                            page = page,
+                            size = 5,
+                            query = query,
+                            type = SongPagingTypeDto.POPULARITY
+                        ).map { it.toCreatePlaylistPagingDto() }
+                    }
+
+                    val songByArtistDef = async {
+                        kyokuRepo.getSongPaging(
+                            page = page,
+                            size = 10,
+                            query = query,
+                            type = SongPagingTypeDto.ARTIST
+                        ).map { it.toCreatePlaylistPagingDto() }
+                    }
+
+                    val artistDef = async {
+                        kyokuRepo.getArtistPaging(
+                            page = page,
+                            size = 5,
+                            query = query,
+                            countryId = -1,
+                            type = ArtistPagingTypeDto.ALL
+                        ).map { it.toCreatePlaylistPagingDto() }
+                    }
+                    val albumDef = async {
+                        kyokuRepo.getAlbumPaging(
+                            page = page,
+                            size = 5,
+                            query = query,
+                            type = AlbumPagingTypeDto.BY_POPULARITY
+                        ).map { it.toCreatePlaylistPagingDto() }
+                    }
+
+                    val playlistDef = async { emptyList<CreatePlaylistPagingDto>() } // todo add feature
+
+                    val song = songDef.await()
+                    val songByArtist = songByArtistDef.await()
+
+                    listOf(
+                        song.ifEmpty { songByArtist },
+                        artistDef.await(),
+                        albumDef.await(),
+                        playlistDef.await()
+                    ).flatten().shuffled(Random(System.currentTimeMillis()))
+                }
+
+                CreatePlaylistPagerFilterTypeDto.ARTIST -> {
+                    kyokuRepo.getArtistPaging(
+                        page = page,
+                        size = size,
+                        query = query,
+                        countryId = -1,
+                        type = ArtistPagingTypeDto.ALL
+                    ).map { it.toCreatePlaylistPagingDto() }
+                }
+
+                CreatePlaylistPagerFilterTypeDto.ALBUM -> {
+                    kyokuRepo.getAlbumPaging(
+                        page = page,
+                        size = size,
+                        query = query,
+                        type = AlbumPagingTypeDto.BY_POPULARITY
+                    ).map { it.toCreatePlaylistPagingDto() }
+                }
+
+                CreatePlaylistPagerFilterTypeDto.PLAYLIST -> emptyList()
+            }
+        }.let {
+            CreatePlaylistPagingDtoWrapper(
+                list = it
+            )
+        }
     }
 }

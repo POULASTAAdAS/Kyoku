@@ -1,10 +1,14 @@
 package com.poulastaa.play.presentation.create_playlist
 
+import androidx.collection.mutableIntListOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.model.CreatePlaylistType
 import com.poulastaa.core.domain.model.Song
@@ -17,6 +21,9 @@ import com.poulastaa.play.domain.DataLoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,9 +39,16 @@ class CreatePlaylistViewModel @Inject constructor(
     private val _uiEvent = Channel<CreatePlaylistUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    private val _pagingData: MutableStateFlow<PagingData<CreatePlaylistPagingUiData>> =
+        MutableStateFlow(PagingData.empty())
+    var pagingData = _pagingData.asStateFlow()
+        private set
+
     private var loadPagingDataJob: Job? = null
 
     private var generatedData: List<Pair<CreatePlaylistType, List<Song>>> = emptyList()
+
+    private val savedSongIdList = mutableIntListOf()
 
     fun init(playlistId: Long) {
         state = state.copy(
@@ -54,11 +68,38 @@ class CreatePlaylistViewModel @Inject constructor(
             }
 
             CreatePlaylistUiEvent.OnSearchToggle -> {
+                state = state.copy(
+                    isSearchEnabled = !state.isSearchEnabled
+                )
 
+                if (!state.isSearchEnabled) {
+                    state = state.copy(
+                        searchQuery = ""
+                    )
+
+                    loadPagingDataJob?.cancel()
+                    loadPagingDataJob = loadPagingData()
+                }
+            }
+
+            is CreatePlaylistUiEvent.OnFilterTypeChange -> {
+                if (state.filterType == event.type) return
+
+                state = state.copy(
+                    filterType = event.type
+                )
+
+                loadPagingDataJob?.cancel()
+                loadPagingDataJob = loadPagingData()
             }
 
             is CreatePlaylistUiEvent.OnSearchQueryChange -> {
+                state = state.copy(
+                    searchQuery = event.value
+                )
 
+                loadPagingDataJob?.cancel()
+                loadPagingDataJob = loadPagingData()
             }
         }
     }
@@ -104,7 +145,7 @@ class CreatePlaylistViewModel @Inject constructor(
                     )
 
                     state = state.copy(
-                        generatedData = list.reversed()
+                        generatedData = list
                     )
 
                     generatedData = result.data
@@ -120,6 +161,15 @@ class CreatePlaylistViewModel @Inject constructor(
     }
 
     private fun loadPagingData() = viewModelScope.launch {
+        _pagingData.value = PagingData.empty()
 
+        repo.getPagingSong( // todo send saved songId list
+            query = state.searchQuery.trim(),
+            type = state.filterType
+        ).cachedIn(viewModelScope).collectLatest { dto ->
+            _pagingData.value = dto.map {
+                it.toCreatePlaylistPagingUiData()
+            }
+        }
     }
 }

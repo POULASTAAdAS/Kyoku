@@ -64,7 +64,6 @@ import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.components.DummySearch
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
@@ -427,7 +426,6 @@ private fun FavouriteCard(
         }
     }
 }
-
 
 
 @Composable

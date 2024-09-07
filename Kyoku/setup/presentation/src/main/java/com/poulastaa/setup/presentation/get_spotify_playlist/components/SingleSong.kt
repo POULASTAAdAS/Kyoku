@@ -49,8 +49,8 @@ import com.poulastaa.core.presentation.designsystem.DropDownIcon
 import com.poulastaa.core.presentation.designsystem.MusicImage
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReq
-import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 import com.poulastaa.core.presentation.ui.model.UiSong
+import com.poulastaa.setup.presentation.get_spotify_playlist.model.UiPlaylist
 
 @Composable
 fun PlaylistCard(

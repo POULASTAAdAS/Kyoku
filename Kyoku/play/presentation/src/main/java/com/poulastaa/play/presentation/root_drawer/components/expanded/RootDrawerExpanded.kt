@@ -589,6 +589,20 @@ fun RootDrawerExpanded(
                         onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                     }
                 }
+
+                this@Row.AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = state.createPlaylistUiState.isOpen && config.screenWidthDp < 980,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                ) {
+                    CreatePlaylistRootScreen(
+                        playlistId = state.createPlaylistUiState.playlistId,
+                        navigateBack = {
+                            onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
+                        }
+                    )
+                }
             }
         }
     }

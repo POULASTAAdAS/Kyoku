@@ -76,6 +76,13 @@ interface DatabaseRepository {
         type: ArtistPagingTypeDto,
     ): List<ArtistDto>
 
+    suspend fun getSongPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: SongPagingTypeDto,
+    ): List<SongDto>
+
     suspend fun getCreatePlaylistData(
         userId: Long,
         userType: UserType,

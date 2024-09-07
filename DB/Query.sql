@@ -121,10 +121,14 @@ order by  album.points desc , song.year desc;
 select * from playlist;
 
 
-select * from artist order by random() limit 20;
+select * from artist order by rand(20);
 
 
-
+select song.id, song.title, song.coverImage , artist.name from song 
+join songartistrelation on songartistrelation.songId = song.id
+join artist on artist.id =songartistrelation.artistId
+where song.title like 'vishal%' or artist.name like 'vishal%'
+order by  song.year desc , song.points desc;
 
 
 

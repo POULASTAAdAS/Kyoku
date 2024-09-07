@@ -139,4 +139,5 @@
     <string name="international">International</string>
     <string name="explore_artist">Explore Artist</string>
     <string name="build_your_playlist">Build your playlist wiht this songs</string>
+    <string name="search">search</string>
 </resources>
