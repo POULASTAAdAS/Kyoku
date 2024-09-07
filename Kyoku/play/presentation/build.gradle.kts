@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.material3WindowSizeClass)
 
+    implementation(libs.compose.foundation)
     implementation(libs.pagingRuntimeKtx)
     implementation(libs.pagingCompose)
 

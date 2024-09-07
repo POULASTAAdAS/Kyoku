@@ -15,8 +15,9 @@ data class RootDrawerUiState(
     val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState(),
     val viewUiState: HomeViewUiState = HomeViewUiState(),
     val exploreArtistUiState: ExploreArtistUiState = ExploreArtistUiState(),
-    val newAlbumUiState: NewAlbumUiState = NewAlbumUiState(),
-    val newArtisUiState: NewArtistUiState = NewArtistUiState(),
+    val newAlbumUiState: NewAlbumViewUiState = NewAlbumViewUiState(),
+    val newArtisUiState: NewArtistViewUiState = NewArtistViewUiState(),
+    val createPlaylistUiState: CreatePlaylistViewUiState = CreatePlaylistViewUiState(),
 )
 
 data class HomeViewUiState(
@@ -30,10 +31,15 @@ data class ExploreArtistUiState(
     val artistId: Long = -1
 )
 
-data class NewAlbumUiState(
+data class NewAlbumViewUiState(
     val isOpen: Boolean = false,
 )
 
-data class NewArtistUiState(
+data class NewArtistViewUiState(
     val isOpen: Boolean = false,
+)
+
+data class CreatePlaylistViewUiState(
+    val isOpen: Boolean = false,
+    val playlistId: Long = -1
 )

@@ -24,4 +24,7 @@ sealed interface RootDrawerUiEvent {
 
     data object NewArtist : RootDrawerUiEvent
     data object NewArtistCancel : RootDrawerUiEvent
+
+    data class CreatePlaylist(val playlistId: Long) : RootDrawerUiEvent
+    data object CreatePlaylistCancel : RootDrawerUiEvent
 }

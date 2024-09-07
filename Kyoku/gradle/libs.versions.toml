@@ -33,13 +33,14 @@ splashScreen = "1.0.1"
 datastorePreferences = "1.1.1"
 
 paging = "3.3.2"
+foundation = "1.7.0"
 
 credentials = "1.3.0-rc01"
 googleId = "1.1.1"
 
 coilCompose = "2.6.0"
 
-material3WindowSizeClass = "1.2.1"
+material3WindowSizeClass = "1.3.0"
 
 media3 = "1.4.1"
 legacySupport = "1.0.0"
@@ -114,6 +115,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 pagingRuntimeKtx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
 pagingCompose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 pagingCommon = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 credentialsPlayServicesAuth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }

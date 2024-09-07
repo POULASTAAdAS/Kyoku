@@ -1,6 +1,5 @@
 package com.poulastaa.play.data.di
 
-import android.app.Application
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.repository.add_playlist.AddPlaylistRepository
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
@@ -8,6 +7,9 @@ import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDataso
 import com.poulastaa.core.domain.repository.add_to_playlist.AddToPlaylistRepository
 import com.poulastaa.core.domain.repository.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
+import com.poulastaa.core.domain.repository.create_playlist.CreatePlaylistRepository
+import com.poulastaa.core.domain.repository.create_playlist.LocalCreatePlaylistDatasource
+import com.poulastaa.core.domain.repository.create_playlist.RemoteCreatePlaylistDatasource
 import com.poulastaa.core.domain.repository.explore_artist.ExploreArtistRepository
 import com.poulastaa.core.domain.repository.explore_artist.LocalExploreArtistDatasource
 import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
@@ -35,6 +37,7 @@ import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OfflineFirstViewRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstAddToPlaylistRepository
+import com.poulastaa.play.data.OnlineFirstCreatePlaylistRepository
 import com.poulastaa.play.data.OnlineFirstExploreArtistRepository
 import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
@@ -169,6 +172,18 @@ object PlayDataViewmodelModule {
         remote: RemoteNewArtistDataSource,
         applicationScope: CoroutineScope,
     ): NewArtistRepository = OnlineFirstNewArtistRepository(
+        local = local,
+        remote = remote,
+        applicationScope = applicationScope,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideCreatePlaylistRepository(
+        local: LocalCreatePlaylistDatasource,
+        remote: RemoteCreatePlaylistDatasource,
+        applicationScope: CoroutineScope,
+    ): CreatePlaylistRepository = OnlineFirstCreatePlaylistRepository(
         local = local,
         remote = remote,
         applicationScope = applicationScope,

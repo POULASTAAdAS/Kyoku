@@ -3,6 +3,7 @@ package com.poulastaa.network.di
 import com.google.gson.Gson
 import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
+import com.poulastaa.core.domain.repository.create_playlist.RemoteCreatePlaylistDatasource
 import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
@@ -13,6 +14,7 @@ import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasour
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
+import com.poulastaa.network.OnlineFirstCreatePlaylistDatasource
 import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstNewAlbumDatasource
@@ -169,5 +171,15 @@ object NetworkViewModel {
         client = client,
         gson = gson,
         pager = pager,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideCreatePlaylistDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteCreatePlaylistDatasource = OnlineFirstCreatePlaylistDatasource(
+        client = client,
+        gson = gson,
     )
 }

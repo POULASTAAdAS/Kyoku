@@ -174,9 +174,7 @@ private fun ViewScreen(
                                     .fillMaxSize()
                                     .padding(MaterialTheme.dimens.large1),
                                 colorFilter = ColorFilter.tint(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(
-                                        .2f
-                                    )
+                                    color = MaterialTheme.colorScheme.onBackground.copy(.2f)
                                 )
                             )
                         }
@@ -201,7 +199,9 @@ private fun ViewScreen(
                         Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
                         FilledTonalButton(
-                            onClick = {},
+                            onClick = {
+                                onEvent(ViewUiEvent.OnCreatePlaylistClick(state.data.id))
+                            },
                             modifier = Modifier
                                 .fillMaxWidth(.5f),
                             elevation = ButtonDefaults.filledTonalButtonElevation(

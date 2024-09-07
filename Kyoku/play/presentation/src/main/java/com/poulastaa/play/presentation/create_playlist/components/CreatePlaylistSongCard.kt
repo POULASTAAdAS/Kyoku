@@ -37,7 +37,7 @@ fun CreatePlaylistSongCard(
 ) {
     Row(
         modifier = Modifier
-            .height(90.dp)
+            .height(70.dp)
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.extraSmall)
             .then(modifier),
@@ -58,7 +58,7 @@ fun CreatePlaylistSongCard(
                 text = song.title,
                 maxLines = 1,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Medium
             )
 
             Text(

@@ -162,6 +162,16 @@ class ViewViewModel @Inject constructor(
 
             }
 
+            is ViewUiEvent.OnCreatePlaylistClick -> {
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ViewUiAction.Navigate(
+                            ViewOtherScreen.CreatePlaylistScreen(event.playlistId)
+                        )
+                    )
+                }
+            }
+
             is ViewUiEvent.OnThreeDotClick -> {
                 viewModelScope.launch {
                     val entry =

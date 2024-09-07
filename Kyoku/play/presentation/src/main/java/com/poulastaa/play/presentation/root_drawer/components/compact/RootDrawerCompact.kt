@@ -377,6 +377,12 @@ fun RootDrawerCompact(
                                     )
                                 )
 
+                                is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
+                                    RootDrawerUiEvent.CreatePlaylist(
+                                        playlistId = it.playlistId
+                                    )
+                                )
+
                                 is ViewOtherScreen.ViewSongArtists -> {
 
                                 }
@@ -407,13 +413,15 @@ fun RootDrawerCompact(
                 state.viewUiState.isOpen ||
                 state.exploreArtistUiState.isOpen ||
                 state.newArtisUiState.isOpen ||
-                state.newAlbumUiState.isOpen
+                state.newAlbumUiState.isOpen ||
+                state.createPlaylistUiState.isOpen
             ) BackHandler {
                 if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                 else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
                 else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
                 else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
                 else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
+                else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
             }
         }
     )

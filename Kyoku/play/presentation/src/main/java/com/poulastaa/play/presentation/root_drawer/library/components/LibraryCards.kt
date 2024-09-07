@@ -313,7 +313,6 @@ fun ImageGrid(
                 modifier = Modifier
                     .aspectRatio(1f),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground.copy(.3f))
             )
         } else {
             Row(

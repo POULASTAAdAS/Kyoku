@@ -46,6 +46,7 @@ import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistRootScreen
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
+import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
@@ -134,6 +135,7 @@ fun RootDrawerExpanded(
                                             state.viewUiState.isOpen ||
                                             state.newAlbumUiState.isOpen ||
                                             state.newArtisUiState.isOpen ||
+                                            state.createPlaylistUiState.isOpen ||
                                             state.exploreArtistUiState.isOpen)
                                 ) Modifier
                                     .fillMaxWidth(.6f)
@@ -270,6 +272,7 @@ fun RootDrawerExpanded(
                                 state.viewUiState.isOpen ||
                                 state.newAlbumUiState.isOpen ||
                                 state.newArtisUiState.isOpen ||
+                                state.createPlaylistUiState.isOpen ||
                                 (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                             ) ViewArtistCompactRootScreen(
                                 artistId = id,
@@ -348,6 +351,12 @@ fun RootDrawerExpanded(
                                     is ViewOtherScreen.AddSongToPlaylist -> onEvent(
                                         RootDrawerUiEvent.AddSongToPlaylist(
                                             id = it.id
+                                        )
+                                    )
+
+                                    is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
+                                        RootDrawerUiEvent.CreatePlaylist(
+                                            playlistId = it.playlistId
                                         )
                                     )
 
@@ -436,6 +445,21 @@ fun RootDrawerExpanded(
                             },
                             navigateBack = {
                                 onEvent(RootDrawerUiEvent.NewArtistCancel)
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        modifier = Modifier.fillMaxSize(),
+                        visible = state.createPlaylistUiState.isOpen && config.screenWidthDp > 980,
+                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
+                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                    ) {
+                        CreatePlaylistRootScreen(
+                            modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                            playlistId = state.createPlaylistUiState.playlistId,
+                            navigateBack = {
+                                onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
                             }
                         )
                     }
@@ -537,6 +561,13 @@ fun RootDrawerExpanded(
                                     )
                                 )
 
+                                is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
+                                    RootDrawerUiEvent.CreatePlaylist(
+                                        playlistId = it.playlistId
+                                    )
+                                )
+
+
                                 is ViewOtherScreen.ViewSongArtists -> {
                                     // todo add screen
                                 }
@@ -566,12 +597,14 @@ fun RootDrawerExpanded(
         state.viewUiState.isOpen ||
         state.exploreArtistUiState.isOpen ||
         state.newArtisUiState.isOpen ||
-        state.newAlbumUiState.isOpen
+        state.newAlbumUiState.isOpen ||
+        state.createPlaylistUiState.isOpen
     ) BackHandler {
         if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
         else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
         else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
+        else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
     }
 }

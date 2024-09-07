@@ -129,7 +129,7 @@ class RootDrawerViewModel @Inject constructor(
                     ),
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
                     viewUiState = HomeViewUiState(),
-                    newAlbumUiState = NewAlbumUiState()
+                    newAlbumUiState = NewAlbumViewUiState()
                 )
             }
 
@@ -147,7 +147,7 @@ class RootDrawerViewModel @Inject constructor(
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
                     viewUiState = HomeViewUiState(),
                     exploreArtistUiState = ExploreArtistUiState(),
-                    newArtisUiState = NewArtistUiState()
+                    newArtisUiState = NewArtistViewUiState()
                 )
             }
 
@@ -167,7 +167,7 @@ class RootDrawerViewModel @Inject constructor(
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
                     viewUiState = HomeViewUiState(),
                     exploreArtistUiState = ExploreArtistUiState(),
-                    newAlbumUiState = NewAlbumUiState()
+                    newAlbumUiState = NewAlbumViewUiState()
                 )
             }
 
@@ -179,6 +179,25 @@ class RootDrawerViewModel @Inject constructor(
                 )
             }
 
+            is RootDrawerUiEvent.CreatePlaylist -> {
+                state = state.copy(
+                    createPlaylistUiState = state.createPlaylistUiState.copy(
+                        isOpen = true,
+                        playlistId = event.playlistId
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState(),
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newAlbumUiState = NewAlbumViewUiState(),
+                    newArtisUiState = NewArtistViewUiState()
+                )
+            }
+
+            RootDrawerUiEvent.CreatePlaylistCancel -> {
+                state = state.copy(
+                    createPlaylistUiState = CreatePlaylistViewUiState(),
+                )
+            }
 
             else -> Unit
         }

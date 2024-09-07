@@ -5,8 +5,12 @@ import com.poulastaa.core.presentation.ui.model.UiSong
 import com.poulastaa.play.domain.DataLoadingState
 
 data class CreatePlaylistUiState(
+    val playlistId: Long = -1,
+
     val loadingState: DataLoadingState = DataLoadingState.LOADING,
     val generatedData: List<CreatePlaylistData> = emptyList(),
+
+    val header: String = "",
 
     val searchQuery: String = "",
     val isSearchEnabled: Boolean = false
