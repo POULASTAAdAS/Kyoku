@@ -27,12 +27,22 @@ class OnlineFirstCreatePlaylistRepository @Inject constructor(
 
     override suspend fun getPagingSong(
         query: String,
-        type: CreatePlaylistPagerFilterType
-    ): Flow<PagingData<CreatePlaylistPagingData>> = remote.getPagingSong(query, type)
+        type: CreatePlaylistPagerFilterType,
+        savedSongIdList: List<Long>
+    ): Flow<PagingData<CreatePlaylistPagingData>> =
+        remote.getPagingSong(query, type, savedSongIdList)
 
     override suspend fun saveSong(song: Song, playlistId: Long): EmptyResult<DataError.Network> {
         val result = remote.saveSong(songId = song.id, playlistId = playlistId)
         if (result is Result.Success) applicationScope.async { local.saveSong(song, playlistId) }
+            .await()
+
+        return result.asEmptyDataResult()
+    }
+
+    override suspend fun saveSong(songId: Long, playlistId: Long): EmptyResult<DataError.Network> {
+        val result = remote.getSong(songId)
+        if (result is Result.Success) applicationScope.async { local.saveSong(result.data, playlistId) }
             .await()
 
         return result.asEmptyDataResult()

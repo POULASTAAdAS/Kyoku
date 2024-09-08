@@ -50,7 +50,6 @@ fun CreatePlaylistSearchContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(30.dp)
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
         ) {
@@ -119,7 +118,11 @@ fun CreatePlaylistSearchContent(
                                 data = data,
                                 modifier = Modifier
                                     .clickable {
-
+                                        onEvent(
+                                            CreatePlaylistUiEvent.OnArtistClick(
+                                                artistId = data.id
+                                            )
+                                        )
                                     }
                                     .padding(MaterialTheme.dimens.small1)
                             )
@@ -129,7 +132,11 @@ fun CreatePlaylistSearchContent(
                                 data = data,
                                 modifier = Modifier
                                     .clickable {
-
+                                        onEvent(
+                                            CreatePlaylistUiEvent.OnAlbumClick(
+                                                albumId = data.id
+                                            )
+                                        )
                                     }
                                     .padding(MaterialTheme.dimens.small1)
                             )

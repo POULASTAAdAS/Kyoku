@@ -14,8 +14,10 @@ interface RemoteCreatePlaylistDatasource {
     suspend fun getStaticData(): Result<List<Pair<CreatePlaylistType, List<Song>>>, DataError.Network>
     suspend fun getPagingSong(
         query: String,
-        type: CreatePlaylistPagerFilterType
+        type: CreatePlaylistPagerFilterType,
+        savedSongIdList: List<Long>
     ): Flow<PagingData<CreatePlaylistPagingData>>
 
+    suspend fun getSong(songId: Long): Result<Song, DataError.Network>
     suspend fun saveSong(songId: Long, playlistId: Long): EmptyResult<DataError.Network>
 }

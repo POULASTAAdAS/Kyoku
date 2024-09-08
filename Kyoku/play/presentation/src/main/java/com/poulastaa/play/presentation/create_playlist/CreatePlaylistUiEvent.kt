@@ -10,4 +10,10 @@ sealed interface CreatePlaylistUiEvent {
     data class OnFilterTypeChange(val type: CreatePlaylistPagerFilterType) : CreatePlaylistUiEvent
 
     data class OnSongClick(val type: CreatePlaylistType, val songId: Long) : CreatePlaylistUiEvent
+
+    data class OnArtistClick(val artistId: Long) : CreatePlaylistUiEvent
+    data class OnAlbumClick(val albumId: Long) : CreatePlaylistUiEvent
+
+    data object OnArtistCancel : CreatePlaylistUiEvent
+    data object OnAlbumCancel : CreatePlaylistUiEvent
 }

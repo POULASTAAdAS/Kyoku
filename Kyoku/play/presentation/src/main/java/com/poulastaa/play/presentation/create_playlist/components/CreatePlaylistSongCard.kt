@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.create_playlist.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,6 +41,7 @@ fun CreatePlaylistSongCard(
             .height(70.dp)
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.extraSmall)
+            .animateContentSize()
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.gson.Gson
+import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post
 import com.poulastaa.core.domain.EndPoints
@@ -18,6 +19,7 @@ import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.asEmptyDataResult
 import com.poulastaa.core.domain.utils.map
 import com.poulastaa.network.mapper.toCreatePlaylistData
+import com.poulastaa.network.mapper.toSong
 import com.poulastaa.network.model.CreatePlaylistDto
 import com.poulastaa.network.model.UpdatePlaylistReq
 import com.poulastaa.network.paging_source.CreatePlaylistPagerSource
@@ -41,9 +43,10 @@ class OnlineFirstCreatePlaylistDatasource @Inject constructor(
 
     override suspend fun getPagingSong(
         query: String,
-        type: CreatePlaylistPagerFilterType
+        type: CreatePlaylistPagerFilterType,
+        savedSongIdList: List<Long>
     ): Flow<PagingData<CreatePlaylistPagingData>> {
-        pager.init(query, type)
+        pager.init(query, type, savedSongIdList)
 
         return Pager(
             config = PagingConfig(
@@ -53,6 +56,19 @@ class OnlineFirstCreatePlaylistDatasource @Inject constructor(
             pagingSourceFactory = { pager }
         ).flow
     }
+
+    override suspend fun getSong(
+        songId: Long
+    ): Result<Song, DataError.Network> = client.get<SongDto>(
+        route = EndPoints.GetSong.route,
+        params = listOf(
+            Pair(
+                first = "songId",
+                second = songId.toString()
+            )
+        ),
+        gson = gson
+    ).map { it.toSong() }
 
     override suspend fun saveSong(
         songId: Long,

@@ -14,8 +14,10 @@ interface CreatePlaylistRepository {
     suspend fun getStaticData(): Result<List<Pair<CreatePlaylistType, List<Song>>>, DataError.Network>
     suspend fun getPagingSong(
         query: String,
-        type: CreatePlaylistPagerFilterType
+        type: CreatePlaylistPagerFilterType,
+        savedSongIdList: List<Long>
     ): Flow<PagingData<CreatePlaylistPagingData>>
 
     suspend fun saveSong(song: Song, playlistId: Long): EmptyResult<DataError.Network>
+    suspend fun saveSong(songId: Long, playlistId: Long): EmptyResult<DataError.Network>
 }

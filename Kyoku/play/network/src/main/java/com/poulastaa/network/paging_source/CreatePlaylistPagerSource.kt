@@ -25,13 +25,16 @@ class CreatePlaylistPagerSource @Inject constructor(
 ) : PagingSource<Int, CreatePlaylistPagingData>() {
     private var query: String = ""
     private var type: CreatePlaylistPagerFilterTypeDto = CreatePlaylistPagerFilterTypeDto.ALL
+    private var savedSongIdList: List<Long> = emptyList()
 
     fun init(
         query: String,
         type: CreatePlaylistPagerFilterType,
+        savedSongIdList: List<Long>
     ) {
         this.query = query
         this.type = type.toCreatePlaylistPagerFilterTypeDto()
+        this.savedSongIdList = savedSongIdList
     }
 
     override fun getRefreshKey(state: PagingState<Int, CreatePlaylistPagingData>): Int? =
@@ -47,6 +50,7 @@ class CreatePlaylistPagerSource @Inject constructor(
                 "size" to 15.toString(),
                 "query" to query,
                 "type" to type.name,
+                "savedSongIdList" to savedSongIdList.joinToString(",")
             ),
             gson = gson
         ).map { dto ->

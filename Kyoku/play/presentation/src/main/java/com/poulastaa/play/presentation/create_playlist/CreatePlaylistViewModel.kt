@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.create_playlist
 
-import androidx.collection.mutableIntListOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import androidx.paging.map
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.model.CreatePlaylistType
@@ -19,6 +19,8 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.domain.DataLoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,8 +49,7 @@ class CreatePlaylistViewModel @Inject constructor(
     private var loadPagingDataJob: Job? = null
 
     private var generatedData: List<Pair<CreatePlaylistType, List<Song>>> = emptyList()
-
-    private val savedSongIdList = mutableIntListOf()
+    private val savedSongIdList: MutableList<Long> = mutableListOf()
 
     fun init(playlistId: Long) {
         state = state.copy(
@@ -64,7 +65,58 @@ class CreatePlaylistViewModel @Inject constructor(
     fun onEvent(event: CreatePlaylistUiEvent) {
         when (event) {
             is CreatePlaylistUiEvent.OnSongClick -> {
+                if (savedSongIdList.contains(event.songId)) return
+                savedSongIdList.add(event.songId)
 
+                CoroutineScope(Dispatchers.Default).launch {
+                    state = state.copy(
+                        generatedData = state.generatedData.map { data ->
+                            data.copy(
+                                list = data.list.mapNotNull { song ->
+                                    if (song.id == event.songId) null
+                                    else song
+                                }
+                            )
+                        }
+                    )
+
+                    _pagingData.value = _pagingData.value.filter {
+                        it.id != event.songId
+                    }
+                }
+
+                if (event.type == CreatePlaylistType.SEARCH) saveSearchedSong(event.songId)
+                else saveGeneratedSong(event.songId)
+            }
+
+            is CreatePlaylistUiEvent.OnAlbumClick -> {
+                state = state.copy(
+                    albumUiState = CreatePlaylistExpandedUiState(
+                        isExpanded = true,
+                        albumId = event.albumId
+                    )
+                )
+            }
+
+            is CreatePlaylistUiEvent.OnArtistClick -> {
+                state = state.copy(
+                    artistUiState = CreatePlaylistExpandedUiState(
+                        isExpanded = true,
+                        albumId = event.artistId
+                    )
+                )
+            }
+
+            CreatePlaylistUiEvent.OnAlbumCancel -> {
+                state = state.copy(
+                    albumUiState = CreatePlaylistExpandedUiState()
+                )
+            }
+
+            CreatePlaylistUiEvent.OnArtistCancel -> {
+                state = state.copy(
+                    artistUiState = CreatePlaylistExpandedUiState()
+                )
             }
 
             CreatePlaylistUiEvent.OnSearchToggle -> {
@@ -73,9 +125,7 @@ class CreatePlaylistViewModel @Inject constructor(
                 )
 
                 if (!state.isSearchEnabled) {
-                    state = state.copy(
-                        searchQuery = ""
-                    )
+                    state = state.copy(searchQuery = "")
 
                     loadPagingDataJob?.cancel()
                     loadPagingDataJob = loadPagingData()
@@ -163,12 +213,63 @@ class CreatePlaylistViewModel @Inject constructor(
     private fun loadPagingData() = viewModelScope.launch {
         _pagingData.value = PagingData.empty()
 
-        repo.getPagingSong( // todo send saved songId list
+        repo.getPagingSong(
             query = state.searchQuery.trim(),
-            type = state.filterType
+            type = state.filterType,
+            savedSongIdList = savedSongIdList.toList()
         ).cachedIn(viewModelScope).collectLatest { dto ->
             _pagingData.value = dto.map {
                 it.toCreatePlaylistPagingUiData()
+            }
+        }
+    }
+
+    private fun saveGeneratedSong(songId: Long) = viewModelScope.launch {
+        val song = generatedData.map { it.second }.firstNotNullOfOrNull { list ->
+            list.firstOrNull { song -> song.id == songId }
+        } ?: return@launch
+
+        val result = repo.saveSong(
+            song = song,
+            playlistId = state.playlistId
+        )
+
+        if (result is Result.Error) {
+            when (result.error) {
+                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                    CreatePlaylistUiAction.EmitToast(
+                        UiText.StringResource(R.string.error_no_internet)
+                    )
+                )
+
+                else -> _uiEvent.send(
+                    CreatePlaylistUiAction.EmitToast(
+                        UiText.StringResource(R.string.error_something_went_wrong)
+                    )
+                )
+            }
+        }
+    }
+
+    private fun saveSearchedSong(songId: Long) = viewModelScope.launch {
+        val result = repo.saveSong(
+            songId = songId,
+            playlistId = state.playlistId
+        )
+
+        if (result is Result.Error) {
+            when (result.error) {
+                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                    CreatePlaylistUiAction.EmitToast(
+                        UiText.StringResource(R.string.error_no_internet)
+                    )
+                )
+
+                else -> _uiEvent.send(
+                    CreatePlaylistUiAction.EmitToast(
+                        UiText.StringResource(R.string.error_something_went_wrong)
+                    )
+                )
             }
         }
     }
