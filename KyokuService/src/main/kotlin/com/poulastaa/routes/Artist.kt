@@ -105,10 +105,15 @@ fun Route.getArtistSongPagerData(service: ServiceRepository) {
                 val size = call.parameters["size"]?.toInt()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
+                val sendSongIdListStr = call.parameters["removeSongIdList"]
+
+                val sendSongIdList = sendSongIdListStr?.let {
+                    if (it.isNotBlank()) it.split(",").map { id -> id.toLong() } else null
+                } ?: emptyList()
 
                 val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 
-                val result = service.getArtistSongPagingData(artistId, page, size, payload)
+                val result = service.getArtistSongPagingData(artistId, page, size, payload, sendSongIdList)
 
                 call.respond(
                     message = result,
@@ -129,7 +134,6 @@ fun Route.getArtistAlbumPagerData(service: ServiceRepository) {
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
                 val size = call.parameters["size"]?.toInt()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
-
 
                 val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
 

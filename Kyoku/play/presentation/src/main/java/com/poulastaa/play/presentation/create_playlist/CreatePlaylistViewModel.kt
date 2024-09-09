@@ -49,7 +49,6 @@ class CreatePlaylistViewModel @Inject constructor(
     private var loadPagingDataJob: Job? = null
 
     private var generatedData: List<Pair<CreatePlaylistType, List<Song>>> = emptyList()
-    private val savedSongIdList: MutableList<Long> = mutableListOf()
 
     fun init(playlistId: Long) {
         state = state.copy(
@@ -65,8 +64,8 @@ class CreatePlaylistViewModel @Inject constructor(
     fun onEvent(event: CreatePlaylistUiEvent) {
         when (event) {
             is CreatePlaylistUiEvent.OnSongClick -> {
-                if (savedSongIdList.contains(event.songId)) return
-                savedSongIdList.add(event.songId)
+                if (state.savedSongIdList.contains(event.songId)) return
+                state = state.copy(savedSongIdList = state.savedSongIdList + event.songId)
 
                 CoroutineScope(Dispatchers.Default).launch {
                     state = state.copy(
@@ -93,7 +92,7 @@ class CreatePlaylistViewModel @Inject constructor(
                 state = state.copy(
                     albumUiState = CreatePlaylistExpandedUiState(
                         isExpanded = true,
-                        albumId = event.albumId
+                        id = event.albumId
                     )
                 )
             }
@@ -102,7 +101,7 @@ class CreatePlaylistViewModel @Inject constructor(
                 state = state.copy(
                     artistUiState = CreatePlaylistExpandedUiState(
                         isExpanded = true,
-                        albumId = event.artistId
+                        id = event.artistId
                     )
                 )
             }
@@ -216,7 +215,7 @@ class CreatePlaylistViewModel @Inject constructor(
         repo.getPagingSong(
             query = state.searchQuery.trim(),
             type = state.filterType,
-            savedSongIdList = savedSongIdList.toList()
+            savedSongIdList = state.savedSongIdList
         ).cachedIn(viewModelScope).collectLatest { dto ->
             _pagingData.value = dto.map {
                 it.toCreatePlaylistPagingUiData()

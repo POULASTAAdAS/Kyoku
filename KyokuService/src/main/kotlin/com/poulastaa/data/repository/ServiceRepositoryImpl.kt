@@ -626,9 +626,10 @@ class ServiceRepositoryImpl(
         page: Int,
         size: Int,
         payload: ReqUserPayload,
+        savedSongList: List<Long>
     ): ArtistPagerDataDto {
         userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
-        return kyokuRepo.getArtistSongPagingData(artistId, page, size)
+        return kyokuRepo.getArtistSongPagingData(artistId, page, size,savedSongList)
     }
 
     override suspend fun getArtistAlbumPagingData(

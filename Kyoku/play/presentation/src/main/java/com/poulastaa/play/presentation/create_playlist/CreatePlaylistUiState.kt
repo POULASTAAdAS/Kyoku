@@ -18,6 +18,8 @@ data class CreatePlaylistUiState(
 
     val filterType: CreatePlaylistPagerFilterType = CreatePlaylistPagerFilterType.ALL,
 
+    val savedSongIdList: List<Long> = emptyList(),
+
     val artistUiState: CreatePlaylistExpandedUiState = CreatePlaylistExpandedUiState(),
     val albumUiState: CreatePlaylistExpandedUiState = CreatePlaylistExpandedUiState()
 )
@@ -38,5 +40,5 @@ data class CreatePlaylistPagingUiData(
 
 data class CreatePlaylistExpandedUiState(
     val isExpanded: Boolean = false,
-    val albumId: Long = -1
+    val id: Long = -1
 )

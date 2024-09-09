@@ -267,6 +267,7 @@ class KyokuDatabaseImpl : DatabaseRepository {
         artistId: Long,
         page: Int,
         size: Int,
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto = query {
         SongArtistRelationTable
             .join(
@@ -281,7 +282,8 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 SongTable.coverImage,
                 SongTable.year
             ).select {
-                SongArtistRelationTable.artistId eq artistId
+                SongArtistRelationTable.artistId eq artistId and
+                        (SongArtistRelationTable.songId notInList savedSongList)
             }.orderBy(SongTable.year to SortOrder.DESC)
             .map {
                 ArtistSingleDataDto(

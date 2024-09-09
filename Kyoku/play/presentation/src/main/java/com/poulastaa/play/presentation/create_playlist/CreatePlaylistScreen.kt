@@ -3,6 +3,13 @@ package com.poulastaa.play.presentation.create_playlist
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,12 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.domain.model.CreatePlaylistType
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.presentation.create_playlist.artist.CreatePlaylistArtistRootScreen
+import com.poulastaa.play.presentation.create_playlist.artist.CreatePlaylistArtistUiEvent
 import com.poulastaa.play.presentation.create_playlist.components.CommonHorizontalPager
 import com.poulastaa.play.presentation.create_playlist.components.CreatePlaylistLoadingScreen
 import com.poulastaa.play.presentation.create_playlist.components.CreatePlaylistSearchContent
@@ -72,16 +82,68 @@ fun CreatePlaylistRootScreen(
         }
     }
 
-    CreatePlaylistScreen(
-        modifier = modifier,
-        state = viewModel.state,
-        data = viewModel.pagingData.collectAsLazyPagingItems(),
-        onEvent = viewModel::onEvent,
-        navigateBack = navigateBack
-    )
+    Box(Modifier.fillMaxSize()) {
+        CreatePlaylistScreen(
+            modifier = modifier,
+            state = viewModel.state,
+            data = viewModel.pagingData.collectAsLazyPagingItems(),
+            onEvent = viewModel::onEvent,
+            navigateBack = navigateBack
+        )
 
-    if (viewModel.state.isSearchEnabled) BackHandler {
-        viewModel.onEvent(CreatePlaylistUiEvent.OnSearchToggle)
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = viewModel.state.artistUiState.isExpanded,
+            enter = fadeIn() + expandIn() + slideInHorizontally { it },
+            exit = fadeOut() + shrinkOut() + slideOutHorizontally { it }
+        ) {
+            CreatePlaylistArtistRootScreen(
+                modifier = modifier,
+                artistId = viewModel.state.artistUiState.id,
+                savedSongIdList = viewModel.state.savedSongIdList,
+                onEvent = { event ->
+                    when (event) {
+                        is CreatePlaylistArtistUiEvent.OnAlbumClick -> {
+                            viewModel.onEvent(
+                                CreatePlaylistUiEvent.OnAlbumClick(
+                                    albumId = event.albumId
+                                )
+                            )
+                        }
+
+                        is CreatePlaylistArtistUiEvent.OnSongClick -> {
+                            viewModel.onEvent(
+                                CreatePlaylistUiEvent.OnSongClick(
+                                    type = CreatePlaylistType.SEARCH,
+                                    songId = event.songId
+                                )
+                            )
+                        }
+                    }
+                },
+                onBackClick = {
+                    viewModel.onEvent(CreatePlaylistUiEvent.OnArtistCancel)
+                }
+            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = viewModel.state.albumUiState.isExpanded,
+            enter = fadeIn() + expandIn() + slideInHorizontally { it },
+            exit = fadeOut() + shrinkOut() + slideOutHorizontally { it }
+        ) {
+
+        }
+    }
+
+    if (viewModel.state.isSearchEnabled ||
+        viewModel.state.artistUiState.isExpanded ||
+        viewModel.state.albumUiState.isExpanded
+    ) BackHandler {
+        if (viewModel.state.isSearchEnabled) viewModel.onEvent(CreatePlaylistUiEvent.OnSearchToggle)
+        else if (viewModel.state.artistUiState.isExpanded) viewModel.onEvent(CreatePlaylistUiEvent.OnArtistCancel)
+        else if (viewModel.state.albumUiState.isExpanded) viewModel.onEvent(CreatePlaylistUiEvent.OnAlbumCancel)
     }
 }
 

@@ -40,9 +40,6 @@ FROM RankedSongs
 WHERE rn = 1;
 
 
-
-
-
 -- getFavouriteArtistMix
 select song.id , song.title , song.coverImage , song.points from song
 join songartistrelation on songartistrelation.songId = song.id
@@ -117,22 +114,6 @@ select album.id , album.name , song.coverImage , song.year , album.points from a
 join songalbumrelation on songalbumrelation.albumId = album.id
 join album on songalbumrelation.albumId = album.id
 order by  album.points desc , song.year desc;
-
-select * from playlist;
-
-
-select * from artist order by rand(20);
-
-
-select song.id, song.title, song.coverImage , artist.name from song 
-join songartistrelation on songartistrelation.songId = song.id
-join artist on artist.id =songartistrelation.artistId
-where song.title like 'vishal%' or artist.name like 'vishal%'
-order by  song.year desc , song.points desc;
-
-
-
-
 
 
 

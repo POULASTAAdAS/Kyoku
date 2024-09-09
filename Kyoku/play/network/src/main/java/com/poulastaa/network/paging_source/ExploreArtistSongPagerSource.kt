@@ -21,9 +21,14 @@ class ExploreArtistSongPagerSource @Inject constructor(
     private val gson: Gson,
 ) : PagingSource<Int, ArtistSingleData>() {
     private var artistId: Long? = null
+    private var removeSongIdList: List<Long> = emptyList()
 
-    fun init(artistId: Long) {
+    fun init(
+        artistId: Long,
+        removeSongIdList: List<Long>
+    ) {
         this.artistId = artistId
+        this.removeSongIdList = removeSongIdList
     }
 
     override fun getRefreshKey(state: PagingState<Int, ArtistSingleData>): Int? =
@@ -39,7 +44,8 @@ class ExploreArtistSongPagerSource @Inject constructor(
             params = listOf(
                 "page" to page.toString(),
                 "size" to 10.toString(),
-                "artistId" to artistId.toString()
+                "artistId" to artistId.toString(),
+                "removeSongIdList" to removeSongIdList.joinToString(separator = ",")
             ),
             gson = gson
         ).map {

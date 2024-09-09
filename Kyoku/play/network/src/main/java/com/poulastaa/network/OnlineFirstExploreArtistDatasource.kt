@@ -66,7 +66,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
     ).asEmptyDataResult()
 
     override suspend fun getArtistSong(artistId: Long): Flow<PagingData<ArtistSingleData>> {
-        pagerSong.init(artistId)
+        pagerSong.init(artistId, emptyList())
 
         return Pager(
             config = PagingConfig(

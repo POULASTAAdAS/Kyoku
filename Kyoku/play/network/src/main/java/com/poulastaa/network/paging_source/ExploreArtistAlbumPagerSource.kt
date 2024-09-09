@@ -39,7 +39,7 @@ class ExploreArtistAlbumPagerSource @Inject constructor(
             params = listOf(
                 "page" to page.toString(),
                 "size" to 10.toString(),
-                "artistId" to artistId.toString()
+                "artistId" to artistId.toString(),
             ),
             gson = gson
         ).map {

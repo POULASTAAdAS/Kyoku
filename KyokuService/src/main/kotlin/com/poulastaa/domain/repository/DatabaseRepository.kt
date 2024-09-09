@@ -53,6 +53,7 @@ interface DatabaseRepository {
         artistId: Long,
         page: Int,
         size: Int,
+        savedSongList: List<Long>
     ): ArtistPagerDataDto
 
     suspend fun getArtistAlbumPagingData(

@@ -135,6 +135,7 @@ interface ServiceRepository {
         page: Int,
         size: Int,
         payload: ReqUserPayload,
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto
 
     suspend fun getArtistAlbumPagingData(
