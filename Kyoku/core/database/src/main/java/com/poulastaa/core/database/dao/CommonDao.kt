@@ -145,4 +145,7 @@ interface CommonDao {
 
     @Query("select id from FavouriteEntity")
     suspend fun getFevSongIds(): List<Long>
+
+    @Query("select id from PlaylistEntity where name = :name")
+    suspend fun getPlaylistByName(name:String): Long?
 }

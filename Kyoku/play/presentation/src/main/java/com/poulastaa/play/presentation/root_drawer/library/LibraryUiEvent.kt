@@ -60,5 +60,11 @@ sealed interface LibraryUiEvent {
             data class View(val id: Long) : Artist
             data class UnFollow(val id: Long) : Artist
         }
+
+        sealed interface NewPlaylist : BottomSheetUiEvent {
+            data class OnNameChange(val name: String) : NewPlaylist
+            data object OnSaveClick : NewPlaylist
+            data object OnCancelClick : NewPlaylist
+        }
     }
 }

@@ -688,7 +688,7 @@ class UserDatabaseRepository(
                     query {
                         PlaylistDao.find {
                             PlaylistTable.id inList it
-                        }
+                        }.toList()
                     }.map { playlist ->
                         PlaylistDto(
                             id = playlist.id.value,

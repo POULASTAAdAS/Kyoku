@@ -136,6 +136,8 @@ class KyokuDatabaseImpl : DatabaseRepository {
             }
         }.await()
 
+        if (songIdList.firstOrNull() == -1L) return@coroutineScope playlist.id.value
+
         CoroutineScope(Dispatchers.IO).launch {
             query {
                 UserPlaylistRelationTable.insertIgnore {

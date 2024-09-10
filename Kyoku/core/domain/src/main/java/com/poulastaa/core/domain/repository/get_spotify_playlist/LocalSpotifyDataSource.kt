@@ -6,13 +6,13 @@ import com.poulastaa.core.domain.model.Song
 import kotlinx.coroutines.flow.Flow
 
 typealias SongId = Long
-typealias playlistId = Long
+typealias PlaylistId = Long
 
 interface LocalSpotifyDataSource {
     suspend fun insertSongs(songs: List<Song>): List<SongId>
-    suspend fun insertPlaylist(playlist: Playlist): playlistId
+    suspend fun insertPlaylist(playlist: Playlist): PlaylistId
 
-    suspend fun createRelationOnSongAndPlaylist(songIdList: List<SongId>, playlistId: playlistId)
+    suspend fun createRelationOnSongAndPlaylist(songIdList: List<SongId>, playlistId: PlaylistId)
 
     suspend fun getSongOnUrl(url: String): SongId?
 

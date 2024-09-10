@@ -41,9 +41,18 @@ class OnlineFirstCreatePlaylistRepository @Inject constructor(
     }
 
     override suspend fun saveSong(songId: Long, playlistId: Long): EmptyResult<DataError.Network> {
-        val result = remote.getSong(songId)
-        if (result is Result.Success) applicationScope.async { local.saveSong(result.data, playlistId) }
-            .await()
+        val resultDef = applicationScope.async { remote.saveSong(songId, playlistId) }
+        val songDef = applicationScope.async { remote.getSong(songId) }
+
+        val result = resultDef.await()
+        val song = songDef.await()
+
+        if (result is Result.Success && song is Result.Success) applicationScope.async {
+            local.saveSong(
+                song.data,
+                playlistId
+            )
+        }.await()
 
         return result.asEmptyDataResult()
     }

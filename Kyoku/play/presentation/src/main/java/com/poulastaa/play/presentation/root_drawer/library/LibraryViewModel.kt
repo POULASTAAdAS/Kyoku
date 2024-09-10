@@ -17,6 +17,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.SnackBarType
 import com.poulastaa.core.presentation.ui.SnackBarUiState
 import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.play.presentation.add_to_playlist.AddNewPlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
@@ -147,7 +148,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.PlaylistHeader -> {
-
+                            state = state.copy(
+                                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                                    isOpen = true
+                                )
+                            )
                         }
                     }
                 }
@@ -257,6 +262,9 @@ class LibraryViewModel @Inject constructor(
 
                     is LibraryUiEvent.BottomSheetUiEvent.Artist ->
                         handleArtistBottomSheetUiEvent(event)
+
+                    is LibraryUiEvent.BottomSheetUiEvent.NewPlaylist ->
+                        handleNewPlaylistBottomSheetUiEvent(event)
                 }
             }
         }
@@ -425,6 +433,35 @@ class LibraryViewModel @Inject constructor(
                     val result = repo.deleteSavedData(event.id, LibraryDataType.ARTIST)
                     handleResult(result, R.string.artist_un_followed)
                 }
+            }
+        }
+    }
+
+    private fun handleNewPlaylistBottomSheetUiEvent(event: LibraryUiEvent.BottomSheetUiEvent.NewPlaylist) {
+        when (event) {
+            is LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnNameChange -> {
+                state = state.copy(
+                    newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                        name = event.name
+                    )
+                )
+            }
+
+            LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnSaveClick -> {
+                if (state.newPlaylistBottomSheetState.isMakingApiCall) return
+                createNewPlaylist()
+            }
+
+            LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnCancelClick -> {
+                if (state.newPlaylistBottomSheetState.isMakingApiCall) return
+
+                state = state.copy(
+                    newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                        isOpen = false,
+                        name = "",
+                        isValidName = false
+                    )
+                )
             }
         }
     }
@@ -605,5 +642,88 @@ class LibraryViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun createNewPlaylist() {
+        if (!validatePlaylistName(state.newPlaylistBottomSheetState.name)) return
+
+        state = state.copy(
+            newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                isMakingApiCall = true
+            )
+        )
+
+        viewModelScope.launch {
+            when (val result = repo.createPlaylist(state.newPlaylistBottomSheetState.name.trim())) {
+                is Result.Error -> {
+                    when (result.error) {
+                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_no_internet)
+                            )
+                        )
+
+                        DataError.Local.NAME_CONFLICT -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_playlist_name_conflict)
+                            )
+                        )
+
+                        else -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_something_went_wrong)
+                            )
+                        )
+                    }
+
+                    state = state.copy(
+                        newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                            isMakingApiCall = false
+                        )
+                    )
+                }
+
+                is Result.Success -> {
+                    state = state.copy(
+                        newPlaylistBottomSheetState = AddNewPlaylistBottomSheetUiState(),
+                    )
+
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.View(
+                                id = result.data,
+                                type = ViewDataType.PLAYLIST
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validatePlaylistName(name: String): Boolean {
+        if (name.trim().isEmpty()) {
+            state = state.copy(
+                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_empty_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        if (name.length < 4) {
+            state = state.copy(
+                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_short_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        return true
     }
 }

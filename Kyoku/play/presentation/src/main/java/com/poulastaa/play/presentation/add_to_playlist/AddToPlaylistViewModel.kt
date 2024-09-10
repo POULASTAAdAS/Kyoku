@@ -93,7 +93,7 @@ class AddToPlaylistViewModel @Inject constructor(
             AddToPlaylistUiEvent.AddNewPlaylist -> {
                 state = state.copy(
                     addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
-                        isAddNewPlaylistBottomSheetOpen = true
+                        isOpen = true
                     )
                 )
             }
@@ -255,7 +255,7 @@ class AddToPlaylistViewModel @Inject constructor(
                     is AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnNameChange -> {
                         state = state.copy(
                             addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
-                                newPlaylistName = event.name
+                                name = event.name
                             )
                         )
                     }
@@ -267,7 +267,7 @@ class AddToPlaylistViewModel @Inject constructor(
                     }
 
                     AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnSaveClick -> {
-                        if (!validatePlaylistName(state.addNewPlaylistBottomSheetState.newPlaylistName)) return
+                        if (!validatePlaylistName(state.addNewPlaylistBottomSheetState.name)) return
 
                         state = state.copy(
                             addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
@@ -278,7 +278,7 @@ class AddToPlaylistViewModel @Inject constructor(
                         viewModelScope.launch {
                             val result = repo.createPlaylist(
                                 songId = state.songId,
-                                name = state.addNewPlaylistBottomSheetState.newPlaylistName
+                                name = state.addNewPlaylistBottomSheetState.name
                             )
 
                             when (result) {

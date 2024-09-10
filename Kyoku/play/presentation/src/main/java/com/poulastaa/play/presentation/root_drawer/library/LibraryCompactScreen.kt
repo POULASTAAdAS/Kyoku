@@ -57,6 +57,8 @@ import com.poulastaa.core.presentation.ui.CustomSnackBar
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
+import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistUiEvent
+import com.poulastaa.play.presentation.add_to_playlist.components.AddNewPlaylistBottomSheet
 import com.poulastaa.play.presentation.root_drawer.home.components.SuggestedArtistCard
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
 import com.poulastaa.play.presentation.root_drawer.library.components.FavouriteCard
@@ -119,6 +121,7 @@ private fun LibraryScreen(
     val appBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val libraryBottomSheetState = rememberModalBottomSheetState()
+    val newPlaylistBottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 
     val haptic = LocalHapticFeedback.current
@@ -725,6 +728,23 @@ private fun LibraryScreen(
             onEvent(LibraryUiEvent.OnItemBottomSheetCancel)
         }
     }
+
+    if (state.newPlaylistBottomSheetState.isOpen) AddNewPlaylistBottomSheet(
+        sheetState = newPlaylistBottomSheetState,
+        state = state.newPlaylistBottomSheetState,
+        onEvent = { event ->
+            when (event) {
+                is AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnNameChange ->
+                    onEvent(LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnNameChange(event.name))
+
+                AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnSaveClick ->
+                    onEvent(LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnSaveClick)
+
+                AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnCancelClick ->
+                    onEvent(LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnCancelClick)
+            }
+        }
+    )
 }
 
 private fun <T> LazyGridScope.itemSection(

@@ -3,6 +3,7 @@ package com.poulastaa.core.domain.repository.library
 import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedType
+import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
 import com.poulastaa.core.domain.utils.SavedPlaylist
@@ -23,4 +24,6 @@ interface LocalLibraryDataSource {
     suspend fun unPinData(id: Long, type: LibraryDataType)
 
     suspend fun deleteSavedData(id: Long, type: LibraryDataType)
+    suspend fun checkPlaylistWithSameName(name: String): Boolean
+    suspend fun createPlaylist(playlist: Playlist)
 }

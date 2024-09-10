@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.create_playlist
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -83,6 +84,8 @@ class CreatePlaylistViewModel @Inject constructor(
                         it.id != event.songId
                     }
                 }
+
+                Log.d("songid", event.songId.toString())
 
                 if (event.type == CreatePlaylistType.SEARCH) saveSearchedSong(event.songId)
                 else saveGeneratedSong(event.songId)
@@ -255,6 +258,8 @@ class CreatePlaylistViewModel @Inject constructor(
             songId = songId,
             playlistId = state.playlistId
         )
+
+        Log.d("result", result.toString())
 
         if (result is Result.Error) {
             when (result.error) {

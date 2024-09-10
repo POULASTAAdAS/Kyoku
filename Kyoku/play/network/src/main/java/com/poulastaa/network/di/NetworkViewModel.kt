@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.poulastaa.core.domain.repository.add_playlist.RemoteAddPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.create_playlist.RemoteCreatePlaylistDatasource
+import com.poulastaa.core.domain.repository.create_playlist.album.RemoteCreatePlaylistAlbumDatasource
 import com.poulastaa.core.domain.repository.create_playlist.artist.RemoteCreatePlaylistArtistDatasource
 import com.poulastaa.core.domain.repository.explore_artist.RemoteExploreArtistDatasource
 import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
@@ -15,6 +16,7 @@ import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasour
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
+import com.poulastaa.network.OnlineFirstCreatePlaylistAlbumDatasource
 import com.poulastaa.network.OnlineFirstCreatePlaylistArtistDatasource
 import com.poulastaa.network.OnlineFirstCreatePlaylistDatasource
 import com.poulastaa.network.OnlineFirstExploreArtistDatasource
@@ -210,5 +212,15 @@ object NetworkViewModel {
         gson = gson,
         album = album,
         song = song
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideCreatePlaylistAlbumDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteCreatePlaylistAlbumDatasource = OnlineFirstCreatePlaylistAlbumDatasource(
+        client = client,
+        gson = gson,
     )
 }

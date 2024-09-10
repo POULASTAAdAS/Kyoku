@@ -36,6 +36,34 @@ fun Route.addAlbum(
     }
 }
 
+fun Route.getAlbum(
+    service: ServiceRepository,
+) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.GetAlbum.route) {
+            get {
+                val albumId = call.parameters["albumId"]?.toLong()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val savedSongIdListStr = call.parameters["savedSongIdList"]
+
+                val savedSongIdList = savedSongIdListStr?.let {
+                    if (it.isNotBlank()) it.split(",").map { id -> id.toLong() } else null
+                } ?: emptyList()
+
+                val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val album = service.getAlbum(albumId, savedSongIdList, payload)
+
+                call.respond(
+                    message = album,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
+
 fun Route.removeAlbum(service: ServiceRepository) {
     authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.RemoveAlbum.route) {

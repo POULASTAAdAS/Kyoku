@@ -20,8 +20,8 @@ data class AddToPlaylistUiState(
 )
 
 data class AddNewPlaylistBottomSheetUiState(
-    val isAddNewPlaylistBottomSheetOpen: Boolean = false,
-    val newPlaylistName: String = "",
+    val isOpen: Boolean = false,
+    val name: String = "",
     val isMakingApiCall: Boolean = false,
     val isValidName: Boolean = true,
     val errorMessage: UiText = UiText.DynamicString("")

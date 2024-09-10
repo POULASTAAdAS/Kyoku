@@ -10,6 +10,8 @@ import com.poulastaa.core.domain.repository.add_to_playlist.RemoteAddToPlaylistD
 import com.poulastaa.core.domain.repository.create_playlist.CreatePlaylistRepository
 import com.poulastaa.core.domain.repository.create_playlist.LocalCreatePlaylistDatasource
 import com.poulastaa.core.domain.repository.create_playlist.RemoteCreatePlaylistDatasource
+import com.poulastaa.core.domain.repository.create_playlist.album.CreatePlaylistAlbumRepository
+import com.poulastaa.core.domain.repository.create_playlist.album.RemoteCreatePlaylistAlbumDatasource
 import com.poulastaa.core.domain.repository.create_playlist.artist.CreatePlaylistArtistRepository
 import com.poulastaa.core.domain.repository.create_playlist.artist.LocalCreatePlaylistArtistDatasource
 import com.poulastaa.core.domain.repository.create_playlist.artist.RemoteCreatePlaylistArtistDatasource
@@ -40,6 +42,7 @@ import com.poulastaa.play.data.OfflineFirstSettingRepository
 import com.poulastaa.play.data.OfflineFirstViewRepository
 import com.poulastaa.play.data.OnlineFirstAddPlaylistRepository
 import com.poulastaa.play.data.OnlineFirstAddToPlaylistRepository
+import com.poulastaa.play.data.OnlineFirstCreatePlaylistAlbumRepository
 import com.poulastaa.play.data.OnlineFirstCreatePlaylistArtistRepository
 import com.poulastaa.play.data.OnlineFirstCreatePlaylistRepository
 import com.poulastaa.play.data.OnlineFirstExploreArtistRepository
@@ -202,4 +205,10 @@ object PlayDataViewmodelModule {
         local = local,
         remote = remote,
     )
+
+    @Provides
+    @ViewModelScoped
+    fun provideCreatePlaylistAlbumRepository(
+        remote: RemoteCreatePlaylistAlbumDatasource,
+    ): CreatePlaylistAlbumRepository = OnlineFirstCreatePlaylistAlbumRepository(remote = remote)
 }

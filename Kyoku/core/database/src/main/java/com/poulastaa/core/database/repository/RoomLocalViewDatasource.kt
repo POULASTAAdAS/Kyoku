@@ -7,6 +7,7 @@ import com.poulastaa.core.database.entity.FavouriteArtistMixEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimeEntity
 import com.poulastaa.core.database.entity.PopularSongMixEntity
+import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPlaylistSong
@@ -113,15 +114,31 @@ class RoomLocalViewDatasource @Inject constructor(
     }
 
     override suspend fun savePlaylist(data: PlaylistData) {
+        if (data.id == -1L) return
+
         coroutineScope {
-            async {
+            val song = async {
                 data.listOfSong.map { it.toSongEntity() }.let {
                     commonDao.insertSongs(it)
                 }
-            }.await()
+            }
 
-            data.toPlaylistEntity().let {
-                commonDao.insertPlaylist(it)
+            val playlist = async {
+                data.toPlaylistEntity().let {
+                    commonDao.insertPlaylist(it)
+                }
+            }
+
+            song.await()
+            playlist.await()
+
+            data.listOfSong.map {
+                SongPlaylistRelationEntity(
+                    songId = it.id,
+                    playlistId = data.id
+                )
+            }.let {
+                commonDao.insertSongPlaylistRelations(it)
             }
         }
     }

@@ -303,6 +303,20 @@ class ServiceRepositoryImpl(
         )
     }
 
+    override suspend fun getAlbum(
+        albumId: Long,
+        savedSongList: List<Long>,
+        payload: ReqUserPayload,
+    ): AlbumWithSongDto = coroutineScope {
+        val albumDef = async { kyokuRepo.getAlbumOnId(albumId) }
+        val songDef = async { kyokuRepo.getAlbumSong(albumId) }
+
+        AlbumWithSongDto(
+            albumDto = albumDef.await()?.toAlbum("") ?: return@coroutineScope AlbumWithSongDto(),
+            listOfSong = songDef.await().filterNot { savedSongList.contains(it.id) }
+        )
+    }
+
     override suspend fun addAlbum(list: List<Long>, payload: ReqUserPayload): AddAlbumDto {
         val user = userRepo.getUserOnPayload(payload) ?: return AddAlbumDto()
 
@@ -626,10 +640,10 @@ class ServiceRepositoryImpl(
         page: Int,
         size: Int,
         payload: ReqUserPayload,
-        savedSongList: List<Long>
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto {
         userRepo.getUserOnPayload(payload) ?: return ArtistPagerDataDto()
-        return kyokuRepo.getArtistSongPagingData(artistId, page, size,savedSongList)
+        return kyokuRepo.getArtistSongPagingData(artistId, page, size, savedSongList)
     }
 
     override suspend fun getArtistAlbumPagingData(

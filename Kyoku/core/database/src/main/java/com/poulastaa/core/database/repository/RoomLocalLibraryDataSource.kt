@@ -6,10 +6,12 @@ import com.poulastaa.core.database.entity.PinnedEntity
 import com.poulastaa.core.database.mapper.toArtist
 import com.poulastaa.core.database.mapper.toPinnedData
 import com.poulastaa.core.database.mapper.toPinnedType
+import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toSavedPlaylist
 import com.poulastaa.core.domain.LibraryDataType
 import com.poulastaa.core.domain.model.PinnedData
 import com.poulastaa.core.domain.model.PinnedType
+import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.utils.SavedAlbum
 import com.poulastaa.core.domain.utils.SavedArtist
@@ -84,5 +86,12 @@ class RoomLocalLibraryDataSource @Inject constructor(
 
             else -> return
         }
+    }
+
+    override suspend fun checkPlaylistWithSameName(name: String): Boolean =
+        commonDao.getPlaylistByName(name) != null
+
+    override suspend fun createPlaylist(playlist: Playlist) {
+        commonDao.insertPlaylist(playlist.toPlaylistEntity())
     }
 }

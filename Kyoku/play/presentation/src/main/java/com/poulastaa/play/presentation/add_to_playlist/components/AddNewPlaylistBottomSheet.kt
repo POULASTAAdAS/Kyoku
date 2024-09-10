@@ -81,7 +81,7 @@ fun AddNewPlaylistBottomSheet(
             }
 
             AppTextField(
-                text = state.newPlaylistName,
+                text = state.name,
                 onValueChange = { onEvent(AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnNameChange(it)) },
                 label = stringResource(id = R.string.playlist),
                 onDone = {
@@ -135,7 +135,7 @@ private fun Preview() {
             AddNewPlaylistBottomSheet(
                 sheetState = rememberModalBottomSheetState(),
                 state = AddNewPlaylistBottomSheetUiState(
-                    isAddNewPlaylistBottomSheetOpen = true,
+                    isOpen = true,
                     isValidName = err.value,
                     errorMessage = UiText.DynamicString("Error message")
                 ),

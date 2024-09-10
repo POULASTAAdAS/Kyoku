@@ -90,8 +90,8 @@ private fun AddToPlaylistScreen(
     val addNewPlaylistBottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) {
-        if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) addNewPlaylistBottomSheetState.show()
+    LaunchedEffect(key1 = state.addNewPlaylistBottomSheetState.isOpen) {
+        if (state.addNewPlaylistBottomSheetState.isOpen) addNewPlaylistBottomSheetState.show()
         else addNewPlaylistBottomSheetState.hide()
     }
 
@@ -170,7 +170,7 @@ private fun AddToPlaylistScreen(
         }
     }
 
-    if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) AddNewPlaylistBottomSheet(
+    if (state.addNewPlaylistBottomSheetState.isOpen) AddNewPlaylistBottomSheet(
         sheetState = addNewPlaylistBottomSheetState,
         state = state.addNewPlaylistBottomSheetState,
         onEvent = { event ->

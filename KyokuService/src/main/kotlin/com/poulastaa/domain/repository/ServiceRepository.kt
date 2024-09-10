@@ -70,6 +70,12 @@ interface ServiceRepository {
         userPayload: ReqUserPayload,
     ): Boolean
 
+    suspend fun getAlbum(
+        albumId: Long,
+        savedSongList: List<Long>,
+        payload: ReqUserPayload,
+    ): AlbumWithSongDto
+
     suspend fun addAlbum(
         list: List<Long>,
         payload: ReqUserPayload,

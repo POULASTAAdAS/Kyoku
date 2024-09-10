@@ -52,6 +52,8 @@ import com.poulastaa.core.presentation.designsystem.components.CompactErrorScree
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.presentation.create_playlist.album.CreatePlaylistAlbumRootScreen
+import com.poulastaa.play.presentation.create_playlist.album.CreatePlaylistAlbumUiEvent
 import com.poulastaa.play.presentation.create_playlist.artist.CreatePlaylistArtistRootScreen
 import com.poulastaa.play.presentation.create_playlist.artist.CreatePlaylistArtistUiEvent
 import com.poulastaa.play.presentation.create_playlist.components.CommonHorizontalPager
@@ -133,7 +135,26 @@ fun CreatePlaylistRootScreen(
             enter = fadeIn() + expandIn() + slideInHorizontally { it },
             exit = fadeOut() + shrinkOut() + slideOutHorizontally { it }
         ) {
-
+            CreatePlaylistAlbumRootScreen(
+                modifier = modifier,
+                albumId = viewModel.state.albumUiState.id,
+                savedSongIdList = viewModel.state.savedSongIdList,
+                onEvent = {
+                    when (it) {
+                        is CreatePlaylistAlbumUiEvent.OnSongClick -> {
+                            viewModel.onEvent(
+                                CreatePlaylistUiEvent.OnSongClick(
+                                    type = CreatePlaylistType.SEARCH,
+                                    songId = it.songId
+                                )
+                            )
+                        }
+                    }
+                },
+                onBackClick = {
+                    viewModel.onEvent(CreatePlaylistUiEvent.OnAlbumCancel)
+                }
+            )
         }
     }
 
@@ -142,7 +163,8 @@ fun CreatePlaylistRootScreen(
         viewModel.state.albumUiState.isExpanded
     ) BackHandler {
         if (viewModel.state.isSearchEnabled) viewModel.onEvent(CreatePlaylistUiEvent.OnSearchToggle)
-        else if (viewModel.state.artistUiState.isExpanded) viewModel.onEvent(CreatePlaylistUiEvent.OnArtistCancel)
+        else if (viewModel.state.artistUiState.isExpanded && !viewModel.state.albumUiState.isExpanded)
+            viewModel.onEvent(CreatePlaylistUiEvent.OnArtistCancel)
         else if (viewModel.state.albumUiState.isExpanded) viewModel.onEvent(CreatePlaylistUiEvent.OnAlbumCancel)
     }
 }
