@@ -409,7 +409,7 @@ private fun Preview() {
                 ),
                 topBarTitle = "Playlist",
                 loadingState = loading,
-                type = ViewDataType.PLAYLIST
+                type = ViewDataType.ALBUM
             ), onEvent = {}
         ) {
 

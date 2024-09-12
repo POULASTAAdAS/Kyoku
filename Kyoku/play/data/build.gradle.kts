@@ -17,6 +17,9 @@ dependencies {
     implementation(libs.androidx.work)
     implementation(libs.hilt.work)
 
+    implementation(libs.media3.common)
+    implementation(libs.media3.exoplayer)
+
     implementation(projects.core.domain)
     implementation(projects.play.domain)
     implementation(projects.core.database)

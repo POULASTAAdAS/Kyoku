@@ -126,12 +126,6 @@ where song.title like 'vishal%'
 order by  song.year desc , song.points desc;
 
 
-select * from playlist;
-
-
-
-
-
 
 
 

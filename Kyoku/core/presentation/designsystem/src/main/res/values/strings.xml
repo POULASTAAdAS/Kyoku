@@ -141,4 +141,7 @@
     <string name="build_your_playlist">Build your playlist wiht this songs</string>
     <string name="search">search</string>
     <string name="error_playlist_name_conflict">Two playlist can\'t have same name</string>
+    <string name="playing_from">Playing from</string>
+    <string name="playing_queue">Playing Queue</string>
+    <string name="song_info">Song Info</string>
 </resources>

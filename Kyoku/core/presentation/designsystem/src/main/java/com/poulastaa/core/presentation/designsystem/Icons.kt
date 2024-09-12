@@ -144,6 +144,13 @@ val PlayIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play)
 
+val PauseIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_pause)
+
+val NextIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_next)
 
 val AddAsPlaylistIcon: ImageVector
     @Composable
@@ -165,11 +172,11 @@ val CancelIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Close
 
-val PlayNextIcon: ImageVector
+val PlayNextInQueueIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play_next_in_queue)
 
-val PlayLastIcon: ImageVector
+val PlayLastInQueueIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play_last_in_queue)
 
@@ -213,3 +220,15 @@ val SadIcon: ImageVector
 val PopularIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_popular)
+
+val RepeatOnIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_repeat_on)
+
+val RepeatOffIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_repeat_off)
+
+val AddToLibraryIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_add_to_library)

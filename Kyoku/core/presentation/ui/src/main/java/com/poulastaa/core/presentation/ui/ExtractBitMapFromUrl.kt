@@ -31,20 +31,30 @@ private fun loadBitmapFromFile(filename: String, context: Context): Bitmap? {
     } else null
 }
 
-
 @Composable
 fun imageReq(
     header: String,
     url: String,
-) = ImageRequest.Builder(LocalContext.current)
-    .data(url)
-    .addHeader(
-        name = if (header.startsWith("Bearer")) "Authorization" else "Cookie",
-        value = header
-    )
-    .crossfade(true)
-    .build()
+): ImageRequest {
+    val context = LocalContext.current
 
+    ImageLoader.Builder(context)
+        .diskCache {
+            DiskCache.Builder()
+                .directory(context.cacheDir.resolve("image_catch"))
+                .maxSizePercent(0.04)
+                .build()
+        }
+        .build()
+
+    return ImageRequest.Builder(context)
+        .addHeader(
+            name = if (!header.startsWith("Bearer")) "Cookie" else "Authorization",
+            value = header
+        )
+        .data(url)
+        .build()
+}
 
 @Composable
 fun imageReqSongCover(

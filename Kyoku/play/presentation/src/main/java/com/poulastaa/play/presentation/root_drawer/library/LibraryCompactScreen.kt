@@ -809,7 +809,7 @@ private fun Preview() {
                             name = "Artist $it"
                         )
                     },
-                    playlist = (1..10).map {
+                    playlist = (1..5).map {
                         UiPrevPlaylist(
                             id = 1,
                             name = "Playlist $it",
