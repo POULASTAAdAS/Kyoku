@@ -55,6 +55,7 @@ import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
 import com.poulastaa.play.presentation.root_drawer.home.HomeOtherScreens
 import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
+import com.poulastaa.play.presentation.root_drawer.toPlayType
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view.ViewCompactScreen
 import com.poulastaa.play.presentation.view.ViewOtherScreen
@@ -346,23 +347,37 @@ fun RootDrawerExpanded(
                             modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                             id = state.viewUiState.songId,
                             type = state.viewUiState.type,
-                            navigate = {
-                                when (it) {
+                            navigate = { event ->
+                                when (event) {
                                     is ViewOtherScreen.AddSongToPlaylist -> onEvent(
                                         RootDrawerUiEvent.AddSongToPlaylist(
-                                            id = it.id
+                                            id = event.id
                                         )
                                     )
 
                                     is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
                                         RootDrawerUiEvent.CreatePlaylist(
-                                            playlistId = it.playlistId
+                                            playlistId = event.playlistId
                                         )
                                     )
 
                                     is ViewOtherScreen.ViewSongArtists -> {
 
                                     }
+
+                                    is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
+                                        RootDrawerUiEvent.PlayOperation.ViewPlayAll(
+                                            id = event.id,
+                                            type = event.type.toPlayType()
+                                        )
+                                    )
+
+                                    is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
+                                        RootDrawerUiEvent.PlayOperation.ViewShuffle(
+                                            id = event.id,
+                                            type = event.type.toPlayType()
+                                        )
+                                    )
                                 }
                             },
                             navigateBack = {
@@ -553,17 +568,17 @@ fun RootDrawerExpanded(
                     ViewCompactScreen(
                         id = state.viewUiState.songId,
                         type = state.viewUiState.type,
-                        navigate = {
-                            when (it) {
+                        navigate = { event ->
+                            when (event) {
                                 is ViewOtherScreen.AddSongToPlaylist -> onEvent(
                                     RootDrawerUiEvent.AddSongToPlaylist(
-                                        id = it.id
+                                        id = event.id
                                     )
                                 )
 
                                 is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
                                     RootDrawerUiEvent.CreatePlaylist(
-                                        playlistId = it.playlistId
+                                        playlistId = event.playlistId
                                     )
                                 )
 
@@ -571,6 +586,20 @@ fun RootDrawerExpanded(
                                 is ViewOtherScreen.ViewSongArtists -> {
                                     // todo add screen
                                 }
+
+                                is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
+                                    RootDrawerUiEvent.PlayOperation.ViewPlayAll(
+                                        id = event.id,
+                                        type = event.type.toPlayType()
+                                    )
+                                )
+
+                                is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
+                                    RootDrawerUiEvent.PlayOperation.ViewShuffle(
+                                        id = event.id,
+                                        type = event.type.toPlayType()
+                                    )
+                                )
                             }
                         },
                         navigateBack = {

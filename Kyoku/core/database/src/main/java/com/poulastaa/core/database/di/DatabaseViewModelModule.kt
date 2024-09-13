@@ -7,6 +7,7 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.dao.PlayerDao
 import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.RoomLocalAddArtistDatasource
@@ -19,6 +20,7 @@ import com.poulastaa.core.database.repository.RoomLocalExploreArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDataSource
 import com.poulastaa.core.database.repository.RoomLocalNewAlbumDatasource
+import com.poulastaa.core.database.repository.RoomLocalPlayerDatasource
 import com.poulastaa.core.database.repository.RoomLocalSettingDatasource
 import com.poulastaa.core.database.repository.RoomLocalSpotifyDataSource
 import com.poulastaa.core.database.repository.RoomLocalStoreArtistDataSource
@@ -36,6 +38,7 @@ import com.poulastaa.core.domain.repository.home.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.library.LocalLibraryDataSource
 import com.poulastaa.core.domain.repository.new_album.LocalNewAlbumDataSource
 import com.poulastaa.core.domain.repository.new_artist.LocalNewArtistDataSource
+import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
@@ -217,4 +220,18 @@ object DatabaseViewModelModule {
     fun provideLocalCreatePlaylistArtistDatasource(
         commonDao: CommonDao,
     ): LocalCreatePlaylistArtistDatasource = RoomLocalCreatePlaylistArtistDatasource(commonDao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalPlayerDatasource(
+        commonDao: CommonDao,
+        libraryDao: LibraryDao,
+        viewDao: ViewDao,
+        playerDao: PlayerDao
+    ): LocalPlayerDatasource = RoomLocalPlayerDatasource(
+        commonDao = commonDao,
+        libraryDao = libraryDao,
+        viewDao = viewDao,
+        playerDao = playerDao
+    )
 }

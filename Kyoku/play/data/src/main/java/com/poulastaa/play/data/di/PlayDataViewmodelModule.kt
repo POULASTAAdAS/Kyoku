@@ -1,5 +1,6 @@
 package com.poulastaa.play.data.di
 
+import android.content.Context
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.repository.add_playlist.AddPlaylistRepository
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
@@ -30,6 +31,8 @@ import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
 import com.poulastaa.core.domain.repository.new_artist.LocalNewArtistDataSource
 import com.poulastaa.core.domain.repository.new_artist.NewArtistRepository
 import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
+import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
+import com.poulastaa.core.domain.repository.player.PlayerRepository
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.setting.SettingRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -50,11 +53,13 @@ import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
 import com.poulastaa.play.data.OnlineFirstNewAlbumRepository
 import com.poulastaa.play.data.OnlineFirstNewArtistRepository
+import com.poulastaa.play.data.OnlineFirstPlayerRepository
 import com.poulastaa.play.data.OnlineFirstViewArtistRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.CoroutineScope
 
@@ -211,4 +216,14 @@ object PlayDataViewmodelModule {
     fun provideCreatePlaylistAlbumRepository(
         remote: RemoteCreatePlaylistAlbumDatasource,
     ): CreatePlaylistAlbumRepository = OnlineFirstCreatePlaylistAlbumRepository(remote = remote)
+
+    @Provides
+    @ViewModelScoped
+    fun providePlayerRepository(
+        @ApplicationContext context: Context,
+        local: LocalPlayerDatasource,
+    ): PlayerRepository = OnlineFirstPlayerRepository(
+        context = context,
+        local = local
+    )
 }

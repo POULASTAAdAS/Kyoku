@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.CommonDao
+import com.poulastaa.core.database.dao.PlayerDao
 import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
 import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
@@ -49,4 +50,10 @@ object DatabaseAppModule {
         commonDao = commonDao,
         workDao = workDao
     )
+
+    @Provides
+    @Singleton
+    fun providePlayerDao(
+        database: KyokuDatabase,
+    ): PlayerDao = database.playerDao
 }

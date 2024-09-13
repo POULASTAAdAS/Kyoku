@@ -6,15 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.repository.player.PlayerRepository
+import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.SyncLibraryScheduler
+import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -24,10 +28,14 @@ import kotlin.time.Duration.Companion.minutes
 @HiltViewModel
 class RootDrawerViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val syncScheduler: SyncLibraryScheduler
+    private val syncScheduler: SyncLibraryScheduler,
+    private val repo: PlayerRepository
 ) : ViewModel() {
     var state by mutableStateOf(RootDrawerUiState())
         private set
+
+    private var loadInfoJob: Job? = null
+    private var loadSongsJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -49,6 +57,8 @@ class RootDrawerViewModel @Inject constructor(
                 profilePicUrl = user.profilePic
             )
         }
+
+        loadPlayingData()
     }
 
     private val _uiEvent = Channel<RootDrawerUiAction>()
@@ -199,6 +209,29 @@ class RootDrawerViewModel @Inject constructor(
                 )
             }
 
+            is RootDrawerUiEvent.PlayOperation -> {
+                when (event) {
+                    is RootDrawerUiEvent.PlayOperation.ViewPlayAll -> {
+                        state = state.copy(
+                            player = PlayerUiState(
+                                isData = true,
+                                loadingState = DataLoadingState.LOADING
+                            )
+                        )
+
+                        viewModelScope.launch {
+                            async { repo.loadData(event.id, event.type) }.await()
+
+                            loadPlayingData()
+                        }
+                    }
+
+                    is RootDrawerUiEvent.PlayOperation.ViewShuffle -> {
+
+                    }
+                }
+            }
+
             else -> Unit
         }
     }
@@ -206,5 +239,34 @@ class RootDrawerViewModel @Inject constructor(
 
     private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {
         ds.storeSaveScreen(screen.name)
+    }
+
+    private fun loadPlayingData() {
+        loadInfoJob?.cancel()
+        loadSongsJob?.cancel()
+        loadSongsJob = loadSongs()
+        loadInfoJob = loadInfo()
+    }
+
+    private fun loadSongs() = viewModelScope.launch {
+        repo.getSongs().collectLatest { payload ->
+            state = state.copy(
+                player = state.player.copy(
+                    isData = payload.isNotEmpty(),
+                    loadingState = DataLoadingState.LOADED,
+                    queue = payload.map { it.toPlayerUiSong() }
+                )
+            )
+        }
+    }
+
+    private fun loadInfo() = viewModelScope.launch {
+        repo.getInfo().collectLatest { payload ->
+            state = state.copy(
+                player = state.player.copy(
+                    info = payload.toPlayerUiInfo(0)
+                )
+            )
+        }
     }
 }

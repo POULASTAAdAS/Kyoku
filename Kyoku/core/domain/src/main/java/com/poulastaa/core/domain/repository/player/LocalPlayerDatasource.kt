@@ -5,7 +5,9 @@ import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.PlayerSong
 import kotlinx.coroutines.flow.Flow
 
-interface PlayerRepository {
+typealias TypeName = String
+
+interface LocalPlayerDatasource {
     suspend fun loadData(id: Long, type: PlayType)
     fun getInfo(): Flow<PlayerInfo>
     fun getSongs(): Flow<List<PlayerSong>>

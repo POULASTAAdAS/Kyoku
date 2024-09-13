@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer
 
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.domain.PlayType
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
 
@@ -27,4 +28,9 @@ sealed interface RootDrawerUiEvent {
 
     data class CreatePlaylist(val playlistId: Long) : RootDrawerUiEvent
     data object CreatePlaylistCancel : RootDrawerUiEvent
+
+    sealed interface PlayOperation : RootDrawerUiEvent {
+        data class ViewPlayAll(val id: Long, val type: PlayType) : PlayOperation
+        data class ViewShuffle(val id: Long, val type: PlayType) : PlayOperation
+    }
 }

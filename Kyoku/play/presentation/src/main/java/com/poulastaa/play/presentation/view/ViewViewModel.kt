@@ -143,11 +143,29 @@ class ViewViewModel @Inject constructor(
     fun onEvent(event: ViewUiEvent) {
         when (event) {
             ViewUiEvent.OnPlayClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ViewUiAction.Navigate(
+                            ViewOtherScreen.PlayOperation.PlayAll(
+                                id = state.data.id,
+                                type = state.type
+                            )
+                        )
+                    )
+                }
             }
 
             ViewUiEvent.OnShuffleClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ViewUiAction.Navigate(
+                            ViewOtherScreen.PlayOperation.PlayAll(
+                                id = state.data.id,
+                                type = state.type
+                            )
+                        )
+                    )
+                }
             }
 
             ViewUiEvent.OnDownloadClick -> {

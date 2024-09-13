@@ -1,8 +1,10 @@
 package com.poulastaa.play.presentation.player
 
+import com.poulastaa.core.domain.RepeatState
 import com.poulastaa.play.domain.DataLoadingState
 
 data class PlayerUiState(
+    val isData: Boolean = false,
     val loadingState: DataLoadingState = DataLoadingState.LOADING,
     val isPlayerExtended: Boolean = false,
 
@@ -20,8 +22,3 @@ data class PlayerUiInfo(
     val hasPrev: Boolean = false,
 )
 
-enum class RepeatState {
-    LOOP,
-    SINGLE,
-    IDLE
-}

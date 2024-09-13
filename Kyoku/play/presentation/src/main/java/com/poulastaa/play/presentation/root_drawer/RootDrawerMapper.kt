@@ -1,11 +1,17 @@
 package com.poulastaa.play.presentation.root_drawer
 
+import com.poulastaa.core.domain.PlayType
+import com.poulastaa.core.domain.PlayerInfo
+import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.player.PlayerUiInfo
+import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
+import com.poulastaa.play.presentation.view.components.ViewDataType
 
 fun String.toDrawerScreen() = when (this) {
     SaveScreen.HOME.name -> DrawerScreen.Home
@@ -33,4 +39,32 @@ fun PrevAlbum.toUiAlbum() = UiPrevAlbum(
     id = this.albumId,
     name = this.name,
     coverImage = this.coverImage
+)
+
+fun ViewDataType.toPlayType() = when (this) {
+    ViewDataType.PLAYLIST -> PlayType.PLAYLIST
+    ViewDataType.ALBUM -> PlayType.ALBUM
+    ViewDataType.FEV -> PlayType.FEV
+    ViewDataType.ARTIST_MIX -> PlayType.ARTIST_MIX
+    ViewDataType.POPULAR_MIX -> PlayType.POPULAR_MIX
+    ViewDataType.OLD_MIX -> PlayType.OLD_MIX
+}
+
+fun PlayerSong.toPlayerUiSong() = PlayerUiSong(
+    id = this.id,
+    title = this.title,
+    artist = this.artist,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    releaseYear = this.releaseYear,
+)
+
+fun PlayerInfo.toPlayerUiInfo(index: Int) = PlayerUiInfo(
+    type = this.type,
+    isShuffledEnabled = this.isShuffledEnabled,
+    repeatState = this.repeatState,
+    isPlaying = this.isPlaying,
+    hasNext = this.hasNext,
+    hasPrev = this.hasPrev,
+    currentPlayingIndex = index,
 )

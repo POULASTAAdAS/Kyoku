@@ -178,7 +178,7 @@ class UserDatabaseRepository(
                             database.getArtistOnSongId(songDao.id.value) to songDao
                         }
                     }.awaitAll().map { pair ->
-                        pair.second.toSongDto(artist = pair.first.joinToString())
+                        pair.second.toSongDto(artist = pair.first.joinToString { it.name })
                     }
                 )
             }

@@ -66,8 +66,6 @@ class IntroViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     val countryCode = event.activity.resources.configuration.locales[0].country
 
-                    Log.d("toke ", event.token)
-
                     val result = auth.googleAuth(
                         token = event.token,
                         countryCode = countryCode

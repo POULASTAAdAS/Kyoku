@@ -50,7 +50,7 @@ import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 @Composable
 fun SmallCompactPlayer(
     modifier: Modifier = Modifier,
-    height: Dp = 70.dp,
+    height: Dp = 90.dp,
     header: String,
     song: PlayerUiSong,
     hasNext: Boolean,
