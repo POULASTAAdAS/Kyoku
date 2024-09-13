@@ -6,11 +6,11 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -54,32 +56,35 @@ fun SmallExpandedPlayer(
     hasPrev: Boolean,
     onEvent: (PlayerUiEvent.PlayBackController) -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
+        shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp,
+            defaultElevation = 8.dp,
             draggedElevation = 6.dp
         )
     ) {
         Column(
-            modifier = Modifier.background(Brush.verticalGradient(colors = song.colors))
+            modifier = Modifier
+                .background(Brush.verticalGradient(colors = song.colors))
+                .padding(MaterialTheme.dimens.small2)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = MaterialTheme.dimens.small1)
-                    .padding(horizontal = MaterialTheme.dimens.small1),
+                    .weight(.6f)
+                    .padding(MaterialTheme.dimens.small1),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 ImageGrid(
                     header = header,
                     urls = listOf(song.coverImage),
                     shapes = MaterialTheme.shapes.extraSmall,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.aspectRatio(1f),
                     elevation = CardDefaults.cardElevation(
-                        defaultElevation = 2.dp
+                        defaultElevation = 4.dp
                     )
                 )
 
@@ -93,13 +98,13 @@ fun SmallExpandedPlayer(
                     enable = hasPrev,
                     modifier = Modifier
                         .rotate(90f)
-                        .size(30.dp),
+                        .aspectRatio(.4f),
                     onClick = {
                         onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
                     }
                 )
 
-                Spacer(Modifier.width(MaterialTheme.dimens.small2))
+                Spacer(Modifier.weight(1f))
 
                 PlayControlButton(
                     icon = if (song.isPlaying) PauseIcon else PlayIcon,
@@ -107,13 +112,13 @@ fun SmallExpandedPlayer(
                         contentColor = song.colors[1]
                     ),
                     modifier = Modifier
-                        .size(40.dp),
+                        .aspectRatio(.5f),
                     onClick = {
                         onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
                     }
                 )
 
-                Spacer(Modifier.width(MaterialTheme.dimens.small2))
+                Spacer(Modifier.weight(1f))
 
                 PlayControlButton(
                     icon = NextIcon,
@@ -122,7 +127,7 @@ fun SmallExpandedPlayer(
                     ),
                     enable = hasNext,
                     modifier = Modifier
-                        .size(30.dp),
+                        .aspectRatio(.4f),
                     onClick = {
                         onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
                     }
@@ -161,7 +166,13 @@ fun SmallExpandedPlayer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.dimens.small1),
+                    .padding(horizontal = MaterialTheme.dimens.small1)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null
+                    ) {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
@@ -190,9 +201,6 @@ fun SmallExpandedPlayer(
                     modifier = Modifier
                         .rotate(180f)
                         .clip(CircleShape)
-                        .clickable {
-
-                        }
                 )
             }
         }

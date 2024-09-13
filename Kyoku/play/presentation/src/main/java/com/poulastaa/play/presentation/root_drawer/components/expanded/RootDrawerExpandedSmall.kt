@@ -54,6 +54,8 @@ fun RootDrawerExpandedSmall(
                 },
                 onEvent = onEvent,
             )
+
+
         }
 
         AnimatedVisibility(

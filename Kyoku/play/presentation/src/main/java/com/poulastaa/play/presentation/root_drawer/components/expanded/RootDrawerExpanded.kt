@@ -1,5 +1,8 @@
 package com.poulastaa.play.presentation.root_drawer.components.expanded
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,27 +10,35 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.poulastaa.core.domain.ScreenEnum
+import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
+import com.poulastaa.play.presentation.player.small_player.SmallExpandedPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
@@ -38,6 +49,7 @@ import com.poulastaa.play.presentation.settings.SettingsRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistCompactRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistExpandedRootScreen
 import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
+import kotlin.math.roundToInt
 
 @Composable
 fun RowScope.RootDrawerExpanded(
@@ -49,6 +61,9 @@ fun RowScope.RootDrawerExpanded(
     var toggle by remember {
         mutableStateOf(false)
     }
+
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
 
     val config = LocalConfiguration.current
 
@@ -291,6 +306,48 @@ fun RowScope.RootDrawerExpanded(
             }
         }
 
-        
+        this@RootDrawerExpanded.AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxWidth(.3f)
+                .fillMaxHeight(.3f)
+                .align(Alignment.BottomEnd)
+                .padding(MaterialTheme.dimens.medium1)
+                .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+
+                        val newX = (offsetX + dragAmount.x)
+                            .toInt()
+                            .coerceIn(-1630, 0)
+
+                        val newY = (offsetY + dragAmount.y)
+                            .toInt()
+                            .coerceIn(-1100, 0)
+
+                        offsetX = newX.toFloat()
+                        offsetY  = newY.toFloat()
+                    }
+                },
+            visible = state.player.isData &&
+                    state.player.queue.isNotEmpty() && config.screenWidthDp > 980
+        ) {
+            if (state.player.queue.isNotEmpty()) SmallExpandedPlayer(
+                header = state.header,
+                song = state.player.queue[state.player.info.currentPlayingIndex].copy(
+                    colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    }
+                ),
+                hasNext = state.player.info.hasNext,
+                hasPrev = state.player.info.hasPrev,
+                onEvent = {
+
+                }
+            )
+        }
     }
 }
