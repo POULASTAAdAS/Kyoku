@@ -9,6 +9,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
@@ -17,7 +18,8 @@ import com.poulastaa.core.presentation.designsystem.components.AppScreenWindowSi
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.root_drawer.components.compact.RootDrawerCompact
-import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpanded
+import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpandedLarge
+import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpandedSmall
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,6 +74,8 @@ private fun AppDrawer(
     val context = LocalContext.current
     val windowSize = calculateWindowSizeClass(activity = context as Activity)
     val navController = rememberNavController()
+    val config = LocalConfiguration.current
+
 
     AppScreenWindowSize(
         windowSizeClass = windowSize,
@@ -102,12 +106,13 @@ private fun AppDrawer(
             )
         },
         expandedContent = {
-            RootDrawerExpanded(
+            if (config.screenWidthDp > 980) RootDrawerExpandedLarge(
                 navController = navController,
                 state = state,
-                onSaveScreenToggle = {
-                    onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
-                },
+                onEvent = onEvent,
+            ) else RootDrawerExpandedSmall(
+                navController = navController,
+                state = state,
                 onEvent = onEvent,
             )
         }

@@ -490,7 +490,7 @@ private fun FloatingController(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(modifier)
-                .height((screenHeight * 1 / 4).dp)
+                .height((screenHeight * .7 / 4).dp)
                 .padding(horizontal = MaterialTheme.dimens.medium1),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 7.dp
