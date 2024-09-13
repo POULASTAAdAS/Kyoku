@@ -30,7 +30,7 @@ sealed interface RootDrawerUiEvent {
     data object CreatePlaylistCancel : RootDrawerUiEvent
 
     sealed interface PlayOperation : RootDrawerUiEvent {
-        data class ViewPlayAll(val id: Long, val type: PlayType) : PlayOperation
-        data class ViewShuffle(val id: Long, val type: PlayType) : PlayOperation
+        data class PlaySaved(val id: Long, val type: PlayType) : PlayOperation
+        data class ShuffleSaved(val id: Long, val type: PlayType) : PlayOperation
     }
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.play.data
 
+import android.util.Log
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -41,13 +42,9 @@ class OfflineFirstViewRepository @Inject constructor(
 
         return coroutineScope {
             val remoteAlbumDef = async { remote.getAlbumOnId(id) }
-            val isAlbumOnLibrary = async { local.isAlbumOnLibrary(id) }
-
             val remoteAlbum = remoteAlbumDef.await()
 
-            if (isAlbumOnLibrary.await() && remoteAlbum is Result.Success)
-                local.saveAlbum(remoteAlbum.data)
-
+            if (remoteAlbum is Result.Success) local.saveAlbum(remoteAlbum.data)
             remoteAlbum.map { it.toViewData() }
         }
     }

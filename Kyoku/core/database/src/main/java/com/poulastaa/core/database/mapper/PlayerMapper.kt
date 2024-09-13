@@ -26,6 +26,21 @@ fun SongEntity.toSong() = Song(
     onBackground = this.onBackground
 )
 
+@JvmName("SongToPlayerSongEntity1")
+fun Song.toPlayerSongEntity(isInFavourite: Boolean) = PlayerSongEntity(
+    id = this.id,
+    title = this.title,
+    artist = this.artistName,
+    coverImage = this.coverImage,
+    masterPlaylistUrl = this.masterPlaylistUrl,
+    releaseYear = this.releaseYear.toInt(),
+    primary = this.primary,
+    secondary = this.background,
+    background = this.onBackground,
+    isInFavourite = isInFavourite
+)
+
+@JvmName("SongEntityToPlayerSongEntity1")
 fun SongEntity.toPlayerSongEntity(isInFavourite: Boolean) = PlayerSongEntity(
     id = this.id,
     title = this.title,

@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.repository.player.PlayerRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
@@ -213,21 +217,42 @@ class RootDrawerViewModel @Inject constructor(
 
             is RootDrawerUiEvent.PlayOperation -> {
                 when (event) {
-                    is RootDrawerUiEvent.PlayOperation.ViewPlayAll -> {
+                    is RootDrawerUiEvent.PlayOperation.PlaySaved -> {
                         state = state.copy(
-                            player = PlayerUiState(
+                            player = state.player.copy(
                                 isData = false,
                                 loadingState = DataLoadingState.LOADING
                             )
                         )
 
                         viewModelScope.launch {
-                            async { repo.loadData(event.id, event.type) }.await()
-                            loadPlayingData()
+                            when (val result = repo.loadData(event.id, event.type)) {
+                                is Result.Error -> {
+                                    when (result.error) {
+                                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                            RootDrawerUiAction.EmitToast(
+                                                UiText.StringResource(
+                                                    R.string.error_no_internet
+                                                )
+                                            )
+                                        )
+
+                                        else -> _uiEvent.send(
+                                            RootDrawerUiAction.EmitToast(
+                                                UiText.StringResource(
+                                                    R.string.error_something_went_wrong
+                                                )
+                                            )
+                                        )
+                                    }
+                                }
+
+                                is Result.Success -> loadPlayingData()
+                            }
                         }
                     }
 
-                    is RootDrawerUiEvent.PlayOperation.ViewShuffle -> {
+                    is RootDrawerUiEvent.PlayOperation.ShuffleSaved -> {
 
                     }
                 }
@@ -269,6 +294,12 @@ class RootDrawerViewModel @Inject constructor(
 
             is PlayerUiEvent.PlayBackController.SeekTo -> {
 
+            }
+
+            PlayerUiEvent.ClosePlayer -> {
+                state = state.copy(
+                    player = PlayerUiState()
+                )
             }
         }
     }

@@ -10,13 +10,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,6 +75,7 @@ import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RootDrawerCompact(
     isSmall: Boolean,
@@ -83,6 +90,8 @@ fun RootDrawerCompact(
     var currentDestination by remember {
         mutableStateOf(state.startDestination)
     }
+
+    var dragScope by remember { mutableFloatStateOf(0f) }
 
     LaunchedEffect(key1 = navController.currentBackStackEntryFlow) {
         navController.currentBackStackEntryFlow.collectLatest {
@@ -126,11 +135,6 @@ fun RootDrawerCompact(
             )
         },
         content = {
-            Log.d(
-                "data",
-                "${state.player.isData} ${state.player.queue.isNotEmpty()} ${state.player.info.currentPlayingIndex}"
-            )
-
             Box {
                 Box(
                     modifier = Modifier
@@ -420,14 +424,14 @@ fun RootDrawerCompact(
                                     }
 
                                     is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.ViewPlayAll(
+                                        RootDrawerUiEvent.PlayOperation.PlaySaved(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
                                     )
 
                                     is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.ViewShuffle(
+                                        RootDrawerUiEvent.PlayOperation.ShuffleSaved(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
@@ -483,9 +487,23 @@ fun RootDrawerCompact(
                                 navController.currentDestination?.route?.contains(DrawerScreen.Settings.route) == true
                             ) 0.dp else 45.dp
                         )
-                        .clickable {
+                        .clickable(
+                            interactionSource = null,
+                            indication = null
+                        ) {
                             onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
-                        },
+                        }
+                        .offset(y = dragScope.coerceAtLeast(0f).dp)
+                        .draggable(
+                            state = rememberDraggableState {
+                                dragScope += it
+                            },
+                            orientation = Orientation.Vertical,
+                            onDragStopped = {
+                                if (dragScope > 130) onPlayerEvent(PlayerUiEvent.ClosePlayer)
+                                else dragScope = 0f
+                            },
+                        ),
                     visible = state.player.isData &&
                             state.player.queue.isNotEmpty() &&
                             !state.createPlaylistUiState.isOpen &&
@@ -495,7 +513,7 @@ fun RootDrawerCompact(
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
                             slideOutVertically(tween(400)) { it }
                 ) {
-                    SmallCompactPlayer(
+                    if (state.player.queue.isNotEmpty()) SmallCompactPlayer(
                         modifier = Modifier.padding(
                             if (isSmall) MaterialTheme.dimens.small3 else MaterialTheme.dimens.small1
                         ),
@@ -517,16 +535,14 @@ fun RootDrawerCompact(
             }
 
             AnimatedVisibility(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset(y = dragScope.dp),
                 visible = state.player.isPlayerExtended,
-                enter = fadeIn() + expandIn(expandFrom = Alignment.Center) + slideInVertically(
-                    tween(
-                        400
-                    )
-                ) { it },
-                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) + slideOutVertically(
-                    tween(400)
-                ) { it }
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                        slideInVertically(tween(400)) { it },
+                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
+                        slideOutVertically(tween(400)) { it }
             ) {
                 PlayerScreen(
                     header = state.header,
@@ -552,13 +568,13 @@ fun RootDrawerCompact(
                 state.createPlaylistUiState.isOpen ||
                 state.player.isPlayerExtended
             ) BackHandler {
-                if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+                if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+                else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                 else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
                 else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
                 else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
                 else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
                 else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
-                else if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
             }
         }
     )

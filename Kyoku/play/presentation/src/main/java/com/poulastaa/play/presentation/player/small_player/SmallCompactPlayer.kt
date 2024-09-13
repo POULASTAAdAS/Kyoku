@@ -91,7 +91,9 @@ fun SmallCompactPlayer(
                 Text(
                     text = song.title,
                     fontWeight = FontWeight.SemiBold,
-                    color = song.colors[1]
+                    color = song.colors[1],
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 Text(

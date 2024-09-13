@@ -10,4 +10,6 @@ sealed interface PlayerUiEvent {
         data object OnPlayNextClick : PlayBackController
         data object OnPlayPrevClick : PlayBackController
     }
+
+    data object ClosePlayer : PlayerUiEvent
 }

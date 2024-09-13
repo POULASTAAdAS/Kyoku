@@ -24,6 +24,15 @@ interface PlayerDao {
     )
     suspend fun getPlaylistSongs(id: Long): List<SongEntity>
 
+    @Query(
+        """
+        select SongEntity.* from SongEntity
+        join SongAlbumRelationEntity on SongEntity.id = SongAlbumRelationEntity.songId
+        where SongAlbumRelationEntity.albumId = :id
+    """
+    )
+    suspend fun getAlbumSongs(id: Long): List<SongEntity>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun loadPlayerSongs(entrys: List<PlayerSongEntity>)
 

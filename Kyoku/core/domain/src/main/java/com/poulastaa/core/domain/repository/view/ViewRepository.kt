@@ -11,7 +11,6 @@ interface ViewRepository {
     suspend fun getAlbumOnId(id: Long): Result<ViewData, DataError.Network>
 
     suspend fun isSavedAlbum(id: Long): Boolean
-
     suspend fun isSongInFavourite(songId: Long): Boolean
 
     suspend fun getFev(): Result<List<PlaylistSong>, DataError.Network>

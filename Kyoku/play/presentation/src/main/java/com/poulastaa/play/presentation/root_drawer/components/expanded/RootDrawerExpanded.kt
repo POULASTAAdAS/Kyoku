@@ -366,14 +366,14 @@ fun RootDrawerExpanded(
                                     }
 
                                     is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.ViewPlayAll(
+                                        RootDrawerUiEvent.PlayOperation.PlaySaved(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
                                     )
 
                                     is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.ViewShuffle(
+                                        RootDrawerUiEvent.PlayOperation.ShuffleSaved(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
@@ -588,14 +588,14 @@ fun RootDrawerExpanded(
                                 }
 
                                 is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
-                                    RootDrawerUiEvent.PlayOperation.ViewPlayAll(
+                                    RootDrawerUiEvent.PlayOperation.PlaySaved(
                                         id = event.id,
                                         type = event.type.toPlayType()
                                     )
                                 )
 
                                 is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
-                                    RootDrawerUiEvent.PlayOperation.ViewShuffle(
+                                    RootDrawerUiEvent.PlayOperation.ShuffleSaved(
                                         id = event.id,
                                         type = event.type.toPlayType()
                                     )
