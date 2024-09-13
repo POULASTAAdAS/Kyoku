@@ -36,8 +36,8 @@ interface PlayerDao {
     @Query("delete from PlayerInfoEntity")
     suspend fun clearLoadInfo()
 
-    @Query("select * from PlayerInfoEntity limit 1")
-    fun getInfo(): Flow<PlayerInfoEntity>
+    @Query("select * from PlayerInfoEntity")
+    fun getInfo(): Flow<List<PlayerInfoEntity>>
 
     @Query("select * from PlayerSongEntity")
     fun getSong(): Flow<List<PlayerSongEntity>>

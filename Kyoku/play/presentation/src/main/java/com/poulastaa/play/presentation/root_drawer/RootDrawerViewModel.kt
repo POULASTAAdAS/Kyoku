@@ -11,6 +11,7 @@ import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.SyncLibraryScheduler
+import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +59,7 @@ class RootDrawerViewModel @Inject constructor(
             )
         }
 
+        readHeader()
         loadPlayingData()
     }
 
@@ -214,14 +216,13 @@ class RootDrawerViewModel @Inject constructor(
                     is RootDrawerUiEvent.PlayOperation.ViewPlayAll -> {
                         state = state.copy(
                             player = PlayerUiState(
-                                isData = true,
+                                isData = false,
                                 loadingState = DataLoadingState.LOADING
                             )
                         )
 
                         viewModelScope.launch {
                             async { repo.loadData(event.id, event.type) }.await()
-
                             loadPlayingData()
                         }
                     }
@@ -233,6 +234,42 @@ class RootDrawerViewModel @Inject constructor(
             }
 
             else -> Unit
+        }
+    }
+
+    fun onPlayerEvent(event: PlayerUiEvent) {
+        when (event) {
+            PlayerUiEvent.OnPlayerExtendClick -> {
+                state = state.copy(
+                    player = state.player.copy(
+                        isPlayerExtended = true
+                    )
+                )
+            }
+
+            PlayerUiEvent.OnPlayerShrinkClick -> {
+                state = state.copy(
+                    player = state.player.copy(
+                        isPlayerExtended = false
+                    )
+                )
+            }
+
+            PlayerUiEvent.PlayBackController.OnPlayNextClick -> {
+
+            }
+
+            is PlayerUiEvent.PlayBackController.OnPlayPause -> {
+
+            }
+
+            PlayerUiEvent.PlayBackController.OnPlayPrevClick -> {
+
+            }
+
+            is PlayerUiEvent.PlayBackController.SeekTo -> {
+
+            }
         }
     }
 
@@ -267,6 +304,16 @@ class RootDrawerViewModel @Inject constructor(
                     info = payload.toPlayerUiInfo(0)
                 )
             )
+        }
+    }
+
+    private fun readHeader() {
+        viewModelScope.launch {
+            ds.readTokenOrCookie().collectLatest {
+                state = state.copy(
+                    header = it
+                )
+            }
         }
     }
 }

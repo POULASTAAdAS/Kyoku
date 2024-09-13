@@ -9,13 +9,13 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.components.AppScreenWindowSize
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.root_drawer.components.compact.RootDrawerCompact
 import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpanded
 import kotlinx.coroutines.launch
@@ -56,7 +56,8 @@ fun RootDrawerScreen(
             } else {
                 viewModel.onEvent(it)
             }
-        }
+        },
+        onPlayerEvent = viewModel::onPlayerEvent
     )
 }
 
@@ -66,34 +67,38 @@ private fun AppDrawer(
     drawerState: DrawerState,
     state: RootDrawerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
+    onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val windowSize = calculateWindowSizeClass(activity = context as Activity)
-    val config = LocalConfiguration.current
     val navController = rememberNavController()
 
     AppScreenWindowSize(
         windowSizeClass = windowSize,
         compactContent = {
             RootDrawerCompact(
+                isSmall = true,
                 drawerState = drawerState,
                 navController = navController,
                 state = state,
                 onSaveScreenToggle = {
                     onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
                 },
-                onEvent = onEvent
+                onEvent = onEvent,
+                onPlayerEvent = onPlayerEvent
             )
         },
         mediumContent = {
             RootDrawerCompact(
+                isSmall = false,
                 drawerState = drawerState,
                 navController = navController,
                 state = state,
                 onSaveScreenToggle = {
                     onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
                 },
-                onEvent = onEvent
+                onEvent = onEvent,
+                onPlayerEvent = onPlayerEvent
             )
         },
         expandedContent = {

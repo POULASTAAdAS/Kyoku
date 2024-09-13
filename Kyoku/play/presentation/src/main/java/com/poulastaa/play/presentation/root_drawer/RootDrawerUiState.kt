@@ -13,6 +13,8 @@ data class RootDrawerUiState(
     val username: String = "User",
     val profilePicUrl: String = "",
 
+    val header: String = "",
+
     val addToPlaylistUiState: HomeAddToPlaylistUiState = HomeAddToPlaylistUiState(),
     val viewUiState: HomeViewUiState = HomeViewUiState(),
     val exploreArtistUiState: ExploreArtistUiState = ExploreArtistUiState(),

@@ -3,6 +3,7 @@ package com.poulastaa.play.presentation.root_drawer.components.compact
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +50,8 @@ import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
+import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.full_player.PlayerScreen
 import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
@@ -67,11 +71,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RootDrawerCompact(
+    isSmall: Boolean,
     drawerState: DrawerState,
     navController: NavHostController,
     state: RootDrawerUiState,
     onSaveScreenToggle: (SaveScreen) -> Unit,
     onEvent: (RootDrawerUiEvent) -> Unit,
+    onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var currentDestination by remember {
@@ -122,16 +128,27 @@ fun RootDrawerCompact(
         content = {
             Log.d(
                 "data",
-                "${state.player.isData} ${state.player.queue.isNotEmpty()} ${state.player.queue}"
+                "${state.player.isData} ${state.player.queue.isNotEmpty()} ${state.player.info.currentPlayingIndex}"
             )
 
-            Column {
+            Box {
                 Box(
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                        .weight(1f)
+                        .fillMaxSize()
+                        .padding(
+                            bottom = if (
+                                (state.viewUiState.isOpen ||
+                                        state.addToPlaylistUiState.isOpen ||
+                                        state.newArtisUiState.isOpen ||
+                                        state.newAlbumUiState.isOpen ||
+                                        state.exploreArtistUiState.isOpen) && state.player.isData
+                            ) 100.dp else 0.dp
+                        )
                 ) {
                     NavHost(
+                        modifier = Modifier
+                            .padding(bottom = if (state.player.isData) 100.dp else 0.dp),
                         navController = navController,
                         startDestination = state.startDestination
                     ) {
@@ -297,7 +314,7 @@ fun RootDrawerCompact(
                         onSaveScreenToggle = onSaveScreenToggle
                     )
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.newAlbumUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
@@ -322,7 +339,7 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.newArtisUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
@@ -344,7 +361,7 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         visible = state.exploreArtistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
@@ -375,7 +392,7 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.viewUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
@@ -423,7 +440,7 @@ fun RootDrawerCompact(
                         )
                     }
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         visible = state.addToPlaylistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
@@ -433,7 +450,7 @@ fun RootDrawerCompact(
                         }
                     }
 
-                    this@Column.AnimatedVisibility(
+                    AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.createPlaylistUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
@@ -450,17 +467,42 @@ fun RootDrawerCompact(
 
                 AnimatedVisibility(
                     modifier = Modifier
-                        .padding(bottom = 56.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
                         .padding(horizontal = MaterialTheme.dimens.medium1)
+                        .padding(
+                            bottom = if (
+                                state.viewUiState.isOpen ||
+                                state.addToPlaylistUiState.isOpen ||
+                                state.newArtisUiState.isOpen ||
+                                state.newAlbumUiState.isOpen ||
+                                state.exploreArtistUiState.isOpen ||
+                                navController.currentDestination?.route?.contains(DrawerScreen.ViewArtist.route) == true ||
+                                navController.currentDestination?.route?.contains(DrawerScreen.Profile.route) == true ||
+                                navController.currentDestination?.route?.contains(DrawerScreen.History.route) == true ||
+                                navController.currentDestination?.route?.contains(DrawerScreen.Settings.route) == true
+                            ) 0.dp else 45.dp
+                        )
                         .clickable {
-
+                            onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
                         },
-                    visible = state.player.isData && state.player.queue.isNotEmpty()
+                    visible = state.player.isData &&
+                            state.player.queue.isNotEmpty() &&
+                            !state.createPlaylistUiState.isOpen &&
+                            !state.player.isPlayerExtended,
+                    enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                            slideInVertically(tween(400)) { it },
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
+                            slideOutVertically(tween(400)) { it }
                 ) {
                     SmallCompactPlayer(
-                        header = "",
-                        song = state.player.queue[0].copy(
-                            colors = state.player.queue[0].colors.ifEmpty {
+                        modifier = Modifier.padding(
+                            if (isSmall) MaterialTheme.dimens.small3 else MaterialTheme.dimens.small1
+                        ),
+                        header = state.header,
+                        height = if (isSmall) 95.dp else 120.dp,
+                        song = state.player.queue[state.player.info.currentPlayingIndex].copy(
+                            colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
                                 listOf(
                                     MaterialTheme.colorScheme.primary,
                                     MaterialTheme.colorScheme.surfaceContainer
@@ -469,20 +511,46 @@ fun RootDrawerCompact(
                         ),
                         hasNext = state.player.info.hasNext,
                         hasPrev = state.player.info.hasPrev,
-                        onEvent = {
-
-                        }
+                        onEvent = onPlayerEvent
                     )
                 }
             }
 
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxSize(),
+                visible = state.player.isPlayerExtended,
+                enter = fadeIn() + expandIn(expandFrom = Alignment.Center) + slideInVertically(
+                    tween(
+                        400
+                    )
+                ) { it },
+                exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) + slideOutVertically(
+                    tween(400)
+                ) { it }
+            ) {
+                PlayerScreen(
+                    header = state.header,
+                    song = state.player.queue[state.player.info.currentPlayingIndex].copy(
+                        colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                            listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.surfaceContainer
+                            )
+                        }
+                    ),
+                    info = state.player.info,
+                    queue = state.player.queue,
+                    onEvent = onPlayerEvent
+                )
+            }
 
             if (state.addToPlaylistUiState.isOpen ||
                 state.viewUiState.isOpen ||
                 state.exploreArtistUiState.isOpen ||
                 state.newArtisUiState.isOpen ||
                 state.newAlbumUiState.isOpen ||
-                state.createPlaylistUiState.isOpen
+                state.createPlaylistUiState.isOpen ||
+                state.player.isPlayerExtended
             ) BackHandler {
                 if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                 else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
@@ -490,6 +558,7 @@ fun RootDrawerCompact(
                 else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
                 else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
                 else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
+                else if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
             }
         }
     )

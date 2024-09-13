@@ -50,7 +50,7 @@ import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 @Composable
 fun SmallCompactPlayer(
     modifier: Modifier = Modifier,
-    height: Dp = 90.dp,
+    height: Dp = 95.dp,
     header: String,
     song: PlayerUiSong,
     hasNext: Boolean,
@@ -58,14 +58,14 @@ fun SmallCompactPlayer(
     onEvent: (PlayerUiEvent.PlayBackController) -> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(height)
             .clip(MaterialTheme.shapes.extraSmall)
             .background(
                 brush = Brush.linearGradient(colors = song.colors)
             )
-            .padding(MaterialTheme.dimens.small1),
+            .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -91,14 +91,15 @@ fun SmallCompactPlayer(
                 Text(
                     text = song.title,
                     fontWeight = FontWeight.SemiBold,
+                    color = song.colors[1]
                 )
 
                 Text(
                     text = song.artist,
-                    color = MaterialTheme.colorScheme.background.copy(.7f),
+                    color = song.colors[1],
                     fontSize = MaterialTheme.typography.titleSmall.fontSize,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 

@@ -74,7 +74,11 @@ class RoomLocalPlayerDatasource @Inject constructor(
         }
     }
 
-    override fun getInfo(): Flow<PlayerInfo> = playerDao.getInfo().map { it.toPlayerInfo() }
+    override fun getInfo(): Flow<PlayerInfo> = playerDao.getInfo().map {
+        if (it.isEmpty()) PlayerInfo()
+        else it.map { entity -> entity.toPlayerInfo() }.first()
+    }
+
     override fun getSongs(): Flow<List<PlayerSong>> =
         playerDao.getSong().map { list -> list.map { entity -> entity.toPlayerSong() } }
 }
