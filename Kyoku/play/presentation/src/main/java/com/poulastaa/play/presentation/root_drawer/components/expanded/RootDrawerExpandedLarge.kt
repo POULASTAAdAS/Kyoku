@@ -54,9 +54,12 @@ fun RootDrawerExpandedLarge(
         )
 
         AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
             visible = state.addToPlaylistUiState.isOpen,
-            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
-            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             AddToPlaylistRootScreen(
                 songId = state.addToPlaylistUiState.songId,
@@ -67,9 +70,12 @@ fun RootDrawerExpandedLarge(
         }
 
         AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
             visible = state.viewUiState.isOpen,
-            enter = fadeIn(),
-            exit = fadeOut()
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             ViewCompactScreen(
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
@@ -117,8 +123,10 @@ fun RootDrawerExpandedLarge(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.newAlbumUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             AddNewAlbumRootScreen(
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
@@ -141,9 +149,12 @@ fun RootDrawerExpandedLarge(
         }
 
         AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
             visible = state.exploreArtistUiState.isOpen,
-            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
-            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             ExploreArtistRootScreen(
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
@@ -173,8 +184,10 @@ fun RootDrawerExpandedLarge(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.newArtisUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             AddNewArtistRootScreen(
                 navigate = {
@@ -195,8 +208,10 @@ fun RootDrawerExpandedLarge(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.createPlaylistUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
         ) {
             CreatePlaylistRootScreen(
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
@@ -215,7 +230,7 @@ fun RootDrawerExpandedLarge(
             exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
                     slideOutHorizontally { it }
         ) {
-            VerticalPlayerScreen(
+            if (state.player.queue.isNotEmpty()) VerticalPlayerScreen(
                 modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
                 header = state.header,
                 song = state.player.queue[state.player.info.currentPlayingIndex].copy(
@@ -241,7 +256,7 @@ fun RootDrawerExpandedLarge(
         state.createPlaylistUiState.isOpen ||
         state.player.isPlayerExtended
     ) BackHandler {
-        if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.ClosePlayer)
+        if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
         else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)

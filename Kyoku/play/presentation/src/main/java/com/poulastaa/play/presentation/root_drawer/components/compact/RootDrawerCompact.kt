@@ -10,7 +10,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
@@ -75,7 +75,6 @@ import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RootDrawerCompact(
     isSmall: Boolean,
@@ -102,6 +101,9 @@ fun RootDrawerCompact(
     }
 
     ModalNavigationDrawer(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .navigationBarsPadding(),
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
@@ -487,12 +489,6 @@ fun RootDrawerCompact(
                                 navController.currentDestination?.route?.contains(DrawerScreen.Settings.route) == true
                             ) 0.dp else 45.dp
                         )
-                        .clickable(
-                            interactionSource = null,
-                            indication = null
-                        ) {
-                            onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
-                        }
                         .offset(y = dragScope.coerceAtLeast(0f).dp)
                         .draggable(
                             state = rememberDraggableState {
@@ -503,7 +499,14 @@ fun RootDrawerCompact(
                                 if (dragScope > 130) onPlayerEvent(PlayerUiEvent.ClosePlayer)
                                 else dragScope = 0f
                             },
-                        ),
+                        )
+                        .navigationBarsPadding()
+                        .clickable(
+                            interactionSource = null,
+                            indication = null
+                        ) {
+                            onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
+                        },
                     visible = state.player.isData &&
                             state.player.queue.isNotEmpty() &&
                             !state.createPlaylistUiState.isOpen &&

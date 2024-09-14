@@ -223,8 +223,7 @@ private fun ViewScreen(
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.surfaceContainer)
                             .padding(innerPadding)
-                            .nestedScroll(scroll.nestedScrollConnection)
-                            .navigationBarsPadding(),
+                            .nestedScroll(scroll.nestedScrollConnection),
                         contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
                     ) {
                         item {

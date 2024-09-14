@@ -144,4 +144,5 @@
     <string name="playing_from">Playing from</string>
     <string name="playing_queue">Playing Queue</string>
     <string name="song_info">Song Info</string>
+    <string name="song">Song</string>
 </resources>

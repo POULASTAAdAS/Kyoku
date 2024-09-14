@@ -667,7 +667,7 @@ fun PlayerSongCard(
                 .fillMaxHeight()
                 .combinedClickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
+                    interactionSource = null,
                     onClick = {},
                     onLongClick = onMove
                 )

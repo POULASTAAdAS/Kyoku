@@ -232,3 +232,7 @@ val RepeatOffIcon: ImageVector
 val AddToLibraryIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_add_to_library)
+
+val InfoIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_info)

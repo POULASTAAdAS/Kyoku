@@ -67,6 +67,7 @@ fun SmallExpandedPlayer(
             draggedElevation = 6.dp
         ),
         onClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             onEvent(PlayerUiEvent.OnPlayerExtendClick)
         }
     ) {
@@ -96,10 +97,11 @@ fun SmallExpandedPlayer(
 
                 Column {
                     Icon(
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier
+                            .align(Alignment.End)
                             .clip(CircleShape)
                             .clickable {
-
+                                onEvent(PlayerUiEvent.ClosePlayer)
                             },
                         imageVector = CancelIcon,
                         contentDescription = null,
@@ -185,13 +187,7 @@ fun SmallExpandedPlayer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.dimens.small1)
-                    .clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    },
+                    .padding(horizontal = MaterialTheme.dimens.small1),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {

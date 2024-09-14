@@ -76,7 +76,6 @@ private fun AppDrawer(
     val navController = rememberNavController()
     val config = LocalConfiguration.current
 
-
     AppScreenWindowSize(
         windowSizeClass = windowSize,
         compactContent = {

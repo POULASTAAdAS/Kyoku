@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -63,22 +64,21 @@ fun HomeAppbar(
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 2.sp,
-                modifier = Modifier.padding(start = MaterialTheme.dimens.small2)
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                color = MaterialTheme.colorScheme.primary.copy(.85f)
             )
         },
         navigationIcon = {
             Card(
                 modifier = Modifier
-                    .size(54.dp)
+                    .aspectRatio(1f)
                     .clickable(
                         onClick = {
                             onProfileClick()
                             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        }
+                        interactionSource = null
                     ),
                 shape = CircleShape,
                 elevation = CardDefaults.cardElevation(
@@ -129,7 +129,8 @@ fun HomeAppbar(
             IconButton(onClick = onSearchClick) {
                 Icon(
                     imageVector = SearchIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(.8f)
                 )
             }
         },

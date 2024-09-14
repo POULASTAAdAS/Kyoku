@@ -46,7 +46,8 @@ fun BoxScope.CompactBottomNavigation(
     AnimatedVisibility(
         visible = (currentDestination == DrawerScreen.Home.route ||
                 currentDestination == DrawerScreen.Library.route),
-        modifier = Modifier.align(Alignment.BottomCenter),
+        modifier = Modifier
+            .align(Alignment.BottomCenter),
         enter = fadeIn() + slideInVertically { it },
         exit = fadeOut() + slideOutVertically { it }
     ) {
@@ -57,8 +58,7 @@ fun BoxScope.CompactBottomNavigation(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .navigationBarsPadding(),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             Spacer(modifier = Modifier.weight(.5f))
 

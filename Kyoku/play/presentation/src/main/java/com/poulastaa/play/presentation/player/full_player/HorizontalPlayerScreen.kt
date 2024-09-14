@@ -1,6 +1,8 @@
 package com.poulastaa.play.presentation.player.full_player
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +28,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -48,7 +52,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -58,11 +64,12 @@ import com.poulastaa.core.presentation.designsystem.AddToLibraryIcon
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
-import com.poulastaa.core.presentation.designsystem.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.FilterPlaylistIcon
+import com.poulastaa.core.presentation.designsystem.InfoIcon
 import com.poulastaa.core.presentation.designsystem.NextIcon
 import com.poulastaa.core.presentation.designsystem.PauseIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.RepeatOffIcon
 import com.poulastaa.core.presentation.designsystem.RepeatOnIcon
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -70,6 +77,7 @@ import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,8 +91,18 @@ fun HorizontalPlayerScreen(
     val pagerState = rememberPagerState { 2 }
     var controllerPos by remember { mutableFloatStateOf(0f) }
     val scope = rememberCoroutineScope()
-    val interactionSource = remember { MutableInteractionSource() }
     val haptic = LocalHapticFeedback.current
+
+    val list = animateFloatAsState(
+        if (pagerState.currentPage == 0) 1f else .23f,
+        tween(400),
+        label = ""
+    )
+    val details = animateFloatAsState(
+        if (pagerState.currentPage == 1) 1f else .23f,
+        tween(400),
+        label = ""
+    )
 
     Scaffold {
         Column(
@@ -280,31 +298,96 @@ fun HorizontalPlayerScreen(
                                     )
                                 ),
                         ) {
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(.85f),
-                                contentPadding = PaddingValues(vertical = MaterialTheme.dimens.medium1),
-                                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
-                            ) {
-                                items(queue.size) { index ->
-                                    PlayerSongCard(
-                                        modifier = Modifier.clickable {
-                                            onEvent(
-                                                PlayerUiEvent.PlayBackController.OnSongClick(
-                                                    queue[index].id
-                                                )
+                            VerticalPager(state = pagerState) { index ->
+                                if (index == 0) LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(.85f),
+                                    contentPadding = PaddingValues(vertical = MaterialTheme.dimens.medium1),
+                                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
+                                ) {
+                                    item {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(
+                                                    start = MaterialTheme.dimens.medium1,
+                                                    bottom = MaterialTheme.dimens.small3
+                                                ),
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                                text = stringResource(R.string.playing_from),
+                                                fontWeight = FontWeight.Medium,
+                                                color = song.colors[0],
+                                                textDecoration = TextDecoration.Underline
                                             )
-                                        },
-                                        header = header,
-                                        colors = if (queue[index].id == song.id) song.colors else
-                                            song.colors.map { color -> color.copy(.4f) },
-                                        song = queue[index],
-                                        onMove = {
-                                            if (queue[index].id != song.id) {
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            }
+
+                                            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                                            Text(
+                                                text = info.type,
+                                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                                maxLines = 1,
+                                                fontWeight = FontWeight.Bold,
+                                                overflow = TextOverflow.Ellipsis,
+                                                color = song.colors[0]
+                                            )
                                         }
+                                    }
+
+                                    items(queue.size) { index ->
+                                        PlayerSongCard(
+                                            modifier = Modifier.clickable {
+                                                onEvent(
+                                                    PlayerUiEvent.PlayBackController.OnSongClick(
+                                                        queue[index].id
+                                                    )
+                                                )
+                                            },
+                                            header = header,
+                                            colors = if (queue[index].id == song.id) song.colors else
+                                                song.colors.map { color -> color.copy(.4f) },
+                                            song = queue[index],
+                                            onMove = {
+                                                if (queue[index].id != song.id) {
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                }
+                                            }
+                                        )
+                                    }
+                                } else Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(.85f)
+                                        .padding(MaterialTheme.dimens.medium1),
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.song),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                        )
+
+                                        Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                                        Text(
+                                            text = song.title,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            fontWeight = FontWeight.SemiBold,
+                                        )
+                                    }
+
+                                    Spacer(Modifier.height(MaterialTheme.dimens.small1))
+
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = song.colors[0]
                                     )
                                 }
                             }
@@ -314,19 +397,23 @@ fun HorizontalPlayerScreen(
                                     .fillMaxSize()
                                     .padding(horizontal = MaterialTheme.dimens.small3)
                                     .padding(vertical = MaterialTheme.dimens.large1),
-                                verticalArrangement = Arrangement.Center
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .weight(.3f),
+                                        .weight(list.value),
                                     shape = MaterialTheme.shapes.large,
                                     elevation = CardDefaults.cardElevation(
                                         defaultElevation = 5.dp,
                                         pressedElevation = 0.dp
                                     ),
                                     onClick = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        scope.launch {
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            if (pagerState.currentPage != 0)
+                                                pagerState.animateScrollToPage(0)
+                                        }
                                     }
                                 ) {
                                     Icon(
@@ -345,14 +432,18 @@ fun HorizontalPlayerScreen(
                                 Card(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .weight(.3f),
+                                        .weight(details.value),
                                     shape = MaterialTheme.shapes.large,
                                     elevation = CardDefaults.cardElevation(
                                         defaultElevation = 5.dp,
                                         pressedElevation = 0.dp
                                     ),
                                     onClick = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        scope.launch {
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            if (pagerState.currentPage != 1)
+                                                pagerState.animateScrollToPage(1)
+                                        }
                                     }
                                 ) {
                                     Icon(
@@ -360,7 +451,7 @@ fun HorizontalPlayerScreen(
                                             .fillMaxSize()
                                             .background(song.colors[1])
                                             .padding(MaterialTheme.dimens.small2),
-                                        imageVector = FilterArtistIcon,
+                                        imageVector = InfoIcon,
                                         contentDescription = null,
                                         tint = song.colors[0]
                                     )

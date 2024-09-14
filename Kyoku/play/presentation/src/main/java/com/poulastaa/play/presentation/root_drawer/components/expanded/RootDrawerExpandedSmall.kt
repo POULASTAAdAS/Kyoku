@@ -10,16 +10,30 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
@@ -30,6 +44,7 @@ import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.full_player.HorizontalPlayerScreen
+import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.toPlayType
@@ -44,6 +59,9 @@ fun RootDrawerExpandedSmall(
     onEvent: (RootDrawerUiEvent) -> Unit,
     onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
+    var dragScope by remember { mutableFloatStateOf(0f) }
+    val config = LocalConfiguration.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -234,6 +252,58 @@ fun RootDrawerExpandedSmall(
                 ),
                 info = state.player.info,
                 queue = state.player.queue,
+                onEvent = onPlayerEvent
+            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxWidth(.5f)
+                .align(Alignment.BottomCenter)
+                .padding(bottom = MaterialTheme.dimens.small1)
+                .clickable(
+                    interactionSource = null,
+                    indication = null
+                ) {
+                    onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
+                }
+                .offset {
+                    IntOffset(0, dragScope.coerceAtLeast(0f).toInt())
+                }
+                .draggable(
+                    state = rememberDraggableState {
+                        dragScope += it
+                    },
+                    orientation = Orientation.Vertical,
+                    onDragStopped = {
+                        if (dragScope > 130) onPlayerEvent(PlayerUiEvent.ClosePlayer)
+                        else dragScope = 0f
+                    },
+                ),
+            visible = state.player.isData &&
+                    state.player.queue.isNotEmpty() &&
+                    config.screenWidthDp < 980 &&
+                    !state.createPlaylistUiState.isOpen &&
+                    !state.player.isPlayerExtended,
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInVertically(tween(400)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
+                    slideOutVertically(tween(400)) { it }
+        ) {
+            if (state.player.queue.isNotEmpty()) SmallCompactPlayer(
+                modifier = Modifier.padding(MaterialTheme.dimens.small1),
+                header = state.header,
+                height = 95.dp,
+                song = state.player.queue[state.player.info.currentPlayingIndex].copy(
+                    colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    }
+                ),
+                hasNext = state.player.info.hasNext,
+                hasPrev = state.player.info.hasPrev,
                 onEvent = onPlayerEvent
             )
         }
