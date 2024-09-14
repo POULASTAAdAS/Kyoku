@@ -57,7 +57,7 @@ import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.player.PlayerUiEvent
-import com.poulastaa.play.presentation.player.full_player.PlayerScreen
+import com.poulastaa.play.presentation.player.full_player.VerticalPlayerScreen
 import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
@@ -544,7 +544,7 @@ fun RootDrawerCompact(
                 exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
                         slideOutVertically(tween(400)) { it }
             ) {
-                PlayerScreen(
+                VerticalPlayerScreen(
                     header = state.header,
                     song = state.player.queue[state.player.info.currentPlayingIndex].copy(
                         colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {

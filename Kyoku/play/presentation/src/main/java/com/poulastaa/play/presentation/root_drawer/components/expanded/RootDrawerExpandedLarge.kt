@@ -2,6 +2,7 @@ package com.poulastaa.play.presentation.root_drawer.components.expanded
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,6 +26,8 @@ import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistRootScreen
 import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
+import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.full_player.VerticalPlayerScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.toPlayType
@@ -37,6 +40,7 @@ fun RootDrawerExpandedLarge(
     navController: NavHostController,
     state: RootDrawerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
+    onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
     Row { // don't remove the row
         RootDrawerExpanded(
@@ -46,6 +50,7 @@ fun RootDrawerExpandedLarge(
                 onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
             },
             onEvent = onEvent,
+            onPlayerEvent = onPlayerEvent,
         )
 
         AnimatedVisibility(
@@ -201,6 +206,31 @@ fun RootDrawerExpandedLarge(
                 }
             )
         }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.player.isPlayerExtended,
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
+        ) {
+            VerticalPlayerScreen(
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                header = state.header,
+                song = state.player.queue[state.player.info.currentPlayingIndex].copy(
+                    colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.surfaceContainer
+                        )
+                    }
+                ),
+                info = state.player.info,
+                queue = state.player.queue,
+                onEvent = onPlayerEvent
+            )
+        }
     }
 
     if (state.addToPlaylistUiState.isOpen ||
@@ -208,9 +238,11 @@ fun RootDrawerExpandedLarge(
         state.exploreArtistUiState.isOpen ||
         state.newArtisUiState.isOpen ||
         state.newAlbumUiState.isOpen ||
-        state.createPlaylistUiState.isOpen
+        state.createPlaylistUiState.isOpen ||
+        state.player.isPlayerExtended
     ) BackHandler {
-        if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+        if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.ClosePlayer)
+        else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
         else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)

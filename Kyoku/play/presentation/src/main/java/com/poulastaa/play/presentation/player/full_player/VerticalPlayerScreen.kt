@@ -94,22 +94,20 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerScreen(
+fun VerticalPlayerScreen(
     modifier: Modifier = Modifier,
     header: String,
     song: PlayerUiSong,
     info: PlayerUiInfo,
     queue: List<PlayerUiSong>,
-    onEvent: (PlayerUiEvent) -> Unit
+    onEvent: (PlayerUiEvent) -> Unit,
 ) {
-    var controllerPos by remember { mutableFloatStateOf(0f) }
-
     val pagerState = rememberPagerState { 2 }
-
+    var controllerPos by remember { mutableFloatStateOf(0f) }
     val scope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val config = LocalConfiguration.current
+    val screenHeight = config.screenHeightDp
 
     Scaffold {
         Box(
@@ -124,20 +122,35 @@ fun PlayerScreen(
                     .padding(it)
                     .verticalScroll(rememberScrollState())
             ) {
-                TopBar(
+                PlayerTopBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 56.dp)
+                        .padding(horizontal = MaterialTheme.dimens.small3),
                     colors = song.colors,
                     type = info.type,
                     onEvent = onEvent
                 )
 
-                Spacer(Modifier.height(MaterialTheme.dimens.large1))
+                Spacer(
+                    Modifier.height(
+                        if (config.screenWidthDp > 980) MaterialTheme.dimens.small1
+                        else MaterialTheme.dimens.large1
+                    )
+                )
 
                 ImageGrid(
                     header = header,
                     urls = listOf(song.coverImage),
                     modifier = Modifier
-                        .padding(MaterialTheme.dimens.medium3)
-                        .padding(horizontal = MaterialTheme.dimens.medium1),
+                        .padding(
+                            if (config.screenWidthDp > 980) MaterialTheme.dimens.large2
+                            else MaterialTheme.dimens.medium3
+                        )
+                        .padding(
+                            horizontal = if (config.screenWidthDp > 980) MaterialTheme.dimens.large2
+                            else MaterialTheme.dimens.medium1
+                        ),
                     shapes = MaterialTheme.shapes.small
                 )
 
@@ -238,7 +251,12 @@ fun PlayerScreen(
                     )
                 }
 
-                Spacer(Modifier.height(MaterialTheme.dimens.large2))
+                Spacer(
+                    Modifier.height(
+                        if (config.screenWidthDp > 980) MaterialTheme.dimens.large1
+                        else MaterialTheme.dimens.large2
+                    )
+                )
 
                 Row(
                     modifier = Modifier
@@ -250,7 +268,7 @@ fun PlayerScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    CustomIconButton(
+                    PlayerCustomIconButton(
                         modifier = Modifier.size(35.dp),
                         icon = if (info.repeatState == RepeatState.SINGLE) RepeatOnIcon else RepeatOffIcon,
                         colors = IconButtonDefaults.iconButtonColors(
@@ -262,7 +280,7 @@ fun PlayerScreen(
 
                     }
 
-                    CustomIconButton(
+                    PlayerCustomIconButton(
                         modifier = Modifier
                             .size(50.dp)
                             .rotate(90f),
@@ -275,7 +293,7 @@ fun PlayerScreen(
 
                     }
 
-                    CustomIconButton(
+                    PlayerCustomIconButton(
                         modifier = Modifier.size(90.dp),
                         icon = if (song.isPlaying) PauseIcon else PlayIcon,
                         colors = IconButtonDefaults.iconButtonColors(
@@ -285,7 +303,7 @@ fun PlayerScreen(
 
                     }
 
-                    CustomIconButton(
+                    PlayerCustomIconButton(
                         modifier = Modifier.size(50.dp),
                         icon = NextIcon,
                         enabled = info.hasNext,
@@ -296,7 +314,7 @@ fun PlayerScreen(
 
                     }
 
-                    CustomIconButton(
+                    PlayerCustomIconButton(
                         modifier = Modifier.size(35.dp),
                         icon = AddToLibraryIcon,
                         colors = IconButtonDefaults.iconButtonColors(
@@ -412,7 +430,7 @@ private fun Queue(
     header: String,
     colors: List<Color>,
     queue: List<PlayerUiSong>,
-    onEvent: (PlayerUiEvent) -> Unit
+    onEvent: (PlayerUiEvent) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
     val config = LocalConfiguration.current
@@ -445,9 +463,9 @@ private fun Queue(
             userScrollEnabled = cardPos < 100
         ) {
             items(queue.size) {
-                SongCard(
+                PlayerSongCard(
                     modifier = Modifier.clickable {
-
+                        onEvent(PlayerUiEvent.PlayBackController.OnSongClick(queue[it].id))
                     },
                     header = header,
                     colors = if (queue[it].id == id) colors else
@@ -474,27 +492,28 @@ private fun FloatingController(
     song: PlayerUiSong,
     hasNext: Boolean,
     hasPrev: Boolean,
-    onEvent: (PlayerUiEvent.PlayBackController) -> Unit
+    onEvent: (PlayerUiEvent.PlayBackController) -> Unit,
 ) {
+    val config = LocalConfiguration.current
+    val visibilityThreshold = if (config.screenWidthDp > 980) 300 else 250
+
     AnimatedVisibility(
         modifier = Modifier.fillMaxWidth(),
-        visible = controllerPos < 250,
+        visible = controllerPos < visibilityThreshold,
         enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                 slideInVertically(tween(400)) { -it },
         exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
                 slideOutVertically(tween(400)) { it }
     ) {
-        val temp = remember { controllerPos < 250 }
+        val temp = remember { controllerPos < visibilityThreshold }
 
         if (temp) Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .then(modifier)
-                .height((screenHeight * .7 / 4).dp)
+                .height((screenHeight * (if (config.screenWidthDp > 980) .9f else .7f) / 4).dp)
                 .padding(horizontal = MaterialTheme.dimens.medium1),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 7.dp
-            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 7.dp),
             shape = MaterialTheme.shapes.small
         ) {
             Column(
@@ -541,7 +560,6 @@ private fun FloatingController(
                             overflow = TextOverflow.Ellipsis,
                         )
 
-                        Spacer(Modifier.weight(.5f))
 
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -555,7 +573,7 @@ private fun FloatingController(
                                 ),
                                 enable = hasPrev,
                                 modifier = Modifier
-                                    .aspectRatio(.5f)
+                                    .aspectRatio(.8f)
                                     .rotate(90f),
                                 onClick = {
                                     onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
@@ -569,7 +587,7 @@ private fun FloatingController(
                                 color = IconButtonDefaults.iconButtonColors(
                                     contentColor = song.colors[0]
                                 ),
-                                modifier = Modifier.aspectRatio(.5f),
+                                modifier = Modifier.aspectRatio(1f),
                                 onClick = {
                                     onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
                                 }
@@ -583,7 +601,7 @@ private fun FloatingController(
                                     contentColor = song.colors[0]
                                 ),
                                 enable = hasNext,
-                                modifier = Modifier.aspectRatio(.5f),
+                                modifier = Modifier.aspectRatio(.8f),
                                 onClick = {
                                     onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
                                 }
@@ -628,12 +646,12 @@ private fun FloatingController(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun SongCard(
+fun PlayerSongCard(
     modifier: Modifier = Modifier,
     colors: List<Color>,
     header: String,
     song: PlayerUiSong,
-    onMove: () -> Unit
+    onMove: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -699,12 +717,12 @@ private fun SongCard(
 }
 
 @Composable
-private fun CustomIconButton(
+fun PlayerCustomIconButton(
     modifier: Modifier = Modifier,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     icon: ImageVector,
     enabled: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
         modifier = modifier,
@@ -725,7 +743,7 @@ private fun Header(
     modifier: Modifier,
     isSelected: Boolean,
     text: String,
-    color: Color
+    color: Color,
 ) {
     Column(
         modifier = modifier,
@@ -753,16 +771,14 @@ private fun Header(
 }
 
 @Composable
-private fun TopBar(
+fun PlayerTopBar(
+    modifier: Modifier = Modifier,
     colors: List<Color>,
     type: String,
-    onEvent: (PlayerUiEvent.OnPlayerShrinkClick) -> Unit
+    onEvent: (PlayerUiEvent.OnPlayerShrinkClick) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 56.dp)
-            .padding(horizontal = MaterialTheme.dimens.small3),
+        modifier = modifier,
     ) {
         IconButton(
             onClick = {
@@ -806,7 +822,7 @@ private fun TopBar(
 @Composable
 private fun Preview() {
     AppThem {
-        PlayerScreen(
+        VerticalPlayerScreen(
             header = "",
             song = PlayerUiSong(
                 id = 1,

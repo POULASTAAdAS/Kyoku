@@ -110,10 +110,12 @@ private fun AppDrawer(
                 navController = navController,
                 state = state,
                 onEvent = onEvent,
+                onPlayerEvent = onPlayerEvent
             ) else RootDrawerExpandedSmall(
                 navController = navController,
                 state = state,
                 onEvent = onEvent,
+                onPlayerEvent = onPlayerEvent
             )
         }
     )

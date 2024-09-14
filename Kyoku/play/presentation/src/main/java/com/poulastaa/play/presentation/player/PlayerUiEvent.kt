@@ -9,6 +9,7 @@ sealed interface PlayerUiEvent {
         data class SeekTo(val pos: Float) : PlayBackController
         data object OnPlayNextClick : PlayBackController
         data object OnPlayPrevClick : PlayBackController
+        data class OnSongClick(val songId: Long) : PlayBackController
     }
 
     data object ClosePlayer : PlayerUiEvent

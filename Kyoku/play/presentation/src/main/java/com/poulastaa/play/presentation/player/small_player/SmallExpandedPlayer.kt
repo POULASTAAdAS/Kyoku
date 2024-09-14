@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
+import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.NextIcon
 import com.poulastaa.core.presentation.designsystem.PauseIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
@@ -54,7 +55,7 @@ fun SmallExpandedPlayer(
     song: PlayerUiSong,
     hasNext: Boolean,
     hasPrev: Boolean,
-    onEvent: (PlayerUiEvent.PlayBackController) -> Unit
+    onEvent: (PlayerUiEvent) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
 
@@ -64,7 +65,10 @@ fun SmallExpandedPlayer(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp,
             draggedElevation = 6.dp
-        )
+        ),
+        onClick = {
+            onEvent(PlayerUiEvent.OnPlayerExtendClick)
+        }
     ) {
         Column(
             modifier = Modifier
@@ -90,48 +94,63 @@ fun SmallExpandedPlayer(
 
                 Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
-                PlayControlButton(
-                    icon = NextIcon,
-                    color = IconButtonDefaults.iconButtonColors(
-                        contentColor = song.colors[1]
-                    ),
-                    enable = hasPrev,
-                    modifier = Modifier
-                        .rotate(90f)
-                        .aspectRatio(.4f),
-                    onClick = {
-                        onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
+                Column {
+                    Icon(
+                        modifier = Modifier.align(Alignment.End)
+                            .clip(CircleShape)
+                            .clickable {
+
+                            },
+                        imageVector = CancelIcon,
+                        contentDescription = null,
+                        tint = song.colors[1]
+                    )
+
+                    Row {
+                        PlayControlButton(
+                            icon = NextIcon,
+                            color = IconButtonDefaults.iconButtonColors(
+                                contentColor = song.colors[1]
+                            ),
+                            enable = hasPrev,
+                            modifier = Modifier
+                                .rotate(90f)
+                                .aspectRatio(.5f),
+                            onClick = {
+                                onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
+                            }
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        PlayControlButton(
+                            icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                            color = IconButtonDefaults.iconButtonColors(
+                                contentColor = song.colors[1]
+                            ),
+                            modifier = Modifier
+                                .aspectRatio(.6f),
+                            onClick = {
+                                onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
+                            }
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        PlayControlButton(
+                            icon = NextIcon,
+                            color = IconButtonDefaults.iconButtonColors(
+                                contentColor = song.colors[1]
+                            ),
+                            enable = hasNext,
+                            modifier = Modifier
+                                .aspectRatio(.5f),
+                            onClick = {
+                                onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
+                            }
+                        )
                     }
-                )
-
-                Spacer(Modifier.weight(1f))
-
-                PlayControlButton(
-                    icon = if (song.isPlaying) PauseIcon else PlayIcon,
-                    color = IconButtonDefaults.iconButtonColors(
-                        contentColor = song.colors[1]
-                    ),
-                    modifier = Modifier
-                        .aspectRatio(.5f),
-                    onClick = {
-                        onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
-                    }
-                )
-
-                Spacer(Modifier.weight(1f))
-
-                PlayControlButton(
-                    icon = NextIcon,
-                    color = IconButtonDefaults.iconButtonColors(
-                        contentColor = song.colors[1]
-                    ),
-                    enable = hasNext,
-                    modifier = Modifier
-                        .aspectRatio(.4f),
-                    onClick = {
-                        onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
-                    }
-                )
+                }
             }
 
             Slider(

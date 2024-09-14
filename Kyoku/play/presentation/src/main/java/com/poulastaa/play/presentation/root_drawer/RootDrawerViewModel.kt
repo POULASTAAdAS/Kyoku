@@ -34,7 +34,7 @@ import kotlin.time.Duration.Companion.minutes
 class RootDrawerViewModel @Inject constructor(
     private val ds: DataStoreRepository,
     private val syncScheduler: SyncLibraryScheduler,
-    private val repo: PlayerRepository
+    private val repo: PlayerRepository,
 ) : ViewModel() {
     var state by mutableStateOf(RootDrawerUiState())
         private set
@@ -293,6 +293,10 @@ class RootDrawerViewModel @Inject constructor(
             }
 
             is PlayerUiEvent.PlayBackController.SeekTo -> {
+
+            }
+
+            is PlayerUiEvent.PlayBackController.OnSongClick -> {
 
             }
 
