@@ -24,12 +24,12 @@ class OnlineFirstPlayerRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val local: LocalPlayerDatasource,
     private val remote: RemotePlayerDatasource,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
 ) : PlayerRepository {
     override suspend fun loadData(
         id: Long,
         type: PlayType,
-        isShuffled: Boolean
+        isShuffled: Boolean,
     ): EmptyResult<DataError.Network> = coroutineScope {
         async { local.clearAll() }.await()
 
@@ -47,21 +47,28 @@ class OnlineFirstPlayerRepository @Inject constructor(
                         val playlist = playlistDef.await()
                         val songs = songsDef.await()
 
-                        Result.Success(
+                        applicationScope.launch {
                             local.loadData(
                                 songs = songs,
                                 id = playlist.id,
                                 name = playlist.name
                             )
-                        )
+                        }.join()
+
+                        Result.Success(Unit)
                     }
 
                     false -> {
                         val result = remote.getPlaylist(id)
 
                         if (result is Result.Success) applicationScope.launch {
-                            local.savePlaylist(result.data)
-                        }
+                            local.loadData(
+                                songs = if (isShuffled) result.data.listOfSong.shuffled(Random)
+                                else result.data.listOfSong,
+                                id = result.data.id,
+                                name = result.data.name
+                            )
+                        }.join()
 
                         result.asEmptyDataResult()
                     }
@@ -72,23 +79,25 @@ class OnlineFirstPlayerRepository @Inject constructor(
                 when (local.isPlaylistOrAlbumSaved(id, false)) {
                     true -> {
                         coroutineScope {
-                            val playlistDef = async { local.getAlbum(id) }
+                            val albumDef = async { local.getAlbum(id) }
                             val songsDef = async {
                                 local.getAlbumSongs(id).let { songs ->
                                     if (isShuffled) songs.shuffled(Random) else songs
                                 }
                             }
 
-                            val album = playlistDef.await()
+                            val album = albumDef.await()
                             val songs = songsDef.await()
 
-                            Result.Success(
+                            applicationScope.launch {
                                 local.loadData(
                                     songs = songs,
                                     id = album.albumId,
                                     name = album.name
                                 )
-                            )
+                            }.join()
+
+                            Result.Success(Unit)
                         }
                     }
 
@@ -96,8 +105,13 @@ class OnlineFirstPlayerRepository @Inject constructor(
                         val result = remote.getAlbum(id)
 
                         if (result is Result.Success) applicationScope.launch {
-                            local.saveAlbum(result.data)
-                        }
+                            local.loadData(
+                                songs = if (isShuffled) result.data.listOfSong.shuffled(Random)
+                                else result.data.listOfSong,
+                                id = result.data.album.albumId,
+                                name = result.data.album.name
+                            )
+                        }.join()
 
                         result.asEmptyDataResult()
                     }

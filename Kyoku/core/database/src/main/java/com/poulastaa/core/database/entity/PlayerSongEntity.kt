@@ -1,12 +1,16 @@
 package com.poulastaa.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    indices = [Index(value = ["songId"], unique = true)]
+)
 data class PlayerSongEntity(
     @PrimaryKey(autoGenerate = false)
-    val id: Long = -1,
+    val id: Int = -1,
+    val songId: Long = -1,
     val title: String = "",
     val artist: String = "",
     val coverImage: String = "",
@@ -20,5 +24,5 @@ data class PlayerSongEntity(
     val isInFavourite: Boolean = false,
     val primary: String = "",
     val secondary: String = "",
-    val background: String = ""
+    val background: String = "",
 )

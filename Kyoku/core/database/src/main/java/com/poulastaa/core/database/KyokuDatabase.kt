@@ -71,7 +71,7 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         PlayerSongEntity::class,
         PlayerInfoEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class KyokuDatabase : RoomDatabase() {

@@ -3,7 +3,8 @@ package com.poulastaa.play.presentation.player
 import androidx.compose.ui.graphics.Color
 
 data class PlayerUiSong(
-    val id: Long = -1,
+    val index:Int = -1,
+    val songId: Long = -1,
     val title: String = "",
     val artist: String = "",
     val coverImage: String = "",

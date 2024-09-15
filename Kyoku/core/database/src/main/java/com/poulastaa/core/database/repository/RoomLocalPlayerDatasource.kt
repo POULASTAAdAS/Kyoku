@@ -6,22 +6,15 @@ import com.poulastaa.core.database.dao.PlayerDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.PlayerInfoEntity
 import com.poulastaa.core.database.entity.SongEntity
-import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
-import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
-import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toPlayerInfo
 import com.poulastaa.core.database.mapper.toPlayerSong
 import com.poulastaa.core.database.mapper.toPlayerSongEntity
 import com.poulastaa.core.database.mapper.toPlaylist
-import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPrevAlbum
 import com.poulastaa.core.database.mapper.toSong
-import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.domain.PlayerInfo
-import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
-import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
@@ -37,7 +30,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
     private val commonDao: CommonDao,
     private val libraryDao: LibraryDao,
     private val viewDao: ViewDao,
-    private val playerDao: PlayerDao
+    private val playerDao: PlayerDao,
 ) : LocalPlayerDatasource {
     override suspend fun clearAll() {
         coroutineScope {
@@ -75,11 +68,11 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val songs = async {
                 idList.let {
                     viewDao.getSongOnIdList(it)
-                }.map {
-                    it.toPlayerSongEntity(it.id)
-                }.awaitAll().let {
-                    if (isShuffled) it.shuffled(Random) else it
                 }.let {
+                    if (isShuffled) it.shuffled(Random.Default) else it
+                }.mapIndexed { index, songEntity ->
+                    songEntity.toPlayerSongEntity(index + 1, songEntity.id)
+                }.awaitAll().let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -108,11 +101,11 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val song = async {
                 idList.let {
                     viewDao.getSongOnIdList(it)
-                }.map {
-                    it.toPlayerSongEntity(it.id)
-                }.awaitAll().let {
-                    if (isShuffled) it.shuffled(Random) else it
                 }.let {
+                    if (isShuffled) it.shuffled(Random.Default) else it
+                }.mapIndexed { index, songEntity ->
+                    songEntity.toPlayerSongEntity(index + 1, songEntity.id)
+                }.awaitAll().let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -141,11 +134,11 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val song = async {
                 idList.let {
                     viewDao.getSongOnIdList(it)
-                }.map {
-                    it.toPlayerSongEntity(it.id)
-                }.awaitAll().let {
-                    if (isShuffled) it.shuffled(Random) else it
                 }.let {
+                    if (isShuffled) it.shuffled(Random.Default) else it
+                }.mapIndexed { index, songEntity ->
+                    songEntity.toPlayerSongEntity(index + 1, songEntity.id)
+                }.awaitAll().let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -174,11 +167,11 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val song = async {
                 idList.let {
                     viewDao.getSongOnIdList(it)
-                }.map {
-                    it.toPlayerSongEntity(it.id)
-                }.awaitAll().let {
-                    if (isShuffled) it.shuffled(Random) else it
                 }.let {
+                    if (isShuffled) it.shuffled(Random.Default) else it
+                }.mapIndexed { index, songEntity ->
+                    songEntity.toPlayerSongEntity(index + 1, songEntity.id)
+                }.awaitAll().let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -202,7 +195,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
 
     override suspend fun loadData(songs: List<Song>, id: Long, name: String) {
         coroutineScope {
-            val loadPlaylist = async {
+            val loadPlayerInfo = async {
                 playerDao.loadInfo(
                     entry = PlayerInfoEntity(
                         id = id,
@@ -213,75 +206,21 @@ class RoomLocalPlayerDatasource @Inject constructor(
             }
 
             val loadSongs = async {
-                songs.map {
+                songs.mapIndexed { index, song ->
                     async {
-                        val isInFavourite = commonDao.isSongInFavourite(it.id)
-                        it.toPlayerSongEntity(isInFavourite = isInFavourite != null)
+                        val isInFavourite = commonDao.isSongInFavourite(song.id)
+                        song.toPlayerSongEntity(
+                            id = index + 1,
+                            isInFavourite = isInFavourite != null
+                        )
                     }
                 }.awaitAll().let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
 
-            loadPlaylist.await()
+            loadPlayerInfo.await()
             loadSongs.await()
-        }
-    }
-
-    override suspend fun saveAlbum(payload: AlbumWithSong) {
-        coroutineScope {
-            val album = async {
-                payload.album.toAlbumEntity().let {
-                    commonDao.insertAlbum(it)
-                }
-            }
-
-            val song = async {
-                payload.listOfSong.map { it.toSongEntity() }
-                    .let {
-                        commonDao.insertSongs(it)
-                    }
-            }
-
-            album.await()
-            song.await()
-
-            payload.listOfSong.map {
-                SongAlbumRelationEntity(
-                    albumId = payload.album.albumId,
-                    songId = it.id
-                )
-            }.let {
-                commonDao.insertSongAlbumRelation(it)
-            }
-        }
-    }
-
-    override suspend fun savePlaylist(payload: PlaylistData) {
-        coroutineScope {
-            val playlist = async {
-                payload.toPlaylistEntity().let {
-                    commonDao.insertPlaylist(it)
-                }
-            }
-
-            val song = async {
-                payload.listOfSong.map { it.toSongEntity() }.let {
-                    commonDao.insertSongs(it)
-                }
-            }
-
-            playlist.await()
-            song.await()
-
-            payload.listOfSong.map {
-                SongPlaylistRelationEntity(
-                    songId = it.id,
-                    playlistId = payload.id
-                )
-            }.let {
-                commonDao.insertSongPlaylistRelations(it)
-            }
         }
     }
 
@@ -296,10 +235,13 @@ class RoomLocalPlayerDatasource @Inject constructor(
             list.map { entity -> entity.toPlayerSong() }
         }
 
-    private suspend fun SongEntity.toPlayerSongEntity(id: Long) = coroutineScope {
+    private suspend fun SongEntity.toPlayerSongEntity(
+        index: Int,
+        songId: Long,
+    ) = coroutineScope {
         async {
-            val isInFavourite = commonDao.isSongInFavourite(id)
-            this@toPlayerSongEntity.toPlayerSongEntity(isInFavourite != null)
+            val isInFavourite = commonDao.isSongInFavourite(songId)
+            this@toPlayerSongEntity.toPlayerSongEntity(index, isInFavourite != null)
         }
     }
 }

@@ -51,7 +51,8 @@ fun ViewDataType.toPlayType() = when (this) {
 }
 
 fun PlayerSong.toPlayerUiSong() = PlayerUiSong(
-    id = this.id,
+    index = this.id,
+    songId = this.songId,
     title = this.title,
     artist = this.artist,
     coverImage = this.coverImage,

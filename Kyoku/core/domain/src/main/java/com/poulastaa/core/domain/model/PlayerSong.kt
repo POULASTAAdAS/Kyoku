@@ -1,7 +1,8 @@
 package com.poulastaa.core.domain.model
 
 data class PlayerSong(
-    val id: Long = -1,
+    val id: Int,
+    val songId: Long = -1,
     val title: String = "",
     val artist: String = "",
     val coverImage: String = "",
@@ -10,5 +11,5 @@ data class PlayerSong(
     val releaseYear: Int = -1,
     val primary: String = "",
     val secondary: String = "",
-    val background: String = ""
+    val background: String = "",
 )

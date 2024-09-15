@@ -26,9 +26,6 @@ interface LocalPlayerDatasource {
     suspend fun loadPopularArtistMix(isShuffled: Boolean = false)
     suspend fun loadData(songs: List<Song>, id: Long, name: String)
 
-    suspend fun saveAlbum(payload: AlbumWithSong)
-    suspend fun savePlaylist(payload: PlaylistData)
-
     fun getInfo(): Flow<PlayerInfo>
     fun getSongs(): Flow<List<PlayerSong>>
 }

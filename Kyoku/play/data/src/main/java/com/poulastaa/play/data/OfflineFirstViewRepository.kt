@@ -20,7 +20,7 @@ import javax.inject.Inject
 class OfflineFirstViewRepository @Inject constructor(
     private val local: LocalViewDatasource,
     private val remote: RemoteViewDatasource,
-    private val application: CoroutineScope
+    private val application: CoroutineScope,
 ) : ViewRepository {
     override suspend fun getPlaylistOnId(id: Long): Result<ViewData, DataError.Network> {
         val localPlaylist = local.getPlaylistOnId(id)
@@ -40,10 +40,12 @@ class OfflineFirstViewRepository @Inject constructor(
         if (localAlbum.listOfSong.isNotEmpty()) return Result.Success(localAlbum)
 
         return coroutineScope {
+            val isAlbumSavedDef = async { local.isAlbumOnLibrary(id) }
             val remoteAlbumDef = async { remote.getAlbumOnId(id) }
             val remoteAlbum = remoteAlbumDef.await()
 
-            if (remoteAlbum is Result.Success && localAlbum.id != -1L) local.saveAlbum(remoteAlbum.data)
+            if (remoteAlbum is Result.Success && isAlbumSavedDef.await())
+                local.saveAlbum(remoteAlbum.data)
             remoteAlbum.map { it.toViewData() }
         }
     }

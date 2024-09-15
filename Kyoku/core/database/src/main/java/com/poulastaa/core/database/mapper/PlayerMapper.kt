@@ -27,8 +27,12 @@ fun SongEntity.toSong() = Song(
 )
 
 @JvmName("SongToPlayerSongEntity1")
-fun Song.toPlayerSongEntity(isInFavourite: Boolean) = PlayerSongEntity(
-    id = this.id,
+fun Song.toPlayerSongEntity(
+    id: Int,
+    isInFavourite: Boolean,
+) = PlayerSongEntity(
+    id = id,
+    songId = this.id,
     title = this.title,
     artist = this.artistName,
     coverImage = this.coverImage,
@@ -41,8 +45,12 @@ fun Song.toPlayerSongEntity(isInFavourite: Boolean) = PlayerSongEntity(
 )
 
 @JvmName("SongEntityToPlayerSongEntity1")
-fun SongEntity.toPlayerSongEntity(isInFavourite: Boolean) = PlayerSongEntity(
-    id = this.id,
+fun SongEntity.toPlayerSongEntity(
+    id: Int,
+    isInFavourite: Boolean,
+) = PlayerSongEntity(
+    id = id,
+    songId = this.id,
     title = this.title,
     artist = this.artistName,
     coverImage = this.coverImage,
@@ -66,6 +74,7 @@ fun PlayerInfoEntity.toPlayerInfo() = PlayerInfo(
 
 fun PlayerSongEntity.toPlayerSong() = PlayerSong(
     id = this.id,
+    songId = this.songId,
     title = this.title,
     artist = this.artist,
     coverImage = this.coverImage,

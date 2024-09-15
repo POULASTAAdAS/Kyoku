@@ -78,7 +78,7 @@ class OnlineFirstWorkDatasource @Inject constructor(
             route = EndPoints.SyncData.route,
             body = UpdateSavedDataReq(
                 list = list,
-                type = UpdateSavedDataType.ARTIST
+                type = UpdateSavedDataType.ARTIST // todo fix error add favourite option
             ),
             gson = gson
         ).map { dto ->

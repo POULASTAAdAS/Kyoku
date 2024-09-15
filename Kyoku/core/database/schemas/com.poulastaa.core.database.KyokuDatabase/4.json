@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "7de1e67abe0e320f4b7dc909bbce932b",
+    "identityHash": "2466f5527abcee183d510d16777c20a4",
     "entities": [
       {
         "tableName": "SongEntity",
@@ -912,11 +912,17 @@
       },
       {
         "tableName": "PlayerSongEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `artist` TEXT NOT NULL, `coverImage` TEXT NOT NULL, `masterPlaylistUrl` TEXT NOT NULL, `album` TEXT NOT NULL, `releaseYear` INTEGER NOT NULL, `currentProgress` TEXT NOT NULL, `endTime` TEXT NOT NULL, `progress` REAL NOT NULL, `isPlaying` INTEGER NOT NULL, `isInFavourite` INTEGER NOT NULL, `primary` TEXT NOT NULL, `secondary` TEXT NOT NULL, `background` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `songId` INTEGER NOT NULL, `title` TEXT NOT NULL, `artist` TEXT NOT NULL, `coverImage` TEXT NOT NULL, `masterPlaylistUrl` TEXT NOT NULL, `album` TEXT NOT NULL, `releaseYear` INTEGER NOT NULL, `currentProgress` TEXT NOT NULL, `endTime` TEXT NOT NULL, `progress` REAL NOT NULL, `isPlaying` INTEGER NOT NULL, `isInFavourite` INTEGER NOT NULL, `primary` TEXT NOT NULL, `secondary` TEXT NOT NULL, `background` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "songId",
+            "columnName": "songId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -1011,7 +1017,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_PlayerSongEntity_songId",
+            "unique": true,
+            "columnNames": [
+              "songId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_PlayerSongEntity_songId` ON `${TABLE_NAME}` (`songId`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -1074,7 +1090,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7de1e67abe0e320f4b7dc909bbce932b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2466f5527abcee183d510d16777c20a4')"
     ]
   }
 }

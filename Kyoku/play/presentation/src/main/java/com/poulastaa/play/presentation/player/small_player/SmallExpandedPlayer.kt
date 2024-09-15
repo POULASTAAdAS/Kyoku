@@ -133,7 +133,7 @@ fun SmallExpandedPlayer(
                             modifier = Modifier
                                 .aspectRatio(.6f),
                             onClick = {
-                                onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
+                                onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.songId))
                             }
                         )
 

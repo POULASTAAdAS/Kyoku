@@ -333,7 +333,7 @@ fun VerticalPlayerScreen(
                     state = pagerState
                 ) { index ->
                     if (index == 0) Queue(
-                        id = song.id,
+                        id = song.songId,
                         header = header,
                         colors = song.colors,
                         queue = queue,
@@ -424,16 +424,16 @@ private fun Queue(
                     modifier = Modifier.clickable {
                         onEvent(
                             PlayerUiEvent.PlayBackController.OnSongClick(
-                                queue[it].id
+                                queue[it].songId
                             )
                         )
                     },
                     header = header,
-                    colors = if (queue[it].id == id) colors else
+                    colors = if (queue[it].songId == id) colors else
                         colors.map { color -> color.copy(.7f) },
                     song = queue[it],
                     onMove = {
-                        if (queue[it].id != id) {
+                        if (queue[it].songId != id) {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         }
                     }
@@ -550,7 +550,7 @@ private fun FloatingController(
                                 ),
                                 modifier = Modifier.aspectRatio(1f),
                                 onClick = {
-                                    onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
+                                    onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.songId))
                                 }
                             )
 
@@ -693,7 +693,7 @@ private fun Preview() {
         VerticalPlayerScreen(
             header = "",
             song = PlayerUiSong(
-                id = 1,
+                songId = 1,
                 title = "That cool song",
                 artist = "That Cool artist",
                 endTime = "4:00",
@@ -711,7 +711,7 @@ private fun Preview() {
             ),
             queue = (1..10).map {
                 PlayerUiSong(
-                    id = it.toLong(),
+                    songId = it.toLong(),
                     title = "That cool song",
                     artist = "That Cool artist",
                     endTime = "4:00",

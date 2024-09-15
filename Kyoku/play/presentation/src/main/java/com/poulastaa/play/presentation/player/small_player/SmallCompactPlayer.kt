@@ -129,7 +129,7 @@ fun SmallCompactPlayer(
                 modifier = Modifier
                     .size(45.dp),
                 onClick = {
-                    onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.id))
+                    onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.songId))
                 }
             )
 

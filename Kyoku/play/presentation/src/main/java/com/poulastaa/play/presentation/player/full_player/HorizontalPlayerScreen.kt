@@ -489,16 +489,16 @@ private fun Queue(
                 modifier = Modifier.clickable {
                     onEvent(
                         PlayerUiEvent.PlayBackController.OnSongClick(
-                            queue[index].id
+                            queue[index].songId
                         )
                     )
                 },
                 header = header,
-                colors = if (queue[index].id == playingSong.id) playingSong.colors else
+                colors = if (queue[index].songId == playingSong.songId) playingSong.colors else
                     playingSong.colors.map { color -> color.copy(.4f) },
                 song = queue[index],
                 onMove = {
-                    if (queue[index].id != playingSong.id) {
+                    if (queue[index].songId != playingSong.songId) {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     }
                 }
@@ -522,7 +522,7 @@ private fun Preview() {
         HorizontalPlayerScreen(
             header = "",
             song = PlayerUiSong(
-                id = 1,
+                songId = 1,
                 title = "That cool song",
                 artist = "That Cool artist",
                 endTime = "4:00",
@@ -540,7 +540,7 @@ private fun Preview() {
             ),
             queue = (1..10).map {
                 PlayerUiSong(
-                    id = it.toLong(),
+                    songId = it.toLong(),
                     title = "That cool song",
                     artist = "That Cool artist",
                     endTime = "4:00",
