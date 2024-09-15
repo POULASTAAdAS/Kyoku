@@ -253,7 +253,38 @@ class RootDrawerViewModel @Inject constructor(
                     }
 
                     is RootDrawerUiEvent.PlayOperation.ShuffleSaved -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                isData = false,
+                                loadingState = DataLoadingState.LOADING
+                            )
+                        )
 
+                        viewModelScope.launch {
+                            when (val result = repo.loadData(event.id, event.type, true)) {
+                                is Result.Error -> {
+                                    when (result.error) {
+                                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                            RootDrawerUiAction.EmitToast(
+                                                UiText.StringResource(
+                                                    R.string.error_no_internet
+                                                )
+                                            )
+                                        )
+
+                                        else -> _uiEvent.send(
+                                            RootDrawerUiAction.EmitToast(
+                                                UiText.StringResource(
+                                                    R.string.error_something_went_wrong
+                                                )
+                                            )
+                                        )
+                                    }
+                                }
+
+                                is Result.Success -> loadPlayingData()
+                            }
+                        }
                     }
                 }
             }

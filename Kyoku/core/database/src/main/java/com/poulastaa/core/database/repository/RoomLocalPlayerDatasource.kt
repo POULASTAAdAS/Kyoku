@@ -6,15 +6,22 @@ import com.poulastaa.core.database.dao.PlayerDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.PlayerInfoEntity
 import com.poulastaa.core.database.entity.SongEntity
+import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
+import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
+import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toPlayerInfo
 import com.poulastaa.core.database.mapper.toPlayerSong
 import com.poulastaa.core.database.mapper.toPlayerSongEntity
 import com.poulastaa.core.database.mapper.toPlaylist
+import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPrevAlbum
 import com.poulastaa.core.database.mapper.toSong
+import com.poulastaa.core.database.mapper.toSongEntity
 import com.poulastaa.core.domain.PlayerInfo
+import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
+import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
@@ -22,9 +29,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.random.Random
 
 class RoomLocalPlayerDatasource @Inject constructor(
     private val commonDao: CommonDao,
@@ -61,7 +68,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
     override suspend fun getAlbum(id: Long): PrevAlbum =
         commonDao.getAlbumById(id).toPrevAlbum()
 
-    override suspend fun loadFev() {
+    override suspend fun loadFev(isShuffled: Boolean) {
         coroutineScope {
             val idList = commonDao.getFevSongIds()
 
@@ -71,6 +78,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
                 }.map {
                     it.toPlayerSongEntity(it.id)
                 }.awaitAll().let {
+                    if (isShuffled) it.shuffled(Random) else it
+                }.let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -92,7 +101,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
         }
     }
 
-    override suspend fun loadOldMix() {
+    override suspend fun loadOldMix(isShuffled: Boolean) {
         coroutineScope {
             val idList = viewDao.getOldMixSongIds()
 
@@ -102,6 +111,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
                 }.map {
                     it.toPlayerSongEntity(it.id)
                 }.awaitAll().let {
+                    if (isShuffled) it.shuffled(Random) else it
+                }.let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -123,7 +134,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
         }
     }
 
-    override suspend fun loadArtistMix() {
+    override suspend fun loadArtistMix(isShuffled: Boolean) {
         coroutineScope {
             val idList = viewDao.getFevArtistMixSongIds()
 
@@ -133,6 +144,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
                 }.map {
                     it.toPlayerSongEntity(it.id)
                 }.awaitAll().let {
+                    if (isShuffled) it.shuffled(Random) else it
+                }.let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -154,7 +167,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
         }
     }
 
-    override suspend fun loadPopularArtistMix() {
+    override suspend fun loadPopularArtistMix(isShuffled: Boolean) {
         coroutineScope {
             val idList = viewDao.getPopularSongMixSongIds()
 
@@ -164,6 +177,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
                 }.map {
                     it.toPlayerSongEntity(it.id)
                 }.awaitAll().let {
+                    if (isShuffled) it.shuffled(Random) else it
+                }.let {
                     playerDao.loadPlayerSongs(it)
                 }
             }
@@ -210,6 +225,63 @@ class RoomLocalPlayerDatasource @Inject constructor(
 
             loadPlaylist.await()
             loadSongs.await()
+        }
+    }
+
+    override suspend fun saveAlbum(payload: AlbumWithSong) {
+        coroutineScope {
+            val album = async {
+                payload.album.toAlbumEntity().let {
+                    commonDao.insertAlbum(it)
+                }
+            }
+
+            val song = async {
+                payload.listOfSong.map { it.toSongEntity() }
+                    .let {
+                        commonDao.insertSongs(it)
+                    }
+            }
+
+            album.await()
+            song.await()
+
+            payload.listOfSong.map {
+                SongAlbumRelationEntity(
+                    albumId = payload.album.albumId,
+                    songId = it.id
+                )
+            }.let {
+                commonDao.insertSongAlbumRelation(it)
+            }
+        }
+    }
+
+    override suspend fun savePlaylist(payload: PlaylistData) {
+        coroutineScope {
+            val playlist = async {
+                payload.toPlaylistEntity().let {
+                    commonDao.insertPlaylist(it)
+                }
+            }
+
+            val song = async {
+                payload.listOfSong.map { it.toSongEntity() }.let {
+                    commonDao.insertSongs(it)
+                }
+            }
+
+            playlist.await()
+            song.await()
+
+            payload.listOfSong.map {
+                SongPlaylistRelationEntity(
+                    songId = it.id,
+                    playlistId = payload.id
+                )
+            }.let {
+                commonDao.insertSongPlaylistRelations(it)
+            }
         }
     }
 

@@ -8,7 +8,12 @@ import com.poulastaa.core.domain.utils.EmptyResult
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerRepository {
-    suspend fun loadData(id: Long, type: PlayType): EmptyResult<DataError.Network>
+    suspend fun loadData(
+        id: Long,
+        type: PlayType,
+        isShuffled: Boolean = false
+    ): EmptyResult<DataError.Network>
+
     fun getInfo(): Flow<PlayerInfo>
     fun getSongs(): Flow<List<PlayerSong>>
 }

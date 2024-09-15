@@ -1,8 +1,8 @@
 package com.poulastaa.play.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +40,7 @@ import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.ViewSongOperation
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SongDetailsMovableCard(
     modifier: Modifier = Modifier,
@@ -65,10 +65,11 @@ fun SongDetailsMovableCard(
             tint = MaterialTheme.colorScheme.onBackground.copy(.8f),
             modifier = Modifier
                 .fillMaxHeight()
-                .clickable(
-                    onClick = onMove,
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
+                .combinedClickable(
+                    interactionSource = null,
+                    indication = null,
+                    onClick = {},
+                    onLongClick = onMove
                 )
         )
 

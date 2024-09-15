@@ -17,7 +17,10 @@ data class ViewUiState(
     val header: String = "",
     val isSavedData: Boolean = true,
     val threeDotOperations: List<ViewSongOperation> = emptyList(),
-    val data: ViewUiData = ViewUiData()
+    val data: ViewUiData = ViewUiData(),
+    val editData: ViewUiData = ViewUiData(),
+
+    val isEditEnabled: Boolean = false,
 )
 
 data class ViewUiData(

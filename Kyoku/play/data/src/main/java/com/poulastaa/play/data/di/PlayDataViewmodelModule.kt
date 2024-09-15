@@ -33,6 +33,7 @@ import com.poulastaa.core.domain.repository.new_artist.NewArtistRepository
 import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
 import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
 import com.poulastaa.core.domain.repository.player.PlayerRepository
+import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.setting.SettingRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -222,8 +223,12 @@ object PlayDataViewmodelModule {
     fun providePlayerRepository(
         @ApplicationContext context: Context,
         local: LocalPlayerDatasource,
+        remote: RemotePlayerDatasource,
+        applicationScope: CoroutineScope,
     ): PlayerRepository = OnlineFirstPlayerRepository(
         context = context,
-        local = local
+        local = local,
+        remote = remote,
+        applicationScope = applicationScope
     )
 }

@@ -3,6 +3,8 @@ package com.poulastaa.play.presentation.view
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +20,9 @@ import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewTopBar(
+    isEditable: Boolean,
     scrollBehavior: TopAppBarScrollBehavior,
+    onEditClick: () -> Unit,
     navigateBack: () -> Unit
 ) {
     CenterAlignedTopAppBar(
@@ -31,7 +35,13 @@ fun ViewTopBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent
         ),
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        actions = {
+            if (isEditable) AppBackButton(
+                icon = Icons.Rounded.Edit,
+                onClick = onEditClick
+            )
+        }
     )
 }
 
@@ -46,7 +56,9 @@ private fun Preview() {
                 .background(MaterialTheme.colorScheme.surfaceContainer)
         ) {
             ViewTopBar(
-                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                isEditable = true,
+                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                onEditClick = {}
             ) {
 
             }

@@ -11,6 +11,7 @@ import com.poulastaa.core.domain.repository.home.RemoteHomeDatasource
 import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
 import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
+import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
@@ -23,6 +24,7 @@ import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstNewAlbumDatasource
 import com.poulastaa.network.OnlineFirstNewArtistDatasource
+import com.poulastaa.network.OnlineFirstPlayerDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
 import com.poulastaa.network.paging_source.CreatePlaylistPagerSource
@@ -220,6 +222,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteCreatePlaylistAlbumDatasource = OnlineFirstCreatePlaylistAlbumDatasource(
+        client = client,
+        gson = gson,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun providePlayerDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemotePlayerDatasource = OnlineFirstPlayerDatasource(
         client = client,
         gson = gson,
     )

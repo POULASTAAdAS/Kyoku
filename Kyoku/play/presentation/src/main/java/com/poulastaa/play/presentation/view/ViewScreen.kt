@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -48,9 +47,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +68,7 @@ import com.poulastaa.core.presentation.designsystem.ShuffleIcon
 import com.poulastaa.core.presentation.designsystem.components.CompactErrorScreen
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.SongDetailsCard
 import com.poulastaa.play.presentation.SongDetailsMovableCard
@@ -119,11 +121,15 @@ private fun ViewScreen(
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val config = LocalConfiguration.current
+    val haptic = LocalHapticFeedback.current
 
     Scaffold(
         topBar = {
             ViewTopBar(
+                isEditable = state.type == ViewDataType.PLAYLIST ||
+                        state.type == ViewDataType.FEV,
                 scrollBehavior = scroll,
+                onEditClick = {}, // todo add edit option
                 navigateBack = navigateBack
             )
         },
@@ -331,6 +337,7 @@ private fun ViewScreen(
                                 song = song,
                                 list = state.threeDotOperations,
                                 onMove = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onEvent(ViewUiEvent.OnMoveClick(song.id))
                                 },
                                 onThreeDotOpenClick = {
@@ -404,11 +411,18 @@ private fun Preview() {
         ViewScreen(
             state = ViewUiState(
                 data = ViewUiData(
-                    name = "Playlist"
+                    name = "Playlist",
+                    listOfSong = (1..10).map {
+                        ViewUiSong(
+                            id = it.toLong(),
+                            name = "Song $it",
+                            artist = "Artist $it"
+                        )
+                    }
                 ),
                 topBarTitle = "Playlist",
                 loadingState = loading,
-                type = ViewDataType.ALBUM
+                type = ViewDataType.PLAYLIST
             ), onEvent = {}
         ) {
 

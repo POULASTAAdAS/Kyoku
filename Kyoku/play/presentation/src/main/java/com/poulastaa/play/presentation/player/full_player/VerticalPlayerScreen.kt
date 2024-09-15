@@ -8,10 +8,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,14 +32,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -60,7 +55,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
@@ -76,8 +70,6 @@ import com.poulastaa.core.domain.RepeatState
 import com.poulastaa.core.presentation.designsystem.AddToLibraryIcon
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
-import com.poulastaa.core.presentation.designsystem.FavouriteIcon
-import com.poulastaa.core.presentation.designsystem.MoveIcon
 import com.poulastaa.core.presentation.designsystem.NextIcon
 import com.poulastaa.core.presentation.designsystem.PauseIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
@@ -88,6 +80,9 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
+import com.poulastaa.play.presentation.player.components.PlayerCustomIconButton
+import com.poulastaa.play.presentation.player.components.PlayerSongCard
+import com.poulastaa.play.presentation.player.components.PlayerSongInfo
 import com.poulastaa.play.presentation.player.small_player.PlayControlButton
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import kotlinx.coroutines.launch
@@ -156,50 +151,11 @@ fun VerticalPlayerScreen(
 
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                Row(
+                PlayerSongInfo(
                     modifier = Modifier.padding(horizontal = MaterialTheme.dimens.medium1),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(.8f)
-                    ) {
-                        Text(
-                            text = song.title,
-                            fontWeight = FontWeight.SemiBold,
-                            color = song.colors[0],
-                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-
-                        Text(
-                            text = song.artist,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = song.colors[0],
-                        )
-                    }
-
-                    Spacer(Modifier.weight(1f))
-
-                    IconButton(
-                        onClick = {
-
-                        },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer
-                        ),
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(MaterialTheme.dimens.small1),
-                            imageVector = if (song.isInFavourite) FavouriteIcon
-                            else Icons.Rounded.FavoriteBorder,
-                            contentDescription = null,
-                        )
-                    }
-                }
+                    song = song,
+                    onEvent = onEvent
+                )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.large2))
 
@@ -424,6 +380,7 @@ fun VerticalPlayerScreen(
     }
 }
 
+
 @Composable
 private fun Queue(
     id: Long,
@@ -465,7 +422,11 @@ private fun Queue(
             items(queue.size) {
                 PlayerSongCard(
                     modifier = Modifier.clickable {
-                        onEvent(PlayerUiEvent.PlayBackController.OnSongClick(queue[it].id))
+                        onEvent(
+                            PlayerUiEvent.PlayBackController.OnSongClick(
+                                queue[it].id
+                            )
+                        )
                     },
                     header = header,
                     colors = if (queue[it].id == id) colors else
@@ -644,99 +605,6 @@ private fun FloatingController(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PlayerSongCard(
-    modifier: Modifier = Modifier,
-    colors: List<Color>,
-    header: String,
-    song: PlayerUiSong,
-    onMove: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.extraSmall)
-            .fillMaxWidth()
-            .height(70.dp),
-    ) {
-        Icon(
-            imageVector = MoveIcon,
-            contentDescription = null,
-            tint = colors[0],
-            modifier = Modifier
-                .fillMaxHeight()
-                .combinedClickable(
-                    indication = null,
-                    interactionSource = null,
-                    onClick = {},
-                    onLongClick = onMove
-                )
-        )
-
-        Spacer(modifier = Modifier.width(MaterialTheme.dimens.small1))
-
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ImageGrid(
-                header = header,
-                urls = listOf(song.coverImage),
-                elevation = CardDefaults.cardElevation()
-            )
-
-            Spacer(modifier = Modifier.width(MaterialTheme.dimens.medium1))
-
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(.9f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = song.title,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colors[0],
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = song.artist,
-                    color = colors[0],
-                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-
-        }
-    }
-}
-
-@Composable
-fun PlayerCustomIconButton(
-    modifier: Modifier = Modifier,
-    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    icon: ImageVector,
-    enabled: Boolean = true,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-        colors = colors,
-        enabled = enabled
-    ) {
-        Icon(
-            modifier = modifier,
-            imageVector = icon,
-            contentDescription = null
-        )
-    }
-}
 
 @Composable
 private fun Header(
@@ -771,7 +639,7 @@ private fun Header(
 }
 
 @Composable
-fun PlayerTopBar(
+private fun PlayerTopBar(
     modifier: Modifier = Modifier,
     colors: List<Color>,
     type: String,

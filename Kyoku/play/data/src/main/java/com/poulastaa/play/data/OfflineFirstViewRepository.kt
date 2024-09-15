@@ -1,6 +1,5 @@
 package com.poulastaa.play.data
 
-import android.util.Log
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
@@ -29,7 +28,7 @@ class OfflineFirstViewRepository @Inject constructor(
 
         val remotePlaylist = remote.getPlaylistOnId(id)
 
-        if (remotePlaylist is Result.Success) application.async {
+        if (remotePlaylist is Result.Success && localPlaylist.id != -1L) application.async {
             local.savePlaylist(remotePlaylist.data)
         }.await()
 
@@ -44,13 +43,12 @@ class OfflineFirstViewRepository @Inject constructor(
             val remoteAlbumDef = async { remote.getAlbumOnId(id) }
             val remoteAlbum = remoteAlbumDef.await()
 
-            if (remoteAlbum is Result.Success) local.saveAlbum(remoteAlbum.data)
+            if (remoteAlbum is Result.Success && localAlbum.id != -1L) local.saveAlbum(remoteAlbum.data)
             remoteAlbum.map { it.toViewData() }
         }
     }
 
-    override suspend fun isSavedAlbum(id: Long): Boolean =
-        local.isAlbumOnLibrary(id)
+    override suspend fun isSavedAlbum(id: Long): Boolean = local.isAlbumOnLibrary(id)
 
     override suspend fun isSongInFavourite(songId: Long) = local.isSongInFavourite(songId)
 
