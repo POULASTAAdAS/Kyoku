@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
@@ -236,3 +237,7 @@ val AddToLibraryIcon: ImageVector
 val InfoIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_info)
+
+val EditIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Edit

@@ -147,5 +147,22 @@ interface CommonDao {
     suspend fun getFevSongIds(): List<Long>
 
     @Query("select id from PlaylistEntity where name = :name")
-    suspend fun getPlaylistByName(name:String): Long?
+    suspend fun getPlaylistByName(name: String): Long?
+
+    @Query(
+        """
+        select SongEntity.* from SongEntity
+        join SongPlaylistRelationEntity on SongPlaylistRelationEntity.songId = SongEntity.id
+        where SongPlaylistRelationEntity.playlistId = :playlistId
+    """
+    )
+    fun getPlaylistSongsAsFlow(playlistId: Long): Flow<List<SongEntity>>
+
+    @Query(
+        """
+        select SongEntity.* from SongEntity
+        join FavouriteEntity on FavouriteEntity.id = SongEntity.id
+    """
+    )
+    fun getFavouriteSongsAsFlow(): Flow<List<SongEntity>>
 }

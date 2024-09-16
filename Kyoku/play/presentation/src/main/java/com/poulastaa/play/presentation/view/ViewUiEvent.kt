@@ -18,4 +18,7 @@ sealed interface ViewUiEvent {
         val id: Long,
         val operation: ViewSongOperation
     ) : ViewUiEvent
+
+    data object OnEditOpen : ViewUiEvent
+    data object OnEditClose : ViewUiEvent
 }

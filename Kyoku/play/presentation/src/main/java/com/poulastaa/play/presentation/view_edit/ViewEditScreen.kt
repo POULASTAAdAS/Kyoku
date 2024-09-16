@@ -1,7 +1,10 @@
-package com.poulastaa.play.presentation.view.components
+package com.poulastaa.play.presentation.view_edit
 
-import android.util.Log
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,7 +40,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -58,33 +61,42 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CancelIcon
+import com.poulastaa.core.presentation.designsystem.MoveIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.model.ViewUiSong
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
-import com.poulastaa.play.presentation.view.ViewUiData
-import com.poulastaa.play.presentation.view.ViewUiEvent
+
+@Composable
+fun ViewEditRootScreen(
+    modifier: Modifier = Modifier,
+    info: ViewEditUiInfo,
+    onExploreClick: () -> Unit,
+    navigateBack: () -> Unit,
+) {
+
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewEditScreen(
+private fun ViewEditScreen(
     modifier: Modifier = Modifier,
-    header: String,
-    data: ViewUiData,
-    onEvent: (ViewUiEvent) -> Unit,
+    state: ViewEditUiState,
+    onEvent: (ViewEditUiEvent) -> Unit,
+    onExploreClick: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val haptic = LocalHapticFeedback.current
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 scrollBehavior = scroll,
                 title = {
                     Text(
-                        text = data.name,
+                        text = state.data.info.name,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.primary
@@ -121,10 +133,11 @@ fun ViewEditScreen(
         ) {
             item {
                 FilledTonalButton(
-                    onClick = {},
+                    onClick = onExploreClick,
                     elevation = ButtonDefaults.filledTonalButtonElevation(
                         defaultElevation = 8.dp,
-                        pressedElevation = 3.dp
+                        pressedElevation = 0.dp,
+                        focusedElevation = 0.dp
                     ),
                     modifier = Modifier.fillMaxWidth(.45f)
                 ) {
@@ -136,14 +149,16 @@ fun ViewEditScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.large1))
             }
 
-            items(data.listOfSong) { item ->
+            items(state.data.songs) { item ->
                 DraggableSongCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(70.dp),
+                        .height(80.dp),
                     haptic = haptic,
-                    header = header,
-                    song = item
+                    header = state.header,
+                    isMoving = state.isMoving,
+                    song = item,
+                    onEvent = onEvent
                 )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small3))
@@ -152,22 +167,26 @@ fun ViewEditScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DraggableSongCard(
+private fun DraggableSongCard(
     modifier: Modifier = Modifier,
     haptic: HapticFeedback,
+    isMoving: Boolean,
     header: String,
-    song: ViewUiSong,
+    song: ViewEditUiSong,
+    onEvent: (ViewEditUiEvent.OnDeleteClick) -> Unit,
 ) {
     var dragOffSetX by remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(dragOffSetX < -350f) {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-    }
-
-    Log.d("drag", dragOffSetX.toString())
+    val animateDragOfSet =
+        animateFloatAsState(
+            targetValue = if (song.isVisible) dragOffSetX else -4000f,
+            animationSpec = tween(400),
+            label = ""
+        )
 
     Box(modifier = modifier) {
-        Card(
+        if (!isMoving) Card(
             modifier = Modifier.fillMaxSize(),
             shape = MaterialTheme.shapes.extraSmall,
             elevation = CardDefaults.cardElevation(
@@ -203,7 +222,7 @@ fun DraggableSongCard(
                 .fillMaxSize()
                 .offset {
                     IntOffset(
-                        dragOffSetX
+                        animateDragOfSet.value
                             .coerceAtMost(0f)
                             .toInt(), 0
                     )
@@ -215,8 +234,9 @@ fun DraggableSongCard(
                     orientation = Orientation.Horizontal,
                     onDragStopped = {
                         if (dragOffSetX < -350f) {
-
-                        } else dragOffSetX =  0f
+                            onEvent(ViewEditUiEvent.OnDeleteClick(song.id))
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        } else dragOffSetX = 0f
                     }
                 ),
             shape = MaterialTheme.shapes.extraSmall,
@@ -230,6 +250,19 @@ fun DraggableSongCard(
                     .padding(MaterialTheme.dimens.small2),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    imageVector = MoveIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground.copy(.8f),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .combinedClickable(
+                            interactionSource = null,
+                            indication = null,
+                            onClick = {},
+                            onLongClick = {}
+                        )
+                )
                 ImageGrid(
                     header = header,
                     urls = listOf(song.coverImage),
@@ -244,7 +277,7 @@ fun DraggableSongCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = song.name,
+                        text = song.title,
                         maxLines = 1,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Medium
@@ -268,17 +301,22 @@ fun DraggableSongCard(
 private fun Preview() {
     AppThem {
         ViewEditScreen(
-            data = ViewUiData(
-                name = "Playlist",
-                listOfSong = (1..10).map {
-                    ViewUiSong(
-                        id = it.toLong(),
-                        name = "Song $it",
-                        artist = "Artist $it"
-                    )
-                }
+            state = ViewEditUiState(
+                data = ViewEditData(
+                    info = ViewEditUiInfo(
+                        name = "Playlist"
+                    ),
+                    songs = (1..10).map {
+                        ViewEditUiSong(
+                            id = it.toLong(),
+                            title = "Song $it",
+                            artist = "Artist $it",
+                        )
+                    }
+                ),
+                header = "",
             ),
-            header = "",
+            onExploreClick = {},
             onEvent = {}
         ) { }
     }

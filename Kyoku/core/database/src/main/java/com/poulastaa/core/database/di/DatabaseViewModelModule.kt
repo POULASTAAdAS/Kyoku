@@ -26,6 +26,7 @@ import com.poulastaa.core.database.repository.RoomLocalSpotifyDataSource
 import com.poulastaa.core.database.repository.RoomLocalStoreArtistDataSource
 import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewDatasource
+import com.poulastaa.core.database.repository.RoomLocalViewEditDatasource
 import com.poulastaa.core.domain.repository.add_playlist.LocalAddPlaylistDatasource
 import com.poulastaa.core.domain.repository.add_to_playlist.LocalAddToPlaylistDatasource
 import com.poulastaa.core.domain.repository.artist.LocalArtistDataSource
@@ -42,6 +43,7 @@ import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.LocalViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_edit.LocalViewEditDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -169,7 +171,7 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalViewDatasource(
         commonDao: CommonDao,
-        viewDao: ViewDao
+        viewDao: ViewDao,
     ): LocalViewDatasource = RoomLocalViewDatasource(
         commonDao = commonDao,
         viewDao = viewDao
@@ -185,7 +187,7 @@ object DatabaseViewModelModule {
     @ViewModelScoped
     fun provideLocalExploreArtistDatasource(
         commonDao: CommonDao,
-        viewDao: ViewDao
+        viewDao: ViewDao,
     ): LocalExploreArtistDatasource = RoomLocalExploreArtistDatasource(
         commonDao = commonDao,
         viewDao = viewDao
@@ -227,11 +229,21 @@ object DatabaseViewModelModule {
         commonDao: CommonDao,
         libraryDao: LibraryDao,
         viewDao: ViewDao,
-        playerDao: PlayerDao
+        playerDao: PlayerDao,
     ): LocalPlayerDatasource = RoomLocalPlayerDatasource(
         commonDao = commonDao,
         libraryDao = libraryDao,
         viewDao = viewDao,
         playerDao = playerDao
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalViewEditDatasource(
+        commonDao: CommonDao,
+        viewDao: ViewDao,
+    ): LocalViewEditDatasource = RoomLocalViewEditDatasource(
+        commonDao = commonDao,
+        viewDao = viewDao
     )
 }

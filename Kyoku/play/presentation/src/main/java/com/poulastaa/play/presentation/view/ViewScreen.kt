@@ -2,6 +2,7 @@ package com.poulastaa.play.presentation.view
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -75,6 +77,9 @@ import com.poulastaa.play.presentation.SongDetailsMovableCard
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import com.poulastaa.play.presentation.view.components.ViewLoadingAnimation
+import com.poulastaa.play.presentation.view_edit.ViewEditRootScreen
+import com.poulastaa.play.presentation.view_edit.ViewEditUiInfo
+import com.poulastaa.play.presentation.view_edit.toViewEditType
 import kotlinx.coroutines.delay
 
 @Composable
@@ -84,7 +89,7 @@ fun ViewCompactScreen(
     type: ViewDataType,
     viewModel: ViewViewModel = hiltViewModel(),
     navigate: (ViewOtherScreen) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -117,262 +122,293 @@ private fun ViewScreen(
     modifier: Modifier = Modifier,
     state: ViewUiState,
     onEvent: (ViewUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val config = LocalConfiguration.current
     val haptic = LocalHapticFeedback.current
 
-    Scaffold(
-        topBar = {
-            ViewTopBar(
-                isEditable = state.type == ViewDataType.PLAYLIST ||
-                        state.type == ViewDataType.FEV,
-                scrollBehavior = scroll,
-                onEditClick = {}, // todo add edit option
-                navigateBack = navigateBack
-            )
-        },
-        modifier = modifier
-    ) { innerPadding ->
-        AnimatedContent(
-            targetState = state.loadingState,
-            label = "view Animated Content",
-            transitionSpec = {
-                fadeIn(
-                    animationSpec = tween(800)
-                ) togetherWith fadeOut(animationSpec = tween(800))
-            }
-        ) { isDataLoading ->
-            when (isDataLoading) {
-                DataLoadingState.LOADING -> Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(MaterialTheme.dimens.medium1)
-                        .verticalScroll(rememberScrollState())
-                        .nestedScroll(scroll.nestedScrollConnection),
-                    content = { ViewLoadingAnimation() }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+    ) {
+        Scaffold(
+            topBar = {
+                ViewTopBar(
+                    scrollBehavior = scroll,
+                    isEditable = state.type == ViewDataType.PLAYLIST ||
+                            state.type == ViewDataType.FEV,
+                    onEditClick = {
+                        onEvent(ViewUiEvent.OnEditOpen)
+                    },
+                    navigateBack = navigateBack,
                 )
-
-                DataLoadingState.LOADED -> {
-                    if (state.type == ViewDataType.PLAYLIST && state.data.listOfSong.isEmpty()) Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(innerPadding)
-                            .padding(horizontal = MaterialTheme.dimens.medium1)
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Card(
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 10.dp
-                            ),
-                            shape = MaterialTheme.shapes.small,
-                            modifier = Modifier
-                                .size(240.dp)
-                        ) {
-                            Image(
-                                painter = MusicImage,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(MaterialTheme.dimens.large1),
-                                colorFilter = ColorFilter.tint(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(.2f)
-                                )
-                            )
-                        }
-
-                        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-
-                        Text(
-                            text = state.data.name,
-                            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-
-                        Spacer(Modifier.weight(.4f))
-
-                        Text(
-                            text = stringResource(R.string.build_your_playlist),
-                            fontWeight = FontWeight.SemiBold,
-                        )
-
-                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
-
-                        FilledTonalButton(
-                            onClick = {
-                                onEvent(ViewUiEvent.OnCreatePlaylistClick(state.data.id))
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth(.5f),
-                            elevation = ButtonDefaults.filledTonalButtonElevation(
-                                defaultElevation = 8.dp
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(R.string.explore),
-                                modifier = Modifier.padding(MaterialTheme.dimens.small1),
-                                fontWeight = FontWeight.SemiBold,
-                                letterSpacing = 2.sp
-                            )
-                        }
-
-                        Spacer(Modifier.weight(1f))
-                    }
-                    else LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(innerPadding)
-                            .nestedScroll(scroll.nestedScrollConnection),
-                        contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
-                    ) {
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .then(
-                                        if (config.screenWidthDp < 600)
-                                            Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
-                                        else Modifier
-                                            .aspectRatio(1.6f)
-                                    ),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Card(
-                                    modifier = Modifier
-                                        .aspectRatio(1f)
-                                        .padding(MaterialTheme.dimens.large2),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 10.dp
-                                    ),
-                                    shape = MaterialTheme.shapes.small
-                                ) {
-                                    ImageGrid(
-                                        header = state.header,
-                                        urls = if (state.type == ViewDataType.ALBUM) listOf(
-                                            state.data.urls.getOrElse(index = 0) { "" }
-                                        ) else state.data.urls
-                                    )
-                                }
-                            }
-                        }
-
-                        item {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = MaterialTheme.dimens.medium1)
-                            ) {
-                                Text(
-                                    text = state.data.name,
-                                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                                    fontWeight = FontWeight.SemiBold,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-
-                                Text(
-                                    text = "${state.data.listOfSong.size} songs",
-                                    fontSize = MaterialTheme.typography.titleSmall.fontSize,
-                                    color = MaterialTheme.colorScheme.onBackground.copy(.7f)
-                                )
-                            }
-                        }
-
-                        item {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = MaterialTheme.dimens.medium1),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CustomButton(
-                                    imageVector = DownloadIcon,
-                                    modifier = Modifier
-                                        .border(
-                                            width = 1.5.dp,
-                                            color = MaterialTheme.colorScheme.primary.copy(.5f),
-                                            shape = CircleShape
-                                        )
-                                        .size(35.dp)
-                                ) {
-                                    onEvent(ViewUiEvent.OnDownloadClick)
-                                }
-
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                CustomButton(imageVector = ShuffleIcon) {
-                                    onEvent(ViewUiEvent.OnShuffleClick)
-                                }
-
-                                Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
-
-                                IconButton(
-                                    onClick = {
-                                        onEvent(ViewUiEvent.OnPlayClick)
-                                    },
-                                    modifier = Modifier.size(70.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = PlayIcon,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary.copy(.6f),
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                }
-                            }
-                        }
-
-                        items(state.data.listOfSong) { song ->
-                            if (state.isSavedData) SongDetailsMovableCard(
-                                modifier = Modifier.clickable {
-                                    onEvent(ViewUiEvent.OnSongClick(song.id))
-                                },
-                                header = state.header,
-                                song = song,
-                                list = state.threeDotOperations,
-                                onMove = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    onEvent(ViewUiEvent.OnMoveClick(song.id))
-                                },
-                                onThreeDotOpenClick = {
-                                    onEvent(ViewUiEvent.OnThreeDotClick(song.id))
-                                },
-                                onThreeDotOperationClick = {
-                                    onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
-                                },
-                                onThreeDotClose = {
-                                    onEvent(ViewUiEvent.OnThreeDotClose(song.id))
-                                }
-                            )
-                            else SongDetailsCard(
-                                modifier = Modifier.clickable {
-                                    onEvent(ViewUiEvent.OnSongClick(song.id))
-                                },
-                                header = state.header,
-                                song = song,
-                                list = state.threeDotOperations,
-                                onThreeDotOpenClick = {
-                                    onEvent(ViewUiEvent.OnThreeDotClick(song.id))
-                                },
-                                onThreeDotOperationClick = {
-                                    onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
-                                },
-                                onThreeDotClose = {
-                                    onEvent(ViewUiEvent.OnThreeDotClose(song.id))
-                                }
-                            )
-                        }
-                    }
+            },
+            modifier = modifier
+        ) { innerPadding ->
+            AnimatedContent(
+                targetState = state.loadingState,
+                label = "view Animated Content",
+                transitionSpec = {
+                    fadeIn(
+                        animationSpec = tween(800)
+                    ) togetherWith fadeOut(animationSpec = tween(800))
                 }
+            ) { isDataLoading ->
+                when (isDataLoading) {
+                    DataLoadingState.LOADING -> Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(MaterialTheme.dimens.medium1)
+                            .verticalScroll(rememberScrollState())
+                            .nestedScroll(scroll.nestedScrollConnection),
+                        content = { ViewLoadingAnimation() }
+                    )
 
-                DataLoadingState.ERROR -> CompactErrorScreen()
+                    DataLoadingState.LOADED -> {
+                        if (state.type == ViewDataType.PLAYLIST && state.data.listOfSong.isEmpty()) Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(innerPadding)
+                                .padding(horizontal = MaterialTheme.dimens.medium1)
+                                .verticalScroll(rememberScrollState()),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Card(
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 10.dp
+                                ),
+                                shape = MaterialTheme.shapes.small,
+                                modifier = Modifier
+                                    .size(240.dp)
+                            ) {
+                                Image(
+                                    painter = MusicImage,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(MaterialTheme.dimens.large1),
+                                    colorFilter = ColorFilter.tint(
+                                        color = MaterialTheme.colorScheme.onBackground.copy(.2f)
+                                    )
+                                )
+                            }
+
+                            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+                            Text(
+                                text = state.data.name,
+                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+
+                            Spacer(Modifier.weight(.4f))
+
+                            Text(
+                                text = stringResource(R.string.build_your_playlist),
+                                fontWeight = FontWeight.SemiBold,
+                            )
+
+                            Spacer(Modifier.height(MaterialTheme.dimens.small3))
+
+                            FilledTonalButton(
+                                onClick = {
+                                    onEvent(ViewUiEvent.OnCreatePlaylistClick(state.data.id))
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth(.5f),
+                                elevation = ButtonDefaults.filledTonalButtonElevation(
+                                    defaultElevation = 8.dp
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.explore),
+                                    modifier = Modifier.padding(MaterialTheme.dimens.small1),
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = 2.sp
+                                )
+                            }
+
+                            Spacer(Modifier.weight(1f))
+                        }
+                        else LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(innerPadding)
+                                .nestedScroll(scroll.nestedScrollConnection),
+                            contentPadding = PaddingValues(bottom = MaterialTheme.dimens.medium1),
+                        ) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .then(
+                                            if (config.screenWidthDp < 600)
+                                                Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
+                                            else Modifier
+                                                .aspectRatio(1.6f)
+                                        ),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Card(
+                                        modifier = Modifier
+                                            .aspectRatio(1f)
+                                            .padding(MaterialTheme.dimens.large2),
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 10.dp
+                                        ),
+                                        shape = MaterialTheme.shapes.small
+                                    ) {
+                                        ImageGrid(
+                                            header = state.header,
+                                            urls = if (state.type == ViewDataType.ALBUM) listOf(
+                                                state.data.urls.getOrElse(index = 0) { "" }
+                                            ) else state.data.urls
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(horizontal = MaterialTheme.dimens.medium1)
+                                ) {
+                                    Text(
+                                        text = state.data.name,
+                                        fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+
+                                    Text(
+                                        text = "${state.data.listOfSong.size} songs",
+                                        fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                                        color = MaterialTheme.colorScheme.onBackground.copy(.7f)
+                                    )
+                                }
+                            }
+
+                            item {
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                            }
+
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = MaterialTheme.dimens.medium1),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    CustomButton(
+                                        imageVector = DownloadIcon,
+                                        modifier = Modifier
+                                            .border(
+                                                width = 2.dp,
+                                                color = MaterialTheme.colorScheme.primary.copy(.5f),
+                                                shape = CircleShape
+                                            )
+                                            .size(35.dp)
+                                    ) {
+                                        onEvent(ViewUiEvent.OnDownloadClick)
+                                    }
+
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    CustomButton(imageVector = ShuffleIcon) {
+                                        onEvent(ViewUiEvent.OnShuffleClick)
+                                    }
+
+                                    Spacer(modifier = Modifier.width(MaterialTheme.dimens.small3))
+
+                                    IconButton(
+                                        onClick = {
+                                            onEvent(ViewUiEvent.OnPlayClick)
+                                        },
+                                        modifier = Modifier.size(70.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = PlayIcon,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary.copy(.8f),
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                }
+                            }
+
+                            items(state.data.listOfSong) { song ->
+                                if (state.isSavedData) SongDetailsMovableCard(
+                                    modifier = Modifier.clickable {
+                                        onEvent(ViewUiEvent.OnSongClick(song.id))
+                                    },
+                                    header = state.header,
+                                    song = song,
+                                    list = state.threeDotOperations,
+                                    onMove = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        onEvent(ViewUiEvent.OnMoveClick(song.id))
+                                    },
+                                    onThreeDotOpenClick = {
+                                        onEvent(ViewUiEvent.OnThreeDotClick(song.id))
+                                    },
+                                    onThreeDotOperationClick = {
+                                        onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
+                                    },
+                                    onThreeDotClose = {
+                                        onEvent(ViewUiEvent.OnThreeDotClose(song.id))
+                                    }
+                                )
+                                else SongDetailsCard(
+                                    modifier = Modifier.clickable {
+                                        onEvent(ViewUiEvent.OnSongClick(song.id))
+                                    },
+                                    header = state.header,
+                                    song = song,
+                                    list = state.threeDotOperations,
+                                    onThreeDotOpenClick = {
+                                        onEvent(ViewUiEvent.OnThreeDotClick(song.id))
+                                    },
+                                    onThreeDotOperationClick = {
+                                        onEvent(ViewUiEvent.OnThreeDotItemClick(song.id, it))
+                                    },
+                                    onThreeDotClose = {
+                                        onEvent(ViewUiEvent.OnThreeDotClose(song.id))
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    DataLoadingState.ERROR -> CompactErrorScreen()
+                }
             }
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.isEditEnabled
+        ) {
+            ViewEditRootScreen(
+                modifier = modifier,
+                info = ViewEditUiInfo(
+                    id = state.data.id,
+                    name = state.data.name,
+                    type = state.type.toViewEditType(),
+                ),
+                onExploreClick = {
+                    onEvent(ViewUiEvent.OnCreatePlaylistClick(state.data.id))
+                },
+                navigateBack = {
+                    onEvent(ViewUiEvent.OnEditClose)
+                }
+            )
         }
     }
 }
@@ -381,7 +417,7 @@ private fun ViewScreen(
 private fun CustomButton(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
         onClick = onClick,

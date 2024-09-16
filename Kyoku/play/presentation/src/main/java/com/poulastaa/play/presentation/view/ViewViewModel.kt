@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: ViewRepository
+    private val repo: ViewRepository,
 ) : ViewModel() {
     var state by mutableStateOf(ViewUiState())
         private set
@@ -38,7 +38,7 @@ class ViewViewModel @Inject constructor(
 
     fun loadData(
         id: Long,
-        type: ViewDataType
+        type: ViewDataType,
     ) {
         state = state.copy(
             type = type
@@ -323,6 +323,20 @@ class ViewViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+
+            is ViewUiEvent.OnEditOpen -> {
+                state = state.copy(
+                    isEditEnabled = true,
+                    editData = state.data
+                )
+            }
+
+            is ViewUiEvent.OnEditClose -> {
+                state = state.copy(
+                    isEditEnabled = false,
+                    editData = ViewUiData()
+                )
             }
         }
     }

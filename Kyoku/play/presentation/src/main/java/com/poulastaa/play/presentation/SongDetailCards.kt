@@ -264,7 +264,7 @@ private fun Preview() {
                 song = ViewUiSong(
                     name = "That cool song",
                     artist = "That cool artist",
-                    isExpanded = true
+                    isExpanded = false
                 ),
                 list = listOf(
                     ViewSongOperation.PLAY_NEXT,
