@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.repository.view_edit.ViewEditRepository
+import com.poulastaa.core.domain.utils.DataError
+import com.poulastaa.core.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -15,11 +18,12 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewEditViewModel @Inject constructor(
     private val ds: DataStoreRepository,
+    private val repo: ViewEditRepository
 ) : ViewModel() {
     var state by mutableStateOf(ViewEditUiState())
         private set
 
-    private var deleteSongJob: Job? = null
+    private var loadDataJob: Job? = null
 
     fun init(info: ViewEditUiInfo) {
         state = state.copy(
@@ -28,6 +32,8 @@ class ViewEditViewModel @Inject constructor(
             )
         )
 
+        loadDataJob?.cancel()
+        loadDataJob = loadData()
         readHeader()
     }
 
@@ -47,18 +53,48 @@ class ViewEditViewModel @Inject constructor(
                     )
                 )
 
-                deleteSongJob?.cancel()
-                deleteSongJob = deleteSong(event.songId)
+                deleteSong(event.songId)
             }
         }
     }
 
     private fun loadData() = viewModelScope.launch {
-
+        repo.getSongs(
+            playlistId = state.data.info.id,
+            type = state.data.info.type
+        ).collectLatest {
+            state = state.copy(
+                data = state.data.copy(
+                    songs = it.map { song ->
+                        song.toViewEditUiSong()
+                    }
+                )
+            )
+        }
     }
 
     private fun deleteSong(songId: Long) = viewModelScope.launch {
+        when (val result = repo.deleteSong(state.data.info.id, songId)) {
+            is Result.Error -> {
+                when (result.error) {
+                    DataError.Network.NO_INTERNET -> {
 
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+
+            is Result.Success -> {
+                state = state.copy(
+                    data = state.data.copy(
+                        songs = state.data.songs.filter { it.id != songId }
+                    )
+                )
+            }
+        }
     }
 
     private fun readHeader() = viewModelScope.launch {

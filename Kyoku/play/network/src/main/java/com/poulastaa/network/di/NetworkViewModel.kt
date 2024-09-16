@@ -14,12 +14,14 @@ import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
 import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
+import com.poulastaa.core.domain.repository.view_edit.RemoteViewEditDatasource
 import com.poulastaa.network.OfflineFirstLibraryDatasource
 import com.poulastaa.network.OnlineFirstAddPlaylistDatasource
 import com.poulastaa.network.OnlineFirstAddToPlaylistDatasource
 import com.poulastaa.network.OnlineFirstCreatePlaylistAlbumDatasource
 import com.poulastaa.network.OnlineFirstCreatePlaylistArtistDatasource
 import com.poulastaa.network.OnlineFirstCreatePlaylistDatasource
+import com.poulastaa.network.OnlineFirstEditViewDatasource
 import com.poulastaa.network.OnlineFirstExploreArtistDatasource
 import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstNewAlbumDatasource
@@ -232,6 +234,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemotePlayerDatasource = OnlineFirstPlayerDatasource(
+        client = client,
+        gson = gson,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideViewEditDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteViewEditDatasource = OnlineFirstEditViewDatasource(
         client = client,
         gson = gson,
     )

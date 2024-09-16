@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UpdateFavouriteReq(
     val songId: Long,
-    val opp: Boolean,
+    val opp: Boolean
 )
