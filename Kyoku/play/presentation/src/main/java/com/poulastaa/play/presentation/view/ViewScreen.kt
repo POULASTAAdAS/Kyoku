@@ -1,11 +1,14 @@
 package com.poulastaa.play.presentation.view
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -114,6 +117,10 @@ fun ViewCompactScreen(
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
     )
+
+    if (viewModel.state.isEditEnabled) BackHandler {
+        viewModel.onEvent(ViewUiEvent.OnEditClose)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,9 +136,7 @@ private fun ViewScreen(
     val haptic = LocalHapticFeedback.current
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+        modifier = modifier
     ) {
         Scaffold(
             topBar = {
@@ -144,8 +149,7 @@ private fun ViewScreen(
                     },
                     navigateBack = navigateBack,
                 )
-            },
-            modifier = modifier
+            }
         ) { innerPadding ->
             AnimatedContent(
                 targetState = state.loadingState,
@@ -393,10 +397,13 @@ private fun ViewScreen(
 
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
-            visible = state.isEditEnabled
+            visible = state.isEditEnabled,
+            enter = fadeIn() + slideInVertically(tween(400)) { it },
+            exit = fadeOut() + slideOutVertically { it }
         ) {
-            ViewEditRootScreen(
-                modifier = modifier,
+            val temp = remember { state.isEditEnabled }
+
+            if (temp) ViewEditRootScreen(
                 info = ViewEditUiInfo(
                     id = state.data.id,
                     name = state.data.name,

@@ -3,6 +3,7 @@ package com.poulastaa.play.presentation.root_drawer.components.compact
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
@@ -89,8 +90,19 @@ fun RootDrawerCompact(
     var currentDestination by remember {
         mutableStateOf(state.startDestination)
     }
-
     var dragScope by remember { mutableFloatStateOf(0f) }
+    val smallPlayerPadding = animateDpAsState(
+        if (
+            (state.viewUiState.isOpen ||
+                    state.addToPlaylistUiState.isOpen ||
+                    state.newArtisUiState.isOpen ||
+                    state.newAlbumUiState.isOpen ||
+                    state.exploreArtistUiState.isOpen)
+            && state.player.isData
+        ) 100.dp else 0.dp,
+        animationSpec = tween(400),
+        label = ""
+    )
 
     LaunchedEffect(key1 = navController.currentBackStackEntryFlow) {
         navController.currentBackStackEntryFlow.collectLatest {
@@ -142,15 +154,7 @@ fun RootDrawerCompact(
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.surfaceContainer)
                         .fillMaxSize()
-                        .padding(
-                            bottom = if (
-                                (state.viewUiState.isOpen ||
-                                        state.addToPlaylistUiState.isOpen ||
-                                        state.newArtisUiState.isOpen ||
-                                        state.newAlbumUiState.isOpen ||
-                                        state.exploreArtistUiState.isOpen) && state.player.isData
-                            ) 100.dp else 0.dp
-                        )
+                        .padding(bottom = smallPlayerPadding.value)
                 ) {
                     NavHost(
                         modifier = Modifier
@@ -323,8 +327,8 @@ fun RootDrawerCompact(
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.newAlbumUiState.isOpen,
-                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
                         AddNewAlbumRootScreen(
                             navigate = {
@@ -348,8 +352,8 @@ fun RootDrawerCompact(
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
                         visible = state.newArtisUiState.isOpen,
-                        enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+                        exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
                         AddNewArtistRootScreen(
                             navigate = {
@@ -368,6 +372,7 @@ fun RootDrawerCompact(
                     }
 
                     AnimatedVisibility(
+                        modifier = Modifier.fillMaxSize(),
                         visible = state.exploreArtistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
@@ -447,6 +452,7 @@ fun RootDrawerCompact(
                     }
 
                     AnimatedVisibility(
+                        modifier = Modifier.fillMaxSize(),
                         visible = state.addToPlaylistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
@@ -509,7 +515,6 @@ fun RootDrawerCompact(
                         },
                     visible = state.player.isData &&
                             state.player.queue.isNotEmpty() &&
-                            !state.createPlaylistUiState.isOpen &&
                             !state.player.isPlayerExtended,
                     enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                             slideInVertically(tween(400)) { it },
@@ -564,20 +569,20 @@ fun RootDrawerCompact(
             }
 
             if (state.addToPlaylistUiState.isOpen ||
+                state.createPlaylistUiState.isOpen ||
                 state.viewUiState.isOpen ||
                 state.exploreArtistUiState.isOpen ||
                 state.newArtisUiState.isOpen ||
                 state.newAlbumUiState.isOpen ||
-                state.createPlaylistUiState.isOpen ||
                 state.player.isPlayerExtended
             ) BackHandler {
                 if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+                else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
                 else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                 else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
                 else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
                 else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
                 else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
-                else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
             }
         }
     )

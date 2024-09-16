@@ -1,7 +1,6 @@
 package com.poulastaa.play.presentation.view_edit
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
@@ -40,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.MoveIcon
@@ -69,18 +72,26 @@ import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 
 @Composable
 fun ViewEditRootScreen(
-    modifier: Modifier = Modifier,
     info: ViewEditUiInfo,
+    viewModel: ViewEditViewModel = hiltViewModel(),
     onExploreClick: () -> Unit,
     navigateBack: () -> Unit,
 ) {
+    LaunchedEffect(key1 = info) {
+        viewModel.init(info)
+    }
 
+    ViewEditScreen(
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        onExploreClick = onExploreClick,
+        navigateBack = navigateBack
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ViewEditScreen(
-    modifier: Modifier = Modifier,
     state: ViewEditUiState,
     onEvent: (ViewEditUiEvent) -> Unit,
     onExploreClick: () -> Unit,
@@ -90,7 +101,6 @@ private fun ViewEditScreen(
     val haptic = LocalHapticFeedback.current
 
     Scaffold(
-        modifier = modifier,
         topBar = {
             CenterAlignedTopAppBar(
                 scrollBehavior = scroll,
@@ -127,7 +137,8 @@ private fun ViewEditScreen(
                         ),
                     )
                 )
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .nestedScroll(scroll.nestedScrollConnection),
             contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -178,12 +189,15 @@ private fun DraggableSongCard(
     onEvent: (ViewEditUiEvent.OnDeleteClick) -> Unit,
 ) {
     var dragOffSetX by remember { mutableFloatStateOf(0f) }
-    val animateDragOfSet =
-        animateFloatAsState(
-            targetValue = if (song.isVisible) dragOffSetX else -4000f,
-            animationSpec = tween(400),
-            label = ""
-        )
+    val animateDragOfSet = animateFloatAsState(
+        targetValue = if (song.isVisible) dragOffSetX else -4000f,
+        label = ""
+    )
+
+    LaunchedEffect(dragOffSetX < -350f) {
+        if (dragOffSetX < -350f) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+
 
     Box(modifier = modifier) {
         if (!isMoving) Card(
@@ -233,10 +247,8 @@ private fun DraggableSongCard(
                     },
                     orientation = Orientation.Horizontal,
                     onDragStopped = {
-                        if (dragOffSetX < -350f) {
-                            onEvent(ViewEditUiEvent.OnDeleteClick(song.id))
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        } else dragOffSetX = 0f
+                        if (dragOffSetX < -350f) onEvent(ViewEditUiEvent.OnDeleteClick(song.id))
+                        dragOffSetX = 0f
                     }
                 ),
             shape = MaterialTheme.shapes.extraSmall,

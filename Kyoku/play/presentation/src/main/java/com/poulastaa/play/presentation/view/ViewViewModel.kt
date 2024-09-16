@@ -17,6 +17,7 @@ import com.poulastaa.play.domain.ViewSongOperation
 import com.poulastaa.play.presentation.view.components.ViewDataType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
@@ -36,12 +37,16 @@ class ViewViewModel @Inject constructor(
     private val _uiEvent = Channel<ViewUiAction>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    private var readHeaderJob: Job? = null
+
     fun loadData(
         id: Long,
         type: ViewDataType,
+        firstLoad: Boolean = true,
     ) {
-        state = state.copy(
-            type = type
+        if (firstLoad) state = state.copy(
+            type = type,
+            isEditEnabled = state.data.id == id && type == ViewDataType.PLAYLIST
         )
 
         viewModelScope.launch {
@@ -137,7 +142,8 @@ class ViewViewModel @Inject constructor(
             }
         }
 
-        readHeader()
+        readHeaderJob?.cancel()
+        readHeaderJob = readHeader()
     }
 
     fun onEvent(event: ViewUiEvent) {
@@ -334,20 +340,25 @@ class ViewViewModel @Inject constructor(
 
             is ViewUiEvent.OnEditClose -> {
                 state = state.copy(
+                    loadingState = DataLoadingState.LOADING,
                     isEditEnabled = false,
                     editData = ViewUiData()
+                )
+
+                loadData(
+                    id = state.data.id,
+                    type = state.type,
+                    firstLoad = false
                 )
             }
         }
     }
 
-    private fun readHeader() {
-        viewModelScope.launch {
-            ds.readTokenOrCookie().collectLatest {
-                state = state.copy(
-                    header = it
-                )
-            }
+    private fun readHeader() = viewModelScope.launch {
+        ds.readTokenOrCookie().collectLatest {
+            state = state.copy(
+                header = it
+            )
         }
     }
 }

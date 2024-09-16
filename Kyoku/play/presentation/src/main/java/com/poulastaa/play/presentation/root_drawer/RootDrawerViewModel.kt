@@ -129,6 +129,7 @@ class RootDrawerViewModel @Inject constructor(
                         type = event.type,
                     ),
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    createPlaylistUiState = CreatePlaylistViewUiState()
                 )
             }
 
@@ -203,7 +204,6 @@ class RootDrawerViewModel @Inject constructor(
                         playlistId = event.playlistId
                     ),
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
-                    viewUiState = HomeViewUiState(),
                     exploreArtistUiState = ExploreArtistUiState(),
                     newAlbumUiState = NewAlbumViewUiState(),
                     newArtisUiState = NewArtistViewUiState()

@@ -69,56 +69,6 @@ fun RootDrawerExpandedLarge(
             }
         }
 
-        AnimatedVisibility(
-            modifier = Modifier.fillMaxSize(),
-            visible = state.viewUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
-                    slideInHorizontally(tween(300)) { it },
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
-                    slideOutHorizontally { it }
-        ) {
-            ViewCompactScreen(
-                modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
-                id = state.viewUiState.songId,
-                type = state.viewUiState.type,
-                navigate = { event ->
-                    when (event) {
-                        is ViewOtherScreen.AddSongToPlaylist -> onEvent(
-                            RootDrawerUiEvent.AddSongToPlaylist(
-                                id = event.id
-                            )
-                        )
-
-                        is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
-                            RootDrawerUiEvent.CreatePlaylist(
-                                playlistId = event.playlistId
-                            )
-                        )
-
-                        is ViewOtherScreen.ViewSongArtists -> {
-
-                        }
-
-                        is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
-                            RootDrawerUiEvent.PlayOperation.PlaySaved(
-                                id = event.id,
-                                type = event.type.toPlayType()
-                            )
-                        )
-
-                        is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
-                            RootDrawerUiEvent.PlayOperation.ShuffleSaved(
-                                id = event.id,
-                                type = event.type.toPlayType()
-                            )
-                        )
-                    }
-                },
-                navigateBack = {
-                    onEvent(RootDrawerUiEvent.OnViewCancel)
-                }
-            )
-        }
 
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
@@ -224,6 +174,57 @@ fun RootDrawerExpandedLarge(
 
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
+            visible = state.viewUiState.isOpen,
+            enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
+                    slideInHorizontally(tween(300)) { it },
+            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
+                    slideOutHorizontally { it }
+        ) {
+            ViewCompactScreen(
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                id = state.viewUiState.songId,
+                type = state.viewUiState.type,
+                navigate = { event ->
+                    when (event) {
+                        is ViewOtherScreen.AddSongToPlaylist -> onEvent(
+                            RootDrawerUiEvent.AddSongToPlaylist(
+                                id = event.id
+                            )
+                        )
+
+                        is ViewOtherScreen.CreatePlaylistScreen -> onEvent(
+                            RootDrawerUiEvent.CreatePlaylist(
+                                playlistId = event.playlistId
+                            )
+                        )
+
+                        is ViewOtherScreen.ViewSongArtists -> {
+
+                        }
+
+                        is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
+                            RootDrawerUiEvent.PlayOperation.PlaySaved(
+                                id = event.id,
+                                type = event.type.toPlayType()
+                            )
+                        )
+
+                        is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
+                            RootDrawerUiEvent.PlayOperation.ShuffleSaved(
+                                id = event.id,
+                                type = event.type.toPlayType()
+                            )
+                        )
+                    }
+                },
+                navigateBack = {
+                    onEvent(RootDrawerUiEvent.OnViewCancel)
+                }
+            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
             visible = state.player.isPlayerExtended,
             enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                     slideInHorizontally(tween(300)) { it },
@@ -249,19 +250,19 @@ fun RootDrawerExpandedLarge(
     }
 
     if (state.addToPlaylistUiState.isOpen ||
+        state.createPlaylistUiState.isOpen ||
         state.viewUiState.isOpen ||
         state.exploreArtistUiState.isOpen ||
         state.newArtisUiState.isOpen ||
         state.newAlbumUiState.isOpen ||
-        state.createPlaylistUiState.isOpen ||
         state.player.isPlayerExtended
     ) BackHandler {
         if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+        else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
         else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
         else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
         else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
-        else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
     }
 }
