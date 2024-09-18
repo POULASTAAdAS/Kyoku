@@ -3,6 +3,7 @@ package com.poulastaa.core.database.repository
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.entity.FavouriteEntity
+import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toArtistEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
@@ -13,7 +14,9 @@ import com.poulastaa.core.domain.model.PlaylistWithSong
 import com.poulastaa.core.domain.model.Song
 import com.poulastaa.core.domain.repository.work.LocalWorkDatasource
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class RoomLocalWorkDatasource @Inject constructor(
@@ -40,22 +43,37 @@ class RoomLocalWorkDatasource @Inject constructor(
 
     override suspend fun removeAlbums(list: List<Long>) = workDao.deleteAlbums(list)
 
-
     override suspend fun getAllPlaylistId(): List<Long> = workDao.getAllSavedPlaylistId()
 
     override suspend fun savePlaylists(entry: List<PlaylistWithSong>) {
         coroutineScope {
-            async {
+            val song = async {
                 entry.map { it.songs }
                     .flatten()
                     .map { it.toSongEntity() }.let {
                         commonDao.insertSongs(it)
                     }
-            }.await()
-
-            entry.map { it.playlist }.map { it.toPlaylistEntity() }.let {
-                commonDao.insertPlaylists(it)
             }
+
+            val playlist = async {
+                entry.map { it.playlist }.map { it.toPlaylistEntity() }.let {
+                    commonDao.insertPlaylists(it)
+                }
+            }
+
+            song.await()
+            playlist.await()
+
+            entry.map { payload ->
+                payload.songs.map { song ->
+                    SongPlaylistRelationEntity(
+                        songId = song.id,
+                        playlistId = payload.playlist.id
+                    )
+                }.let {
+                    async { commonDao.insertSongPlaylistRelations(it) }
+                }
+            }.awaitAll()
         }
     }
 
@@ -69,6 +87,37 @@ class RoomLocalWorkDatasource @Inject constructor(
                 commonDao.insertArtists(it)
             }
     }
+
+    override suspend fun getAllPlaylistSongsIdList(playlistId: Long): List<Long> =
+        commonDao.getPlaylistSongsAsFlow(playlistId).first().map { it.id }
+
+    override suspend fun updatePlaylistsSongs(entry: PlaylistWithSong) {
+        coroutineScope {
+            val playlist = async { workDao.updatePlaylist(entry.playlist.toPlaylistEntity()) }
+            val song = async {
+                entry.songs.map { it.toSongEntity() }.let {
+                    commonDao.insertSongs(it)
+                }
+            }
+
+            playlist.await()
+            song.await()
+
+            entry.songs.map {
+                SongPlaylistRelationEntity(
+                    songId = it.id,
+                    playlistId = entry.playlist.id
+                )
+            }.let {
+                commonDao.insertSongPlaylistRelations(it)
+            }
+        }
+    }
+
+    override suspend fun removePlaylistSongs(
+        playlistId: Long,
+        list: List<Long>,
+    ) = workDao.deletePlaylistSongs(playlistId, list)
 
     override suspend fun removeArtists(list: List<Long>) = workDao.deleteArtists(list)
 

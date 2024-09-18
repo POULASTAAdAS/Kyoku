@@ -10,7 +10,10 @@ import com.poulastaa.core.domain.utils.Result
 
 interface RemoteWorkDatasource {
     suspend fun getUpdatedAlbums(list: List<Long>): Result<SyncData<AlbumWithSong>, DataError.Network>
-    suspend fun getUpdatedPlaylists(list: List<Long>): Result<SyncData<PlaylistWithSong>, DataError.Network>
+    suspend fun getUpdatedPlaylists(
+        list: List<Long>,
+        arePlaylist: Boolean,
+    ): Result<SyncData<PlaylistWithSong>, DataError.Network>
     suspend fun getUpdatedArtists(list: List<Long>): Result<SyncData<Artist>, DataError.Network>
     suspend fun getUpdatedFavourite(list: List<Long>): Result<SyncData<Song>, DataError.Network>
 }

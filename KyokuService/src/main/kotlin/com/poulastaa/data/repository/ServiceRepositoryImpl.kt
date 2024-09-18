@@ -680,6 +680,18 @@ class ServiceRepositoryImpl(
                 userType = user.userType,
                 artistIdList = req.list
             )
+
+            UpdateSavedDataType.FEV -> userRepo.getSyncFavourite(
+                userId = user.id,
+                userType = user.userType,
+                songIdList = req.list
+            )
+
+            UpdateSavedDataType.PLAYLIST_SONG -> userRepo.getSyncPlaylistSongs(
+                userId = user.id,
+                userType = user.userType,
+                playlistIdAndSongIdList = req.list
+            )
         }
     }
 

@@ -14,6 +14,10 @@ interface LocalWorkDatasource {
     suspend fun savePlaylists(entry: List<PlaylistWithSong>)
     suspend fun removePlaylist(list: List<Long>)
 
+    suspend fun getAllPlaylistSongsIdList(playlistId: Long): List<Long>
+    suspend fun updatePlaylistsSongs(entry: PlaylistWithSong)
+    suspend fun removePlaylistSongs(playlistId: Long, list: List<Long>)
+
     suspend fun getAllArtistsId(): List<Long>
     suspend fun saveArtists(entry: List<Artist>)
     suspend fun removeArtists(list: List<Long>)

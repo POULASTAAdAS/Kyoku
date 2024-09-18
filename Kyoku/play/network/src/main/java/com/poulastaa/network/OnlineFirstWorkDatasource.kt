@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 class OnlineFirstWorkDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteWorkDatasource {
     override suspend fun getUpdatedAlbums(list: List<Long>): Result<SyncData<AlbumWithSong>, DataError.Network> =
         client.post<UpdateSavedDataReq, SyncDto<AlbumWithSongDto>>(
@@ -45,19 +45,33 @@ class OnlineFirstWorkDatasource @Inject constructor(
             }
         }
 
-    override suspend fun getUpdatedPlaylists(list: List<Long>): Result<SyncData<PlaylistWithSong>, DataError.Network> =
-        client.post<UpdateSavedDataReq, SyncDto<PlaylistDto>>(
+    override suspend fun getUpdatedPlaylists(
+        list: List<Long>,
+        arePlaylist: Boolean,
+    ): Result<SyncData<PlaylistWithSong>, DataError.Network> = when (arePlaylist) {
+        true -> client.post<UpdateSavedDataReq, SyncDto<PlaylistDto>>(
             route = EndPoints.SyncData.route,
             body = UpdateSavedDataReq(
                 list = list,
                 type = UpdateSavedDataType.PLAYLIST
             ),
             gson = gson
-        ).map { dto ->
-            dto.toSyncData {
-                it.toPlaylistWithSong()
-            }
+        )
+
+        false -> client.post<UpdateSavedDataReq, SyncDto<PlaylistDto>>(
+            route = EndPoints.SyncData.route,
+            body = UpdateSavedDataReq(
+                list = list,
+                type = UpdateSavedDataType.PLAYLIST_SONG
+            ),
+            gson = gson
+        )
+    }.map { dto ->
+        dto.toSyncData {
+            it.toPlaylistWithSong()
         }
+    }
+
 
     override suspend fun getUpdatedArtists(list: List<Long>): Result<SyncData<Artist>, DataError.Network> =
         client.post<UpdateSavedDataReq, SyncDto<ArtistDto>>(
@@ -78,7 +92,7 @@ class OnlineFirstWorkDatasource @Inject constructor(
             route = EndPoints.SyncData.route,
             body = UpdateSavedDataReq(
                 list = list,
-                type = UpdateSavedDataType.ARTIST // todo fix error add favourite option
+                type = UpdateSavedDataType.FEV
             ),
             gson = gson
         ).map { dto ->

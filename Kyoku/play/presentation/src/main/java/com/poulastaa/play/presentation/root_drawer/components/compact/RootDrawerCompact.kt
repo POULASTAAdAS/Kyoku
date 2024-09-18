@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -182,7 +183,6 @@ fun RootDrawerCompact(
 
                                         is HomeOtherScreens.ViewArtist -> {
                                             Log.d("artistId nav", screen.id.toString())
-
 
                                             navController.navigate(
                                                 route = DrawerScreen.ViewArtist.route + "/${screen.id}"
@@ -495,7 +495,14 @@ fun RootDrawerCompact(
                                 navController.currentDestination?.route?.contains(DrawerScreen.Settings.route) == true
                             ) 0.dp else 45.dp
                         )
-                        .offset(y = dragScope.coerceAtLeast(0f).dp)
+                        .offset {
+                            IntOffset(
+                                x = 0,
+                                dragScope
+                                    .coerceAtLeast(0f)
+                                    .toInt()
+                            )
+                        }
                         .draggable(
                             state = rememberDraggableState {
                                 dragScope += it
@@ -545,7 +552,9 @@ fun RootDrawerCompact(
             AnimatedVisibility(
                 modifier = Modifier
                     .fillMaxSize()
-                    .offset(y = dragScope.dp),
+                    .offset {
+                        IntOffset(x = 0, dragScope.toInt())
+                    },
                 visible = state.player.isPlayerExtended,
                 enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                         slideInVertically(tween(400)) { it },

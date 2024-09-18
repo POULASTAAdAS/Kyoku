@@ -130,4 +130,16 @@ interface UserRepository {
         userType: UserType,
         artistIdList: List<Long>,
     ): SyncDto<Any>
+
+    suspend fun getSyncFavourite(
+        userId: Long,
+        userType: UserType,
+        songIdList: List<Long>,
+    ): SyncDto<Any>
+
+    suspend fun getSyncPlaylistSongs(
+        userId: Long,
+        userType: UserType,
+        playlistIdAndSongIdList: List<Long>,
+    ): SyncDto<Any>
 }

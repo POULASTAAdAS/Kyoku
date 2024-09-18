@@ -21,7 +21,7 @@ import kotlin.time.toJavaDuration
 
 class SyncLibraryWorkerScheduler @Inject constructor(
     private val context: Context,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
 ) : SyncLibraryScheduler {
     private val workManager = WorkManager.getInstance(context)
 
@@ -36,6 +36,8 @@ class SyncLibraryWorkerScheduler @Inject constructor(
             playlist.await()
             artist.await()
             favourite.await()
+
+            async { updatePlaylistSongWorker(interval) }.await()
         }
     }
 
@@ -101,6 +103,40 @@ class SyncLibraryWorkerScheduler @Inject constructor(
         ).addTag(WorkType.PLAYLIST_SYNC.name)
             .build()
 
+
+        applicationScope.launch {
+            workManager.enqueue(workReq).await()
+        }.join()
+    }
+
+    private suspend fun updatePlaylistSongWorker(interval: Duration) {
+        val isSyncScheduled = withContext(Dispatchers.IO) {
+            workManager.getWorkInfosByTag(WorkType.PLAYLIST_SONG_SYNC.name)
+                .get()
+                .any {
+                    it.state == WorkInfo.State.ENQUEUED ||
+                            it.state == WorkInfo.State.RUNNING ||
+                            it.state == WorkInfo.State.SUCCEEDED
+                }
+        }
+
+        if (isSyncScheduled) return
+
+        val workReq = PeriodicWorkRequestBuilder<UpdatePlaylistSongWorker>(
+            repeatInterval = interval.toJavaDuration()
+        ).setConstraints(
+            constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+        ).setBackoffCriteria(
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 2000L,
+            timeUnit = TimeUnit.SECONDS
+        ).setInitialDelay(
+            duration = 30,
+            timeUnit = TimeUnit.MINUTES
+        ).addTag(WorkType.PLAYLIST_SYNC.name)
+            .build()
 
         applicationScope.launch {
             workManager.enqueue(workReq).await()
@@ -199,6 +235,7 @@ class SyncLibraryWorkerScheduler @Inject constructor(
     private enum class WorkType {
         ALBUM_SYNC,
         PLAYLIST_SYNC,
+        PLAYLIST_SONG_SYNC,
         ARTIST_SYNC,
     }
 }

@@ -37,7 +37,9 @@ fun Route.syncData(service: ServiceRepository) {
                         )
                     }
 
-                    UpdateSavedDataType.PLAYLIST -> {
+                    UpdateSavedDataType.PLAYLIST,
+                    UpdateSavedDataType.PLAYLIST_SONG,
+                        -> {
                         val res = result as SyncDto<PlaylistDto>
 
                         call.respond(
@@ -48,6 +50,15 @@ fun Route.syncData(service: ServiceRepository) {
 
                     UpdateSavedDataType.ARTIST -> {
                         val res = result as SyncDto<ArtistDto>
+
+                        call.respond(
+                            message = res,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+
+                    UpdateSavedDataType.FEV -> {
+                        val res = result as SyncDto<SongDto>
 
                         call.respond(
                             message = res,

@@ -6,5 +6,7 @@ import kotlinx.serialization.Serializable
 enum class UpdateSavedDataType {
     ALBUM,
     PLAYLIST,
-    ARTIST
+    PLAYLIST_SONG,
+    ARTIST,
+    FEV
 }

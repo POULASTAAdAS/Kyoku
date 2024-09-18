@@ -153,7 +153,7 @@ private fun Preview() {
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 title = "Good Morning",
                 profileUrl = "",
-                onProfileClick = { /*TODO*/ }
+                onProfileClick = { }
             ) {}
         }
     }

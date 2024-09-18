@@ -68,18 +68,6 @@ class RoomLocalViewDatasource @Inject constructor(
 
     override suspend fun getFevSongIdList(): List<Long> = commonDao.getFevSongIds()
 
-    override suspend fun getOldMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
-
-    override suspend fun getArtistMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
-
-    override suspend fun getPopularMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
-
     override suspend fun insertSongs(list: List<Song>, type: LocalViewDatasource.ReqType?) {
         list.map { it.toSongEntity() }.let { commonDao.insertSongs(it) }
         val idList = list.map { it.id }

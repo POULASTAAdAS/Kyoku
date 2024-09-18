@@ -20,9 +20,6 @@ interface LocalViewDatasource {
     suspend fun getPrevSongIdList(type: ReqType): List<Long>
 
     suspend fun getFevSongIdList(): List<Long>
-    suspend fun getOldMix(): List<PlaylistSong>
-    suspend fun getArtistMix(): List<PlaylistSong>
-    suspend fun getPopularMix(): List<PlaylistSong>
 
     suspend fun insertSongs(list: List<Song>, type: ReqType? = null)
     suspend fun savePlaylist(data: PlaylistData)

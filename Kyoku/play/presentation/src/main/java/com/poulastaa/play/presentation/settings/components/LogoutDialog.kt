@@ -104,7 +104,7 @@ private fun Preview() {
                 .background(MaterialTheme.colorScheme.surfaceContainer)
         ) {
             LogoutDialog(
-                onConform = { /*TODO*/ },
+                onConform = {},
                 isLoginOut = true
             ) {
 

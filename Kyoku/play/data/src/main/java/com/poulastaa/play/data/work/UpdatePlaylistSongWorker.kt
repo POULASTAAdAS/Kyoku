@@ -11,7 +11,7 @@ import dagger.assisted.AssistedInject
 
 
 @HiltWorker
-class UpdatePlaylistWorker @AssistedInject constructor(
+class UpdatePlaylistSongWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val work: WorkRepository,
@@ -19,7 +19,7 @@ class UpdatePlaylistWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 4) return Result.failure()
 
-        return when (val result = work.getUpdatedPlaylists()) {
+        return when (val result = work.getUpdatedPlaylistSongs()) {
             is com.poulastaa.core.domain.utils.Result.Error -> result.error.toWorkResult()
 
             is com.poulastaa.core.domain.utils.Result.Success -> Result.success()
