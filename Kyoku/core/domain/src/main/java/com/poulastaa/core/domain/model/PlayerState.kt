@@ -9,7 +9,7 @@ sealed interface PlayerState {
     data class Playing(val isPlaying: Boolean) : PlayerState
 
     data class CurrentlyPlaying(
-        val id: Long,
+        val songId: Long,
         val hasNext: Boolean = false,
         val hasPrev: Boolean = false
     ) : PlayerState

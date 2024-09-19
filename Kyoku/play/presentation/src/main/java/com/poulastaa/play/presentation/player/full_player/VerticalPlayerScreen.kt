@@ -254,7 +254,7 @@ fun VerticalPlayerScreen(
                             contentColor = song.colors[0]
                         )
                     ) {
-
+                        onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
                     }
 
                     PlayerCustomIconButton(
@@ -264,7 +264,7 @@ fun VerticalPlayerScreen(
                             contentColor = song.colors[0]
                         )
                     ) {
-
+                        onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.songId))
                     }
 
                     PlayerCustomIconButton(
@@ -275,7 +275,7 @@ fun VerticalPlayerScreen(
                             contentColor = song.colors[0]
                         )
                     ) {
-
+                        onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
                     }
 
                     PlayerCustomIconButton(
@@ -347,7 +347,7 @@ fun VerticalPlayerScreen(
                         queue = queue,
                         onEvent = onEvent
                     ) else {
-                        LaunchedEffect(Unit) {
+                        LaunchedEffect(Unit , song.songId) {
                             onEvent(PlayerUiEvent.GetSongInfo(song.songId))
                         }
 
@@ -391,9 +391,7 @@ fun VerticalPlayerScreen(
                 controllerPos = controllerPos,
                 header = header,
                 song = song,
-                progress = info.progress,
-                hasNext = info.hasNext,
-                hasPrev = info.hasPrev,
+                info = info,
                 onEvent = onEvent
             )
         }
@@ -523,7 +521,7 @@ private fun Queue(
                 PlayerSongCard(
                     modifier = Modifier.clickable {
                         onEvent(
-                            PlayerUiEvent.PlayBackController.OnSongClick(
+                            PlayerUiEvent.PlayBackController.OnQueueSongClick(
                                 queue[it].songId
                             )
                         )
@@ -549,11 +547,9 @@ private fun FloatingController(
     modifier: Modifier = Modifier,
     screenHeight: Int,
     controllerPos: Float,
-    progress: Float,
     header: String,
     song: PlayerUiSong,
-    hasNext: Boolean,
-    hasPrev: Boolean,
+    info: PlayerUiInfo,
     onEvent: (PlayerUiEvent.PlayBackController) -> Unit,
 ) {
     val config = LocalConfiguration.current
@@ -633,7 +629,7 @@ private fun FloatingController(
                                 color = IconButtonDefaults.iconButtonColors(
                                     contentColor = song.colors[0]
                                 ),
-                                enable = hasPrev,
+                                enable = info.hasPrev,
                                 modifier = Modifier
                                     .aspectRatio(.8f)
                                     .rotate(90f),
@@ -645,7 +641,7 @@ private fun FloatingController(
                             Spacer(Modifier.width(MaterialTheme.dimens.small2))
 
                             PlayControlButton(
-                                icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                                icon = if (info.isPlaying) PauseIcon else PlayIcon,
                                 color = IconButtonDefaults.iconButtonColors(
                                     contentColor = song.colors[0]
                                 ),
@@ -662,7 +658,7 @@ private fun FloatingController(
                                 color = IconButtonDefaults.iconButtonColors(
                                     contentColor = song.colors[0]
                                 ),
-                                enable = hasNext,
+                                enable = info.hasNext,
                                 modifier = Modifier.aspectRatio(.8f),
                                 onClick = {
                                     onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
@@ -675,7 +671,7 @@ private fun FloatingController(
                 }
 
                 Slider(
-                    value = progress,
+                    value = info.progress,
                     onValueChange = {
                         onEvent(PlayerUiEvent.PlayBackController.SeekTo(it))
                     },

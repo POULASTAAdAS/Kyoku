@@ -202,7 +202,7 @@ fun HorizontalPlayerScreen(
                                 contentColor = song.colors[1]
                             )
                         ) {
-
+                            onEvent(PlayerUiEvent.PlayBackController.OnPlayPrevClick)
                         }
 
                         PlayerCustomIconButton(
@@ -213,7 +213,7 @@ fun HorizontalPlayerScreen(
                                 contentColor = song.colors[1]
                             )
                         ) {
-
+                            onEvent(PlayerUiEvent.PlayBackController.OnPlayPause(song.songId))
                         }
 
                         PlayerCustomIconButton(
@@ -225,7 +225,7 @@ fun HorizontalPlayerScreen(
                                 contentColor = song.colors[1]
                             )
                         ) {
-
+                            onEvent(PlayerUiEvent.PlayBackController.OnPlayNextClick)
                         }
 
                         PlayerCustomIconButton(
@@ -276,7 +276,7 @@ fun HorizontalPlayerScreen(
                                     queue = queue,
                                     onEvent = onEvent,
                                 ) else {
-                                    LaunchedEffect(Unit) {
+                                    LaunchedEffect(Unit,song.songId) {
                                         onEvent(PlayerUiEvent.GetSongInfo(song.songId))
                                     }
 
@@ -535,7 +535,7 @@ private fun Queue(
             PlayerSongCard(
                 modifier = Modifier.clickable {
                     onEvent(
-                        PlayerUiEvent.PlayBackController.OnSongClick(
+                        PlayerUiEvent.PlayBackController.OnQueueSongClick(
                             queue[index].songId
                         )
                     )

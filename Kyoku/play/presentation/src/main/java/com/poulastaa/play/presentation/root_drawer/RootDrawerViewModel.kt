@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.root_drawer
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -120,6 +121,27 @@ class RootDrawerViewModel @Inject constructor(
                                 )
                             )
                         )
+
+                        state = state.copy(
+                            player = state.player.copy(
+                                queue = state.player.queue.map { uiSong ->
+                                    if (uiSong.songId == playerState.songId) uiSong.copy(isPlaying = true)
+                                    else uiSong.copy(isPlaying = false)
+                                }
+                            )
+                        )
+
+                        state.player.queue
+                            .firstOrNull { it.songId == playerState.songId }
+                            ?.let { song ->
+                                state = state.copy(
+                                    player = state.player.copy(
+                                        info = state.player.info.copy(
+                                            currentPlayingIndex = song.index.dec(),
+                                        )
+                                    )
+                                )
+                            }
                     }
 
                     else -> Unit
@@ -389,24 +411,18 @@ class RootDrawerViewModel @Inject constructor(
 
             is PlayerUiEvent.PlayBackController -> {
                 when (event) {
-                    PlayerUiEvent.PlayBackController.OnPlayNextClick -> {
+                    PlayerUiEvent.PlayBackController.OnPlayPrevClick -> player.onEvent(PlayerEvent.PlayPrev)
+                    PlayerUiEvent.PlayBackController.OnPlayNextClick -> player.onEvent(PlayerEvent.PlayNext)
+                    is PlayerUiEvent.PlayBackController.OnPlayPause -> player.onEvent(PlayerEvent.PlayPause)
+                    is PlayerUiEvent.PlayBackController.SeekTo -> player.onEvent(
+                        PlayerEvent.SeekTo(
+                            event.pos
+                        )
+                    )
 
-                    }
-
-                    is PlayerUiEvent.PlayBackController.OnPlayPause -> {
-
-                    }
-
-                    PlayerUiEvent.PlayBackController.OnPlayPrevClick -> {
-
-                    }
-
-                    is PlayerUiEvent.PlayBackController.SeekTo -> {
-
-                    }
-
-                    is PlayerUiEvent.PlayBackController.OnSongClick -> {
-
+                    is PlayerUiEvent.PlayBackController.OnQueueSongClick -> {
+                        val songIndex = state.player.queue.indexOfFirst { it.songId == event.songId }
+                        player.onEvent(PlayerEvent.SeekToSong(songIndex))
                     }
                 }
             }
@@ -418,7 +434,8 @@ class RootDrawerViewModel @Inject constructor(
                     player = state.player.copy(
                         info = state.player.info.copy(
                             artist = state.player.info.artist.copy(
-                                loadingState = DataLoadingState.LOADING
+                                songId = event.songId,
+                                loadingState = DataLoadingState.LOADING,
                             )
                         )
                     )
@@ -495,28 +512,46 @@ class RootDrawerViewModel @Inject constructor(
     }
 
     private fun loadSongs() = viewModelScope.launch {
-        player.addMediaItem(repo.getSongs().first())
+        val data = repo.getSongs().first()
+
+        player.addMediaItem(data)
         player.onEvent(PlayerEvent.PlayPause)
 
-        repo.getSongs().collectLatest { payload ->
-            state = state.copy(
-                player = state.player.copy(
-                    isData = payload.isNotEmpty(),
-                    loadingState = DataLoadingState.LOADED,
-                    queue = payload.map { it.toPlayerUiSong() }
-                )
+        state = state.copy(
+            player = state.player.copy(
+                isData = data.isNotEmpty(),
+                loadingState = DataLoadingState.LOADED,
+                queue = data.map { it.toPlayerUiSong() }
             )
-        }
+        )
+
+//        repo.getSongs().collectLatest { payload ->
+//            state = state.copy(
+//                player = state.player.copy(
+//                    isData = payload.isNotEmpty(),
+//                    loadingState = DataLoadingState.LOADED,
+//                    queue = payload.map { it.toPlayerUiSong() }
+//                )
+//            )
+//        }
     }
 
     private fun loadInfo() = viewModelScope.launch {
-        repo.getInfo().collectLatest { payload ->
-            state = state.copy(
-                player = state.player.copy(
-                    info = payload.toPlayerUiInfo(0)
-                )
+        val info = repo.getInfo().first()
+
+        state = state.copy(
+            player = state.player.copy(
+                info = info.toPlayerUiInfo(0)
             )
-        }
+        )
+
+//        repo.getInfo().collectLatest { payload ->
+//            state = state.copy(
+//                player = state.player.copy(
+//                    info = payload.toPlayerUiInfo(0)
+//                )
+//            )
+//        }
     }
 
     private fun readHeader() {

@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 class PlayerDatasource @Inject constructor(
@@ -46,6 +47,16 @@ class PlayerDatasource @Inject constructor(
                     playJob = startProgress()
                 }
             }
+
+            PlayerEvent.PlayNext -> player.seekToNext()
+            PlayerEvent.PlayPrev -> player.seekToPrevious()
+
+            is PlayerEvent.SeekTo -> {
+                val pos = (event.value * player.duration / 100f).toLong()
+                player.seekTo(pos)
+            }
+
+            is PlayerEvent.SeekToSong -> player.seekTo(event.index, 0)
         }
     }
 
@@ -91,7 +102,7 @@ class PlayerDatasource @Inject constructor(
                         .setArtworkUri(Uri.parse(song.coverImage))
                         .build()
                 )
-                .setMediaId(song.id.toString())
+                .setMediaId(song.songId.toString())
                 .build()
         }.let {
             player.addMediaItems(it)
@@ -101,7 +112,7 @@ class PlayerDatasource @Inject constructor(
 
     private fun startProgress() = CoroutineScope(Dispatchers.Main).launch {
         while (true) {
-            val progress = DecimalFormat("##.##")
+            val progress = DecimalFormat("00.00")
                 .format((player.currentPosition.toFloat() / player.duration * 100f))
                 .toFloat()
             val second = millisecondsToMinutesAndSeconds(player.currentPosition)
@@ -119,15 +130,12 @@ class PlayerDatasource @Inject constructor(
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
-        Log.d("playbackState", playbackState.toString())
-
         when (playbackState) {
-            Player.STATE_READY -> {
-                _playerUiState.value = PlayerState.Ready(millisecondsToMinutesAndSeconds(player.duration))
-                _playerUiState.value = PlayerState.Playing(isPlaying = true)
-            }
-
             ExoPlayer.STATE_IDLE -> _playerUiState.value = PlayerState.Initial
+
+            Player.STATE_READY -> _playerUiState.value =
+                PlayerState.Ready(millisecondsToMinutesAndSeconds(player.duration))
+
             ExoPlayer.STATE_ENDED -> _playerUiState.value = PlayerState.Playing(isPlaying = false)
 
             else -> Unit
@@ -135,14 +143,13 @@ class PlayerDatasource @Inject constructor(
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
-        Log.d("isPlaying", isPlaying.toString())
+        _playerUiState.value = PlayerState.Playing(isPlaying = isPlaying)
     }
 
     override fun onTracksChanged(tracks: Tracks) {
         super.onTracksChanged(tracks)
-
         _playerUiState.value = PlayerState.CurrentlyPlaying(
-            id = player.currentMediaItem?.mediaId?.toLong() ?: -1L,
+            songId = player.currentMediaItem?.mediaId?.toLong() ?: -1L,
             hasPrev = player.hasPreviousMediaItem(),
             hasNext = player.hasNextMediaItem()
         )
@@ -153,6 +160,10 @@ class PlayerDatasource @Inject constructor(
         val minutes = (totalSeconds / 60).toLong()
         val seconds = (totalSeconds % 60).toLong()
 
-        return "$minutes.$seconds"
+        return String.format(
+            locale = Locale.Builder().build(),
+            format = "%02d.%02d",
+            minutes, seconds
+        )
     }
 }
