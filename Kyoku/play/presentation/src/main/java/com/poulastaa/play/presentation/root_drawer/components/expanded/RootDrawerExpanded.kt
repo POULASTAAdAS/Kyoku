@@ -271,6 +271,7 @@ fun RowScope.RootDrawerExpanded(
                     state.newAlbumUiState.isOpen ||
                     state.newArtisUiState.isOpen ||
                     state.createPlaylistUiState.isOpen ||
+                    state.player.isPlayerExtended ||
                     (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                 ) ViewArtistCompactRootScreen(
                     artistId = id,

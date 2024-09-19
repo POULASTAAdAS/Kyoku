@@ -587,7 +587,16 @@ fun RootDrawerCompact(
                     ),
                     info = state.player.info,
                     queue = state.player.queue,
-                    onEvent = onPlayerEvent
+                    onEvent = {
+                        if (it is PlayerUiEvent.OnArtistClick) {
+                            navController.navigate(
+                                route = DrawerScreen.ViewArtist.route + "/${it.artistId}"
+                            )
+
+                            onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+                        }
+                        else onPlayerEvent(it)
+                    }
                 )
             }
         }
@@ -597,6 +606,14 @@ fun RootDrawerCompact(
         songId = state.viewSongArtistSongId,
         sheetState = viewSongArtistSheetState,
         navigateToArtistScreen = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
+                onEvent(RootDrawerUiEvent.OnViewCancel)
+                onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+            }
+
             navController.navigate(
                 route = DrawerScreen.ViewArtist.route + "/${it}"
             )

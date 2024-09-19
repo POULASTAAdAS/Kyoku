@@ -410,15 +410,13 @@ class RootDrawerViewModel @Inject constructor(
                 }
             }
 
-            is PlayerUiEvent.OnArtistClick -> {
-
-            }
-
             PlayerUiEvent.ClosePlayer -> {
                 state = state.copy(
                     player = PlayerUiState()
                 )
             }
+
+            else -> Unit
         }
     }
 

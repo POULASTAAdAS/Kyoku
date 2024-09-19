@@ -285,9 +285,10 @@ fun HorizontalPlayerScreen(
                                         label = ""
                                     ) { state ->
                                         when (state) {
-                                            true -> SongInfoCardLoading()
+                                            true -> SongInfoCardLoading(Modifier.padding(MaterialTheme.dimens.medium1))
                                             false -> SongInfoCard(
                                                 song = song,
+                                                header = header,
                                                 artist = info.artist,
                                                 onEvent = onEvent
                                             )
@@ -421,6 +422,7 @@ fun HorizontalPlayerScreen(
 
 @Composable
 private fun SongInfoCard(
+    header: String,
     song: PlayerUiSong,
     artist: PlayerSongArtist,
     onEvent: (PlayerUiEvent.OnArtistClick) -> Unit,
@@ -472,7 +474,7 @@ private fun SongInfoCard(
                     .clickable {
                         onEvent(PlayerUiEvent.OnArtistClick(artist.id))
                     },
-                header = "",
+                header = header,
                 artist = artist,
             )
 

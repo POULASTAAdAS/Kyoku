@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
@@ -263,7 +264,16 @@ fun RootDrawerExpandedSmall(
                 ),
                 info = state.player.info,
                 queue = state.player.queue,
-                onEvent = onPlayerEvent
+                onEvent = {
+                    if (it is PlayerUiEvent.OnArtistClick) {
+                        navController.navigate(
+                            route = DrawerScreen.ViewArtist.route + "/${it.artistId}"
+                        )
+
+                        onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+                    }
+                    else onPlayerEvent(it)
+                }
             )
         }
 
@@ -329,7 +339,17 @@ fun RootDrawerExpandedSmall(
         songId = state.viewSongArtistSongId,
         sheetState = viewSongArtistSheetState,
         navigateToArtistScreen = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
+                onEvent(RootDrawerUiEvent.OnViewCancel)
+                onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+            }
 
+            navController.navigate(
+                route = DrawerScreen.ViewArtist.route + "/$it"
+            )
         },
         navigateBack = {
             scope.launch {

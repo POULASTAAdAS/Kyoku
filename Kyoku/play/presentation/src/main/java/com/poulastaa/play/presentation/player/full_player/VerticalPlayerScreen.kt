@@ -38,6 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -355,7 +356,21 @@ fun VerticalPlayerScreen(
                             label = ""
                         ) { state ->
                             when (state) {
-                                true -> SongInfoCardLoading()
+                                true -> Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(config.screenHeightDp.dp)
+                                        .padding(horizontal = MaterialTheme.dimens.medium1)
+                                        .padding(bottom = MaterialTheme.dimens.medium1),
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 7.dp
+                                    ),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = song.colors[1],
+                                    )
+                                ) {
+                                    SongInfoCardLoading(modifier = Modifier.padding(MaterialTheme.dimens.medium1))
+                                }
                                 false -> SongInfoCard(
                                     header = header,
                                     config = config,
@@ -412,6 +427,40 @@ private fun SongInfoCard(
                 ),
             contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
         ) {
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.song),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    )
+
+                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                    Text(
+                        text = song.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+
+            item {
+                Column {
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = song.colors[0]
+                    )
+
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                }
+            }
+
             items(artist.artist) { artist ->
                 SongArtistCard(
                     modifier = Modifier

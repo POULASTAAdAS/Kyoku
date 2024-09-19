@@ -80,7 +80,13 @@ class SongArtistsViewModel @Inject constructor(
     fun onEvent(event: SongArtistsUiEvent) {
         when (event) {
             is SongArtistsUiEvent.OnArtistClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        SongArtistsUiAction.NavigateToArtist(
+                            event.artistId
+                        )
+                    )
+                }
             }
         }
     }

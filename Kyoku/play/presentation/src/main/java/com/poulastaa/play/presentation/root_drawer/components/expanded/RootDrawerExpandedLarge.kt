@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
@@ -258,7 +259,16 @@ fun RootDrawerExpandedLarge(
                 ),
                 info = state.player.info,
                 queue = state.player.queue,
-                onEvent = onPlayerEvent
+                onEvent = {
+                    if (it is PlayerUiEvent.OnArtistClick) {
+                        navController.navigate(
+                            route = DrawerScreen.ViewArtist.route + "/${it.artistId}"
+                        ) {
+                            popUpTo(DrawerScreen.ViewArtist.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    } else onPlayerEvent(it)
+                }
             )
         }
     }
@@ -267,7 +277,18 @@ fun RootDrawerExpandedLarge(
         songId = state.viewSongArtistSongId,
         sheetState = viewSongArtistSheetState,
         navigateToArtistScreen = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
+            }
 
+            navController.navigate(
+                route = DrawerScreen.ViewArtist.route + "/$it"
+            ) {
+                popUpTo(DrawerScreen.ViewArtist.route) { inclusive = true }
+                launchSingleTop = true
+            }
         },
         navigateBack = {
             scope.launch {
