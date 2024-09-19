@@ -15,6 +15,9 @@ data class PlayerUiState(
 
 data class PlayerUiInfo(
     val currentPlayingIndex: Int = 0,
+    val currentProgress: String = "0:0",
+    val endTime: String = "0:0",
+    val progress: Float = 0f,
     val type: String = "",
     val isShuffledEnabled: Boolean = false,
     val repeatState: RepeatState = RepeatState.IDLE,

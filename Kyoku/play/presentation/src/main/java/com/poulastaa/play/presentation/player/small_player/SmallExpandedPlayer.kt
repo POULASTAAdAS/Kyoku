@@ -44,6 +44,7 @@ import com.poulastaa.core.presentation.designsystem.PauseIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 
@@ -53,8 +54,7 @@ fun SmallExpandedPlayer(
     modifier: Modifier = Modifier,
     header: String,
     song: PlayerUiSong,
-    hasNext: Boolean,
-    hasPrev: Boolean,
+    info: PlayerUiInfo,
     onEvent: (PlayerUiEvent) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
@@ -114,7 +114,7 @@ fun SmallExpandedPlayer(
                             color = IconButtonDefaults.iconButtonColors(
                                 contentColor = song.colors[1]
                             ),
-                            enable = hasPrev,
+                            enable = info.hasPrev,
                             modifier = Modifier
                                 .rotate(90f)
                                 .aspectRatio(.5f),
@@ -126,7 +126,7 @@ fun SmallExpandedPlayer(
                         Spacer(Modifier.weight(1f))
 
                         PlayControlButton(
-                            icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                            icon = if (info.isPlaying) PauseIcon else PlayIcon,
                             color = IconButtonDefaults.iconButtonColors(
                                 contentColor = song.colors[1]
                             ),
@@ -144,7 +144,7 @@ fun SmallExpandedPlayer(
                             color = IconButtonDefaults.iconButtonColors(
                                 contentColor = song.colors[1]
                             ),
-                            enable = hasNext,
+                            enable = info.hasPrev,
                             modifier = Modifier
                                 .aspectRatio(.5f),
                             onClick = {
@@ -156,7 +156,7 @@ fun SmallExpandedPlayer(
             }
 
             Slider(
-                value = song.progress,
+                value = info.progress,
                 modifier = Modifier.weight(.1f),
                 onValueChange = {
                     onEvent(PlayerUiEvent.PlayBackController.SeekTo(it))
@@ -222,35 +222,34 @@ fun SmallExpandedPlayer(
     }
 }
 
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(MaterialTheme.dimens.large1)
-        ) {
-            SmallExpandedPlayer(
-                modifier = Modifier
-                    .height(130.dp)
-                    .width(200.dp)
-                    .clickable { },
-                header = "",
-                hasNext = false,
-                hasPrev = true,
-                song = PlayerUiSong(
-                    title = "That cool song",
-                    artist = "That Cool artist",
-                    endTime = "4:00",
-                    progress = 13.4f,
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.surfaceContainer
-                    )
-                )
-            ) { }
-        }
-    }
-}
+//@PreviewLightDark
+//@Composable
+//private fun Preview() {
+//    AppThem {
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(MaterialTheme.colorScheme.surfaceContainer)
+//                .padding(MaterialTheme.dimens.large1)
+//        ) {
+//            SmallExpandedPlayer(
+//                modifier = Modifier
+//                    .height(130.dp)
+//                    .width(200.dp)
+//                    .clickable { },
+//                header = "",
+//                hasNext = false,
+//                hasPrev = true,
+//                progress = 0f,
+//                song = PlayerUiSong(
+//                    title = "That cool song",
+//                    artist = "That Cool artist",
+//                    colors = listOf(
+//                        MaterialTheme.colorScheme.primary,
+//                        MaterialTheme.colorScheme.surfaceContainer
+//                    )
+//                )
+//            ) { }
+//        }
+//    }
+//}

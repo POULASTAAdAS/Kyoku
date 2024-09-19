@@ -208,7 +208,7 @@ fun HorizontalPlayerScreen(
                         PlayerCustomIconButton(
                             modifier = Modifier
                                 .aspectRatio(.7f),
-                            icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                            icon = if (info.isPlaying) PauseIcon else PlayIcon,
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = song.colors[1]
                             )
@@ -375,19 +375,19 @@ fun HorizontalPlayerScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = song.currentProgress,
+                    text = info.currentProgress,
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                     color = song.colors[1]
                 )
                 Text(
-                    text = song.endTime,
+                    text = info.endTime,
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                     color = song.colors[0]
                 )
             }
 
             Slider(
-                value = song.progress,
+                value = info.progress,
                 onValueChange = { pos ->
                     onEvent(PlayerUiEvent.PlayBackController.SeekTo(pos))
                 },
@@ -401,7 +401,7 @@ fun HorizontalPlayerScreen(
                         thumbTrackGapSize = 0.dp,
                         drawStopIndicator = null,
                         colors = SliderDefaults.colors(
-                            activeTrackColor = if (song.progress > 60f) song.colors[0] else song.colors[1],
+                            activeTrackColor = if (info.progress > 60f) song.colors[0] else song.colors[1],
                         )
                     )
                 },
@@ -572,8 +572,6 @@ private fun Preview() {
                 songId = 1,
                 title = "That cool song",
                 artist = "That Cool artist",
-                endTime = "4:00",
-                progress = 13.4f,
                 colors = listOf(
                     MaterialTheme.colorScheme.primary,
                     MaterialTheme.colorScheme.surfaceContainer
@@ -599,8 +597,6 @@ private fun Preview() {
                     songId = it.toLong(),
                     title = "That cool song",
                     artist = "That Cool artist",
-                    endTime = "4:00",
-                    progress = 13.4f,
                     colors = listOf(
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.surfaceContainer

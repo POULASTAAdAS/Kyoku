@@ -1,9 +1,10 @@
-package com.poulastaa.play.domain
+package com.poulastaa.core.domain.model
 
 sealed interface PlayerState {
     data object Initial : PlayerState
-    data class Ready(val duration: Long) : PlayerState
-    data class Progress(val value: Long) : PlayerState
+    data class Ready(val totalTime: String) : PlayerState
+    data class ProgressBar(val value: Float) : PlayerState
+    data class Progress(val value: String) : PlayerState
     data class Buffering(val value: Long) : PlayerState
     data class Playing(val isPlaying: Boolean) : PlayerState
 

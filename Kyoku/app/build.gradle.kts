@@ -59,6 +59,9 @@ dependencies {
     implementation(libs.material3WindowSizeClass)
     implementation(libs.google.id)
 
+    // media
+    implementation(libs.media3.session)
+
 
     // project
     implementation(projects.core.presentation.designsystem)

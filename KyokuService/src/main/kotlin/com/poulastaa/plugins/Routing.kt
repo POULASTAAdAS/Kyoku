@@ -76,6 +76,10 @@ private fun Routing.common(service: ServiceRepository) {
     getCreatePlaylistPagerData(service)
 
     getSongArtist(service)
+
+    getMasterPlaylist(service)
+    get_128_Or_320_Playlist(service)
+    getSongSegment(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

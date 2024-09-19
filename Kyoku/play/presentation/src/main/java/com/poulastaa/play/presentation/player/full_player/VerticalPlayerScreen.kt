@@ -168,7 +168,7 @@ fun VerticalPlayerScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.large2))
 
                 Slider(
-                    value = song.progress,
+                    value = info.progress,
                     onValueChange = { pos ->
                         onEvent(PlayerUiEvent.PlayBackController.SeekTo(pos))
                     },
@@ -204,12 +204,12 @@ fun VerticalPlayerScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = song.currentProgress,
+                        text = info.currentProgress,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = song.colors[0]
                     )
                     Text(
-                        text = song.endTime,
+                        text = info.endTime,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = song.colors[0]
                     )
@@ -259,7 +259,7 @@ fun VerticalPlayerScreen(
 
                     PlayerCustomIconButton(
                         modifier = Modifier.size(90.dp),
-                        icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                        icon = if (info.isPlaying) PauseIcon else PlayIcon,
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = song.colors[0]
                         )
@@ -371,6 +371,7 @@ fun VerticalPlayerScreen(
                                 ) {
                                     SongInfoCardLoading(modifier = Modifier.padding(MaterialTheme.dimens.medium1))
                                 }
+
                                 false -> SongInfoCard(
                                     header = header,
                                     config = config,
@@ -390,6 +391,7 @@ fun VerticalPlayerScreen(
                 controllerPos = controllerPos,
                 header = header,
                 song = song,
+                progress = info.progress,
                 hasNext = info.hasNext,
                 hasPrev = info.hasPrev,
                 onEvent = onEvent
@@ -547,6 +549,7 @@ private fun FloatingController(
     modifier: Modifier = Modifier,
     screenHeight: Int,
     controllerPos: Float,
+    progress: Float,
     header: String,
     song: PlayerUiSong,
     hasNext: Boolean,
@@ -672,7 +675,7 @@ private fun FloatingController(
                 }
 
                 Slider(
-                    value = song.progress,
+                    value = progress,
                     onValueChange = {
                         onEvent(PlayerUiEvent.PlayBackController.SeekTo(it))
                     },
@@ -794,8 +797,6 @@ private fun Preview() {
                 songId = 1,
                 title = "That cool song",
                 artist = "That Cool artist",
-                endTime = "4:00",
-                progress = 13.4f,
                 colors = listOf(
                     MaterialTheme.colorScheme.primary,
                     MaterialTheme.colorScheme.surfaceContainer
@@ -812,8 +813,6 @@ private fun Preview() {
                     songId = it.toLong(),
                     title = "That cool song",
                     artist = "That Cool artist",
-                    endTime = "4:00",
-                    progress = 13.4f,
                     colors = listOf(
                         MaterialTheme.colorScheme.primary,
                         MaterialTheme.colorScheme.surfaceContainer

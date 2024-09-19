@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
+import com.poulastaa.core.domain.model.PlayerEvent
+import com.poulastaa.core.domain.model.PlayerState
+import com.poulastaa.core.domain.repository.player.KyokuPlayer
 import com.poulastaa.core.domain.repository.player.PlayerRepository
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.Result
@@ -36,6 +39,7 @@ class RootDrawerViewModel @Inject constructor(
     private val ds: DataStoreRepository,
     private val syncScheduler: SyncLibraryScheduler,
     private val repo: PlayerRepository,
+    private val player: KyokuPlayer,
 ) : ViewModel() {
     var state by mutableStateOf(RootDrawerUiState())
         private set
@@ -64,8 +68,67 @@ class RootDrawerViewModel @Inject constructor(
             )
         }
 
+        viewModelScope.launch {
+            player.playerUiState.collectLatest { playerState ->
+                when (playerState) {
+                    is PlayerState.ProgressBar -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                info = state.player.info.copy(
+                                    progress = playerState.value
+                                )
+                            )
+                        )
+                    }
+
+                    is PlayerState.Progress -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                info = state.player.info.copy(
+                                    currentProgress = playerState.value
+                                )
+                            )
+                        )
+                    }
+
+                    is PlayerState.Ready -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                info = state.player.info.copy(
+                                    endTime = playerState.totalTime
+                                )
+                            )
+                        )
+                    }
+
+                    is PlayerState.Playing -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                info = state.player.info.copy(
+                                    isPlaying = playerState.isPlaying
+                                )
+                            )
+                        )
+                    }
+
+                    is PlayerState.CurrentlyPlaying -> {
+                        state = state.copy(
+                            player = state.player.copy(
+                                info = state.player.info.copy(
+                                    hasPrev = playerState.hasPrev,
+                                    hasNext = playerState.hasNext
+                                )
+                            )
+                        )
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+
         readHeader()
-        loadPlayingData()
+//        loadPlayingData()
     }
 
     private val _uiEvent = Channel<RootDrawerUiAction>()
@@ -420,7 +483,6 @@ class RootDrawerViewModel @Inject constructor(
         }
     }
 
-
     private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {
         ds.storeSaveScreen(screen.name)
     }
@@ -433,6 +495,9 @@ class RootDrawerViewModel @Inject constructor(
     }
 
     private fun loadSongs() = viewModelScope.launch {
+        player.addMediaItem(repo.getSongs().first())
+        player.onEvent(PlayerEvent.PlayPause)
+
         repo.getSongs().collectLatest { payload ->
             state = state.copy(
                 player = state.player.copy(

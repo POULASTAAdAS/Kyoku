@@ -1,7 +1,6 @@
 package com.poulastaa.play.presentation.player.small_player
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,16 +32,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.NextIcon
 import com.poulastaa.core.presentation.designsystem.PauseIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 
@@ -53,9 +51,8 @@ fun SmallCompactPlayer(
     height: Dp = 95.dp,
     header: String,
     song: PlayerUiSong,
-    hasNext: Boolean,
-    hasPrev: Boolean,
-    onEvent: (PlayerUiEvent.PlayBackController) -> Unit
+    info: PlayerUiInfo,
+    onEvent: (PlayerUiEvent.PlayBackController) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -110,7 +107,7 @@ fun SmallCompactPlayer(
                 color = IconButtonDefaults.iconButtonColors(
                     contentColor = song.colors[0]
                 ),
-                enable = hasPrev,
+                enable = info.hasPrev,
                 modifier = Modifier
                     .rotate(90f)
                     .size(35.dp),
@@ -122,7 +119,7 @@ fun SmallCompactPlayer(
             Spacer(Modifier.width(MaterialTheme.dimens.small2))
 
             PlayControlButton(
-                icon = if (song.isPlaying) PauseIcon else PlayIcon,
+                icon = if (info.isPlaying) PauseIcon else PlayIcon,
                 color = IconButtonDefaults.iconButtonColors(
                     contentColor = song.colors[0]
                 ),
@@ -140,7 +137,7 @@ fun SmallCompactPlayer(
                 color = IconButtonDefaults.iconButtonColors(
                     contentColor = song.colors[0]
                 ),
-                enable = hasNext,
+                enable = info.hasNext,
                 modifier = Modifier
                     .size(35.dp),
                 onClick = {
@@ -150,7 +147,7 @@ fun SmallCompactPlayer(
         }
 
         Slider(
-            value = song.progress,
+            value = info.progress,
             onValueChange = {
                 onEvent(PlayerUiEvent.PlayBackController.SeekTo(it))
             },
@@ -185,7 +182,7 @@ fun PlayControlButton(
     icon: ImageVector,
     color: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     enable: Boolean = true,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
         modifier = modifier,
@@ -201,28 +198,27 @@ fun PlayControlButton(
     }
 }
 
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        Column {
-            SmallCompactPlayer(
-                modifier = Modifier
-                    .clickable { },
-                header = "",
-                hasNext = false,
-                hasPrev = true,
-                song = PlayerUiSong(
-                    title = "That cool song",
-                    artist = "That Cool artist",
-                    endTime = "4:00",
-                    progress = 13.4f,
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.surfaceContainer
-                    )
-                )
-            ) { }
-        }
-    }
-}
+//@PreviewLightDark
+//@Composable
+//private fun Preview() {
+//    AppThem {
+//        Column {
+//            SmallCompactPlayer(
+//                modifier = Modifier
+//                    .clickable { },
+//                header = "",
+//                hasNext = false,
+//                hasPrev = true,
+//                progress = 0f,
+//                song = PlayerUiSong(
+//                    title = "That cool song",
+//                    artist = "That Cool artist",
+//                    colors = listOf(
+//                        MaterialTheme.colorScheme.primary,
+//                        MaterialTheme.colorScheme.surfaceContainer
+//                    )
+//                )
+//            ) { }
+//        }
+//    }
+//}

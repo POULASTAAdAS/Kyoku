@@ -556,8 +556,7 @@ fun RootDrawerCompact(
                                 )
                             }
                         ),
-                        hasNext = state.player.info.hasNext,
-                        hasPrev = state.player.info.hasPrev,
+                        info = state.player.info,
                         onEvent = onPlayerEvent
                     )
                 }
