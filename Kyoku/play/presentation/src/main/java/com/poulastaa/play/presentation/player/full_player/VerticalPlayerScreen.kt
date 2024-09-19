@@ -1,5 +1,7 @@
 package com.poulastaa.play.presentation.player.full_player
 
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -28,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -44,6 +47,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -77,12 +81,15 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.RepeatOffIcon
 import com.poulastaa.core.presentation.designsystem.RepeatOnIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.presentation.SongArtistCard
+import com.poulastaa.play.presentation.player.PlayerSongArtist
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.player.components.PlayerCustomIconButton
 import com.poulastaa.play.presentation.player.components.PlayerSongCard
 import com.poulastaa.play.presentation.player.components.PlayerSongInfo
+import com.poulastaa.play.presentation.player.components.SongInfoCardLoading
 import com.poulastaa.play.presentation.player.small_player.PlayControlButton
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 import kotlinx.coroutines.launch
@@ -338,33 +345,29 @@ fun VerticalPlayerScreen(
                         colors = song.colors,
                         queue = queue,
                         onEvent = onEvent
-                    ) else Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(600.dp)
-                            .padding(horizontal = MaterialTheme.dimens.medium1)
-                            .padding(bottom = MaterialTheme.dimens.medium1),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 7.dp
-                        )
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    brush = Brush.verticalGradient(song.colors.map { color ->
-                                        color.copy(
-                                            .5f
-                                        )
-                                    })
-                                ),
-                        ) {
+                    ) else {
+                        LaunchedEffect(Unit) {
+                            onEvent(PlayerUiEvent.GetSongInfo(song.songId))
+                        }
 
+                        AnimatedContent(
+                            targetState = info.artist.artist.isEmpty(),
+                            label = ""
+                        ) { state ->
+                            when (state) {
+                                true -> SongInfoCardLoading()
+                                false -> SongInfoCard(
+                                    header = header,
+                                    config = config,
+                                    artist = info.artist,
+                                    song = song,
+                                    onEvent = onEvent
+                                )
+                            }
                         }
                     }
                 }
             }
-
 
             FloatingController(
                 modifier = Modifier.padding(it),
@@ -376,6 +379,52 @@ fun VerticalPlayerScreen(
                 hasPrev = info.hasPrev,
                 onEvent = onEvent
             )
+        }
+    }
+}
+
+@Composable
+private fun SongInfoCard(
+    header: String,
+    config: Configuration,
+    artist: PlayerSongArtist,
+    song: PlayerUiSong,
+    onEvent: (PlayerUiEvent.OnArtistClick) -> Unit,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(config.screenHeightDp.dp)
+            .padding(horizontal = MaterialTheme.dimens.medium1)
+            .padding(bottom = MaterialTheme.dimens.medium1),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 7.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = song.colors[1],
+        )
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(song.colors.map { it.copy(.3f) })
+                ),
+            contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
+        ) {
+            items(artist.artist) { artist ->
+                SongArtistCard(
+                    modifier = Modifier
+                        .height(80.dp)
+                        .clickable {
+                            onEvent(PlayerUiEvent.OnArtistClick(artist.id))
+                        },
+                    header = header,
+                    artist = artist,
+                )
+
+                Spacer(Modifier.height(MaterialTheme.dimens.small2))
+            }
         }
     }
 }

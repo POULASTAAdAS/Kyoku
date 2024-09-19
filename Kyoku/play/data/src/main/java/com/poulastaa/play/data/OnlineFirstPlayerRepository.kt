@@ -3,10 +3,12 @@ package com.poulastaa.play.data
 import android.content.Context
 import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
+import com.poulastaa.core.domain.model.ArtistWithPopularity
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
 import com.poulastaa.core.domain.repository.player.PlayerRepository
 import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
+import com.poulastaa.core.domain.repository.song_artist.RemoteSongArtistDatasource
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
@@ -24,6 +26,7 @@ class OnlineFirstPlayerRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val local: LocalPlayerDatasource,
     private val remote: RemotePlayerDatasource,
+    private val artistRemote: RemoteSongArtistDatasource,
     private val applicationScope: CoroutineScope,
 ) : PlayerRepository {
     override suspend fun loadData(
@@ -129,4 +132,7 @@ class OnlineFirstPlayerRepository @Inject constructor(
 
     override fun getInfo(): Flow<PlayerInfo> = local.getInfo()
     override fun getSongs(): Flow<List<PlayerSong>> = local.getSongs()
+
+    override suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network> =
+        artistRemote.getArtistOnSongId(songId)
 }

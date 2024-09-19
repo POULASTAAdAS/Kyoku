@@ -18,6 +18,7 @@ import com.poulastaa.play.domain.SyncLibraryScheduler
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
+import com.poulastaa.play.presentation.song_artist.toSongArtistUiArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -323,23 +324,93 @@ class RootDrawerViewModel @Inject constructor(
                 )
             }
 
-            PlayerUiEvent.PlayBackController.OnPlayNextClick -> {
+            is PlayerUiEvent.PlayBackController -> {
+                when (event) {
+                    PlayerUiEvent.PlayBackController.OnPlayNextClick -> {
 
+                    }
+
+                    is PlayerUiEvent.PlayBackController.OnPlayPause -> {
+
+                    }
+
+                    PlayerUiEvent.PlayBackController.OnPlayPrevClick -> {
+
+                    }
+
+                    is PlayerUiEvent.PlayBackController.SeekTo -> {
+
+                    }
+
+                    is PlayerUiEvent.PlayBackController.OnSongClick -> {
+
+                    }
+                }
             }
 
-            is PlayerUiEvent.PlayBackController.OnPlayPause -> {
+            is PlayerUiEvent.GetSongInfo -> {
+                if (state.player.info.artist.songId == event.songId) return
 
+                state = state.copy(
+                    player = state.player.copy(
+                        info = state.player.info.copy(
+                            artist = state.player.info.artist.copy(
+                                loadingState = DataLoadingState.LOADING
+                            )
+                        )
+                    )
+                )
+
+                viewModelScope.launch {
+                    when (val result = repo.getArtistOnSongId(event.songId)) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                    RootDrawerUiAction.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_no_internet
+                                        )
+                                    )
+                                )
+
+                                else -> _uiEvent.send(
+                                    RootDrawerUiAction.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
+
+                            state = state.copy(
+                                player = state.player.copy(
+                                    info = state.player.info.copy(
+                                        artist = state.player.info.artist.copy(
+                                            loadingState = DataLoadingState.ERROR
+                                        )
+                                    )
+                                )
+                            )
+                        }
+
+                        is Result.Success -> {
+                            state = state.copy(
+                                player = state.player.copy(
+                                    info = state.player.info.copy(
+                                        artist = state.player.info.artist.copy(
+                                            songId = if (result.data.isEmpty()) -1 else event.songId,
+                                            loadingState = if (result.data.isEmpty()) DataLoadingState.ERROR else DataLoadingState.LOADED,
+                                            artist = result.data.map { it.toSongArtistUiArtist() }
+                                        )
+                                    )
+                                )
+                            )
+                        }
+                    }
+                }
             }
 
-            PlayerUiEvent.PlayBackController.OnPlayPrevClick -> {
-
-            }
-
-            is PlayerUiEvent.PlayBackController.SeekTo -> {
-
-            }
-
-            is PlayerUiEvent.PlayBackController.OnSongClick -> {
+            is PlayerUiEvent.OnArtistClick -> {
 
             }
 

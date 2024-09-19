@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.player.full_player
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -35,6 +37,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -70,13 +73,17 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.RepeatOffIcon
 import com.poulastaa.core.presentation.designsystem.RepeatOnIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.presentation.SongArtistCard
+import com.poulastaa.play.presentation.player.PlayerSongArtist
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.player.components.PlayerCustomIconButton
 import com.poulastaa.play.presentation.player.components.PlayerSongCard
 import com.poulastaa.play.presentation.player.components.PlayerSongInfo
+import com.poulastaa.play.presentation.player.components.SongInfoCardLoading
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
+import com.poulastaa.play.presentation.song_artist.SongArtistUiArtist
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -268,10 +275,25 @@ fun HorizontalPlayerScreen(
                                     info = info,
                                     queue = queue,
                                     onEvent = onEvent,
-                                ) else SongInfoCard(
-                                    song = song,
-                                    onEvent = onEvent
-                                )
+                                ) else {
+                                    LaunchedEffect(Unit) {
+                                        onEvent(PlayerUiEvent.GetSongInfo(song.songId))
+                                    }
+
+                                    AnimatedContent(
+                                        targetState = info.artist.artist.isEmpty(),
+                                        label = ""
+                                    ) { state ->
+                                        when (state) {
+                                            true -> SongInfoCardLoading()
+                                            false -> SongInfoCard(
+                                                song = song,
+                                                artist = info.artist,
+                                                onEvent = onEvent
+                                            )
+                                        }
+                                    }
+                                }
                             }
 
                             Column(
@@ -400,39 +422,62 @@ fun HorizontalPlayerScreen(
 @Composable
 private fun SongInfoCard(
     song: PlayerUiSong,
-    onEvent: (PlayerUiEvent) -> Unit
+    artist: PlayerSongArtist,
+    onEvent: (PlayerUiEvent.OnArtistClick) -> Unit,
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
-            .fillMaxWidth(.85f)
-            .padding(MaterialTheme.dimens.medium1),
+            .fillMaxWidth(.85f),
+        contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.song),
-                fontWeight = FontWeight.Bold,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            )
+        item {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.song),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                )
 
-            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+                Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
-            Text(
-                text = song.title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.SemiBold,
-            )
+                Text(
+                    text = song.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
 
-        Spacer(Modifier.height(MaterialTheme.dimens.small1))
+        item {
+            Column {
+                Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = song.colors[0]
-        )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = song.colors[0]
+                )
+
+                Spacer(Modifier.height(MaterialTheme.dimens.small3))
+            }
+        }
+
+        items(artist.artist) { artist ->
+            SongArtistCard(
+                modifier = Modifier
+                    .height(70.dp)
+                    .clickable {
+                        onEvent(PlayerUiEvent.OnArtistClick(artist.id))
+                    },
+                header = "",
+                artist = artist,
+            )
+
+            Spacer(Modifier.height(MaterialTheme.dimens.small2))
+        }
     }
 }
 
@@ -536,7 +581,16 @@ private fun Preview() {
                 type = "album",
                 hasNext = true,
                 hasPrev = true,
-                repeatState = RepeatState.IDLE
+                repeatState = RepeatState.IDLE,
+                artist = PlayerSongArtist(
+                    songId = 1,
+                    artist = (1..5).map {
+                        SongArtistUiArtist(
+                            id = it.toLong(),
+                            name = "Artist $it"
+                        )
+                    }
+                )
             ),
             queue = (1..10).map {
                 PlayerUiSong(

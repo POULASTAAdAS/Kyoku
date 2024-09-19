@@ -231,11 +231,13 @@ object PlayDataViewmodelModule {
         @ApplicationContext context: Context,
         local: LocalPlayerDatasource,
         remote: RemotePlayerDatasource,
+        artistRemote: RemoteSongArtistDatasource,
         applicationScope: CoroutineScope,
     ): PlayerRepository = OnlineFirstPlayerRepository(
         context = context,
         local = local,
         remote = remote,
+        artistRemote = artistRemote,
         applicationScope = applicationScope
     )
 

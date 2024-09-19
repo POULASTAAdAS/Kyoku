@@ -46,6 +46,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.imageReqUser
 import com.poulastaa.play.domain.DataLoadingState
+import com.poulastaa.play.presentation.SongArtistCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,10 +131,12 @@ private fun SongArtistsScreen(
                         )
                     }
                 } else items(state.artist) { artist ->
-                    Artist(
-                        modifier = Modifier.clickable {
-                            onEvent(SongArtistsUiEvent.OnArtistClick(artist.id))
-                        },
+                    SongArtistCard(
+                        modifier = Modifier
+                            .height(80.dp)
+                            .clickable {
+                                onEvent(SongArtistsUiEvent.OnArtistClick(artist.id))
+                            },
                         header = state.header,
                         artist = artist,
                     )
@@ -159,57 +162,6 @@ private fun SongArtistsScreen(
     }
 }
 
-@Composable
-private fun Artist(
-    modifier: Modifier = Modifier,
-    header: String,
-    artist: SongArtistUiArtist,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clip(MaterialTheme.shapes.extraSmall)
-            .then(modifier),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Card(
-            modifier = Modifier
-                .aspectRatio(1f),
-            shape = MaterialTheme.shapes.extraSmall,
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 7.dp
-            )
-        ) {
-            AsyncImage(
-                model = imageReqUser(
-                    header = header,
-                    url = artist.coverImage
-                ),
-                modifier = Modifier
-                    .aspectRatio(1f),
-                contentDescription = null,
-            )
-        }
-
-        Spacer(Modifier.width(MaterialTheme.dimens.medium1))
-
-        Column {
-            Text(
-                text = artist.name,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            )
-
-            Spacer(Modifier.height(MaterialTheme.dimens.small1))
-
-            Text(
-                text = artist.popularity.toString(),
-                fontSize = MaterialTheme.typography.titleMedium.fontSize,
-            )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
