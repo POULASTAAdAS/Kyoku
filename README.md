@@ -29,6 +29,14 @@
   </tr>
 </table>
 
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/first%20play%20demo.mp4" width="240" height="520">
+    </td>
+  </tr>
+</table>
+
 # <h2 align="center">Preview Light</h2>
 
 <table>
