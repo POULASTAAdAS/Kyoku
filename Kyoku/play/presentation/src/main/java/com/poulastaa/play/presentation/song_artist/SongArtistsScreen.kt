@@ -1,5 +1,6 @@
 package com.poulastaa.play.presentation.song_artist
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults.properties
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -40,21 +43,39 @@ import coil.compose.AsyncImage
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.imageReqUser
-import com.poulastaa.core.presentation.ui.model.UiArtist
 import com.poulastaa.play.domain.DataLoadingState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SongArtistsRootScreen(
+fun SongArtistsBottomSheet(
     songId: Long,
+    sheetState: SheetState,
     viewModel: SongArtistsViewModel = hiltViewModel(),
+    navigateToArtistScreen: (artistId: Long) -> Unit,
     navigateBack: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(songId) {
         viewModel.init(songId)
     }
 
+    ObserveAsEvent(viewModel.uiEvent) { event ->
+        when (event) {
+            is SongArtistsUiAction.EmitToast -> Toast.makeText(
+                context,
+                event.message.asString(context),
+                Toast.LENGTH_LONG
+            ).show()
+
+            is SongArtistsUiAction.NavigateToArtist -> navigateToArtistScreen(event.artistId)
+        }
+    }
+
     SongArtistsScreen(
+        sheetState = sheetState,
         state = viewModel.state,
         onEvent = viewModel::onEvent,
         navigateBack = navigateBack
@@ -64,11 +85,11 @@ fun SongArtistsRootScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SongArtistsScreen(
+    sheetState: SheetState,
     state: SongArtistsUiState,
     onEvent: (SongArtistsUiEvent) -> Unit,
     navigateBack: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
         onDismissRequest = navigateBack,
@@ -95,15 +116,29 @@ private fun SongArtistsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
             ) {
-                items(state.artist) { artist ->
+                if (state.artist.isEmpty()) item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(MaterialTheme.dimens.medium1)
+                            .padding(bottom = MaterialTheme.dimens.medium1),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.nothing_to_show),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                    }
+                } else items(state.artist) { artist ->
                     Artist(
                         modifier = Modifier.clickable {
                             onEvent(SongArtistsUiEvent.OnArtistClick(artist.id))
                         },
+                        header = state.header,
                         artist = artist,
                     )
 
-                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3 + MaterialTheme.dimens.small1))
                 }
             }
 
@@ -127,7 +162,8 @@ private fun SongArtistsScreen(
 @Composable
 private fun Artist(
     modifier: Modifier = Modifier,
-    artist: UiArtist,
+    header: String,
+    artist: SongArtistUiArtist,
 ) {
     Row(
         modifier = Modifier
@@ -147,8 +183,8 @@ private fun Artist(
         ) {
             AsyncImage(
                 model = imageReqUser(
-                    header = "",
-                    url = artist.coverImageUrl
+                    header = header,
+                    url = artist.coverImage
                 ),
                 modifier = Modifier
                     .aspectRatio(1f),
@@ -158,14 +194,24 @@ private fun Artist(
 
         Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
-        Text(
-            text = artist.name,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = MaterialTheme.typography.titleLarge.fontSize
-        )
+        Column {
+            Text(
+                text = artist.name,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
+            )
+
+            Spacer(Modifier.height(MaterialTheme.dimens.small1))
+
+            Text(
+                text = artist.popularity.toString(),
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
@@ -177,9 +223,10 @@ private fun Preview() {
 
     AppThem {
         SongArtistsScreen(
+            sheetState = rememberModalBottomSheetState(),
             state = SongArtistsUiState(
                 artist = (1..10).map {
-                    UiArtist(
+                    SongArtistUiArtist(
                         id = it.toLong(),
                         name = "Artist $it"
                     )

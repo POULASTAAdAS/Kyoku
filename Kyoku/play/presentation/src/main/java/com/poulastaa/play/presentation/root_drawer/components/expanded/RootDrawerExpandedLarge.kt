@@ -12,8 +12,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -31,19 +34,26 @@ import com.poulastaa.play.presentation.player.full_player.VerticalPlayerScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.toPlayType
+import com.poulastaa.play.presentation.song_artist.SongArtistsBottomSheet
 import com.poulastaa.play.presentation.view.ViewCompactScreen
 import com.poulastaa.play.presentation.view.ViewOtherScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootDrawerExpandedLarge(
+    viewSongArtistSheetState: SheetState,
     navController: NavHostController,
     state: RootDrawerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
     onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+
     Row { // don't remove the row
         RootDrawerExpanded(
+            viewSongArtistSheetState = viewSongArtistSheetState,
             navController = navController,
             state = state,
             onSaveScreenToggle = {
@@ -199,7 +209,11 @@ fun RootDrawerExpandedLarge(
                         )
 
                         is ViewOtherScreen.ViewSongArtists -> {
+                            onEvent(RootDrawerUiEvent.OnViewSongArtists(event.id))
 
+                            scope.launch {
+                                viewSongArtistSheetState.show()
+                            }
                         }
 
                         is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
@@ -248,6 +262,21 @@ fun RootDrawerExpandedLarge(
             )
         }
     }
+
+    if (viewSongArtistSheetState.isVisible) SongArtistsBottomSheet(
+        songId = state.viewSongArtistSongId,
+        sheetState = viewSongArtistSheetState,
+        navigateToArtistScreen = {
+
+        },
+        navigateBack = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
+            }
+        }
+    )
 
     if (state.addToPlaylistUiState.isOpen ||
         state.createPlaylistUiState.isOpen ||

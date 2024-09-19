@@ -36,6 +36,8 @@ import com.poulastaa.core.domain.repository.player.PlayerRepository
 import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
 import com.poulastaa.core.domain.repository.setting.LocalSettingDatasource
 import com.poulastaa.core.domain.repository.setting.SettingRepository
+import com.poulastaa.core.domain.repository.song_artist.RemoteSongArtistDatasource
+import com.poulastaa.core.domain.repository.song_artist.SongArtistRepository
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view.ViewRepository
@@ -57,6 +59,7 @@ import com.poulastaa.play.data.OnlineFirstHomeRepository
 import com.poulastaa.play.data.OnlineFirstLibraryRepository
 import com.poulastaa.play.data.OnlineFirstNewAlbumRepository
 import com.poulastaa.play.data.OnlineFirstNewArtistRepository
+import com.poulastaa.play.data.OnlineFirstOnlineFirstViewEditRepository
 import com.poulastaa.play.data.OnlineFirstPlayerRepository
 import com.poulastaa.play.data.OnlineFirstViewArtistRepository
 import com.poulastaa.play.data.OnlineFirstViewEditRepository
@@ -89,7 +92,7 @@ object PlayDataViewmodelModule {
         local: LocalLibraryDataSource,
         remote: RemoteLibraryDataSource,
         applicationScope: CoroutineScope,
-        ds: DataStoreRepository
+        ds: DataStoreRepository,
     ): LibraryRepository = OnlineFirstLibraryRepository(
         local = local,
         remote = remote,
@@ -240,9 +243,15 @@ object PlayDataViewmodelModule {
     @ViewModelScoped
     fun provideViewEditRepository(
         local: LocalViewEditDatasource,
-        remote: RemoteViewEditDatasource
+        remote: RemoteViewEditDatasource,
     ): ViewEditRepository = OnlineFirstViewEditRepository(
         local = local,
         remote = remote
     )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSongArtistRepository(
+        remote: RemoteSongArtistDatasource,
+    ): SongArtistRepository = OnlineFirstOnlineFirstViewEditRepository(remote = remote)
 }

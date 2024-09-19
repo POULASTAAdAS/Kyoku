@@ -53,7 +53,7 @@ interface DatabaseRepository {
         artistId: Long,
         page: Int,
         size: Int,
-        savedSongList: List<Long>
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto
 
     suspend fun getArtistAlbumPagingData(
@@ -89,4 +89,6 @@ interface DatabaseRepository {
         userType: UserType,
         countryId: Int,
     ): CreatePlaylistDto
+
+    suspend fun getSongArtist(songId: Long): List<ArtistWithPopularityDto>
 }

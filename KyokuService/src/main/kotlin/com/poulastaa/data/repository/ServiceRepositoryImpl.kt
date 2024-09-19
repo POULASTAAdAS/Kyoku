@@ -832,4 +832,15 @@ class ServiceRepositoryImpl(
             )
         }
     }
+
+    override suspend fun getSongArtist(
+        songId: Long,
+        payload: ReqUserPayload,
+    ): SongArtistRes {
+        userRepo.getUserOnPayload(payload) ?: return SongArtistRes()
+
+        return SongArtistRes(
+            list = kyokuRepo.getSongArtist(songId)
+        )
+    }
 }

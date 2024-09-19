@@ -4,7 +4,9 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -63,7 +65,7 @@ fun RootDrawerScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun AppDrawer(
     drawerState: DrawerState,
@@ -75,11 +77,13 @@ private fun AppDrawer(
     val windowSize = calculateWindowSizeClass(activity = context as Activity)
     val navController = rememberNavController()
     val config = LocalConfiguration.current
+    val viewSongArtistSheetState = rememberModalBottomSheetState()
 
     AppScreenWindowSize(
         windowSizeClass = windowSize,
         compactContent = {
             RootDrawerCompact(
+                viewSongArtistSheetState = viewSongArtistSheetState,
                 isSmall = true,
                 drawerState = drawerState,
                 navController = navController,
@@ -93,6 +97,7 @@ private fun AppDrawer(
         },
         mediumContent = {
             RootDrawerCompact(
+                viewSongArtistSheetState = viewSongArtistSheetState,
                 isSmall = false,
                 drawerState = drawerState,
                 navController = navController,
@@ -106,11 +111,13 @@ private fun AppDrawer(
         },
         expandedContent = {
             if (config.screenWidthDp > 980) RootDrawerExpandedLarge(
+                viewSongArtistSheetState = viewSongArtistSheetState,
                 navController = navController,
                 state = state,
                 onEvent = onEvent,
                 onPlayerEvent = onPlayerEvent
             ) else RootDrawerExpandedSmall(
+                viewSongArtistSheetState = viewSongArtistSheetState,
                 navController = navController,
                 state = state,
                 onEvent = onEvent,

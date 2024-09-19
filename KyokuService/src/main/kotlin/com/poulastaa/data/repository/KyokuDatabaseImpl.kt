@@ -726,6 +726,24 @@ class KyokuDatabaseImpl : DatabaseRepository {
         }
     }
 
+    override suspend fun getSongArtist(songId: Long): List<ArtistWithPopularityDto> = withContext(Dispatchers.IO) {
+        val artistIdList = query {
+            SongArtistRelationTable
+                .slice(SongArtistRelationTable.artistId)
+                .select {
+                    SongArtistRelationTable.songId eq songId
+                }.map {
+                    it[SongArtistRelationTable.artistId]
+                }
+        }
+
+        query {
+            ArtistDao.find {
+                ArtistTable.id inList artistIdList
+            }.map { it.toArtistWithPopularityDto() }
+        }
+    }
+
     private suspend fun AlbumDao.toPagingAlbumDto() =
         coroutineScope {
             async {

@@ -183,4 +183,9 @@ interface ServiceRepository {
         type: CreatePlaylistPagerFilterTypeDto,
         payload: ReqUserPayload,
     ): CreatePlaylistPagingDtoWrapper
+
+    suspend fun getSongArtist(
+        songId: Long,
+        payload: ReqUserPayload,
+    ): SongArtistRes
 }

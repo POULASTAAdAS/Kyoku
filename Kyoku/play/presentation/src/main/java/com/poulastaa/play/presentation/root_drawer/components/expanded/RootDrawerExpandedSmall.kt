@@ -20,11 +20,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +36,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumOtherScreen
 import com.poulastaa.play.presentation.add_new_album.AddNewAlbumRootScreen
 import com.poulastaa.play.presentation.add_new_artist.AddNewArtistOtherScreen
@@ -48,12 +50,16 @@ import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.toPlayType
+import com.poulastaa.play.presentation.song_artist.SongArtistsBottomSheet
 import com.poulastaa.play.presentation.view.ViewCompactScreen
 import com.poulastaa.play.presentation.view.ViewOtherScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootDrawerExpandedSmall(
+    viewSongArtistSheetState: SheetState,
     navController: NavHostController,
     state: RootDrawerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
@@ -61,6 +67,7 @@ fun RootDrawerExpandedSmall(
 ) {
     var dragScope by remember { mutableFloatStateOf(0f) }
     val config = LocalConfiguration.current
+    val scope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -69,6 +76,7 @@ fun RootDrawerExpandedSmall(
     ) {
         Row { // don't remove the row
             RootDrawerExpanded(
+                viewSongArtistSheetState = viewSongArtistSheetState,
                 navController = navController,
                 state = state,
                 onSaveScreenToggle = {
@@ -82,8 +90,8 @@ fun RootDrawerExpandedSmall(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.newAlbumUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
         ) {
             AddNewAlbumRootScreen(
                 navigate = {
@@ -107,8 +115,8 @@ fun RootDrawerExpandedSmall(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.newArtisUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
         ) {
             AddNewArtistRootScreen(
                 navigate = {
@@ -160,8 +168,8 @@ fun RootDrawerExpandedSmall(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.viewUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
         ) {
             ViewCompactScreen(
                 id = state.viewUiState.songId,
@@ -182,7 +190,11 @@ fun RootDrawerExpandedSmall(
 
 
                         is ViewOtherScreen.ViewSongArtists -> {
-                            // todo add screen
+                            onEvent(RootDrawerUiEvent.OnViewSongArtists(event.id))
+
+                            scope.launch {
+                                viewSongArtistSheetState.show()
+                            }
                         }
 
                         is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
@@ -220,8 +232,8 @@ fun RootDrawerExpandedSmall(
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.createPlaylistUiState.isOpen,
-            enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
         ) {
             CreatePlaylistRootScreen(
                 playlistId = state.createPlaylistUiState.playlistId,
@@ -232,8 +244,7 @@ fun RootDrawerExpandedSmall(
         }
 
         AnimatedVisibility(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             visible = state.player.isPlayerExtended,
             enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                     slideInVertically(tween(400)) { it },
@@ -268,7 +279,12 @@ fun RootDrawerExpandedSmall(
                     onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
                 }
                 .offset {
-                    IntOffset(0, dragScope.coerceAtLeast(0f).toInt())
+                    IntOffset(
+                        0,
+                        dragScope
+                            .coerceAtLeast(0f)
+                            .toInt()
+                    )
                 }
                 .draggable(
                     state = rememberDraggableState {
@@ -308,6 +324,21 @@ fun RootDrawerExpandedSmall(
             )
         }
     }
+
+    if (viewSongArtistSheetState.isVisible) SongArtistsBottomSheet(
+        songId = state.viewSongArtistSongId,
+        sheetState = viewSongArtistSheetState,
+        navigateToArtistScreen = {
+
+        },
+        navigateBack = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
+            }
+        }
+    )
 
     if (state.addToPlaylistUiState.isOpen ||
         state.viewUiState.isOpen ||

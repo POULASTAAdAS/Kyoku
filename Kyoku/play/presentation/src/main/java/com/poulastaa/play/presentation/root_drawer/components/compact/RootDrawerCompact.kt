@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.components.compact
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -25,8 +24,10 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +70,7 @@ import com.poulastaa.play.presentation.root_drawer.library.LibraryCompactScreen
 import com.poulastaa.play.presentation.root_drawer.library.LibraryOtherScreen
 import com.poulastaa.play.presentation.root_drawer.toPlayType
 import com.poulastaa.play.presentation.settings.SettingsRootScreen
+import com.poulastaa.play.presentation.song_artist.SongArtistsBottomSheet
 import com.poulastaa.play.presentation.view.ViewCompactScreen
 import com.poulastaa.play.presentation.view.ViewOtherScreen
 import com.poulastaa.play.presentation.view.components.ViewDataType
@@ -77,8 +79,10 @@ import com.poulastaa.play.presentation.view_artist.ViewArtistOtherScreen
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootDrawerCompact(
+    viewSongArtistSheetState: SheetState,
     isSmall: Boolean,
     drawerState: DrawerState,
     navController: NavHostController,
@@ -166,27 +170,33 @@ fun RootDrawerCompact(
                         composable(route = DrawerScreen.Home.route) {
                             HomeCompactScreen(
                                 profileUrl = state.profilePicUrl,
-                                navigate = { screen ->
-                                    when (screen) {
+                                navigate = { event ->
+                                    when (event) {
                                         is HomeOtherScreens.AddAsPlaylist -> onEvent(
                                             RootDrawerUiEvent.AddSongToPlaylist(
-                                                screen.songId
+                                                event.songId
                                             )
                                         )
 
                                         is HomeOtherScreens.View -> onEvent(
                                             RootDrawerUiEvent.View(
-                                                screen.id,
-                                                screen.type
+                                                event.id,
+                                                event.type
                                             )
                                         )
 
                                         is HomeOtherScreens.ViewArtist -> {
-                                            Log.d("artistId nav", screen.id.toString())
-
                                             navController.navigate(
-                                                route = DrawerScreen.ViewArtist.route + "/${screen.id}"
+                                                route = DrawerScreen.ViewArtist.route + "/${event.artistId}"
                                             )
+                                        }
+
+                                        is HomeOtherScreens.ViewSongArtist -> {
+                                            onEvent(RootDrawerUiEvent.OnViewSongArtists(event.songId))
+
+                                            scope.launch {
+                                                viewSongArtistSheetState.show()
+                                            }
                                         }
                                     }
                                 },
@@ -427,7 +437,11 @@ fun RootDrawerCompact(
                                     )
 
                                     is ViewOtherScreen.ViewSongArtists -> {
+                                        onEvent(RootDrawerUiEvent.OnViewSongArtists(event.id))
 
+                                        scope.launch {
+                                            viewSongArtistSheetState.show()
+                                        }
                                     }
 
                                     is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
@@ -576,23 +590,40 @@ fun RootDrawerCompact(
                     onEvent = onPlayerEvent
                 )
             }
+        }
+    )
 
-            if (state.addToPlaylistUiState.isOpen ||
-                state.createPlaylistUiState.isOpen ||
-                state.viewUiState.isOpen ||
-                state.exploreArtistUiState.isOpen ||
-                state.newArtisUiState.isOpen ||
-                state.newAlbumUiState.isOpen ||
-                state.player.isPlayerExtended
-            ) BackHandler {
-                if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
-                else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
-                else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
-                else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
-                else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
-                else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
-                else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
+    if (viewSongArtistSheetState.isVisible) SongArtistsBottomSheet(
+        songId = state.viewSongArtistSongId,
+        sheetState = viewSongArtistSheetState,
+        navigateToArtistScreen = {
+            navController.navigate(
+                route = DrawerScreen.ViewArtist.route + "/${it}"
+            )
+        },
+        navigateBack = {
+            scope.launch {
+                viewSongArtistSheetState.hide()
+            }.invokeOnCompletion {
+                onEvent(RootDrawerUiEvent.OnViewSongArtistsCancel)
             }
         }
     )
+
+    if (state.addToPlaylistUiState.isOpen ||
+        state.createPlaylistUiState.isOpen ||
+        state.viewUiState.isOpen ||
+        state.exploreArtistUiState.isOpen ||
+        state.newArtisUiState.isOpen ||
+        state.newAlbumUiState.isOpen ||
+        state.player.isPlayerExtended
+    ) BackHandler {
+        if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+        else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
+        else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+        else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
+        else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+        else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
+        else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
+    }
 }

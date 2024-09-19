@@ -52,3 +52,10 @@ fun PagingAlbumDto.toCreatePlaylistPagingDto() = CreatePlaylistPagingDto(
     expandable = true,
     isArtist = false
 )
+
+fun ArtistDao.toArtistWithPopularityDto() = ArtistWithPopularityDto(
+    id = this.id.value,
+    name = this.name,
+    coverImage = this.constructProfilePic() ?: "",
+    popularity = this.points
+)

@@ -12,6 +12,7 @@ import com.poulastaa.core.domain.repository.library.RemoteLibraryDataSource
 import com.poulastaa.core.domain.repository.new_album.RemoteNewAlbumDataSource
 import com.poulastaa.core.domain.repository.new_artist.RemoteNewArtistDataSource
 import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
+import com.poulastaa.core.domain.repository.song_artist.RemoteSongArtistDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view_artist.RemoteViewArtistDatasource
 import com.poulastaa.core.domain.repository.view_edit.RemoteViewEditDatasource
@@ -27,6 +28,7 @@ import com.poulastaa.network.OnlineFirstHomeDatasource
 import com.poulastaa.network.OnlineFirstNewAlbumDatasource
 import com.poulastaa.network.OnlineFirstNewArtistDatasource
 import com.poulastaa.network.OnlineFirstPlayerDatasource
+import com.poulastaa.network.OnlineFirstSongArtistDatasource
 import com.poulastaa.network.OnlineFirstViewArtistDatasource
 import com.poulastaa.network.OnlineFirstViewDatasource
 import com.poulastaa.network.paging_source.CreatePlaylistPagerSource
@@ -130,7 +132,7 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
         pagerAlbum: ExploreArtistAlbumPagerSource,
-        pagerSong: ExploreArtistSongPagerSource
+        pagerSong: ExploreArtistSongPagerSource,
     ): RemoteExploreArtistDatasource = OnlineFirstExploreArtistDatasource(
         client = client,
         gson = gson,
@@ -197,7 +199,7 @@ object NetworkViewModel {
     fun provideCreatePlaylistDatasource(
         client: OkHttpClient,
         gson: Gson,
-        pager: CreatePlaylistPagerSource
+        pager: CreatePlaylistPagerSource,
     ): RemoteCreatePlaylistDatasource = OnlineFirstCreatePlaylistDatasource(
         client = client,
         gson = gson,
@@ -210,7 +212,7 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
         album: ExploreArtistAlbumPagerSource,
-        song: ExploreArtistSongPagerSource
+        song: ExploreArtistSongPagerSource,
     ): RemoteCreatePlaylistArtistDatasource = OnlineFirstCreatePlaylistArtistDatasource(
         client = client,
         gson = gson,
@@ -244,6 +246,16 @@ object NetworkViewModel {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteViewEditDatasource = OnlineFirstEditViewDatasource(
+        client = client,
+        gson = gson,
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSongArtistRepository(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteSongArtistDatasource = OnlineFirstSongArtistDatasource(
         client = client,
         gson = gson,
     )

@@ -189,3 +189,24 @@ fun Route.getArtistPagingData(service: ServiceRepository) {
         }
     }
 }
+
+fun Route.getSongArtist(service: ServiceRepository) {
+    authenticate(configurations = SECURITY_LIST) {
+        route(EndPoints.GetSongArtist.route) {
+            get {
+                val songId = call.parameters["songId"]?.toLong()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val payload = call.getReqUserPayload()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorised.route)
+
+                val result = service.getSongArtist(songId, payload)
+
+                call.respond(
+                    message = result,
+                    status = HttpStatusCode.OK
+                )
+            }
+        }
+    }
+}
