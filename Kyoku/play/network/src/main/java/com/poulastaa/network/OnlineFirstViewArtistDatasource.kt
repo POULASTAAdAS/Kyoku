@@ -25,10 +25,10 @@ import javax.inject.Inject
 
 class OnlineFirstViewArtistDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteViewArtistDatasource {
     override suspend fun getData(
-        artistId: Long
+        artistId: Long,
     ): Result<ViewArtistData, DataError.Network> = client.get<ViewArtistDto>(
         route = EndPoints.ViewArtist.route,
         params = listOf("artistId" to artistId.toString()),
@@ -36,7 +36,7 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
     ).map { it.toViewArtistData() }
 
     override suspend fun followArtist(
-        artistId: Long
+        artistId: Long,
     ): Result<Artist, DataError.Network> = client.post<AddArtistReq, AddArtistDto>(
         route = EndPoints.AddArtist.route,
         body = AddArtistReq(listOf(artistId)),
@@ -46,7 +46,7 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
     }
 
     override suspend fun unFollowArtist(
-        artistId: Long
+        artistId: Long,
     ): EmptyResult<DataError.Network> = client.get<Unit>(
         route = EndPoints.RemoveArtist.route,
         params = listOf("artistId" to artistId.toString()),
@@ -54,7 +54,7 @@ class OnlineFirstViewArtistDatasource @Inject constructor(
     ).asEmptyDataResult()
 
     override suspend fun addSongToFavourite(
-        songId: Long
+        songId: Long,
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.AddToFavourite.route,
         params = listOf("songId" to songId.toString()),

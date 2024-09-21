@@ -7,7 +7,7 @@ import com.poulastaa.core.domain.repository.create_playlist.artist.LocalCreatePl
 import javax.inject.Inject
 
 class RoomLocalCreatePlaylistArtistDatasource @Inject constructor(
-    private val commonDao: CommonDao
+    private val commonDao: CommonDao,
 ) : LocalCreatePlaylistArtistDatasource {
     override suspend fun getArtist(artistId: Long): Artist? =
         commonDao.getArtistByIdOrNull(artistId)?.toArtist()

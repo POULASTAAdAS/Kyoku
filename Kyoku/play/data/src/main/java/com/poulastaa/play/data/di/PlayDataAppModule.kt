@@ -34,7 +34,7 @@ object PlayDataAppModule {
     @Singleton
     fun provideSyncLibraryWorkerScheduler(
         @ApplicationContext context: Context,
-        applicationScope: CoroutineScope
+        applicationScope: CoroutineScope,
     ): SyncLibraryScheduler = SyncLibraryWorkerScheduler(
         context = context,
         applicationScope = applicationScope

@@ -12,12 +12,12 @@ data class AddNewArtistUiState(
 
     val type: ArtistPagingType = ArtistPagingType.ALL,
 
-    val toast: SnackBarUiState = SnackBarUiState()
+    val toast: SnackBarUiState = SnackBarUiState(),
 )
 
 data class AddArtistUiArtist(
     val id: Long = -1,
     val name: String = "",
     val coverImage: String = "",
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
 )

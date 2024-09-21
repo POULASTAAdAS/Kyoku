@@ -60,6 +60,7 @@ import com.poulastaa.play.presentation.create_playlist.CreatePlaylistRootScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistOtherScreen
 import com.poulastaa.play.presentation.explore_artist.ExploreArtistRootScreen
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.player.full_player.VerticalPlayerScreen
 import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
@@ -86,24 +87,25 @@ fun RootDrawerCompact(
     isSmall: Boolean,
     drawerState: DrawerState,
     navController: NavHostController,
-    state: RootDrawerUiState,
+    drawerUiState: RootDrawerUiState,
+    playerUiState: PlayerUiState,
     onSaveScreenToggle: (SaveScreen) -> Unit,
     onEvent: (RootDrawerUiEvent) -> Unit,
     onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var currentDestination by remember {
-        mutableStateOf(state.startDestination)
+        mutableStateOf(drawerUiState.startDestination)
     }
     var dragScope by remember { mutableFloatStateOf(0f) }
     val smallPlayerPadding = animateDpAsState(
         if (
-            (state.viewUiState.isOpen ||
-                    state.addToPlaylistUiState.isOpen ||
-                    state.newArtisUiState.isOpen ||
-                    state.newAlbumUiState.isOpen ||
-                    state.exploreArtistUiState.isOpen)
-            && state.player.isData
+            (drawerUiState.viewUiState.isOpen ||
+                    drawerUiState.addToPlaylistUiState.isOpen ||
+                    drawerUiState.newArtisUiState.isOpen ||
+                    drawerUiState.newAlbumUiState.isOpen ||
+                    drawerUiState.exploreArtistUiState.isOpen)
+            && playerUiState.isData
         ) 100.dp else 0.dp,
         animationSpec = tween(400),
         label = ""
@@ -125,8 +127,8 @@ fun RootDrawerCompact(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             CompactDrawerContent(
-                userName = state.username,
-                profilePicUrl = state.profilePicUrl,
+                userName = drawerUiState.username,
+                profilePicUrl = drawerUiState.profilePicUrl,
                 navigate = {
                     scope.launch {
                         drawerState.close()
@@ -163,13 +165,13 @@ fun RootDrawerCompact(
                 ) {
                     NavHost(
                         modifier = Modifier
-                            .padding(bottom = if (state.player.isData) 100.dp else 0.dp),
+                            .padding(bottom = if (playerUiState.isData) 100.dp else 0.dp),
                         navController = navController,
-                        startDestination = state.startDestination
+                        startDestination = drawerUiState.startDestination
                     ) {
                         composable(route = DrawerScreen.Home.route) {
                             HomeCompactScreen(
-                                profileUrl = state.profilePicUrl,
+                                profileUrl = drawerUiState.profilePicUrl,
                                 navigate = { event ->
                                     when (event) {
                                         is HomeOtherScreens.AddAsPlaylist -> onEvent(
@@ -218,7 +220,7 @@ fun RootDrawerCompact(
 
                         composable(route = DrawerScreen.Library.route) {
                             LibraryCompactScreen(
-                                profileUrl = state.profilePicUrl,
+                                profileUrl = drawerUiState.profilePicUrl,
                                 onProfileClick = {
                                     onEvent(RootDrawerUiEvent.OnDrawerToggle)
                                 },
@@ -330,13 +332,13 @@ fun RootDrawerCompact(
 
                     CompactBottomNavigation(
                         currentDestination = currentDestination,
-                        saveScreen = state.saveScreen,
+                        saveScreen = drawerUiState.saveScreen,
                         onSaveScreenToggle = onSaveScreenToggle
                     )
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.newAlbumUiState.isOpen,
+                        visible = drawerUiState.newAlbumUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
@@ -361,7 +363,7 @@ fun RootDrawerCompact(
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.newArtisUiState.isOpen,
+                        visible = drawerUiState.newArtisUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
@@ -383,12 +385,12 @@ fun RootDrawerCompact(
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.exploreArtistUiState.isOpen,
+                        visible = drawerUiState.exploreArtistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
                         ExploreArtistRootScreen(
-                            artistId = state.exploreArtistUiState.artistId,
+                            artistId = drawerUiState.exploreArtistUiState.artistId,
                             navigate = {
                                 when (it) {
                                     is ExploreArtistOtherScreen.AddSongToPlaylist -> onEvent(
@@ -415,13 +417,13 @@ fun RootDrawerCompact(
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.viewUiState.isOpen,
+                        visible = drawerUiState.viewUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                         exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                     ) {
                         ViewCompactScreen(
-                            id = state.viewUiState.songId,
-                            type = state.viewUiState.type,
+                            id = drawerUiState.viewUiState.songId,
+                            type = drawerUiState.viewUiState.type,
                             navigate = { event ->
                                 when (event) {
                                     is ViewOtherScreen.AddSongToPlaylist -> onEvent(
@@ -444,15 +446,15 @@ fun RootDrawerCompact(
                                         }
                                     }
 
-                                    is ViewOtherScreen.PlayOperation.PlayAll -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.PlaySaved(
+                                    is ViewOtherScreen.PlayOperation.PlayAll -> onPlayerEvent(
+                                        PlayerUiEvent.PlayOperation.PlayAll(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
                                     )
 
-                                    is ViewOtherScreen.PlayOperation.Shuffle -> onEvent(
-                                        RootDrawerUiEvent.PlayOperation.ShuffleSaved(
+                                    is ViewOtherScreen.PlayOperation.Shuffle -> onPlayerEvent(
+                                        PlayerUiEvent.PlayOperation.ShuffleAll(
                                             id = event.id,
                                             type = event.type.toPlayType()
                                         )
@@ -467,23 +469,23 @@ fun RootDrawerCompact(
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.addToPlaylistUiState.isOpen,
+                        visible = drawerUiState.addToPlaylistUiState.isOpen,
                         enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
                         exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
                     ) {
-                        AddToPlaylistRootScreen(songId = state.addToPlaylistUiState.songId) {
+                        AddToPlaylistRootScreen(songId = drawerUiState.addToPlaylistUiState.songId) {
                             onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
                         }
                     }
 
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxSize(),
-                        visible = state.createPlaylistUiState.isOpen,
+                        visible = drawerUiState.createPlaylistUiState.isOpen,
                         enter = fadeIn() + expandIn(expandFrom = Alignment.Center),
                         exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center)
                     ) {
                         CreatePlaylistRootScreen(
-                            playlistId = state.createPlaylistUiState.playlistId,
+                            playlistId = drawerUiState.createPlaylistUiState.playlistId,
                             navigateBack = {
                                 onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
                             }
@@ -498,11 +500,11 @@ fun RootDrawerCompact(
                         .padding(horizontal = MaterialTheme.dimens.medium1)
                         .padding(
                             bottom = if (
-                                state.viewUiState.isOpen ||
-                                state.addToPlaylistUiState.isOpen ||
-                                state.newArtisUiState.isOpen ||
-                                state.newAlbumUiState.isOpen ||
-                                state.exploreArtistUiState.isOpen ||
+                                drawerUiState.viewUiState.isOpen ||
+                                drawerUiState.addToPlaylistUiState.isOpen ||
+                                drawerUiState.newArtisUiState.isOpen ||
+                                drawerUiState.newAlbumUiState.isOpen ||
+                                drawerUiState.exploreArtistUiState.isOpen ||
                                 navController.currentDestination?.route?.contains(DrawerScreen.ViewArtist.route) == true ||
                                 navController.currentDestination?.route?.contains(DrawerScreen.Profile.route) == true ||
                                 navController.currentDestination?.route?.contains(DrawerScreen.History.route) == true ||
@@ -534,29 +536,29 @@ fun RootDrawerCompact(
                         ) {
                             onPlayerEvent(PlayerUiEvent.OnPlayerExtendClick)
                         },
-                    visible = state.player.isData &&
-                            state.player.queue.isNotEmpty() &&
-                            !state.player.isPlayerExtended,
+                    visible = playerUiState.isData &&
+                            playerUiState.queue.isNotEmpty() &&
+                            !playerUiState.isPlayerExtended,
                     enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                             slideInVertically(tween(400)) { it },
                     exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
                             slideOutVertically(tween(400)) { it }
                 ) {
-                    if (state.player.queue.isNotEmpty()) SmallCompactPlayer(
+                    if (playerUiState.queue.isNotEmpty()) SmallCompactPlayer(
                         modifier = Modifier.padding(
                             if (isSmall) MaterialTheme.dimens.small3 else MaterialTheme.dimens.small1
                         ),
-                        header = state.header,
+                        header = drawerUiState.header,
                         height = if (isSmall) 95.dp else 120.dp,
-                        song = state.player.queue[state.player.info.currentPlayingIndex].copy(
-                            colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                        song = playerUiState.queue[playerUiState.info.currentPlayingIndex].copy(
+                            colors = playerUiState.queue[playerUiState.info.currentPlayingIndex].colors.ifEmpty {
                                 listOf(
                                     MaterialTheme.colorScheme.primary,
                                     MaterialTheme.colorScheme.surfaceContainer
                                 )
                             }
                         ),
-                        info = state.player.info,
+                        info = playerUiState.info,
                         onEvent = onPlayerEvent
                     )
                 }
@@ -568,24 +570,24 @@ fun RootDrawerCompact(
                     .offset {
                         IntOffset(x = 0, dragScope.toInt())
                     },
-                visible = state.player.isPlayerExtended,
+                visible = playerUiState.isPlayerExtended,
                 enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                         slideInVertically(tween(400)) { it },
                 exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.Center) +
                         slideOutVertically(tween(400)) { it }
             ) {
                 VerticalPlayerScreen(
-                    header = state.header,
-                    song = state.player.queue[state.player.info.currentPlayingIndex].copy(
-                        colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+                    header = drawerUiState.header,
+                    song = playerUiState.queue[playerUiState.info.currentPlayingIndex].copy(
+                        colors = playerUiState.queue[playerUiState.info.currentPlayingIndex].colors.ifEmpty {
                             listOf(
                                 MaterialTheme.colorScheme.primary,
                                 MaterialTheme.colorScheme.surfaceContainer
                             )
                         }
                     ),
-                    info = state.player.info,
-                    queue = state.player.queue,
+                    info = playerUiState.info,
+                    queue = playerUiState.queue,
                     onEvent = {
                         if (it is PlayerUiEvent.OnArtistClick) {
                             navController.navigate(
@@ -593,8 +595,7 @@ fun RootDrawerCompact(
                             )
 
                             onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
-                        }
-                        else onPlayerEvent(it)
+                        } else onPlayerEvent(it)
                     }
                 )
             }
@@ -602,7 +603,7 @@ fun RootDrawerCompact(
     )
 
     if (viewSongArtistSheetState.isVisible) SongArtistsBottomSheet(
-        songId = state.viewSongArtistSongId,
+        songId = drawerUiState.viewSongArtistSongId,
         sheetState = viewSongArtistSheetState,
         navigateToArtistScreen = {
             scope.launch {
@@ -626,20 +627,20 @@ fun RootDrawerCompact(
         }
     )
 
-    if (state.addToPlaylistUiState.isOpen ||
-        state.createPlaylistUiState.isOpen ||
-        state.viewUiState.isOpen ||
-        state.exploreArtistUiState.isOpen ||
-        state.newArtisUiState.isOpen ||
-        state.newAlbumUiState.isOpen ||
-        state.player.isPlayerExtended
+    if (drawerUiState.addToPlaylistUiState.isOpen ||
+        drawerUiState.createPlaylistUiState.isOpen ||
+        drawerUiState.viewUiState.isOpen ||
+        drawerUiState.exploreArtistUiState.isOpen ||
+        drawerUiState.newArtisUiState.isOpen ||
+        drawerUiState.newAlbumUiState.isOpen ||
+        playerUiState.isPlayerExtended
     ) BackHandler {
-        if (state.player.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
-        else if (state.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
-        else if (state.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
-        else if (state.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
-        else if (state.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
-        else if (state.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
-        else if (state.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
+        if (playerUiState.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
+        else if (drawerUiState.createPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.CreatePlaylistCancel)
+        else if (drawerUiState.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
+        else if (drawerUiState.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
+        else if (drawerUiState.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)
+        else if (drawerUiState.newArtisUiState.isOpen) onEvent(RootDrawerUiEvent.NewArtistCancel)
+        else if (drawerUiState.newAlbumUiState.isOpen) onEvent(RootDrawerUiEvent.NewAlbumCancel)
     }
 }

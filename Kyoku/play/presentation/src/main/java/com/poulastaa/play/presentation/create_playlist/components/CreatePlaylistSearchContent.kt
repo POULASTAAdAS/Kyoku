@@ -39,7 +39,7 @@ fun CreatePlaylistSearchContent(
     header: String,
     filterType: CreatePlaylistPagerFilterType,
     data: LazyPagingItems<CreatePlaylistPagingUiData>,
-    onEvent: (CreatePlaylistUiEvent) -> Unit
+    onEvent: (CreatePlaylistUiEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier

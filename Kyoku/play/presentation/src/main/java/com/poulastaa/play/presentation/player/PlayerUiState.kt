@@ -18,13 +18,20 @@ data class PlayerUiInfo(
     val currentProgress: String = "0:0",
     val endTime: String = "0:0",
     val progress: Float = 0f,
-    val type: String = "",
     val isShuffledEnabled: Boolean = false,
     val repeatState: RepeatState = RepeatState.IDLE,
     val isPlaying: Boolean = false,
     val hasNext: Boolean = false,
     val hasPrev: Boolean = false,
+    val more: MorePlayerInfo = MorePlayerInfo(),
     val artist: PlayerSongArtist = PlayerSongArtist(),
+)
+
+data class MorePlayerInfo(
+    val loadingState: DataLoadingState = DataLoadingState.LOADING,
+    val id: Long = -1,
+    val title: String = "",
+    val coverImage: List<String> = emptyList(),
 )
 
 data class PlayerSongArtist(

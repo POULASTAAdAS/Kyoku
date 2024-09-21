@@ -40,7 +40,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
 ) : RemoteExploreArtistDatasource {
 
     override suspend fun getArtist(
-        artistId: Long
+        artistId: Long,
     ): Result<Artist, DataError.Network> = client.get<ArtistDto>(
         route = EndPoints.GetArtist.route,
         params = listOf("artistId" to artistId.toString()),
@@ -48,7 +48,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
     ).map { it.toArtist() }
 
     override suspend fun followArtist(
-        artistId: Long
+        artistId: Long,
     ): Result<Artist, DataError.Network> = client.post<AddArtistReq, AddArtistDto>(
         route = EndPoints.AddArtist.route,
         body = AddArtistReq(listOf(artistId)),
@@ -58,7 +58,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
     }
 
     override suspend fun unFollowArtist(
-        artistId: Long
+        artistId: Long,
     ): EmptyResult<DataError.Network> = client.get<Unit>(
         route = EndPoints.RemoveArtist.route,
         params = listOf("artistId" to artistId.toString()),
@@ -90,7 +90,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
     }
 
     override suspend fun addSongToFavourite(
-        songId: Long
+        songId: Long,
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.AddToFavourite.route,
         params = listOf("songId" to songId.toString()),
@@ -100,7 +100,7 @@ class OnlineFirstExploreArtistDatasource @Inject constructor(
     }
 
     override suspend fun saveAlbum(
-        albumId: Long
+        albumId: Long,
     ): Result<AlbumWithSong, DataError.Network> = client.post<AddAlbumReq, AddAlbumDto>(
         route = EndPoints.AddAlbum.route,
         body = AddAlbumReq(

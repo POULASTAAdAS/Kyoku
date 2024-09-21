@@ -13,7 +13,7 @@ import dagger.assisted.AssistedInject
 class UpdateArtistWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val work: WorkRepository
+    private val work: WorkRepository,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 4) return Result.failure()

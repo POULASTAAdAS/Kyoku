@@ -1,10 +1,8 @@
 package com.poulastaa.core.domain.repository.player
 
 import com.poulastaa.core.domain.PlayerInfo
-import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
-import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.Song
 import kotlinx.coroutines.flow.Flow

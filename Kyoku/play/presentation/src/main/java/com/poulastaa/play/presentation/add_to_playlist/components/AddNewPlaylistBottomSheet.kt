@@ -44,7 +44,7 @@ import kotlinx.coroutines.delay
 fun AddNewPlaylistBottomSheet(
     sheetState: SheetState,
     state: AddNewPlaylistBottomSheetUiState,
-    onEvent: (AddToPlaylistUiEvent.AddNewPlaylistUiEvent) -> Unit
+    onEvent: (AddToPlaylistUiEvent.AddNewPlaylistUiEvent) -> Unit,
 ) {
     ModalBottomSheet(
         onDismissRequest = { onEvent(AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnCancelClick) },

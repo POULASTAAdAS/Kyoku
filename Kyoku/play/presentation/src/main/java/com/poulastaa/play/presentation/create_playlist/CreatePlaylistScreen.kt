@@ -66,7 +66,7 @@ fun CreatePlaylistRootScreen(
     modifier: Modifier = Modifier,
     playlistId: Long,
     viewModel: CreatePlaylistViewModel = hiltViewModel(),
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -176,7 +176,7 @@ private fun CreatePlaylistScreen(
     state: CreatePlaylistUiState,
     data: LazyPagingItems<CreatePlaylistPagingUiData>,
     onEvent: (CreatePlaylistUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val horizontalPager = rememberPagerState { state.generatedData.size }
     val focusRequester = remember { FocusRequester() }
@@ -284,7 +284,7 @@ private fun CreatePlaylistScreen(
 
 @Composable
 fun PagerIndicator(
-    pagerState: PagerState
+    pagerState: PagerState,
 ) {
     repeat(pagerState.pageCount) {
         val color = if (it == pagerState.currentPage)

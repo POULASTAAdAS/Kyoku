@@ -24,6 +24,6 @@ interface AddToPlaylistRepository {
 
     suspend fun createPlaylist(
         songId: Long,
-        name: String
+        name: String,
     ): EmptyResult<DataError.Network>
 }

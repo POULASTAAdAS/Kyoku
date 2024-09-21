@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddArtistDto(
-    val list: List<ArtistDto>
+    val list: List<ArtistDto>,
 )

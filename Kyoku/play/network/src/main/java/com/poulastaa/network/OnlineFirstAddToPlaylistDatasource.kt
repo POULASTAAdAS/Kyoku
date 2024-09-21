@@ -23,10 +23,10 @@ import javax.inject.Inject
 
 class OnlineFirstAddToPlaylistDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteAddToPlaylistDatasource {
     override suspend fun saveSong(
-        songId: Long
+        songId: Long,
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.GetSong.route,
         params = listOf(
@@ -51,7 +51,7 @@ class OnlineFirstAddToPlaylistDatasource @Inject constructor(
     )
 
     override suspend fun addSongToFavourite(
-        songId: Long
+        songId: Long,
     ): EmptyResult<DataError.Network> = client.post<UpdateFavouriteReq, Unit>(
         route = EndPoints.UpdateFavourite.route,
         body = UpdateFavouriteReq(
@@ -62,7 +62,7 @@ class OnlineFirstAddToPlaylistDatasource @Inject constructor(
     )
 
     override suspend fun removeSongToFavourite(
-        songId: Long
+        songId: Long,
     ): EmptyResult<DataError.Network> = client.post<UpdateFavouriteReq, Unit>(
         route = EndPoints.UpdateFavourite.route,
         body = UpdateFavouriteReq(
@@ -74,7 +74,7 @@ class OnlineFirstAddToPlaylistDatasource @Inject constructor(
 
     override suspend fun createPlaylist(
         songId: Long,
-        name: String
+        name: String,
     ): Result<PlaylistData, DataError.Network> =
         client.post<CreatePlaylistWithSongReq, PlaylistDto>(
             route = EndPoints.CreatePlaylist.route,

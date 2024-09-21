@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 class RoomLocalCreatePlaylistDatasource @Inject constructor(
-    private val commonDao: CommonDao
+    private val commonDao: CommonDao,
 ) : LocalCreatePlaylistDatasource {
     override suspend fun saveSong(song: Song, playlistId: Long) {
         coroutineScope {

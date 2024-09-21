@@ -34,7 +34,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreatePlaylistViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: CreatePlaylistRepository
+    private val repo: CreatePlaylistRepository,
 ) : ViewModel() {
     var state by mutableStateOf(CreatePlaylistUiState())
         private set

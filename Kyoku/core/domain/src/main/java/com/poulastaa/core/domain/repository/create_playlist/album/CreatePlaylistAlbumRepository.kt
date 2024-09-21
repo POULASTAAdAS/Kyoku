@@ -7,6 +7,6 @@ import com.poulastaa.core.domain.utils.Result
 interface CreatePlaylistAlbumRepository {
     suspend fun getAlbum(
         albumId: Long,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Result<AlbumWithSong, DataError.Network>
 }

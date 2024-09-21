@@ -63,7 +63,7 @@ fun AddNewAlbumTopBar(
     isMakingApiCall: Boolean,
     onSearchChange: (String) -> Unit,
     onSaveClick: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
 

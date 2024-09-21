@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class OnlineFirstViewEditRepository @Inject constructor(
     private val local: LocalViewEditDatasource,
-    private val remote: RemoteViewEditDatasource
+    private val remote: RemoteViewEditDatasource,
 ) : ViewEditRepository {
     override fun getSongs(playlistId: Long, type: ViewEditType): Flow<List<PlaylistSong>> =
         local.getSongs(playlistId, type)

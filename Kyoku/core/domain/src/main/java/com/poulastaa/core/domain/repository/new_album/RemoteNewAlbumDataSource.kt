@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface RemoteNewAlbumDataSource {
     fun getPagingAlbum(
         query: String,
-        type: AlbumPagingType
+        type: AlbumPagingType,
     ): Flow<PagingData<PagingAlbumData>>
 
     suspend fun saveAlbums(list: List<Long>): Result<List<AlbumWithSong>, DataError.Network>

@@ -56,7 +56,7 @@ fun AddNewArtistRootScreen(
     modifier: Modifier = Modifier,
     viewModel: AddNewArtistVewModel = hiltViewModel(),
     navigate: (AddNewArtistOtherScreen) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     ObserveAsEvent(viewModel.uiEvent) { event ->
         when (event) {
@@ -95,7 +95,7 @@ private fun AddNewArtistScreen(
     state: AddNewArtistUiState,
     onEvent: (AddArtistUiEvent) -> Unit,
     artist: LazyPagingItems<AddArtistUiArtist>,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -249,7 +249,7 @@ private fun AddNewArtistScreen(
 @Composable
 private fun AddNewArtistDummySearch(
     isVisible: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     AnimatedVisibility(
         visible = isVisible,

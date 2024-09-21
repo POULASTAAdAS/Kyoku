@@ -33,10 +33,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.NextIcon

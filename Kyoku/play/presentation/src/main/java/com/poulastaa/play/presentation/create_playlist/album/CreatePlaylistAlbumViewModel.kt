@@ -14,10 +14,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class CreatePlaylistAlbumViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: CreatePlaylistAlbumRepository
+    private val repo: CreatePlaylistAlbumRepository,
 ) : ViewModel() {
     var state by mutableStateOf(CreatePlaylistAlbumUiState())
         private set

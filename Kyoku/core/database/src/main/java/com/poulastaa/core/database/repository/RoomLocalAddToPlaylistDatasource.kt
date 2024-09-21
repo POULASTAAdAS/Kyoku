@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class RoomLocalAddToPlaylistDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val addToPlaylistDao: AddToPlaylistDao
+    private val addToPlaylistDao: AddToPlaylistDao,
 ) : LocalAddToPlaylistDatasource {
     override suspend fun checkIfSongInFev(songId: Long): Boolean =
         addToPlaylistDao.getFavouriteEntryOnSongId(songId) != null

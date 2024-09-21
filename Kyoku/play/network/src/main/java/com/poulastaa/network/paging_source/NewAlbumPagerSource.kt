@@ -28,7 +28,7 @@ class NewAlbumPagerSource @Inject constructor(
 
     fun init(
         query: String,
-        type: AlbumPagingType
+        type: AlbumPagingType,
     ) {
         this.query = query
         this.type = type.toAlbumPagingTypeDto()

@@ -43,6 +43,7 @@ import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.player.small_player.SmallExpandedPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
@@ -61,7 +62,8 @@ import kotlinx.coroutines.launch
 fun RowScope.RootDrawerExpanded(
     viewSongArtistSheetState: SheetState,
     navController: NavHostController,
-    state: RootDrawerUiState,
+    drawerUiState: RootDrawerUiState,
+    playerUiState: PlayerUiState,
     onSaveScreenToggle: (SaveScreen) -> Unit,
     onEvent: (RootDrawerUiEvent) -> Unit,
     onPlayerEvent: (PlayerUiEvent) -> Unit,
@@ -79,11 +81,11 @@ fun RowScope.RootDrawerExpanded(
             .fillMaxHeight(),
     ) {
         ExpandedDrawerContent(
-            userName = state.username,
-            profilePicUrl = state.profilePicUrl,
+            userName = drawerUiState.username,
+            profilePicUrl = drawerUiState.profilePicUrl,
             isExpanded = toggle,
             isExpandSmall = false,
-            saveScreen = state.saveScreen,
+            saveScreen = drawerUiState.saveScreen,
             onExpandToggle = {
                 toggle = !toggle
             },
@@ -116,17 +118,17 @@ fun RowScope.RootDrawerExpanded(
     Box {
         NavHost(
             navController = navController,
-            startDestination = state.startDestination,
+            startDestination = drawerUiState.startDestination,
             modifier = Modifier
                 .then(
                     if (config.screenWidthDp > 980 &&
-                        (state.addToPlaylistUiState.isOpen ||
-                                state.viewUiState.isOpen ||
-                                state.newAlbumUiState.isOpen ||
-                                state.newArtisUiState.isOpen ||
-                                state.createPlaylistUiState.isOpen ||
-                                state.exploreArtistUiState.isOpen ||
-                                state.player.isPlayerExtended)
+                        (drawerUiState.addToPlaylistUiState.isOpen ||
+                                drawerUiState.viewUiState.isOpen ||
+                                drawerUiState.newAlbumUiState.isOpen ||
+                                drawerUiState.newArtisUiState.isOpen ||
+                                drawerUiState.createPlaylistUiState.isOpen ||
+                                drawerUiState.exploreArtistUiState.isOpen ||
+                                playerUiState.isPlayerExtended)
                     ) Modifier
                         .fillMaxWidth(.6f)
                         .fillMaxHeight()
@@ -135,7 +137,7 @@ fun RowScope.RootDrawerExpanded(
         ) {
             composable(route = DrawerScreen.Home.route) {
                 HomeCompactScreen(
-                    profileUrl = state.profilePicUrl,
+                    profileUrl = drawerUiState.profilePicUrl,
                     navigate = { event ->
                         when (event) {
                             is HomeOtherScreens.AddAsPlaylist -> onEvent(
@@ -183,7 +185,7 @@ fun RowScope.RootDrawerExpanded(
             composable(route = DrawerScreen.Library.route) {
                 LibraryCompactScreen(
                     isExpanded = true,
-                    profileUrl = state.profilePicUrl,
+                    profileUrl = drawerUiState.profilePicUrl,
                     onProfileClick = {},
                     navigate = { screen ->
                         when (screen) {
@@ -266,13 +268,13 @@ fun RowScope.RootDrawerExpanded(
             ) {
                 val id = it.arguments?.getLong("id") ?: -1
 
-                if (state.addToPlaylistUiState.isOpen ||
-                    state.viewUiState.isOpen ||
-                    state.newAlbumUiState.isOpen ||
-                    state.newArtisUiState.isOpen ||
-                    state.createPlaylistUiState.isOpen ||
-                    state.player.isPlayerExtended ||
-                    (state.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
+                if (drawerUiState.addToPlaylistUiState.isOpen ||
+                    drawerUiState.viewUiState.isOpen ||
+                    drawerUiState.newAlbumUiState.isOpen ||
+                    drawerUiState.newArtisUiState.isOpen ||
+                    drawerUiState.createPlaylistUiState.isOpen ||
+                    playerUiState.isPlayerExtended ||
+                    (drawerUiState.exploreArtistUiState.isOpen && config.screenWidthDp > 980)  // stopping compact view for compact screen
                 ) ViewArtistCompactRootScreen(
                     artistId = id,
                     onArtistDetailScreenOpen = { artistId ->
@@ -329,26 +331,26 @@ fun RowScope.RootDrawerExpanded(
                 .fillMaxHeight(.3f)
                 .align(Alignment.BottomEnd)
                 .padding(MaterialTheme.dimens.medium1),
-            visible = state.player.isData &&
-                    state.player.queue.isNotEmpty() &&
+            visible = playerUiState.isData &&
+                    playerUiState.queue.isNotEmpty() &&
                     config.screenWidthDp > 980 &&
-                    !state.player.isPlayerExtended,
+                    !playerUiState.isPlayerExtended,
             enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                     slideInHorizontally(tween(400)) { it },
             exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
                     slideOutHorizontally(tween(400)) { it }
         ) {
-            if (state.player.queue.isNotEmpty()) SmallExpandedPlayer(
-                header = state.header,
-                song = state.player.queue[state.player.info.currentPlayingIndex].copy(
-                    colors = state.player.queue[state.player.info.currentPlayingIndex].colors.ifEmpty {
+            if (playerUiState.queue.isNotEmpty()) SmallExpandedPlayer(
+                header = drawerUiState.header,
+                song = playerUiState.queue[playerUiState.info.currentPlayingIndex].copy(
+                    colors = playerUiState.queue[playerUiState.info.currentPlayingIndex].colors.ifEmpty {
                         listOf(
                             MaterialTheme.colorScheme.primary,
                             MaterialTheme.colorScheme.surfaceContainer
                         )
                     }
                 ),
-                info = state.player.info,
+                info = playerUiState.info,
                 onEvent = onPlayerEvent
             )
         }

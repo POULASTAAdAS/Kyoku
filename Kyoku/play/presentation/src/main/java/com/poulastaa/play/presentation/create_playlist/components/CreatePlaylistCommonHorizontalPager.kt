@@ -27,7 +27,7 @@ fun CommonHorizontalPager(
     modifier: Modifier = Modifier,
     state: CreatePlaylistData,
     header: String,
-    onEvent: (CreatePlaylistUiEvent) -> Unit
+    onEvent: (CreatePlaylistUiEvent) -> Unit,
 ) {
     Card(
         modifier = modifier

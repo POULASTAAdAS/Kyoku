@@ -25,7 +25,7 @@ class ExploreArtistSongPagerSource @Inject constructor(
 
     fun init(
         artistId: Long,
-        removeSongIdList: List<Long>
+        removeSongIdList: List<Long>,
     ) {
         this.artistId = artistId
         this.removeSongIdList = removeSongIdList

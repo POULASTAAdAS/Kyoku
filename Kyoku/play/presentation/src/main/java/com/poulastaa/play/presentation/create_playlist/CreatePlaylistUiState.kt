@@ -21,12 +21,12 @@ data class CreatePlaylistUiState(
     val savedSongIdList: List<Long> = emptyList(),
 
     val artistUiState: CreatePlaylistExpandedUiState = CreatePlaylistExpandedUiState(),
-    val albumUiState: CreatePlaylistExpandedUiState = CreatePlaylistExpandedUiState()
+    val albumUiState: CreatePlaylistExpandedUiState = CreatePlaylistExpandedUiState(),
 )
 
 data class CreatePlaylistData(
     val type: CreatePlaylistType,
-    val list: List<UiSong>
+    val list: List<UiSong>,
 )
 
 data class CreatePlaylistPagingUiData(
@@ -35,10 +35,10 @@ data class CreatePlaylistPagingUiData(
     val coverImage: String,
     val artist: String,
     val expandable: Boolean,
-    val isArtist: Boolean
+    val isArtist: Boolean,
 )
 
 data class CreatePlaylistExpandedUiState(
     val isExpanded: Boolean = false,
-    val id: Long = -1
+    val id: Long = -1,
 )

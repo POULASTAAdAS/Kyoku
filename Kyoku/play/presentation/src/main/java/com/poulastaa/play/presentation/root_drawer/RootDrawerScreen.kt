@@ -19,6 +19,7 @@ import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.presentation.designsystem.components.AppScreenWindowSize
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.root_drawer.components.compact.RootDrawerCompact
 import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpandedLarge
 import com.poulastaa.play.presentation.root_drawer.components.expanded.RootDrawerExpandedSmall
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun RootDrawerScreen(
-    viewModel: RootDrawerViewModel = hiltViewModel(),
+    drawerViewModel: RootDrawerViewModel = hiltViewModel(),
+    playerViewModel: PlayerViewModel = hiltViewModel(),
     navigate: (ScreenEnum) -> Unit,
 ) {
     val context = LocalContext.current
@@ -34,7 +36,7 @@ fun RootDrawerScreen(
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    ObserveAsEvent(flow = viewModel.uiEvent) { event ->
+    ObserveAsEvent(flow = drawerViewModel.uiEvent) { event ->
         when (event) {
             is RootDrawerUiAction.EmitToast -> {
                 Toast.makeText(
@@ -48,9 +50,24 @@ fun RootDrawerScreen(
         }
     }
 
+    ObserveAsEvent(flow = playerViewModel.uiEvent) { event ->
+        when (event) {
+            is RootDrawerUiAction.EmitToast -> {
+                Toast.makeText(
+                    context,
+                    event.message.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            else -> Unit
+        }
+    }
+
     AppDrawer(
         drawerState = drawerState,
-        state = viewModel.state,
+        drawerUiState = drawerViewModel.state,
+        playerUiState = playerViewModel.state,
         onEvent = {
             if (it == RootDrawerUiEvent.OnDrawerToggle) {
                 scope.launch {
@@ -58,10 +75,10 @@ fun RootDrawerScreen(
                     else drawerState.close()
                 }
             } else {
-                viewModel.onEvent(it)
+                drawerViewModel.onEvent(it)
             }
         },
-        onPlayerEvent = viewModel::onPlayerEvent
+        onPlayerEvent = playerViewModel::onPlayerEvent
     )
 }
 
@@ -69,7 +86,8 @@ fun RootDrawerScreen(
 @Composable
 private fun AppDrawer(
     drawerState: DrawerState,
-    state: RootDrawerUiState,
+    drawerUiState: RootDrawerUiState,
+    playerUiState: PlayerUiState,
     onEvent: (RootDrawerUiEvent) -> Unit,
     onPlayerEvent: (PlayerUiEvent) -> Unit,
 ) {
@@ -87,7 +105,8 @@ private fun AppDrawer(
                 isSmall = true,
                 drawerState = drawerState,
                 navController = navController,
-                state = state,
+                drawerUiState = drawerUiState,
+                playerUiState = playerUiState,
                 onSaveScreenToggle = {
                     onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
                 },
@@ -101,7 +120,8 @@ private fun AppDrawer(
                 isSmall = false,
                 drawerState = drawerState,
                 navController = navController,
-                state = state,
+                drawerUiState = drawerUiState,
+                playerUiState = playerUiState,
                 onSaveScreenToggle = {
                     onEvent(RootDrawerUiEvent.SaveScreenToggle(it))
                 },
@@ -113,13 +133,15 @@ private fun AppDrawer(
             if (config.screenWidthDp > 980) RootDrawerExpandedLarge(
                 viewSongArtistSheetState = viewSongArtistSheetState,
                 navController = navController,
-                state = state,
+                drawerUiState = drawerUiState,
+                playerUiState = playerUiState,
                 onEvent = onEvent,
                 onPlayerEvent = onPlayerEvent
             ) else RootDrawerExpandedSmall(
                 viewSongArtistSheetState = viewSongArtistSheetState,
                 navController = navController,
-                state = state,
+                drawerUiState = drawerUiState,
+                playerUiState = playerUiState,
                 onEvent = onEvent,
                 onPlayerEvent = onPlayerEvent
             )

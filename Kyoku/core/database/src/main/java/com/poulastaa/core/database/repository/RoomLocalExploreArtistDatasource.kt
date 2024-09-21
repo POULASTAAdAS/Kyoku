@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class RoomLocalExploreArtistDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val viewDao: ViewDao
+    private val viewDao: ViewDao,
 ) : LocalExploreArtistDatasource {
     override suspend fun getArtist(artistId: Long): Artist? =
         commonDao.getArtistByIdOrNull(artistId)?.toArtist()

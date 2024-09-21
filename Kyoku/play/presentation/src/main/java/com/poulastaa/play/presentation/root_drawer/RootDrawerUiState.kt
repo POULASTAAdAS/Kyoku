@@ -2,7 +2,6 @@ package com.poulastaa.play.presentation.root_drawer
 
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
-import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import com.poulastaa.play.presentation.view.components.ViewDataType
 
@@ -22,7 +21,6 @@ data class RootDrawerUiState(
     val newArtisUiState: NewArtistViewUiState = NewArtistViewUiState(),
     val createPlaylistUiState: CreatePlaylistViewUiState = CreatePlaylistViewUiState(),
     val viewSongArtistSongId: Long = -1,
-    val player: PlayerUiState = PlayerUiState(),
 )
 
 data class HomeViewUiState(

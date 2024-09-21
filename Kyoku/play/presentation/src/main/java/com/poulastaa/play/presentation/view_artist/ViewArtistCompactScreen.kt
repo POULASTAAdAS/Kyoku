@@ -50,7 +50,7 @@ fun ViewArtistCompactRootScreen(
     viewModel: ViewArtistViewModel = hiltViewModel(),
     onArtistDetailScreenOpen: (id: Long) -> Unit,
     navigate: (ViewArtistOtherScreen) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -88,7 +88,7 @@ private fun ViewArtistScreen(
     state: ViewArtistUiState,
     onEvent: (ViewArtistUiEvent) -> Unit,
     navigateToArtistDetail: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -136,7 +136,7 @@ private fun Content(
     scrollBehavior: TopAppBarScrollBehavior,
     state: ViewArtistUiState,
     navigateToArtistDetail: () -> Unit,
-    onEvent: (ViewArtistUiEvent) -> Unit
+    onEvent: (ViewArtistUiEvent) -> Unit,
 ) {
     val config = LocalConfiguration.current
 

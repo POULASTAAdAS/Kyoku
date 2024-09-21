@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +34,7 @@ fun CreatePlaylistArtistTopBar(
     title: String = stringResource(R.string.artist),
     header: String,
     coverImageUrl: String,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     LargeTopAppBar(
         scrollBehavior = scrollBehavior,

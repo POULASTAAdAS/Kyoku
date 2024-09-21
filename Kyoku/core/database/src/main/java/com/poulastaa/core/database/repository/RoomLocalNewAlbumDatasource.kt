@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class RoomLocalNewAlbumDatasource @Inject constructor(
-    private val commonDao: CommonDao
+    private val commonDao: CommonDao,
 ) : LocalNewAlbumDataSource {
     override suspend fun getNotSavedAlbumIdList(list: List<Long>): List<Long> {
         val savedAlbumIdList = commonDao.getAllSavedAlbum().first()

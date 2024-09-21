@@ -27,7 +27,7 @@ class OnlineFirstCreatePlaylistArtistDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
     private val album: ExploreArtistAlbumPagerSource,
-    private val song: ExploreArtistSongPagerSource
+    private val song: ExploreArtistSongPagerSource,
 ) : RemoteCreatePlaylistArtistDatasource {
     override suspend fun getArtist(artistId: Long): Result<Artist, DataError.Network> =
         client.get<ArtistDto>(
@@ -54,7 +54,7 @@ class OnlineFirstCreatePlaylistArtistDatasource @Inject constructor(
 
     override suspend fun getPagingSong(
         artistId: Long,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>> {
         song.init(artistId, savedSongIdList)
 

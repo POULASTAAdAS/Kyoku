@@ -83,7 +83,7 @@ fun AddNewAlbumRootScreen(
     modifier: Modifier = Modifier,
     viewModel: AddNewAlbumViewModel = hiltViewModel(),
     navigate: (AddNewAlbumOtherScreen) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     ObserveAsEvent(viewModel.uiEvent) { event ->
         when (event) {
@@ -126,7 +126,7 @@ private fun AddNewAlbumScreen(
     state: AddAlbumUiState,
     album: LazyPagingItems<AddAlbumUiAlbum>,
     onEvent: (AddAlbumUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -311,7 +311,7 @@ private fun AddNewAlbumScreen(
 @Composable
 private fun AddNewAlbumDummySearch(
     isVisible: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -353,7 +353,7 @@ private fun AlbumCard(
     album: AddAlbumUiAlbum,
     isMassSelectEnabled: Boolean,
     onCheckChange: (Boolean) -> Unit,
-    onEvent: (AddAlbumUiEvent.ThreeDotEvent) -> Unit
+    onEvent: (AddAlbumUiEvent.ThreeDotEvent) -> Unit,
 ) {
     Row(
         modifier = modifier

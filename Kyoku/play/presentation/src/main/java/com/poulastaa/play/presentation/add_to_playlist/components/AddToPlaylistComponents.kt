@@ -182,7 +182,7 @@ fun AddToPlaylistTextField(
 fun AddToPlaylistNavigationIcon(
     searchEnabled: Boolean,
     onEvent: (AddToPlaylistUiEvent.CancelSearch) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     IconButton(
         onClick = {
@@ -207,7 +207,7 @@ fun PlaylistCard(
     modifier: Modifier = Modifier,
     header: String,
     data: UiPlaylistData,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -259,7 +259,7 @@ fun PlaylistCard(
 @Composable
 private fun CustomCheckBox(
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -349,7 +349,7 @@ fun LazyListScope.addToPlaylistTopPart(
 
 @Composable
 private fun NewPlaylistButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -373,7 +373,7 @@ private fun NewPlaylistButton(
 private fun FavouriteCard(
     modifier: Modifier = Modifier,
     fev: UiFavouriteData,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -432,7 +432,7 @@ private fun FavouriteCard(
 private fun TextColumn(
     modifier: Modifier = Modifier,
     heading: String,
-    songsCount: Int
+    songsCount: Int,
 ) {
     Column(
         modifier = modifier,

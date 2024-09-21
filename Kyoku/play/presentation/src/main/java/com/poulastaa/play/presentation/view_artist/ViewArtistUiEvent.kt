@@ -10,7 +10,7 @@ sealed interface ViewArtistUiEvent {
         data class OnCloseClick(val id: Long) : ThreeDotEvent
         data class OnThreeDotItemClick(
             val id: Long,
-            val operation: ViewSongOperation
+            val operation: ViewSongOperation,
         ) : ThreeDotEvent
     }
 

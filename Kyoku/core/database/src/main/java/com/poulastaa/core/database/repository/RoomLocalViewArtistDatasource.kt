@@ -13,7 +13,7 @@ import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class RoomLocalViewArtistDatasource @Inject constructor(
-    private val commonDao: CommonDao
+    private val commonDao: CommonDao,
 ) : LocalViewArtistDatasource {
     override suspend fun getArtist(artistId: Long): Artist? =
         commonDao.getArtistByIdOrNull(artistId)?.toArtist()

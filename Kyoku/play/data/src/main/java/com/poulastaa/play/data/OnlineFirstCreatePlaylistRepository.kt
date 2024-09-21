@@ -20,7 +20,7 @@ import javax.inject.Inject
 class OnlineFirstCreatePlaylistRepository @Inject constructor(
     private val local: LocalCreatePlaylistDatasource,
     private val remote: RemoteCreatePlaylistDatasource,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
 ) : CreatePlaylistRepository {
     override suspend fun getStaticData(): Result<List<Pair<CreatePlaylistType, List<Song>>>, DataError.Network> =
         remote.getStaticData()
@@ -28,7 +28,7 @@ class OnlineFirstCreatePlaylistRepository @Inject constructor(
     override suspend fun getPagingSong(
         query: String,
         type: CreatePlaylistPagerFilterType,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>> =
         remote.getPagingSong(query, type, savedSongIdList)
 

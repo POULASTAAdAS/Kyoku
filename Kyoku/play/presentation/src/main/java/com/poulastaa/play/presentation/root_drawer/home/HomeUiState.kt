@@ -28,5 +28,5 @@ data class HomeUiState(
 
 data class HomeAddToPlaylistUiState(
     val isOpen: Boolean = false,
-    val songId: Long = -1
+    val songId: Long = -1,
 )

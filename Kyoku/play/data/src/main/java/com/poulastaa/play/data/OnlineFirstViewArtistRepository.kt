@@ -15,7 +15,7 @@ import javax.inject.Inject
 class OnlineFirstViewArtistRepository @Inject constructor(
     private val local: LocalViewArtistDatasource,
     private val remote: RemoteViewArtistDatasource,
-    private val application: CoroutineScope
+    private val application: CoroutineScope,
 ) : ViewArtistRepository {
     override suspend fun getData(artistId: Long): Result<ViewArtistData, DataError.Network> =
         remote.getData(artistId)

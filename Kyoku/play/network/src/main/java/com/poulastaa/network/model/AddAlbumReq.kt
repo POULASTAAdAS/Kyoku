@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddAlbumReq(
-    val list: List<Long>
+    val list: List<Long>,
 )

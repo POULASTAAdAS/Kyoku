@@ -46,7 +46,7 @@ fun CreatePlaylistSearchToBar(
     searchQuery: String,
     focusRequester: FocusRequester,
     onEvent: (CreatePlaylistUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
 

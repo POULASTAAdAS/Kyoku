@@ -131,7 +131,7 @@ fun VerticalPlayerScreen(
                         .padding(end = 56.dp)
                         .padding(horizontal = MaterialTheme.dimens.small3),
                     colors = song.colors,
-                    type = info.type,
+                    type = info.more.title,
                     onEvent = onEvent
                 )
 
@@ -347,7 +347,7 @@ fun VerticalPlayerScreen(
                         queue = queue,
                         onEvent = onEvent
                     ) else {
-                        LaunchedEffect(Unit , song.songId) {
+                        LaunchedEffect(Unit, song.songId) {
                             onEvent(PlayerUiEvent.GetSongInfo(song.songId))
                         }
 
@@ -799,7 +799,6 @@ private fun Preview() {
                 )
             ),
             info = PlayerUiInfo(
-                type = "album",
                 hasNext = true,
                 hasPrev = true,
                 repeatState = RepeatState.IDLE

@@ -24,11 +24,11 @@ import javax.inject.Inject
 class OnlineFirstNewAlbumDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
-    private val pager: NewAlbumPagerSource
+    private val pager: NewAlbumPagerSource,
 ) : RemoteNewAlbumDataSource {
     override fun getPagingAlbum(
         query: String,
-        type: AlbumPagingType
+        type: AlbumPagingType,
     ): Flow<PagingData<PagingAlbumData>> {
         pager.init(query, type)
 

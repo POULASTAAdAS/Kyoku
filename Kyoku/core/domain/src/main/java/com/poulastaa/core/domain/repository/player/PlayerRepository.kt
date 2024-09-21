@@ -13,7 +13,7 @@ interface PlayerRepository {
     suspend fun loadData(
         id: Long,
         type: PlayType,
-        isShuffled: Boolean = false
+        isShuffled: Boolean = false,
     ): EmptyResult<DataError.Network>
 
     fun getInfo(): Flow<PlayerInfo>

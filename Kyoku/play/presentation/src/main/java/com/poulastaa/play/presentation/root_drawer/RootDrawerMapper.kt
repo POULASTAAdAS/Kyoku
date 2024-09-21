@@ -61,7 +61,6 @@ fun PlayerSong.toPlayerUiSong() = PlayerUiSong(
 )
 
 fun PlayerInfo.toPlayerUiInfo(index: Int) = PlayerUiInfo(
-    type = this.type,
     isShuffledEnabled = this.isShuffledEnabled,
     repeatState = this.repeatState,
     isPlaying = this.isPlaying,

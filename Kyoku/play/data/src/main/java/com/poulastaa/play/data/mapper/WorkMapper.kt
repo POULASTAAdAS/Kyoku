@@ -9,9 +9,11 @@ fun DataError.Network.toWorkResult() = when (this) {
     DataError.Network.PASSWORD_DOES_NOT_MATCH,
     DataError.Network.SERIALISATION,
     DataError.Network.UNKNOWN,
-    DataError.Network.CONFLICT -> ListenableWorker.Result.failure()
+    DataError.Network.CONFLICT,
+    -> ListenableWorker.Result.failure()
 
     DataError.Network.NOT_FOUND,
     DataError.Network.NO_INTERNET,
-    DataError.Network.SERVER_ERROR -> ListenableWorker.Result.retry()
+    DataError.Network.SERVER_ERROR,
+    -> ListenableWorker.Result.retry()
 }

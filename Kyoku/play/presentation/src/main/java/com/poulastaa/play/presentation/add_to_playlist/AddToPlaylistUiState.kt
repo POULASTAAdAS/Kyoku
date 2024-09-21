@@ -16,7 +16,7 @@ data class AddToPlaylistUiState(
 
     val oldPlaylistData: List<UiPlaylistData> = emptyList(),
     val playlistData: List<UiPlaylistData> = emptyList(),
-    val favouriteData: UiFavouriteData = UiFavouriteData()
+    val favouriteData: UiFavouriteData = UiFavouriteData(),
 )
 
 data class AddNewPlaylistBottomSheetUiState(
@@ -24,19 +24,19 @@ data class AddNewPlaylistBottomSheetUiState(
     val name: String = "",
     val isMakingApiCall: Boolean = false,
     val isValidName: Boolean = true,
-    val errorMessage: UiText = UiText.DynamicString("")
+    val errorMessage: UiText = UiText.DynamicString(""),
 )
 
 
 data class UiPlaylistData(
     val selectStatus: UiSelectStatus = UiSelectStatus(),
     val totalSongs: Int = 0,
-    val playlist: UiPrevPlaylist = UiPrevPlaylist()
+    val playlist: UiPrevPlaylist = UiPrevPlaylist(),
 )
 
 data class UiFavouriteData(
     val selectStatus: UiSelectStatus = UiSelectStatus(),
-    val totalSongs: Int = 0
+    val totalSongs: Int = 0,
 )
 
 data class UiSelectStatus(

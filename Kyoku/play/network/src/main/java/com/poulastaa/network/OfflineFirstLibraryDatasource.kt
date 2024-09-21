@@ -26,7 +26,7 @@ class OfflineFirstLibraryDatasource @Inject constructor(
 ) : RemoteLibraryDataSource {
     override suspend fun pinData(
         id: Long,
-        type: LibraryDataType
+        type: LibraryDataType,
     ): EmptyResult<DataError.Network> = client.put<PinReq, Unit>(
         route = EndPoints.PinData.route,
         body = PinReq(
@@ -38,7 +38,7 @@ class OfflineFirstLibraryDatasource @Inject constructor(
 
     override suspend fun unPinData(
         id: Long,
-        type: LibraryDataType
+        type: LibraryDataType,
     ): EmptyResult<DataError.Network> = client.put<PinReq, Unit>(
         route = EndPoints.UnPinData.route,
         body = PinReq(
@@ -50,7 +50,7 @@ class OfflineFirstLibraryDatasource @Inject constructor(
 
     override suspend fun deleteSavedData(
         id: Long,
-        type: LibraryDataType
+        type: LibraryDataType,
     ): EmptyResult<DataError.Network> = client.get<Unit>(
         route = EndPoints.DeleteSavedData.route,
         params = listOf(

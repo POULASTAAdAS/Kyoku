@@ -30,7 +30,7 @@ import javax.inject.Inject
 class OnlineFirstCreatePlaylistDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
-    private val pager: CreatePlaylistPagerSource
+    private val pager: CreatePlaylistPagerSource,
 ) : RemoteCreatePlaylistDatasource {
     override suspend fun getStaticData(): Result<List<Pair<CreatePlaylistType, List<Song>>>, DataError.Network> =
         client.get<CreatePlaylistDto>(
@@ -44,7 +44,7 @@ class OnlineFirstCreatePlaylistDatasource @Inject constructor(
     override suspend fun getPagingSong(
         query: String,
         type: CreatePlaylistPagerFilterType,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>> {
         pager.init(query, type, savedSongIdList)
 
@@ -58,7 +58,7 @@ class OnlineFirstCreatePlaylistDatasource @Inject constructor(
     }
 
     override suspend fun getSong(
-        songId: Long
+        songId: Long,
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.GetSong.route,
         params = listOf(
@@ -72,7 +72,7 @@ class OnlineFirstCreatePlaylistDatasource @Inject constructor(
 
     override suspend fun saveSong(
         songId: Long,
-        playlistId: Long
+        playlistId: Long,
     ): EmptyResult<DataError.Network> = client.post<UpdatePlaylistReq, Unit>(
         route = EndPoints.UpdatePlaylist.route,
         body = UpdatePlaylistReq(

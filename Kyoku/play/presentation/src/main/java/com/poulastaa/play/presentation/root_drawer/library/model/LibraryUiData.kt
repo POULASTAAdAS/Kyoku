@@ -12,7 +12,7 @@ data class LibraryUiData(
     val isFavouriteEntry: Boolean = false,
 
     val isFevPinned: Boolean = false,
-    val pinned: List<PinnedUiData> = emptyList()
+    val pinned: List<PinnedUiData> = emptyList(),
 )
 
 
@@ -20,5 +20,5 @@ data class PinnedUiData(
     val id: Long,
     val name: String,
     val urls: List<String>,
-    val pinnedType: PinnedType
+    val pinnedType: PinnedType,
 )

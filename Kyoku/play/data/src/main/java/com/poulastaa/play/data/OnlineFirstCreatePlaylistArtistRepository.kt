@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class OnlineFirstCreatePlaylistArtistRepository @Inject constructor(
     private val local: LocalCreatePlaylistArtistDatasource,
-    private val remote: RemoteCreatePlaylistArtistDatasource
+    private val remote: RemoteCreatePlaylistArtistDatasource,
 ) : CreatePlaylistArtistRepository {
     override suspend fun getArtist(artistId: Long): Result<Artist, DataError.Network> {
         val artist = local.getArtist(artistId) ?: return remote.getArtist(artistId)
@@ -28,7 +28,7 @@ class OnlineFirstCreatePlaylistArtistRepository @Inject constructor(
 
     override suspend fun getPagingSong(
         artistId: Long,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>> =
         remote.getPagingSong(artistId, savedSongIdList)
 }

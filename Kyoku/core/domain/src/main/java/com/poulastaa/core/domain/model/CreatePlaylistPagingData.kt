@@ -6,5 +6,5 @@ data class CreatePlaylistPagingData(
     val coverImage: String,
     val artist: String,
     val expandable: Boolean,
-    val isArtist: Boolean
+    val isArtist: Boolean,
 )

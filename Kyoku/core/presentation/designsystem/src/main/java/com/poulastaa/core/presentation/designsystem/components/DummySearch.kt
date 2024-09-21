@@ -18,7 +18,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun DummySearch(
     header: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(

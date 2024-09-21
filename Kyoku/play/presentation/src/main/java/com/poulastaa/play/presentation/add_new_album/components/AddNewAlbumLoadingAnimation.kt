@@ -26,7 +26,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 
 @Composable
 fun AddNewAlbumLoadingAnimation(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
 ) {
     Column(
         modifier = Modifier

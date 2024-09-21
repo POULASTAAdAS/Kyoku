@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 class OnlineFirstEditViewDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteViewEditDatasource {
     override suspend fun deleteSong(
         playlistId: Long,
-        songId: Long
+        songId: Long,
     ): EmptyResult<DataError.Network> = client.post<UpdatePlaylistReq, Unit>(
         route = EndPoints.UpdatePlaylist.route,
         body = UpdatePlaylistReq(

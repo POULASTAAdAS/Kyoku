@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.create_playlist.album
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +41,7 @@ fun CreatePlaylistAlbumRootScreen(
     savedSongIdList: List<Long>,
     viewModel: CreatePlaylistAlbumViewModel = hiltViewModel(),
     onEvent: (CreatePlaylistAlbumUiEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     LaunchedEffect(key1 = albumId) {
         viewModel.init(albumId, savedSongIdList)
@@ -65,7 +64,7 @@ private fun CreatePlaylistAlbumScreen(
     modifier: Modifier = Modifier,
     state: CreatePlaylistAlbumUiState,
     onEvent: (CreatePlaylistAlbumUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
 

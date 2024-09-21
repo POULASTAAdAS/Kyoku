@@ -43,7 +43,7 @@ fun CreatePlaylistArtistRootScreen(
     artistId: Long,
     savedSongIdList: List<Long>,
     onEvent: (CreatePlaylistArtistUiEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     LaunchedEffect(key1 = artistId) {
         viewModel.init(artistId)
@@ -74,7 +74,7 @@ private fun CreatePlaylistArtistScreen(
     album: LazyPagingItems<CreatePlaylistPagingUiData>,
     song: LazyPagingItems<CreatePlaylistPagingUiData>,
     onEvent: (CreatePlaylistArtistUiEvent) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
 

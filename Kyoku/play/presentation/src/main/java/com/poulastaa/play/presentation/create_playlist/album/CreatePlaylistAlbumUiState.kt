@@ -8,5 +8,5 @@ data class CreatePlaylistAlbumUiState(
     val loadingState: DataLoadingState = DataLoadingState.LOADING,
     val header: String = "",
     val album: UiPrevAlbum = UiPrevAlbum(),
-    val albumSongs: List<CreatePlaylistPagingUiData> = emptyList()
+    val albumSongs: List<CreatePlaylistPagingUiData> = emptyList(),
 )

@@ -30,7 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddNewAlbumViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: NewAlbumRepository
+    private val repo: NewAlbumRepository,
 ) : ViewModel() {
     var state by mutableStateOf(AddAlbumUiState())
         private set

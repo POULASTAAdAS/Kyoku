@@ -28,7 +28,7 @@ import com.poulastaa.play.presentation.player.PlayerUiSong
 fun PlayerSongInfo(
     modifier: Modifier = Modifier,
     song: PlayerUiSong,
-    onEvent: (PlayerUiEvent) -> Unit
+    onEvent: (PlayerUiEvent) -> Unit,
 ) {
     Row(
         modifier = modifier,

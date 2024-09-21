@@ -19,7 +19,7 @@ data class LibraryUiState(
     val data: LibraryUiData = LibraryUiData(),
     val libraryBottomSheet: LibraryBottomSheetUiState = LibraryBottomSheetUiState(),
     val newPlaylistBottomSheetState: AddNewPlaylistBottomSheetUiState = AddNewPlaylistBottomSheetUiState(),
-    val toast: SnackBarUiState = SnackBarUiState()
+    val toast: SnackBarUiState = SnackBarUiState(),
 ) {
     val canShowUi: Boolean
         get() = !isDataLoading && !viewTypeReading

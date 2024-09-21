@@ -19,7 +19,7 @@ data class AddAlbumUiState(
 
     ),
 
-    val toast: SnackBarUiState = SnackBarUiState()
+    val toast: SnackBarUiState = SnackBarUiState(),
 )
 
 data class AddAlbumUiAlbum(
@@ -29,5 +29,5 @@ data class AddAlbumUiAlbum(
     val artist: String = "",
     val releaseYear: String = "",
     val isExtended: Boolean = false,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false,
 )

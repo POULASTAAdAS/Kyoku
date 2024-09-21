@@ -11,6 +11,6 @@ sealed interface PlayerState {
     data class CurrentlyPlaying(
         val songId: Long,
         val hasNext: Boolean = false,
-        val hasPrev: Boolean = false
+        val hasPrev: Boolean = false,
     ) : PlayerState
 }

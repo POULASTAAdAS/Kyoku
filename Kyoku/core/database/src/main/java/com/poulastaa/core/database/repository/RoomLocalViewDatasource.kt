@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class RoomLocalViewDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val viewDao: ViewDao
+    private val viewDao: ViewDao,
 ) : LocalViewDatasource {
     override suspend fun getPlaylistOnId(id: Long): ViewData =
         viewDao.getPlaylistOnId(id).groupBy { it.playlistId }

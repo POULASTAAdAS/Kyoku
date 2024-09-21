@@ -32,7 +32,7 @@ import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 fun CreatePlaylistAlbumCard(
     modifier: Modifier = Modifier,
     header: String,
-    data: CreatePlaylistPagingUiData
+    data: CreatePlaylistPagingUiData,
 ) {
     Row(
         modifier = Modifier

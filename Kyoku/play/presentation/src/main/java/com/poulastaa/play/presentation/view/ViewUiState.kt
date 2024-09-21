@@ -27,5 +27,5 @@ data class ViewUiData(
     val id: Long = -1,
     val name: String = "",
     val urls: List<String> = emptyList(),
-    val listOfSong: List<ViewUiSong> = emptyList()
+    val listOfSong: List<ViewUiSong> = emptyList(),
 )

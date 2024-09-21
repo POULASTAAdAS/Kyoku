@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddToPlaylistViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: AddToPlaylistRepository
+    private val repo: AddToPlaylistRepository,
 ) : ViewModel() {
     var state by mutableStateOf(AddToPlaylistUiState())
         private set
@@ -385,12 +385,12 @@ class AddToPlaylistViewModel @Inject constructor(
     }
 
     private fun toggleSelectStatus(
-        currentStatus: UiSelectStatus
+        currentStatus: UiSelectStatus,
     ): UiSelectStatus = currentStatus.copy(new = currentStatus.new.not())
 
     private fun adjustTotalSongs(
         currentTotal: Int,
-        selectStatus: UiSelectStatus
+        selectStatus: UiSelectStatus,
     ) = if (selectStatus.old) {
         if (selectStatus.new) currentTotal.dec() else currentTotal.inc()
     } else {

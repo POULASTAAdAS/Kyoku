@@ -5,5 +5,5 @@ data class PagingAlbumData(
     val name: String,
     val coverImage: String,
     val releaseYear: String,
-    val artist: String
+    val artist: String,
 )

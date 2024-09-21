@@ -30,7 +30,7 @@ class CreatePlaylistPagerSource @Inject constructor(
     fun init(
         query: String,
         type: CreatePlaylistPagerFilterType,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ) {
         this.query = query
         this.type = type.toCreatePlaylistPagerFilterTypeDto()

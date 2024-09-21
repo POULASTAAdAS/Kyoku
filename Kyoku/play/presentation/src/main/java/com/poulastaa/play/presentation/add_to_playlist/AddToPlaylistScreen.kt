@@ -49,7 +49,7 @@ fun AddToPlaylistRootScreen(
     modifier: Modifier = Modifier,
     viewModel: AddToPlaylistViewModel = hiltViewModel(),
     songId: Long,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.loadData(songId)
@@ -83,7 +83,7 @@ private fun AddToPlaylistScreen(
     modifier: Modifier = Modifier,
     state: AddToPlaylistUiState,
     onEvent: (AddToPlaylistUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }

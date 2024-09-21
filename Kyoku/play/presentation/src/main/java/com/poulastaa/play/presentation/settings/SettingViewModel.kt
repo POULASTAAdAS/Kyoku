@@ -21,7 +21,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val ds: DataStoreRepository,
     private val repo: SettingRepository,
-    private val sync: SyncLibraryScheduler
+    private val sync: SyncLibraryScheduler,
 ) : ViewModel() {
     var state by mutableStateOf(SettingUiState())
         private set

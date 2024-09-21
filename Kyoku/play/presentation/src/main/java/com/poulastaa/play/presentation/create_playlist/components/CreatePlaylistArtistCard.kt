@@ -31,7 +31,7 @@ import com.poulastaa.play.presentation.root_drawer.home.components.CircularArtis
 fun CreatePlaylistArtistCard(
     modifier: Modifier = Modifier,
     header: String,
-    data: CreatePlaylistPagingUiData
+    data: CreatePlaylistPagingUiData,
 ) {
     Row(
         modifier = Modifier

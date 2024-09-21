@@ -23,7 +23,7 @@ import javax.inject.Inject
 class OnlineFirstNewArtistDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
-    private val pager: NewArtistPagerSource
+    private val pager: NewArtistPagerSource,
 ) : RemoteNewArtistDataSource {
     override fun getPagingArtist(
         query: String,

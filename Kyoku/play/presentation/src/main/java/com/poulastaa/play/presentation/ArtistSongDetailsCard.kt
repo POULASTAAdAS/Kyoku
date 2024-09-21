@@ -44,7 +44,7 @@ fun ArtistSongDetailsCard(
     header: String,
     list: List<ViewSongOperation>,
     song: ArtistUiSong,
-    onEvent: (ViewArtistUiEvent.ThreeDotEvent) -> Unit
+    onEvent: (ViewArtistUiEvent.ThreeDotEvent) -> Unit,
 ) {
     Row(
         modifier = modifier

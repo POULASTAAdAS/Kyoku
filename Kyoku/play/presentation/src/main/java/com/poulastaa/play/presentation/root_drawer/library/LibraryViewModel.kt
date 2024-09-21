@@ -568,7 +568,7 @@ class LibraryViewModel @Inject constructor(
 
     private fun handleResult(
         result: EmptyResult<DataError.Network>,
-        @StringRes messageId: Int
+        @StringRes messageId: Int,
     ) {
         showToastJob?.cancel()
 

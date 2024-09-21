@@ -22,7 +22,7 @@ sealed interface LibraryUiEvent {
 
     data class OnItemLongClick(
         val id: Long,
-        val type: LibraryBottomSheetLongClickType
+        val type: LibraryBottomSheetLongClickType,
     ) : LibraryUiEvent
 
     data object OnItemBottomSheetCancel : LibraryUiEvent

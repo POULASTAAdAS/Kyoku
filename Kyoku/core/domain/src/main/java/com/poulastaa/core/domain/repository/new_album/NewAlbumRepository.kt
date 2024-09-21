@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface NewAlbumRepository {
     fun getPagingAlbum(
         query: String,
-        type: AlbumPagingType
+        type: AlbumPagingType,
     ): Flow<PagingData<PagingAlbumData>>
 
     suspend fun saveAlbums(list: List<Long>): EmptyResult<DataError.Network>

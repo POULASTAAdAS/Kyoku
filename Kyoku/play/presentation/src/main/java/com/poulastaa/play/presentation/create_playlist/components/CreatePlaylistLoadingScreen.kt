@@ -32,7 +32,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun CreatePlaylistLoadingScreen(
     modifier: Modifier = Modifier,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     Column(
         modifier = modifier

@@ -17,7 +17,7 @@ import javax.inject.Inject
 class OnlineFirstAddToPlaylistRepository @Inject constructor(
     private val local: LocalAddToPlaylistDatasource,
     private val remote: RemoteAddToPlaylistDatasource,
-    private val application: CoroutineScope
+    private val application: CoroutineScope,
 ) : AddToPlaylistRepository {
     override suspend fun checkIfSongInFev(songId: Long): Boolean =
         application.async { local.checkIfSongInFev(songId) }.await()
@@ -47,7 +47,7 @@ class OnlineFirstAddToPlaylistRepository @Inject constructor(
 
 
     override suspend fun addSongToFavourite(
-        songId: Long
+        songId: Long,
     ): EmptyResult<DataError.Network> = application.async {
         val result = async { remote.addSongToFavourite(songId) }.await()
         if (result is Result.Success) local.addSongToFavourite(songId)
@@ -65,7 +65,7 @@ class OnlineFirstAddToPlaylistRepository @Inject constructor(
 
     override suspend fun createPlaylist(
         songId: Long,
-        name: String
+        name: String,
     ): EmptyResult<DataError.Network> {
         val result = remote.createPlaylist(songId, name)
 

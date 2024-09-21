@@ -313,7 +313,7 @@ fun LibraryItemBottomSheet(
 private fun PinOption(
     title: String,
     icon: ImageVector = PinIcon,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier

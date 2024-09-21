@@ -45,7 +45,7 @@ object DatabaseAppModule {
     @Singleton
     fun provideLocalWorkDatasource(
         commonDao: CommonDao,
-        workDao: WorkDao
+        workDao: WorkDao,
     ): LocalWorkDatasource = RoomLocalWorkDatasource(
         commonDao = commonDao,
         workDao = workDao

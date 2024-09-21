@@ -20,11 +20,11 @@ import javax.inject.Inject
 
 class OnlineFirstPlayerDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemotePlayerDatasource {
     override suspend fun getAlbum(
-        id: Long
-    ): Result<AlbumWithSong, DataError.Network> =  client.post<GetDataReq, AlbumWithSongDto>(
+        id: Long,
+    ): Result<AlbumWithSong, DataError.Network> = client.post<GetDataReq, AlbumWithSongDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
             id = id,
@@ -35,14 +35,15 @@ class OnlineFirstPlayerDatasource @Inject constructor(
         it.toAlbumWithSong()
     }
 
-    override suspend fun getPlaylist(id: Long): Result<PlaylistData, DataError.Network> =  client.post<GetDataReq, PlaylistDto>(
-        route = EndPoints.GetTypeData.route,
-        body = GetDataReq(
-            id = id,
-            type = GetDataType.PLAYLIST
-        ),
-        gson = gson
-    ).map {
-        it.toPlaylistData()
-    }
+    override suspend fun getPlaylist(id: Long): Result<PlaylistData, DataError.Network> =
+        client.post<GetDataReq, PlaylistDto>(
+            route = EndPoints.GetTypeData.route,
+            body = GetDataReq(
+                id = id,
+                type = GetDataType.PLAYLIST
+            ),
+            gson = gson
+        ).map {
+            it.toPlaylistData()
+        }
 }

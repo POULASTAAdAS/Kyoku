@@ -43,7 +43,7 @@ import com.poulastaa.play.presentation.add_new_artist.AddArtistUiArtist
 fun AddNewArtistArtistCard(
     modifier: Modifier = Modifier,
     header: String,
-    artist: AddArtistUiArtist
+    artist: AddArtistUiArtist,
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary.copy(.7f)
 

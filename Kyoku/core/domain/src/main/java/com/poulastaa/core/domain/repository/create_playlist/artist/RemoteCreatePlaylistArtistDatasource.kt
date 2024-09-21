@@ -15,6 +15,6 @@ interface RemoteCreatePlaylistArtistDatasource {
 
     suspend fun getPagingSong(
         artistId: Long,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>>
 }

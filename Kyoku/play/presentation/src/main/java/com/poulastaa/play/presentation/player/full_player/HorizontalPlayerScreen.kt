@@ -276,7 +276,7 @@ fun HorizontalPlayerScreen(
                                     queue = queue,
                                     onEvent = onEvent,
                                 ) else {
-                                    LaunchedEffect(Unit,song.songId) {
+                                    LaunchedEffect(Unit, song.songId) {
                                         onEvent(PlayerUiEvent.GetSongInfo(song.songId))
                                     }
 
@@ -285,7 +285,12 @@ fun HorizontalPlayerScreen(
                                         label = ""
                                     ) { state ->
                                         when (state) {
-                                            true -> SongInfoCardLoading(Modifier.padding(MaterialTheme.dimens.medium1))
+                                            true -> SongInfoCardLoading(
+                                                Modifier.padding(
+                                                    MaterialTheme.dimens.medium1
+                                                )
+                                            )
+
                                             false -> SongInfoCard(
                                                 song = song,
                                                 header = header,
@@ -521,7 +526,7 @@ private fun Queue(
                 Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
                 Text(
-                    text = info.type,
+                    text = info.more.title,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     maxLines = 1,
                     fontWeight = FontWeight.Bold,
@@ -578,7 +583,6 @@ private fun Preview() {
                 )
             ),
             info = PlayerUiInfo(
-                type = "album",
                 hasNext = true,
                 hasPrev = true,
                 repeatState = RepeatState.IDLE,

@@ -50,7 +50,7 @@ fun SongDetailsMovableCard(
     onMove: () -> Unit,
     onThreeDotOpenClick: () -> Unit,
     onThreeDotOperationClick: (ViewSongOperation) -> Unit,
-    onThreeDotClose: () -> Unit
+    onThreeDotClose: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -164,7 +164,7 @@ fun SongDetailsCard(
     list: List<ViewSongOperation>,
     onThreeDotOpenClick: () -> Unit,
     onThreeDotOperationClick: (ViewSongOperation) -> Unit,
-    onThreeDotClose: () -> Unit
+    onThreeDotClose: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(

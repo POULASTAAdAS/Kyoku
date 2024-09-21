@@ -15,7 +15,7 @@ interface CreatePlaylistRepository {
     suspend fun getPagingSong(
         query: String,
         type: CreatePlaylistPagerFilterType,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Flow<PagingData<CreatePlaylistPagingData>>
 
     suspend fun saveSong(song: Song, playlistId: Long): EmptyResult<DataError.Network>

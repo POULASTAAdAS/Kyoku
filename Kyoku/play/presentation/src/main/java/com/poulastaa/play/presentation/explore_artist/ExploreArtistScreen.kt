@@ -43,7 +43,7 @@ fun ExploreArtistRootScreen(
     artistId: Long,
     viewModel: ExploreArtistViewModel = hiltViewModel(),
     navigate: (ExploreArtistOtherScreen) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -81,7 +81,7 @@ fun ExploreArtistScreen(
     album: LazyPagingItems<ExploreArtistSingleUiData>,
     song: LazyPagingItems<ExploreArtistSingleUiData>,
     onEvent: (ExploreArtistUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
 

@@ -15,11 +15,11 @@ import javax.inject.Inject
 
 class OnlineFirstCreatePlaylistAlbumDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteCreatePlaylistAlbumDatasource {
     override suspend fun getAlbum(
         albumId: Long,
-        savedSongIdList: List<Long>
+        savedSongIdList: List<Long>,
     ): Result<AlbumWithSong, DataError.Network> = client.get<AlbumWithSongDto>(
         route = EndPoints.GetAlbum.route,
         params = listOf(

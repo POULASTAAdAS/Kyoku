@@ -39,7 +39,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun CustomSnackBar(
     data: SnackBarUiState,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
 ) {
     AnimatedVisibility(
         visible = data.isVisible,

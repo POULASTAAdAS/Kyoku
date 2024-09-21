@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewEditViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: ViewEditRepository
+    private val repo: ViewEditRepository,
 ) : ViewModel() {
     var state by mutableStateOf(ViewEditUiState())
         private set

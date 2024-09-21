@@ -6,7 +6,7 @@ data class ExploreArtistUiState(
     val isPlayingQueue: Boolean = false,
     val header: String = "",
     val list: List<ExploreArtistThreeDotEvent> = emptyList(),
-    val artist: UiArtist = UiArtist()
+    val artist: UiArtist = UiArtist(),
 )
 
 data class ExploreArtistSingleUiData(
@@ -14,5 +14,5 @@ data class ExploreArtistSingleUiData(
     val title: String,
     val coverImage: String = "",
     val releaseYear: Int = 0,
-    val isExpanded: Boolean = false
+    val isExpanded: Boolean = false,
 )

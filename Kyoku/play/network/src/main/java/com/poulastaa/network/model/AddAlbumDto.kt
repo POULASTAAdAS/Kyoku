@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AddAlbumDto(
-    val list: List<AlbumWithSongDto>
+    val list: List<AlbumWithSongDto>,
 )

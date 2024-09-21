@@ -16,7 +16,7 @@ sealed interface ViewUiEvent {
     data class OnThreeDotClose(val songId: Long) : ViewUiEvent
     data class OnThreeDotItemClick(
         val id: Long,
-        val operation: ViewSongOperation
+        val operation: ViewSongOperation,
     ) : ViewUiEvent
 
     data object OnEditOpen : ViewUiEvent

@@ -9,5 +9,5 @@ data class CreatePlaylistPagingDto(
     val artist: String,
     val coverImage: String,
     val expandable: Boolean,
-    val isArtist: Boolean
+    val isArtist: Boolean,
 )

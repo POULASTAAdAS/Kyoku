@@ -34,7 +34,7 @@ import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
 fun CreatePlaylistSongCard(
     modifier: Modifier = Modifier,
     header: String,
-    song: UiSong
+    song: UiSong,
 ) {
     Row(
         modifier = Modifier

@@ -18,11 +18,11 @@ import javax.inject.Inject
 class OnlineFirstNewAlbumRepository @Inject constructor(
     private val local: LocalNewAlbumDataSource,
     private val remote: RemoteNewAlbumDataSource,
-    private val applicationScope: CoroutineScope
+    private val applicationScope: CoroutineScope,
 ) : NewAlbumRepository {
     override fun getPagingAlbum(
         query: String,
-        type: AlbumPagingType
+        type: AlbumPagingType,
     ): Flow<PagingData<PagingAlbumData>> = remote.getPagingAlbum(query, type)
 
     override suspend fun saveAlbums(list: List<Long>): EmptyResult<DataError.Network> {

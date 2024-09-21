@@ -151,7 +151,7 @@ fun ColumnScope.ViewLoadingAnimation() {
 @Composable
 private fun CustomButton(
     modifier: Modifier = Modifier,
-    icon: ImageVector
+    icon: ImageVector,
 ) {
     IconButton(
         onClick = {},

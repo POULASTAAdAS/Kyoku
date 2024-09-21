@@ -14,6 +14,7 @@ interface RemoteWorkDatasource {
         list: List<Long>,
         arePlaylist: Boolean,
     ): Result<SyncData<PlaylistWithSong>, DataError.Network>
+
     suspend fun getUpdatedArtists(list: List<Long>): Result<SyncData<Artist>, DataError.Network>
     suspend fun getUpdatedFavourite(list: List<Long>): Result<SyncData<Song>, DataError.Network>
 }

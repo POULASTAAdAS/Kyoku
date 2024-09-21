@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun ExploreArtistButton(
     modifier: Modifier = Modifier,
     name: String,
-    onCLick: () -> Unit
+    onCLick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

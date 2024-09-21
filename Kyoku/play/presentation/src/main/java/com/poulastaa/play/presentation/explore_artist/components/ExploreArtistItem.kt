@@ -44,7 +44,7 @@ fun ExploreArtistItem(
     type: ExploreArtistUiEvent.Type,
     list: List<ExploreArtistThreeDotEvent>,
     item: ExploreArtistSingleUiData,
-    onEvent: (ExploreArtistUiEvent.ThreeDotEvent) -> Unit
+    onEvent: (ExploreArtistUiEvent.ThreeDotEvent) -> Unit,
 ) {
     Row(
         modifier = Modifier

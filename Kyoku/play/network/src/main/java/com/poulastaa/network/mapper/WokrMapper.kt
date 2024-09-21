@@ -16,7 +16,7 @@ fun PlaylistDto.toPlaylistWithSong() = PlaylistWithSong(
 )
 
 fun <T, R> SyncDto<T>.toSyncData(
-    convert: (T) -> R
+    convert: (T) -> R,
 ): SyncData<R> {
     return SyncData(
         removeIdList = this.removeIdList,
