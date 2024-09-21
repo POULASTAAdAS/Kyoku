@@ -38,13 +38,8 @@ class PlayerDatasource @Inject constructor(
     override fun onEvent(event: PlayerEvent) {
         when (event) {
             PlayerEvent.PlayPause -> {
-                if (player.isPlaying) {
-                    player.pause()
-                    stopProgress()
-                } else {
-                    player.play()
-                    playJob = startProgress()
-                }
+                if (player.isPlaying) pauseProgress()
+                else playJob = startProgress()
             }
 
             PlayerEvent.PlayNext -> player.seekToNext()
@@ -55,7 +50,9 @@ class PlayerDatasource @Inject constructor(
                 player.seekTo(pos)
             }
 
-            is PlayerEvent.SeekToSong -> player.seekTo(event.index, 0)
+            is PlayerEvent.SeekToSong -> player.seekTo(event.index, event.pos)
+
+            PlayerEvent.Stop -> stopProgress()
         }
     }
 
@@ -110,6 +107,8 @@ class PlayerDatasource @Inject constructor(
     }
 
     private fun startProgress() = CoroutineScope(Dispatchers.Main).launch {
+        player.play()
+
         while (true) {
             val progress = DecimalFormat("00.00")
                 .format((player.currentPosition.toFloat() / player.duration * 100f))
@@ -123,9 +122,15 @@ class PlayerDatasource @Inject constructor(
         }
     }
 
+    private fun pauseProgress() {
+        player.pause()
+        playJob?.cancel()
+    }
+
     private fun stopProgress() {
         playJob?.cancel()
-        _playerUiState.value = PlayerState.Playing(isPlaying = false)
+        player.stop()
+        player.clearMediaItems()
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {

@@ -135,4 +135,10 @@ class OnlineFirstPlayerRepository @Inject constructor(
 
     override suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network> =
         artistRemote.getArtistOnSongId(songId)
+
+    override fun close() {
+        applicationScope.launch {
+            local.clearAll()
+        }
+    }
 }

@@ -369,7 +369,7 @@ fun RootDrawerExpandedSmall(
         drawerUiState.createPlaylistUiState.isOpen ||
         playerUiState.isPlayerExtended
     ) BackHandler {
-        if (playerUiState.isPlayerExtended) onPlayerEvent(PlayerUiEvent.ClosePlayer)
+        if (playerUiState.isPlayerExtended) onPlayerEvent(PlayerUiEvent.OnPlayerShrinkClick)
         else if (drawerUiState.addToPlaylistUiState.isOpen) onEvent(RootDrawerUiEvent.OnAddSongToPlaylistCancel)
         else if (drawerUiState.viewUiState.isOpen) onEvent(RootDrawerUiEvent.OnViewCancel)
         else if (drawerUiState.exploreArtistUiState.isOpen) onEvent(RootDrawerUiEvent.OnExploreArtistCancel)

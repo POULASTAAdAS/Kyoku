@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.model.PlayerEvent
 import com.poulastaa.core.domain.model.PlayerState
 import com.poulastaa.core.domain.repository.player.KyokuPlayer
@@ -34,7 +35,7 @@ class PlayerViewModel @Inject constructor(
     var state by mutableStateOf(PlayerUiState())
         private set
 
-    private val _uiEvent = Channel<RootDrawerUiAction>()
+    private val _uiEvent = Channel<RootDrawerUiAction.EmitToast>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private var loadArtistJob: Job? = null
@@ -42,6 +43,7 @@ class PlayerViewModel @Inject constructor(
 
     init {
         init()
+        loadPlayingData(true)
     }
 
     private fun init() {
@@ -117,12 +119,33 @@ class PlayerViewModel @Inject constructor(
             is PlayerUiEvent.PlayOperation -> {
                 when (event) {
                     is PlayerUiEvent.PlayOperation.PlayAll -> {
-                        state = state.copy(
-                            isData = false,
-                            loadingState = DataLoadingState.LOADING
-                        )
+                        when (event.type) {
+                            PlayType.PLAYLIST,
+                            PlayType.ALBUM,
+                            -> {
+                                if (state.info.more.id == event.id) return player.onEvent(
+                                    PlayerEvent.SeekToSong(0, 0)
+                                )
+
+                                state = state.copy(
+                                    isData = false,
+                                    loadingState = DataLoadingState.LOADING
+                                )
+                            }
+
+                            PlayType.FEV,
+                            PlayType.ARTIST_MIX,
+                            PlayType.POPULAR_MIX,
+                            PlayType.OLD_MIX,
+                            -> {
+                                if (state.info.isPlaying)
+                                    return player.onEvent(PlayerEvent.SeekToSong(0, 0))
+                            }
+                        }
 
                         viewModelScope.launch {
+                            player.onEvent(PlayerEvent.Stop)
+
                             when (val result = repo.loadData(event.id, event.type)) {
                                 is Result.Error -> {
                                     when (result.error) {
@@ -198,31 +221,30 @@ class PlayerViewModel @Inject constructor(
                     )
                 )
 
-                // load artist
                 loadArtistJob?.cancel()
-                loadInfoJob?.cancel()
                 loadArtistJob = loadArtist(event.songId)
-                loadInfoJob = loadOtherInfo(event.songId)
             }
 
             PlayerUiEvent.ClosePlayer -> {
                 state = PlayerUiState()
+                repo.close()
+                player.onEvent(PlayerEvent.Stop)
             }
 
             else -> Unit
         }
     }
 
-    private fun loadPlayingData() {
-        loadSongs()
+    private fun loadPlayingData(isInitial: Boolean = false) {
+        loadSongs(isInitial)
         loadInfo()
     }
 
-    private fun loadSongs() = viewModelScope.launch {
+    private fun loadSongs(isInitial: Boolean = false) = viewModelScope.launch {
         val data = repo.getSongs().first()
 
         player.addMediaItem(data)
-        player.onEvent(PlayerEvent.PlayPause)
+        if (!isInitial) player.onEvent(PlayerEvent.PlayPause)
 
         state = state.copy(
             isData = data.isNotEmpty(),
@@ -243,13 +265,17 @@ class PlayerViewModel @Inject constructor(
         when (val result = repo.getArtistOnSongId(songId)) {
             is Result.Error -> {
                 when (result.error) {
-                    DataError.Network.NO_INTERNET -> _uiEvent.send(
-                        RootDrawerUiAction.EmitToast(
-                            UiText.StringResource(
-                                R.string.error_no_internet
+                    DataError.Network.NO_INTERNET -> {
+                        _uiEvent.send(
+                            RootDrawerUiAction.EmitToast(
+                                UiText.StringResource(
+                                    R.string.error_no_internet
+                                )
                             )
                         )
-                    )
+
+                        return@launch
+                    }
 
                     else -> _uiEvent.send(
                         RootDrawerUiAction.EmitToast(
@@ -281,6 +307,9 @@ class PlayerViewModel @Inject constructor(
                 )
             }
         }
+
+        loadInfoJob?.cancel()
+        loadInfoJob = loadOtherInfo(songId)
     }
 
     private fun loadOtherInfo(songId: Long) = viewModelScope.launch {

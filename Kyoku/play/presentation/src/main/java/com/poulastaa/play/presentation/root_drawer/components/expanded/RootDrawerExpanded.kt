@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +42,7 @@ import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
 import com.poulastaa.play.domain.TopBarToDrawerEvent
 import com.poulastaa.play.presentation.player.PlayerUiEvent
+import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.player.small_player.SmallExpandedPlayer
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
@@ -337,18 +337,25 @@ fun RowScope.RootDrawerExpanded(
                     !playerUiState.isPlayerExtended,
             enter = fadeIn() + expandIn(expandFrom = Alignment.Center) +
                     slideInHorizontally(tween(400)) { it },
-            exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd) +
-                    slideOutHorizontally(tween(400)) { it }
+            exit = fadeOut(tween(400)) + shrinkOut(
+                shrinkTowards = Alignment.CenterEnd,
+                animationSpec = tween(400)
+            )
         ) {
-            if (playerUiState.queue.isNotEmpty()) SmallExpandedPlayer(
+            SmallExpandedPlayer(
                 header = drawerUiState.header,
-                song = playerUiState.queue[playerUiState.info.currentPlayingIndex].copy(
+                song = playerUiState.queue.getOrNull(playerUiState.info.currentPlayingIndex)?.copy(
                     colors = playerUiState.queue[playerUiState.info.currentPlayingIndex].colors.ifEmpty {
                         listOf(
                             MaterialTheme.colorScheme.primary,
                             MaterialTheme.colorScheme.surfaceContainer
                         )
                     }
+                ) ?: PlayerUiSong(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.surfaceContainer
+                    )
                 ),
                 info = playerUiState.info,
                 onEvent = onPlayerEvent

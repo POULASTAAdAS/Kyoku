@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -107,7 +108,6 @@ fun RootDrawerCompact(
                     drawerUiState.exploreArtistUiState.isOpen)
             && playerUiState.isData
         ) 100.dp else 0.dp,
-        animationSpec = tween(400),
         label = ""
     )
 
@@ -526,10 +526,11 @@ fun RootDrawerCompact(
                             orientation = Orientation.Vertical,
                             onDragStopped = {
                                 if (dragScope > 130) onPlayerEvent(PlayerUiEvent.ClosePlayer)
-                                else dragScope = 0f
+                                dragScope = 0f
                             },
                         )
                         .navigationBarsPadding()
+                        .imePadding()
                         .clickable(
                             interactionSource = null,
                             indication = null

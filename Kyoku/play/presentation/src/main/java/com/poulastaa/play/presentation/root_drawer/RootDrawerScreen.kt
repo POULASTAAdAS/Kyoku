@@ -51,17 +51,11 @@ fun RootDrawerScreen(
     }
 
     ObserveAsEvent(flow = playerViewModel.uiEvent) { event ->
-        when (event) {
-            is RootDrawerUiAction.EmitToast -> {
-                Toast.makeText(
-                    context,
-                    event.message.asString(context),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-
-            else -> Unit
-        }
+        Toast.makeText(
+            context,
+            event.message.asString(context),
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     AppDrawer(

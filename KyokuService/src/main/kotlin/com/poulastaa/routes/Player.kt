@@ -27,10 +27,6 @@ fun Route.getMasterPlaylist(
 
                 val masterPlaylist = StringBuilder()
                 file.forEachLine {
-                    println(it)
-                }
-
-                file.forEachLine {
                     if (it.endsWith(".m3u8")) {
                         masterPlaylist.appendLine(
                             "${System.getenv("SERVICE_URL") + EndPoints.PlaySongPlaylist.route}?playlist=${
@@ -60,11 +56,6 @@ fun Route.get_128_Or_320_Playlist(
                     else playlist.split('/')[1] to File("$CURRENT_PROJECT_FOLDER/$playlist")
 
                 val masterPlaylist = StringBuilder()
-
-                pair.second.forEachLine {
-                    println(it)
-                }
-
                 pair.second.forEachLine {
                     if (it.endsWith(".m4a")) {
                         masterPlaylist.appendLine(

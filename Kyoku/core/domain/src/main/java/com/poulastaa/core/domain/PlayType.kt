@@ -1,7 +1,6 @@
 package com.poulastaa.core.domain
 
 enum class PlayType {
-    SONG,
     PLAYLIST,
     ALBUM,
     FEV,

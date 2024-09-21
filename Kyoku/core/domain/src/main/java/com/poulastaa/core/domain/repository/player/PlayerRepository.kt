@@ -20,4 +20,6 @@ interface PlayerRepository {
     fun getSongs(): Flow<List<PlayerSong>>
 
     suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network>
+
+    fun close()
 }
