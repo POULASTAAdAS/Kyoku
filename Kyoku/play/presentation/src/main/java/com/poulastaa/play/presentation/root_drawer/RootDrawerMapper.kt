@@ -5,9 +5,11 @@ import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.PrevAlbum
 import com.poulastaa.core.domain.model.PrevSavedPlaylist
+import com.poulastaa.core.domain.model.SongOtherData
 import com.poulastaa.core.presentation.ui.model.UiPrevPlaylist
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.presentation.player.MorePlayerInfo
 import com.poulastaa.play.presentation.player.PlayerUiInfo
 import com.poulastaa.play.presentation.player.PlayerUiSong
 import com.poulastaa.play.presentation.root_drawer.home.model.UiPrevAlbum
@@ -67,4 +69,11 @@ fun PlayerInfo.toPlayerUiInfo(index: Int) = PlayerUiInfo(
     hasNext = this.hasNext,
     hasPrev = this.hasPrev,
     currentPlayingIndex = index,
+)
+
+fun SongOtherData.toMorePlayerInfo()  = MorePlayerInfo(
+    id = this.otherId,
+    title = this.title,
+    coverImage = this.coverImage,
+    isPlaylist = this.isPlaylist
 )

@@ -74,6 +74,7 @@ import com.poulastaa.core.presentation.designsystem.RepeatOffIcon
 import com.poulastaa.core.presentation.designsystem.RepeatOnIcon
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.play.presentation.SongArtistCard
+import com.poulastaa.play.presentation.player.MorePlayerInfo
 import com.poulastaa.play.presentation.player.PlayerSongArtist
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
@@ -294,7 +295,7 @@ fun HorizontalPlayerScreen(
                                             false -> SongInfoCard(
                                                 song = song,
                                                 header = header,
-                                                artist = info.artist,
+                                                info = info,
                                                 onEvent = onEvent
                                             )
                                         }
@@ -429,7 +430,7 @@ fun HorizontalPlayerScreen(
 private fun SongInfoCard(
     header: String,
     song: PlayerUiSong,
-    artist: PlayerSongArtist,
+    info: PlayerUiInfo,
     onEvent: (PlayerUiEvent.OnArtistClick) -> Unit,
 ) {
     LazyColumn(
@@ -472,7 +473,7 @@ private fun SongInfoCard(
             }
         }
 
-        items(artist.artist) { artist ->
+        items(info.artist.artist) { artist ->
             SongArtistCard(
                 modifier = Modifier
                     .height(70.dp)
@@ -485,6 +486,44 @@ private fun SongInfoCard(
 
             Spacer(Modifier.height(MaterialTheme.dimens.small2))
         }
+
+        if (info.more.title.isNotBlank() || info.more.id != -1L) item {
+            Row(
+                modifier = Modifier
+                    .height(80.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ImageGrid(
+                    header = header,
+                    urls = info.more.coverImage,
+                    modifier = Modifier.aspectRatio(1f)
+                )
+
+                Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                Column {
+                    Text(
+                        text = info.more.title,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        maxLines = 1
+                    )
+
+                    if (info.more.releaseYear != -1) Row {
+                        Text(text = stringResource(R.string.release_year))
+
+                        Spacer(Modifier.width(MaterialTheme.dimens.small3))
+
+                        Text(
+                            text = info.more.releaseYear.toString(),
+                            textDecoration = TextDecoration.Underline
+                        )
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -586,6 +625,9 @@ private fun Preview() {
                 hasNext = true,
                 hasPrev = true,
                 repeatState = RepeatState.IDLE,
+                more = MorePlayerInfo(
+                    title = "Playlist",
+                ),
                 artist = PlayerSongArtist(
                     songId = 1,
                     artist = (1..5).map {

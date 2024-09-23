@@ -67,6 +67,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpSize
@@ -82,7 +83,9 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.RepeatOffIcon
 import com.poulastaa.core.presentation.designsystem.RepeatOnIcon
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.play.domain.DataLoadingState
 import com.poulastaa.play.presentation.SongArtistCard
+import com.poulastaa.play.presentation.player.MorePlayerInfo
 import com.poulastaa.play.presentation.player.PlayerSongArtist
 import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiInfo
@@ -93,6 +96,7 @@ import com.poulastaa.play.presentation.player.components.PlayerSongInfo
 import com.poulastaa.play.presentation.player.components.SongInfoCardLoading
 import com.poulastaa.play.presentation.player.small_player.PlayControlButton
 import com.poulastaa.play.presentation.root_drawer.library.components.ImageGrid
+import com.poulastaa.play.presentation.song_artist.SongArtistUiArtist
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -375,7 +379,7 @@ fun VerticalPlayerScreen(
                                 false -> SongInfoCard(
                                     header = header,
                                     config = config,
-                                    artist = info.artist,
+                                    info = info,
                                     song = song,
                                     onEvent = onEvent
                                 )
@@ -402,9 +406,9 @@ fun VerticalPlayerScreen(
 private fun SongInfoCard(
     header: String,
     config: Configuration,
-    artist: PlayerSongArtist,
+    info: PlayerUiInfo,
     song: PlayerUiSong,
-    onEvent: (PlayerUiEvent.OnArtistClick) -> Unit,
+    onEvent: (PlayerUiEvent) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -461,7 +465,7 @@ private fun SongInfoCard(
                 }
             }
 
-            items(artist.artist) { artist ->
+            items(info.artist.artist) { artist ->
                 SongArtistCard(
                     modifier = Modifier
                         .height(80.dp)
@@ -473,6 +477,56 @@ private fun SongInfoCard(
                 )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small2))
+            }
+
+            item {
+                Column {
+                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
+
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = song.colors[0]
+                    )
+
+                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                }
+            }
+
+            if (info.more.title.isNotBlank() || info.more.id != -1L) item {
+                Row(
+                    modifier = Modifier
+                        .height(80.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ImageGrid(
+                        header = header,
+                        urls = info.more.coverImage,
+                        modifier = Modifier.aspectRatio(1f)
+                    )
+
+                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                    Column {
+                        Text(
+                            text = info.more.title,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                            maxLines = 1
+                        )
+
+                        if (info.more.releaseYear != -1) Row {
+                            Text(text = stringResource(R.string.release_year))
+
+                            Spacer(Modifier.width(MaterialTheme.dimens.small3))
+
+                            Text(
+                                text = info.more.releaseYear.toString(),
+                                textDecoration = TextDecoration.Underline
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -801,7 +855,21 @@ private fun Preview() {
             info = PlayerUiInfo(
                 hasNext = true,
                 hasPrev = true,
-                repeatState = RepeatState.IDLE
+                repeatState = RepeatState.IDLE,
+                more = MorePlayerInfo(
+                    title = "Playlist",
+                    releaseYear = 2024
+                ),
+                artist = PlayerSongArtist(
+                    loadingState = DataLoadingState.LOADING,
+                    songId = 1,
+                    artist = (1..2).map {
+                        SongArtistUiArtist(
+                            id = it.toLong(),
+                            name = "Artist $it"
+                        )
+                    }
+                )
             ),
             queue = (1..10).map {
                 PlayerUiSong(

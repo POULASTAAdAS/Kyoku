@@ -5,6 +5,7 @@ import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.ArtistWithPopularity
 import com.poulastaa.core.domain.model.PlayerSong
+import com.poulastaa.core.domain.model.SongOtherData
 import com.poulastaa.core.domain.repository.player.LocalPlayerDatasource
 import com.poulastaa.core.domain.repository.player.PlayerRepository
 import com.poulastaa.core.domain.repository.player.RemotePlayerDatasource
@@ -132,6 +133,9 @@ class OnlineFirstPlayerRepository @Inject constructor(
 
     override fun getInfo(): Flow<PlayerInfo> = local.getInfo()
     override fun getSongs(): Flow<List<PlayerSong>> = local.getSongs()
+
+    override suspend fun getOtherInfo(songId: Long): Result<SongOtherData, DataError.Network> =
+        remote.loadOtherInfo(songId)
 
     override suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network> =
         artistRemote.getArtistOnSongId(songId)

@@ -308,11 +308,45 @@ class PlayerViewModel @Inject constructor(
             }
         }
 
+        if (state.info.more.id != -1L &&
+            state.info.more.id == state.info.more.id
+        ) return@launch
+
         loadInfoJob?.cancel()
         loadInfoJob = loadOtherInfo(songId)
     }
 
     private fun loadOtherInfo(songId: Long) = viewModelScope.launch {
+        when (val result = repo.getOtherInfo(songId)) {
+            is Result.Error -> {
+                when (result.error) {
+                    DataError.Network.NO_INTERNET -> {
+                        _uiEvent.send(
+                            RootDrawerUiAction.EmitToast(
+                                UiText.StringResource(
+                                    R.string.error_no_internet
+                                )
+                            )
+                        )
+                    }
 
+                    else -> _uiEvent.send(
+                        RootDrawerUiAction.EmitToast(
+                            UiText.StringResource(
+                                R.string.error_something_went_wrong
+                            )
+                        )
+                    )
+                }
+            }
+
+            is Result.Success -> {
+                state = state.copy(
+                    info = state.info.copy(
+                        more = result.data.toMorePlayerInfo()
+                    )
+                )
+            }
+        }
     }
 }

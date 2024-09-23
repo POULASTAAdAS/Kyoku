@@ -28,9 +28,10 @@ data class PlayerUiInfo(
 )
 
 data class MorePlayerInfo(
-    val loadingState: DataLoadingState = DataLoadingState.LOADING,
     val id: Long = -1,
     val title: String = "",
+    val releaseYear: Int = -1,
+    val isPlaylist: Boolean = false,
     val coverImage: List<String> = emptyList(),
 )
 

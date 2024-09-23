@@ -21,6 +21,5 @@ sealed interface PlayerUiEvent {
 
     data class GetSongInfo(val songId: Long) : PlayerUiEvent
     data class OnArtistClick(val artistId: Long) : PlayerUiEvent
-
     data object ClosePlayer : PlayerUiEvent
 }

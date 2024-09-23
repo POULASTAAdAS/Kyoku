@@ -4,6 +4,7 @@ import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.ArtistWithPopularity
 import com.poulastaa.core.domain.model.PlayerSong
+import com.poulastaa.core.domain.model.SongOtherData
 import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
@@ -20,6 +21,6 @@ interface PlayerRepository {
     fun getSongs(): Flow<List<PlayerSong>>
 
     suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network>
-
+    suspend fun getOtherInfo(songId: Long): Result<SongOtherData, DataError.Network>
     fun close()
 }
