@@ -214,6 +214,14 @@ fun RootDrawerExpandedSmall(
                                 type = event.type.toPlayType()
                             )
                         )
+
+                        is ViewOtherScreen.PlayOperation.PlayOne -> onPlayerEvent(
+                            PlayerUiEvent.PlayOperation.PlayOne(
+                                songId = event.songId,
+                                otherId = event.otherId,
+                                type = event.type.toPlayType()
+                            )
+                        )
                     }
                 },
                 navigateBack = {

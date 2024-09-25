@@ -1,8 +1,9 @@
 package com.poulastaa.core.domain
 
 data class PlayerInfo(
-    val id: Long = -1,
-    val type: String = "",
+    val otherId: Long = -1,
+    val title: String = "",
+    val type: PlayType = PlayType.IDLE,
     val isShuffledEnabled: Boolean = false,
     val repeatState: RepeatState = RepeatState.IDLE,
     val isPlaying: Boolean = false,

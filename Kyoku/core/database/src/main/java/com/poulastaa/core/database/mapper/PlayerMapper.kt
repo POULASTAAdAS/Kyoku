@@ -63,13 +63,14 @@ fun SongEntity.toPlayerSongEntity(
 )
 
 fun PlayerInfoEntity.toPlayerInfo() = PlayerInfo(
-    id = this.id,
-    type = this.type,
+    otherId = this.otherId,
+    title = this.title,
     isShuffledEnabled = this.isShuffledEnabled,
     repeatState = this.repeatState,
     isPlaying = this.isPlaying,
     hasNext = this.hasNext,
-    hasPrev = this.hasPrev
+    hasPrev = this.hasPrev,
+    type = this.type,
 )
 
 fun PlayerSongEntity.toPlayerSong() = PlayerSong(

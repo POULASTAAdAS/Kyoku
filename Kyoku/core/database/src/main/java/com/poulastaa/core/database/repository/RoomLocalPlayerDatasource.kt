@@ -12,6 +12,7 @@ import com.poulastaa.core.database.mapper.toPlayerSongEntity
 import com.poulastaa.core.database.mapper.toPlaylist
 import com.poulastaa.core.database.mapper.toPrevAlbum
 import com.poulastaa.core.database.mapper.toSong
+import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
@@ -80,8 +81,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val info = async {
                 playerDao.loadInfo(
                     entry = PlayerInfoEntity(
-                        id = 1,
-                        type = "Favourite",
+                        otherId = 1,
+                        title = "Favourite",
                         hasNext = idList.size > 1,
                         isPlaying = false,
                         isShuffledEnabled = false,
@@ -113,8 +114,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val info = async {
                 playerDao.loadInfo(
                     entry = PlayerInfoEntity(
-                        id = 1,
-                        type = "Old Songs Mix",
+                        otherId = 1,
+                        title = "Old Songs Mix",
                         hasNext = idList.size > 1,
                         isPlaying = false,
                         isShuffledEnabled = false,
@@ -146,8 +147,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val info = async {
                 playerDao.loadInfo(
                     entry = PlayerInfoEntity(
-                        id = 1,
-                        type = "Favourite Artist Mix",
+                        otherId = 1,
+                        title = "Favourite Artist Mix",
                         hasNext = idList.size > 1,
                         isPlaying = false,
                         isShuffledEnabled = false,
@@ -179,8 +180,8 @@ class RoomLocalPlayerDatasource @Inject constructor(
             val info = async {
                 playerDao.loadInfo(
                     entry = PlayerInfoEntity(
-                        id = 1,
-                        type = "Popular Songs Mix",
+                        otherId = 1,
+                        title = "Popular Songs Mix",
                         hasNext = idList.size > 1,
                         isPlaying = false,
                         isShuffledEnabled = false,
@@ -193,35 +194,39 @@ class RoomLocalPlayerDatasource @Inject constructor(
         }
     }
 
-    override suspend fun loadData(songs: List<Song>, id: Long, name: String) {
-        coroutineScope {
-            val loadPlayerInfo = async {
-                playerDao.loadInfo(
-                    entry = PlayerInfoEntity(
-                        id = id,
-                        type = name,
-                        hasNext = songs.size > 1,
-                    )
+    override suspend fun loadData(
+        songs: List<Song>,
+        otherId: Long,
+        title: String,
+        type: PlayType,
+    ) = coroutineScope {
+        val loadPlayerInfo = async {
+            playerDao.loadInfo(
+                entry = PlayerInfoEntity(
+                    otherId = otherId,
+                    title = title,
+                    hasNext = songs.size > 1,
+                    type = type
                 )
-            }
-
-            val loadSongs = async {
-                songs.mapIndexed { index, song ->
-                    async {
-                        val isInFavourite = commonDao.isSongInFavourite(song.id)
-                        song.toPlayerSongEntity(
-                            id = index + 1,
-                            isInFavourite = isInFavourite != null
-                        )
-                    }
-                }.awaitAll().let {
-                    playerDao.loadPlayerSongs(it)
-                }
-            }
-
-            loadPlayerInfo.await()
-            loadSongs.await()
+            )
         }
+
+        val loadSongs = async {
+            songs.mapIndexed { index, song ->
+                async {
+                    val isInFavourite = commonDao.isSongInFavourite(song.id)
+                    song.toPlayerSongEntity(
+                        id = index + 1,
+                        isInFavourite = isInFavourite != null
+                    )
+                }
+            }.awaitAll().let {
+                playerDao.loadPlayerSongs(it)
+            }
+        }
+
+        loadPlayerInfo.await()
+        loadSongs.await()
     }
 
     override fun getInfo(): Flow<PlayerInfo> =

@@ -20,6 +20,7 @@ import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.song_artist.toSongArtistUiArtist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -126,11 +127,6 @@ class PlayerViewModel @Inject constructor(
                                 if (state.info.more.id == event.id) return player.onEvent(
                                     PlayerEvent.SeekToSong(0, 0)
                                 )
-
-                                state = state.copy(
-                                    isData = false,
-                                    loadingState = DataLoadingState.LOADING
-                                )
                             }
 
                             PlayType.FEV,
@@ -138,10 +134,17 @@ class PlayerViewModel @Inject constructor(
                             PlayType.POPULAR_MIX,
                             PlayType.OLD_MIX,
                             -> {
-                                if (state.info.isPlaying)
+                                if (event.type == state.info.other.playType)
                                     return player.onEvent(PlayerEvent.SeekToSong(0, 0))
                             }
+
+                            PlayType.IDLE -> return
                         }
+
+                        state = state.copy(
+                            isData = false,
+                            loadingState = DataLoadingState.LOADING
+                        )
 
                         viewModelScope.launch {
                             player.onEvent(PlayerEvent.Stop)
@@ -174,6 +177,98 @@ class PlayerViewModel @Inject constructor(
 
                     is PlayerUiEvent.PlayOperation.ShuffleAll -> {
 
+                    }
+
+                    is PlayerUiEvent.PlayOperation.PlayOne -> {
+                        when (event.type) {
+                            PlayType.PLAYLIST,
+                            PlayType.ALBUM,
+                            -> {
+                                if (state.info.other.otherId == event.otherId) return onPlayerEvent(
+                                    PlayerUiEvent.PlayBackController.OnQueueSongClick(
+                                        event.songId
+                                    )
+                                )
+
+                                state = state.copy(
+                                    isData = false,
+                                    loadingState = DataLoadingState.LOADING,
+                                )
+
+                                viewModelScope.launch {
+                                    player.onEvent(PlayerEvent.Stop)
+
+                                    when (val result = repo.loadData(event.otherId, event.type)) {
+                                        is Result.Error -> {
+                                            when (result.error) {
+                                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                                    RootDrawerUiAction.EmitToast(
+                                                        UiText.StringResource(
+                                                            R.string.error_no_internet
+                                                        )
+                                                    )
+                                                )
+
+                                                else -> _uiEvent.send(
+                                                    RootDrawerUiAction.EmitToast(
+                                                        UiText.StringResource(
+                                                            R.string.error_something_went_wrong
+                                                        )
+                                                    )
+                                                )
+                                            }
+                                        }
+
+                                        is Result.Success -> {
+                                            val dataDef = async { repo.getSongs().first() }
+                                            val infoDef = async { repo.getInfo().first() }
+
+                                            val data = dataDef.await()
+
+                                            val index = data.indexOfFirst {
+                                                it.songId == event.songId
+                                            }
+
+                                            player.addMediaItem(data)
+                                            player.onEvent(PlayerEvent.SeekToSong(index))
+
+                                            state = state.copy(
+                                                queue = data.map { it.toPlayerUiSong() }
+                                            )
+
+                                            val info = infoDef.await()
+
+                                            state = state.copy(
+                                                info = info.toPlayerUiInfo()
+                                            )
+                                        }
+                                    }
+
+                                    state = state.copy(
+                                        isData = state.queue.isNotEmpty(),
+                                        loadingState = DataLoadingState.LOADED,
+                                    )
+                                }
+                            }
+
+                            PlayType.FEV -> {
+
+                            }
+
+                            PlayType.ARTIST_MIX -> {
+
+                            }
+
+                            PlayType.POPULAR_MIX -> {
+
+                            }
+
+                            PlayType.OLD_MIX -> {
+
+                            }
+
+                            PlayType.IDLE -> Unit
+                        }
                     }
                 }
             }
@@ -257,7 +352,7 @@ class PlayerViewModel @Inject constructor(
         val info = repo.getInfo().first()
 
         state = state.copy(
-            info = info.toPlayerUiInfo(0)
+            info = info.toPlayerUiInfo()
         )
     }
 

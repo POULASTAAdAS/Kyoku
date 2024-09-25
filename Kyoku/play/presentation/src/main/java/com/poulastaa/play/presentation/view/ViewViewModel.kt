@@ -165,7 +165,7 @@ class ViewViewModel @Inject constructor(
                 viewModelScope.launch {
                     _uiEvent.send(
                         ViewUiAction.Navigate(
-                            ViewOtherScreen.PlayOperation.PlayAll(
+                            ViewOtherScreen.PlayOperation.Shuffle(
                                 id = state.data.id,
                                 type = state.type
                             )
@@ -179,7 +179,17 @@ class ViewViewModel @Inject constructor(
             }
 
             is ViewUiEvent.OnSongClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ViewUiAction.Navigate(
+                            ViewOtherScreen.PlayOperation.PlayOne(
+                                songId = event.songId,
+                                otherId = state.data.id,
+                                type = state.type
+                            )
+                        )
+                    )
+                }
             }
 
             is ViewUiEvent.OnMoveClick -> {

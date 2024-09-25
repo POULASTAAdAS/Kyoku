@@ -54,8 +54,9 @@ class OnlineFirstPlayerRepository @Inject constructor(
                         applicationScope.launch {
                             local.loadData(
                                 songs = songs,
-                                id = playlist.id,
-                                name = playlist.name
+                                otherId = playlist.id,
+                                title = playlist.name,
+                                type = type
                             )
                         }.join()
 
@@ -69,8 +70,9 @@ class OnlineFirstPlayerRepository @Inject constructor(
                             local.loadData(
                                 songs = if (isShuffled) result.data.listOfSong.shuffled(Random)
                                 else result.data.listOfSong,
-                                id = result.data.id,
-                                name = result.data.name
+                                otherId = result.data.id,
+                                title = result.data.name,
+                                type = type
                             )
                         }.join()
 
@@ -96,8 +98,9 @@ class OnlineFirstPlayerRepository @Inject constructor(
                             applicationScope.launch {
                                 local.loadData(
                                     songs = songs,
-                                    id = album.albumId,
-                                    name = album.name
+                                    otherId = album.albumId,
+                                    title = album.name,
+                                    type = type
                                 )
                             }.join()
 
@@ -112,8 +115,9 @@ class OnlineFirstPlayerRepository @Inject constructor(
                             local.loadData(
                                 songs = if (isShuffled) result.data.listOfSong.shuffled(Random)
                                 else result.data.listOfSong,
-                                id = result.data.album.albumId,
-                                name = result.data.album.name
+                                otherId = result.data.album.albumId,
+                                title = result.data.album.name,
+                                type = type
                             )
                         }.join()
 

@@ -4,5 +4,5 @@ data class SongOtherData(
     val otherId: Long,
     val title: String,
     val isPlaylist: Boolean,
-    val coverImage: List<String>
+    val coverImage: List<String>,
 )

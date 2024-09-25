@@ -6,5 +6,6 @@ enum class PlayType {
     FEV,
     ARTIST_MIX,
     POPULAR_MIX,
-    OLD_MIX
+    OLD_MIX,
+    IDLE
 }

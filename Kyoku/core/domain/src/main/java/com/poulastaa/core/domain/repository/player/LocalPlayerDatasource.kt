@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.repository.player
 
+import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
@@ -22,7 +23,7 @@ interface LocalPlayerDatasource {
     suspend fun loadOldMix(isShuffled: Boolean = false)
     suspend fun loadArtistMix(isShuffled: Boolean = false)
     suspend fun loadPopularArtistMix(isShuffled: Boolean = false)
-    suspend fun loadData(songs: List<Song>, id: Long, name: String)
+    suspend fun loadData(songs: List<Song>, otherId: Long, title: String, type: PlayType)
 
     fun getInfo(): Flow<PlayerInfo>
     fun getSongs(): Flow<List<PlayerSong>>

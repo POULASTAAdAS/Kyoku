@@ -10,5 +10,10 @@ sealed interface ViewOtherScreen {
     sealed interface PlayOperation : ViewOtherScreen {
         data class PlayAll(val id: Long, val type: ViewDataType) : PlayOperation
         data class Shuffle(val id: Long, val type: ViewDataType) : PlayOperation
+        data class PlayOne(
+            val songId: Long,
+            val otherId: Long,
+            val type: ViewDataType,
+        ) : PlayOperation
     }
 }

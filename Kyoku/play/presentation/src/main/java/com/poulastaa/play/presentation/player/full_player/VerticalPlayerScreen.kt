@@ -126,8 +126,8 @@ fun VerticalPlayerScreen(
                     .background(
                         brush = Brush.verticalGradient(colors = song.colors)
                     )
-                    .padding(it)
                     .verticalScroll(rememberScrollState())
+                    .padding(it)
             ) {
                 PlayerTopBar(
                     modifier = Modifier

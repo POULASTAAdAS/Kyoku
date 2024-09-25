@@ -2,9 +2,14 @@ package com.poulastaa.play.data.player
 
 import android.icu.text.DecimalFormat
 import android.net.Uri
+import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import androidx.media3.exoplayer.ExoPlayer
@@ -33,24 +38,40 @@ class PlayerDatasource @Inject constructor(
         MutableStateFlow(PlayerState.Initial)
     override val playerUiState = _playerUiState.asStateFlow()
 
+    private var isBuffering by mutableStateOf(false)
+
     private var playJob: Job? = null
 
     override fun onEvent(event: PlayerEvent) {
+        if (isBuffering) return
+
         when (event) {
             PlayerEvent.PlayPause -> {
                 if (player.isPlaying) pauseProgress()
                 else playJob = startProgress()
             }
 
-            PlayerEvent.PlayNext -> player.seekToNext()
-            PlayerEvent.PlayPrev -> player.seekToPrevious()
+            PlayerEvent.PlayNext -> {
+                player.seekToNext()
+                startIfPause()
+            }
+
+            PlayerEvent.PlayPrev -> {
+                player.seekToPrevious()
+                startIfPause()
+            }
 
             is PlayerEvent.SeekTo -> {
                 val pos = (event.value * player.duration / 100f).toLong()
                 player.seekTo(pos)
+
+                startIfPause()
             }
 
-            is PlayerEvent.SeekToSong -> player.seekTo(event.index, event.pos)
+            is PlayerEvent.SeekToSong -> {
+                player.seekTo(event.index, event.pos)
+                startIfPause()
+            }
 
             PlayerEvent.Stop -> stopProgress()
         }
@@ -106,6 +127,41 @@ class PlayerDatasource @Inject constructor(
         }
     }
 
+    override fun onPlaybackStateChanged(playbackState: Int) {
+        isBuffering = playbackState == 2 // check if buffering
+
+        when (playbackState) {
+            ExoPlayer.STATE_IDLE -> _playerUiState.value = PlayerState.Initial
+
+            Player.STATE_READY -> _playerUiState.value =
+                PlayerState.Ready(millisecondsToMinutesAndSeconds(player.duration))
+
+            ExoPlayer.STATE_ENDED -> _playerUiState.value = PlayerState.Playing(isPlaying = false)
+
+            else -> Unit
+        }
+    }
+
+    override fun onIsPlayingChanged(isPlaying: Boolean) {
+        _playerUiState.value = PlayerState.Playing(isPlaying = isPlaying)
+    }
+
+    override fun onTracksChanged(tracks: Tracks) {
+        super.onTracksChanged(tracks)
+        _playerUiState.value = PlayerState.CurrentlyPlaying(
+            songId = player.currentMediaItem?.mediaId?.toLong() ?: -1L,
+            hasPrev = player.hasPreviousMediaItem(),
+            hasNext = player.hasNextMediaItem()
+        )
+    }
+
+    override fun onPlayerError(error: PlaybackException) {
+        if (player.hasNextMediaItem()) {
+            player.seekToNext()
+            player.prepare()
+        }
+    }
+
     private fun startProgress() = CoroutineScope(Dispatchers.Main).launch {
         player.play()
 
@@ -133,30 +189,12 @@ class PlayerDatasource @Inject constructor(
         player.clearMediaItems()
     }
 
-    override fun onPlaybackStateChanged(playbackState: Int) {
-        when (playbackState) {
-            ExoPlayer.STATE_IDLE -> _playerUiState.value = PlayerState.Initial
-
-            Player.STATE_READY -> _playerUiState.value =
-                PlayerState.Ready(millisecondsToMinutesAndSeconds(player.duration))
-
-            ExoPlayer.STATE_ENDED -> _playerUiState.value = PlayerState.Playing(isPlaying = false)
-
-            else -> Unit
+    private fun startIfPause() {
+        if (!player.isPlaying) {
+            player.prepare()
+            playJob?.cancel()
+            playJob = startProgress()
         }
-    }
-
-    override fun onIsPlayingChanged(isPlaying: Boolean) {
-        _playerUiState.value = PlayerState.Playing(isPlaying = isPlaying)
-    }
-
-    override fun onTracksChanged(tracks: Tracks) {
-        super.onTracksChanged(tracks)
-        _playerUiState.value = PlayerState.CurrentlyPlaying(
-            songId = player.currentMediaItem?.mediaId?.toLong() ?: -1L,
-            hasPrev = player.hasPreviousMediaItem(),
-            hasNext = player.hasNextMediaItem()
-        )
     }
 
     private fun millisecondsToMinutesAndSeconds(milliseconds: Long): String {

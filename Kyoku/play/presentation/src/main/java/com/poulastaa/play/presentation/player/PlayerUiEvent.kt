@@ -6,6 +6,11 @@ sealed interface PlayerUiEvent {
     sealed interface PlayOperation : PlayerUiEvent {
         data class PlayAll(val id: Long, val type: PlayType) : PlayOperation
         data class ShuffleAll(val id: Long, val type: PlayType) : PlayOperation
+        data class PlayOne(
+            val songId: Long,
+            val otherId: Long,
+            val type: PlayType,
+        ) : PlayOperation
     }
 
     data object OnPlayerExtendClick : PlayerUiEvent
