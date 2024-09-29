@@ -14,6 +14,7 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.domain.utils.asEmptyDataResult
+import com.poulastaa.play.data.mapper.toRecentHistoryOtherType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -140,6 +141,28 @@ class OnlineFirstPlayerRepository @Inject constructor(
 
     override suspend fun getOtherInfo(songId: Long): Result<SongOtherData, DataError.Network> =
         remote.loadOtherInfo(songId)
+
+    override suspend fun addSongToHistory(songId: Long, otherId: Long, type: PlayType) {
+        if (type == PlayType.IDLE) return
+
+        val local = applicationScope.async {
+            local.addSongToHistory(
+                songId,
+                otherId,
+                type.toRecentHistoryOtherType()
+            )
+        }
+
+        when (remote.addSongToHistory(songId, otherId, type.toRecentHistoryOtherType())) {
+            is Result.Error -> {
+                // todo add to internal database
+            }
+
+            else -> Unit
+        }
+
+        local.await()
+    }
 
     override suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network> =
         artistRemote.getArtistOnSongId(songId)

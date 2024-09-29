@@ -8,6 +8,7 @@ import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.PlayerDao
+import com.poulastaa.core.database.dao.RecentHistoryDao
 import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.RoomLocalAddArtistDatasource
@@ -230,11 +231,13 @@ object DatabaseViewModelModule {
         libraryDao: LibraryDao,
         viewDao: ViewDao,
         playerDao: PlayerDao,
+        historyDao: RecentHistoryDao
     ): LocalPlayerDatasource = RoomLocalPlayerDatasource(
         commonDao = commonDao,
         libraryDao = libraryDao,
         viewDao = viewDao,
-        playerDao = playerDao
+        playerDao = playerDao,
+        historyDao = historyDao
     )
 
     @Provides

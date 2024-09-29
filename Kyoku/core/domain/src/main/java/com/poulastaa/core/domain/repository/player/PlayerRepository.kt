@@ -22,5 +22,12 @@ interface PlayerRepository {
 
     suspend fun getArtistOnSongId(songId: Long): Result<List<ArtistWithPopularity>, DataError.Network>
     suspend fun getOtherInfo(songId: Long): Result<SongOtherData, DataError.Network>
+
+    suspend fun addSongToHistory(
+        songId: Long,
+        otherId: Long,
+        type: PlayType
+    )
+
     fun close()
 }

@@ -9,6 +9,7 @@ import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.PlayerDao
+import com.poulastaa.core.database.dao.RecentHistoryDao
 import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.dao.WorkDao
@@ -29,6 +30,7 @@ import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
 import com.poulastaa.core.database.entity.PopularSongMixEntity
 import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
 import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
+import com.poulastaa.core.database.entity.RecentHistoryEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
@@ -69,10 +71,12 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         PinnedEntity::class,
 
         PlayerSongEntity::class,
-        PlayerInfoEntity::class
+        PlayerInfoEntity::class,
+
+        RecentHistoryEntity::class
     ],
-    version = 7,
-    exportSchema = true
+    version = 8,
+    exportSchema = false
 )
 abstract class KyokuDatabase : RoomDatabase() {
     abstract val commonDao: CommonDao
@@ -85,4 +89,5 @@ abstract class KyokuDatabase : RoomDatabase() {
     abstract val viewDao: ViewDao
     abstract val workDao: WorkDao
     abstract val playerDao: PlayerDao
+    abstract val recentHistoryDao: RecentHistoryDao
 }

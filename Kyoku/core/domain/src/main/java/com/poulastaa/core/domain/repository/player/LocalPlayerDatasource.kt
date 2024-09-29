@@ -2,6 +2,7 @@ package com.poulastaa.core.domain.repository.player
 
 import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
+import com.poulastaa.core.domain.RecentHistoryOtherType
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.model.PrevAlbum
@@ -27,4 +28,10 @@ interface LocalPlayerDatasource {
 
     fun getInfo(): Flow<PlayerInfo>
     fun getSongs(): Flow<List<PlayerSong>>
+
+    suspend fun addSongToHistory(
+        songId: Long,
+        otherId: Long,
+        type: RecentHistoryOtherType
+    )
 }

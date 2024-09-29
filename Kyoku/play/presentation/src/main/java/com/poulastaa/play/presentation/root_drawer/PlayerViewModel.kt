@@ -60,6 +60,14 @@ class PlayerViewModel @Inject constructor(
                     }
 
                     is PlayerState.Progress -> {
+                        if (playerState.value.split('.').last() == "05") viewModelScope.launch {
+                            repo.addSongToHistory(
+                                songId = state.info.artist.songId,
+                                otherId = state.info.other.otherId,
+                                type = state.info.other.playType
+                            )
+                        }
+
                         state = state.copy(
                             info = state.info.copy(
                                 currentProgress = playerState.value

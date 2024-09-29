@@ -3,8 +3,10 @@ package com.poulastaa.core.database.repository
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.PlayerDao
+import com.poulastaa.core.database.dao.RecentHistoryDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.PlayerInfoEntity
+import com.poulastaa.core.database.entity.RecentHistoryEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.mapper.toPlayerInfo
 import com.poulastaa.core.database.mapper.toPlayerSong
@@ -14,6 +16,7 @@ import com.poulastaa.core.database.mapper.toPrevAlbum
 import com.poulastaa.core.database.mapper.toSong
 import com.poulastaa.core.domain.PlayType
 import com.poulastaa.core.domain.PlayerInfo
+import com.poulastaa.core.domain.RecentHistoryOtherType
 import com.poulastaa.core.domain.model.PlayerSong
 import com.poulastaa.core.domain.model.Playlist
 import com.poulastaa.core.domain.model.PrevAlbum
@@ -32,6 +35,7 @@ class RoomLocalPlayerDatasource @Inject constructor(
     private val libraryDao: LibraryDao,
     private val viewDao: ViewDao,
     private val playerDao: PlayerDao,
+    private val historyDao: RecentHistoryDao
 ) : LocalPlayerDatasource {
     override suspend fun clearAll() {
         coroutineScope {
@@ -239,6 +243,24 @@ class RoomLocalPlayerDatasource @Inject constructor(
         playerDao.getSong().map { list ->
             list.map { entity -> entity.toPlayerSong() }
         }
+
+    override suspend fun addSongToHistory(
+        songId: Long,
+        otherId: Long,
+        type: RecentHistoryOtherType
+    ) {
+        val lastOtherEntry = historyDao.getLastOtherEntry()
+        if (lastOtherEntry?.otherType == type && lastOtherEntry.otherId == otherId) return
+
+        historyDao.insert(
+            RecentHistoryEntity(
+                songId = songId,
+                otherId = otherId,
+                otherType = type
+            )
+        )
+        historyDao.deleteOldEntry()
+    }
 
     private suspend fun SongEntity.toPlayerSongEntity(
         index: Int,
