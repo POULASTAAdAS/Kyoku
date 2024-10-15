@@ -71,4 +71,5 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.12")
 
     implementation("com.google.guava:guava:33.2.1-jre")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 }

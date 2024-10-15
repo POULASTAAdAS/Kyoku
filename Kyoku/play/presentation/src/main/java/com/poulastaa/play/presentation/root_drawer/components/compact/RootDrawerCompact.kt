@@ -64,6 +64,7 @@ import com.poulastaa.play.presentation.player.PlayerUiEvent
 import com.poulastaa.play.presentation.player.PlayerUiState
 import com.poulastaa.play.presentation.player.full_player.VerticalPlayerScreen
 import com.poulastaa.play.presentation.player.small_player.SmallCompactPlayer
+import com.poulastaa.play.presentation.profile.ProfilePortraitRootScreen
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiEvent
 import com.poulastaa.play.presentation.root_drawer.RootDrawerUiState
 import com.poulastaa.play.presentation.root_drawer.home.HomeCompactScreen
@@ -246,17 +247,17 @@ fun RootDrawerCompact(
                         }
 
                         composable(route = DrawerScreen.Profile.route) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "Profile",
-                                    fontSize = MaterialTheme.typography.displayLarge.fontSize,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                            ProfilePortraitRootScreen(
+                                navigateToLibrary = {
+                                    navController.navigate(DrawerScreen.Library.route) {
+                                        popUpTo(DrawerScreen.Library.route) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                navigateBack = {
+                                    navController.popBackStack()
+                                }
+                            )
                         }
 
                         composable(route = DrawerScreen.History.route) {

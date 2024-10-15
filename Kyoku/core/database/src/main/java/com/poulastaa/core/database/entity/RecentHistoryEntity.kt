@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 @Entity
 data class RecentHistoryEntity(
     @PrimaryKey(autoGenerate = false)
-    val timeStamp: LocalDateTime = LocalDateTime.now(),
+    val timeStamp: String = "", // todo change to date time
     val songId: Long = -1,
     val otherId: Long = -1,
     val otherType: RecentHistoryOtherType = RecentHistoryOtherType.INDIVIDUAL,
