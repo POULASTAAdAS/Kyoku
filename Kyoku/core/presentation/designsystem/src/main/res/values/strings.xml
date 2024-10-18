@@ -138,7 +138,7 @@
     <string name="search_artist">search artist</string>
     <string name="international">International</string>
     <string name="explore_artist">Explore Artist</string>
-    <string name="build_your_playlist">Build your playlist wiht this songs</string>
+    <string name="build_your_playlist">Build your playlist with this songs</string>
     <string name="search">search</string>
     <string name="error_playlist_name_conflict">Two playlist can\'t have same name</string>
     <string name="playing_from">Playing from</string>
@@ -148,4 +148,7 @@
     <string name="nothing_to_show">Nothing to show</string>
     <string name="release_year">"Release year: "</string>
     <string name="profile_title">Profile</string>
+    <string name="saved_playlist">saved playlist</string>
+    <string name="saved_albums">saved albums</string>
+    <string name="followed_artists">followed artists</string>
 </resources>

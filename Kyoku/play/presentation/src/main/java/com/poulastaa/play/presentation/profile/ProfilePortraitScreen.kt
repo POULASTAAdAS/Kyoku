@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -57,6 +58,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.ui.MovingCirclesWithMetaballEffect
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.imageReq
 
@@ -81,7 +83,7 @@ fun ProfilePortraitRootScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ProfilePortraitScreen(
+fun ProfilePortraitScreen(
     state: ProfileUiState,
     onEvent: (ProfileUiEvent) -> Unit,
     navigateBack: () -> Unit,
@@ -130,10 +132,10 @@ private fun ProfilePortraitScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
             ) {
-                Items(
+                ProfileItems(
                     icon = FilterArtistIcon,
                     value = state.savedArtistCount,
-                    text = "followed artists",
+                    text = stringResource(R.string.followed_artists),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onEvent(ProfileUiEvent.OnItemClick(ProfileItemType.ARTIST))
@@ -142,10 +144,10 @@ private fun ProfilePortraitScreen(
 
                 Spacer(Modifier.width(MaterialTheme.dimens.small1))
 
-                Items(
+                ProfileItems(
                     icon = FilterAlbumIcon,
                     value = state.savedAlbumCount,
-                    text = "saved albums",
+                    text = stringResource(R.string.saved_albums),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onEvent(ProfileUiEvent.OnItemClick(ProfileItemType.ALBUM))
@@ -154,10 +156,10 @@ private fun ProfilePortraitScreen(
 
                 Spacer(Modifier.width(MaterialTheme.dimens.small1))
 
-                Items(
+                ProfileItems(
                     icon = FilterPlaylistIcon,
                     value = state.savedPlaylistCount,
-                    text = "saved playlist",
+                    text = stringResource(R.string.saved_playlist),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onEvent(ProfileUiEvent.OnItemClick(ProfileItemType.PLAYLIST))
@@ -171,44 +173,56 @@ private fun ProfilePortraitScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(.6f),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp,
-                        pressedElevation = 0.dp
-                    ),
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.onBackground,
-                        contentColor = MaterialTheme.colorScheme.surfaceContainer
-                    ),
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        onEvent(ProfileUiEvent.OnItemClick(ProfileItemType.LIBRARY))
-                    }
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(MaterialTheme.dimens.medium1),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Go to ${stringResource(R.string.library_label).lowercase()}",
-                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
+                ProfileLibraryButton(
+                    haptic = haptic,
+                    onEvent = onEvent
+                )
             }
         }
     }
 }
 
 @Composable
-private fun Items(
+fun ProfileLibraryButton(
+    modifier: Modifier = Modifier,
+    haptic: HapticFeedback,
+    onEvent: (ProfileUiEvent) -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(.6f),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp,
+            pressedElevation = 0.dp
+        ),
+        shape = CircleShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            contentColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        onClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            onEvent(ProfileUiEvent.OnItemClick(ProfileItemType.LIBRARY))
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(MaterialTheme.dimens.medium1),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Go to ${stringResource(R.string.library_label).lowercase()}",
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+fun ProfileItems(
     value: Int,
     text: String,
     icon: ImageVector,
@@ -280,22 +294,29 @@ private fun TopCard(
             bottomStart = MaterialTheme.dimens.medium1
         )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            ProfileImage(state) {
-                onEvent(ProfileUiEvent.EditClick)
+            MovingCirclesWithMetaballEffect()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                ProfileImage(state) {
+                    onEvent(ProfileUiEvent.EditClick)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun NameCard(state: ProfileUiState) {
+fun NameCard(state: ProfileUiState) {
     Card(
         modifier = Modifier.Companion
             .offset(y = (-20).dp)
@@ -328,7 +349,7 @@ private fun NameCard(state: ProfileUiState) {
 }
 
 @Composable
-private fun ProfileImage(
+fun ProfileImage(
     state: ProfileUiState,
     onClick: () -> Unit,
 ) {
