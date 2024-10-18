@@ -58,6 +58,9 @@
     <td>
       <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/tablet/tablate_home.gif" width="240" height="520">
     </td>
+    <td>
+      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/gif/meatball%20animation.gif" width="240" height="520">
+    </td>
   </tr>
 </table>
 # License
