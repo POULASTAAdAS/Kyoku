@@ -83,7 +83,7 @@ fun ProfilePortraitRootScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun ProfilePortraitScreen(
+private fun ProfilePortraitScreen(
     state: ProfileUiState,
     onEvent: (ProfileUiEvent) -> Unit,
     navigateBack: () -> Unit,
@@ -362,8 +362,7 @@ fun ProfileImage(
             modifier = Modifier
                 .padding(bottom = MaterialTheme.dimens.medium1)
                 .fillMaxSize(.6f)
-                .aspectRatio(1f)
-                .clip(CircleShape),
+                .aspectRatio(1f),
             shape = CircleShape,
             onClick = onClick,
             elevation = CardDefaults.cardElevation(

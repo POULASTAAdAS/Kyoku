@@ -60,7 +60,7 @@ fun ProfileLandscapeRootScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileLandscapeScreen(
+private fun ProfileLandscapeScreen(
     state: ProfileUiState,
     onEvent: (ProfileUiEvent) -> Unit,
     navigateBack: () -> Unit,

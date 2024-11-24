@@ -33,7 +33,6 @@ class AuthHeaderInterceptor @Inject constructor(
             ds.readTokenOrCookie().first()
         }
 
-
         val newReq = oldReq.newBuilder()
             .addHeader(
                 name = if (tokenOrCookie.startsWith("Bearer")) "Authorization" else "Cookie",

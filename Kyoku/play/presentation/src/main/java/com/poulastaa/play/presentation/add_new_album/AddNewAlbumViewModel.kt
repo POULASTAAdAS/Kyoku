@@ -40,8 +40,7 @@ class AddNewAlbumViewModel @Inject constructor(
 
     private val _album: MutableStateFlow<PagingData<AddAlbumUiAlbum>> =
         MutableStateFlow(PagingData.empty())
-    var album = _album.asStateFlow()
-        private set
+    val album = _album.asStateFlow()
 
     private var loadDataJob: Job? = null
     private var showSnackBarJob: Job? = null
