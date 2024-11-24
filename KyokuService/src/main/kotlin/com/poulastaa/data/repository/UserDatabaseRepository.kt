@@ -147,7 +147,7 @@ class UserDatabaseRepository(
     ): Pair<LogInDto, UserId> = coroutineScope {
         val userId = getUserOnEmail(email, userType)?.id ?: return@coroutineScope LogInDto() to -1
 
-        val savedPlaylistDef = async {
+        val savedPlaylistWithSongDef = async {
             query {
                 UserPlaylistSongRelationTable.select {
                     (UserPlaylistSongRelationTable.userId eq userId) and (UserPlaylistSongRelationTable.userType eq userType.name)
@@ -178,9 +178,22 @@ class UserDatabaseRepository(
                             database.getArtistOnSongId(songDao.id.value) to songDao
                         }
                     }.awaitAll().map { pair ->
-                        pair.second.toSongDto(artist = pair.first.joinToString())
+                        pair.second.toSongDto(artist = pair.first.joinToString { artist -> artist.name })
                     }
                 )
+            }
+        }
+
+        val savedEmptyPlaylistIdsDef = async {
+            query {
+                UserPlaylistRelationTable
+                    .slice(UserPlaylistRelationTable.playlistId)
+                    .select {
+                        UserPlaylistRelationTable.userId eq userId and
+                                (UserPlaylistRelationTable.userType eq userType.name)
+                    }.map {
+                        it[UserPlaylistRelationTable.playlistId]
+                    }
             }
         }
         val savedAlbumDef = async {
@@ -241,8 +254,29 @@ class UserDatabaseRepository(
         }
         val favouriteSongDef = async { getUserFavouriteSong(userId, userType.name) }
 
+        val savedPlaylistWithSong = savedPlaylistWithSongDef.await()
+        val savedEmptyPlaylistIds = savedEmptyPlaylistIdsDef.await()
+
+        val emptyPlaylistDef = async {
+            val idList = savedPlaylistWithSong.map { it.id }
+
+            savedEmptyPlaylistIds.filterNot { idList.contains(it) }
+                .let {
+                    query {
+                        PlaylistDao.find {
+                            PlaylistTable.id inList it
+                        }.map { playlist ->
+                            PlaylistDto(
+                                id = playlist.id.value,
+                                name = playlist.name,
+                            )
+                        }
+                    }
+                }
+        }
+
         LogInDto(
-            savedPlaylist = savedPlaylistDef.await(),
+            savedPlaylist = savedPlaylistWithSong + emptyPlaylistDef.await(),
             savedAlbum = savedAlbumDef.await(),
             savedArtist = followArtistDef.await(),
             favouriteSong = favouriteSongDef.await()
@@ -322,30 +356,38 @@ class UserDatabaseRepository(
     }
 
     override suspend fun addArtist(
-        artistId: Long,
-        email: String,
+        list: List<Long>,
+        userId: Long,
         userType: UserType,
-    ): ArtistDto {
-        val artist = query {
+    ): List<ArtistDto> {
+        val daoList = query {
             ArtistDao.find {
-                ArtistTable.id eq artistId
-            }.singleOrNull()
-        } ?: return ArtistDto()
-
-        query {
-            UserArtistRelationTable.insertIgnore {
-                it[this.artistId] = artistId
-                it[this.userType] = userType.name
-                it[this.userId] = userId
-            }
+                ArtistTable.id inList list
+            }.toList()
         }
 
-        return artist.toArtistDto()
+        if (daoList.isEmpty()) return emptyList()
+
+        coroutineScope {
+            daoList.map { dto ->
+                async {
+                    query {
+                        UserArtistRelationTable.insertIgnore {
+                            it[this.artistId] = dto.id.value
+                            it[this.userType] = userType.name
+                            it[this.userId] = userId
+                        }
+                    }
+                }
+            }.awaitAll()
+        }
+
+        return daoList.map { it.toArtistDto() }
     }
 
     override suspend fun removeArtist(
-        id: Long,
-        email: String,
+        artistId: Long,
+        userId: Long,
         userType: UserType,
     ): Boolean = query {
         UserArtistRelationTable.deleteWhere {
@@ -358,52 +400,55 @@ class UserDatabaseRepository(
     }
 
     override suspend fun addAlbum(
-        albumId: Long,
+        list: List<Long>,
         email: String,
         userType: UserType,
-    ): AlbumWithSongDto = coroutineScope {
-        val user = getUserOnEmail(email, userType) ?: return@coroutineScope AlbumWithSongDto()
+    ): List<AlbumWithSongDto> = coroutineScope {
+        val user = getUserOnEmail(email, userType) ?: return@coroutineScope emptyList()
 
-        val album = query {
+        query {
             AlbumDao.find {
-                AlbumTable.id eq albumId
-            }.singleOrNull()
-        } ?: return@coroutineScope AlbumWithSongDto()
-
-        val insertDef = async {
-            query {
-                UserAlbumRelationTable.insertIgnore {
-                    it[this.albumId] = album.id.value
-                    it[this.userType] = userType.name
-                    it[this.userId] = user.id
-                }
-            }
-        }
-        val songDef = async {
-            query {
-                SongAlbumRelationTable.select {
-                    SongAlbumRelationTable.albumId eq album.id.value
-                }.map {
-                    it[SongAlbumRelationTable.songId]
-                }.let {
-                    SongDao.find {
-                        SongTable.id inList it
+                AlbumTable.id inList list
+            }.toList()
+        }.map { album ->
+            async {
+                val insertDef = async {
+                    query {
+                        UserAlbumRelationTable.insertIgnore {
+                            it[this.albumId] = album.id.value
+                            it[this.userType] = userType.name
+                            it[this.userId] = user.id
+                        }
                     }
-                }.map {
-                    val artist = database.getArtistOnSongId(it.id.value)
-
-                    it.toSongDto(artist.joinToString { resultArtist -> resultArtist.name })
                 }
+
+                val songDef = async {
+                    query {
+                        SongAlbumRelationTable.select {
+                            SongAlbumRelationTable.albumId eq album.id.value
+                        }.map {
+                            it[SongAlbumRelationTable.songId]
+                        }.let {
+                            SongDao.find {
+                                SongTable.id inList it
+                            }
+                        }.map {
+                            val artist = database.getArtistOnSongId(it.id.value)
+
+                            it.toSongDto(artist.joinToString { resultArtist -> resultArtist.name })
+                        }
+                    }
+                }
+
+                insertDef.await()
+                val songs = songDef.await()
+
+                AlbumWithSongDto(
+                    albumDto = album.toAlbum(songs.getOrNull(0)?.coverImage ?: ""),
+                    listOfSong = songs
+                )
             }
-        }
-
-        insertDef.await()
-        val songs = songDef.await()
-
-        AlbumWithSongDto(
-            albumDto = album.toAlbum(songs.getOrNull(0)?.coverImage ?: ""),
-            listOfSong = songs
-        )
+        }.awaitAll()
     }
 
     override suspend fun removeAlbum(
@@ -553,5 +598,210 @@ class UserDatabaseRepository(
                 }
             }
         }
+    }
+
+    override suspend fun getSyncAlbum(
+        userId: Long,
+        userType: UserType,
+        albumIdList: List<Long>,
+    ): SyncDto<Any> = coroutineScope {
+        val savedAlbumIdList = query {
+            UserAlbumRelationTable
+                .select {
+                    UserAlbumRelationTable.userId eq userId and
+                            (UserAlbumRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserAlbumRelationTable.albumId]
+                }
+        }
+
+        val removeList = albumIdList.filterNot { savedAlbumIdList.contains(it) }
+
+        val newList = savedAlbumIdList.filterNot { albumIdList.contains(it) }
+            .map {
+                async {
+                    val album = async { database.getAlbumOnId(it)!! }
+                    val song = async { database.getAlbumSong(it) }
+
+                    album.await() to song.await()
+                }
+            }.awaitAll()
+
+        SyncDto(
+            removeIdList = removeList,
+            newAlbumList = newList.map {
+                AlbumWithSongDto(
+                    albumDto = AlbumDto(
+                        id = it.first.id.value,
+                        name = it.first.name,
+                        coverImage = it.second.first().coverImage.ifEmpty { "" }
+                    ),
+                    listOfSong = it.second
+                )
+            }
+        )
+    }
+
+    override suspend fun getSyncPlaylist(
+        userId: Long,
+        userType: UserType,
+        playlistIdList: List<Long>,
+    ): SyncDto<Any> = coroutineScope {
+        val savedPlaylistIdList = query {
+            UserPlaylistSongRelationTable
+                .slice(UserPlaylistSongRelationTable.playlistId)
+                .select {
+                    UserPlaylistSongRelationTable.userId eq userId and
+                            (UserPlaylistSongRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserPlaylistSongRelationTable.playlistId]
+                }
+        }
+
+        val removeList = playlistIdList.filterNot { savedPlaylistIdList.contains(it) }
+
+        val newListDef = async {
+            savedPlaylistIdList.filterNot { playlistIdList.contains(it) }
+                .map {
+                    async {
+                        val playlist = async { database.getPlaylistOnId(it)!! }
+                        val song = async { database.getPlaylistSong(it, userId, userType) }
+
+                        playlist.await() to song.await()
+                    }
+                }.awaitAll()
+        }
+
+        val allPlaylistDef = async {
+            val idList = query {
+                UserPlaylistRelationTable
+                    .slice(UserPlaylistRelationTable.playlistId)
+                    .select {
+                        UserPlaylistRelationTable.userId eq userId and
+                                (UserPlaylistRelationTable.userType eq userType.name)
+                    }.map {
+                        it[UserPlaylistRelationTable.playlistId]
+                    }
+            }
+
+            idList.filterNot { savedPlaylistIdList.contains(it) }
+                .let {
+                    query {
+                        PlaylistDao.find {
+                            PlaylistTable.id inList it
+                        }.toList()
+                    }.map { playlist ->
+                        PlaylistDto(
+                            id = playlist.id.value,
+                            name = playlist.name
+                        )
+                    }
+                }
+        }
+
+        SyncDto(
+            removeIdList = removeList,
+            newAlbumList = newListDef.await().map {
+                PlaylistDto(
+                    id = it.first.id.value,
+                    name = it.first.name,
+                    listOfSong = it.second
+                )
+            } + allPlaylistDef.await()
+        )
+    }
+
+    override suspend fun getSyncArtist(
+        userId: Long,
+        userType: UserType,
+        artistIdList: List<Long>,
+    ): SyncDto<Any> = coroutineScope {
+        val savedArtistIdList = query {
+            UserArtistRelationTable
+                .select {
+                    UserArtistRelationTable.userId eq userId and
+                            (UserArtistRelationTable.userType eq userType.name)
+                }.map {
+                    it[UserArtistRelationTable.artistId]
+                }
+        }
+
+        val removeList = artistIdList.filterNot { savedArtistIdList.contains(it) }
+
+        val newList = savedArtistIdList.filterNot { artistIdList.contains(it) }
+            .map {
+                async { database.getArtistOnId(it)!!.toArtistDto() }
+            }.awaitAll()
+
+        SyncDto(
+            removeIdList = removeList,
+            newAlbumList = newList
+        )
+    }
+
+    override suspend fun getSyncFavourite(
+        userId: Long,
+        userType: UserType,
+        songIdList: List<Long>,
+    ): SyncDto<Any> = coroutineScope {
+        val oldSongIdList = query {
+            UserFavouriteRelationTable
+                .slice(UserFavouriteRelationTable.songId)
+                .select {
+                    UserFavouriteRelationTable.userId eq userId and
+                            (UserFavouriteRelationTable.userType eq userType.name)
+                }.map { it[UserFavouriteRelationTable.songId] }
+        }
+
+        val removeList = songIdList.filterNot { oldSongIdList.contains(it) }
+        val newListDef = oldSongIdList
+            .filterNot { songIdList.contains(it) }
+            .map {
+                async { database.getSongOnId(it) }
+            }.awaitAll()
+
+        SyncDto(
+            removeIdList = removeList,
+            newAlbumList = newListDef
+        )
+    }
+
+    override suspend fun getSyncPlaylistSongs(
+        userId: Long,
+        userType: UserType,
+        playlistIdAndSongIdList: List<Long>,
+    ): SyncDto<Any> = coroutineScope {
+        val playlistId = playlistIdAndSongIdList.firstOrNull()
+            ?: return@coroutineScope SyncDto(newAlbumList = emptyList<PlaylistDto>())
+        val songIdList = playlistIdAndSongIdList.drop(1)
+
+        val savedPlaylistSongIdList = query {
+            UserPlaylistSongRelationTable
+                .slice(UserPlaylistSongRelationTable.songId)
+                .select {
+                    UserPlaylistSongRelationTable.playlistId eq userId and
+                            (UserPlaylistSongRelationTable.userType eq userType.name)
+                }.map { it[UserPlaylistSongRelationTable.songId] }
+        }
+
+        val removeList = songIdList.filterNot { savedPlaylistSongIdList.contains(it) }
+        val playlistDef = async { database.getPlaylistOnId(playlistId) }
+        val newListDef = savedPlaylistSongIdList.filterNot { removeList.contains(it) }.map {
+            async { database.getSongOnId(it) }
+        }
+
+        val playlist = playlistDef.await() ?: return@coroutineScope SyncDto(newAlbumList = emptyList<PlaylistDto>())
+        val newList = newListDef.awaitAll()
+
+        SyncDto(
+            removeIdList = removeList,
+            newAlbumList = listOf(
+                PlaylistDto(
+                    id = playlist.id.value,
+                    name = playlist.name,
+                    listOfSong = newList
+                )
+            )
+        )
     }
 }

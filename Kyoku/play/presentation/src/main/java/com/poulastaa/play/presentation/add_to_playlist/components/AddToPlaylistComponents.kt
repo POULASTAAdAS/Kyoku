@@ -64,7 +64,7 @@ import com.poulastaa.core.presentation.designsystem.CancelIcon
 import com.poulastaa.core.presentation.designsystem.CheckIcon
 import com.poulastaa.core.presentation.designsystem.FavouriteIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.SearchIcon
+import com.poulastaa.core.presentation.designsystem.components.DummySearch
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.ui.imageReqSongCover
 import com.poulastaa.play.presentation.add_to_playlist.AddToPlaylistUiEvent
@@ -182,7 +182,7 @@ fun AddToPlaylistTextField(
 fun AddToPlaylistNavigationIcon(
     searchEnabled: Boolean,
     onEvent: (AddToPlaylistUiEvent.CancelSearch) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     IconButton(
         onClick = {
@@ -207,7 +207,7 @@ fun PlaylistCard(
     modifier: Modifier = Modifier,
     header: String,
     data: UiPlaylistData,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -259,7 +259,7 @@ fun PlaylistCard(
 @Composable
 private fun CustomCheckBox(
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -328,7 +328,9 @@ fun LazyListScope.addToPlaylistTopPart(
                     onEvent(AddToPlaylistUiEvent.AddNewPlaylist)
                 }
 
-                DummySearch {
+                DummySearch(
+                    header = stringResource(id = R.string.search_playlist)
+                ) {
                     onEvent(AddToPlaylistUiEvent.EnableSearch)
                 }
 
@@ -347,7 +349,7 @@ fun LazyListScope.addToPlaylistTopPart(
 
 @Composable
 private fun NewPlaylistButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -371,7 +373,7 @@ private fun NewPlaylistButton(
 private fun FavouriteCard(
     modifier: Modifier = Modifier,
     fev: UiFavouriteData,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -425,44 +427,12 @@ private fun FavouriteCard(
     }
 }
 
-@Composable
-private fun DummySearch(
-    onClick: () -> Unit
-) {
-    Card(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-        shape = MaterialTheme.shapes.extraSmall,
-        onClick = onClick
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.dimens.small1)
-        ) {
-            Icon(
-                modifier = Modifier.padding(start = MaterialTheme.dimens.small1),
-                imageVector = SearchIcon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground.copy(.7f)
-            )
-
-            Text(
-                text = stringResource(id = R.string.search_playlist),
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                color = MaterialTheme.colorScheme.onBackground.copy(.7f)
-            )
-        }
-    }
-
-}
 
 @Composable
 private fun TextColumn(
     modifier: Modifier = Modifier,
     heading: String,
-    songsCount: Int
+    songsCount: Int,
 ) {
     Column(
         modifier = modifier,

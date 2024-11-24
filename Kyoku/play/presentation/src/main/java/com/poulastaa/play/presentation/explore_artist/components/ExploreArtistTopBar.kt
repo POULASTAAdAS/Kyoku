@@ -33,7 +33,7 @@ fun ExploreArtistTopBar(
     header: String,
     title: String,
     coverImage: String,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     LargeTopAppBar(
         scrollBehavior = scroll,
@@ -62,7 +62,7 @@ fun ExploreArtistTopBar(
         },
         navigationIcon = {
             AppBackButton(
-                imageVector = CancelIcon,
+                icon = CancelIcon,
                 onClick = navigateBack
             )
         },

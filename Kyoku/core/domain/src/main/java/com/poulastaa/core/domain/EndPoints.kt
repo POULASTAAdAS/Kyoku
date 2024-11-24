@@ -31,6 +31,7 @@ sealed class EndPoints(val route: String) {
     data object AddArtist : EndPoints(route = "/api/authorised/addArtist")
     data object RemoveArtist : EndPoints(route = "/api/authorised/removeArtist")
 
+    data object GetAlbum : EndPoints(route = "/api/authorised/getAlbum")
     data object AddAlbum : EndPoints(route = "/api/authorised/addAlbum")
     data object RemoveAlbum : EndPoints(route = "/api/authorised/removeAlbum")
 
@@ -54,4 +55,19 @@ sealed class EndPoints(val route: String) {
     data object GetArtist : EndPoints(route = "/api/authorised/getArtist")
     data object GetArtistSong : EndPoints(route = "/api/authorised/getArtistSong")
     data object GetArtistAlbum : EndPoints(route = "/api/authorised/getArtistAlbum")
+
+    data object SyncData : EndPoints(route = "/api/authorised/syncData")
+
+    data object GetAlbumPaging : EndPoints(route = "/api/authorised/getAlbumPaging")
+    data object GetArtistPaging : EndPoints(route = "/api/authorised/getArtistPaging")
+
+    data object GetCreatePlaylistData : EndPoints(route = "/api/authorised/getCreatePlaylistData")
+    data object GetCreatePlaylistPagerData :
+        EndPoints(route = "/api/authorised/getCreatePlaylistPagerData")
+
+    data object GetSongArtist : EndPoints(route = "/api/authorised/getSongArtist")
+
+    data object GetSongOtherData : EndPoints(route = "/api/authorised/getSongOtherData")
+
+    data object UpdateHistory : EndPoints(route = "/api/authorised/updateHistory")
 }

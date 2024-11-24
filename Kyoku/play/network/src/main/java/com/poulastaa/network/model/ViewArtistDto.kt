@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class ViewArtistDto(
     val followers: Long,
     val artist: ArtistDto,
-    val listOfSong: List<ViewArtistSongDto>
+    val listOfSong: List<ViewArtistSongDto>,
 )

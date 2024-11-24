@@ -8,8 +8,11 @@ import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.GetSpotifyPlaylistDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.dao.PlayerDao
+import com.poulastaa.core.database.dao.RecentHistoryDao
 import com.poulastaa.core.database.dao.SettingDao
 import com.poulastaa.core.database.dao.ViewDao
+import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.ArtistEntity
 import com.poulastaa.core.database.entity.DayTypeSongEntity
@@ -18,6 +21,8 @@ import com.poulastaa.core.database.entity.FavouriteArtistMixEntity
 import com.poulastaa.core.database.entity.FavouriteArtistMixPrevEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PinnedEntity
+import com.poulastaa.core.database.entity.PlayerInfoEntity
+import com.poulastaa.core.database.entity.PlayerSongEntity
 import com.poulastaa.core.database.entity.PlaylistEntity
 import com.poulastaa.core.database.entity.PopularAlbumPrevEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimeEntity
@@ -25,6 +30,7 @@ import com.poulastaa.core.database.entity.PopularSongFromYourTimePrevEntity
 import com.poulastaa.core.database.entity.PopularSongMixEntity
 import com.poulastaa.core.database.entity.PopularSongMixPrevEntity
 import com.poulastaa.core.database.entity.PopularSuggestArtistEntity
+import com.poulastaa.core.database.entity.RecentHistoryEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.ArtistSongEntity
 import com.poulastaa.core.database.entity.popular_artist_song.PopularSongArtistEntity
@@ -62,10 +68,15 @@ import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
         SongAlbumRelationEntity::class,
 
         FavouriteEntity::class,
-        PinnedEntity::class
+        PinnedEntity::class,
+
+        PlayerSongEntity::class,
+        PlayerInfoEntity::class,
+
+        RecentHistoryEntity::class
     ],
-    version = 2,
-    exportSchema = true
+    version = 8,
+    exportSchema = false
 )
 abstract class KyokuDatabase : RoomDatabase() {
     abstract val commonDao: CommonDao
@@ -76,4 +87,7 @@ abstract class KyokuDatabase : RoomDatabase() {
     abstract val settingDao: SettingDao
     abstract val addToPlaylist: AddToPlaylistDao
     abstract val viewDao: ViewDao
+    abstract val workDao: WorkDao
+    abstract val playerDao: PlayerDao
+    abstract val recentHistoryDao: RecentHistoryDao
 }

@@ -62,5 +62,5 @@ dependencies {
     // client
     implementation("io.ktor:ktor-client-core-jvm")
     implementation("io.ktor:ktor-client-apache-jvm")
-
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 }

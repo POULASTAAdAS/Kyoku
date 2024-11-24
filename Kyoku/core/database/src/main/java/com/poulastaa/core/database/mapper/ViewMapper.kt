@@ -1,11 +1,11 @@
 package com.poulastaa.core.database.mapper
 
-import com.poulastaa.core.ViewData
 import com.poulastaa.core.database.entity.AlbumEntity
 import com.poulastaa.core.database.entity.SongEntity
 import com.poulastaa.core.database.model.PlaylistResult
-import com.poulastaa.core.domain.AlbumData
+import com.poulastaa.core.domain.model.AlbumData
 import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.model.ViewData
 
 fun List<PlaylistResult>.toViewData(id: Long) = ViewData(
     id = id,

@@ -14,7 +14,10 @@ import com.poulastaa.core.domain.utils.DataError
 import com.poulastaa.core.domain.utils.EmptyResult
 import com.poulastaa.core.domain.utils.Result
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.SnackBarType
+import com.poulastaa.core.presentation.ui.SnackBarUiState
 import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.play.presentation.add_to_playlist.AddNewPlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
 import com.poulastaa.play.presentation.root_drawer.toUiAlbum
 import com.poulastaa.play.presentation.root_drawer.toUiPrevPlaylist
@@ -87,7 +90,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.AlbumHeader -> {
-
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.NewAlbum
+                                )
+                            )
                         }
 
                         is LibraryUiEvent.OnClick.Album -> {
@@ -102,7 +109,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.ArtistHeader -> {
-
+                            _uiEvent.send(
+                                LibraryUiAction.Navigate(
+                                    LibraryOtherScreen.NewArtist
+                                )
+                            )
                         }
 
                         is LibraryUiEvent.OnClick.Artist -> {
@@ -137,7 +148,11 @@ class LibraryViewModel @Inject constructor(
                         }
 
                         LibraryUiEvent.OnClick.PlaylistHeader -> {
-
+                            state = state.copy(
+                                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                                    isOpen = true
+                                )
+                            )
                         }
                     }
                 }
@@ -247,6 +262,9 @@ class LibraryViewModel @Inject constructor(
 
                     is LibraryUiEvent.BottomSheetUiEvent.Artist ->
                         handleArtistBottomSheetUiEvent(event)
+
+                    is LibraryUiEvent.BottomSheetUiEvent.NewPlaylist ->
+                        handleNewPlaylistBottomSheetUiEvent(event)
                 }
             }
         }
@@ -419,6 +437,35 @@ class LibraryViewModel @Inject constructor(
         }
     }
 
+    private fun handleNewPlaylistBottomSheetUiEvent(event: LibraryUiEvent.BottomSheetUiEvent.NewPlaylist) {
+        when (event) {
+            is LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnNameChange -> {
+                state = state.copy(
+                    newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                        name = event.name
+                    )
+                )
+            }
+
+            LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnSaveClick -> {
+                if (state.newPlaylistBottomSheetState.isMakingApiCall) return
+                createNewPlaylist()
+            }
+
+            LibraryUiEvent.BottomSheetUiEvent.NewPlaylist.OnCancelClick -> {
+                if (state.newPlaylistBottomSheetState.isMakingApiCall) return
+
+                state = state.copy(
+                    newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                        isOpen = false,
+                        name = "",
+                        isValidName = false
+                    )
+                )
+            }
+        }
+    }
+
 
     private fun populate() {
         getPinnedData()
@@ -521,7 +568,7 @@ class LibraryViewModel @Inject constructor(
 
     private fun handleResult(
         result: EmptyResult<DataError.Network>,
-        @StringRes messageId: Int
+        @StringRes messageId: Int,
     ) {
         showToastJob?.cancel()
 
@@ -530,20 +577,20 @@ class LibraryViewModel @Inject constructor(
                 when (result.error) {
                     DataError.Network.NO_INTERNET -> {
                         showToastJob = showToast(
-                            LibraryUiToast(
+                            SnackBarUiState(
                                 isVisible = true,
                                 message = UiText.StringResource(R.string.error_no_internet),
-                                type = LibraryToastType.ERROR
+                                type = SnackBarType.ERROR
                             )
                         )
                     }
 
                     else -> {
                         showToastJob = showToast(
-                            LibraryUiToast(
+                            SnackBarUiState(
                                 isVisible = true,
                                 message = UiText.StringResource(R.string.error_something_went_wrong),
-                                type = LibraryToastType.ERROR
+                                type = SnackBarType.ERROR
                             )
                         )
                     }
@@ -552,17 +599,17 @@ class LibraryViewModel @Inject constructor(
 
             is Result.Success -> {
                 showToastJob = showToast(
-                    LibraryUiToast(
+                    SnackBarUiState(
                         isVisible = true,
                         message = UiText.StringResource(messageId),
-                        type = LibraryToastType.SUCCESS
+                        type = SnackBarType.SUCCESS
                     )
                 )
             }
         }
     }
 
-    private fun showToast(toast: LibraryUiToast) = viewModelScope.launch {
+    private fun showToast(toast: SnackBarUiState) = viewModelScope.launch {
         state = state.copy(
             toast = state.toast.copy(
                 message = toast.message,
@@ -595,5 +642,88 @@ class LibraryViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun createNewPlaylist() {
+        if (!validatePlaylistName(state.newPlaylistBottomSheetState.name)) return
+
+        state = state.copy(
+            newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                isMakingApiCall = true
+            )
+        )
+
+        viewModelScope.launch {
+            when (val result = repo.createPlaylist(state.newPlaylistBottomSheetState.name.trim())) {
+                is Result.Error -> {
+                    when (result.error) {
+                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_no_internet)
+                            )
+                        )
+
+                        DataError.Local.NAME_CONFLICT -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_playlist_name_conflict)
+                            )
+                        )
+
+                        else -> _uiEvent.send(
+                            LibraryUiAction.EmitToast(
+                                UiText.StringResource(R.string.error_something_went_wrong)
+                            )
+                        )
+                    }
+
+                    state = state.copy(
+                        newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                            isMakingApiCall = false
+                        )
+                    )
+                }
+
+                is Result.Success -> {
+                    state = state.copy(
+                        newPlaylistBottomSheetState = AddNewPlaylistBottomSheetUiState(),
+                    )
+
+                    _uiEvent.send(
+                        LibraryUiAction.Navigate(
+                            LibraryOtherScreen.View(
+                                id = result.data,
+                                type = ViewDataType.PLAYLIST
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validatePlaylistName(name: String): Boolean {
+        if (name.trim().isEmpty()) {
+            state = state.copy(
+                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_empty_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        if (name.length < 4) {
+            state = state.copy(
+                newPlaylistBottomSheetState = state.newPlaylistBottomSheetState.copy(
+                    errorMessage = UiText.StringResource(R.string.error_short_playlist_name),
+                    isValidName = false
+                )
+            )
+
+            return false
+        }
+
+        return true
     }
 }

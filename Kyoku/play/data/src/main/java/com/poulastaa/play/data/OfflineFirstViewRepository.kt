@@ -1,7 +1,7 @@
 package com.poulastaa.play.data
 
-import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.PlaylistSong
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import com.poulastaa.core.domain.repository.view.RemoteViewDatasource
 import com.poulastaa.core.domain.repository.view.ViewRepository
@@ -20,13 +20,18 @@ import javax.inject.Inject
 class OfflineFirstViewRepository @Inject constructor(
     private val local: LocalViewDatasource,
     private val remote: RemoteViewDatasource,
-    private val application: CoroutineScope
+    private val application: CoroutineScope,
 ) : ViewRepository {
     override suspend fun getPlaylistOnId(id: Long): Result<ViewData, DataError.Network> {
         val localPlaylist = local.getPlaylistOnId(id)
         if (localPlaylist.listOfSong.isNotEmpty()) return Result.Success(localPlaylist)
 
         val remotePlaylist = remote.getPlaylistOnId(id)
+
+        if (remotePlaylist is Result.Success && localPlaylist.id != -1L) application.async {
+            local.savePlaylist(remotePlaylist.data)
+        }.await()
+
         return remotePlaylist.map { it.toViewData() }
     }
 
@@ -35,20 +40,17 @@ class OfflineFirstViewRepository @Inject constructor(
         if (localAlbum.listOfSong.isNotEmpty()) return Result.Success(localAlbum)
 
         return coroutineScope {
+            val isAlbumSavedDef = async { local.isAlbumOnLibrary(id) }
             val remoteAlbumDef = async { remote.getAlbumOnId(id) }
-            val isAlbumOnLibrary = async { local.isAlbumOnLibrary(id) }
-
             val remoteAlbum = remoteAlbumDef.await()
 
-            if (isAlbumOnLibrary.await() && remoteAlbum is Result.Success)
+            if (remoteAlbum is Result.Success && isAlbumSavedDef.await())
                 local.saveAlbum(remoteAlbum.data)
-
             remoteAlbum.map { it.toViewData() }
         }
     }
 
-    override suspend fun isSavedAlbum(id: Long): Boolean =
-        local.isAlbumOnLibrary(id)
+    override suspend fun isSavedAlbum(id: Long): Boolean = local.isAlbumOnLibrary(id)
 
     override suspend fun isSongInFavourite(songId: Long) = local.isSongInFavourite(songId)
 

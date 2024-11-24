@@ -27,7 +27,7 @@ fun ViewArtistNameRow(
     popularity: Long,
     name: String,
     isArtistFollowed: Boolean,
-    onFollowArtistToggle: () -> Unit
+    onFollowArtistToggle: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -63,7 +63,7 @@ fun ViewArtistNameRow(
 @Composable
 fun FollowArtistButton(
     isArtistFollowed: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,

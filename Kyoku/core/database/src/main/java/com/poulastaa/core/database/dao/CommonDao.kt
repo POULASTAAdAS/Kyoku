@@ -88,15 +88,17 @@ interface CommonDao {
     @Query("delete from AlbumEntity where id = :id")
     suspend fun deleteAlbum(id: Long)
 
+
     @Query(" select `primary`, background, onBackground from SongEntity  where id = :songId ")
     suspend fun getSongColorInfo(songId: Long): SongColorResult
 
     @Query(
         """
-        select PlaylistEntity.id , PlaylistEntity.name ,  SongEntity.coverImage from SongEntity
-        join SongPlaylistRelationEntity on SongEntity.id = SongPlaylistRelationEntity.songId
-        join PlaylistEntity on PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
-        where PlaylistEntity.id order by PlaylistEntity.points
+         SELECT PlaylistEntity.id, PlaylistEntity.name, SongEntity.coverImage
+        FROM PlaylistEntity
+        LEFT JOIN SongPlaylistRelationEntity ON PlaylistEntity.id = SongPlaylistRelationEntity.playlistId
+        LEFT JOIN SongEntity ON SongEntity.id = SongPlaylistRelationEntity.songId
+        ORDER BY PlaylistEntity.id DESC
     """
     )
     fun getAllSavedPlaylist(): Flow<List<PrevSongResult>>
@@ -140,4 +142,27 @@ interface CommonDao {
 
     @Query("select id from FavouriteEntity where id = :id")
     suspend fun isSongInFavourite(id: Long): Long?
+
+    @Query("select id from FavouriteEntity")
+    suspend fun getFevSongIds(): List<Long>
+
+    @Query("select id from PlaylistEntity where name = :name")
+    suspend fun getPlaylistByName(name: String): Long?
+
+    @Query(
+        """
+        select SongEntity.* from SongEntity
+        join SongPlaylistRelationEntity on SongPlaylistRelationEntity.songId = SongEntity.id
+        where SongPlaylistRelationEntity.playlistId = :playlistId
+    """
+    )
+    fun getPlaylistSongsAsFlow(playlistId: Long): Flow<List<SongEntity>>
+
+    @Query(
+        """
+        select SongEntity.* from SongEntity
+        join FavouriteEntity on FavouriteEntity.id = SongEntity.id
+    """
+    )
+    fun getFavouriteSongsAsFlow(): Flow<List<SongEntity>>
 }

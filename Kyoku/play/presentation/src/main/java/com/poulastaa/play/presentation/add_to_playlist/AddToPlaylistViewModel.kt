@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddToPlaylistViewModel @Inject constructor(
     private val ds: DataStoreRepository,
-    private val repo: AddToPlaylistRepository
+    private val repo: AddToPlaylistRepository,
 ) : ViewModel() {
     var state by mutableStateOf(AddToPlaylistUiState())
         private set
@@ -93,7 +93,7 @@ class AddToPlaylistViewModel @Inject constructor(
             AddToPlaylistUiEvent.AddNewPlaylist -> {
                 state = state.copy(
                     addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
-                        isAddNewPlaylistBottomSheetOpen = true
+                        isOpen = true
                     )
                 )
             }
@@ -255,7 +255,7 @@ class AddToPlaylistViewModel @Inject constructor(
                     is AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnNameChange -> {
                         state = state.copy(
                             addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
-                                newPlaylistName = event.name
+                                name = event.name
                             )
                         )
                     }
@@ -267,7 +267,7 @@ class AddToPlaylistViewModel @Inject constructor(
                     }
 
                     AddToPlaylistUiEvent.AddNewPlaylistUiEvent.OnSaveClick -> {
-                        if (!validatePlaylistName(state.addNewPlaylistBottomSheetState.newPlaylistName)) return
+                        if (!validatePlaylistName(state.addNewPlaylistBottomSheetState.name)) return
 
                         state = state.copy(
                             addNewPlaylistBottomSheetState = state.addNewPlaylistBottomSheetState.copy(
@@ -278,7 +278,7 @@ class AddToPlaylistViewModel @Inject constructor(
                         viewModelScope.launch {
                             val result = repo.createPlaylist(
                                 songId = state.songId,
-                                name = state.addNewPlaylistBottomSheetState.newPlaylistName
+                                name = state.addNewPlaylistBottomSheetState.name
                             )
 
                             when (result) {
@@ -385,12 +385,12 @@ class AddToPlaylistViewModel @Inject constructor(
     }
 
     private fun toggleSelectStatus(
-        currentStatus: UiSelectStatus
+        currentStatus: UiSelectStatus,
     ): UiSelectStatus = currentStatus.copy(new = currentStatus.new.not())
 
     private fun adjustTotalSongs(
         currentTotal: Int,
-        selectStatus: UiSelectStatus
+        selectStatus: UiSelectStatus,
     ) = if (selectStatus.old) {
         if (selectStatus.new) currentTotal.dec() else currentTotal.inc()
     } else {

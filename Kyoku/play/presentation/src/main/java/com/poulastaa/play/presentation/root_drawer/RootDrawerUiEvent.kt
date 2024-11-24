@@ -18,4 +18,16 @@ sealed interface RootDrawerUiEvent {
 
     data class OnExploreArtistOpen(val id: Long) : RootDrawerUiEvent
     data object OnExploreArtistCancel : RootDrawerUiEvent
+
+    data object NewAlbum : RootDrawerUiEvent
+    data object NewAlbumCancel : RootDrawerUiEvent
+
+    data object NewArtist : RootDrawerUiEvent
+    data object NewArtistCancel : RootDrawerUiEvent
+
+    data class CreatePlaylist(val playlistId: Long) : RootDrawerUiEvent
+    data object CreatePlaylistCancel : RootDrawerUiEvent
+
+    data class OnViewSongArtists(val songId: Long) : RootDrawerUiEvent
+    data object OnViewSongArtistsCancel : RootDrawerUiEvent
 }

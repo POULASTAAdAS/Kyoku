@@ -18,6 +18,6 @@ interface RemoteAddToPlaylistDatasource {
 
     suspend fun createPlaylist(
         songId: Long,
-        name: String
+        name: String,
     ): Result<PlaylistData, DataError.Network>
 }

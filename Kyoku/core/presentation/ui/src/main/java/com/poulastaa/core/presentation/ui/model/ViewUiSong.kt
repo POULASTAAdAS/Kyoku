@@ -5,5 +5,5 @@ data class ViewUiSong(
     val name: String = "",
     val coverImage: String = "",
     val artist: String = "",
-    val isExpanded: Boolean = false
+    val isExpanded: Boolean = false,
 )

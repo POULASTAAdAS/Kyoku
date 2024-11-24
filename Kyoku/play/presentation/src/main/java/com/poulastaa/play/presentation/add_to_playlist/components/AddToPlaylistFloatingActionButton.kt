@@ -22,7 +22,7 @@ import com.poulastaa.core.presentation.designsystem.R
 @Composable
 fun AddToPlaylistFloatingActionButton(
     isMakingApiCall: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,

@@ -5,13 +5,14 @@ import com.poulastaa.play.presentation.view.components.ViewDataType
 
 sealed interface HomeOtherScreens {
     data class AddAsPlaylist(
-        val songId: Long
+        val songId: Long,
     ) : HomeOtherScreens
 
     data class View(
         val id: Long = -1,
-        val type: ViewDataType
+        val type: ViewDataType,
     ) : HomeOtherScreens
 
-    data class ViewArtist(val id: Long) : HomeOtherScreens
+    data class ViewArtist(val artistId: Long) : HomeOtherScreens
+    data class ViewSongArtist(val songId: Long) : HomeOtherScreens
 }

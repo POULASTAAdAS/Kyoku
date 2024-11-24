@@ -18,7 +18,7 @@ import com.poulastaa.core.presentation.designsystem.components.AppBackButton
 fun ViewArtistTopBar(
     title: String,
     scrollBehavior: TopAppBarScrollBehavior,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {

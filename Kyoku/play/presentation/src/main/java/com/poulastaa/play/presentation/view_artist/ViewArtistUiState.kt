@@ -22,11 +22,11 @@ data class UiArtistData(
     val isArtistFollowed: Boolean = false,
     val popularity: Long = 0,
     val artist: UiArtist = UiArtist(),
-    val listOfSong: List<ArtistUiSong> = emptyList()
+    val listOfSong: List<ArtistUiSong> = emptyList(),
 )
 
 
 data class ViewArtistToast(
     val isError: Boolean = false,
-    val message: UiText = UiText.DynamicString("")
+    val message: UiText = UiText.DynamicString(""),
 )

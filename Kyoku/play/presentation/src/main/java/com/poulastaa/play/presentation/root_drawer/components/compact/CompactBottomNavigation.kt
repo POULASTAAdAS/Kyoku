@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -45,7 +45,8 @@ fun BoxScope.CompactBottomNavigation(
     AnimatedVisibility(
         visible = (currentDestination == DrawerScreen.Home.route ||
                 currentDestination == DrawerScreen.Library.route),
-        modifier = Modifier.align(Alignment.BottomCenter),
+        modifier = Modifier
+            .align(Alignment.BottomCenter),
         enter = fadeIn() + slideInVertically { it },
         exit = fadeOut() + slideOutVertically { it }
     ) {
@@ -55,8 +56,8 @@ fun BoxScope.CompactBottomNavigation(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .navigationBarsPadding(),
+                .wrapContentHeight()
+                .background(MaterialTheme.colorScheme.surfaceContainer),
         ) {
             Spacer(modifier = Modifier.weight(.5f))
 

@@ -66,8 +66,7 @@ fun CompactDrawerContent(
 
     ModalDrawerSheet(
         windowInsets = WindowInsets.systemBars
-            .only(WindowInsetsSides.Horizontal),
-        drawerContainerColor = MaterialTheme.colorScheme.primaryContainer
+            .only(WindowInsetsSides.Left),
     ) {
         Column(
             modifier = Modifier
@@ -76,11 +75,11 @@ fun CompactDrawerContent(
                     brush = Brush.verticalGradient(
                         colors = if (isSystemInDarkTheme()) listOf(
                             MaterialTheme.colorScheme.primaryContainer,
-                            MaterialTheme.colorScheme.primary.copy(.2f),
+                            MaterialTheme.colorScheme.primary.copy(.7f)
                         )
                         else listOf(
                             MaterialTheme.colorScheme.background,
-                            MaterialTheme.colorScheme.primary.copy(.15f),
+                            MaterialTheme.colorScheme.primary,
                         )
                     )
                 )

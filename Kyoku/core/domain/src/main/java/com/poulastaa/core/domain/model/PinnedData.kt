@@ -4,5 +4,5 @@ data class PinnedData(
     val id: Long,
     val name: String,
     val urls: List<String>,
-    val pinnedType: PinnedType
+    val pinnedType: PinnedType,
 )

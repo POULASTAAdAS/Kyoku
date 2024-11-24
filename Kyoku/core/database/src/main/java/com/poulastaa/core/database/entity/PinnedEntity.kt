@@ -8,5 +8,5 @@ import com.poulastaa.core.domain.model.PinnedType
 )
 data class PinnedEntity(
     val id: Long,
-    val type: PinnedType
+    val type: PinnedType,
 )

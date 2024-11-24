@@ -36,8 +36,6 @@ fun Application.configureSecurity() {
             }
         }
 
-
-
         session<UserSession>(Constants.SECURITY_LIST[1]) {
             validate { it }
 

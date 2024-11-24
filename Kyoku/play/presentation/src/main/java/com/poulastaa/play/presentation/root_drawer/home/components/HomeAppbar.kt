@@ -3,9 +3,9 @@ package com.poulastaa.play.presentation.root_drawer.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +22,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,22 +62,21 @@ fun HomeAppbar(
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 2.sp,
-                modifier = Modifier.padding(start = MaterialTheme.dimens.small2)
+                modifier = Modifier.padding(start = MaterialTheme.dimens.small2),
+                color = MaterialTheme.colorScheme.primary.copy(.85f)
             )
         },
         navigationIcon = {
             Card(
                 modifier = Modifier
-                    .size(54.dp)
+                    .aspectRatio(1f)
                     .clickable(
                         onClick = {
                             onProfileClick()
                             hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        }
+                        interactionSource = null
                     ),
                 shape = CircleShape,
                 elevation = CardDefaults.cardElevation(
@@ -129,7 +127,8 @@ fun HomeAppbar(
             IconButton(onClick = onSearchClick) {
                 Icon(
                     imageVector = SearchIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary.copy(.8f)
                 )
             }
         },
@@ -152,7 +151,7 @@ private fun Preview() {
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 title = "Good Morning",
                 profileUrl = "",
-                onProfileClick = { /*TODO*/ }
+                onProfileClick = { }
             ) {}
         }
     }

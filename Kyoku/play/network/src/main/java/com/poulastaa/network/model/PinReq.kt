@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PinReq(
     val id: Long,
-    val type: LibraryDataType
+    val type: LibraryDataType,
 )

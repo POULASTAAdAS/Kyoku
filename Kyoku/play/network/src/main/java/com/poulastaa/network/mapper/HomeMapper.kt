@@ -29,7 +29,7 @@ private fun PrevAlbumDto.toPrevAlbum() = PrevAlbum(
     coverImage = this.coverImage
 )
 
-private fun AlbumDto.toAlbum() = PrevAlbum(
+fun AlbumDto.toAlbum() = PrevAlbum(
     albumId = this.id,
     name = this.name,
     coverImage = this.coverImage

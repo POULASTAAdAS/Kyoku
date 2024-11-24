@@ -45,12 +45,8 @@ interface ViewDao {
     @Query("select id from PopularSongFromYourTimeEntity")
     suspend fun getOldMixSongIds(): List<Long>
 
-
     @Query("select id from DayTypeSongEntity")
     suspend fun getDayTypeMixSongIds(): List<Long>
-
-    @Query("select id from FavouriteEntity")
-    suspend fun getFevSongIds(): List<Long>
 
     @Query("select * from SongEntity where id in (:list)")
     suspend fun getSongOnIdList(list: List<Long>): List<SongEntity>

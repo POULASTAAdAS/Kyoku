@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.explore_artist.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +44,7 @@ fun ExploreArtistItem(
     type: ExploreArtistUiEvent.Type,
     list: List<ExploreArtistThreeDotEvent>,
     item: ExploreArtistSingleUiData,
-    onEvent: (ExploreArtistUiEvent.ThreeDotEvent) -> Unit
+    onEvent: (ExploreArtistUiEvent.ThreeDotEvent) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -103,7 +102,8 @@ fun ExploreArtistItem(
             IconButton(
                 onClick = {
                     onEvent(ExploreArtistUiEvent.ThreeDotEvent.OnThreeDotOpen(item.id, type))
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
                     imageVector = ThreeDotIcon,
@@ -129,7 +129,8 @@ fun ExploreArtistItem(
 
                 when (type) {
                     ExploreArtistUiEvent.Type.SONG -> {
-                        list.forEach { it as SongThreeDotEvent
+                        list.forEach {
+                            it as SongThreeDotEvent
                             DropdownMenuItem(
                                 text = { Text(text = it.value) },
                                 onClick = {
@@ -145,7 +146,8 @@ fun ExploreArtistItem(
                     }
 
                     ExploreArtistUiEvent.Type.ALBUM -> {
-                        list.forEach { it as AlbumThreeDotEvent
+                        list.forEach {
+                            it as AlbumThreeDotEvent
                             DropdownMenuItem(
                                 text = { Text(text = it.value) },
                                 onClick = {

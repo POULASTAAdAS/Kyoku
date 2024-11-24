@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -125,7 +124,7 @@ class HomeViewModel @Inject constructor(
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
                                     HomeOtherScreens.ViewArtist(
-                                        id = event.id ?: -1L
+                                        artistId = event.id ?: -1L
                                     )
                                 )
                             )
@@ -347,7 +346,7 @@ class HomeViewModel @Inject constructor(
                             _uiEvent.send(
                                 HomeUiAction.Navigate(
                                     screen = HomeOtherScreens.ViewArtist(
-                                        id = event.id
+                                        artistId = event.id
                                     )
                                 )
                             )
@@ -429,6 +428,18 @@ class HomeViewModel @Inject constructor(
                                     )
                                 )
                             }
+                        }
+                    }
+
+                    is HomeUiEvent.ItemBottomSheetUiEvent.ViewSongArtist -> {
+                        viewModelScope.launch {
+                            _uiEvent.send(
+                                HomeUiAction.Navigate(
+                                    HomeOtherScreens.ViewSongArtist(
+                                        songId = event.id
+                                    )
+                                )
+                            )
                         }
                     }
 

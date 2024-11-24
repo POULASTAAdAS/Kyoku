@@ -61,19 +61,25 @@ interface ServiceRepository {
     ): Boolean
 
     suspend fun addArtist(
-        artistId: Long,
+        list: List<Long>,
         payload: ReqUserPayload,
-    ): ArtistDto
+    ): AddArtistDto
 
     suspend fun removeArtist(
-        id: Long,
+        artistId: Long,
         userPayload: ReqUserPayload,
     ): Boolean
 
-    suspend fun addAlbum(
+    suspend fun getAlbum(
         albumId: Long,
+        savedSongList: List<Long>,
         payload: ReqUserPayload,
     ): AlbumWithSongDto
+
+    suspend fun addAlbum(
+        list: List<Long>,
+        payload: ReqUserPayload,
+    ): AddAlbumDto
 
     suspend fun removeAlbum(
         id: Long,
@@ -135,6 +141,7 @@ interface ServiceRepository {
         page: Int,
         size: Int,
         payload: ReqUserPayload,
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto
 
     suspend fun getArtistAlbumPagingData(
@@ -143,4 +150,42 @@ interface ServiceRepository {
         size: Int,
         payload: ReqUserPayload,
     ): ArtistPagerDataDto
+
+    suspend fun getSyncData(
+        req: UpdateSavedDataReq,
+        payload: ReqUserPayload,
+    ): SyncDto<Any>
+
+    suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingTypeDto,
+        payload: ReqUserPayload,
+    ): PagingAlbumResDto
+
+    suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: ArtistPagingTypeDto,
+        payload: ReqUserPayload,
+    ): PagingArtistResDto
+
+    suspend fun getCreatePlaylistData(
+        payload: ReqUserPayload,
+    ): CreatePlaylistDto
+
+    suspend fun getCreatePlaylistPagerData(
+        page: Int,
+        size: Int,
+        query: String,
+        type: CreatePlaylistPagerFilterTypeDto,
+        payload: ReqUserPayload,
+    ): CreatePlaylistPagingDtoWrapper
+
+    suspend fun getSongArtist(
+        songId: Long,
+        payload: ReqUserPayload,
+    ): SongArtistRes
 }

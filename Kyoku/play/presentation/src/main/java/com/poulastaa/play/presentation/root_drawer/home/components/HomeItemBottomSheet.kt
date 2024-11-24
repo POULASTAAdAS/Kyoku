@@ -51,8 +51,8 @@ import com.poulastaa.core.presentation.designsystem.FilterPlaylistIcon
 import com.poulastaa.core.presentation.designsystem.FollowArtistIcon
 import com.poulastaa.core.presentation.designsystem.NotFavouriteIcon
 import com.poulastaa.core.presentation.designsystem.PlayIcon
-import com.poulastaa.core.presentation.designsystem.PlayLastIcon
-import com.poulastaa.core.presentation.designsystem.PlayNextIcon
+import com.poulastaa.core.presentation.designsystem.PlayLastInQueueIcon
+import com.poulastaa.core.presentation.designsystem.PlayNextInQueueIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UnFollowArtistIcon
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -283,7 +283,7 @@ fun HomeItemBottomSheet(
                         } else {
                             Option(
                                 text = stringResource(id = R.string.play_next_on_queue),
-                                icon = PlayNextIcon
+                                icon = PlayNextInQueueIcon
                             ) {
                                 onEvent(
                                     HomeUiEvent.ItemBottomSheetUiEvent.PlayNextOnQueue(
@@ -294,7 +294,7 @@ fun HomeItemBottomSheet(
 
                             Option(
                                 text = stringResource(id = R.string.play_last_on_queue),
-                                icon = PlayLastIcon
+                                icon = PlayLastInQueueIcon
                             ) {
                                 onEvent(
                                     HomeUiEvent.ItemBottomSheetUiEvent.PlayLastOnQueue(

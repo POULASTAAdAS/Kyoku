@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class RoomLocalAddToPlaylistDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val addToPlaylistDao: AddToPlaylistDao
+    private val addToPlaylistDao: AddToPlaylistDao,
 ) : LocalAddToPlaylistDatasource {
     override suspend fun checkIfSongInFev(songId: Long): Boolean =
         addToPlaylistDao.getFavouriteEntryOnSongId(songId) != null
@@ -28,7 +28,7 @@ class RoomLocalAddToPlaylistDatasource @Inject constructor(
     override suspend fun getTotalSongsInFev(): Int = addToPlaylistDao.getTotalFavouriteEntryCount()
 
     override suspend fun getPlaylistData(songId: Long): List<Pair<Pair<SIZE, PRESENT>, PrevSavedPlaylist>> =
-        addToPlaylistDao.getAllSavedPlaylist().first().groupBy { entry -> entry.id }
+        commonDao.getAllSavedPlaylist().first().groupBy { entry -> entry.id }
             .map { map ->
                 val size = map.value.mapNotNull { it.coverImage }.count()
                 val present =

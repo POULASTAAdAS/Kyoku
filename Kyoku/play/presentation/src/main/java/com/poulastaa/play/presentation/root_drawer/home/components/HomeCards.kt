@@ -518,7 +518,16 @@ private fun ImageGrid(
         elevation = elevation,
         colors = colors
     ) {
-        Row(
+        if (urls.size < 3) AsyncImage(
+            model = imageReqSongCover(
+                header = header,
+                url = urls.getOrElse(0) { "" }
+            ),
+            modifier = Modifier
+                .aspectRatio(1f),
+            contentDescription = null
+        )
+        else Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(.5f)

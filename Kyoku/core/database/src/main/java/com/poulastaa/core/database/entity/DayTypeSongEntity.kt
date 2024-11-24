@@ -17,5 +17,5 @@ import androidx.room.ForeignKey
 )
 data class DayTypeSongEntity(
     @ColumnInfo(index = true)
-    val id: Long
+    val id: Long,
 )

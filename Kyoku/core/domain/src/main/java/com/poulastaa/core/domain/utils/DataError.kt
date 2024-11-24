@@ -12,4 +12,8 @@ interface DataError : Error {
         SERIALISATION,
         UNKNOWN
     }
+
+    enum class Local : DataError {
+        NAME_CONFLICT
+    }
 }

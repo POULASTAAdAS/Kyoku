@@ -1,7 +1,7 @@
 package com.poulastaa.auth.data.mapper
 
-import com.poulastaa.core.domain.User
 import com.poulastaa.core.domain.model.ResponseUser
+import com.poulastaa.core.domain.model.User
 
 
 fun ResponseUser.toUser() = User(

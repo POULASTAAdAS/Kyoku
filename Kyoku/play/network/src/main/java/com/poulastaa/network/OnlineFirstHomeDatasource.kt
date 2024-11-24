@@ -1,8 +1,6 @@
 package com.poulastaa.network
 
 import com.google.gson.Gson
-import com.poulastaa.core.data.model.AlbumWithSongDto
-import com.poulastaa.core.data.model.ArtistDto
 import com.poulastaa.core.data.model.SongDto
 import com.poulastaa.core.data.network.get
 import com.poulastaa.core.data.network.post
@@ -22,6 +20,10 @@ import com.poulastaa.network.mapper.toAlbumWithSong
 import com.poulastaa.network.mapper.toArtist
 import com.poulastaa.network.mapper.toNewHome
 import com.poulastaa.network.mapper.toSong
+import com.poulastaa.network.model.AddAlbumDto
+import com.poulastaa.network.model.AddAlbumReq
+import com.poulastaa.network.model.AddArtistDto
+import com.poulastaa.network.model.AddArtistReq
 import com.poulastaa.network.model.NewHomeDto
 import com.poulastaa.network.model.NewHomeReq
 import okhttp3.OkHttpClient
@@ -67,13 +69,13 @@ class OnlineFirstHomeDatasource @Inject constructor(
 
     override suspend fun followArtist(
         id: Long,
-    ): Result<Artist, DataError.Network> = client.get<ArtistDto>(
+    ): Result<Artist, DataError.Network> = client.post<AddArtistReq, AddArtistDto>(
         route = EndPoints.AddArtist.route,
-        params = listOf(
-            "artistId" to id.toString(),
-        ),
+        body = AddArtistReq(listOf(id)),
         gson = gson
-    ).map { it.toArtist() }
+    ).map {
+        it.list.first().toArtist()
+    }
 
     override suspend fun unFollowArtist(
         id: Long,
@@ -86,13 +88,15 @@ class OnlineFirstHomeDatasource @Inject constructor(
     ).asEmptyDataResult()
 
     override suspend fun saveAlbum(id: Long): Result<AlbumWithSong, DataError.Network> =
-        client.get<AlbumWithSongDto>(
+        client.post<AddAlbumReq, AddAlbumDto>(
             route = EndPoints.AddAlbum.route,
-            params = listOf(
-                "albumId" to id.toString(),
+            body = AddAlbumReq(
+                list = listOf(id)
             ),
             gson = gson
-        ).map { it.toAlbumWithSong() }
+        ).map {
+            it.list.first().toAlbumWithSong()
+        }
 
     override suspend fun removeAlbum(id: Long): EmptyResult<DataError.Network> = client.get<Unit>(
         route = EndPoints.RemoveAlbum.route,

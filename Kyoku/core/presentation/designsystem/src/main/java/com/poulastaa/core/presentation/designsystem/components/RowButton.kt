@@ -27,7 +27,7 @@ fun RowButton(
     modifier: Modifier = Modifier,
     isMakingApiCall: Boolean,
     cancel: () -> Unit,
-    save: () -> Unit
+    save: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

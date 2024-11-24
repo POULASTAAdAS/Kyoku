@@ -42,6 +42,7 @@ private fun Routing.common(service: ServiceRepository) {
     followArtist(service)
     unFollowArtist(service)
 
+    getAlbum(service)
     addAlbum(service)
     removeAlbum(service)
 
@@ -65,6 +66,20 @@ private fun Routing.common(service: ServiceRepository) {
     getArtist(service)
     getArtistSongPagerData(service)
     getArtistAlbumPagerData(service)
+
+    syncData(service)
+
+    getAlbumPagingData(service)
+    getArtistPagingData(service)
+
+    getCreatePlaylistData(service)
+    getCreatePlaylistPagerData(service)
+
+    getSongArtist(service)
+
+    getMasterPlaylist(service)
+    get_128_Or_320_Playlist(service)
+    getSongSegment(service)
 }
 
 private fun Routing.setUpRoutes(service: ServiceRepository) {

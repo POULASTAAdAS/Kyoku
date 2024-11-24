@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.home
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -146,382 +147,398 @@ private fun HomeScreen(
                 )
             }
         ) { paddingValues ->
-            if (!state.canShowUi) Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .size(70.dp),
-                    strokeCap = StrokeCap.Round,
-                    strokeWidth = 2.dp
-                )
-            } else LazyColumn(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
-            ) {
-                item {}
-
-                if (state.savedPlaylists.isNotEmpty()) item {
-                    TopRow(
-                        modifier = Modifier
-                            .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
-                            .fillMaxWidth()
-                            .windowInsetsPadding(
-                                insets = WindowInsets(
-                                    left = MaterialTheme.dimens.medium1,
-                                    right = MaterialTheme.dimens.medium1
-                                )
-                            )
-                    ) {
-                        state.savedPlaylists.take(
-                            if (config.screenWidthDp < 500) 2
-                            else state.savedPlaylists.size
-                        ).forEach { playlist ->
-                            SavedPlaylistCard(
-                                header = state.header,
-                                uiPlaylist = playlist,
+            AnimatedContent(state.canShowUi, label = "") { canShowUi ->
+                when (canShowUi) {
+                    false -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(paddingValues),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                        onEvent(
-                                            HomeUiEvent.OnItemClick(
-                                                playlist.id,
-                                                HomeItemClickType.SAVED_PLAYLIST
-                                            )
-                                        )
-                                    }
+                                    .align(Alignment.CenterHorizontally)
+                                    .size(70.dp),
+                                strokeCap = StrokeCap.Round,
+                                strokeWidth = 2.dp
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
-                }
+                    true -> {
+                        LazyColumn(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(paddingValues),
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                        ) {
+                            item {}
 
-                if (state.savedAlbums.isNotEmpty()) item {
-                    TopRow(
-                        modifier = Modifier
-                            .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
-                            .fillMaxWidth()
-                            .windowInsetsPadding(
-                                insets = WindowInsets(
-                                    left = MaterialTheme.dimens.medium1,
-                                    right = MaterialTheme.dimens.medium1
-                                )
-                            )
-                    ) {
-                        state.savedAlbums.take(
-                            if (config.screenWidthDp < 500) 2
-                            else state.savedAlbums.size
-                        ).forEach { album ->
-                            SavedAlbumCard(
-                                header = state.header,
-                                uiAlbum = album,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable {
-                                        onEvent(
-                                            HomeUiEvent.OnItemClick(
-                                                album.id,
-                                                HomeItemClickType.SAVED_ALBUM
+                            if (state.savedPlaylists.isNotEmpty()) item {
+                                TopRow(
+                                    modifier = Modifier
+                                        .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
+                                        .fillMaxWidth()
+                                        .windowInsetsPadding(
+                                            insets = WindowInsets(
+                                                left = MaterialTheme.dimens.medium1,
+                                                right = MaterialTheme.dimens.medium1
                                             )
+                                        )
+                                ) {
+                                    state.savedPlaylists.take(
+                                        if (config.screenWidthDp < 500) 2
+                                        else state.savedPlaylists.size
+                                    ).forEach { playlist ->
+                                        SavedPlaylistCard(
+                                            header = state.header,
+                                            uiPlaylist = playlist,
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clickable {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemClick(
+                                                            playlist.id,
+                                                            HomeItemClickType.SAVED_PLAYLIST
+                                                        )
+                                                    )
+                                                }
                                         )
                                     }
-                            )
-                        }
-                    }
+                                }
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
-                }
-
-                item {
-                    HeadLine(text = stringResource(id = R.string.explore_more))
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                    ItemsRow {
-                        item {
-                            GridImageCard(
-                                modifier = Modifier.combinedClickable(
-                                    onClick = {
-                                        onEvent(
-                                            HomeUiEvent.OnItemClick(
-                                                itemClickType = HomeItemClickType.POPULAR_SONG_MIX
-                                            )
-                                        )
-                                    },
-                                    onLongClick = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-
-                                        onEvent(
-                                            HomeUiEvent.OnItemLongClick(
-                                                itemClickType = HomeItemClickType.POPULAR_SONG_MIX,
-                                                context = context
-                                            )
-                                        )
-                                    }
-                                ),
-                                size = 150.dp,
-                                header = state.header,
-                                urls = state.staticData.popularSongMix.map { entry ->
-                                    entry.coverImage
-                                },
-                                title = stringResource(id = R.string.popular_song_mix)
-                            )
-                        }
-
-                        item {
-                            GridImageCard(
-                                modifier = Modifier.combinedClickable(
-                                    onClick = {
-                                        onEvent(
-                                            HomeUiEvent.OnItemClick(
-                                                itemClickType = HomeItemClickType.OLD_GEM
-                                            )
-                                        )
-                                    },
-                                    onLongClick = {
-                                        onEvent(
-                                            HomeUiEvent.OnItemLongClick(
-                                                itemClickType = HomeItemClickType.OLD_GEM,
-                                                context = context
-                                            )
-                                        )
-                                    }
-                                ),
-                                size = 150.dp,
-                                header = state.header,
-                                urls = state.staticData.popularSongFromYourTime.map { entry ->
-                                    entry.coverImage
-                                },
-                                title = stringResource(id = R.string.popular_songs_from_your_time)
-                            )
-                        }
-
-                        item {
-                            GridImageCard(
-                                modifier = Modifier.combinedClickable(
-                                    onClick = {
-                                        onEvent(
-                                            HomeUiEvent.OnItemClick(
-                                                itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX
-                                            )
-                                        )
-                                    },
-                                    onLongClick = {
-                                        onEvent(
-                                            HomeUiEvent.OnItemLongClick(
-                                                itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX,
-                                                context = context
-                                            )
-                                        )
-                                    }
-                                ),
-                                size = 150.dp,
-                                header = state.header,
-                                urls = state.staticData.favouriteArtistMix.map { entry ->
-                                    entry.coverImage
-                                },
-                                title = stringResource(id = R.string.popular_artist_mix)
-                            )
-                        }
-                    }
-                }
-
-                item {}
-
-                item {
-                    HeadLine(text = stringResource(id = R.string.artist_you_may_like))
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                    ItemsRow {
-                        items(
-                            items = state.staticData.suggestedArtist,
-                            key = { artist ->
-                                artist.id
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
                             }
-                        ) { artist ->
-                            SuggestedArtistCard(
-                                modifier = Modifier
-                                    .size(220.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                                    .combinedClickable(
-                                        onClick = {
+
+                            if (state.savedAlbums.isNotEmpty()) item {
+                                TopRow(
+                                    modifier = Modifier
+                                        .height(if (config.screenWidthDp < 500) 65.dp else 90.dp)
+                                        .fillMaxWidth()
+                                        .windowInsetsPadding(
+                                            insets = WindowInsets(
+                                                left = MaterialTheme.dimens.medium1,
+                                                right = MaterialTheme.dimens.medium1
+                                            )
+                                        )
+                                ) {
+                                    state.savedAlbums.take(
+                                        if (config.screenWidthDp < 500) 2
+                                        else state.savedAlbums.size
+                                    ).forEach { album ->
+                                        SavedAlbumCard(
+                                            header = state.header,
+                                            uiAlbum = album,
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clickable {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemClick(
+                                                            album.id,
+                                                            HomeItemClickType.SAVED_ALBUM
+                                                        )
+                                                    )
+                                                }
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.small2))
+                            }
+
+                            item {
+                                HeadLine(text = stringResource(id = R.string.explore_more))
+
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+                                ItemsRow {
+                                    item {
+                                        GridImageCard(
+                                            modifier = Modifier.combinedClickable(
+                                                onClick = {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemClick(
+                                                            itemClickType = HomeItemClickType.POPULAR_SONG_MIX
+                                                        )
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemLongClick(
+                                                            itemClickType = HomeItemClickType.POPULAR_SONG_MIX,
+                                                            context = context
+                                                        )
+                                                    )
+                                                }
+                                            ),
+                                            size = 150.dp,
+                                            header = state.header,
+                                            urls = state.staticData.popularSongMix.map { entry ->
+                                                entry.coverImage
+                                            },
+                                            title = stringResource(id = R.string.popular_song_mix)
+                                        )
+                                    }
+
+                                    item {
+                                        GridImageCard(
+                                            modifier = Modifier.combinedClickable(
+                                                onClick = {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemClick(
+                                                            itemClickType = HomeItemClickType.OLD_GEM
+                                                        )
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemLongClick(
+                                                            itemClickType = HomeItemClickType.OLD_GEM,
+                                                            context = context
+                                                        )
+                                                    )
+                                                }
+                                            ),
+                                            size = 150.dp,
+                                            header = state.header,
+                                            urls = state.staticData.popularSongFromYourTime.map { entry ->
+                                                entry.coverImage
+                                            },
+                                            title = stringResource(id = R.string.popular_songs_from_your_time)
+                                        )
+                                    }
+
+                                    item {
+                                        GridImageCard(
+                                            modifier = Modifier.combinedClickable(
+                                                onClick = {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemClick(
+                                                            itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX
+                                                        )
+                                                    )
+                                                },
+                                                onLongClick = {
+                                                    onEvent(
+                                                        HomeUiEvent.OnItemLongClick(
+                                                            itemClickType = HomeItemClickType.FAVOURITE_ARTIST_MIX,
+                                                            context = context
+                                                        )
+                                                    )
+                                                }
+                                            ),
+                                            size = 150.dp,
+                                            header = state.header,
+                                            urls = state.staticData.favouriteArtistMix.map { entry ->
+                                                entry.coverImage
+                                            },
+                                            title = stringResource(id = R.string.popular_artist_mix)
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {}
+
+                            item {
+                                HeadLine(text = stringResource(id = R.string.artist_you_may_like))
+
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+                                ItemsRow {
+                                    items(
+                                        items = state.staticData.suggestedArtist,
+                                        key = { artist ->
+                                            artist.id
+                                        }
+                                    ) { artist ->
+                                        SuggestedArtistCard(
+                                            modifier = Modifier
+                                                .size(220.dp)
+                                                .clip(MaterialTheme.shapes.medium)
+                                                .combinedClickable(
+                                                    onClick = {
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemClick(
+                                                                id = artist.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST
+                                                            )
+                                                        )
+                                                    },
+                                                    onLongClick = {
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
+
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemLongClick(
+                                                                id = artist.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST,
+                                                                context = context
+                                                            )
+                                                        )
+                                                    }
+                                                ),
+                                            artist = artist,
+                                            header = state.header
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {}
+
+                            item {
+                                HeadLine(text = stringResource(id = R.string.popular_albums))
+
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
+
+                                ItemsRow {
+                                    items(
+                                        items = state.staticData.popularAlbum,
+                                        key = { album ->
+                                            album.id
+                                        }
+                                    ) { album ->
+                                        HomeAlbumCard(
+                                            modifier = Modifier
+                                                .size(150.dp)
+                                                .combinedClickable(
+                                                    onClick = {
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemClick(
+                                                                id = album.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ALBUM
+                                                            )
+                                                        )
+                                                    },
+                                                    onLongClick = {
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
+
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemLongClick(
+                                                                id = album.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ALBUM,
+                                                                context = context
+                                                            )
+                                                        )
+                                                    }
+                                                ),
+                                            header = state.header,
+                                            prevAlbum = album,
+                                        )
+                                    }
+
+                                    item {
+                                        ViewMore(
+                                            modifier = Modifier.size(150.dp)
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {}
+
+                            item {
+                                HeadLine(text = stringResource(id = R.string.best_from_artist))
+                            }
+
+                            items(
+                                items = state.staticData.popularArtistSong,
+                                key = { artist ->
+                                    artist.artist.id
+                                }
+                            ) { songData ->
+                                MoreFromArtist(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .height(60.dp)
+                                        .padding(end = MaterialTheme.dimens.small2)
+                                        .clickable {
                                             onEvent(
-                                                HomeUiEvent.OnItemClick(
-                                                    id = artist.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ARTIST
+                                                HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
+                                                    id = songData.artist.id
                                                 )
                                             )
                                         },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    header = state.header,
+                                    artist = songData.artist
+                                )
 
-                                            onEvent(
-                                                HomeUiEvent.OnItemLongClick(
-                                                    id = artist.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ARTIST,
-                                                    context = context
-                                                )
-                                            )
+                                Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+                                ItemsRow {
+                                    items(
+                                        items = songData.listOfSong,
+                                        key = { song ->
+                                            song.id
                                         }
-                                    ),
-                                artist = artist,
-                                header = state.header
-                            )
-                        }
-                    }
-                }
+                                    ) { song ->
+                                        SingleSongCard(
+                                            modifier = Modifier
+                                                .size(150.dp)
+                                                .combinedClickable(
+                                                    onClick = {
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemClick(
+                                                                id = song.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG
+                                                            )
+                                                        )
+                                                    },
+                                                    onLongClick = {
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.LongPress
+                                                        )
 
-                item {}
+                                                        onEvent(
+                                                            HomeUiEvent.OnItemLongClick(
+                                                                id = song.id,
+                                                                artistId = songData.artist.id,
+                                                                itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG,
+                                                                context = context
+                                                            )
+                                                        )
+                                                    }
+                                                ),
+                                            header = state.header,
+                                            song = song
+                                        )
+                                    }
 
-                item {
-                    HeadLine(text = stringResource(id = R.string.popular_albums))
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium1))
-
-                    ItemsRow {
-                        items(
-                            items = state.staticData.popularAlbum,
-                            key = { album ->
-                                album.id
+                                    item {
+                                        ViewMore(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .size(150.dp)
+                                                .clickable {
+                                                    onEvent(
+                                                        HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
+                                                            id = songData.artist.id
+                                                        )
+                                                    )
+                                                }
+                                        )
+                                    }
+                                }
                             }
-                        ) { album ->
-                            HomeAlbumCard(
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(
-                                                HomeUiEvent.OnItemClick(
-                                                    id = album.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ALBUM
-                                                )
-                                            )
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                                            onEvent(
-                                                HomeUiEvent.OnItemLongClick(
-                                                    id = album.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ALBUM,
-                                                    context = context
-                                                )
-                                            )
-                                        }
-                                    ),
-                                header = state.header,
-                                prevAlbum = album,
-                            )
-                        }
-
-                        item {
-                            ViewMore(
-                                modifier = Modifier.size(150.dp)
-                            )
-                        }
-                    }
-                }
-
-                item {}
-
-                item {
-                    HeadLine(text = stringResource(id = R.string.best_from_artist))
-                }
-
-                items(
-                    items = state.staticData.popularArtistSong,
-                    key = { artist ->
-                        artist.artist.id
-                    }
-                ) { songData ->
-                    MoreFromArtist(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .height(60.dp)
-                            .padding(end = MaterialTheme.dimens.small2)
-                            .clickable {
-                                onEvent(
-                                    HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
-                                        id = songData.artist.id
+                            item {
+                                Spacer(
+                                    modifier = Modifier.height(
+                                        if (config.screenWidthDp < 500) 70.dp
+                                        else MaterialTheme.dimens.medium1
                                     )
                                 )
-                            },
-                        header = state.header,
-                        artist = songData.artist
-                    )
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
-
-                    ItemsRow {
-                        items(
-                            items = songData.listOfSong,
-                            key = { song ->
-                                song.id
                             }
-                        ) { song ->
-                            SingleSongCard(
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            onEvent(
-                                                HomeUiEvent.OnItemClick(
-                                                    id = song.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG
-                                                )
-                                            )
-                                        },
-                                        onLongClick = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-
-                                            onEvent(
-                                                HomeUiEvent.OnItemLongClick(
-                                                    id = song.id,
-                                                    artistId = songData.artist.id,
-                                                    itemClickType = HomeItemClickType.SUGGEST_ARTIST_SONG,
-                                                    context = context
-                                                )
-                                            )
-                                        }
-                                    ),
-                                header = state.header,
-                                song = song
-                            )
-                        }
-
-                        item {
-                            ViewMore(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .size(150.dp)
-                                    .clickable {
-                                        onEvent(
-                                            HomeUiEvent.ItemBottomSheetUiEvent.ExploreArtist(
-                                                id = songData.artist.id
-                                            )
-                                        )
-                                    }
-                            )
                         }
                     }
-                }
-
-                item {
-                    Spacer(
-                        modifier = Modifier.height(
-                            if (config.screenWidthDp < 500) 70.dp
-                            else MaterialTheme.dimens.medium1
-                        )
-                    )
                 }
             }
         }

@@ -8,7 +8,7 @@ object Constants {
     const val COVER_IMAGE_ROOT_DIR = "/data/coverImage/"
     const val ARTIST_IMAGE_ROOT_DIR = "/data/artist/"
 
-    const val PLAYLIST = "/songs/"
+    const val PLAYLIST = "/data/"
 
     const val SONG_128 = "/data/128"
     const val SONG_320 = "/data/320"

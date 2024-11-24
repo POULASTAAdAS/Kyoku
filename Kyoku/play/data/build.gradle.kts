@@ -14,6 +14,15 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
     implementation(libs.pagingCommon)
+    implementation(libs.androidx.work)
+    implementation(libs.hilt.work)
+
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.exoplayer.hls)
+    implementation(libs.media3.session)
+    implementation(libs.media3.ui)
+
+    implementation(libs.glide)
 
     implementation(projects.core.domain)
     implementation(projects.play.domain)

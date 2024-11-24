@@ -1,10 +1,10 @@
 package com.poulastaa.play.data.mapper
 
-import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.model.ViewData
 
 
 fun Song.toPlaylistSong() = PlaylistSong(

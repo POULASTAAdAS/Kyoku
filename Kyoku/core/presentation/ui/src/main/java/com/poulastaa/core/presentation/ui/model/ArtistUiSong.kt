@@ -5,5 +5,5 @@ data class ArtistUiSong(
     val title: String = "",
     val coverImage: String = "",
     val isExpanded: Boolean = false,
-    val popularity: Long = -1
+    val popularity: Long = -1,
 )

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class GetDataReq(
     val id: Long = -1,
     val listOfId: List<Long> = emptyList(),
-    val type: GetDataType
+    val type: GetDataType,
 )

@@ -1,6 +1,7 @@
 package com.poulastaa.play.presentation.root_drawer.library
 
-import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.core.presentation.ui.SnackBarUiState
+import com.poulastaa.play.presentation.add_to_playlist.AddNewPlaylistBottomSheetUiState
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryFilterType
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryUiData
 import com.poulastaa.play.presentation.root_drawer.library.model.LibraryViewType
@@ -17,8 +18,8 @@ data class LibraryUiState(
 
     val data: LibraryUiData = LibraryUiData(),
     val libraryBottomSheet: LibraryBottomSheetUiState = LibraryBottomSheetUiState(),
-
-    val toast: LibraryUiToast = LibraryUiToast()
+    val newPlaylistBottomSheetState: AddNewPlaylistBottomSheetUiState = AddNewPlaylistBottomSheetUiState(),
+    val toast: SnackBarUiState = SnackBarUiState(),
 ) {
     val canShowUi: Boolean
         get() = !isDataLoading && !viewTypeReading
@@ -44,16 +45,3 @@ enum class LibraryBottomSheetLongClickType {
     PLAYLIST,
     FAVOURITE
 }
-
-data class LibraryUiToast(
-    val isVisible: Boolean = false,
-    val message: UiText = UiText.DynamicString(""),
-    val type: LibraryToastType = LibraryToastType.DEFAULT
-)
-
-enum class LibraryToastType {
-    ERROR,
-    SUCCESS,
-    DEFAULT
-}
-

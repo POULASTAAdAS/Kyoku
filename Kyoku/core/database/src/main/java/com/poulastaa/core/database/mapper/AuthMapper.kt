@@ -6,8 +6,8 @@ import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PrevAlbum
 
 fun PlaylistData.toPlaylistEntity() = PlaylistEntity(
-    id = id,
-    name = name,
+    id = this.id,
+    name = this.name,
     points = 0,
 )
 

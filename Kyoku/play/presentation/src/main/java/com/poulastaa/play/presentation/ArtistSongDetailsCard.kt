@@ -44,7 +44,7 @@ fun ArtistSongDetailsCard(
     header: String,
     list: List<ViewSongOperation>,
     song: ArtistUiSong,
-    onEvent: (ViewArtistUiEvent.ThreeDotEvent) -> Unit
+    onEvent: (ViewArtistUiEvent.ThreeDotEvent) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -101,7 +101,8 @@ fun ArtistSongDetailsCard(
             IconButton(
                 onClick = {
                     onEvent(ViewArtistUiEvent.ThreeDotEvent.OnClick(song.id))
-                }
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
             ) {
                 Icon(
                     imageVector = ThreeDotIcon,
@@ -155,7 +156,7 @@ private fun Preview() {
                 song = ArtistUiSong(
                     title = "That Cool Title",
                     popularity = 100,
-                    isExpanded = true
+                    isExpanded = false
                 )
             ) {
 

@@ -4,13 +4,8 @@ import com.poulastaa.data.dao.AlbumDao
 import com.poulastaa.data.dao.ArtistDao
 import com.poulastaa.data.dao.PlaylistDao
 import com.poulastaa.data.dao.SongDao
-import com.poulastaa.data.mappers.constructSongCoverImage
-import com.poulastaa.data.mappers.toArtistResult
-import com.poulastaa.data.mappers.toSongDto
-import com.poulastaa.data.model.ArtistPagerDataDto
-import com.poulastaa.data.model.ArtistSingleDataDto
-import com.poulastaa.data.model.SongDto
-import com.poulastaa.data.model.ViewArtistSongDto
+import com.poulastaa.data.mappers.*
+import com.poulastaa.data.model.*
 import com.poulastaa.domain.model.ResultArtist
 import com.poulastaa.domain.model.UserType
 import com.poulastaa.domain.repository.DatabaseRepository
@@ -141,6 +136,18 @@ class KyokuDatabaseImpl : DatabaseRepository {
             }
         }.await()
 
+        CoroutineScope(Dispatchers.IO).launch {
+            query {
+                UserPlaylistRelationTable.insertIgnore {
+                    it[this.playlistId] = playlist.id.value
+                    it[this.userType] = userType.name
+                    it[this.userId] = userId
+                }
+            }
+        }
+
+        if (songIdList.firstOrNull() == -1L) return@coroutineScope playlist.id.value
+
         songIdList.map { id ->
             async {
                 query {
@@ -262,6 +269,7 @@ class KyokuDatabaseImpl : DatabaseRepository {
         artistId: Long,
         page: Int,
         size: Int,
+        savedSongList: List<Long>,
     ): ArtistPagerDataDto = query {
         SongArtistRelationTable
             .join(
@@ -276,7 +284,8 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 SongTable.coverImage,
                 SongTable.year
             ).select {
-                SongArtistRelationTable.artistId eq artistId
+                SongArtistRelationTable.artistId eq artistId and
+                        (SongArtistRelationTable.songId notInList savedSongList)
             }.orderBy(SongTable.year to SortOrder.DESC)
             .map {
                 ArtistSingleDataDto(
@@ -344,4 +353,431 @@ class KyokuDatabaseImpl : DatabaseRepository {
                 }
         }
     }
+
+    override suspend fun getAlbumPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: AlbumPagingTypeDto,
+    ): List<PagingAlbumDto> {
+        return coroutineScope {
+            when (type) {
+                AlbumPagingTypeDto.NAME -> {
+                    return@coroutineScope if (query.isNotBlank()) query {
+                        AlbumDao.find {
+                            AlbumTable.name like "$query%"
+                        }.orderBy(AlbumTable.points to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size).toList()
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
+                    else query {
+                        AlbumDao.all()
+                            .orderBy(AlbumTable.name to SortOrder.ASC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size).toList()
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
+                }
+
+                AlbumPagingTypeDto.BY_YEAR -> {
+                    query {
+                        val fieldSet = AlbumTable.join(
+                            otherTable = SongAlbumRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.albumId eq AlbumTable.id as Column<*>
+                            }
+                        ).join(
+                            otherTable = SongTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongAlbumRelationTable.songId eq SongTable.id as Column<*>
+                            }
+                        ).slice(
+                            AlbumTable.id,
+                            AlbumTable.name,
+                            SongTable.coverImage,
+                            SongTable.year
+                        )
+
+                        val valueSet = if (query.isEmpty()) fieldSet.selectAll()
+                        else fieldSet.select {
+                            AlbumTable.name like "$query%"
+                        }
+
+                        valueSet
+                            .orderBy(SongTable.year to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                            .map { res ->
+                                AlbumDto(
+                                    id = res[AlbumTable.id].value,
+                                    name = res[AlbumTable.name],
+                                    coverImage = res[SongTable.coverImage].constructSongCoverImage(),
+                                ) to res[SongTable.year]
+                            }.map { (album, year) ->
+                                async {
+                                    val artist = async { getArtistOnAlbumId(albumId = album.id) }
+
+                                    PagingAlbumDto(
+                                        id = album.id,
+                                        name = album.name,
+                                        coverImage = album.coverImage,
+                                        artist = artist.await(),
+                                        releaseYear = year.toString()
+                                    )
+                                }
+                            }.awaitAll()
+                    }
+                }
+
+                AlbumPagingTypeDto.BY_POPULARITY -> {
+                    query {
+                        if (query.isEmpty()) AlbumDao.all()
+                            .orderBy(AlbumTable.points to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                            .toList()
+                        else AlbumDao.find {
+                            AlbumTable.name like "$query%"
+                        }.orderBy(AlbumTable.points to SortOrder.DESC)
+                            .drop(if (page == 1) 0 else page * size)
+                            .take(size)
+                    }.map { album ->
+                        album.toPagingAlbumDto()
+                    }.awaitAll()
+                }
+            }
+        }
+    }
+
+    private suspend fun getArtistOnAlbumId(albumId: Long) = query {
+        ArtistAlbumRelationTable.select {
+            ArtistAlbumRelationTable.albumId eq albumId
+        }.map {
+            it[ArtistAlbumRelationTable.artistId]
+        }.let {
+            ArtistDao.find {
+                ArtistTable.id inList it
+            }.joinToString {
+                it.name
+            }
+        }
+    }
+
+    override suspend fun getArtistPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        countryId: Int,
+        type: ArtistPagingTypeDto,
+    ): List<ArtistDto> = coroutineScope {
+        when (type) {
+            ArtistPagingTypeDto.ALL -> {
+                query {
+                    ArtistDao.find {
+                        ArtistTable.name like "$query%"
+                    }.orderBy(ArtistTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map {
+                            it.toArtistDto()
+                        }
+                }
+            }
+
+            ArtistPagingTypeDto.INTERNATIONAL -> {
+                query {
+                    ArtistTable
+                        .join(
+                            otherTable = ArtistCountryRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                ArtistTable.id as Column<*> eq ArtistCountryRelationTable.artistId
+                            }
+                        )
+                        .slice(
+                            ArtistTable.id,
+                            ArtistTable.name,
+                            ArtistTable.profilePicUrl,
+                            ArtistTable.points
+                        ).select {
+                            ArtistTable.name like "$query%" and
+                                    (ArtistCountryRelationTable.countryId neq countryId)
+                        }
+                        .orderBy(ArtistTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map {
+                            ArtistDto(
+                                id = it[ArtistTable.id].value,
+                                name = it[ArtistTable.name],
+                                coverImage = it[ArtistTable.profilePicUrl]?.constructArtistProfileUrl() ?: ""
+                            )
+                        }
+                }
+            }
+        }
+    }
+
+    override suspend fun getCreatePlaylistData(
+        userId: Long,
+        userType: UserType,
+        countryId: Int,
+    ): CreatePlaylistDto = coroutineScope {
+        val favouriteDef = async {
+            query {
+                UserFavouriteRelationTable
+                    .slice(UserFavouriteRelationTable.songId)
+                    .select {
+                        UserFavouriteRelationTable.userId eq userId and
+                                (UserFavouriteRelationTable.userType eq userType.name)
+                    }.limit(Random.nextInt(30, 35))
+                    .map { it[UserFavouriteRelationTable.songId] }
+            }.let { getSongOnIdList(it) }
+        }
+
+        val recentHistoryDef = async {
+            emptyList<SongDto>()
+        } // todo
+
+        val internationalDef = async {
+            val albumIdDef = async {
+                query {
+                    AlbumCountryRelationTable
+                        .slice(AlbumCountryRelationTable.albumId)
+                        .select {
+                            AlbumCountryRelationTable.countryId neq countryId
+                        }
+                        .limit(Random.nextInt(15, 20))
+                        .map { it[AlbumCountryRelationTable.albumId] }
+                }
+            }
+            val artistDef = async {
+                query {
+                    ArtistCountryRelationTable
+                        .slice(ArtistCountryRelationTable.artistId)
+                        .select {
+                            ArtistCountryRelationTable.countryId neq countryId
+                        }
+                        .limit(Random.nextInt(10, 15))
+                        .map { it[ArtistCountryRelationTable.artistId] }
+                }
+            }
+
+            val artistSongDef = async {
+                query {
+                    SongArtistRelationTable
+                        .slice(SongArtistRelationTable.songId)
+                        .select {
+                            SongArtistRelationTable.artistId inList artistDef.await()
+                        }
+                        .orderBy(org.jetbrains.exposed.sql.Random())
+                        .limit(Random.nextInt(30, 40))
+                        .map { it[SongArtistRelationTable.songId] }
+                        .let { getSongOnIdList(it) }
+                }
+            }
+            val albumSongDef = async {
+                query {
+                    SongAlbumRelationTable
+                        .slice(SongAlbumRelationTable.songId)
+                        .select {
+                            SongAlbumRelationTable.albumId inList albumIdDef.await()
+                        }
+                        .orderBy(org.jetbrains.exposed.sql.Random())
+                        .limit(Random.nextInt(30, 40))
+                        .map { it[SongAlbumRelationTable.songId] }
+                        .let { getSongOnIdList(it) }
+                }
+            }
+
+            val artistSong = artistSongDef.await()
+            val albumSong = albumSongDef.await()
+
+            albumSong.filterNot { artistSong.contains(it) }
+                .shuffled(Random)
+                .take(Random.nextInt(35, 40))
+        }
+
+        val mostPopularDef = async {
+            query {
+                SongDao.all()
+                    .orderBy(SongTable.points to SortOrder.DESC)
+                    .limit(Random.nextInt(35, 45))
+                    .map { dao ->
+                        async {
+                            val artist = getArtistOnSongId(dao.id.value)
+                            dao.toSongDto(artist.joinToString { it.name })
+                        }
+                    }.awaitAll()
+            }
+        }
+
+
+        val fevPair = CreatePlaylistTypeDto.YOUR_FAVOURITES to favouriteDef.await()
+        val suggestPair = CreatePlaylistTypeDto.SUGGESTED_FOR_YOU to mostPopularDef.await()
+        val likePair = CreatePlaylistTypeDto.YOU_MAY_ALSO_LIKE to internationalDef.await()
+        val historyPair = CreatePlaylistTypeDto.RECENT_HISTORY to recentHistoryDef.await()
+
+        val newFevPair =
+            if (fevPair.second.size < 20) CreatePlaylistTypeDto.YOUR_FAVOURITES to
+                    fevPair.second + (suggestPair.second + likePair.second + historyPair.second).shuffled(Random)
+                .take(Random.nextInt(18, 25))
+            else fevPair
+
+        val data = listOf(
+            newFevPair,
+            suggestPair,
+            likePair,
+            historyPair
+        )
+
+        CreatePlaylistDto(data = data)
+    }
+
+    override suspend fun getSongPaging(
+        page: Int,
+        size: Int,
+        query: String,
+        type: SongPagingTypeDto,
+    ): List<SongDto> = coroutineScope {
+        when (type) {
+            SongPagingTypeDto.TITLE -> {
+                query {
+                    SongDao.find {
+                        SongTable.title like "$query%"
+                    }.orderBy(SongTable.year to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .toList()
+                }.map { dao ->
+                    async {
+                        val artist = getArtistOnSongId(dao.id.value)
+                        dao.toSongDto(artist.joinToString { it.name })
+                    }
+                }.awaitAll()
+            }
+
+            SongPagingTypeDto.POPULARITY -> {
+                query {
+                    SongDao.find {
+                        SongTable.title like "$query%"
+                    }.orderBy(SongTable.year to SortOrder.DESC, SongTable.points to SortOrder.DESC)
+                        .drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .toList()
+                }.map { dao ->
+                    async {
+                        val artist = getArtistOnSongId(dao.id.value)
+                        dao.toSongDto(artist.joinToString { it.name })
+                    }
+                }.awaitAll()
+            }
+
+            SongPagingTypeDto.ARTIST -> {
+                query {
+                    SongTable
+                        .join(
+                            otherTable = SongArtistRelationTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongArtistRelationTable.songId eq SongTable.id as Column<*>
+                            }
+                        ).join(
+                            otherTable = ArtistTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongArtistRelationTable.artistId eq ArtistTable.id as Column<*>
+                            }
+                        )
+                        .slice(
+                            SongTable.id,
+                            SongTable.title,
+                            SongTable.coverImage,
+                            SongTable.masterPlaylistPath,
+                            SongTable.year,
+                            SongTable.points,
+                        )
+                        .select {
+                            (ArtistTable.name like "$query%")
+                        }.drop(if (page == 1) 0 else page * size)
+                        .take(size)
+                        .map { resultRow ->
+                            async {
+                                val artist =
+                                    getArtistOnSongId(resultRow[SongTable.id].value).sortedBy { it.name.contains(query) }
+
+                                SongDto(
+                                    id = resultRow[SongTable.id].value,
+                                    title = resultRow[SongTable.title],
+                                    coverImage = resultRow[SongTable.coverImage].constructSongCoverImage(),
+                                    releaseYear = resultRow[SongTable.year],
+                                    artistName = artist.joinToString { it.name },
+                                    masterPlaylistUrl = resultRow[SongTable.masterPlaylistPath].constructMasterPlaylistUrl()
+                                )
+                            }
+                        }.awaitAll()
+                }
+            }
+        }
+    }
+
+    override suspend fun getSongArtist(songId: Long): List<ArtistWithPopularityDto> = withContext(Dispatchers.IO) {
+        val artistIdList = query {
+            SongArtistRelationTable
+                .slice(SongArtistRelationTable.artistId)
+                .select {
+                    SongArtistRelationTable.songId eq songId
+                }.map {
+                    it[SongArtistRelationTable.artistId]
+                }
+        }
+
+        query {
+            ArtistDao.find {
+                ArtistTable.id inList artistIdList
+            }.map { it.toArtistWithPopularityDto() }
+        }
+    }
+
+    private suspend fun AlbumDao.toPagingAlbumDto() =
+        coroutineScope {
+            async {
+                val pair = async {
+                    query {
+                        SongAlbumRelationTable.join(
+                            otherTable = SongTable,
+                            joinType = JoinType.INNER,
+                            additionalConstraint = {
+                                SongTable.id as Column<*> eq SongAlbumRelationTable.songId
+                            }
+                        ).slice(
+                            SongTable.coverImage,
+                            SongTable.year
+                        ).select {
+                            SongAlbumRelationTable.albumId eq this@toPagingAlbumDto.id.value
+                        }.first().let {
+                            it[SongTable.coverImage] to it[SongTable.year]
+                        }
+                    }
+                }
+
+                val artistDef = async { getArtistOnAlbumId(albumId = this@toPagingAlbumDto.id.value) }
+
+                val (cover, year) = pair.await()
+                val artist = artistDef.await()
+
+                PagingAlbumDto(
+                    id = this@toPagingAlbumDto.id.value,
+                    name = this@toPagingAlbumDto.name,
+                    coverImage = cover.constructSongCoverImage(),
+                    artist = artist,
+                    releaseYear = year.toString()
+                )
+            }
+        }
 }

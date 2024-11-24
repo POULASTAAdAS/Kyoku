@@ -4,7 +4,7 @@ sealed class DrawerScreen(val route: String) {
     data object Home : DrawerScreen(route = "/home")
     data object Library : DrawerScreen(route = "/library")
 
-    data object ViewArtist: DrawerScreen(route = "/viewArtist"){
+    data object ViewArtist : DrawerScreen(route = "/viewArtist") {
         const val PARAM = "/{id}"
     }
 

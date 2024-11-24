@@ -19,7 +19,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun AppBackButton(
     modifier: Modifier = Modifier,
-    imageVector: ImageVector = ArrowBackIcon,
+    icon: ImageVector = ArrowBackIcon,
     onClick: () -> Unit,
 ) {
     IconButton(
@@ -32,7 +32,7 @@ fun AppBackButton(
     ) {
         Icon(
             modifier = Modifier.padding(MaterialTheme.dimens.small1),
-            imageVector = imageVector,
+            imageVector = icon,
             contentDescription = null
         )
     }

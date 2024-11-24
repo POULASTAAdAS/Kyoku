@@ -33,7 +33,7 @@ object AppModule {
         @ApplicationContext context: Context,
     ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         produceFile = {
-            context.preferencesDataStoreFile("AppPreferences")
+            context.preferencesDataStoreFile(name = "AppPreferences")
         }
     )
 

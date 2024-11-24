@@ -14,7 +14,7 @@ fun String.constructSongCoverImage() = "${System.getenv("SERVICE_URL") + EndPoin
     this.replace(COVER_IMAGE_ROOT_DIR, "")
 }"
 
-fun String.constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.GetCoverImage.route}?master=${
+fun String.constructMasterPlaylistUrl() = "${System.getenv("SERVICE_URL") + EndPoints.PlaySongMaster.route}?master=${
     this.replace(MASTER_PLAYLIST_ROOT_DIR, "")
 }"
 

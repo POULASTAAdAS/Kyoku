@@ -1,6 +1,5 @@
 package com.poulastaa.core.database.repository
 
-import com.poulastaa.core.ViewData
 import com.poulastaa.core.database.dao.CommonDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.DayTypeSongEntity
@@ -8,6 +7,8 @@ import com.poulastaa.core.database.entity.FavouriteArtistMixEntity
 import com.poulastaa.core.database.entity.FavouriteEntity
 import com.poulastaa.core.database.entity.PopularSongFromYourTimeEntity
 import com.poulastaa.core.database.entity.PopularSongMixEntity
+import com.poulastaa.core.database.entity.relation.SongAlbumRelationEntity
+import com.poulastaa.core.database.entity.relation.SongPlaylistRelationEntity
 import com.poulastaa.core.database.mapper.toAlbumEntity
 import com.poulastaa.core.database.mapper.toPlaylistEntity
 import com.poulastaa.core.database.mapper.toPlaylistSong
@@ -17,6 +18,7 @@ import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.model.ViewData
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -24,7 +26,7 @@ import javax.inject.Inject
 
 class RoomLocalViewDatasource @Inject constructor(
     private val commonDao: CommonDao,
-    private val viewDao: ViewDao
+    private val viewDao: ViewDao,
 ) : LocalViewDatasource {
     override suspend fun getPlaylistOnId(id: Long): ViewData =
         viewDao.getPlaylistOnId(id).groupBy { it.playlistId }
@@ -47,7 +49,7 @@ class RoomLocalViewDatasource @Inject constructor(
             LocalViewDatasource.ReqType.OLD_MIX_SONG -> viewDao.getOldMixSongIds()
             LocalViewDatasource.ReqType.ARTIST_MIX -> viewDao.getFevArtistMixSongIds()
             LocalViewDatasource.ReqType.POPULAR_MIX -> viewDao.getPopularSongMixSongIds()
-            LocalViewDatasource.ReqType.FEV -> viewDao.getFevSongIds()
+            LocalViewDatasource.ReqType.FEV -> commonDao.getFevSongIds()
         }
 
     override suspend fun getPrevSongIdList(type: LocalViewDatasource.ReqType): List<Long> =
@@ -64,19 +66,7 @@ class RoomLocalViewDatasource @Inject constructor(
             it.toPlaylistSong()
         }
 
-    override suspend fun getFevSongIdList(): List<Long> = viewDao.getFevSongIds()
-
-    override suspend fun getOldMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
-
-    override suspend fun getArtistMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
-
-    override suspend fun getPopularMix(): List<PlaylistSong> {
-        TODO("not implemented")
-    }
+    override suspend fun getFevSongIdList(): List<Long> = commonDao.getFevSongIds()
 
     override suspend fun insertSongs(list: List<Song>, type: LocalViewDatasource.ReqType?) {
         list.map { it.toSongEntity() }.let { commonDao.insertSongs(it) }
@@ -113,28 +103,55 @@ class RoomLocalViewDatasource @Inject constructor(
     }
 
     override suspend fun savePlaylist(data: PlaylistData) {
+        if (data.id == -1L) return
+
         coroutineScope {
-            async {
+            val song = async {
                 data.listOfSong.map { it.toSongEntity() }.let {
                     commonDao.insertSongs(it)
                 }
-            }.await()
+            }
 
-            data.toPlaylistEntity().let {
-                commonDao.insertPlaylist(it)
+            val playlist = async {
+                data.toPlaylistEntity().let {
+                    commonDao.insertPlaylist(it)
+                }
+            }
+
+            song.await()
+            playlist.await()
+
+            data.listOfSong.map {
+                SongPlaylistRelationEntity(
+                    songId = it.id,
+                    playlistId = data.id
+                )
+            }.let {
+                commonDao.insertSongPlaylistRelations(it)
             }
         }
     }
 
     override suspend fun saveAlbum(data: AlbumWithSong) {
         coroutineScope {
-            async {
+            val song = async {
                 data.listOfSong.map { it.toSongEntity() }.let {
                     commonDao.insertSongs(it)
                 }
-            }.await()
+            }
+            val album = async { commonDao.insertAlbum(data.album.toAlbumEntity()) }
 
-            commonDao.insertAlbum(data.album.toAlbumEntity())
+            song.await()
+            album.await()
+
+            data.listOfSong.map {
+                SongAlbumRelationEntity(
+                    songId = it.id,
+                    albumId = data.album.albumId
+                )
+            }.let {
+                commonDao.insertSongAlbumRelation(it)
+            }
         }
     }
 }

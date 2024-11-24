@@ -1,10 +1,10 @@
 package com.poulastaa.core.domain.repository.view
 
-import com.poulastaa.core.ViewData
 import com.poulastaa.core.domain.model.AlbumWithSong
 import com.poulastaa.core.domain.model.PlaylistData
 import com.poulastaa.core.domain.model.PlaylistSong
 import com.poulastaa.core.domain.model.Song
+import com.poulastaa.core.domain.model.ViewData
 
 interface LocalViewDatasource {
     suspend fun getPlaylistOnId(id: Long): ViewData
@@ -20,9 +20,6 @@ interface LocalViewDatasource {
     suspend fun getPrevSongIdList(type: ReqType): List<Long>
 
     suspend fun getFevSongIdList(): List<Long>
-    suspend fun getOldMix(): List<PlaylistSong>
-    suspend fun getArtistMix(): List<PlaylistSong>
-    suspend fun getPopularMix(): List<PlaylistSong>
 
     suspend fun insertSongs(list: List<Song>, type: ReqType? = null)
     suspend fun savePlaylist(data: PlaylistData)

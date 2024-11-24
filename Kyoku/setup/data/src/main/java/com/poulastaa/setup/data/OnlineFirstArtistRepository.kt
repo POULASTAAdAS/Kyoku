@@ -18,9 +18,7 @@ class OnlineFirstArtistRepository @Inject constructor(
 ) : ArtistRepository {
     override suspend fun getArtist(
         sentList: List<Long>,
-    ): Result<List<Artist>, DataError.Network> = applicationScope.async {
-        remote.getArtist(sentList)
-    }.await()
+    ): Result<List<Artist>, DataError.Network> = remote.getArtist(sentList)
 
     override suspend fun insertArtists(
         entrys: List<Artist>,

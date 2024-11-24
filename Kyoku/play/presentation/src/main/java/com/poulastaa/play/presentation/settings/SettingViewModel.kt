@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.core.domain.ScreenEnum
 import com.poulastaa.core.domain.repository.setting.SettingRepository
+import com.poulastaa.play.domain.SyncLibraryScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -19,6 +21,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val ds: DataStoreRepository,
     private val repo: SettingRepository,
+    private val sync: SyncLibraryScheduler,
 ) : ViewModel() {
     var state by mutableStateOf(SettingUiState())
         private set
@@ -45,7 +48,11 @@ class SettingViewModel @Inject constructor(
                 )
 
                 viewModelScope.launch {
-                    repo.logOut()
+                    val db = async { repo.logOut() }
+                    val sync = async { sync.cancelAllSyncs() }
+
+                    db.await()
+                    sync.await()
 
                     state = state.copy(
                         isLoggingOut = false,

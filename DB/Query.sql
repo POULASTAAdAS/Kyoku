@@ -2,43 +2,6 @@ use kyoku;
 
 SET SQL_SAFE_UPDATES = 0;
 
-select * from country;
-select * from genre;
-select * from artist;
-select * from album;
-select * from song;
-
-select * from ArtistCountryRelation;
-select * from ArtistGenreRelation;
-select * from ArtistAlbumRelation;
-
-select * from SongArtistRelation;
-select * from SongAlbumRelation;
-
-
-select count(*) from ArtistCountryRelation;
-select count(*) from ArtistGenreRelation;
-select count(*) from ArtistAlbumRelation;
-
-
-select * from emailauthuser;
-select * from googleauthuser;
-delete from googleauthuser;
-
-select * from loginverificationmail;
-
-select * from playlist;
-select * from userplaylistsongrelation;
-select * from usergenrerelation;
-select * from userartistrelation;
-
-delete from playlist;
-delete from usergenrerelation;
-delete from userartistrelation;
-
-
-
-
 
 -- getPopularSongMix
 select * from song
@@ -115,29 +78,6 @@ join albumcountryrelation on albumcountryrelation.albumId = album.id
 where albumcountryrelation.countryId = 1 order by album.points desc limit 10;
 
 
-select * from emailauthuser;
-select * from googleauthuser;
-select * from userplaylistsongrelation;
-
-
-select * from userplaylistsongrelation;
-
-select * from playlist;
-select * from userplaylistsongrelation;
-
-
-select distinct(userid) from userplaylistsongrelation where playlistid = 3;
-select *  from userplaylistsongrelation;
-
-select * from useralbumrelation;
-select * from useralbumrelation;
-
-
-select * from userartistrelation;
-
-delete from userartistrelation where userid = 0;
-
-
 select * from artist;
 select * from userartistrelation;
 select count(*) from userartistrelation where artistid = 10613;
@@ -164,99 +104,30 @@ JOIN album ON album.id = artistalbumrelation.albumId
 JOIN songalbumrelation ON songalbumrelation.albumId = album.id
 JOIN song ON song.id = songalbumrelation.songId
 WHERE artistalbumrelation.artistId = 2967
-GROUP BY album.id, album.name
+GROUP BY album.id
 ORDER BY year DESC;
 
+select album.id , album.name , song.coverImage , song.year , album.points from song 
+join songalbumrelation on songalbumrelation.songId = song.id
+join album on songalbumrelation.albumId = album.id
+order by  album.points desc , song.year desc;
 
 
+select album.id , album.name , song.coverImage , song.year , album.points from album 
+join songalbumrelation on songalbumrelation.albumId = album.id
+join album on songalbumrelation.albumId = album.id
+order by  album.points desc , song.year desc;
 
 
+select song.id, song.title, song.coverImage , artist.name from song 
+join songartistrelation on songartistrelation.songId = song.id
+join artist on artist.id =songartistrelation.artistId
+where song.title like 'vishal%'
+order by  song.year desc , song.points desc;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+select * from 
 
 
 

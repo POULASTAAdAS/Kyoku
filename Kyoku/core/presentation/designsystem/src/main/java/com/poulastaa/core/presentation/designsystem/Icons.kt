@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Search
@@ -144,6 +145,13 @@ val PlayIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play)
 
+val PauseIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_pause)
+
+val NextIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_next)
 
 val AddAsPlaylistIcon: ImageVector
     @Composable
@@ -165,11 +173,11 @@ val CancelIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Close
 
-val PlayNextIcon: ImageVector
+val PlayNextInQueueIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play_next_in_queue)
 
-val PlayLastIcon: ImageVector
+val PlayLastInQueueIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_play_last_in_queue)
 
@@ -208,3 +216,28 @@ val MoveIcon: ImageVector
 val SadIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_sad)
+
+
+val PopularIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_popular)
+
+val RepeatOnIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_repeat_on)
+
+val RepeatOffIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_repeat_off)
+
+val AddToLibraryIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_add_to_library)
+
+val InfoIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_info)
+
+val EditIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Edit

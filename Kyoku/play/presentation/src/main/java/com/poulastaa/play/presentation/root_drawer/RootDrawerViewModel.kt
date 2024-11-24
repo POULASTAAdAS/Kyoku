@@ -1,6 +1,5 @@
 package com.poulastaa.play.presentation.root_drawer
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,25 +8,32 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataStoreRepository
 import com.poulastaa.play.domain.DrawerScreen
 import com.poulastaa.play.domain.SaveScreen
+import com.poulastaa.play.domain.SyncLibraryScheduler
 import com.poulastaa.play.presentation.root_drawer.home.HomeAddToPlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 
 @HiltViewModel
 class RootDrawerViewModel @Inject constructor(
     private val ds: DataStoreRepository,
+    private val syncScheduler: SyncLibraryScheduler,
 ) : ViewModel() {
     var state by mutableStateOf(RootDrawerUiState())
         private set
 
     init {
+        viewModelScope.launch {
+            syncScheduler.scheduleSync(30.minutes)
+        }
         viewModelScope.launch {
             val savedScreenStringDef = async {
                 ds.readSaveScreen().first()
@@ -39,11 +45,11 @@ class RootDrawerViewModel @Inject constructor(
             state = state.copy(
                 saveScreen = savedScreen.toSaveScreen(),
                 startDestination = savedScreen.toDrawerScreen().route,
-                isScreenLoaded = true,
                 username = user.name,
                 profilePicUrl = user.profilePic
             )
         }
+        readHeader()
     }
 
     private val _uiEvent = Channel<RootDrawerUiAction>()
@@ -106,7 +112,8 @@ class RootDrawerViewModel @Inject constructor(
                         songId = event.id,
                         type = event.type,
                     ),
-                    addToPlaylistUiState = HomeAddToPlaylistUiState()
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    createPlaylistUiState = CreatePlaylistViewUiState()
                 )
             }
 
@@ -123,7 +130,8 @@ class RootDrawerViewModel @Inject constructor(
                         artistId = event.id
                     ),
                     addToPlaylistUiState = HomeAddToPlaylistUiState(),
-                    viewUiState = HomeViewUiState()
+                    viewUiState = HomeViewUiState(),
+                    newAlbumUiState = NewAlbumViewUiState()
                 )
             }
 
@@ -133,12 +141,92 @@ class RootDrawerViewModel @Inject constructor(
                 )
             }
 
+            is RootDrawerUiEvent.NewAlbum -> {
+                state = state.copy(
+                    newAlbumUiState = state.newAlbumUiState.copy(
+                        isOpen = true
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState(),
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newArtisUiState = NewArtistViewUiState()
+                )
+            }
+
+            RootDrawerUiEvent.NewAlbumCancel -> {
+                state = state.copy(
+                    newAlbumUiState = state.newAlbumUiState.copy(
+                        isOpen = false
+                    )
+                )
+            }
+
+            is RootDrawerUiEvent.NewArtist -> {
+                state = state.copy(
+                    newArtisUiState = state.newArtisUiState.copy(
+                        isOpen = true
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    viewUiState = HomeViewUiState(),
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newAlbumUiState = NewAlbumViewUiState()
+                )
+            }
+
+            RootDrawerUiEvent.NewArtistCancel -> {
+                state = state.copy(
+                    newArtisUiState = state.newArtisUiState.copy(
+                        isOpen = false
+                    )
+                )
+            }
+
+            is RootDrawerUiEvent.CreatePlaylist -> {
+                state = state.copy(
+                    createPlaylistUiState = state.createPlaylistUiState.copy(
+                        isOpen = true,
+                        playlistId = event.playlistId
+                    ),
+                    addToPlaylistUiState = HomeAddToPlaylistUiState(),
+                    exploreArtistUiState = ExploreArtistUiState(),
+                    newAlbumUiState = NewAlbumViewUiState(),
+                    newArtisUiState = NewArtistViewUiState()
+                )
+            }
+
+            RootDrawerUiEvent.CreatePlaylistCancel -> {
+                state = state.copy(
+                    createPlaylistUiState = CreatePlaylistViewUiState(),
+                )
+            }
+
+            is RootDrawerUiEvent.OnViewSongArtists -> {
+                state = state.copy(
+                    viewSongArtistSongId = event.songId
+                )
+            }
+
+            RootDrawerUiEvent.OnViewSongArtistsCancel -> {
+                state = state.copy(
+                    viewSongArtistSongId = -1
+                )
+            }
+
             else -> Unit
         }
     }
 
-
     private fun updateSaveScreen(screen: SaveScreen) = viewModelScope.launch {
         ds.storeSaveScreen(screen.name)
+    }
+
+    private fun readHeader() {
+        viewModelScope.launch {
+            ds.readTokenOrCookie().collectLatest {
+                state = state.copy(
+                    header = it
+                )
+            }
+        }
     }
 }

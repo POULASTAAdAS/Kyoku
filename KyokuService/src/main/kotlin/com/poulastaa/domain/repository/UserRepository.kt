@@ -57,22 +57,22 @@ interface UserRepository {
     ): Boolean
 
     suspend fun addArtist(
-        artistId: Long,
-        email: String,
+        list: List<Long>,
+        userId: Long,
         userType: UserType,
-    ): ArtistDto
+    ): List<ArtistDto>
 
     suspend fun removeArtist(
-        id: Long,
-        email: String,
+        artistId: Long,
+        userId: Long,
         userType: UserType,
     ): Boolean
 
     suspend fun addAlbum(
-        albumId: Long,
+        list: List<Long>,
         email: String,
         userType: UserType,
-    ): AlbumWithSongDto
+    ): List<AlbumWithSongDto>
 
     suspend fun removeAlbum(
         id: Long,
@@ -112,4 +112,34 @@ interface UserRepository {
         userId: Long,
         userType: String,
     ): List<SongDto>
+
+    suspend fun getSyncAlbum(
+        userId: Long,
+        userType: UserType,
+        albumIdList: List<Long>,
+    ): SyncDto<Any>
+
+    suspend fun getSyncPlaylist(
+        userId: Long,
+        userType: UserType,
+        playlistIdList: List<Long>,
+    ): SyncDto<Any>
+
+    suspend fun getSyncArtist(
+        userId: Long,
+        userType: UserType,
+        artistIdList: List<Long>,
+    ): SyncDto<Any>
+
+    suspend fun getSyncFavourite(
+        userId: Long,
+        userType: UserType,
+        songIdList: List<Long>,
+    ): SyncDto<Any>
+
+    suspend fun getSyncPlaylistSongs(
+        userId: Long,
+        userType: UserType,
+        playlistIdAndSongIdList: List<Long>,
+    ): SyncDto<Any>
 }

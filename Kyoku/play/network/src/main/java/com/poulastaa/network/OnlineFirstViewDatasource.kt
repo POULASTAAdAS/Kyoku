@@ -24,10 +24,10 @@ import javax.inject.Inject
 
 class OnlineFirstViewDatasource @Inject constructor(
     private val client: OkHttpClient,
-    private val gson: Gson
+    private val gson: Gson,
 ) : RemoteViewDatasource {
     override suspend fun getPlaylistOnId(
-        id: Long
+        id: Long,
     ): Result<PlaylistData, DataError.Network> = client.post<GetDataReq, PlaylistDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
@@ -40,7 +40,7 @@ class OnlineFirstViewDatasource @Inject constructor(
     }
 
     override suspend fun getAlbumOnId(
-        id: Long
+        id: Long,
     ): Result<AlbumWithSong, DataError.Network> = client.post<GetDataReq, AlbumWithSongDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
@@ -62,7 +62,7 @@ class OnlineFirstViewDatasource @Inject constructor(
         }
 
     override suspend fun getOldMix(
-        prevList: List<Long>
+        prevList: List<Long>,
     ): Result<List<Song>, DataError.Network> = client.post<GetDataReq, PlaylistDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
@@ -75,7 +75,7 @@ class OnlineFirstViewDatasource @Inject constructor(
     }
 
     override suspend fun getArtistMix(
-        prevList: List<Long>
+        prevList: List<Long>,
     ): Result<List<Song>, DataError.Network> = client.post<GetDataReq, PlaylistDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
@@ -88,7 +88,7 @@ class OnlineFirstViewDatasource @Inject constructor(
     }
 
     override suspend fun getPopularMix(
-        prevList: List<Long>
+        prevList: List<Long>,
     ): Result<List<Song>, DataError.Network> = client.post<GetDataReq, PlaylistDto>(
         route = EndPoints.GetTypeData.route,
         body = GetDataReq(
@@ -101,12 +101,12 @@ class OnlineFirstViewDatasource @Inject constructor(
     }
 
     override suspend fun getSongOnIdList(
-        list: List<Long>
+        list: List<Long>,
     ): Result<List<Song>, DataError.Network> = throw Exception("not implemented")
 
 
     override suspend fun addSongToFavourite(
-        songId: Long
+        songId: Long,
     ): Result<Song, DataError.Network> = client.get<SongDto>(
         route = EndPoints.AddToFavourite.route,
         params = listOf("songId" to songId.toString()),

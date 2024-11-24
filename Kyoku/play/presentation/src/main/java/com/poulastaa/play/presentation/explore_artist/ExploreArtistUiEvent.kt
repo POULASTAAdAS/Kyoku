@@ -8,7 +8,7 @@ sealed interface ExploreArtistUiEvent {
         data class OnThreeDotClose(val id: Long, val type: Type) : ThreeDotEvent
         data class OnThreeDotEventClick(
             val id: Long,
-            val type: ExploreArtistThreeDotEvent
+            val type: ExploreArtistThreeDotEvent,
         ) : ThreeDotEvent
     }
 

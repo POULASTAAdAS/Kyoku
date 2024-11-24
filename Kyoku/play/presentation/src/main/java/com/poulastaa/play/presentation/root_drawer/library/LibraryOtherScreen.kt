@@ -5,8 +5,11 @@ import com.poulastaa.play.presentation.view.components.ViewDataType
 sealed interface LibraryOtherScreen {
     data class View(
         val id: Long = -1,
-        val type: ViewDataType
+        val type: ViewDataType,
     ) : LibraryOtherScreen
 
     data class ViewArtist(val id: Long) : LibraryOtherScreen
+
+    data object NewAlbum : LibraryOtherScreen
+    data object NewArtist : LibraryOtherScreen
 }

@@ -49,7 +49,7 @@ fun AddToPlaylistRootScreen(
     modifier: Modifier = Modifier,
     viewModel: AddToPlaylistViewModel = hiltViewModel(),
     songId: Long,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.loadData(songId)
@@ -83,17 +83,15 @@ private fun AddToPlaylistScreen(
     modifier: Modifier = Modifier,
     state: AddToPlaylistUiState,
     onEvent: (AddToPlaylistUiEvent) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember {
-        FocusRequester()
-    }
+    val focusRequester = remember { FocusRequester() }
     val addNewPlaylistBottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) {
-        if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) addNewPlaylistBottomSheetState.show()
+    LaunchedEffect(key1 = state.addNewPlaylistBottomSheetState.isOpen) {
+        if (state.addNewPlaylistBottomSheetState.isOpen) addNewPlaylistBottomSheetState.show()
         else addNewPlaylistBottomSheetState.hide()
     }
 
@@ -172,7 +170,7 @@ private fun AddToPlaylistScreen(
         }
     }
 
-    if (state.addNewPlaylistBottomSheetState.isAddNewPlaylistBottomSheetOpen) AddNewPlaylistBottomSheet(
+    if (state.addNewPlaylistBottomSheetState.isOpen) AddNewPlaylistBottomSheet(
         sheetState = addNewPlaylistBottomSheetState,
         state = state.addNewPlaylistBottomSheetState,
         onEvent = { event ->
