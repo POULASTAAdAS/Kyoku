@@ -1,59 +1,5 @@
 # <h1 align="center">Kyoku</h>
 
-# <h2 align="center">Preview Dark</h2>
-
-<table>
-  <tr>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/intro.jpg" width="240" height="520">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/email_login.jpg" width="240" height="520">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/forgot_password.jpg" width="240" height="520">
-    </td>
-    
-  </tr>
-
-  <tr>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/email_signup.jpg" width="240" height="520">
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/dark/phone_home.gif" width="240" height="520">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/gif/meatball%20animation.gif" width="240" height="520">
-    </td>
-  </tr>
-</table>
-
-# <h2 align="center">Preview Light</h2>
-
-<table>
-  <tr>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/light/intro.jpg" width="240" height="520">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/light/email_login.jpg" width="240" height="520">
-    </td>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/light/forgot_password.jpg" width="240" height="520">
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/screensorts/phone/light/email_signup.jpg" width="240" height="520">
-    </td>
-  </tr>
-</table>
-
 # License
 
 ```xml
