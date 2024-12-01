@@ -1,0 +1,113 @@
+[versions]
+kotlin = "2.1.0"
+kotlinJvm = "2.1.0"
+kotlinxDatetime = "0.6.1"
+kotlinxSerializationJSON = "1.7.2"
+kotlinxCoroutines = "1.8.1"
+
+exposed = "0.45.0"
+mysql = "8.0.33"
+hikaricp = "5.0.1"
+
+koin = "3.5.6"
+
+spotify = "8.3.4"
+
+ktor = "3.0.1"
+
+flaxoosKafka = "2.1.1"
+flaxoosRateLimiting = "2.1.1"
+
+logback = "1.4.14"
+
+[libraries]
+# gradle
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-datetime = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+mysql-connector = { module = "mysql:mysql-connector-java", version.ref = "mysql" }
+connection-pooling = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+
+koin = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+
+spotify-api = { module = "se.michaelthelin.spotify:spotify-web-api-java", version.ref = "spotify" }
+
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions-jvm", version.ref = "ktor" }
+
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+
+ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
+
+ktor-server-host-common = { module = "io.ktor:ktor-server-host-common-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+
+flaxoos-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.ref = "flaxoosKafka" }
+flaxoos-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "flaxoosRateLimiting" }
+
+koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+ktor-server-test-host-jvm = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+
+kyoku-jvm-library = { id = "kyoku.jvm.library", version = "unspecified" }
+kyoku-ktor-exposed = { id = "kyoku.ktor.exposed", version = "unspecified" }
+kyoku-ktor-koin = { id = "kyoku.ktor.koin", version = "unspecified" }
+kyoku-ktor-application = { id = "kyoku.ktor.application", version = "unspecified" }
+
+[bundles]
+kotlin = [
+    "kotlinx-datetime",
+    "kotlinx-coroutines",
+]
+
+ktor = [
+    "ktor-server-core",
+    "ktor-server-auth",
+    "ktor-server-auth-jwt",
+    "ktor-server-sessions",
+    "ktor-server-content-negotiation",
+    "ktor-serialization-kotlinx-json",
+    "ktor-server-cors",
+    "ktor-server-host-common",
+    "ktor-server-netty",
+    "logback-classic",
+    "kotlinx-serialization"
+]
+
+ktor-test = [
+    "ktor-server-test-host-jvm",
+    "kotlin-test-junit"
+]
+
+exposed = [
+    "exposed-core",
+    "exposed-dao",
+    "exposed-jdbc",
+    "exposed-datetime",
+    "mysql-connector",
+    "connection-pooling"
+]
+
+koin = [
+    "koin",
+    "koin-logger-slf4j"
+]
