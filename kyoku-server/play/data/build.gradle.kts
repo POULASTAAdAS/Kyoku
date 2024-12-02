@@ -4,6 +4,6 @@ plugins {
 
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":play:domain"))
+    implementation(project(":core:core-domain"))
+    implementation(project(":play:play-domain"))
 }

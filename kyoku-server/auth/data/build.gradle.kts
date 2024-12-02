@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
-    implementation(project(":auth:domain"))
+    implementation(project(":core:core-domain"))
+    implementation(project(":auth:auth-domain"))
 }

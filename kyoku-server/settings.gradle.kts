@@ -13,38 +13,44 @@ rootProject.name = "kyoku-server"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include("core:domain")
-findProject(":core:domain")?.name = "domain"
+project(":core:domain").name = "core-domain"
 include("core:database")
-findProject(":core:database")?.name = "database"
+project(":core:database").name = "core-database"
 include("core:data")
-findProject(":core:data")?.name = "data"
+project(":core:data").name = "core-data"
 
 include("user:data")
-findProject(":user:data")?.name = "data"
+project(":user:data").name = "user-data"
 include("user:domain")
-findProject(":user:domain")?.name = "domain"
+project(":user:domain").name = "user-domain"
 
 include("search:domain")
-findProject(":search:domain")?.name = "domain"
+project(":search:domain").name = "search-domain"
 include("search:data")
-findProject(":search:data")?.name = "data"
+project(":search:data").name = "search-data"
 
 include("auth:domain")
-findProject(":auth:domain")?.name = "domain"
+project(":auth:domain").name = "auth-domain"
 include("auth:data")
-findProject(":auth:data")?.name = "data"
+project(":auth:data").name = "auth-data"
 
 include("details:domain")
-findProject(":details:domain")?.name = "domain"
+project(":details:domain").name = "details-domain"
 include("details:data")
-findProject(":details:data")?.name = "data"
+project(":details:data").name = "details-data"
 
 include("play:domain")
-findProject(":play:domain")?.name = "domain"
+project(":play:domain").name = "play-domain"
 include("play:data")
-findProject(":play:data")?.name = "data"
+project(":play:data").name = "play-data"
 
 include("suggestion:domain")
-findProject(":suggestion:domain")?.name = "domain"
+project(":suggestion:domain").name = "suggestion-domain"
 include("suggestion:data")
-findProject(":suggestion:data")?.name = "data"
+project(":suggestion:data").name = "suggestion-data"
+
+include("app")
+project(":app").name = "app"
+
+include("auth:network")
+project(":auth:network").name = "auth-network"
