@@ -15,6 +15,9 @@ class JVMLibraryConventionPlugin : Plugin<Project> {
                 mavenCentral()
             }
 
+            group = "com.poulastaa.kyoku"
+            version = "1.0"
+
             dependencies {
                 "implementation"(libs.findBundle("kotlin").get())
             }
