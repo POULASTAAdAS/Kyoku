@@ -12,4 +12,12 @@ dependencies {
     implementation(project(":user:user-domain"))
 
     implementation(project(":auth:auth-network"))
+
+    implementation(project(":auth:auth-data"))
+    implementation(project(":core:core-data"))
+
+    implementation(project(":core:core-database"))
+
+    implementation(libs.bundles.koin)
+    implementation(libs.redis.clients.jedis)
 }

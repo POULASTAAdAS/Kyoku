@@ -5,4 +5,6 @@ plugins {
 dependencies {
     implementation(project(":core:core-domain"))
     implementation(project(":auth:auth-domain"))
+
+    implementation(libs.bundles.koin)
 }

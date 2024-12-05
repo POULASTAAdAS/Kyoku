@@ -1,0 +1,39 @@
+services:
+  mysql-kyoku-user:
+    image: mysql:8.4.0
+    container_name: mysql-kyoku-user
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_USER_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql/init_user.sql:/docker-entrypoint-initdb.d/init_user.sql
+      - ./mysql-kyoku-user-data/data:/var/lib/mysql
+
+  mysql-kyoku:
+    image: mysql:8.4.0
+    container_name: mysql-kyoku
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql-kyoku-data/data:/var/lib/mysql
+  redis-kyoku:
+    image: redis:7.4.1
+    container_name: redis-kyoku
+    restart: always
+    ports:
+      - "6380:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: [
+      "redis-server",
+      "--requirepass",
+      "${REDIS_PASSWORD}",
+      "--appendonly",
+      "yes"
+    ]
+    volumes:
+      - "./redis-data/data:/data"

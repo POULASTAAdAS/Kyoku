@@ -31,6 +31,11 @@ gradlePlugin {
             implementationClass = "ExposedConventionPlugin"
         }
 
+        register("ktorLibrary") {
+            id = "kyoku.ktor.library"
+            implementationClass = "KtorLibraryConventionPlugin"
+        }
+
         register("ktorKoin") {
             id = "kyoku.ktor.koin"
             implementationClass = "KoinConventionPlugin"

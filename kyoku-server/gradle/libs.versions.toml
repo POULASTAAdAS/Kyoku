@@ -20,13 +20,17 @@ flaxoosRateLimiting = "2.1.1"
 
 logback = "1.4.14"
 
+googleAuth = "2.2.0"
+
+jedis = "5.2.0"
+
 [libraries]
 # gradle
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+kotlinx-serialization-kotlinx-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
 
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
@@ -46,12 +50,14 @@ ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.re
 ktor-server-sessions = { module = "io.ktor:ktor-server-sessions-jvm", version.ref = "ktor" }
 
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+ktor-serialization-kotlinx-jvm = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 
 ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
 
 ktor-server-host-common = { module = "io.ktor:ktor-server-host-common-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+
+google-auth = { module = "com.google.api-client:google-api-client", version.ref = "googleAuth" }
 
 flaxoos-kafka = { module = "io.github.flaxoos:ktor-server-kafka", version.ref = "flaxoosKafka" }
 flaxoos-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version.ref = "flaxoosRateLimiting" }
@@ -63,6 +69,8 @@ logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "lo
 ktor-server-test-host-jvm = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
+redis-clients-jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
@@ -70,6 +78,7 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 
 kyoku-jvm-library = { id = "kyoku.jvm.library", version = "unspecified" }
 kyoku-ktor-exposed = { id = "kyoku.ktor.exposed", version = "unspecified" }
+kyoku-ktor-library = { id = "kyoku.ktor.library", version = "unspecified" }
 kyoku-ktor-koin = { id = "kyoku.ktor.koin", version = "unspecified" }
 kyoku-ktor-application = { id = "kyoku.ktor.application", version = "unspecified" }
 
@@ -85,12 +94,12 @@ ktor = [
     "ktor-server-auth-jwt",
     "ktor-server-sessions",
     "ktor-server-content-negotiation",
-    "ktor-serialization-kotlinx-json",
+    "ktor-serialization-kotlinx-jvm",
     "ktor-server-cors",
     "ktor-server-host-common",
     "ktor-server-netty",
     "logback-classic",
-    "kotlinx-serialization"
+    "kotlinx-serialization-kotlinx-json"
 ]
 
 ktor-test = [
