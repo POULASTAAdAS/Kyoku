@@ -1,23 +1,17 @@
 package com.poulastaa.core.domain.repository
 
-import com.poulastaa.core.domain.model.AuthResponseDto
+import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.ServerUserDto
+import com.poulastaa.core.domain.model.UserType
 
 interface LocalAuthDatasource {
-    suspend fun getCountryId(): Int?
+    suspend fun getCountryId(countryCode: String): Int?
 
-    suspend fun googleSingUp(
-        payload: ServerUserDto,
-    ): AuthResponseDto
+    suspend fun getUsersByEmail(email: String, type: UserType): List<DBUserDto>
 
-    suspend fun emailSingUp(
+    suspend fun createGoogleUser(user: ServerUserDto): DBUserDto
+    suspend fun createEmailUser(
         payload: ServerUserDto,
         refreshToken: String,
-    ): AuthResponseDto
-
-    suspend fun emailLogIn(
-        email: String,
-        password: String,
-        refreshToken: String,
-    ): AuthResponseDto
+    ): DBUserDto
 }

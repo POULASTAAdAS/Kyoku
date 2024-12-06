@@ -16,7 +16,7 @@ fun AuthResponseDto.toAuthResponse() = AuthenticationResponse(
 )
 
 private fun AuthResponseStatusDto.toAuthenticationResponseStatus() = when (this) {
-    AuthResponseStatusDto.CREATED -> AuthenticationResponseStatus.CREATED
+    AuthResponseStatusDto.USER_CREATED -> AuthenticationResponseStatus.CREATED
     AuthResponseStatusDto.USER_FOUND -> AuthenticationResponseStatus.USER_FOUND
     AuthResponseStatusDto.USER_FOUND_STORE_B_DATE -> AuthenticationResponseStatus.USER_FOUND_STORE_B_DATE
     AuthResponseStatusDto.USER_FOUND_SET_GENRE -> AuthenticationResponseStatus.USER_FOUND_SET_GENRE

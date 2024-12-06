@@ -7,4 +7,5 @@ dependencies {
     implementation(project(":auth:auth-domain"))
 
     implementation(libs.bundles.koin)
+    implementation(libs.kotlin.bycrypt)
 }

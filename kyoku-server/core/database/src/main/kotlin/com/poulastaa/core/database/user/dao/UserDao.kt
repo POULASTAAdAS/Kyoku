@@ -12,6 +12,6 @@ class UserDao(id: EntityID<Long>) : LongEntity(id) {
     var email by UserEntity.email
     var passwordHash by UserEntity.passwordHash
     var profilePicUrl by UserEntity.profilePicUrl
-    var dDate by UserEntity.bDate
+    var bDate by UserEntity.bDate
     val countryId by UserEntity.countryId
 }

@@ -36,7 +36,7 @@ suspend fun RoutingContext.handleGoogleAuthentication(
         )
     }
 
-    val response = repo.googleAuth(payload).toAuthResponse()
+    val response = repo.googleAuth(payload, req.countryCode).toAuthResponse()
 
     call.respond(
         status = HttpStatusCode.OK,

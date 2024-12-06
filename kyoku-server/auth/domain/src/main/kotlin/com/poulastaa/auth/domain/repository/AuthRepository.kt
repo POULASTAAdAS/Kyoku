@@ -4,5 +4,5 @@ import com.poulastaa.core.domain.model.AuthResponseDto
 import com.poulastaa.core.domain.model.GoogleAuthPayloadDto
 
 interface AuthRepository {
-    suspend fun googleAuth(payload: GoogleAuthPayloadDto): AuthResponseDto
+    suspend fun googleAuth(payload: GoogleAuthPayloadDto, countryCode: String): AuthResponseDto
 }

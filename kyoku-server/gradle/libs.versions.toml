@@ -24,6 +24,10 @@ googleAuth = "2.2.0"
 
 jedis = "5.2.0"
 
+jbcrype = "0.4"
+
+gson = "2.8.9"
+
 [libraries]
 # gradle
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -70,6 +74,10 @@ ktor-server-test-host-jvm = { module = "io.ktor:ktor-server-test-host-jvm", vers
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 redis-clients-jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
+
+kotlin-bycrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrype" }
+
+kotlin-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }

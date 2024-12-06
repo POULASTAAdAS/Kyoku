@@ -1,7 +1,7 @@
 package com.poulastaa.core.domain.model
 
 enum class AuthResponseStatusDto {
-    CREATED,
+    USER_CREATED,
     USER_FOUND,
     USER_FOUND_STORE_B_DATE,
     USER_FOUND_SET_GENRE,
