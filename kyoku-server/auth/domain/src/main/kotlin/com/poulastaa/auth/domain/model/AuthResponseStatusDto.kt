@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain.model
+package com.poulastaa.auth.domain.model
 
 enum class AuthResponseStatusDto {
     USER_CREATED,

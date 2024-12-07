@@ -3,7 +3,7 @@ package com.pouluastaa.auth.network.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class AuthenticationResponseStatus {
+enum class AuthStatusResponse {
     CREATED,
     USER_FOUND,
     USER_FOUND_STORE_B_DATE,

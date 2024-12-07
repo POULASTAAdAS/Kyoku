@@ -4,6 +4,7 @@ import com.poulastaa.core.database.user.dao.UserDao
 import com.poulastaa.core.domain.model.DBUserDto
 
 fun UserDao.toDbUserDto() = DBUserDto(
+    id = id.value,
     email = email,
     userName = username,
     passwordHash = passwordHash,

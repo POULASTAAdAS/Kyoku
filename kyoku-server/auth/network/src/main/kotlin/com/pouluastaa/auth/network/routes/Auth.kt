@@ -2,6 +2,7 @@ package com.pouluastaa.auth.network.routes
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.Endpoints
+import com.pouluastaa.auth.network.mapper.toEmailSignUpPayload
 import com.pouluastaa.auth.network.model.*
 import com.pouluastaa.auth.network.routes.utils.handleGoogleAuthentication
 import io.ktor.http.*
@@ -10,7 +11,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
-import redis.clients.jedis.JedisPool
 
 fun Route.auth(repo: AuthRepository) {
     route(Endpoints.Auth.route) {
@@ -26,6 +26,12 @@ fun Route.auth(repo: AuthRepository) {
 
                 jsonObj.containsKey("email") && jsonObj.containsKey("username") -> {
                     val payload = Json.decodeFromString<EmailSignUpRequest>(reqString)
+                    val response = repo.emailSignUp(payload.toEmailSignUpPayload())
+
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = response
+                    )
                 }
 
                 jsonObj.containsKey("password") -> {
@@ -35,7 +41,7 @@ fun Route.auth(repo: AuthRepository) {
                 else -> return@post call.respond(
                     status = HttpStatusCode.OK,
                     message = AuthenticationResponse(
-                        status = AuthenticationResponseStatus.SERVER_ERROR,
+                        status = AuthStatusResponse.SERVER_ERROR,
                     )
                 )
             }

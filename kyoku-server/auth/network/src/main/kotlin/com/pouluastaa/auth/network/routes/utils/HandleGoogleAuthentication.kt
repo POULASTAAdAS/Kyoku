@@ -5,10 +5,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.core.domain.model.GoogleAuthPayloadDto
+import com.poulastaa.auth.domain.model.GoogleAuthPayloadDto
 import com.pouluastaa.auth.network.mapper.toAuthResponse
 import com.pouluastaa.auth.network.model.AuthenticationResponse
-import com.pouluastaa.auth.network.model.AuthenticationResponseStatus
+import com.pouluastaa.auth.network.model.AuthStatusResponse
 import com.pouluastaa.auth.network.model.GoogleAuthRequest
 import io.ktor.http.*
 import io.ktor.server.response.*
@@ -21,7 +21,7 @@ suspend fun RoutingContext.handleGoogleAuthentication(
     val token = req.verifyTokenId() ?: return call.respond(
         status = HttpStatusCode.OK,
         message = AuthenticationResponse(
-            status = AuthenticationResponseStatus.TOKEN_EXPIRED,
+            status = AuthStatusResponse.TOKEN_EXPIRED,
         )
     )
 
@@ -31,7 +31,7 @@ suspend fun RoutingContext.handleGoogleAuthentication(
         return call.respond(
             status = HttpStatusCode.OK,
             message = AuthenticationResponse(
-                status = AuthenticationResponseStatus.SERVER_ERROR,
+                status = AuthStatusResponse.SERVER_ERROR,
             )
         )
     }

@@ -14,6 +14,15 @@ create table if not exists User(
 );
 
 create table if not exists UserJWTRelation(
-	userId bigint references User(id) on delete cascade,
-    refreshToken varchar(2000) not null
+	userId bigint unique references `User`(id) on delete cascade,
+    refreshToken varchar(2000) not null,
+    
+    primary key(userId)
 );
+
+create table if not exists EmailVerification(
+	userId bigint unique references `User`(id) on delete cascade,
+    `status` bool not null default false
+);
+
+

@@ -4,7 +4,9 @@ import com.google.gson.Gson
 import com.poulastaa.core.database.user.dao.CountryDao
 import com.poulastaa.core.database.user.dao.UserDao
 import com.poulastaa.core.database.user.entity.CountryEntity
+import com.poulastaa.core.database.user.entity.EmailVerificationEntity
 import com.poulastaa.core.database.user.entity.UserEntity
+import com.poulastaa.core.database.user.entity.UserJWTRelationEntity
 import com.poulastaa.core.database.user.mapper.toDbUserDto
 import com.poulastaa.core.database.util.query
 import com.poulastaa.core.domain.model.DBUserDto
@@ -12,12 +14,14 @@ import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insertIgnore
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.upperCase
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.SetParams
 
 class ExposedLocalAuthDatasource(
-    private val redis: JedisPool,
+    private val redisPool: JedisPool,
 ) : LocalAuthDatasource {
 
     private val countryListMap = mapOf(
@@ -25,12 +29,12 @@ class ExposedLocalAuthDatasource(
         "US" to "United States"
     )
 
-    override suspend fun getCountryId(countryCode: String): Int? {
+    override suspend fun getCountryIdFromCountryCode(countryCode: String): Int? {
         val country = countryListMap.firstNotNullOfOrNull { (code, value) ->
             if (code.equals(countryCode, ignoreCase = true)) value else null
         } ?: return null
 
-        val cachedCountryId = redis.resource.use { jedis ->
+        val cachedCountryId = redisPool.resource.use { jedis ->
             jedis.get("countryId:${country.uppercase()}")
         }
 
@@ -43,7 +47,7 @@ class ExposedLocalAuthDatasource(
             }.singleOrNull()
         } ?: return null
 
-        redis.resource.use { jedis ->
+        redisPool.resource.use { jedis ->
             jedis.set(
                 "countryId:${dao.country.uppercase()}",
                 dao.id.value.toString(),
@@ -60,7 +64,7 @@ class ExposedLocalAuthDatasource(
         val gson = Gson()
         val redisKey = "user:${type.name}:${email}"
 
-        val userStr = redis.resource.use { jedis ->
+        val userStr = redisPool.resource.use { jedis ->
             jedis.get(redisKey)
         }
 
@@ -72,7 +76,7 @@ class ExposedLocalAuthDatasource(
             }.firstOrNull()
         } ?: return null
 
-        redis.resource.use { jedis ->
+        redisPool.resource.use { jedis ->
             jedis.set(
                 redisKey,
                 gson.toJson(user.toDbUserDto()),
@@ -83,9 +87,58 @@ class ExposedLocalAuthDatasource(
         return user.toDbUserDto()
     }
 
-    override suspend fun createGoogleUser(user: ServerUserDto): DBUserDto =
-        DBUserDto("", "", "", "", -1, java.time.LocalDate.now())
+    override suspend fun createGoogleUser(user: ServerUserDto): DBUserDto = createUser(user).toDbUserDto()
 
-    override suspend fun createEmailUser(payload: ServerUserDto, refreshToken: String): DBUserDto =
-        DBUserDto("", "", "", "", -1, java.time.LocalDate.now())
+    override suspend fun isEmailUserEmailVerified(userId: Long): Boolean {
+        val redisKey = "emailVerificationStatus:${userId}"
+
+        val redisStatus = redisPool.resource.use { jedis ->
+            jedis.get(redisKey)
+        }
+
+        if (redisStatus != null) return redisStatus.toBoolean()
+
+        val dbStatus = query {
+            EmailVerificationEntity.select {
+                EmailVerificationEntity.userId eq userId
+            }.map { row ->
+                row[EmailVerificationEntity.status]
+            }.firstOrNull()
+        } == true
+
+
+        redisPool.resource.use { jedis ->
+            jedis.set(
+                redisKey,
+                dbStatus.toString(),
+                SetParams.setParams().nx().ex(15 * 60) // 15 minute
+            )
+        }
+
+        return dbStatus
+    }
+
+    override suspend fun createEmailUser(user: ServerUserDto, refreshToken: String): DBUserDto {
+        val dbUser = createUser(user)
+
+        query {
+            UserJWTRelationEntity.insertIgnore { statement ->
+                statement[UserJWTRelationEntity.userId] = dbUser.id.value
+                statement[UserJWTRelationEntity.refreshToken] = refreshToken
+            }
+        }
+
+        return dbUser.toDbUserDto()
+    }
+
+    private suspend fun createUser(user: ServerUserDto) = query {
+        UserDao.new {
+            this.email = user.email
+            this.username = user.username
+            this.userType = user.type.name
+            this.passwordHash = user.password
+            this.profilePicUrl = user.profilePicUrl
+            this.countryId = user.countryId
+        }
+    }
 }
