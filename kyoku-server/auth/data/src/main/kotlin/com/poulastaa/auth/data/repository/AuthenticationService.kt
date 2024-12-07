@@ -45,18 +45,20 @@ class AuthenticationService(
                     )
                 )
 
+                // todo send welcome mail
+
                 AuthResponseDto(
                     status = AuthResponseStatusDto.USER_CREATED,
                     user = user.toUserDto()
                 )
             }
 
-            user.bDate == null -> AuthResponseDto(
+            user.bDate == null -> AuthResponseDto( // todo send welcome-back mail
                 status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
                 user = user.toUserDto()
             )
 
-            else -> AuthResponseDto(
+            else -> AuthResponseDto( // todo send welcome-back mail
                 status = AuthResponseStatusDto.USER_FOUND,
                 user = user.toUserDto()
             )
@@ -64,7 +66,7 @@ class AuthenticationService(
     }
 
     override suspend fun emailSignUp(payload: EmailSignUpPayload): AuthResponseDto {
-        if (emailValidator.validateEmail(payload.email)) return AuthResponseDto(
+        if (!emailValidator.isValidEmail(payload.email)) return AuthResponseDto(
             status = AuthResponseStatusDto.INVALID_EMAIL
         )
 
@@ -79,7 +81,6 @@ class AuthenticationService(
             val countryId = countryIdDef.await() ?: return@coroutineScope AuthResponseDto()
             val (refreshToken, accessToken) = tokenDef.await()
 
-
             val user = db.createEmailUser(
                 user = ServerUserDto(
                     email = payload.email,
@@ -90,6 +91,8 @@ class AuthenticationService(
                 ),
                 refreshToken = refreshToken
             )
+
+            // todo send email verification mail
 
             AuthResponseDto(
                 status = AuthResponseStatusDto.USER_CREATED,
@@ -102,6 +105,39 @@ class AuthenticationService(
         }
     }
 
+    override suspend fun emailSignIn(payload: EmailSignInPayload): AuthResponseDto {
+        if (!emailValidator.isValidEmail(payload.email)) return AuthResponseDto(
+            status = AuthResponseStatusDto.INVALID_EMAIL
+        )
+
+        val dbUser = db.getUsersByEmail(payload.email, UserType.EMAIL)
+
+        return when {
+            dbUser == null -> AuthResponseDto(
+                status = AuthResponseStatusDto.USER_NOT_FOUND
+            )
+
+            verifyPassword(payload.password, dbUser.passwordHash) == false -> AuthResponseDto(
+                status = AuthResponseStatusDto.PASSWORD_DOES_NOT_MATCH
+            )
+
+            !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
+                status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
+                user = dbUser.toUserDto()
+            ) // todo send verification mail
+
+            dbUser.bDate == null -> AuthResponseDto(
+                status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
+                user = dbUser.toUserDto()
+            ) // todo send email signIn verification mail
+
+            else -> AuthResponseDto(
+                status = AuthResponseStatusDto.USER_FOUND,
+                user = dbUser.toUserDto()
+            ) // todo send email signIn verification mail
+        }
+    }
+
     private suspend fun checkIfEmailUserAlreadyExists(payload: EmailSignUpPayload): AuthResponseDto? {
         val dbUser = db.getUsersByEmail(payload.email, UserType.EMAIL)
 
@@ -109,7 +145,7 @@ class AuthenticationService(
             dbUser != null && !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
                 user = dbUser.toUserDto()
-            )
+            ) // todo generate email verification mail
 
             dbUser != null -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_ALREADY_IN_USE

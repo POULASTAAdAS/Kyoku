@@ -3,7 +3,7 @@ package com.poulastaa.auth.data.repository
 import java.net.InetAddress
 
 class EmailVerificationUserCase {
-    suspend fun validateEmail(email: String): Boolean {
+    suspend fun isValidEmail(email: String): Boolean {
         if (!email.isValidEmail() || !email.isValidDomain()) return false
 
 

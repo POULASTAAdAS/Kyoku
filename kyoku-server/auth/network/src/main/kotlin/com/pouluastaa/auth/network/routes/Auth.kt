@@ -2,6 +2,8 @@ package com.pouluastaa.auth.network.routes
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.Endpoints
+import com.pouluastaa.auth.network.mapper.toAuthResponse
+import com.pouluastaa.auth.network.mapper.toEmailSignInPayload
 import com.pouluastaa.auth.network.mapper.toEmailSignUpPayload
 import com.pouluastaa.auth.network.model.*
 import com.pouluastaa.auth.network.routes.utils.handleGoogleAuthentication
@@ -26,7 +28,7 @@ fun Route.auth(repo: AuthRepository) {
 
                 jsonObj.containsKey("email") && jsonObj.containsKey("username") -> {
                     val payload = Json.decodeFromString<EmailSignUpRequest>(reqString)
-                    val response = repo.emailSignUp(payload.toEmailSignUpPayload())
+                    val response = repo.emailSignUp(payload.toEmailSignUpPayload()).toAuthResponse()
 
                     call.respond(
                         status = HttpStatusCode.OK,
@@ -36,6 +38,12 @@ fun Route.auth(repo: AuthRepository) {
 
                 jsonObj.containsKey("password") -> {
                     val payload = Json.decodeFromString<EmailLogInRequest>(reqString)
+                    val response = repo.emailSignIn(payload.toEmailSignInPayload()).toAuthResponse()
+
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = response
+                    )
                 }
 
                 else -> return@post call.respond(

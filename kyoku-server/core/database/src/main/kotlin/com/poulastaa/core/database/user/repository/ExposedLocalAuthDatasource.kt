@@ -1,6 +1,8 @@
 package com.poulastaa.core.database.user.repository
 
 import com.google.gson.Gson
+import com.poulastaa.core.database.user.DbManager.kyokuDbQuery
+import com.poulastaa.core.database.user.DbManager.userDbQuery
 import com.poulastaa.core.database.user.dao.CountryDao
 import com.poulastaa.core.database.user.dao.UserDao
 import com.poulastaa.core.database.user.entity.CountryEntity
@@ -8,7 +10,6 @@ import com.poulastaa.core.database.user.entity.EmailVerificationEntity
 import com.poulastaa.core.database.user.entity.UserEntity
 import com.poulastaa.core.database.user.entity.UserJWTRelationEntity
 import com.poulastaa.core.database.user.mapper.toDbUserDto
-import com.poulastaa.core.database.util.query
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
@@ -23,7 +24,6 @@ import redis.clients.jedis.params.SetParams
 class ExposedLocalAuthDatasource(
     private val redisPool: JedisPool,
 ) : LocalAuthDatasource {
-
     private val countryListMap = mapOf(
         "In" to "India",
         "US" to "United States"
@@ -40,8 +40,7 @@ class ExposedLocalAuthDatasource(
 
         if (cachedCountryId != null) return cachedCountryId.toInt()
 
-
-        val dao = query {
+        val dao = kyokuDbQuery {
             CountryDao.find {
                 CountryEntity.country.upperCase() eq country.uppercase()
             }.singleOrNull()
@@ -70,7 +69,7 @@ class ExposedLocalAuthDatasource(
 
         if (userStr != null) return gson.fromJson(userStr, DBUserDto::class.java)
 
-        val user = query {
+        val user = userDbQuery {
             UserDao.find {
                 UserEntity.email eq email and (UserEntity.userType eq type.name)
             }.firstOrNull()
@@ -98,7 +97,7 @@ class ExposedLocalAuthDatasource(
 
         if (redisStatus != null) return redisStatus.toBoolean()
 
-        val dbStatus = query {
+        val dbStatus = userDbQuery {
             EmailVerificationEntity.select {
                 EmailVerificationEntity.userId eq userId
             }.map { row ->
@@ -121,7 +120,7 @@ class ExposedLocalAuthDatasource(
     override suspend fun createEmailUser(user: ServerUserDto, refreshToken: String): DBUserDto {
         val dbUser = createUser(user)
 
-        query {
+        userDbQuery {
             UserJWTRelationEntity.insertIgnore { statement ->
                 statement[UserJWTRelationEntity.userId] = dbUser.id.value
                 statement[UserJWTRelationEntity.refreshToken] = refreshToken
@@ -131,7 +130,7 @@ class ExposedLocalAuthDatasource(
         return dbUser.toDbUserDto()
     }
 
-    private suspend fun createUser(user: ServerUserDto) = query {
+    private suspend fun createUser(user: ServerUserDto) = userDbQuery {
         UserDao.new {
             this.email = user.email
             this.username = user.username

@@ -1,9 +1,6 @@
 package com.pouluastaa.auth.network.mapper
 
-import com.poulastaa.auth.domain.model.AuthResponseDto
-import com.poulastaa.auth.domain.model.AuthResponseStatusDto
-import com.poulastaa.auth.domain.model.EmailSignUpPayload
-import com.poulastaa.auth.domain.model.JwtTokenDto
+import com.poulastaa.auth.domain.model.*
 import com.poulastaa.core.domain.model.UserDto
 import com.pouluastaa.auth.network.model.*
 
@@ -45,4 +42,9 @@ fun EmailSignUpRequest.toEmailSignUpPayload() = EmailSignUpPayload(
     password = this.password,
     username = this.username,
     countryCode = this.countryCode,
+)
+
+fun EmailLogInRequest.toEmailSignInPayload() = EmailSignInPayload(
+    email = this.email,
+    password = this.password,
 )
