@@ -10,6 +10,7 @@ class UserDao(id: EntityID<Long>) : LongEntity(id) {
 
     var username by UserEntity.username
     var email by UserEntity.email
+    var userType by UserEntity.userType
     var passwordHash by UserEntity.passwordHash
     var profilePicUrl by UserEntity.profilePicUrl
     var bDate by UserEntity.bDate

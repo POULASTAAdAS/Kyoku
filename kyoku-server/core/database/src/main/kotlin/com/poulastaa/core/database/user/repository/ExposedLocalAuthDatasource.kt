@@ -11,6 +11,7 @@ import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.upperCase
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.SetParams
@@ -46,7 +47,7 @@ class ExposedLocalAuthDatasource(
             jedis.set(
                 "countryId:${dao.country.uppercase()}",
                 dao.id.value.toString(),
-                SetParams.setParams().nx().ex(3600)
+                SetParams.setParams().nx().ex(3600) // 1 hour
             )
         }
         return dao.id.value
@@ -55,23 +56,31 @@ class ExposedLocalAuthDatasource(
     override suspend fun getUsersByEmail(
         email: String,
         type: UserType,
-    ): List<DBUserDto> {
-        val user = redis.resource.use { jedis ->
-            jedis.get("email:${type.name}")
+    ): DBUserDto? {
+        val gson = Gson()
+        val redisKey = "user:${type.name}:${email}"
+
+        val userStr = redis.resource.use { jedis ->
+            jedis.get(redisKey)
         }
 
-        if (user != null) return listOf(Gson().fromJson(user.toString(), DBUserDto::class.java))
+        if (userStr != null) return gson.fromJson(userStr, DBUserDto::class.java)
 
-        val users = query {
+        val user = query {
             UserDao.find {
-                UserEntity.email eq email
-            }.map { it.toDbUserDto() }
+                UserEntity.email eq email and (UserEntity.userType eq type.name)
+            }.firstOrNull()
+        } ?: return null
+
+        redis.resource.use { jedis ->
+            jedis.set(
+                redisKey,
+                gson.toJson(user.toDbUserDto()),
+                SetParams.setParams().nx().ex(15 * 60) // 15 minute
+            )
         }
 
-        // todo fix userEntity add user type
-        // todo add data to redis catch
-
-        return users
+        return user.toDbUserDto()
     }
 
     override suspend fun createGoogleUser(user: ServerUserDto): DBUserDto =

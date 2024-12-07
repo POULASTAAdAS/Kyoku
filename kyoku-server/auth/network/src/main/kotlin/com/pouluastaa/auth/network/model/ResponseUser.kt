@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ResponseUser(
     val email: String = "",
     val username: String = "",
-    val profilePicUrl: String ="",
+    val profilePicUrl: String? = null,
 )

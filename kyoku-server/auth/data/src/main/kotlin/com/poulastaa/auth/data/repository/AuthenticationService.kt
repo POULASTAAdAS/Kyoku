@@ -15,12 +15,16 @@ class AuthenticationService(
         countryCode: String,
     ): AuthResponseDto = coroutineScope {
         val countryIdDef = async { db.getCountryId(countryCode) }
-        val users = async { db.getUsersByEmail(payload.email, UserType.GOOGLE) }
+        val userDef = async { db.getUsersByEmail(payload.email, UserType.GOOGLE) }
 
         val countryId = countryIdDef.await() ?: return@coroutineScope AuthResponseDto()
-        val user = users.await().find { user ->
-            verifyPassword(payload.sub, user.passwordHash)
-        }
+        val user = userDef.await()
+
+        if (user != null &&
+            !verifyPassword(payload.sub, user.passwordHash)
+        ) return@coroutineScope AuthResponseDto(
+            status = AuthResponseStatusDto.PASSWORD_DOES_NOT_MATCH
+        )
 
         when {
             user == null -> {

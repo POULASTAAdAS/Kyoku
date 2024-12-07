@@ -20,8 +20,9 @@ services:
     volumes:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./mysql-kyoku-data/data:/var/lib/mysql
+
   redis-kyoku:
-    image: redis:7.4.1
+    image: redis/redis-stack:latest
     container_name: redis-kyoku
     restart: always
     ports:

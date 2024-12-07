@@ -6,7 +6,7 @@ data class DBUserDto(
     val email: String,
     val userName: String,
     val passwordHash: String,
-    val profilePicUrl: String,
+    val profilePicUrl: String?,
     val countryCode: Int,
     val bDate: LocalDate?,
 )
