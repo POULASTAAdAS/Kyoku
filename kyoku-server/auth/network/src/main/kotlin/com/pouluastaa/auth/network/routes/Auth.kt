@@ -38,7 +38,7 @@ fun Route.auth(repo: AuthRepository) {
 
                 jsonObj.containsKey("password") -> {
                     val payload = Json.decodeFromString<EmailLogInRequest>(reqString)
-                    val response = repo.emailSignIn(payload.toEmailSignInPayload()).toAuthResponse()
+                    val response = repo.emailLogIn(payload.toEmailSignInPayload()).toAuthResponse()
 
                     call.respond(
                         status = HttpStatusCode.OK,

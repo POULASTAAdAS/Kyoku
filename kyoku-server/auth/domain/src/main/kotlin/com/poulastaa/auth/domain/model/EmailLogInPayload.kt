@@ -1,6 +1,6 @@
 package com.poulastaa.auth.domain.model
 
-data class EmailSignInPayload(
+data class EmailLogInPayload(
     val email: String,
     val password: String,
 )

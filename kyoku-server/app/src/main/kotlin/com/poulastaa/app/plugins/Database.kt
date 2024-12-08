@@ -1,6 +1,6 @@
 package com.poulastaa.app.plugins
 
-import com.poulastaa.core.database.user.DbManager
+import com.poulastaa.core.database.SQLDbManager
 import io.ktor.server.application.*
 
 fun Application.configureDatabases() {
@@ -9,7 +9,7 @@ fun Application.configureDatabases() {
     val userJdbcUrl = environment.config.property("storage.userJdbcURL").getString()
     val kyokuJdbcUrl = environment.config.property("storage.JdbcURL").getString()
 
-    DbManager.initializeDatabases(
+    SQLDbManager.initializeDatabases(
         driverClass = driverClass,
         userDbUrl = userJdbcUrl,
         kyokuDbUrl = kyokuJdbcUrl

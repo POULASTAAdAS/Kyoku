@@ -1,6 +1,6 @@
-package com.poulastaa.core.database.user.mapper
+package com.poulastaa.core.database.mapper
 
-import com.poulastaa.core.database.user.dao.UserDao
+import com.poulastaa.core.database.dao.UserDao
 import com.poulastaa.core.domain.model.DBUserDto
 
 fun UserDao.toDbUserDto() = DBUserDto(

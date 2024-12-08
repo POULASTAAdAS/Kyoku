@@ -128,3 +128,9 @@ koin = [
     "koin",
     "koin-logger-slf4j"
 ]
+
+ktor-auth = [
+    "ktor-server-auth",
+    "ktor-server-auth-jwt",
+    "ktor-server-sessions"
+]

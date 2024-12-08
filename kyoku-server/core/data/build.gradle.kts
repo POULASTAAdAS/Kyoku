@@ -8,4 +8,5 @@ dependencies {
     implementation(project(":core:core-database"))
 
     implementation(libs.bundles.koin)
+    implementation(libs.kotlin.gson)
 }

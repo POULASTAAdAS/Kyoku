@@ -9,12 +9,7 @@ interface LocalAuthDatasource {
 
     suspend fun getUsersByEmail(email: String, type: UserType): DBUserDto?
 
-    suspend fun createGoogleUser(user: ServerUserDto): DBUserDto
-
     suspend fun isEmailUserEmailVerified(userId: Long): Boolean
 
-    suspend fun createEmailUser(
-        user: ServerUserDto,
-        refreshToken: String,
-    ): DBUserDto
+    suspend fun createUser(user: ServerUserDto): DBUserDto
 }

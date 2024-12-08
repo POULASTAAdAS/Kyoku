@@ -1,4 +1,4 @@
-package com.poulastaa.core.database.user
+package com.poulastaa.core.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object DbManager {
+object SQLDbManager {
     private lateinit var userDb: Database
     private lateinit var kyokuDb: Database
     private var isInitialized = false
@@ -26,14 +26,14 @@ object DbManager {
 
         if (isInitialized) throw IllegalStateException("Databases are already initialized!")
 
-        userDb = Database.connect(
+        userDb = Database.Companion.connect(
             provideDatasource(
                 jdbcUrl = userDbUrl,
                 driverClass = driverClass,
             )
         )
 
-        kyokuDb = Database.connect(
+        kyokuDb = Database.Companion.connect(
             provideDatasource(
                 jdbcUrl = kyokuDbUrl,
                 driverClass = driverClass,

@@ -6,5 +6,4 @@ import kotlinx.serialization.Serializable
 data class AuthenticationResponse(
     val status: AuthStatusResponse = AuthStatusResponse.SERVER_ERROR,
     val user: ResponseUser = ResponseUser(),
-    val token: JwtTokenResponse = JwtTokenResponse(),
 )

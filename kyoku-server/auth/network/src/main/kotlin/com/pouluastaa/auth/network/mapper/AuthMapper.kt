@@ -7,7 +7,6 @@ import com.pouluastaa.auth.network.model.*
 fun AuthResponseDto.toAuthResponse() = AuthenticationResponse(
     status = this.status.toAuthenticationResponseStatus(),
     user = this.user.toResponseUser(),
-    token = this.token.toJwtTokenResponse()
 )
 
 private fun AuthResponseStatusDto.toAuthenticationResponseStatus() = when (this) {
@@ -32,11 +31,6 @@ private fun UserDto.toResponseUser() = ResponseUser(
     profilePicUrl = this.profilePicUrl
 )
 
-private fun JwtTokenDto.toJwtTokenResponse() = JwtTokenResponse(
-    refreshToken = this.refreshToken,
-    accessToken = this.accessToken,
-)
-
 fun EmailSignUpRequest.toEmailSignUpPayload() = EmailSignUpPayload(
     email = this.email,
     password = this.password,
@@ -44,7 +38,7 @@ fun EmailSignUpRequest.toEmailSignUpPayload() = EmailSignUpPayload(
     countryCode = this.countryCode,
 )
 
-fun EmailLogInRequest.toEmailSignInPayload() = EmailSignInPayload(
+fun EmailLogInRequest.toEmailSignInPayload() = EmailLogInPayload(
     email = this.email,
     password = this.password,
 )

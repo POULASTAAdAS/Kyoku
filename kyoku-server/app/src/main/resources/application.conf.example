@@ -1,0 +1,24 @@
+ktor {
+  deployment {
+    port = 8080
+    port = ${?PORT}
+  }
+
+  application {
+    modules = [com.poulastaa.app.AppKt.module]
+  }
+}
+
+jwt {
+  privateKey = "your private key"
+  audience = "jwt-audience"
+  issuer = "http://0.0.0.0:8080/"
+  realm = "com.poulastaa"
+}
+
+storage {
+  driverClassName = "com.mysql.cj.jdbc.Driver"
+
+  userJdbcURL = "your jdbc url"
+  JdbcURL = "your jdbc url"
+}

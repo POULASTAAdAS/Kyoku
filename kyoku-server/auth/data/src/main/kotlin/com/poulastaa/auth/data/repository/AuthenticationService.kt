@@ -3,6 +3,7 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.data.mapper.toUserDto
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.domain.repository.AuthRepository
+import com.poulastaa.auth.domain.repository.JWTRepository
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
@@ -11,8 +12,9 @@ import kotlinx.coroutines.coroutineScope
 import org.mindrot.jbcrypt.BCrypt
 
 class AuthenticationService(
-    private val db: LocalAuthDatasource,
     private val emailValidator: EmailVerificationUserCase,
+    private val db: LocalAuthDatasource,
+    private val jwt: JWTRepository,
 ) : AuthRepository {
     override suspend fun googleAuth(
         payload: GoogleAuthPayloadDto,
@@ -34,7 +36,7 @@ class AuthenticationService(
             user == null -> {
                 val passHash = payload.sub.encryptPassword() ?: return@coroutineScope AuthResponseDto()
 
-                val user = db.createGoogleUser(
+                val user = db.createUser(
                     user = ServerUserDto(
                         email = payload.email,
                         type = UserType.GOOGLE,
@@ -72,40 +74,28 @@ class AuthenticationService(
 
         checkIfEmailUserAlreadyExists(payload)?.let { return it }
 
-        return coroutineScope {
-            val passHash = payload.password.encryptPassword() ?: return@coroutineScope AuthResponseDto()
-            val countryIdDef = async { db.getCountryIdFromCountryCode(payload.countryCode) }
-            // todo generate token from jwtRepo
-            val tokenDef = async { Pair("", "") }
+        val passHash = payload.password.encryptPassword() ?: return AuthResponseDto()
+        val countryId = db.getCountryIdFromCountryCode(payload.countryCode) ?: return AuthResponseDto()
 
-            val countryId = countryIdDef.await() ?: return@coroutineScope AuthResponseDto()
-            val (refreshToken, accessToken) = tokenDef.await()
-
-            val user = db.createEmailUser(
-                user = ServerUserDto(
-                    email = payload.email,
-                    type = UserType.EMAIL,
-                    username = payload.username,
-                    password = passHash,
-                    countryId = countryId,
-                ),
-                refreshToken = refreshToken
+        val user = db.createUser(
+            user = ServerUserDto(
+                email = payload.email,
+                type = UserType.EMAIL,
+                username = payload.username,
+                password = passHash,
+                countryId = countryId,
             )
+        )
 
-            // todo send email verification mail
+        // todo send email verification mail
 
-            AuthResponseDto(
-                status = AuthResponseStatusDto.USER_CREATED,
-                user = user.toUserDto(),
-                token = JwtTokenDto(
-                    refreshToken = refreshToken,
-                    accessToken = accessToken
-                )
-            )
-        }
+        return AuthResponseDto(
+            status = AuthResponseStatusDto.USER_CREATED,
+            user = user.toUserDto()
+        )
     }
 
-    override suspend fun emailSignIn(payload: EmailSignInPayload): AuthResponseDto {
+    override suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto {
         if (!emailValidator.isValidEmail(payload.email)) return AuthResponseDto(
             status = AuthResponseStatusDto.INVALID_EMAIL
         )
@@ -124,17 +114,17 @@ class AuthenticationService(
             !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
                 user = dbUser.toUserDto()
-            ) // todo send verification mail
+            ) // todo send email verification mail
 
             dbUser.bDate == null -> AuthResponseDto(
                 status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
                 user = dbUser.toUserDto()
-            ) // todo send email signIn verification mail
+            ) // todo send logIn mail
 
             else -> AuthResponseDto(
                 status = AuthResponseStatusDto.USER_FOUND,
                 user = dbUser.toUserDto()
-            ) // todo send email signIn verification mail
+            ) // todo send logIn mail
         }
     }
 
@@ -145,7 +135,7 @@ class AuthenticationService(
             dbUser != null && !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
                 user = dbUser.toUserDto()
-            ) // todo generate email verification mail
+            ) // todo send email verification mail
 
             dbUser != null -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_ALREADY_IN_USE

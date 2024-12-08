@@ -1,4 +1,4 @@
-package com.poulastaa.core.database.user.entity
+package com.poulastaa.core.database.entity
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
