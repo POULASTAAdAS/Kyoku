@@ -4,7 +4,7 @@ import com.poulastaa.auth.data.repository.AuthenticationService
 import com.poulastaa.auth.data.repository.EmailVerificationUserCase
 import com.poulastaa.auth.data.repository.JWTRepositoryService
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.auth.domain.repository.JWTRepository
+import com.poulastaa.core.domain.repository.JWTRepository
 import org.koin.dsl.module
 
 fun provideAuthService() = module {
@@ -16,7 +16,6 @@ fun provideAuthService() = module {
         AuthenticationService(
             db = get(),
             emailValidator = get(),
-            jwt = get(),
         )
     }
 }

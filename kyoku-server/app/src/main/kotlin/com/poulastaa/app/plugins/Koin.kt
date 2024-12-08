@@ -2,9 +2,10 @@ package com.poulastaa.app.plugins
 
 import com.poulastaa.auth.data.di.provideAuthService
 import com.poulastaa.auth.data.di.provideJWTService
-import com.poulastaa.core.data.di.provideGson
-import com.poulastaa.core.database.di.provideJedisPool
-import com.poulastaa.core.database.di.provideUserDatabase
+import com.poulastaa.core.data.di.provideGsonService
+import com.poulastaa.core.database.di.provideJedisPoolService
+import com.poulastaa.core.database.di.provideUserDatabaseService
+import com.poulastaa.notification.data.di.provideNotificationService
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
@@ -15,15 +16,16 @@ fun Application.configureKoin(
 ) {
     install(Koin) {
         modules(
-            provideGson(),
-            provideJedisPool(),
-            provideUserDatabase(),
+            provideGsonService(),
+            provideJedisPoolService(),
+            provideUserDatabaseService(),
             provideJWTService(
                 issuer = issuer,
                 audience = audience,
                 privateKeyPayload = privateKeyPayload
             ),
-            provideAuthService()
+            provideAuthService(),
+            provideNotificationService()
         )
     }
 }

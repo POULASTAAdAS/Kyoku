@@ -3,7 +3,6 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.data.mapper.toUserDto
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.auth.domain.repository.JWTRepository
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
@@ -14,7 +13,6 @@ import org.mindrot.jbcrypt.BCrypt
 class AuthenticationService(
     private val emailValidator: EmailVerificationUserCase,
     private val db: LocalAuthDatasource,
-    private val jwt: JWTRepository,
 ) : AuthRepository {
     override suspend fun googleAuth(
         payload: GoogleAuthPayloadDto,

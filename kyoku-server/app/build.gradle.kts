@@ -10,11 +10,14 @@ dependencies {
     implementation(project(":search:search-domain"))
     implementation(project(":suggestion:suggestion-domain"))
     implementation(project(":user:user-domain"))
+    implementation(project(":notification:notification-domain"))
+
 
     implementation(project(":auth:auth-network"))
 
     implementation(project(":auth:auth-data"))
     implementation(project(":core:core-data"))
+    implementation(project(":notification:notification-data"))
 
     implementation(project(":core:core-database"))
 

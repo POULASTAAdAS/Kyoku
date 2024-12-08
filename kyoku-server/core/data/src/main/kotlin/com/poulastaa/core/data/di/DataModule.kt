@@ -6,7 +6,7 @@ import com.poulastaa.core.data.usecase.LocalDateAdapter
 import org.koin.dsl.module
 import java.time.LocalDate
 
-fun provideGson() = module {
+fun provideGsonService() = module {
     single<Gson> {
         GsonBuilder()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())

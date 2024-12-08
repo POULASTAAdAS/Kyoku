@@ -1,4 +1,4 @@
-package com.poulastaa.auth.domain.repository
+package com.poulastaa.core.domain.repository
 
 typealias JWTToken = String
 

@@ -8,13 +8,13 @@ import com.poulastaa.core.domain.repository.LocalCacheDatasource
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 
-fun provideJedisPool() = module {
+fun provideJedisPoolService() = module {
     single<JedisPool> {
         RedisDbManager.jedisPool()
     }
 }
 
-fun provideUserDatabase() = module {
+fun provideUserDatabaseService() = module {
     single<LocalCacheDatasource> {
         RedisLocalCacheDataSource(
             redisPool = get(),

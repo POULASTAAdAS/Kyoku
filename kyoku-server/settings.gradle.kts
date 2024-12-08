@@ -33,6 +33,8 @@ include("auth:domain")
 project(":auth:domain").name = "auth-domain"
 include("auth:data")
 project(":auth:data").name = "auth-data"
+include("auth:network")
+project(":auth:network").name = "auth-network"
 
 include("details:domain")
 project(":details:domain").name = "details-domain"
@@ -52,5 +54,7 @@ project(":suggestion:data").name = "suggestion-data"
 include("app")
 project(":app").name = "app"
 
-include("auth:network")
-project(":auth:network").name = "auth-network"
+include("notification:domain")
+project(":notification:domain").name = "notification-domain"
+include("notification:data")
+project(":notification:data").name = "notification-data"

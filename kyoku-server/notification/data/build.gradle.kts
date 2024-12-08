@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":core:core-domain"))
-    implementation(project(":core:core-database"))
+    implementation(project(":notification:notification-domain"))
 
     implementation(libs.bundles.koin)
     implementation(libs.kotlin.gson)
