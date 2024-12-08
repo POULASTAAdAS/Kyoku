@@ -28,6 +28,8 @@ jbcrype = "0.4"
 
 gson = "2.8.9"
 
+mail = "2.0.1"
+
 [libraries]
 # gradle
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -78,6 +80,8 @@ redis-clients-jedis = { module = "redis.clients:jedis", version.ref = "jedis" }
 kotlin-bycrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrype" }
 
 kotlin-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
+jakarta-mail = {module = "com.sun.mail:jakarta.mail" , version.ref = "mail"}
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlinJvm" }

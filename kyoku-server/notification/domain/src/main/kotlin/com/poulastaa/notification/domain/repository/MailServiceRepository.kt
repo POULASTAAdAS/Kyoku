@@ -5,6 +5,6 @@ interface MailServiceRepository {
 
     fun sendPasswordResetMail(email: String)
 
-    fun sendWelcomeMail(email: String)
-    fun sendWelcomeBackMail(email: String)
+    fun sendWelcomeMail(email: String, username: String)
+    fun sendWelcomeBackMail(email: String, username: String)
 }

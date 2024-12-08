@@ -3,6 +3,7 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.data.mapper.toUserDto
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.domain.repository.AuthRepository
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
@@ -45,7 +46,12 @@ class AuthenticationService(
                     )
                 )
 
-                // todo send welcome mail
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.WELCOME,
+                        second = "${user.email},${user.userName}"
+                    )
+                )
 
                 AuthResponseDto(
                     status = AuthResponseStatusDto.USER_CREATED,
@@ -53,15 +59,33 @@ class AuthenticationService(
                 )
             }
 
-            user.bDate == null -> AuthResponseDto( // todo send welcome-back mail
-                status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
-                user = user.toUserDto()
-            )
+            user.bDate == null -> {
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.WELCOME_BACK,
+                        second = "${user.email},${user.userName}"
+                    )
+                )
 
-            else -> AuthResponseDto( // todo send welcome-back mail
-                status = AuthResponseStatusDto.USER_FOUND,
-                user = user.toUserDto()
-            )
+                AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
+                    user = user.toUserDto()
+                )
+            }
+
+            else -> {
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.WELCOME_BACK,
+                        second = "${user.email},${user.userName}"
+                    )
+                )
+
+                AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND,
+                    user = user.toUserDto()
+                )
+            }
         }
     }
 
@@ -85,7 +109,12 @@ class AuthenticationService(
             )
         )
 
-        // todo send email verification mail
+        db.sendMail(
+            message = Pair(
+                first = MailType.EMAIL_VERIFICATION,
+                second = user.email
+            )
+        )
 
         return AuthResponseDto(
             status = AuthResponseStatusDto.USER_CREATED,
@@ -109,20 +138,47 @@ class AuthenticationService(
                 status = AuthResponseStatusDto.PASSWORD_DOES_NOT_MATCH
             )
 
-            !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
-                status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
-                user = dbUser.toUserDto()
-            ) // todo send email verification mail
+            !db.isEmailUserEmailVerified(dbUser.id) -> {
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.EMAIL_VERIFICATION,
+                        second = payload.email
+                    )
+                )
 
-            dbUser.bDate == null -> AuthResponseDto(
-                status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
-                user = dbUser.toUserDto()
-            ) // todo send logIn mail
+                AuthResponseDto(
+                    status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
+                    user = dbUser.toUserDto()
+                )
+            }
 
-            else -> AuthResponseDto(
-                status = AuthResponseStatusDto.USER_FOUND,
-                user = dbUser.toUserDto()
-            ) // todo send logIn mail
+            dbUser.bDate == null -> {
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.EMAIL_VERIFICATION,
+                        second = payload.email
+                    )
+                )
+
+                AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_STORE_B_DATE,
+                    user = dbUser.toUserDto()
+                )
+            }
+
+            else -> {
+                db.sendMail(
+                    message = Pair(
+                        first = MailType.EMAIL_VERIFICATION,
+                        second = payload.email
+                    )
+                )
+
+                AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND,
+                    user = dbUser.toUserDto()
+                )
+            }
         }
     }
 
@@ -130,11 +186,6 @@ class AuthenticationService(
         val dbUser = db.getUsersByEmail(payload.email, UserType.EMAIL)
 
         return when {
-            dbUser != null && !db.isEmailUserEmailVerified(dbUser.id) -> AuthResponseDto(
-                status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
-                user = dbUser.toUserDto()
-            ) // todo send email verification mail
-
             dbUser != null -> AuthResponseDto(
                 status = AuthResponseStatusDto.EMAIL_ALREADY_IN_USE
             )

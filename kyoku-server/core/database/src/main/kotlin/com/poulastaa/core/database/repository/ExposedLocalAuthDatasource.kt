@@ -9,10 +9,14 @@ import com.poulastaa.core.database.entity.EmailVerificationEntity
 import com.poulastaa.core.database.entity.UserEntity
 import com.poulastaa.core.database.mapper.toDbUserDto
 import com.poulastaa.core.domain.model.DBUserDto
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
 import com.poulastaa.core.domain.repository.LocalCacheDatasource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.upperCase
@@ -86,4 +90,10 @@ class ExposedLocalAuthDatasource(
             this.countryId = user.countryId
         }
     }.toDbUserDto()
+
+    override fun sendMail(message: Pair<MailType, String>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            cache.produceMail(message)
+        }
+    }
 }

@@ -21,5 +21,10 @@ fun Application.configureRouting() {
             remotePath = ".well-known",
             dir = File("assets/certs")
         )
+
+        staticFiles(
+            remotePath = "images",
+            dir = File("assets/images")
+        )
     }
 }

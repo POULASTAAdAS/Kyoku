@@ -17,8 +17,14 @@ class RedisMailSubscriber(
                 when (type) {
                     MailType.EMAIL_VERIFICATION -> mail.sendEmailVerificationMail(email)
                     MailType.PASSWORD_RESET -> mail.sendPasswordResetMail(email)
-                    MailType.WELCOME -> mail.sendWelcomeMail(email)
-                    MailType.WELCOME_BACK -> mail.sendWelcomeBackMail(email)
+                    MailType.WELCOME -> mail.sendWelcomeMail(
+                        email = email.split(',')[0],
+                        username = email.split(',')[1]
+                    )
+                    MailType.WELCOME_BACK -> mail.sendWelcomeBackMail(
+                        email = email.split(',')[0],
+                        username = email.split(',')[1]
+                    )
                 }
             }
         }

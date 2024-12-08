@@ -8,4 +8,5 @@ dependencies {
 
     implementation(libs.bundles.koin)
     implementation(libs.kotlin.gson)
+    implementation(libs.jakarta.mail)
 }

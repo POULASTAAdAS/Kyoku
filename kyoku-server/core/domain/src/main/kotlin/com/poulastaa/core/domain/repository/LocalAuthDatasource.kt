@@ -1,6 +1,7 @@
 package com.poulastaa.core.domain.repository
 
 import com.poulastaa.core.domain.model.DBUserDto
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 
@@ -12,4 +13,6 @@ interface LocalAuthDatasource {
     suspend fun isEmailUserEmailVerified(userId: Long): Boolean
 
     suspend fun createUser(user: ServerUserDto): DBUserDto
+
+    fun sendMail(message: Pair<MailType, String>)
 }
