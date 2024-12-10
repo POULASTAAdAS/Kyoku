@@ -138,20 +138,6 @@ class AuthenticationService(
                 status = AuthResponseStatusDto.PASSWORD_DOES_NOT_MATCH
             )
 
-            !db.isEmailUserEmailVerified(dbUser.id) -> {
-                db.sendMail(
-                    message = Pair(
-                        first = MailType.EMAIL_VERIFICATION,
-                        second = payload.email
-                    )
-                )
-
-                AuthResponseDto(
-                    status = AuthResponseStatusDto.EMAIL_NOT_VERIFIED,
-                    user = dbUser.toUserDto()
-                )
-            }
-
             dbUser.bDate == null -> {
                 db.sendMail(
                     message = Pair(
@@ -180,6 +166,10 @@ class AuthenticationService(
                 )
             }
         }
+    }
+
+    override suspend fun verifyEmail(email: String) {
+
     }
 
     private suspend fun checkIfEmailUserAlreadyExists(payload: EmailSignUpPayload): AuthResponseDto? {

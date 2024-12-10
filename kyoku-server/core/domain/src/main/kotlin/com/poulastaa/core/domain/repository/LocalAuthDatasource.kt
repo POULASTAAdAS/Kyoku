@@ -10,8 +10,6 @@ interface LocalAuthDatasource {
 
     suspend fun getUsersByEmail(email: String, type: UserType): DBUserDto?
 
-    suspend fun isEmailUserEmailVerified(userId: Long): Boolean
-
     suspend fun createUser(user: ServerUserDto): DBUserDto
 
     fun sendMail(message: Pair<MailType, String>)

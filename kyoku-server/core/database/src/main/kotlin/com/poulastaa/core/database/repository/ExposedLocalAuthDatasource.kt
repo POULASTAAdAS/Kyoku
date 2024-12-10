@@ -5,7 +5,6 @@ import com.poulastaa.core.database.SQLDbManager.userDbQuery
 import com.poulastaa.core.database.dao.CountryDao
 import com.poulastaa.core.database.dao.UserDao
 import com.poulastaa.core.database.entity.CountryEntity
-import com.poulastaa.core.database.entity.EmailVerificationEntity
 import com.poulastaa.core.database.entity.UserEntity
 import com.poulastaa.core.database.mapper.toDbUserDto
 import com.poulastaa.core.domain.model.DBUserDto
@@ -18,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.upperCase
 
 class ExposedLocalAuthDatasource(
@@ -62,22 +60,6 @@ class ExposedLocalAuthDatasource(
         cache.setUserByEmail(email, type, dbUser.toDbUserDto())
 
         return dbUser.toDbUserDto()
-    }
-
-    override suspend fun isEmailUserEmailVerified(userId: Long): Boolean {
-        cache.cacheEmailVerificationStatus(userId)?.let { return@let it }
-
-        val dbStatus = userDbQuery {
-            EmailVerificationEntity.select {
-                EmailVerificationEntity.userId eq userId
-            }.map { row ->
-                row[EmailVerificationEntity.status]
-            }.firstOrNull()
-        } == true
-
-        cache.setEmailVerificationStatus(userId, dbStatus)
-
-        return dbStatus
     }
 
     override suspend fun createUser(user: ServerUserDto): DBUserDto = userDbQuery {

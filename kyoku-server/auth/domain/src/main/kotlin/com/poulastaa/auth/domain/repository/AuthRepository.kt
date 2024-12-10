@@ -9,4 +9,6 @@ interface AuthRepository {
     suspend fun googleAuth(payload: GoogleAuthPayloadDto, countryCode: String): AuthResponseDto
     suspend fun emailSignUp(payload: EmailSignUpPayload): AuthResponseDto
     suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto
+
+    suspend fun verifyEmail(email: String)
 }
