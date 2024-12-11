@@ -5,6 +5,7 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.poulastaa.core.domain.repository.Email
 import com.poulastaa.core.domain.repository.JWTRepository
 import com.poulastaa.core.domain.repository.JWTToken
 import java.security.KeyFactory
@@ -17,7 +18,7 @@ import java.util.*
 class JWTRepositoryService(
     private val issuer: String,
     private val audience: String,
-    private val privateKeyPayload: String,
+    val privateKeyPayload: String,
 ) : JWTRepository {
     private val privateKey: PrivateKey = KeyFactory
         .getInstance("RSA")
@@ -39,6 +40,18 @@ class JWTRepositoryService(
             .withClaim(type.claimKey, email)
             .withExpiresAt(Date(System.currentTimeMillis() + type.validationTime))
             .sign(algorithm)
+    }
+
+    override fun verifyToken(
+        token: String,
+        type: JWTRepository.TokenType,
+    ): Email? = try {
+        getJWTVerifier()
+            .verify(token)
+            .getClaim(type.claimKey)
+            .asString()
+    } catch (_: Exception) {
+        null
     }
 
     private fun getPublicKey(): RSAPublicKey {

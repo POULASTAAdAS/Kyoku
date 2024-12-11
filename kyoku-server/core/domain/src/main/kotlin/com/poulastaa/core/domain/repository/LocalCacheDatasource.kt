@@ -8,12 +8,19 @@ interface LocalCacheDatasource {
     fun cachedCountryId(key: String): Int?
     fun setCountryId(key: String, value: String)
 
-    fun cachedUserByEmail(key: String, type: UserType): DBUserDto?
-    fun setUserByEmail(key: String, type: UserType, value: DBUserDto)
+    fun cachedUserByEmail(key: Email, type: UserType): DBUserDto?
+    fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
 
-    fun cacheEmailVerificationStatus(key: Long): Boolean?
-    fun setEmailVerificationStatus(key: Long, value: Boolean)
+    fun isVerificationTokenUsed(token: String): Boolean
+    fun storeVerificationToken(token: String)
 
-    fun produceMail(message: Pair<MailType, String>)
-    suspend fun consumeMail(block: (Pair<MailType, String>) -> Unit)
+    fun cacheEmailVerificationStatus(key: Email): Boolean?
+    fun setEmailVerificationStatus(key: Email)
+    fun deleteEmailVerificationStatus(key: Email)
+
+    fun produceMail(message: Pair<MailType, Email>)
+    suspend fun consumeMail(block: (Pair<MailType, Email>) -> Unit)
+    fun getEmailVerificationState(email: String): Boolean
+
+    fun isResetPasswordTokenUsed(token: String): Boolean
 }

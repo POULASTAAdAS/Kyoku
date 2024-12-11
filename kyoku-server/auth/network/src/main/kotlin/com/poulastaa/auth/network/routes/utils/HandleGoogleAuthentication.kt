@@ -1,4 +1,4 @@
-package com.pouluastaa.auth.network.routes.utils
+package com.poulastaa.auth.network.routes.utils
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
@@ -6,10 +6,10 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.domain.model.GoogleAuthPayloadDto
-import com.pouluastaa.auth.network.mapper.toAuthResponse
-import com.pouluastaa.auth.network.model.AuthenticationResponse
-import com.pouluastaa.auth.network.model.AuthStatusResponse
-import com.pouluastaa.auth.network.model.GoogleAuthRequest
+import com.poulastaa.auth.network.mapper.toAuthResponse
+import com.poulastaa.auth.network.model.AuthenticationResponse
+import com.poulastaa.auth.network.model.AuthStatusResponse
+import com.poulastaa.auth.network.model.GoogleAuthRequest
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

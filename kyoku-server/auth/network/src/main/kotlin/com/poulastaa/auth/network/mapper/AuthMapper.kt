@@ -1,8 +1,32 @@
-package com.pouluastaa.auth.network.mapper
+package com.poulastaa.auth.network.mapper
 
 import com.poulastaa.auth.domain.model.*
+import com.poulastaa.auth.network.model.*
 import com.poulastaa.core.domain.model.UserDto
-import com.pouluastaa.auth.network.model.*
+
+fun UpdatePasswordStatusDto.toUpdatePasswordStatus() = when (this) {
+    UpdatePasswordStatusDto.RESET -> UpdatePasswordStatus.RESET
+    UpdatePasswordStatusDto.SAME_PASSWORD -> UpdatePasswordStatus.SAME_PASSWORD
+    UpdatePasswordStatusDto.USER_NOT_FOUND -> UpdatePasswordStatus.USER_NOT_FOUND
+    UpdatePasswordStatusDto.TOKEN_USED -> UpdatePasswordStatus.TOKEN_USED
+    UpdatePasswordStatusDto.SERVER_ERROR -> UpdatePasswordStatus.SERVER_ERROR
+}
+
+fun ForgotPasswordResponseStatusDto.toForgotPasswordResponse() = ForgotPasswordResponse(
+    status = when (this) {
+        ForgotPasswordResponseStatusDto.FORGOT_PASSWORD_MAIL_SEND -> ForgotPasswordResponseStatus.FORGOT_PASSWORD_MAIL_SEND
+        ForgotPasswordResponseStatusDto.USER_NOT_FOUND -> ForgotPasswordResponseStatus.USER_NOT_FOUND
+        ForgotPasswordResponseStatusDto.SERVER_ERROR -> ForgotPasswordResponseStatus.SERVER_ERROR
+        ForgotPasswordResponseStatusDto.EMAIL_NOT_PROVIDED -> ForgotPasswordResponseStatus.EMAIL_NOT_PROVIDED
+        ForgotPasswordResponseStatusDto.EMAIL_NOT_VALID -> ForgotPasswordResponseStatus.EMAIL_NOT_VALID
+    }
+)
+
+fun JwtTokenDto.toJWTResponse() = JwtTokenResponse(
+    state = true,
+    accessToken = this.accessToken,
+    refreshToken = this.refreshToken,
+)
 
 fun AuthResponseDto.toAuthResponse() = AuthenticationResponse(
     status = this.status.toAuthenticationResponseStatus(),

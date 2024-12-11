@@ -1,12 +1,12 @@
-package com.pouluastaa.auth.network.routes
+package com.poulastaa.auth.network.routes
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.Endpoints
-import com.pouluastaa.auth.network.mapper.toAuthResponse
-import com.pouluastaa.auth.network.mapper.toEmailSignInPayload
-import com.pouluastaa.auth.network.mapper.toEmailSignUpPayload
-import com.pouluastaa.auth.network.model.*
-import com.pouluastaa.auth.network.routes.utils.handleGoogleAuthentication
+import com.poulastaa.auth.network.mapper.toAuthResponse
+import com.poulastaa.auth.network.mapper.toEmailSignInPayload
+import com.poulastaa.auth.network.mapper.toEmailSignUpPayload
+import com.poulastaa.auth.network.model.*
+import com.poulastaa.auth.network.routes.utils.handleGoogleAuthentication
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

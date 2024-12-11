@@ -8,6 +8,11 @@ interface JWTRepository {
         type: TokenType,
     ): JWTToken
 
+    fun verifyToken(
+        token: String,
+        type: TokenType,
+    ): Email?
+
     enum class TokenType(
         val sub: String,
         val claimKey: String,
@@ -26,7 +31,7 @@ interface JWTRepository {
         TOKEN_VERIFICATION_MAIL(
             sub = "TOKEN_VERIFICATION_MAIL",
             claimKey = "VERIFICATION_MAIL_TOKEN_KEY",
-            validationTime = 2_40_000L, // 4 minute
+            validationTime = 6_00_000L, // 10 minute
         ),
         TOKEN_FORGOT_PASSWORD(
             sub = "TOKEN_FORGOT_PASSWORD",

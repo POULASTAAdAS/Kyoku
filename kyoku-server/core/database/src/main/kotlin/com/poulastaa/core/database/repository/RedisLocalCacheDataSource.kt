@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.repository.Email
 import com.poulastaa.core.domain.repository.LocalCacheDatasource
 import kotlinx.coroutines.delay
 import redis.clients.jedis.JedisPool
@@ -18,6 +19,8 @@ class RedisLocalCacheDataSource(
         const val COUNTRY_ID = "COUNTRY_ID"
         const val USER = "USER"
         const val EMAIL_VERIFICATION_STATUS = "EMAIL_VERIFICATION_STATUS"
+        const val EMAIL_VERIFICATION_TOKEN = "EMAIL_VERIFICATION_TOKEN"
+        const val RESET_PASSWORD_TOKEN = "RESET_PASSWORD_TOKEN"
     }
 
     private object Channel {
@@ -39,7 +42,7 @@ class RedisLocalCacheDataSource(
     }
 
     override fun cachedUserByEmail(
-        key: String,
+        key: Email,
         type: UserType,
     ): DBUserDto? = redisPool.resource.use { jedis ->
         jedis.get("${Group.USER}:${type.name}:$key")
@@ -48,7 +51,7 @@ class RedisLocalCacheDataSource(
     }
 
     override fun setUserByEmail(
-        key: String,
+        key: Email,
         type: UserType,
         value: DBUserDto,
     ) {
@@ -61,40 +64,84 @@ class RedisLocalCacheDataSource(
         }
     }
 
-    override fun cacheEmailVerificationStatus(key: Long): Boolean? = redisPool.resource.use { jedis ->
-        jedis.get("${Group.EMAIL_VERIFICATION_STATUS}:$key")
-    }?.toBoolean()
+    override fun isVerificationTokenUsed(token: String): Boolean {
+        val cache = redisPool.resource.use { jedis ->
+            jedis.get("${Group.EMAIL_VERIFICATION_TOKEN}:$token")
+        } ?: return false
 
-    override fun setEmailVerificationStatus(key: Long, value: Boolean) {
+        return cache == token
+    }
+
+    override fun storeVerificationToken(token: String) {
         redisPool.resource.use { jedis ->
             jedis.set(
-                "${Group.EMAIL_VERIFICATION_STATUS}:$key",
-                value.toString(),
-                SetParams.setParams().nx().ex(15 * 60) // 15 minute
+                "${Group.EMAIL_VERIFICATION_TOKEN}:${token}",
+                token,
+                SetParams.setParams().nx().ex(15 * 60) // 10 minute
             )
         }
     }
 
-    override fun produceMail(message: Pair<MailType, String>) {
+    override fun cacheEmailVerificationStatus(key: Email): Boolean? = redisPool.resource.use { jedis ->
+        jedis.get("${Group.EMAIL_VERIFICATION_STATUS}:$key")
+    }?.toBoolean()
+
+    override fun setEmailVerificationStatus(key: Email) {
+        redisPool.resource.use { jedis ->
+            jedis.set(
+                "${Group.EMAIL_VERIFICATION_STATUS}:$key",
+                false.toString(),
+                SetParams.setParams().nx().ex(10 * 60) // 10 minute
+            )
+        }
+    }
+
+    override fun deleteEmailVerificationStatus(key: Email) {
+        redisPool.resource.use { jedis ->
+            jedis.del("${Group.EMAIL_VERIFICATION_STATUS}:$key")
+        }
+    }
+
+    override fun produceMail(message: Pair<MailType, Email>) {
         redisPool.resource.use { jedis ->
             jedis.lpush(Channel.NOTIFICATION, gson.toJson(message))
         }
     }
 
-    override suspend fun consumeMail(block: (Pair<MailType, String>) -> Unit) {
+    override suspend fun consumeMail(block: (Pair<MailType, Email>) -> Unit) {
         while (true) {
             redisPool.resource.use { jedis ->
                 jedis.rpop(Channel.NOTIFICATION)?.let { message ->
-                    val map: Pair<MailType, String> = gson.fromJson(
+                    val map: Pair<MailType, Email> = gson.fromJson(
                         message,
-                        object : TypeToken<Pair<MailType, String>>() {}.type
+                        object : TypeToken<Pair<MailType, Email>>() {}.type
                     )
 
                     block(map)
                 }
             }
 
-            delay(1000 * 5)
+            delay(1000 * 6) // 6's
         }
+    }
+
+    override fun getEmailVerificationState(email: String): Boolean {
+        val state = redisPool.resource.use { jedis ->
+            jedis.get("${Group.EMAIL_VERIFICATION_STATUS}:$email")
+        }?.toBoolean() == true
+
+        if (state) redisPool.resource.use { jedis ->
+            jedis.del("${Group.EMAIL_VERIFICATION_STATUS}:$email")
+        }
+
+        return state
+    }
+
+    override fun isResetPasswordTokenUsed(token: String): Boolean {
+        val cache = redisPool.resource.use { jedis ->
+            jedis.get("${Group.RESET_PASSWORD_TOKEN}:$token")
+        } ?: return false
+
+        return cache == token
     }
 }

@@ -1,8 +1,7 @@
 package com.poulastaa.app.plugins
 
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.pouluastaa.auth.network.routes.auth
-import com.pouluastaa.auth.network.routes.unAuthorized
+import com.poulastaa.auth.network.routes.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -14,6 +13,10 @@ fun Application.configureRouting() {
 
     routing {
         auth(authRepository)
+        verifyEmail(authRepository)
+        verifyEmailVerificationState(authRepository)
+        forgotPassword(authRepository)
+        changePassword(authRepository)
 
         unAuthorized()
 

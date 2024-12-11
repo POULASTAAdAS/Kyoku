@@ -16,6 +16,7 @@ fun provideAuthService() = module {
         AuthenticationService(
             db = get(),
             emailValidator = get(),
+            jwt = get()
         )
     }
 }

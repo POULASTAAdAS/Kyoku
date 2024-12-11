@@ -1,14 +1,15 @@
 package com.poulastaa.auth.domain.repository
 
-import com.poulastaa.auth.domain.model.AuthResponseDto
-import com.poulastaa.auth.domain.model.EmailLogInPayload
-import com.poulastaa.auth.domain.model.EmailSignUpPayload
-import com.poulastaa.auth.domain.model.GoogleAuthPayloadDto
+import com.poulastaa.auth.domain.model.*
 
 interface AuthRepository {
     suspend fun googleAuth(payload: GoogleAuthPayloadDto, countryCode: String): AuthResponseDto
     suspend fun emailSignUp(payload: EmailSignUpPayload): AuthResponseDto
     suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto
 
-    suspend fun verifyEmail(email: String)
+    suspend fun verifyEmail(token: String): EmailVerificationStatusDto
+    suspend fun checkEmailVerificationState(email: String): JwtTokenDto?
+    suspend fun forgotPassword(email: String): ForgotPasswordResponseStatusDto
+
+    suspend fun updatePassword(token: String, newPassword: String): UpdatePasswordStatusDto
 }

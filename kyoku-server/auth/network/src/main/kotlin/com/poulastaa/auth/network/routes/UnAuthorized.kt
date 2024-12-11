@@ -1,7 +1,7 @@
-package com.pouluastaa.auth.network.routes
+package com.poulastaa.auth.network.routes
 
 import com.poulastaa.core.domain.model.Endpoints
-import com.pouluastaa.auth.network.model.UnAuthorizedResponse
+import com.poulastaa.auth.network.model.UnAuthorizedResponse
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

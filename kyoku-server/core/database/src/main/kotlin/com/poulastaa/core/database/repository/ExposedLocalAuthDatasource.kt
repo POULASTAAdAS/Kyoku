@@ -6,11 +6,13 @@ import com.poulastaa.core.database.dao.CountryDao
 import com.poulastaa.core.database.dao.UserDao
 import com.poulastaa.core.database.entity.CountryEntity
 import com.poulastaa.core.database.entity.UserEntity
+import com.poulastaa.core.database.entity.UserJWTRelationEntity
 import com.poulastaa.core.database.mapper.toDbUserDto
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.repository.Email
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
 import com.poulastaa.core.domain.repository.LocalCacheDatasource
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.upperCase
+import org.jetbrains.exposed.sql.upsert
 
 class ExposedLocalAuthDatasource(
     private val cache: LocalCacheDatasource,
@@ -62,20 +65,67 @@ class ExposedLocalAuthDatasource(
         return dbUser.toDbUserDto()
     }
 
-    override suspend fun createUser(user: ServerUserDto): DBUserDto = userDbQuery {
-        UserDao.new {
-            this.email = user.email
-            this.username = user.username
-            this.userType = user.type.name
-            this.passwordHash = user.password
-            this.profilePicUrl = user.profilePicUrl
-            this.countryId = user.countryId
-        }
-    }.toDbUserDto()
+    override suspend fun createUser(user: ServerUserDto): DBUserDto {
+        val dbUser = userDbQuery {
+            UserDao.new {
+                this.email = user.email
+                this.username = user.username
+                this.userType = user.type.name
+                this.passwordHash = user.password
+                this.profilePicUrl = user.profilePicUrl
+                this.countryId = user.countryId
+            }
+        }.toDbUserDto()
 
-    override fun sendMail(message: Pair<MailType, String>) {
+        cache.setUserByEmail(user.email, user.type, dbUser)
+
+        return dbUser
+    }
+
+    override fun sendMail(message: Pair<MailType, Email>) {
         CoroutineScope(Dispatchers.IO).launch {
             cache.produceMail(message)
+        }
+
+        if (message.first == MailType.EMAIL_VERIFICATION)
+            cache.setEmailVerificationStatus(message.second)
+    }
+
+    override fun isVerificationTokenUsed(token: String): Boolean = cache.isVerificationTokenUsed(token)
+
+    override fun storeVerificationToken(token: String) = cache.storeVerificationToken(token)
+
+    override fun updateVerificationMailStatus(email: Email): Boolean? {
+        val status = cache.cacheEmailVerificationStatus(email) ?: return null
+        if (!status) cache.deleteEmailVerificationStatus(email)
+
+        return !status
+    }
+
+    override fun getEmailVerificationState(email: String): Boolean = cache.getEmailVerificationState(email)
+
+    override suspend fun saveRefreshToken(token: String, email: Email) {
+        val user = getUsersByEmail(email, UserType.EMAIL) ?: return
+
+        userDbQuery {
+            UserJWTRelationEntity.upsert {
+                it[this.userId] = user.id
+                it[this.refreshToken] = token
+            }
+        }
+    }
+
+    override fun isResetPasswordTokenUsed(token: String): Boolean = cache.isResetPasswordTokenUsed(token)
+
+    override suspend fun updatePassword(email: Email, password: String) {
+        val user = userDbQuery {
+            UserDao.find {
+                UserEntity.email eq email and (UserEntity.userType eq UserType.EMAIL.name)
+            }.singleOrNull()
+        } ?: return
+
+        userDbQuery {
+            user.passwordHash = password
         }
     }
 }
