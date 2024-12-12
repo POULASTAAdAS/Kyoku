@@ -13,11 +13,18 @@ fun Application.configureKoin(
     issuer: String,
     audience: String,
     privateKeyPayload: String,
+    redisHost: String,
+    redisPort: Int,
+    redisPassword: String,
 ) {
     install(Koin) {
         modules(
             provideGsonService(),
-            provideJedisPoolService(),
+            provideJedisPoolService(
+                redisHost = redisHost,
+                redisPort = redisPort,
+                redisPassword = redisPassword
+            ),
             provideUserDatabaseService(),
             provideJWTService(
                 issuer = issuer,

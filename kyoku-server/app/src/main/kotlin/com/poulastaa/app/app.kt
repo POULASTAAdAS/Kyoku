@@ -18,7 +18,10 @@ fun Application.module() {
     configureKoin(
         issuer = this.environment.config.property("jwt.issuer").getString(),
         audience = this.environment.config.property("jwt.audience").getString(),
-        privateKeyPayload = this.environment.config.property("jwt.privateKey").getString()
+        privateKeyPayload = this.environment.config.property("jwt.privateKey").getString(),
+        redisHost = this.environment.config.property("cache.host").getString(),
+        redisPort = this.environment.config.property("cache.port").getString().toInt(),
+        redisPassword = this.environment.config.property("cache.password").getString(),
     )
     configureDatabases()
     configureRouting()

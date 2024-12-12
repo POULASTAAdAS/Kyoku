@@ -4,13 +4,19 @@ import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 
 object RedisDbManager {
-    fun jedisPool(): JedisPool {
-        val redisHost = System.getenv("redisHost") ?: "localhost"
-        val redisPort = System.getenv("redisPort")?.toInt() ?: 6380
-        val redisPassword = System.getenv("redisPassword") ?: "redisPassword"
-        val timeout = 2000
+    private var IS_INITIALIZED = false
+    private const val TIME_OUT = 2000
 
-        val jedisPool = JedisPool(JedisPoolConfig(), redisHost, redisPort, timeout, redisPassword)
+    @Synchronized
+    fun initializeRedisDatabases(
+        redisHost: String,
+        redisPort: Int,
+        redisPassword: String,
+    ): JedisPool {
+        if (IS_INITIALIZED) throw IllegalStateException("Databases are already initialized!")
+        IS_INITIALIZED = true
+
+        val jedisPool = JedisPool(JedisPoolConfig(), redisHost, redisPort, TIME_OUT, redisPassword)
 
         try {
             jedisPool.resource.use { jedis ->

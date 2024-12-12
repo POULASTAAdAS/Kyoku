@@ -22,3 +22,9 @@ storage {
   userJdbcURL = "your jdbc url"
   JdbcURL = "your jdbc url"
 }
+
+cache {
+  host = "hour host"
+  port = "6380"
+  password = "your redis password"
+}

@@ -8,9 +8,17 @@ import com.poulastaa.core.domain.repository.LocalCacheDatasource
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 
-fun provideJedisPoolService() = module {
+fun provideJedisPoolService(
+    redisHost: String,
+    redisPort: Int,
+    redisPassword: String,
+) = module {
     single<JedisPool> {
-        RedisDbManager.jedisPool()
+        RedisDbManager.initializeRedisDatabases(
+            redisHost = redisHost,
+            redisPort = redisPort,
+            redisPassword = redisPassword
+        )
     }
 }
 

@@ -10,9 +10,9 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object SQLDbManager {
-    private lateinit var userDb: Database
-    private lateinit var kyokuDb: Database
-    private var isInitialized = false
+    private lateinit var USER_DB: Database
+    private lateinit var KYOKU_DB: Database
+    private var IS_INITIALIZED = false
 
     @Synchronized
     fun initializeDatabases(
@@ -24,16 +24,16 @@ object SQLDbManager {
         require(kyokuDbUrl.isNotBlank()) { "KYOKU JDBC URL cannot be blank" }
         require(driverClass.isNotBlank()) { "Driver class cannot be blank" }
 
-        if (isInitialized) throw IllegalStateException("Databases are already initialized!")
+        if (IS_INITIALIZED) throw IllegalStateException("Databases are already initialized!")
 
-        userDb = Database.Companion.connect(
+        USER_DB = Database.Companion.connect(
             provideDatasource(
                 jdbcUrl = userDbUrl,
                 driverClass = driverClass,
             )
         )
 
-        kyokuDb = Database.Companion.connect(
+        KYOKU_DB = Database.Companion.connect(
             provideDatasource(
                 jdbcUrl = kyokuDbUrl,
                 driverClass = driverClass,
@@ -41,23 +41,23 @@ object SQLDbManager {
             )
         )
 
-        transaction(userDb) {
+        transaction(USER_DB) {
             addLogger(StdOutSqlLogger)
         }
-        transaction(kyokuDb) {
+        transaction(KYOKU_DB) {
             addLogger(StdOutSqlLogger)
         }
 
-        isInitialized = true
+        IS_INITIALIZED = true
     }
 
     internal suspend fun <T> userDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = userDb) {
+        newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
             block()
         }
 
     internal suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = kyokuDb) {
+        newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
             block()
         }
 
