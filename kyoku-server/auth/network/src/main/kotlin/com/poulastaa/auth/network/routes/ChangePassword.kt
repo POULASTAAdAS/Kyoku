@@ -15,13 +15,17 @@ fun Route.changePassword(
     repo: AuthRepository,
 ) {
     route(Endpoints.SubmitNewPassword.route) {
-        get {
+        post {
             val req = call.receiveNullable<NewPasswordRequest>()
-                ?: return@get call.respondRedirect(Endpoints.UnAuthorized.route)
+                ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+
+            println(req)
+            println(req)
+            println(req)
 
             val status = repo.updatePassword(
                 token = req.token,
-                newPassword = req.newPassword,
+                newPassword = req.password,
             ).toUpdatePasswordStatus()
 
             val baseUrl = System.getenv("BASE_URL")

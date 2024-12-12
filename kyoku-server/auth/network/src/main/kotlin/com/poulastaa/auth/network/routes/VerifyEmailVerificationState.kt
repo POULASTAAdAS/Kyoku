@@ -8,17 +8,17 @@ import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.verifyEmailVerificationState(
+fun Route.getJWTToken(
     auth: AuthRepository,
 ) {
-    route(Endpoints.VerifyEmailVerificationState.route) {
+    route(Endpoints.GetJWTToken.route) {
         get {
             val email = call.parameters["email"] ?: return@get call.respond(
                 message = JwtTokenResponse(),
                 status = HttpStatusCode.OK
             )
 
-            val result = auth.checkEmailVerificationState(email)
+            val result = auth.getJWTToken(email)
 
             if (result != null) call.respond(
                 status = HttpStatusCode.OK,

@@ -14,9 +14,10 @@ fun Application.configureRouting() {
     routing {
         auth(authRepository)
         verifyEmail(authRepository)
-        verifyEmailVerificationState(authRepository)
+        getJWTToken(authRepository)
         forgotPassword(authRepository)
         changePassword(authRepository)
+        resetPassword(authRepository)
 
         unAuthorized()
 

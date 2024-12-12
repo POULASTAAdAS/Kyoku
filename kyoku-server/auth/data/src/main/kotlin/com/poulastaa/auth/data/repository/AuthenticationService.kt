@@ -6,7 +6,9 @@ import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.repository.Email
 import com.poulastaa.core.domain.repository.JWTRepository
+import com.poulastaa.core.domain.repository.JWTToken
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -108,7 +110,8 @@ class AuthenticationService(
                 username = payload.username,
                 password = passHash,
                 countryId = countryId,
-            )
+            ),
+            isDbStore = false
         )
 
         db.sendMail(
@@ -176,7 +179,20 @@ class AuthenticationService(
         val email = jwt.verifyToken(token, JWTRepository.TokenType.TOKEN_VERIFICATION_MAIL)
             ?: return EmailVerificationStatusDto.SERVER_ERROR
 
-        db.storeVerificationToken(token)
+        val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return EmailVerificationStatusDto.SERVER_ERROR
+
+        if (user.id == -1L) db.createUser(
+            user = ServerUserDto(
+                email = email,
+                type = UserType.EMAIL,
+                username = user.userName,
+                password = user.passwordHash,
+                profilePicUrl = user.profilePicUrl,
+                countryId = user.countryCode
+            )
+        )
+
+        db.storeUsedVerificationToken(token)
 
         val status = db.updateVerificationMailStatus(email)
             ?: return EmailVerificationStatusDto.USER_NOT_FOUND
@@ -185,8 +201,8 @@ class AuthenticationService(
         else EmailVerificationStatusDto.TOKEN_USED
     }
 
-    override suspend fun checkEmailVerificationState(email: String): JwtTokenDto? {
-        val state = db.getEmailVerificationState(email)
+    override suspend fun getJWTToken(email: String): JwtTokenDto? {
+        val state = db.getJWTTokenStatus(email)
 
         return if (state) {
             val refreshToken = jwt.generateToken(
@@ -214,7 +230,7 @@ class AuthenticationService(
 
         db.sendMail(
             message = Pair(
-                first = MailType.EMAIL_VERIFICATION,
+                first = MailType.PASSWORD_RESET,
                 second = user.email
             )
         )
@@ -222,13 +238,47 @@ class AuthenticationService(
         return ForgotPasswordResponseStatusDto.FORGOT_PASSWORD_MAIL_SEND
     }
 
+    override suspend fun verifyResetPasswordRequest(token: String): Pair<Email, ResetPasswordStatusDto> {
+        val email = jwt.verifyToken(
+            token = token,
+            type = JWTRepository.TokenType.TOKEN_FORGOT_PASSWORD
+        ) ?: return Pair(
+            first = "",
+            second = ResetPasswordStatusDto.TOKEN_EXPIRED
+        )
+
+        if (db.isVerificationTokenUsed(token)) return Pair(
+            first = "",
+            second = ResetPasswordStatusDto.TOKEN_USED
+        )
+
+        db.getUsersByEmail(email, UserType.EMAIL) ?: return Pair(
+            first = "",
+            second = ResetPasswordStatusDto.SERVER_ERROR
+        )
+
+        db.storeUsedVerificationToken(token)
+
+        return Pair(
+            first = email,
+            second = ResetPasswordStatusDto.TOKEN_VALID
+        )
+    }
+
+    override fun getSubmitNewPasswordToken(email: String): JWTToken = jwt.generateToken(
+        email = email,
+        type = JWTRepository.TokenType.TOKEN_SUBMIT_NEW_PASSWORD
+    )
+
     override suspend fun updatePassword(token: String, newPassword: String): UpdatePasswordStatusDto {
-        if (db.isResetPasswordTokenUsed(token)) return UpdatePasswordStatusDto.TOKEN_USED
+        if (db.isVerificationTokenUsed(token)) return UpdatePasswordStatusDto.TOKEN_USED
         val email = jwt.verifyToken(token, JWTRepository.TokenType.TOKEN_SUBMIT_NEW_PASSWORD)
             ?: return UpdatePasswordStatusDto.TOKEN_USED
 
         val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return UpdatePasswordStatusDto.USER_NOT_FOUND
         if (verifyPassword(newPassword, user.passwordHash)) return UpdatePasswordStatusDto.SAME_PASSWORD
+
+        db.storeUsedVerificationToken(token)
 
         db.updatePassword(email, newPassword.encryptPassword() ?: return UpdatePasswordStatusDto.SERVER_ERROR)
 

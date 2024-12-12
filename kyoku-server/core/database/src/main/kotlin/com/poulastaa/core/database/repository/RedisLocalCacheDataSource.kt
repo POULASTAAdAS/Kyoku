@@ -19,6 +19,7 @@ class RedisLocalCacheDataSource(
         const val COUNTRY_ID = "COUNTRY_ID"
         const val USER = "USER"
         const val EMAIL_VERIFICATION_STATUS = "EMAIL_VERIFICATION_STATUS"
+        const val JWT_TOKEN_STATUS = "JWT_TOKEN_STATUS"
         const val EMAIL_VERIFICATION_TOKEN = "EMAIL_VERIFICATION_TOKEN"
         const val RESET_PASSWORD_TOKEN = "RESET_PASSWORD_TOKEN"
     }
@@ -59,7 +60,7 @@ class RedisLocalCacheDataSource(
             jedis.set(
                 "${Group.USER}:${type.name}:$key",
                 gson.toJson(value),
-                SetParams.setParams().nx().ex(15 * 60) // 15 minute
+                SetParams.setParams().ex(15 * 60) // 15 minute
             )
         }
     }
@@ -72,7 +73,7 @@ class RedisLocalCacheDataSource(
         return cache == token
     }
 
-    override fun storeVerificationToken(token: String) {
+    override fun storeUsedVerificationToken(token: String) {
         redisPool.resource.use { jedis ->
             jedis.set(
                 "${Group.EMAIL_VERIFICATION_TOKEN}:${token}",
@@ -125,16 +126,28 @@ class RedisLocalCacheDataSource(
         }
     }
 
-    override fun getEmailVerificationState(email: String): Boolean {
+    override fun cacheJWTTokenState(email: String): Boolean {
         val state = redisPool.resource.use { jedis ->
-            jedis.get("${Group.EMAIL_VERIFICATION_STATUS}:$email")
-        }?.toBoolean() == true
+            jedis.get("${Group.JWT_TOKEN_STATUS}:$email")
+        }?.toBoolean()
 
-        if (state) redisPool.resource.use { jedis ->
-            jedis.del("${Group.EMAIL_VERIFICATION_STATUS}:$email")
+        return if (state == null) false
+        else if (!state) {
+            redisPool.resource.use { jedis ->
+                jedis.del("${Group.JWT_TOKEN_STATUS}:$email")
+            }
+            true
+        } else false
+    }
+
+    override fun storeJWTTokenState(email: Email) {
+        redisPool.resource.use { jedis ->
+            jedis.set(
+                "${Group.JWT_TOKEN_STATUS}:$email",
+                false.toString(),
+                SetParams.setParams().nx().ex(15 * 60) // 10 minute
+            )
         }
-
-        return state
     }
 
     override fun isResetPasswordTokenUsed(token: String): Boolean {

@@ -65,19 +65,36 @@ class ExposedLocalAuthDatasource(
         return dbUser.toDbUserDto()
     }
 
-    override suspend fun createUser(user: ServerUserDto): DBUserDto {
-        val dbUser = userDbQuery {
-            UserDao.new {
-                this.email = user.email
-                this.username = user.username
-                this.userType = user.type.name
-                this.passwordHash = user.password
-                this.profilePicUrl = user.profilePicUrl
-                this.countryId = user.countryId
+    override suspend fun createUser(user: ServerUserDto, isDbStore: Boolean): DBUserDto {
+        val dbUser = when {
+            (user.type == UserType.GOOGLE || user.type == UserType.EMAIL) && isDbStore -> {
+                userDbQuery {
+                    UserDao.new { // todo fix insert ignore
+                        this.email = user.email
+                        this.username = user.username
+                        this.userType = user.type.name
+                        this.passwordHash = user.password
+                        this.profilePicUrl = user.profilePicUrl
+                        this.countryId = user.countryId
+                    }
+                }.toDbUserDto()
             }
-        }.toDbUserDto()
 
-        cache.setUserByEmail(user.email, user.type, dbUser)
+            else -> DBUserDto(
+                id = -1,
+                email = user.email,
+                userName = user.username,
+                passwordHash = user.password,
+                profilePicUrl = user.profilePicUrl,
+                countryCode = user.countryId
+            )
+        }
+
+        cache.setUserByEmail(
+            key = user.email,
+            type = user.type,
+            value = dbUser
+        )
 
         return dbUser
     }
@@ -93,19 +110,23 @@ class ExposedLocalAuthDatasource(
 
     override fun isVerificationTokenUsed(token: String): Boolean = cache.isVerificationTokenUsed(token)
 
-    override fun storeVerificationToken(token: String) = cache.storeVerificationToken(token)
+    override fun storeUsedVerificationToken(token: String) = cache.storeUsedVerificationToken(token)
 
     override fun updateVerificationMailStatus(email: Email): Boolean? {
-        val status = cache.cacheEmailVerificationStatus(email) ?: return null
-        if (!status) cache.deleteEmailVerificationStatus(email)
+        val status = cache.cacheEmailVerificationStatus(email)?.not() ?: return null
+        if (status) {
+            cache.deleteEmailVerificationStatus(email)
+            cache.storeJWTTokenState(email)
+        }
 
-        return !status
+        return status
     }
 
-    override fun getEmailVerificationState(email: String): Boolean = cache.getEmailVerificationState(email)
+    override fun getJWTTokenStatus(email: Email): Boolean = cache.cacheJWTTokenState(email)
 
     override suspend fun saveRefreshToken(token: String, email: Email) {
-        val user = getUsersByEmail(email, UserType.EMAIL) ?: return
+        val user = getUsersByEmail(email, UserType.EMAIL)
+        if (user == null || user.id == -1L) return
 
         userDbQuery {
             UserJWTRelationEntity.upsert {

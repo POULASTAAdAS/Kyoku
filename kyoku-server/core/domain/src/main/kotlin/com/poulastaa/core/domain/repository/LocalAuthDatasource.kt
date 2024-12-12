@@ -12,14 +12,15 @@ interface LocalAuthDatasource {
 
     suspend fun getUsersByEmail(email: String, type: UserType): DBUserDto?
 
-    suspend fun createUser(user: ServerUserDto): DBUserDto
+    suspend fun createUser(user: ServerUserDto, isDbStore: Boolean = true): DBUserDto
 
     fun sendMail(message: Pair<MailType, Email>)
 
     fun isVerificationTokenUsed(token: String): Boolean
-    fun storeVerificationToken(token: String)
+    fun storeUsedVerificationToken(token: String)
     fun updateVerificationMailStatus(email: Email): Boolean?
-    fun getEmailVerificationState(email: String): Boolean
+
+    fun getJWTTokenStatus(email: Email): Boolean
 
     suspend fun saveRefreshToken(token: String, email: Email)
 

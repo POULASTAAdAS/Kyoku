@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NewPasswordRequest(
     val token: String,
-    val newPassword: String,
+    val password: String,
 )

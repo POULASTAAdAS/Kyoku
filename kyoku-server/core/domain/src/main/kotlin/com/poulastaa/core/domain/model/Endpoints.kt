@@ -4,7 +4,7 @@ sealed class Endpoints(val route: String) {
     data object Auth : Endpoints(route = "/api/v1/auth")
 
     data object VerifyEmail : Endpoints(route = "/api/v1/auth/verifyEmail")
-    data object VerifyEmailVerificationState : Endpoints(route = "/api/v1/auth/verifyEmailVerificationState")
+    data object GetJWTToken : Endpoints(route = "/api/v1/auth/getJWTToken")
 
     data object ForgotPassword : Endpoints(route = "/api/v1/auth/forgotPassword")
     data object ResetPassword : Endpoints(route = "/api/v1/auth/resetPassword")

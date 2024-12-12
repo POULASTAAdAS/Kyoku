@@ -12,7 +12,7 @@ interface LocalCacheDatasource {
     fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
 
     fun isVerificationTokenUsed(token: String): Boolean
-    fun storeVerificationToken(token: String)
+    fun storeUsedVerificationToken(token: String)
 
     fun cacheEmailVerificationStatus(key: Email): Boolean?
     fun setEmailVerificationStatus(key: Email)
@@ -20,7 +20,9 @@ interface LocalCacheDatasource {
 
     fun produceMail(message: Pair<MailType, Email>)
     suspend fun consumeMail(block: (Pair<MailType, Email>) -> Unit)
-    fun getEmailVerificationState(email: String): Boolean
+
+    fun cacheJWTTokenState(email: String): Boolean
+    fun storeJWTTokenState(email: Email)
 
     fun isResetPasswordTokenUsed(token: String): Boolean
 }

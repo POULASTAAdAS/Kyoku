@@ -99,7 +99,7 @@ class GoogleMailService(
     }
 
     override fun sendPasswordResetMail(email: String) {
-        val token = jwt.generateToken(email, JWTRepository.TokenType.TOKEN_VERIFICATION_MAIL)
+        val token = jwt.generateToken(email, JWTRepository.TokenType.TOKEN_FORGOT_PASSWORD)
         val resetPasswordUrl = "${System.getenv("BASE_URL")}${Endpoints.ResetPassword.route}?token=$token"
 
         val sub = "Password Reset Mail"
@@ -172,7 +172,7 @@ class GoogleMailService(
     
                     <h1 class="header">Password reset Mail!</h1>
     
-                    <p class="content">You̥ are seeing this email because you requested for a password reset.</p>
+                    <p class="content">You are seeing this email because you requested for a password reset.</p>
                     <p class="content">
                       Follow the bellow link to reset you password.
                       Please login again through app after changing you password.
