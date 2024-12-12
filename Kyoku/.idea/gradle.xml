@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                  <project path="$PROJECT_DIR$/build-logic/convention" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
+        <option name="testRunner" value="CHOOSE_PER_TEST" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/auth" />
+            <option value="$PROJECT_DIR$/auth/data" />
+            <option value="$PROJECT_DIR$/auth/domain" />
+            <option value="$PROJECT_DIR$/auth/presentation" />
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/build-logic/convention" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/data" />
+            <option value="$PROJECT_DIR$/core/database" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/presentation" />
+            <option value="$PROJECT_DIR$/core/presentation/designsystem" />
+            <option value="$PROJECT_DIR$/core/presentation/ui" />
+            <option value="$PROJECT_DIR$/details" />
+            <option value="$PROJECT_DIR$/details/data" />
+            <option value="$PROJECT_DIR$/details/domain" />
+            <option value="$PROJECT_DIR$/details/presentation" />
+            <option value="$PROJECT_DIR$/history" />
+            <option value="$PROJECT_DIR$/history/data" />
+            <option value="$PROJECT_DIR$/history/domain" />
+            <option value="$PROJECT_DIR$/history/presentation" />
+            <option value="$PROJECT_DIR$/player" />
+            <option value="$PROJECT_DIR$/player/data" />
+            <option value="$PROJECT_DIR$/player/domain" />
+            <option value="$PROJECT_DIR$/player/presentation" />
+            <option value="$PROJECT_DIR$/playlist" />
+            <option value="$PROJECT_DIR$/playlist/data" />
+            <option value="$PROJECT_DIR$/playlist/domain" />
+            <option value="$PROJECT_DIR$/playlist/presentation" />
+            <option value="$PROJECT_DIR$/profile" />
+            <option value="$PROJECT_DIR$/profile/data" />
+            <option value="$PROJECT_DIR$/profile/domain" />
+            <option value="$PROJECT_DIR$/profile/presentation" />
+            <option value="$PROJECT_DIR$/settings" />
+            <option value="$PROJECT_DIR$/settings/data" />
+            <option value="$PROJECT_DIR$/settings/domain" />
+            <option value="$PROJECT_DIR$/settings/presentation" />
+            <option value="$PROJECT_DIR$/setup" />
+            <option value="$PROJECT_DIR$/setup/data" />
+            <option value="$PROJECT_DIR$/setup/domain" />
+            <option value="$PROJECT_DIR$/setup/presentation" />
+          </set>
+        </option>
+        <option name="resolveExternalAnnotations" value="false" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
