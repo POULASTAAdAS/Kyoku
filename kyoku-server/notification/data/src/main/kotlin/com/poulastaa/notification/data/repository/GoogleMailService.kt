@@ -263,7 +263,7 @@ class GoogleMailService(
                         </div>
                         <div class="footer">
                             <p>This app is developed by a single developer.</p>
-                            <p>If you encounter any bugs, please email me at: <strong>${System.getenv("devEmail")}</strong></p>
+                            <p>If you encounter any bugs, please email me at: <strong>${System.getenv("DEV_EMAIL")}</strong></p>
                             <p>Hope you have a great experience with Kyoku!</p>
                             <p>Thank you! :)</p>
                         </div>

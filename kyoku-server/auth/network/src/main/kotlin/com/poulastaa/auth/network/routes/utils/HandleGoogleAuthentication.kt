@@ -44,10 +44,9 @@ suspend fun RoutingContext.handleGoogleAuthentication(
     )
 }
 
-
 private fun GoogleAuthRequest.verifyTokenId(): GoogleIdToken? = try {
     GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
-        .setAudience(listOf(System.getenv("clientId")))
+        .setAudience(listOf(System.getenv("CLIENT_ID")))
         .setIssuer(System.getenv("ISSUER"))
         .build()
         .verify(this.token)
