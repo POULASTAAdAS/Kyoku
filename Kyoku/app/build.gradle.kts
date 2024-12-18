@@ -61,11 +61,16 @@ dependencies {
     // media
     implementation(libs.media3.session)
 
-     project
+    // project
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.core.database)
 
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
+
+    implementation(projects.auth.domain)
+    implementation(projects.auth.data)
+    implementation(projects.auth.network)
+    implementation(projects.auth.presentation)
 }
