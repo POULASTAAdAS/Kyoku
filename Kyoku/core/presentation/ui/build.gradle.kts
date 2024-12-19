@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.coil.compose)
+    implementation(libs.material3WindowSizeClass)
 
     implementation(projects.core.domain)
     implementation(projects.core.presentation.designsystem)

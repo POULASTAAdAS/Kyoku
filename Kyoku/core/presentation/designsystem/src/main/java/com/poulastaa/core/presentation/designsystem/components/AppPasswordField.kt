@@ -108,17 +108,16 @@ fun AppPasswordField(
             Text(
                 text = label,
                 fontWeight = FontWeight.Light,
-                fontSize = MaterialTheme.typography.labelMedium.fontSize
             )
         },
         visualTransformation = if (isPasswordVisible) VisualTransformation.None
         else PasswordVisualTransformation(),
         shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
-            unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(.7f),
+            unfocusedLabelColor = MaterialTheme.colorScheme.primary.copy(.7f),
+            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
+            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
 
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.primary,

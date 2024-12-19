@@ -35,8 +35,6 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-//    implementation(libs.hilt.work)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -58,8 +56,8 @@ dependencies {
     implementation(libs.material3WindowSizeClass)
     implementation(libs.google.id)
 
-    // media
-    implementation(libs.media3.session)
+    // navigation
+    implementation(libs.navigation.compose)
 
     // project
     implementation(projects.core.domain)

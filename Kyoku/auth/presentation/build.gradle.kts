@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.credentials)
     implementation(libs.credentialsPlayServicesAuth)
     implementation(libs.google.id)
+    implementation(libs.material3WindowSizeClass)
 
     implementation(projects.core.domain)
     implementation(projects.auth.domain)

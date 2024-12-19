@@ -15,10 +15,6 @@ class IntroViewmodel @Inject constructor() : ViewModel() {
 
     fun onAction(action: IntroUiAction) {
         when (action) {
-            IntroUiAction.OnEmailSingInClick -> {
-
-            }
-
             IntroUiAction.OnGoogleSignInCancel -> {
                 state = state.copy(
                     isGoogleAuthLoading = true

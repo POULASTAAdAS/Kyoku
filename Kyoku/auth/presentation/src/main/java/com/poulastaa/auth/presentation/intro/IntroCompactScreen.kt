@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,16 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.auth.presentation.intro.components.AppAuthButton
-import com.poulastaa.auth.presentation.intro.components.StartActivityForResult
 import com.poulastaa.core.presentation.designsystem.AppLogo
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.GoogleIcon
@@ -41,37 +37,9 @@ import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWith
 import com.poulastaa.core.presentation.designsystem.dimens
 
 @Composable
-fun IntroRootScreen(
-    viewmodel: IntroViewmodel = hiltViewModel(),
-) {
-    val context = LocalContext.current
-
-    StartActivityForResult(
-        key = viewmodel.state.isGoogleAuthLoading,
-        activity = context as Activity,
-        clientId = viewmodel.state.clientId,
-        onSuccess = {
-            viewmodel.onAction(
-                IntroUiAction.OnTokenReceive(
-                    token = it,
-                    activity = context
-                )
-            )
-        },
-        onCanceled = {
-            viewmodel.onAction(IntroUiAction.OnGoogleSignInCancel)
-        }
-    )
-
-    IntroScreen(
-        state = IntroUiState(),
-        onAction = viewmodel::onAction
-    )
-}
-
-@Composable
-private fun IntroScreen(
+fun IntroCompactScreen(
     state: IntroUiState,
+    navigateToEmailLogIn: () -> Unit,
     onAction: (IntroUiAction) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -113,7 +81,8 @@ private fun IntroScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(top = 50.dp)
-                                .padding(MaterialTheme.dimens.medium2)
+                                .padding(MaterialTheme.dimens.medium2),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = stringResource(R.string.app_description),
@@ -146,9 +115,7 @@ private fun IntroScreen(
                                     .fillMaxWidth()
                                     .height(60.dp),
                                 text = stringResource(R.string.email_sign_in),
-                                onClick = {
-                                    onAction(IntroUiAction.OnEmailSingInClick)
-                                }
+                                onClick = navigateToEmailLogIn
                             )
 
                             Spacer(
@@ -191,8 +158,9 @@ private fun IntroScreen(
 private fun Preview() {
     AppThem {
         Surface {
-            IntroScreen(
+            IntroCompactScreen(
                 state = IntroUiState(),
+                navigateToEmailLogIn = {},
                 onAction = {}
             )
         }
