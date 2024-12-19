@@ -1,13 +1,17 @@
 package com.poulastaa.auth.presentation.intro
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,14 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.poulastaa.auth.presentation.intro.components.AppAuthButton
+import com.poulastaa.auth.presentation.intro.components.StartActivityForResult
 import com.poulastaa.core.presentation.designsystem.AppLogo
 import com.poulastaa.core.presentation.designsystem.AppThem
+import com.poulastaa.core.presentation.designsystem.GoogleIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -35,6 +44,25 @@ import com.poulastaa.core.presentation.designsystem.dimens
 fun IntroRootScreen(
     viewmodel: IntroViewmodel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+
+    StartActivityForResult(
+        key = viewmodel.state.isGoogleAuthLoading,
+        activity = context as Activity,
+        clientId = viewmodel.state.clientId,
+        onSuccess = {
+            viewmodel.onAction(
+                IntroUiAction.OnTokenReceive(
+                    token = it,
+                    activity = context
+                )
+            )
+        },
+        onCanceled = {
+            viewmodel.onAction(IntroUiAction.OnGoogleSignInCancel)
+        }
+    )
+
     IntroScreen(
         state = IntroUiState(),
         onAction = viewmodel::onAction
@@ -64,7 +92,7 @@ private fun IntroScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(.7f),
+                    .fillMaxHeight(.65f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -82,12 +110,52 @@ private fun IntroScreen(
                             )
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 50.dp)
+                                .padding(MaterialTheme.dimens.medium2)
                         ) {
-                            // TODO:
-                            //  Add Description
-                            //  Add Email Sign In Button
-                            //  Add Google Sign In Button
+                            Text(
+                                text = stringResource(R.string.app_description),
+                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                                letterSpacing = 2.sp,
+                                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.medium1)
+                            )
+
+                            Spacer(Modifier.weight(1f))
+
+                            AppAuthButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
+                                image = GoogleIcon,
+                                isLoading = state.isGoogleAuthLoading,
+                                text = stringResource(R.string.google_sign_in),
+                                onClick = {
+                                    onAction(IntroUiAction.OnGoogleSignInClick)
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(MaterialTheme.dimens.medium3))
+
+                            AppAuthButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(60.dp),
+                                text = stringResource(R.string.email_sign_in),
+                                onClick = {
+                                    onAction(IntroUiAction.OnEmailSingInClick)
+                                }
+                            )
+
+                            Spacer(
+                                modifier = Modifier
+                                    .height(MaterialTheme.typography.headlineLarge.fontSize.value.toInt().dp)
+                                    .navigationBarsPadding()
+                            )
                         }
                     }
 

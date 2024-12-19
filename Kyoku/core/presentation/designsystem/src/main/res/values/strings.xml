@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kyoku</string>
+    <string name="app_description">Listen to Thousand of Songs add free on Kyoku.\nSign In and get started.</string>
+    <string name="email_sign_in">Continue with Email</string>
+    <string name="google_sign_in">Continue with Google</string>
 </resources>

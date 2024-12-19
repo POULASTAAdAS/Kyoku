@@ -1,4 +1,13 @@
 package com.poulastaa.auth.presentation.intro
 
+import android.app.Activity
+
 sealed interface IntroUiAction {
+    data object OnEmailSingInClick : IntroUiAction
+    data object OnGoogleSignInClick : IntroUiAction
+    data object OnGoogleSignInCancel : IntroUiAction
+    data class OnTokenReceive(
+        val token: String,
+        val activity: Activity,
+    ) : IntroUiAction
 }
