@@ -50,10 +50,19 @@ fun EmailSignUpRootScreen(
             )
         },
         mediumContent = {
-
+            EmailSignUpMediumScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
         },
         expandedContent = {
-
+            if (config.screenWidthDp > 980) EmailSignUpExpandedScreen(
+                state = state,
+                onAction = viewModel::onAction
+            ) else EmailSignUpCompactExpandedScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
         }
     )
 }
