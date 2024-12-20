@@ -12,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -49,10 +48,8 @@ fun IntroExpandedScreen(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(MaterialTheme.dimens.large1)
-                .navigationBarsPadding()
-                .systemBarsPadding(),
-            horizontalArrangement = Arrangement.Center,
+                .padding(MaterialTheme.dimens.large1),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -97,10 +94,12 @@ fun IntroExpandedScreen(
                 }
             }
 
+            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = MaterialTheme.dimens.large1),
+                    .fillMaxWidth(.9f)
+                    .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

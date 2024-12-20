@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.email.login
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +30,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppLogo
 import com.poulastaa.core.presentation.designsystem.AppThem
@@ -43,7 +45,7 @@ import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWith
 import com.poulastaa.core.presentation.designsystem.dimens
 
 @Composable
-fun EmailLogInCompactScreen(
+fun EmailLogInMediumScreen(
     state: EmailLoginUiState,
     onAction: (EmailLogInUiAction) -> Unit,
 ) {
@@ -56,9 +58,11 @@ fun EmailLogInCompactScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth(.8f)
+                .fillMaxHeight()
                 .padding(MaterialTheme.dimens.medium1)
-                .systemBarsPadding(),
+                .systemBarsPadding()
+                .align(Alignment.Center),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -68,19 +72,20 @@ fun EmailLogInCompactScreen(
                 painter = AppLogo,
                 contentDescription = null,
                 modifier = Modifier
-                    .aspectRatio(2f)
+                    .aspectRatio(2.5f)
                     .align(Alignment.CenterHorizontally)
             )
 
             Spacer(Modifier.weight(.5f))
 
-            Box {
+            Box(
+                modifier = Modifier
+            ) {
                 Card(
                     shape = MaterialTheme.shapes.large,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
-                    modifier = Modifier,
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 8.dp
                     )
@@ -138,10 +143,9 @@ fun EmailLogInCompactScreen(
                         fontSize = MaterialTheme.typography.displayMedium.fontSize,
                         modifier = Modifier
                             .padding(
-                                vertical = MaterialTheme.dimens.small3,
-                                horizontal = MaterialTheme.dimens.medium2
-                            )
-                            .padding(bottom = MaterialTheme.dimens.medium3),
+                                vertical = MaterialTheme.dimens.medium1,
+                                horizontal = MaterialTheme.dimens.medium3
+                            ),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -155,6 +159,7 @@ fun EmailLogInCompactScreen(
                     text = stringResource(R.string.forgot_password),
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.SemiBold,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                     modifier = Modifier.clickable(
                         interactionSource = null,
                         indication = null
@@ -183,6 +188,7 @@ fun EmailLogInCompactScreen(
                     textDecoration = TextDecoration.Underline,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     modifier = Modifier.clickable(
                         interactionSource = null,
                         indication = null
@@ -201,7 +207,8 @@ fun EmailLogInCompactScreen(
                 onClick = {
                     onAction(EmailLogInUiAction.OnConformClick)
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                }
+                },
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
 
             Spacer(Modifier.weight(.5f))
@@ -209,14 +216,20 @@ fun EmailLogInCompactScreen(
     }
 }
 
-@PreviewLightDark
+@Preview(
+    device = "spec:width=800dp,height=1280dp,dpi=480",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    device = "spec:width=800dp,height=1280dp,dpi=480",
+)
 @Composable
 private fun Preview() {
     AppThem {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            EmailLogInCompactScreen(
+            EmailLogInMediumScreen(
                 state = EmailLoginUiState(),
                 onAction = {}
             )

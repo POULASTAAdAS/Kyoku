@@ -156,4 +156,6 @@
     <string name="saved_playlist">saved playlist</string>
     <string name="saved_albums">saved albums</string>
     <string name="followed_artists">followed artists</string>
+    <string name="create">Create</string>
+    <string name="an_account">An Account</string>
 </resources>

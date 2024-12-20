@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.email.login
+package com.poulastaa.auth.presentation.email.signup
 
 import android.app.Activity
 import android.widget.Toast
@@ -15,29 +15,27 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
-fun EmailLogInRootScreen(
-    viewModel: EmailViewModel = hiltViewModel(),
-    navigateToEmailSignUp: () -> Unit,
-    navigateToForgotPassword: (String?) -> Unit,
+fun EmailSignUpRootScreen(
+    viewModel: EmailSignUpViewModel = hiltViewModel(),
+    navigateToLogin: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val windowSize = calculateWindowSizeClass(context as Activity)
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current as Activity
+    val windowSize = calculateWindowSizeClass(context)
     val config = LocalConfiguration.current
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     ObserveAsEvent(viewModel.uiEvent) { event ->
         when (event) {
-            is EmailLogInUiEvent.EmitToast -> Toast.makeText(
+            is EmailSignUpUiEvent.EmitToast -> Toast.makeText(
                 context,
                 event.message.asString(context),
                 Toast.LENGTH_LONG
             ).show()
 
-            is EmailLogInUiEvent.NavigateToForgotPassword -> navigateToForgotPassword(event.email)
+            EmailSignUpUiEvent.NavigateToLogIn -> navigateToLogin()
 
-            EmailLogInUiEvent.NavigateToSignUp -> navigateToEmailSignUp()
-
-            EmailLogInUiEvent.OnSuccess -> {
+            EmailSignUpUiEvent.OnSuccess -> {
                 // todo
             }
         }
@@ -46,27 +44,16 @@ fun EmailLogInRootScreen(
     KyokuWindowSize(
         windowSizeClass = windowSize,
         compactContent = {
-            EmailLogInCompactScreen(
+            EmailSignUpCompactScreen(
                 state = state,
                 onAction = viewModel::onAction
             )
         },
         mediumContent = {
-            EmailLogInMediumScreen(
-                state = state,
-                onAction = viewModel::onAction
-            )
+
         },
         expandedContent = {
-            if (config.screenWidthDp > 980)
-                EmailLogInExpandedScreen(
-                    state = state,
-                    onAction = viewModel::onAction
-                )
-            else EmailLogInCompactExpandedScreen(
-                state = state,
-                onAction = viewModel::onAction
-            )
+
         }
     )
 }

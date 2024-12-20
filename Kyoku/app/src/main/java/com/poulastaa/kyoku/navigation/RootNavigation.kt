@@ -5,13 +5,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
+import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
@@ -41,9 +41,7 @@ fun RootNavigation(
                             initialOffsetX = { it })
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
-                        slideOutHorizontally(animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                            targetOffsetX = { it })
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
             }
         ) {
             EmailLogInRootScreen(
@@ -57,7 +55,9 @@ fun RootNavigation(
         }
 
         composable<Screens.Auth.EmailSignUp> {
-
+            EmailSignUpRootScreen {
+                nav.popBackStack()
+            }
         }
 
         composable<Screens.Auth.ForgotPassword> {

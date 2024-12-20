@@ -7,10 +7,13 @@ import com.poulastaa.auth.domain.model.PasswordState
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +27,9 @@ class EmailViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = EmailLoginUiState()
         )
+
+    private val _uiEvent = Channel<EmailLogInUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     fun onAction(action: EmailLogInUiAction) {
         when (action) {
@@ -66,6 +72,10 @@ class EmailViewModel @Inject constructor(
                         isMakingApiCall = false,
                     )
                 }
+
+                viewModelScope.launch {
+                    _uiEvent.send(EmailLogInUiEvent.NavigateToSignUp)
+                }
             }
 
             EmailLogInUiAction.OnConformClick -> {
@@ -86,15 +96,9 @@ class EmailViewModel @Inject constructor(
             }
 
             EmailLogInUiAction.OnForgotPasswordClick -> {
-                if (isErr()) return
-
-                _state.update {
-                    it.copy(
-                        isMakingApiCall = false,
-                    )
+                viewModelScope.launch {
+                    _uiEvent.send(EmailLogInUiEvent.NavigateToForgotPassword(_state.value.email.value.trim()))
                 }
-
-
             }
         }
     }

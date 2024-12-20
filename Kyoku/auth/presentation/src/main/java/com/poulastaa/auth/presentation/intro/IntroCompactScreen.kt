@@ -81,7 +81,8 @@ fun IntroCompactScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(top = 50.dp)
-                                .padding(MaterialTheme.dimens.medium2),
+                                .padding(MaterialTheme.dimens.medium2)
+                                .navigationBarsPadding(),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(

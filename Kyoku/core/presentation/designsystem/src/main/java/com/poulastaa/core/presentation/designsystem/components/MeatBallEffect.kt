@@ -148,7 +148,7 @@ fun MovingCirclesWithMetaballEffect(circleCount: Int = 15) {
     val renderEffect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) metaBallRenderEffect
     else return
 
-    val circleColor = MaterialTheme.colorScheme.primary
+    val circleColor = MaterialTheme.colorScheme.secondary
 
     Box(
         modifier = Modifier
