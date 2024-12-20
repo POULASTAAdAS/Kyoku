@@ -1,15 +1,19 @@
 package com.poulastaa.kyoku.navigation
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordRootScreen
+import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewModel
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
@@ -40,6 +44,9 @@ fun RootNavigation(
                             animationSpec = tween(DEFAULT_ANIMATION_TIME),
                             initialOffsetX = { it })
             },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+            },
             exitTransition = {
                 fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
             }
@@ -60,10 +67,32 @@ fun RootNavigation(
             }
         }
 
-        composable<Screens.Auth.ForgotPassword> {
-            val email = it.toRoute<Screens.Auth.ForgotPassword>().email
+        composable<Screens.Auth.ForgotPassword>(
+            enterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideInVertically(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            initialOffsetY = { it })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideOutVertically(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            targetOffsetY = { it }
+                        )
+            }
+        ) { stackEntry ->
+            val email = stackEntry.toRoute<Screens.Auth.ForgotPassword>().email
 
-            Log.d("forgot_password", email.toString())
+            val viewmodel = hiltViewModel<ForgotPasswordViewModel>()
+            email?.let { viewmodel.loadEmail(it) }
+
+            ForgotPasswordRootScreen(
+                viewModel = viewmodel,
+                navigateBack = {
+                    nav.popBackStack()
+                }
+            )
         }
     }
 }

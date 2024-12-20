@@ -2,8 +2,8 @@ package com.poulastaa.core.presentation.designsystem
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
@@ -58,7 +58,7 @@ val UserIcon: ImageVector
 
 val ArrowBackIcon: ImageVector
     @Composable
-    get() = Icons.AutoMirrored.Rounded.ArrowBack
+    get() = Icons.AutoMirrored.Rounded.KeyboardArrowLeft
 
 val ArrowDownIcon: ImageVector
     @Composable

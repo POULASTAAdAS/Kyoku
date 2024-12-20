@@ -3,6 +3,7 @@ package com.poulastaa.core.presentation.designsystem.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -27,14 +28,16 @@ fun AppLoadingButton(
     text: String,
     isLoading: Boolean = false,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize,
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary
+    ),
     onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
+        colors = colors,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 8.dp,
             pressedElevation = 0.dp
@@ -51,7 +54,6 @@ fun AppLoadingButton(
 
             Text(
                 text = text,
-                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium,
                 fontSize = fontSize
             )
