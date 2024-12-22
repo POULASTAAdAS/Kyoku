@@ -16,4 +16,26 @@ sealed interface Screens {
         @Serializable
         data class ForgotPassword(val email: String? = null) : Screens
     }
+
+    sealed interface SetUp : Screens {
+        @Serializable
+        data object ImportSpotifyPlaylist : Screens
+
+        @Serializable
+        data object SetBirthDate : Screens
+
+        @Serializable
+        data object PickGenre : Screens
+
+        @Serializable
+        data object PickArtist : Screens
+    }
+
+    sealed interface Core : Screens {
+        @Serializable
+        data object Home : Screens
+
+        @Serializable
+        data object Library : Screens
+    }
 }

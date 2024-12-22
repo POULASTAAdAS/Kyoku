@@ -1,7 +1,6 @@
 package com.poulastaa.auth.domain
 
 import com.poulastaa.auth.domain.model.AuthResponseDto
-import com.poulastaa.auth.domain.model.EmailVerificationStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
 import com.poulastaa.auth.domain.model.JwtTokenDto
 import com.poulastaa.core.domain.DataError
@@ -27,8 +26,7 @@ interface RemoteAuthDataSource {
 
     suspend fun checkEmailVerificationState(
         email: String,
-    ): Result<EmailVerificationStatus, DataError.Network>
+    ): Result<JwtTokenDto, DataError.Network>
 
-    suspend fun getJWTToken(email: String): Result<JwtTokenDto, DataError.Network>
     suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network>
 }

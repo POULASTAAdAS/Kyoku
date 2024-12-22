@@ -3,12 +3,12 @@ package com.poulastaa.auth.data
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.RemoteAuthDataSource
 import com.poulastaa.auth.domain.model.AuthStatus
-import com.poulastaa.auth.domain.model.EmailVerificationStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.DatastoreRepository
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
+import com.poulastaa.core.domain.model.SavedScreen
 import java.net.CookieManager
 import javax.inject.Inject
 
@@ -67,33 +67,37 @@ class OnlineFirstAuthRepository @Inject constructor(
                             result.data.status == AuthStatus.USER_FOUND_SET_GENRE ||
                             result.data.status == AuthStatus.USER_FOUND_SET_ARTIST ||
                             result.data.status == AuthStatus.USER_FOUND_HOME
-
                     )
         ) {
-            ds.storeLocalUser(result.data.user)
-
             val cookie = cookieManager.cookieStore.cookies.firstOrNull()?.toString()
                 ?: return Result.Error(DataError.Network.SERVER_ERROR)
-
             ds.storeTokenOrCookie(cookie)
+
+            ds.storeLocalUser(result.data.user)
+            when (result.data.status) {
+                AuthStatus.CREATED -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
+                AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> ds.storeSignInState(SavedScreen.HOME)
+                AuthStatus.USER_FOUND_STORE_B_DATE -> ds.storeSignInState(SavedScreen.SET_B_DATE)
+                AuthStatus.USER_FOUND_SET_GENRE -> ds.storeSignInState(SavedScreen.PIC_GENRE)
+                AuthStatus.USER_FOUND_SET_ARTIST -> ds.storeSignInState(SavedScreen.PIC_ARTIST)
+                else -> Unit
+            }
         }
 
         return result.map { it.status }
     }
 
-    override suspend fun checkEmailVerificationState(email: String): Result<EmailVerificationStatus, DataError.Network> {
+    override suspend fun checkEmailVerificationState(email: String): Result<Boolean, DataError.Network> {
         val result = remote.checkEmailVerificationState(email)
 
-        if (result is Result.Success && result.data == EmailVerificationStatus.VERIFIED) {
-            val token = remote.getJWTToken(email)
+        if (result is Result.Success && result.data.status) {
+            ds.storeTokenOrCookie("Bearer ${result.data.accessToken}")
+            ds.storeRefreshToken(result.data.refreshToken)
 
-            if (token is Result.Success) {
-                ds.storeTokenOrCookie("Bearer ${token.data.accessToken}")
-                ds.storeRefreshToken(token.data.refreshToken)
-            }
+            return result.map { it.status }
         }
 
-        return result
+        return result.map { it.status }
     }
 
     override suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network> =

@@ -1,7 +1,6 @@
 package com.poulastaa.auth.domain
 
 import com.poulastaa.auth.domain.model.AuthStatus
-import com.poulastaa.auth.domain.model.EmailVerificationStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
 import com.poulastaa.auth.domain.model.JwtTokenDto
 import com.poulastaa.core.domain.DataError
@@ -27,7 +26,7 @@ interface AuthRepository {
 
     suspend fun checkEmailVerificationState(
         email: String,
-    ): Result<EmailVerificationStatus, DataError.Network>
+    ): Result<Boolean, DataError.Network>
 
     suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network>
 }

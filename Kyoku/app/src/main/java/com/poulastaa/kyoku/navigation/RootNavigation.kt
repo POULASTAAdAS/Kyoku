@@ -8,6 +8,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,6 +18,7 @@ import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewM
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
+import com.poulastaa.core.domain.model.SavedScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -29,70 +31,105 @@ fun RootNavigation(
         navController = nav,
         startDestination = screen
     ) {
-        composable<Screens.Auth.Intro> {
-            IntroRootScreen(
-                navigateToEmailLogIn = {
-                    nav.navigate(Screens.Auth.EmailLogIn)
-                }
-            )
-        }
+        authGraph(nav)
+        setupGraph(nav)
+    }
+}
 
-        composable<Screens.Auth.EmailLogIn>(
-            enterTransition = {
-                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
-                        slideInHorizontally(
-                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                            initialOffsetX = { it })
+fun NavGraphBuilder.authGraph(nav: NavHostController) {
+    composable<Screens.Auth.Intro> {
+        IntroRootScreen(
+            navigateToEmailLogIn = {
+                nav.navigate(Screens.Auth.EmailLogIn)
             },
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+            navigateOnSuccess = {
+                nav.popBackStack()
+                when (it) {
+                    SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> nav.navigate(Screens.SetUp.ImportSpotifyPlaylist)
+                    SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
+                    SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
+                    SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
+                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+
+                    else -> Unit
+                }
             }
-        ) {
-            EmailLogInRootScreen(
-                navigateToEmailSignUp = {
-                    nav.navigate(Screens.Auth.EmailSignUp)
-                },
-                navigateToForgotPassword = {
-                    nav.navigate(Screens.Auth.ForgotPassword(it))
-                }
-            )
-        }
+        )
+    }
 
-        composable<Screens.Auth.EmailSignUp> {
-            EmailSignUpRootScreen {
+    composable<Screens.Auth.EmailLogIn>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetX = { it })
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+        }
+    ) {
+        EmailLogInRootScreen(
+            navigateToEmailSignUp = {
+                nav.navigate(Screens.Auth.EmailSignUp)
+            },
+            navigateToForgotPassword = {
+                nav.navigate(Screens.Auth.ForgotPassword(it))
+            }
+        )
+    }
+
+    composable<Screens.Auth.EmailSignUp> {
+        EmailSignUpRootScreen {
+            nav.popBackStack()
+        }
+    }
+
+    composable<Screens.Auth.ForgotPassword>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInVertically(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetY = { it })
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideOutVertically(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        targetOffsetY = { it }
+                    )
+        }
+    ) { stackEntry ->
+        val email = stackEntry.toRoute<Screens.Auth.ForgotPassword>().email
+
+        val viewmodel = hiltViewModel<ForgotPasswordViewModel>()
+        email?.let { viewmodel.loadEmail(it) }
+
+        ForgotPasswordRootScreen(
+            viewModel = viewmodel,
+            navigateBack = {
                 nav.popBackStack()
             }
-        }
+        )
+    }
+}
 
-        composable<Screens.Auth.ForgotPassword>(
-            enterTransition = {
-                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
-                        slideInVertically(
-                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                            initialOffsetY = { it })
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
-                        slideOutVertically(
-                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                            targetOffsetY = { it }
-                        )
-            }
-        ) { stackEntry ->
-            val email = stackEntry.toRoute<Screens.Auth.ForgotPassword>().email
+fun NavGraphBuilder.setupGraph(nav: NavHostController) {
+    composable<Screens.SetUp.ImportSpotifyPlaylist> {
+        // todo
+    }
 
-            val viewmodel = hiltViewModel<ForgotPasswordViewModel>()
-            email?.let { viewmodel.loadEmail(it) }
+    composable<Screens.SetUp.SetBirthDate> {
+        // todo
+    }
 
-            ForgotPasswordRootScreen(
-                viewModel = viewmodel,
-                navigateBack = {
-                    nav.popBackStack()
-                }
-            )
-        }
+    composable<Screens.SetUp.PickGenre> {
+        // todo
+    }
+
+    composable<Screens.SetUp.PickArtist> {
+        // todo
     }
 }

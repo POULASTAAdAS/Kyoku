@@ -16,7 +16,7 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun EmailLogInRootScreen(
-    viewModel: EmailViewModel = hiltViewModel(),
+    viewModel: EmailLogInViewModel = hiltViewModel(),
     navigateToEmailSignUp: () -> Unit,
     navigateToForgotPassword: (String?) -> Unit,
 ) {

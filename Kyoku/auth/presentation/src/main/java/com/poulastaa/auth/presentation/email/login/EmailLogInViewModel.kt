@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EmailViewModel @Inject constructor(
+class EmailLogInViewModel @Inject constructor(
     private val validator: AuthValidator,
 ) : ViewModel() {
     private val _state = MutableStateFlow(EmailLoginUiState())

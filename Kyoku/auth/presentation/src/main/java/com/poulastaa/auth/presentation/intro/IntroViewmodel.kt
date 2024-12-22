@@ -3,12 +3,19 @@ package com.poulastaa.auth.presentation.intro
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.domain.model.AuthStatus
 import com.poulastaa.auth.presentation.BuildConfig
+import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,6 +35,9 @@ class IntroViewmodel @Inject constructor(
             started = SharingStarted.WhileSubscribed(),
             initialValue = IntroUiState()
         )
+
+    private val _uiEvent = Channel<IntroUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     fun onAction(action: IntroUiAction) {
         when (action) {
@@ -58,12 +68,66 @@ class IntroViewmodel @Inject constructor(
 
                     when (response) {
                         is Result.Error -> {
+                            when (response.error) {
+                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_no_internet))
+                                )
 
+                                else -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_something_went_wrong))
+                                )
+                            }
                         }
 
                         is Result.Success -> {
+                            when (response.data) {
+                                AuthStatus.CREATED -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.IMPORT_SPOTIFY_PLAYLIST
+                                    )
+                                )
 
+                                AuthStatus.USER_FOUND,
+                                AuthStatus.USER_FOUND_HOME,
+                                    -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.HOME
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_STORE_B_DATE -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.SET_B_DATE
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_SET_GENRE -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.PIC_GENRE
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_SET_ARTIST -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.PIC_ARTIST
+                                    )
+                                )
+
+                                else -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
                         }
+                    }
+
+                    _state.update {
+                        it.copy(
+                            isGoogleAuthLoading = false
+                        )
                     }
                 }
             }
