@@ -4,8 +4,10 @@ import android.app.Activity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.auth.presentation.intro.components.StartActivityForResult
 import com.poulastaa.core.presentation.ui.KyokuWindowSize
 
@@ -17,46 +19,47 @@ fun IntroRootScreen(
 ) {
     val activity = LocalContext.current as Activity
     val windowSize = calculateWindowSizeClass(activity)
-
-    StartActivityForResult(
-        key = viewmodel.state.isGoogleAuthLoading,
-        activity = activity,
-        clientId = viewmodel.state.clientId,
-        onSuccess = {
-            viewmodel.onAction(
-                IntroUiAction.OnTokenReceive(
-                    token = it,
-                    activity = activity
-                )
-            )
-        },
-        onCanceled = {
-            viewmodel.onAction(IntroUiAction.OnGoogleSignInCancel)
-        }
-    )
+    val state by viewmodel.state.collectAsStateWithLifecycle()
 
     KyokuWindowSize(
         windowSizeClass = windowSize,
         compactContent = {
             IntroCompactScreen(
-                state = viewmodel.state,
+                state = state,
                 navigateToEmailLogIn = navigateToEmailLogIn,
                 onAction = viewmodel::onAction
             )
         },
         mediumContent = {
             IntroMediumScreen(
-                state = viewmodel.state,
+                state = state,
                 navigateToEmailLogIn = navigateToEmailLogIn,
                 onAction = viewmodel::onAction
             )
         },
         expandedContent = {
             IntroExpandedScreen(
-                state = viewmodel.state,
+                state = state,
                 navigateToEmailLogIn = navigateToEmailLogIn,
                 onAction = viewmodel::onAction
             )
+        }
+    )
+
+    StartActivityForResult(
+        key = state.isGoogleAuthLoading,
+        activity = activity,
+        clientId = state.clientId,
+        onSuccess = {
+            viewmodel.onAction(
+                IntroUiAction.OnTokenReceive(
+                    token = it,
+                    countryCode = "//todo" // todo
+                )
+            )
+        },
+        onCanceled = {
+            viewmodel.onAction(IntroUiAction.OnGoogleSignInCancel)
         }
     )
 }

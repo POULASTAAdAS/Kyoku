@@ -1,13 +1,13 @@
 package com.poulastaa.auth.presentation.intro.components
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
-import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -43,7 +43,7 @@ fun StartActivityForResult(
                     onSuccess = onSuccess,
                     onCanceled = onCanceled
                 )
-            }catch (_: Exception) {
+            } catch (e: Exception) {
                 onCanceled.invoke()
             }
         }
@@ -63,7 +63,7 @@ fun handleSignIn(
                         .createFrom(credential.data)
 
                     onSuccess.invoke(googleIdTokenCredential.idToken)
-                } catch (_: GoogleIdTokenParsingException) {
+                } catch (e: GoogleIdTokenParsingException) {
                     onCanceled.invoke()
                 }
             } else onCanceled.invoke()

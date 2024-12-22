@@ -19,10 +19,6 @@ fun Route.changePassword(
             val req = call.receiveNullable<NewPasswordRequest>()
                 ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
 
-            println(req)
-            println(req)
-            println(req)
-
             val status = repo.updatePassword(
                 token = req.token,
                 newPassword = req.password,
