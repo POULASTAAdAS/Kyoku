@@ -28,7 +28,7 @@ class RedisLocalSessionCacheDatasource(
         }
     }
 
-    override suspend fun read(id: String): String = redisPool.resource.use { jedis ->
+    override suspend fun read(id: String): String? = redisPool.resource.use { jedis ->
         jedis.get("${Group.SESSION}:$id")
     }
 }

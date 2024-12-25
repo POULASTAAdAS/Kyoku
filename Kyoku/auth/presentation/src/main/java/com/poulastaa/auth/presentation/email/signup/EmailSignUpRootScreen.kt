@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.presentation.ui.KyokuWindowSize
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
@@ -18,6 +19,7 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 fun EmailSignUpRootScreen(
     viewModel: EmailSignUpViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
+    navigateToScreen: (SavedScreen) -> Unit,
 ) {
     val context = LocalContext.current as Activity
     val windowSize = calculateWindowSizeClass(context)
@@ -35,9 +37,7 @@ fun EmailSignUpRootScreen(
 
             EmailSignUpUiEvent.NavigateToLogIn -> navigateToLogin()
 
-            EmailSignUpUiEvent.OnSuccess -> {
-                // todo
-            }
+            is EmailSignUpUiEvent.OnSuccess -> navigateToScreen(event.screen)
         }
     }
 

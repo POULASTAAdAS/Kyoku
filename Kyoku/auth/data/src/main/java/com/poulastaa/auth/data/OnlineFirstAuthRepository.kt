@@ -87,12 +87,29 @@ class OnlineFirstAuthRepository @Inject constructor(
         return result.map { it.status }
     }
 
-    override suspend fun checkEmailVerificationState(email: String): Result<Boolean, DataError.Network> {
+    override suspend fun checkEmailVerificationState(
+        email: String,
+        resultState: AuthStatus,
+    ): Result<Boolean, DataError.Network> {
         val result = remote.checkEmailVerificationState(email)
 
         if (result is Result.Success && result.data.status) {
             ds.storeTokenOrCookie("Bearer ${result.data.accessToken}")
             ds.storeRefreshToken(result.data.refreshToken)
+
+            when (resultState) {
+                AuthStatus.CREATED,
+                AuthStatus.EMAIL_NOT_VERIFIED,
+                AuthStatus.USER_FOUND,
+                    -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
+
+                AuthStatus.USER_FOUND_STORE_B_DATE -> ds.storeSignInState(SavedScreen.SET_B_DATE)
+                AuthStatus.USER_FOUND_SET_GENRE -> ds.storeSignInState(SavedScreen.PIC_GENRE)
+                AuthStatus.USER_FOUND_SET_ARTIST -> ds.storeSignInState(SavedScreen.PIC_ARTIST)
+                AuthStatus.USER_FOUND_HOME -> ds.storeSignInState(SavedScreen.HOME)
+
+                else -> Unit
+            }
 
             return result.map { it.status }
         }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
@@ -95,7 +98,14 @@ fun ForgotPasswordMediumScreen(
                     onValueChange = { onAction(ForgotPasswordUiAction.OnEmailChange(it)) },
                     label = stringResource(R.string.email),
                     leadingIcon = EmailAlternateIcon,
-                    trailingIcon = if (state.email.isValid) CheckIcon else null
+                    trailingIcon = if (state.email.isValid) CheckIcon else null,
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Email,
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            onAction(ForgotPasswordUiAction.OnSubmitClick)
+                        }
+                    )
                 )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.large2))
@@ -104,6 +114,7 @@ fun ForgotPasswordMediumScreen(
                     modifier = Modifier.fillMaxWidth(.7f),
                     text = stringResource(R.string.continue_text),
                     onClick = { onAction(ForgotPasswordUiAction.OnSubmitClick) },
+                    isLoading = state.isMakingApiCall,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.background

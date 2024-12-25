@@ -55,7 +55,8 @@ fun AppLoadingButton(
             Text(
                 text = text,
                 fontWeight = FontWeight.Medium,
-                fontSize = fontSize
+                fontSize = fontSize,
+                modifier = Modifier.alpha(if (isLoading) 0f else 1f)
             )
         }
     }

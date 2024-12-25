@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,9 +27,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +53,7 @@ fun EmailLogInMediumScreen(
     onAction: (EmailLogInUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -120,7 +124,15 @@ fun EmailLogInMediumScreen(
                             onPasswordToggleClick = {
                                 onAction(EmailLogInUiAction.OnPasswordVisibilityToggle)
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            }
+                            },
+                            imeAction = ImeAction.Done,
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    onAction(EmailLogInUiAction.OnConformClick)
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    focusManager.clearFocus()
+                                }
+                            )
                         )
                     }
                 }
@@ -208,6 +220,7 @@ fun EmailLogInMediumScreen(
                     onAction(EmailLogInUiAction.OnConformClick)
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
+                isLoading = state.isMakingApiCall,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
 

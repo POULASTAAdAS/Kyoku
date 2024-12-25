@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,9 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -48,6 +52,7 @@ fun EmailLogInCompactScreen(
     onAction: (EmailLogInUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -100,7 +105,8 @@ fun EmailLogInCompactScreen(
                             isError = state.email.isErr,
                             supportingText = state.email.errText.asString(),
                             trailingIcon = if (state.email.isValid) CheckIcon else null,
-                            leadingIcon = EmailAlternateIcon
+                            leadingIcon = EmailAlternateIcon,
+                            keyboardType = KeyboardType.Email
                         )
 
                         AppPasswordField(
@@ -115,7 +121,15 @@ fun EmailLogInCompactScreen(
                             onPasswordToggleClick = {
                                 onAction(EmailLogInUiAction.OnPasswordVisibilityToggle)
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            }
+                            },
+                            imeAction = ImeAction.Done,
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    onAction(EmailLogInUiAction.OnConformClick)
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    focusManager.clearFocus()
+                                }
+                            )
                         )
                     }
                 }

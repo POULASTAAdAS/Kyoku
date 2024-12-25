@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -20,9 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -45,6 +51,9 @@ fun EmailSignUpCompactScreen(
     onAction: (EmailSignUpUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     Box {
         MovingCirclesWithMetaballEffect()
@@ -95,13 +104,15 @@ fun EmailSignUpCompactScreen(
                         isError = state.email.isErr,
                         supportingText = state.email.errText.asString(),
                         trailingIcon = if (state.email.isValid) CheckIcon else null,
-                        leadingIcon = EmailAlternateIcon
+                        leadingIcon = EmailAlternateIcon,
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
                     )
 
                     AppTextField(
                         modifier = Modifier.fillMaxWidth(),
                         text = state.username.value,
-                        onValueChange = { onAction(EmailSignUpUiAction.OnEmailChange(it)) },
+                        onValueChange = { onAction(EmailSignUpUiAction.OnUsernameChange(it)) },
                         label = stringResource(R.string.username),
                         isError = state.username.isErr,
                         supportingText = state.username.errText.asString(),
@@ -131,7 +142,15 @@ fun EmailSignUpCompactScreen(
                         isError = state.conformPassword.isErr,
                         supportingText = state.conformPassword.errText.asString(),
                         leadingIcon = PasswordIcon,
-                        onPasswordToggleClick = {}
+                        onPasswordToggleClick = {},
+                        imeAction = ImeAction.Done,
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                onAction(EmailSignUpUiAction.OnConformClick(context.resources.configuration.locales[0].country))
+                                keyboard?.hide()
+                                focusManager.clearFocus()
+                            }
+                        )
                     )
                 }
             }
@@ -171,8 +190,9 @@ fun EmailSignUpCompactScreen(
                     .fillMaxWidth(.8f)
                     .align(Alignment.CenterHorizontally),
                 text = stringResource(R.string.continue_text),
+                isLoading = state.isMakingApiCall,
                 onClick = {
-                    onAction(EmailSignUpUiAction.OnConformClick("//todo"))
+                    onAction(EmailSignUpUiAction.OnConformClick(context.resources.configuration.locales[0].country))
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
             )

@@ -1,13 +1,21 @@
 package com.poulastaa.auth.presentation.email.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.AuthValidator
+import com.poulastaa.auth.domain.model.AuthStatus
 import com.poulastaa.auth.domain.model.PasswordState
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -19,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EmailLogInViewModel @Inject constructor(
     private val validator: AuthValidator,
+    private val repo: AuthRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(EmailLoginUiState())
     val state = _state
@@ -30,6 +39,8 @@ class EmailLogInViewModel @Inject constructor(
 
     private val _uiEvent = Channel<EmailLogInUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var emailVerificationJob: Job? = null
 
     fun onAction(action: EmailLogInUiAction) {
         when (action) {
@@ -88,10 +99,215 @@ class EmailLogInViewModel @Inject constructor(
                     )
                 }
 
-                _state.update {
-                    it.copy(
-                        isMakingApiCall = true
+                viewModelScope.launch {
+                    val result = repo.emailLogIn(
+                        email = _state.value.email.value.trim(),
+                        password = _state.value.password.value.trim()
                     )
+
+                    Log.d("result", result.toString())
+
+                    when (result) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.EMAIL_NOT_VERIFIED -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(R.string.verification_mail_sent)
+                                        )
+                                    )
+
+                                    startVerificationMailJob(
+                                        _state.value.email.value.trim(),
+                                        AuthStatus.USER_FOUND
+                                    )
+                                }
+
+                                DataError.Network.PASSWORD_DOES_NOT_MATCH -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(R.string.error_password_does_not_match)
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            password = it.password.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_password_does_not_match)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                DataError.Network.NOT_FOUND -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(R.string.error_user_not_found)
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            email = it.email.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_user_not_found)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                DataError.Network.INVALID_EMAIL -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(R.string.error_invalid_email)
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            email = it.email.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_invalid_email)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                DataError.Network.NO_INTERNET -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(R.string.error_no_internet)
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            email = it.email.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_no_internet)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                else -> _uiEvent.send(
+                                    EmailLogInUiEvent.EmitToast(
+                                        UiText.StringResource(R.string.error_something_went_wrong)
+                                    )
+                                )
+                            }
+
+                            _state.update {
+                                it.copy(
+                                    isMakingApiCall = false
+                                )
+                            }
+                        }
+
+                        is Result.Success -> {
+                            when (result.data) {
+                                AuthStatus.CREATED,
+                                AuthStatus.USER_FOUND,
+                                AuthStatus.USER_FOUND_STORE_B_DATE,
+                                AuthStatus.USER_FOUND_SET_GENRE,
+                                AuthStatus.USER_FOUND_SET_ARTIST,
+                                AuthStatus.USER_FOUND_HOME,
+                                AuthStatus.EMAIL_NOT_VERIFIED,
+                                    -> _uiEvent.send(
+                                    EmailLogInUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.verification_mail_sent
+                                        )
+                                    )
+                                )
+
+                                AuthStatus.INVALID_EMAIL -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                R.string.error_invalid_email
+                                            )
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            email = it.email.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_invalid_email)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                AuthStatus.USER_NOT_FOUND -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                R.string.error_user_not_found
+                                            )
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            email = it.email.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_user_not_found)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                AuthStatus.PASSWORD_DOES_NOT_MATCH -> {
+                                    _uiEvent.send(
+                                        EmailLogInUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                R.string.error_password_does_not_match
+                                            )
+                                        )
+                                    )
+
+                                    _state.update {
+                                        it.copy(
+                                            password = it.password.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(R.string.error_password_does_not_match)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                else -> _uiEvent.send(
+                                    EmailLogInUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
+
+                            if (result.data == AuthStatus.CREATED ||
+                                result.data == AuthStatus.USER_FOUND ||
+                                result.data == AuthStatus.USER_FOUND_STORE_B_DATE ||
+                                result.data == AuthStatus.USER_FOUND_SET_GENRE ||
+                                result.data == AuthStatus.USER_FOUND_SET_ARTIST ||
+                                result.data == AuthStatus.USER_FOUND_HOME ||
+                                result.data == AuthStatus.EMAIL_NOT_VERIFIED
+                            ) {
+                                emailVerificationJob?.cancel()
+                                emailVerificationJob = startVerificationMailJob(
+                                    email = _state.value.email.value.trim(),
+                                    authState = result.data
+                                )
+                            } else _state.update {
+                                it.copy(
+                                    isMakingApiCall = false
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -180,4 +396,51 @@ class EmailLogInViewModel @Inject constructor(
 
         return err
     }
+
+    private fun startVerificationMailJob(email: String, authState: AuthStatus) =
+        viewModelScope.launch {
+            for (i in 1..15) { // 45 seconds
+                delay(3000)
+
+                val result = repo.checkEmailVerificationState(email, authState)
+
+                if (result is Result.Success && result.data) {
+                    if (authState == AuthStatus.CREATED) _uiEvent.send(
+                        EmailLogInUiEvent.EmitToast(
+                            UiText.StringResource(R.string.welcome)
+                        )
+                    ) else _uiEvent.send(
+                        EmailLogInUiEvent.EmitToast(
+                            UiText.StringResource(R.string.welcome_back)
+                        )
+                    )
+
+                    when (authState) {
+                        AuthStatus.CREATED, AuthStatus.USER_FOUND -> {
+                            _uiEvent.send(
+                                EmailLogInUiEvent.OnSuccess(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
+                            )
+                        }
+
+                        AuthStatus.USER_FOUND_STORE_B_DATE -> _uiEvent.send(
+                            EmailLogInUiEvent.OnSuccess(SavedScreen.SET_B_DATE)
+                        )
+
+                        AuthStatus.USER_FOUND_SET_GENRE -> _uiEvent.send(
+                            EmailLogInUiEvent.OnSuccess(SavedScreen.PIC_GENRE)
+                        )
+
+                        AuthStatus.USER_FOUND_SET_ARTIST -> _uiEvent.send(
+                            EmailLogInUiEvent.OnSuccess(SavedScreen.PIC_ARTIST)
+                        )
+
+                        AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
+                            EmailLogInUiEvent.OnSuccess(SavedScreen.HOME)
+                        )
+
+                        else -> return@launch
+                    }
+                }
+            }
+        }
 }

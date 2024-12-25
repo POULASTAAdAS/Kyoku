@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,9 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,6 +56,7 @@ fun EmailLogInExpandedScreen(
     onAction: (EmailLogInUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
+    val focusManager = LocalFocusManager.current
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -131,7 +135,15 @@ fun EmailLogInExpandedScreen(
                                 onPasswordToggleClick = {
                                     onAction(EmailLogInUiAction.OnPasswordVisibilityToggle)
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
+                                },
+                                imeAction = ImeAction.Done,
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        onAction(EmailLogInUiAction.OnConformClick)
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        focusManager.clearFocus()
+                                    }
+                                )
                             )
                         }
                     }
@@ -214,6 +226,7 @@ fun EmailLogInExpandedScreen(
                     modifier = Modifier
                         .fillMaxWidth(.75f),
                     text = stringResource(R.string.continue_text),
+                    isLoading = state.isMakingApiCall,
                     onClick = {
                         onAction(EmailLogInUiAction.OnConformClick)
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)

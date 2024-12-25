@@ -79,14 +79,46 @@ fun NavGraphBuilder.authGraph(nav: NavHostController) {
             },
             navigateToForgotPassword = {
                 nav.navigate(Screens.Auth.ForgotPassword(it))
+            },
+            navigateToScreen = {
+                nav.popBackStack()
+
+                when (it) {
+                    SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> nav.navigate(Screens.SetUp.ImportSpotifyPlaylist)
+                    SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
+                    SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
+                    SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
+                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+
+                    else -> Unit
+                }
             }
         )
     }
 
     composable<Screens.Auth.EmailSignUp> {
-        EmailSignUpRootScreen {
-            nav.popBackStack()
-        }
+        EmailSignUpRootScreen(
+            navigateToLogin = {
+                nav.navigate(Screens.Auth.EmailLogIn) {
+                    popUpTo(Screens.Auth.EmailLogIn) {
+                        inclusive = true
+                    }
+                }
+            },
+            navigateToScreen = {
+                nav.popBackStack()
+
+                when (it) {
+                    SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> nav.navigate(Screens.SetUp.ImportSpotifyPlaylist)
+                    SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
+                    SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
+                    SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
+                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+
+                    else -> Unit
+                }
+            }
+        )
     }
 
     composable<Screens.Auth.ForgotPassword>(
