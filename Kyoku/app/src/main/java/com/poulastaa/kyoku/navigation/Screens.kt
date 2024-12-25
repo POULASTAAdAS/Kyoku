@@ -37,5 +37,8 @@ sealed interface Screens {
 
         @Serializable
         data object Library : Screens
+
+        @Serializable
+        data object Settings : Screens
     }
 }

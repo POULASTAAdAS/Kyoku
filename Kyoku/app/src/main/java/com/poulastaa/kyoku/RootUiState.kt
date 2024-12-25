@@ -3,5 +3,5 @@ package com.poulastaa.kyoku
 import com.poulastaa.kyoku.navigation.Screens
 
 data class RootUiState(
-    val screen: Screens = Screens.Auth.Intro,
+    val screen: Screens? = null,
 )

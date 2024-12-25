@@ -37,6 +37,11 @@
             <option value="$PROJECT_DIR$/core/presentation" />
             <option value="$PROJECT_DIR$/core/presentation/designsystem" />
             <option value="$PROJECT_DIR$/core/presentation/ui" />
+            <option value="$PROJECT_DIR$/settings" />
+            <option value="$PROJECT_DIR$/settings/data" />
+            <option value="$PROJECT_DIR$/settings/domain" />
+            <option value="$PROJECT_DIR$/settings/network" />
+            <option value="$PROJECT_DIR$/settings/presentation" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

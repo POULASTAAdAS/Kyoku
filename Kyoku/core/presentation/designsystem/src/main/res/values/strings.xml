@@ -158,4 +158,7 @@
     <string name="followed_artists">followed artists</string>
     <string name="create">Create</string>
     <string name="an_account">An Account</string>
+    <string name="hi">Hi...</string>
+    <string name="color_type_1">Royal Green</string>
+    <string name="delete_account">Delete Account</string>
 </resources>

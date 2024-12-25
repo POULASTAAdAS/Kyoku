@@ -241,3 +241,11 @@ val InfoIcon: ImageVector
 val EditIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Edit
+
+val NightIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_night)
+
+val DayIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_day)

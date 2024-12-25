@@ -19,6 +19,7 @@ import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.settings.presentation.SettingsRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -33,6 +34,7 @@ fun RootNavigation(
     ) {
         authGraph(nav)
         setupGraph(nav)
+        coreGraph(nav)
     }
 }
 
@@ -131,5 +133,25 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
 
     composable<Screens.SetUp.PickArtist> {
         // todo
+    }
+}
+
+fun NavGraphBuilder.coreGraph(nav: NavHostController) {
+    composable<Screens.Core.Home> {
+        // todo
+    }
+
+    composable<Screens.Core.Library> {
+        // todo
+    }
+
+    composable<Screens.Core.Settings> {
+        SettingsRootScreen {
+            nav.navigate(Screens.Auth.Intro) {
+                popUpTo(Screens.Auth.Intro) {
+                    inclusive = true
+                }
+            }
+        }
     }
 }

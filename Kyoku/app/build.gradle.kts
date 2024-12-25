@@ -71,4 +71,9 @@ dependencies {
     implementation(projects.auth.data)
     implementation(projects.auth.network)
     implementation(projects.auth.presentation)
+
+    implementation(projects.settings.domain)
+    implementation(projects.settings.data)
+    implementation(projects.settings.network)
+    implementation(projects.settings.presentation)
 }

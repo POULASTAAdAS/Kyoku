@@ -41,10 +41,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RootNavigation(
-                        nav = nav,
-                        screen = state.screen
-                    )
+                    state.screen?.let {
+                        RootNavigation(
+                            nav = nav,
+                            screen = it
+                        )
+                    }
                 }
             }
         }

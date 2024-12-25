@@ -42,9 +42,10 @@ class RootViewModel @Inject constructor(
             SavedScreen.HOME -> Screens.Core.Home
             SavedScreen.LIBRARY -> Screens.Core.Library
         }
+
         _state.update {
             it.copy(
-                screen = screen
+                screen = Screens.Core.Settings
             )
         }
 
