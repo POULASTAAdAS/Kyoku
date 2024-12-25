@@ -14,7 +14,7 @@ import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.Email
 import com.poulastaa.core.domain.repository.LocalAuthDatasource
-import com.poulastaa.core.domain.repository.LocalCacheDatasource
+import com.poulastaa.core.domain.repository.LocalAuthCacheDatasource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ import org.jetbrains.exposed.sql.upperCase
 import org.jetbrains.exposed.sql.upsert
 
 class ExposedLocalAuthDatasource(
-    private val cache: LocalCacheDatasource,
+    private val cache: LocalAuthCacheDatasource,
 ) : LocalAuthDatasource {
     private val countryListMap = mapOf(
         "In" to "India",

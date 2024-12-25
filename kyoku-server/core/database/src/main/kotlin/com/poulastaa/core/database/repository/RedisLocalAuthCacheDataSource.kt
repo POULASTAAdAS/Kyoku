@@ -6,15 +6,15 @@ import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.LocalCacheDatasource
+import com.poulastaa.core.domain.repository.LocalAuthCacheDatasource
 import kotlinx.coroutines.delay
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.SetParams
 
-class RedisLocalCacheDataSource(
+class RedisLocalAuthCacheDataSource(
     private val redisPool: JedisPool,
     private val gson: Gson,
-) : LocalCacheDatasource {
+) : LocalAuthCacheDatasource {
     private object Group {
         const val COUNTRY_ID = "COUNTRY_ID"
         const val USER = "USER"

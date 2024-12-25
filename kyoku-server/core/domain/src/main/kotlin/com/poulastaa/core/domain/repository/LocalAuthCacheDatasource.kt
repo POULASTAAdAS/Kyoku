@@ -4,7 +4,7 @@ import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 
-interface LocalCacheDatasource {
+interface LocalAuthCacheDatasource {
     fun cachedCountryId(key: String): Int?
     fun setCountryId(key: String, value: String)
 

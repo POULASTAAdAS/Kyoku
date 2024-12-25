@@ -3,23 +3,24 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:core-domain"))
-    implementation(project(":auth:auth-domain"))
-    implementation(project(":details:details-domain"))
-    implementation(project(":play:play-domain"))
-    implementation(project(":search:search-domain"))
-    implementation(project(":suggestion:suggestion-domain"))
-    implementation(project(":user:user-domain"))
-    implementation(project(":notification:notification-domain"))
+    implementation(projects.core.coreDomain)
+    implementation(projects.auth.authDomain)
+    implementation(projects.details.detailsDomain)
+    implementation(projects.play.playDomain)
+    implementation(projects.search.searchDomain)
+    implementation(projects.suggestion.suggestionDomain)
+    implementation(projects.user.userDomain)
+    implementation(projects.notification.notificationDomain)
 
+    implementation(projects.auth.authNetwork)
 
-    implementation(project(":auth:auth-network"))
+    implementation(projects.auth.authData)
+    implementation(projects.core.coreData)
+    implementation(projects.notification.notificationData)
 
-    implementation(project(":auth:auth-data"))
-    implementation(project(":core:core-data"))
-    implementation(project(":notification:notification-data"))
+    implementation(projects.core.coreDatabase)
 
-    implementation(project(":core:core-database"))
+    implementation(projects.core.coreNetwork)
 
     implementation(libs.bundles.koin)
     implementation(libs.redis.clients.jedis)

@@ -18,6 +18,8 @@ include("core:database")
 project(":core:database").name = "core-database"
 include("core:data")
 project(":core:data").name = "core-data"
+include("core:network")
+findProject(":core:network")?.name = "core-network"
 
 include("user:data")
 project(":user:data").name = "user-data"

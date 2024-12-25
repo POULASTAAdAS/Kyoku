@@ -28,3 +28,8 @@ cache {
   port = "6380"
   password = "your redis password"
 }
+
+session {
+  encryptionKey = "your session encryption key"
+  secretKey = "your secret key"
+}

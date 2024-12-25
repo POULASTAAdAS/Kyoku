@@ -3,8 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":auth:auth-domain"))
-    implementation(project(":core:core-domain"))
+    implementation(projects.auth.authDomain)
+    implementation(projects.core.coreDomain)
+    implementation(projects.core.coreNetwork)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.auth)
