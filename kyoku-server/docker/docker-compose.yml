@@ -17,8 +17,23 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3308:3306"
-    volumes:
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    volumes: # sequence in file name is important
+      - ./mysql/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql
+
+      - ./mysql/insert/01_EntryAlbum.sql:/docker-entrypoint-initdb.d/01_EntryAlbum.sql
+      - ./mysql/insert/02_EntryArtist.sql:/docker-entrypoint-initdb.d/02_EntryArtist.sql
+      - ./mysql/insert/03_EntryCountry.sql:/docker-entrypoint-initdb.d/03_EntryCountry.sql
+      - ./mysql/insert/04_EntryGenre.sql:/docker-entrypoint-initdb.d/04_EntryGenre.sql
+      - ./mysql/insert/05_EntrySong.sql:/docker-entrypoint-initdb.d/05_EntrySong.sql
+      - ./mysql/insert/06_EntrySongInfo.sql:/docker-entrypoint-initdb.d/06_EntrySongInfo.sql
+
+      - ./mysql/insert/EntryRelationArtistAlbum.sql:/docker-entrypoint-initdb.d/EntryRelationArtistAlbum.sql
+      - ./mysql/insert/EntryRelationArtistCountry.sql:/docker-entrypoint-initdb.d/EntryRelationArtistCountry.sql
+      - ./mysql/insert/EntryRelationArtistGenre.sql:/docker-entrypoint-initdb.d/EntryRelationArtistGenre.sql
+      - ./mysql/insert/EntryRelationSongAlbum.sql:/docker-entrypoint-initdb.d/EntryRelationSongAlbum.sql
+      - ./mysql/insert/EntryRelationSongArtist.sql:/docker-entrypoint-initdb.d/EntryRelationSongArtist.sql
+      - ./mysql/insert/EntryRelationSongGenre.sql:/docker-entrypoint-initdb.d/EntryRelationSongGenre.sql
+
       - ./mysql-kyoku-data/data:/var/lib/mysql
 
   redis-kyoku:
