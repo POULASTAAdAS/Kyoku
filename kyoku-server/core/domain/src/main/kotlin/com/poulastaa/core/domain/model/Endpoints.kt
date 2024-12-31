@@ -10,5 +10,7 @@ sealed class Endpoints(val route: String) {
     data object ResetPassword : Endpoints(route = "/api/v1/auth/resetPassword")
     data object SubmitNewPassword : Endpoints(route = "/api/v1/auth/submitNewPassword")
 
+    data object ImportSpotifyPlaylist : Endpoints(route = "/api/v1/user/importSpotifyPlaylist")
+
     data object UnAuthorized : Endpoints(route = "/api/v1/unauthorized")
 }

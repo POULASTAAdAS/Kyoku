@@ -51,6 +51,7 @@
             <option value="$PROJECT_DIR$/user" />
             <option value="$PROJECT_DIR$/user/data" />
             <option value="$PROJECT_DIR$/user/domain" />
+            <option value="$PROJECT_DIR$/user/network" />
           </set>
         </option>
       </GradleProjectSettings>

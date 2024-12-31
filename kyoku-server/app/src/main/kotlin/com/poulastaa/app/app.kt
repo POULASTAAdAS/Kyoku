@@ -25,6 +25,10 @@ fun Application.module() {
         sessionEncryptionKey = this.environment.config.property("session.encryptionKey").getString(),
         sessionSecretKey = this.environment.config.property("session.secretKey").getString(),
     )
+    configureSecurity(
+        realm = this.environment.config.property("jwt.realm").getString(),
+        issuer = this.environment.config.property("jwt.issuer").getString(),
+    )
     configureRouting()
 
     // must be initialized at first

@@ -1,3 +1,4 @@
+USE Kyoku;
 INSERT IGNORE INTO Album (id, `name` , popularity) VALUES
 (1, "New Punjabi Mp3 Songs 2022", 0),
 (2, "No Name", 0),

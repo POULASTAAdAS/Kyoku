@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain.repository
+package com.poulastaa.core.domain.repository.auth
 
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType

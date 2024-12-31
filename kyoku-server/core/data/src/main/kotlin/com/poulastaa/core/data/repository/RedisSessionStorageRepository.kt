@@ -1,6 +1,6 @@
 package com.poulastaa.core.data.repository
 
-import com.poulastaa.core.domain.repository.LocalSessionCacheDatasource
+import com.poulastaa.core.domain.repository.auth.LocalSessionCacheDatasource
 import io.ktor.server.sessions.*
 
 class RedisSessionStorageRepository(

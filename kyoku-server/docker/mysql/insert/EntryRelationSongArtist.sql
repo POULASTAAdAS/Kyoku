@@ -1,3 +1,5 @@
+USE Kyoku;
+
 INSERT IGNORE INTO SongArtist (songId, artistId) VALUES
 (2, 10101),
 (3, 3503),

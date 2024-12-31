@@ -1,7 +1,7 @@
 package com.poulastaa.notification.data.repository
 
 import com.poulastaa.core.domain.model.Endpoints
-import com.poulastaa.core.domain.repository.JWTRepository
+import com.poulastaa.core.domain.repository.auth.JWTRepository
 import com.poulastaa.core.domain.utils.Constants.SMS_EMAIL_GOOGLE_SMTP_HOST
 import com.poulastaa.core.domain.utils.Constants.SMS_EMAIL_PORT
 import com.poulastaa.notification.domain.repository.MailServiceRepository

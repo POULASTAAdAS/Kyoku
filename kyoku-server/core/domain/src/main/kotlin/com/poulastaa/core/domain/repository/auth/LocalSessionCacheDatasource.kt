@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain.repository
+package com.poulastaa.core.domain.repository.auth
 
 interface LocalSessionCacheDatasource {
     suspend fun write(id: String, value: String)

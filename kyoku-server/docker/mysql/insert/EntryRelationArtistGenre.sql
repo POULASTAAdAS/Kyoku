@@ -1,3 +1,5 @@
+USE Kyoku;
+
 INSERT IGNORE INTO ArtistGenre (artistId, genreId) VALUES
 (9855, 61),
 (1855, 13),

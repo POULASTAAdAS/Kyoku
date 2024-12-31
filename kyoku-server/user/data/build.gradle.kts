@@ -4,6 +4,8 @@ plugins {
 
 
 dependencies {
-    implementation(project(":core:core-domain"))
-    implementation(project(":user:user-domain"))
+    implementation(projects.core.coreDomain)
+    implementation(projects.user.userDomain)
+
+    implementation(libs.bundles.koin)
 }

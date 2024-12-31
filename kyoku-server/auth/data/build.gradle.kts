@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:core-domain"))
-    implementation(project(":auth:auth-domain"))
+    implementation(projects.core.coreDomain)
+    implementation(projects.auth.authDomain)
 
     implementation(libs.bundles.ktor.auth)
     implementation(libs.bundles.koin)

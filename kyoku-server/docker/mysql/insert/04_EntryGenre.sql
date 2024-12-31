@@ -1,3 +1,5 @@
+USE Kyoku;
+
 INSERT IGNORE INTO Genre (id,`name`) VALUES
 (1,"Acoustic"),
 (2,"Actor"),

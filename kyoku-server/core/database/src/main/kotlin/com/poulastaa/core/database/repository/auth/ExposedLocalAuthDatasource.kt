@@ -1,7 +1,6 @@
-package com.poulastaa.core.database.repository
+package com.poulastaa.core.database.repository.auth
 
-import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
-import com.poulastaa.core.database.SQLDbManager.userDbQuery
+import com.poulastaa.core.database.SQLDbManager
 import com.poulastaa.core.database.dao.DaoCountry
 import com.poulastaa.core.database.dao.DaoUser
 import com.poulastaa.core.database.entity.app.EntityCountry
@@ -12,9 +11,11 @@ import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
-import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.LocalAuthDatasource
-import com.poulastaa.core.domain.repository.LocalAuthCacheDatasource
+import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
+import com.poulastaa.core.domain.repository.LocalCoreDatasource
+import com.poulastaa.core.domain.repository.auth.Email
+import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
+import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ import org.jetbrains.exposed.sql.upperCase
 import org.jetbrains.exposed.sql.upsert
 
 class ExposedLocalAuthDatasource(
+    private val coreDB: LocalCoreDatasource,
     private val cache: LocalAuthCacheDatasource,
 ) : LocalAuthDatasource {
     private val countryListMap = mapOf(
@@ -37,8 +39,8 @@ class ExposedLocalAuthDatasource(
 
         cache.cachedCountryId(country.uppercase())?.let { return it }
 
-        val dao = kyokuDbQuery {
-            DaoCountry.find {
+        val dao = SQLDbManager.kyokuDbQuery {
+            DaoCountry.Companion.find {
                 EntityCountry.country.upperCase() eq country.uppercase()
             }.singleOrNull()
         } ?: return null
@@ -48,28 +50,14 @@ class ExposedLocalAuthDatasource(
         return dao.id.value
     }
 
-    override suspend fun getUsersByEmail(
-        email: String,
-        type: UserType,
-    ): DBUserDto? {
-        cache.cachedUserByEmail(email, type)?.let { return it }
-
-        val dbUser = userDbQuery {
-            DaoUser.find {
-                EntityUser.email eq email and (EntityUser.userType eq type.name)
-            }.firstOrNull()
-        } ?: return null
-
-        cache.setUserByEmail(email, type, dbUser.toDbUserDto())
-
-        return dbUser.toDbUserDto()
-    }
+    override suspend fun getUsersByEmail(email: String, type: UserType): DBUserDto? =
+        coreDB.getUserByEmail(email, type)
 
     override suspend fun createUser(user: ServerUserDto, isDbStore: Boolean): DBUserDto {
         val dbUser = when {
             (user.type == UserType.GOOGLE || user.type == UserType.EMAIL) && isDbStore -> {
-                userDbQuery {
-                    DaoUser.new { // todo fix insert ignore
+                SQLDbManager.userDbQuery {
+                    DaoUser.Companion.new { // todo fix insert ignore
                         this.email = user.email
                         this.username = user.username
                         this.userType = user.type.name
@@ -128,7 +116,7 @@ class ExposedLocalAuthDatasource(
         val user = getUsersByEmail(email, UserType.EMAIL)
         if (user == null || user.id == -1L) return
 
-        userDbQuery {
+        SQLDbManager.userDbQuery {
             RelationEntityUserJWT.upsert {
                 it[this.userId] = user.id
                 it[this.refreshToken] = token
@@ -139,13 +127,13 @@ class ExposedLocalAuthDatasource(
     override fun isResetPasswordTokenUsed(token: String): Boolean = cache.isResetPasswordTokenUsed(token)
 
     override suspend fun updatePassword(email: Email, password: String) {
-        val user = userDbQuery {
-            DaoUser.find {
+        val user = SQLDbManager.userDbQuery {
+            DaoUser.Companion.find {
                 EntityUser.email eq email and (EntityUser.userType eq UserType.EMAIL.name)
             }.singleOrNull()
         } ?: return
 
-        userDbQuery {
+        SQLDbManager.userDbQuery {
             user.passwordHash = password
         }
     }

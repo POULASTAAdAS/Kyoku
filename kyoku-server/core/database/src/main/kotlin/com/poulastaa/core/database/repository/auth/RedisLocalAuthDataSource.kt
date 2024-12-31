@@ -1,23 +1,30 @@
-package com.poulastaa.core.database.repository
+package com.poulastaa.core.database.repository.auth
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
-import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.LocalAuthCacheDatasource
+import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
+import com.poulastaa.core.domain.repository.auth.Email
+import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
 import kotlinx.coroutines.delay
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.SetParams
 
-class RedisLocalAuthCacheDataSource(
+class RedisLocalAuthDataSource(
     private val redisPool: JedisPool,
     private val gson: Gson,
+    private val coreCache: LocalCoreCacheDatasource,
 ) : LocalAuthCacheDatasource {
+    override fun setUserByEmail(
+        key: Email,
+        type: UserType,
+        value: DBUserDto,
+    ) = coreCache.setUserByEmail(key, type, value)
+
     private object Group {
         const val COUNTRY_ID = "COUNTRY_ID"
-        const val USER = "USER"
         const val EMAIL_VERIFICATION_STATUS = "EMAIL_VERIFICATION_STATUS"
         const val JWT_TOKEN_STATUS = "JWT_TOKEN_STATUS"
         const val EMAIL_VERIFICATION_TOKEN = "EMAIL_VERIFICATION_TOKEN"
@@ -38,29 +45,6 @@ class RedisLocalAuthCacheDataSource(
                 "${Group.COUNTRY_ID}:$key",
                 value,
                 SetParams.setParams().nx().ex(3600) // 1 hour
-            )
-        }
-    }
-
-    override fun cachedUserByEmail(
-        key: Email,
-        type: UserType,
-    ): DBUserDto? = redisPool.resource.use { jedis ->
-        jedis.get("${Group.USER}:${type.name}:$key")
-    }?.let { string ->
-        gson.fromJson(string, DBUserDto::class.java)
-    }
-
-    override fun setUserByEmail(
-        key: Email,
-        type: UserType,
-        value: DBUserDto,
-    ) {
-        redisPool.resource.use { jedis ->
-            jedis.set(
-                "${Group.USER}:${type.name}:$key",
-                gson.toJson(value),
-                SetParams.setParams().ex(15 * 60) // 15 minute
             )
         }
     }

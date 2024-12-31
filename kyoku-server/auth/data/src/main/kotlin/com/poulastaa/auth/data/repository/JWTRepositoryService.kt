@@ -5,9 +5,9 @@ import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.JWTRepository
-import com.poulastaa.core.domain.repository.JWTToken
+import com.poulastaa.core.domain.repository.auth.Email
+import com.poulastaa.core.domain.repository.auth.JWTRepository
+import com.poulastaa.core.domain.repository.auth.JWTToken
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.interfaces.RSAPrivateKey

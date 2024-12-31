@@ -6,10 +6,10 @@ import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.ServerUserDto
 import com.poulastaa.core.domain.model.UserType
-import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.JWTRepository
-import com.poulastaa.core.domain.repository.JWTToken
-import com.poulastaa.core.domain.repository.LocalAuthDatasource
+import com.poulastaa.core.domain.repository.auth.Email
+import com.poulastaa.core.domain.repository.auth.JWTRepository
+import com.poulastaa.core.domain.repository.auth.JWTToken
+import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.mindrot.jbcrypt.BCrypt

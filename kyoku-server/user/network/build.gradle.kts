@@ -1,0 +1,13 @@
+plugins {
+    alias(libs.plugins.kyoku.ktor.library)
+}
+
+dependencies {
+    implementation(projects.user.userDomain)
+    implementation(projects.core.coreDomain)
+    implementation(projects.core.coreNetwork)
+
+    implementation(libs.ktor.server.core)
+    implementation(libs.spotify.api)
+    implementation(libs.ktor.server.auth)
+}

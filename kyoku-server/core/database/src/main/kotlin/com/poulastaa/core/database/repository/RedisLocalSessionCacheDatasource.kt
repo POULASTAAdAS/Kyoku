@@ -1,6 +1,6 @@
 package com.poulastaa.core.database.repository
 
-import com.poulastaa.core.domain.repository.LocalSessionCacheDatasource
+import com.poulastaa.core.domain.repository.auth.LocalSessionCacheDatasource
 import com.poulastaa.core.domain.utils.Constants
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.SetParams

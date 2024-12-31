@@ -1,15 +1,14 @@
-package com.poulastaa.core.domain.repository
+package com.poulastaa.core.domain.repository.auth
 
 import com.poulastaa.core.domain.model.DBUserDto
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 
 interface LocalAuthCacheDatasource {
+    fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
+
     fun cachedCountryId(key: String): Int?
     fun setCountryId(key: String, value: String)
-
-    fun cachedUserByEmail(key: Email, type: UserType): DBUserDto?
-    fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
 
     fun isVerificationTokenUsed(token: String): Boolean
     fun storeUsedVerificationToken(token: String)

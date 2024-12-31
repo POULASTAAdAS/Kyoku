@@ -25,6 +25,8 @@ include("user:data")
 project(":user:data").name = "user-data"
 include("user:domain")
 project(":user:domain").name = "user-domain"
+include("user:network")
+findProject(":user:network")?.name = "user-network"
 
 include("search:domain")
 project(":search:domain").name = "search-domain"

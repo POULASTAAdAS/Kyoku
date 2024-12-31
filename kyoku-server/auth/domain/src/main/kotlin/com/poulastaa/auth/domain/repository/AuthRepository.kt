@@ -1,8 +1,8 @@
 package com.poulastaa.auth.domain.repository
 
 import com.poulastaa.auth.domain.model.*
-import com.poulastaa.core.domain.repository.Email
-import com.poulastaa.core.domain.repository.JWTToken
+import com.poulastaa.core.domain.repository.auth.Email
+import com.poulastaa.core.domain.repository.auth.JWTToken
 
 interface AuthRepository {
     suspend fun googleAuth(payload: GoogleAuthPayloadDto, countryCode: String): AuthResponseDto

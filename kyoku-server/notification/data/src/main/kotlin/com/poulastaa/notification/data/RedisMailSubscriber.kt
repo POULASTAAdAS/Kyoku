@@ -1,7 +1,7 @@
 package com.poulastaa.notification.data
 
 import com.poulastaa.core.domain.model.MailType
-import com.poulastaa.core.domain.repository.LocalAuthCacheDatasource
+import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
 import com.poulastaa.notification.domain.repository.MailServiceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
