@@ -1,5 +1,3 @@
-USE Kyoku;
-
 INSERT IGNORE INTO SongAlbum (songId, albumId) VALUES
 (2, 2),
 (3, 3),

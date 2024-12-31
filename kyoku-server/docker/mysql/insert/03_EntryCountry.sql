@@ -1,5 +1,3 @@
-USE Kyoku;
-
 INSERT IGNORE INTO Country (id,country) VALUES
 (1,"Afghanistan"),
 (2,"Albania"),

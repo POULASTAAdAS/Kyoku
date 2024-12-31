@@ -45,6 +45,22 @@ CREATE TABLE IF NOT EXISTS SongInfo
     popularity  BIGINT NOT NULL DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS Playlist
+(
+    id              BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `name`          varchar(100) NOT NULL,
+    visibilityState BOOL                  DEFAULT FALSE,
+    popularity      BIGINT       NOT NULL DEFAULT 0
+);
+
+
+CREATE TABLE SongPlaylist
+(
+    songId     BIGINT REFERENCES Song (id) ON DELETE CASCADE,
+    playlistId BIGINT REFERENCES Playlist (id) ON DELETE CASCADE,
+    PRIMARY KEY (songId, playlistId)
+);
+
 CREATE TABLE IF NOT EXISTS SongCountry
 (
     songId    BIGINT REFERENCES Song (id) ON DELETE CASCADE,

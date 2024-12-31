@@ -1,5 +1,3 @@
-USE Kyoku;
-
 INSERT IGNORE INTO ARTIST (id,`name`,coverImage) VALUES
 (1 , "(Melodious Sardar) Ammri" , "/rawArtistCover/(Melodious Sardar) Ammri"),
 (2 , ". P. Balasubrahmanyam" , "/rawArtistCover/. P. Balasubrahmanyam"),

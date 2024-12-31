@@ -1,5 +1,3 @@
-USE Kyoku;
-
 INSERT IGNORE INTO ArtistCountry (artistId, countryId) VALUES
 (10746, 18),
 (2090, 18),

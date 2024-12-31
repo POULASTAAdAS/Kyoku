@@ -1,5 +1,3 @@
-USE Kyoku;
-
 INSERT IGNORE INTO SongGenre (songId, genreId) VALUES
 (2, 86),
 (6, 86),

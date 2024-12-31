@@ -1,9 +1,9 @@
 package com.poulastaa.core.database.mapper
 
-import com.poulastaa.core.database.dao.UserDao
+import com.poulastaa.core.database.dao.DaoUser
 import com.poulastaa.core.domain.model.DBUserDto
 
-fun UserDao.toDbUserDto() = DBUserDto(
+fun DaoUser.toDbUserDto() = DBUserDto(
     id = id.value,
     email = email,
     userName = username,
