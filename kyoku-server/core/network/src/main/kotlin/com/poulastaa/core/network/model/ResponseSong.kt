@@ -9,7 +9,7 @@ data class ResponseSong(
     val poster: String?,
     val masterPlaylist: String,
     val artist: List<ResponseArtist>,
-    val album: ResponseAlbum,
+    val album: ResponseAlbum?,
     val info: ResponseSongInfo,
     val genre: ResponseGenre?,
 )

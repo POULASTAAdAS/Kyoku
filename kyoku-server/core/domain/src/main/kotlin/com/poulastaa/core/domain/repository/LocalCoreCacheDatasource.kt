@@ -1,13 +1,61 @@
 package com.poulastaa.core.domain.repository
 
-import com.poulastaa.core.domain.model.DBUserDto
-import com.poulastaa.core.domain.model.SongDto
-import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.auth.Email
 
 interface LocalCoreCacheDatasource {
-    fun cacheUsersByEmail(email: String, type: UserType): DBUserDto?
-    fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
+    fun cacheUsersByEmail(email: String, type: UserType): DtoDBUser?
+    fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser)
 
-    fun getSongByTitle(list: List<String>): List<SongDto>
+    fun setPlaylist(playlistDto: DtoPlaylist)
+
+    fun cacheGenreById(genreId: GenreId): DtoGenre?
+    fun cacheGenreById(list: List<GenreId>): List<DtoGenre>
+    fun setGenreById(genre: DtoGenre)
+    fun setGenreById(list: List<DtoGenre>)
+
+    fun cacheAlbumById(albumId: AlbumId): DtoAlbum?
+    fun cacheAlbumById(list: List<AlbumId>): List<DtoAlbum>
+    fun setAlbumById(genre: DtoAlbum)
+    fun setAlbumById(list: List<DtoAlbum>)
+
+    fun cacheArtistById(artistId: ArtistId): DtoArtist?
+    fun cacheArtistById(list: List<ArtistId>): List<DtoArtist>
+    fun setArtistById(artist: DtoArtist)
+    fun setArtistById(list: List<DtoArtist>)
+
+    fun cacheCountryById(countryId: CountryId): DtoCountry?
+    fun cacheCountryById(list: List<CountryId>): List<DtoCountry>
+    fun setCountryById(country: DtoCountry)
+    fun setCountryById(list: List<DtoCountry>)
+
+    fun cacheSongInfo(songId: SongId): DtoSongInfo?
+    fun cacheSongInfo(lis: List<SongId>): List<DtoSongInfo>
+    fun setSongInfoById(songInfo: DtoSongInfo)
+    fun setSongInfoById(list: List<DtoSongInfo>)
+
+    fun cacheArtistIdBySongId(songId: SongId): List<ArtistId>?
+    fun cacheArtistIdBySongId(list: List<SongId>): Map<SongId, List<ArtistId>>
+    fun setArtistIdBySongId(songId: SongId, list: List<ArtistId>)
+    fun setArtistIdBySongId(map: Map<SongId, List<ArtistId>>)
+
+    fun cacheGenreIdByArtistId(artistId: ArtistId): GenreId?
+    fun cacheGenreIdByArtistId(list: List<ArtistId>): Map<ArtistId, GenreId>
+    fun setGenreIdByArtistId(artistId: ArtistId, genreId: GenreId)
+    fun setGenreIdByArtistId(map: Map<GenreId, ArtistId>)
+
+    fun cacheCountryIdByArtistId(artistId: ArtistId): CountryId?
+    fun cacheCountryIdByArtistId(list: List<ArtistId>): Map<ArtistId, CountryId>
+    fun setCountryIdByArtistId(artistId: ArtistId, countryId: CountryId)
+    fun setCountryIdByArtistId(map: Map<GenreId, CountryId>)
+
+    fun cacheGenreIdBySongId(songId: SongId): GenreId?
+    fun cacheGenreIdBySongId(lis: List<SongId>): Map<SongId, GenreId>
+    fun setGenreIdBySongId(songId: SongId, countryId: GenreId)
+    fun setGenreIdBySongId(map: Map<SongId, GenreId>)
+
+    fun cacheSongAlbumIdBySongId(songId: SongId): AlbumId?
+    fun cacheSongAlbumIdBySongId(lis: List<SongId>): Map<SongId, AlbumId>
+    fun setAlbumIdBySongId(songId: SongId, albumId: AlbumId)
+    fun setAlbumIdBySongId(map: Map<SongId, AlbumId>)
 }

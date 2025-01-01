@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 class DaoPlaylist(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<DaoPlaylist>(EntityPlaylist)
 
-    val name by EntityPlaylist.name
-    var visibilityState by EntityPlaylist.visibilityState
+    var name by EntityPlaylist.name
+    var isPublic by EntityPlaylist.isPublic
     var popularity by EntityPlaylist.popularity
 }

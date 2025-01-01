@@ -3,9 +3,9 @@ package com.poulastaa.core.database.entity.user
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
-object RelationUserArtist : Table(name = "UserArtist") {
+object RelationEntityUserAlbum : Table(name = "UserAlbum") {
     val userId = long("userId").references(EntityUser.id, onDelete = ReferenceOption.CASCADE)
-    val artistId = long("artistId")
+    val albumId = long("albumId")
 
-    override val primaryKey = PrimaryKey(userId, artistId)
+    override val primaryKey = PrimaryKey(userId, albumId)
 }

@@ -1,9 +1,9 @@
 package com.poulastaa.auth.data.mapper
 
-import com.poulastaa.core.domain.model.DBUserDto
-import com.poulastaa.core.domain.model.UserDto
+import com.poulastaa.core.domain.model.DtoDBUser
+import com.poulastaa.core.domain.model.DtoUser
 
-fun DBUserDto.toUserDto() = UserDto(
+fun DtoDBUser.toUserDto() = DtoUser(
     id = id,
     email = email,
     username = userName,

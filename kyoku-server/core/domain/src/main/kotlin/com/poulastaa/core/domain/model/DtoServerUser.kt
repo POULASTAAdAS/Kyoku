@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain.model
 
-data class ServerUserDto(
+data class DtoServerUser(
     val email: String,
     val type: UserType,
     val username: String,

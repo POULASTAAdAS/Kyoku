@@ -1,7 +1,8 @@
 package com.poulastaa.core.domain.model
 
-data class PlaylistDto(
+data class DtoSongInfo(
     val id: Long = -1,
-    val name: String = "",
+    val releaseYear: Int = -1,
+    val composer: String? = null,
     val popularity: Long = -1,
 )

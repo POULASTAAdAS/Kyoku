@@ -7,11 +7,10 @@ import com.poulastaa.core.database.entity.app.EntityCountry
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserJWT
 import com.poulastaa.core.database.mapper.toDbUserDto
-import com.poulastaa.core.domain.model.DBUserDto
+import com.poulastaa.core.domain.model.DtoDBUser
 import com.poulastaa.core.domain.model.MailType
-import com.poulastaa.core.domain.model.ServerUserDto
+import com.poulastaa.core.domain.model.DtoServerUser
 import com.poulastaa.core.domain.model.UserType
-import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.auth.Email
 import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
@@ -50,10 +49,10 @@ class ExposedLocalAuthDatasource(
         return dao.id.value
     }
 
-    override suspend fun getUsersByEmail(email: String, type: UserType): DBUserDto? =
+    override suspend fun getUsersByEmail(email: String, type: UserType): DtoDBUser? =
         coreDB.getUserByEmail(email, type)
 
-    override suspend fun createUser(user: ServerUserDto, isDbStore: Boolean): DBUserDto {
+    override suspend fun createUser(user: DtoServerUser, isDbStore: Boolean): DtoDBUser {
         val dbUser = when {
             (user.type == UserType.GOOGLE || user.type == UserType.EMAIL) && isDbStore -> {
                 SQLDbManager.userDbQuery {
@@ -68,7 +67,7 @@ class ExposedLocalAuthDatasource(
                 }.toDbUserDto()
             }
 
-            else -> DBUserDto(
+            else -> DtoDBUser(
                 id = -1,
                 email = user.email,
                 userName = user.username,

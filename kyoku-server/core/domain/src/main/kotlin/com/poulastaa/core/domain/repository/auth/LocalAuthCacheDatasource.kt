@@ -1,11 +1,11 @@
 package com.poulastaa.core.domain.repository.auth
 
-import com.poulastaa.core.domain.model.DBUserDto
+import com.poulastaa.core.domain.model.DtoDBUser
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 
 interface LocalAuthCacheDatasource {
-    fun setUserByEmail(key: Email, type: UserType, value: DBUserDto)
+    fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser)
 
     fun cachedCountryId(key: String): Int?
     fun setCountryId(key: String, value: String)

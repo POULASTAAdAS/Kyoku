@@ -2,7 +2,7 @@ package com.poulastaa.core.domain.model
 
 import java.time.LocalDate
 
-data class DBUserDto(
+data class DtoDBUser(
     val id: Long,
     val email: String,
     val userName: String,

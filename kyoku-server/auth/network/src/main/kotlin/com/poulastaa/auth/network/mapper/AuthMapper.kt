@@ -2,7 +2,7 @@ package com.poulastaa.auth.network.mapper
 
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.network.model.*
-import com.poulastaa.core.domain.model.UserDto
+import com.poulastaa.core.domain.model.DtoUser
 
 fun UpdatePasswordStatusDto.toUpdatePasswordStatus() = when (this) {
     UpdatePasswordStatusDto.RESET -> UpdatePasswordStatus.RESET
@@ -49,7 +49,7 @@ private fun AuthResponseStatusDto.toAuthenticationResponseStatus() = when (this)
     AuthResponseStatusDto.SERVER_ERROR -> AuthStatusResponse.SERVER_ERROR
 }
 
-private fun UserDto.toResponseUser() = ResponseUser(
+private fun DtoUser.toResponseUser() = ResponseUser(
     email = this.email,
     username = this.username,
     profilePicUrl = this.profilePicUrl

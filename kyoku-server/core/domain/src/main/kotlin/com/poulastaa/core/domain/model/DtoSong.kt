@@ -1,12 +1,12 @@
 package com.poulastaa.core.domain.model
 
-data class SongDto(
+data class DtoSong(
     val id: Long,
     val title: String,
     val poster: String?,
     val masterPlaylist: String,
-    val artist: List<ArtistDto>,
-    val album: AlbumDto,
-    val info: SongInfoDto,
-    val genre: GenreDto?,
+    val artist: List<DtoArtist>,
+    val album: DtoAlbum?,
+    val info: DtoSongInfo,
+    val genre: DtoGenre?,
 )

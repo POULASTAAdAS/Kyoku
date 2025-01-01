@@ -4,7 +4,7 @@ import com.poulastaa.auth.data.mapper.toUserDto
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.core.domain.model.MailType
-import com.poulastaa.core.domain.model.ServerUserDto
+import com.poulastaa.core.domain.model.DtoServerUser
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.auth.Email
 import com.poulastaa.core.domain.repository.auth.JWTRepository
@@ -40,7 +40,7 @@ class AuthenticationService(
                 val passHash = payload.sub.encryptPassword() ?: return@coroutineScope AuthResponseDto()
 
                 val user = db.createUser(
-                    user = ServerUserDto(
+                    user = DtoServerUser(
                         email = payload.email,
                         type = UserType.GOOGLE,
                         username = payload.userName,
@@ -104,7 +104,7 @@ class AuthenticationService(
         val countryId = db.getCountryIdFromCountryCode(payload.countryCode) ?: return AuthResponseDto()
 
         val user = db.createUser(
-            user = ServerUserDto(
+            user = DtoServerUser(
                 email = payload.email,
                 type = UserType.EMAIL,
                 username = payload.username,
@@ -182,7 +182,7 @@ class AuthenticationService(
         val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return EmailVerificationStatusDto.SERVER_ERROR
 
         if (user.id == -1L) db.createUser(
-            user = ServerUserDto(
+            user = DtoServerUser(
                 email = email,
                 type = UserType.EMAIL,
                 username = user.userName,

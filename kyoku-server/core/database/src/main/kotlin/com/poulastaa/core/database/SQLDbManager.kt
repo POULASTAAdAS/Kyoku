@@ -51,16 +51,6 @@ object SQLDbManager {
         IS_INITIALIZED = true
     }
 
-    internal suspend fun <T> userDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
-            block()
-        }
-
-    internal suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
-            block()
-        }
-
     private fun provideDatasource(
         driverClass: String,
         jdbcUrl: String,
@@ -75,4 +65,14 @@ object SQLDbManager {
             validate()
         }
     )
+
+    internal suspend fun <T> userDbQuery(block: suspend () -> T): T =
+        newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
+            block()
+        }
+
+    internal suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
+        newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
+            block()
+        }
 }

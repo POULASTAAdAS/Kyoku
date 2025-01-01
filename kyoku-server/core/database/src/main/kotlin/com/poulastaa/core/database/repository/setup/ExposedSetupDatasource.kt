@@ -1,11 +1,21 @@
 package com.poulastaa.core.database.repository.setup
 
-import com.poulastaa.core.domain.model.DBUserDto
-import com.poulastaa.core.domain.model.PlaylistFullDto
+import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
+import com.poulastaa.core.database.dao.DaoSong
+import com.poulastaa.core.database.entity.app.EntitySong
+import com.poulastaa.core.database.mapper.toSongDto
+import com.poulastaa.core.domain.model.DtoDBUser
+import com.poulastaa.core.domain.model.DtoPlaylistFull
+import com.poulastaa.core.domain.model.DtoSongInfo
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.not
 
 class ExposedSetupDatasource(
     private val coreDB: LocalCoreDatasource,
@@ -14,12 +24,70 @@ class ExposedSetupDatasource(
     override suspend fun getUserByEmail(
         email: String,
         userType: UserType,
-    ): DBUserDto? = coreDB.getUserByEmail(email, userType)
+    ): DtoDBUser? = coreDB.getUserByEmail(email, userType)
 
     override suspend fun createPlaylistFromSpotifyPlaylist(
-        user: DBUserDto,
+        user: DtoDBUser,
         spotifySongTitle: List<String>,
-    ): PlaylistFullDto {
-        TODO("Not yet implemented")
+    ): DtoPlaylistFull {
+        val cacheSong = cache.getSongByTitle(spotifySongTitle)
+        val notFoundTitle = spotifySongTitle.filter { title ->
+            cacheSong.none { it.title == title }
+        }
+
+        if (notFoundTitle.isEmpty()) {
+            val playlist = coreDB.createPlaylist(user.id, cacheSong.map { it.id })
+            return DtoPlaylistFull(playlist, cacheSong)
+        }
+
+
+        return coroutineScope {
+            val foundSongIdList = cacheSong.filter { it.title in notFoundTitle }.map { it.id }
+
+            val dbSongs = notFoundTitle.map { title ->
+                async {
+                    kyokuDbQuery {
+                        DaoSong.find {
+                            EntitySong.title like "$title%" and
+                                    (not(EntitySong.title like "%Remix%")) and
+                                    (not(EntitySong.title like "%Mashup%")) and
+                                    (not(EntitySong.title like "%LoFi%")) and
+                                    (not(EntitySong.title like "%New Years%")) and
+                                    (not(EntitySong.title like "%Slowed%")) and
+                                    (EntitySong.id notInList foundSongIdList)
+                        }.groupBy { it.title }.mapNotNull { it.value.firstOrNull() }
+                    }
+                }
+            }.awaitAll().flatten()
+
+            val idList = dbSongs.map { it.id.value }
+
+            val albumDef = async { coreDB.getAlbumOnSongId(idList) }
+            val artistDef = async { coreDB.getArtistOnSongId(idList) }
+            val infoDef = async { coreDB.getInfoOnSongId(idList) }
+            val genreDef = async { coreDB.getGenreOnSongId(idList) }
+
+            val songs = dbSongs.map { song ->
+                val artist = artistDef.await()
+                val album = albumDef.await()
+                val info = infoDef.await()
+                val genre = genreDef.await()
+
+                song.toSongDto(
+                    artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
+                    album = album.firstOrNull { it.first == song.id.value }?.second,
+                    info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
+                    genre = genre.firstOrNull { it.first == song.id.value }?.second,
+                )
+            }
+
+            val playlist = coreDB.createPlaylist(user.id, songs.map { it.id })
+
+
+            DtoPlaylistFull(
+                playlist = playlist,
+                listOfSong = songs
+            )
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain.model
 
-data class AlbumDto(
+data class DtoAlbum(
     val id: Long,
     val name: String,
     val poster: String?,

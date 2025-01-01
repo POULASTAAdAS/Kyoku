@@ -2,10 +2,11 @@ package com.poulastaa.core.database.repository.auth
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.poulastaa.core.domain.model.DBUserDto
+import com.poulastaa.core.domain.model.DtoDBUser
 import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
+import com.poulastaa.core.domain.repository.RedisKeys
 import com.poulastaa.core.domain.repository.auth.Email
 import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
 import kotlinx.coroutines.delay
@@ -16,24 +17,12 @@ class RedisLocalAuthDataSource(
     private val redisPool: JedisPool,
     private val gson: Gson,
     private val coreCache: LocalCoreCacheDatasource,
-) : LocalAuthCacheDatasource {
+) : LocalAuthCacheDatasource, RedisKeys() {
     override fun setUserByEmail(
         key: Email,
         type: UserType,
-        value: DBUserDto,
+        value: DtoDBUser,
     ) = coreCache.setUserByEmail(key, type, value)
-
-    private object Group {
-        const val COUNTRY_ID = "COUNTRY_ID"
-        const val EMAIL_VERIFICATION_STATUS = "EMAIL_VERIFICATION_STATUS"
-        const val JWT_TOKEN_STATUS = "JWT_TOKEN_STATUS"
-        const val EMAIL_VERIFICATION_TOKEN = "EMAIL_VERIFICATION_TOKEN"
-        const val RESET_PASSWORD_TOKEN = "RESET_PASSWORD_TOKEN"
-    }
-
-    private object Channel {
-        const val NOTIFICATION = "NOTIFICATION"
-    }
 
     override fun cachedCountryId(key: String): Int? = redisPool.resource.use { jedis ->
         jedis.get("${Group.COUNTRY_ID}:$key")?.toInt()
