@@ -30,19 +30,18 @@ class ExposedSetupDatasource(
         user: DtoDBUser,
         spotifySongTitle: List<String>,
     ): DtoPlaylistFull {
-        val cacheSong = cache.getSongByTitle(spotifySongTitle)
+        val cacheResult = cache.cacheSongByTitle(spotifySongTitle)
         val notFoundTitle = spotifySongTitle.filter { title ->
-            cacheSong.none { it.title == title }
+            cacheResult.none { it.title == title }
         }
 
         if (notFoundTitle.isEmpty()) {
-            val playlist = coreDB.createPlaylist(user.id, cacheSong.map { it.id })
-            return DtoPlaylistFull(playlist, cacheSong)
+            val playlist = coreDB.createPlaylist(user.id, cacheResult.map { it.id })
+            return DtoPlaylistFull(playlist, cacheResult)
         }
 
-
         return coroutineScope {
-            val foundSongIdList = cacheSong.filter { it.title in notFoundTitle }.map { it.id }
+            val foundSongIdList = cacheResult.filter { it.title in notFoundTitle }.map { it.id }
 
             val dbSongs = notFoundTitle.map { title ->
                 async {
@@ -60,14 +59,14 @@ class ExposedSetupDatasource(
                 }
             }.awaitAll().flatten()
 
-            val idList = dbSongs.map { it.id.value }
+            val idList = dbSongs.map { it.id.value } + cacheResult.map { it.id }
 
             val albumDef = async { coreDB.getAlbumOnSongId(idList) }
             val artistDef = async { coreDB.getArtistOnSongId(idList) }
             val infoDef = async { coreDB.getInfoOnSongId(idList) }
             val genreDef = async { coreDB.getGenreOnSongId(idList) }
 
-            val songs = dbSongs.map { song ->
+            val dbResult = dbSongs.map { song ->
                 val artist = artistDef.await()
                 val album = albumDef.await()
                 val info = infoDef.await()
@@ -80,6 +79,11 @@ class ExposedSetupDatasource(
                     genre = genre.firstOrNull { it.first == song.id.value }?.second,
                 )
             }
+
+
+            val songs = dbResult + cacheResult
+            cache.setSongById(songs)
+            cache.setSongIdByTitle(songs)
 
             val playlist = coreDB.createPlaylist(user.id, songs.map { it.id })
 

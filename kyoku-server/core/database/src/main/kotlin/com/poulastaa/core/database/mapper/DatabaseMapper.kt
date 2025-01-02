@@ -54,13 +54,6 @@ fun DtoDBArtist.toArtistDto(
     country = country
 )
 
-fun DaoSongInfo.toSongInfoDto() = DtoSongInfo(
-    id = this.id.value,
-    releaseYear = this.releaseYear,
-    composer = this.composer,
-    popularity = this.popularity
-)
-
 fun DaoGenre.toGenreDto() = DtoGenre(
     id = this.id.value,
     name = this.genre,

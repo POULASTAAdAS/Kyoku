@@ -2,8 +2,9 @@ package com.poulastaa.core.database.entity.app
 
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.Table
 
-object EntitySongInfo : LongIdTable(name = "SongInfo") {
+object EntitySongInfo : Table(name = "SongInfo") {
     val songId = reference("songId", EntitySong.id, onDelete = ReferenceOption.CASCADE)
     val releaseYear = integer("releaseYear")
     val composer = varchar("composer", 200).nullable().default(null)

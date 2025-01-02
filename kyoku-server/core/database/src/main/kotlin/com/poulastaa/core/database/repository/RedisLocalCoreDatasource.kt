@@ -21,6 +21,12 @@ class RedisLocalCoreDatasource(
     override fun setPlaylist(playlistDto: DtoPlaylist) =
         setSingleValueWithExp(Group.PLAYLIST, playlistDto.id, playlistDto)
 
+
+    // song
+    override fun setSongById(song: DtoSong) = setSingleValueWithExp(Group.SONG, song.id, song)
+
+    override fun setSongById(list: List<DtoSong>) = setMultipleValueWithExp(Group.SONG, list.associateBy { it.id })
+
     // genre
     override fun cacheGenreById(genreId: GenreId): DtoGenre? = cacheSingleValue<GenreId, DtoGenre>(Group.GENRE, genreId)
     override fun cacheGenreById(list: List<GenreId>): List<DtoGenre> =
@@ -181,6 +187,8 @@ class RedisLocalCoreDatasource(
     }
 
     private fun <K> setSingleValueWithExp(group: Group, key: K, value: String) {
+        if (value.isNotBlank()) return
+
         redisPool.resource.use { jedis ->
             jedis.setex(
                 "${group.name}:$key",
@@ -192,6 +200,8 @@ class RedisLocalCoreDatasource(
 
     @JvmName("setSingleValueWithExpGson")
     private fun <K, V> setMultipleValueWithExp(group: Group, map: Map<K, V>) {
+        if (map.isEmpty()) return
+
         redisPool.resource.use { jedis ->
             val pipeline = jedis.pipelined()
 
@@ -208,11 +218,13 @@ class RedisLocalCoreDatasource(
     }
 
     private fun <K> setMultipleValueWithExp(group: Group, map: Map<K, String>) {
+        if (map.isEmpty()) return
+
         redisPool.resource.use { jedis ->
             val pipeline = jedis.pipelined()
 
             map.forEach { (k, v) ->
-                pipeline.setex(
+                if (v.isNotBlank()) pipeline.setex(
                     "${group.name}:$k",
                     Group.GENRE.expTime,
                     v

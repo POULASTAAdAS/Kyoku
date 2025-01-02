@@ -13,7 +13,7 @@ class RedisSetupDatasource(
     private val redisPool: JedisPool,
     private val core: LocalCoreCacheDatasource,
 ) : LocalSetupCacheDatasource, RedisKeys() {
-    override fun getSongByTitle(list: List<String>): List<DtoSong> {
+    override fun cacheSongByTitle(list: List<String>): List<DtoSong> { // todo set just id to reduce overhead
         val result = mutableListOf<DtoSong>()
         val filterExclusions = listOf("lofi", "remix", "slowed", "mashup", "ringtone")
 
@@ -23,7 +23,7 @@ class RedisSetupDatasource(
             do {
                 val scanResult = jedis.scan(
                     cursor, ScanParams()
-                        .match("${Group.SONG}:*")
+                        .match("${Group.SONG_TITLE}:*")
                         .count(500)
                 )
 
@@ -47,4 +47,24 @@ class RedisSetupDatasource(
 
         return result.toList()
     }
+
+    override fun setSongIdByTitle(list: List<DtoSong>) {
+        if (list.isEmpty()) return
+
+        redisPool.resource.use { jedis ->
+            val pipeline = jedis.pipelined()
+
+            list.forEach { song ->
+                pipeline.setex(
+                    "${Group.SONG_TITLE}:${song.title}",
+                    Group.SONG_TITLE.expTime,
+                    gson.toJson(song)
+                )
+            }
+
+            pipeline.sync()
+        }
+    }
+
+    override fun setSongById(list: List<DtoSong>) = core.setSongById(list)
 }
