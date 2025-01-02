@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseCountry(
-    val id: Long,
+    val id: Int,
     val name: String,
 )

@@ -215,9 +215,10 @@ class ExposedLocalCoreDatasource(
                             DaoGenre.find { EntityGenre.id eq genreId }
                                 .firstOrNull()?.toGenreDto()?.also { cache.setGenreById(it) }
                         }
-                        genre?.let { songId to it }!! // Include only non-null genres
+
+                        genre?.let { songId to it } // Include only non-null genres
                     }
-                }.awaitAll()
+                }.awaitAll().mapNotNull { it }
             }
 
             val missingSongIds = list.filterNot { it in cacheGenreIds.keys }
@@ -254,6 +255,53 @@ class ExposedLocalCoreDatasource(
     }
 
     override suspend fun getAlbumOnSongId(list: List<SongId>): List<Pair<SongId, DtoAlbum>> {
-        TODO("Not yet implemented")
+        return coroutineScope {
+            val cacheAlbumIds = cache.cacheAlbumIdBySongId(list)
+
+            val cacheAlbumDef = async {
+                cacheAlbumIds.map { (songId, albumId) ->
+                    async {
+                        val album = cache.cacheAlbumById(albumId) ?: kyokuDbQuery {
+                            DaoAlbum.find { EntityAlbum.id eq albumId }
+                                .firstOrNull()?.toAlbumDto()?.also { cache.setAlbumById(it) }
+                        }
+
+                        album?.let { songId to it }
+                    }
+                }.awaitAll().mapNotNull { it }
+            }
+
+            val missingSongIds = list.filterNot { it in cacheAlbumIds.keys }
+
+            val dbAlbumDef = async {
+                if (missingSongIds.isNotEmpty()) kyokuDbQuery {
+                    EntityAlbum
+                        .join(
+                            otherTable = RelationEntitySongAlbum,
+                            joinType = JoinType.INNER,
+                            onColumn = EntityAlbum.id,
+                            otherColumn = RelationEntitySongAlbum.albumId
+                        ).slice(
+                            EntityAlbum.id,
+                            EntityAlbum.name,
+                            EntityAlbum.popularity
+                        )
+                        .select {
+                            RelationEntitySongAlbum.songId inList missingSongIds
+                        }.map {
+                            it[RelationEntitySongAlbum.songId] to DtoAlbum(
+                                id = it[EntityAlbum.id].value,
+                                name = it[EntityAlbum.name],
+                                popularity = it[EntityAlbum.popularity]
+                            )
+                        }.also {
+                            cache.setAlbumById(it.toMap().values.toList())
+                            cache.setAlbumIdBySongId(it.associate { it.first to it.second.id })
+                        }
+                } else emptyList()
+            }
+
+            cacheAlbumDef.await() + dbAlbumDef.await()
+        }
     }
 }

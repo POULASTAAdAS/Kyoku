@@ -33,7 +33,7 @@ class RedisLocalAuthDataSource(
             jedis.set(
                 "${Group.COUNTRY_ID}:$key",
                 value,
-                SetParams.setParams().nx().ex(3600) // 1 hour
+                SetParams.setParams().nx().ex(Group.COUNTRY_ID.expTime)
             )
         }
     }
@@ -51,7 +51,7 @@ class RedisLocalAuthDataSource(
             jedis.set(
                 "${Group.EMAIL_VERIFICATION_TOKEN}:${token}",
                 token,
-                SetParams.setParams().nx().ex(15 * 60) // 10 minute
+                SetParams.setParams().nx().ex(Group.EMAIL_VERIFICATION_TOKEN.expTime)
             )
         }
     }
@@ -65,7 +65,7 @@ class RedisLocalAuthDataSource(
             jedis.set(
                 "${Group.EMAIL_VERIFICATION_STATUS}:$key",
                 false.toString(),
-                SetParams.setParams().nx().ex(10 * 60) // 10 minute
+                SetParams.setParams().nx().ex(Group.EMAIL_VERIFICATION_STATUS.expTime)
             )
         }
     }
@@ -78,14 +78,14 @@ class RedisLocalAuthDataSource(
 
     override fun produceMail(message: Pair<MailType, Email>) {
         redisPool.resource.use { jedis ->
-            jedis.lpush(Channel.NOTIFICATION, gson.toJson(message))
+            jedis.lpush(Channel.NOTIFICATION.name, gson.toJson(message))
         }
     }
 
     override suspend fun consumeMail(block: (Pair<MailType, Email>) -> Unit) {
         while (true) {
             redisPool.resource.use { jedis ->
-                jedis.rpop(Channel.NOTIFICATION)?.let { message ->
+                jedis.rpop(Channel.NOTIFICATION.name)?.let { message ->
                     val map: Pair<MailType, Email> = gson.fromJson(
                         message,
                         object : TypeToken<Pair<MailType, Email>>() {}.type
@@ -95,7 +95,7 @@ class RedisLocalAuthDataSource(
                 }
             }
 
-            delay(1000 * 6) // 6's
+            delay(Channel.NOTIFICATION.delay)
         }
     }
 
@@ -118,7 +118,7 @@ class RedisLocalAuthDataSource(
             jedis.set(
                 "${Group.JWT_TOKEN_STATUS}:$email",
                 false.toString(),
-                SetParams.setParams().nx().ex(15 * 60) // 10 minute
+                SetParams.setParams().nx().ex(Group.JWT_TOKEN_STATUS.expTime)
             )
         }
     }

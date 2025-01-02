@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseFullPlaylist(
-    val playlist: ResponsePlaylist,
+    val playlist: ResponsePlaylist = ResponsePlaylist(),
     val listOfSong: List<ResponseSong> = emptyList(),
 )

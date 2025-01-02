@@ -16,7 +16,7 @@ interface LocalCoreCacheDatasource {
 
     fun cacheAlbumById(albumId: AlbumId): DtoAlbum?
     fun cacheAlbumById(list: List<AlbumId>): List<DtoAlbum>
-    fun setAlbumById(genre: DtoAlbum)
+    fun setAlbumById(album: DtoAlbum)
     fun setAlbumById(list: List<DtoAlbum>)
 
     fun cacheArtistById(artistId: ArtistId): DtoArtist?
@@ -30,14 +30,24 @@ interface LocalCoreCacheDatasource {
     fun setCountryById(list: List<DtoCountry>)
 
     fun cacheSongInfo(songId: SongId): DtoSongInfo?
-    fun cacheSongInfo(lis: List<SongId>): List<DtoSongInfo>
+    fun cacheSongInfo(list: List<SongId>): List<DtoSongInfo>
     fun setSongInfoById(songInfo: DtoSongInfo)
     fun setSongInfoById(list: List<DtoSongInfo>)
 
-    fun cacheArtistIdBySongId(songId: SongId): List<ArtistId>?
+    fun cacheArtistIdBySongId(songId: SongId): List<ArtistId>
     fun cacheArtistIdBySongId(list: List<SongId>): Map<SongId, List<ArtistId>>
     fun setArtistIdBySongId(songId: SongId, list: List<ArtistId>)
     fun setArtistIdBySongId(map: Map<SongId, List<ArtistId>>)
+
+    fun cacheGenreIdBySongId(songId: SongId): GenreId?
+    fun cacheGenreIdBySongId(list: List<SongId>): Map<SongId, GenreId>
+    fun setGenreIdBySongId(songId: SongId, countryId: GenreId)
+    fun setGenreIdBySongId(map: Map<SongId, GenreId>)
+
+    fun cacheAlbumIdBySongId(songId: SongId): AlbumId?
+    fun cacheAlbumIdBySongId(list: List<SongId>): Map<SongId, AlbumId>
+    fun setAlbumIdBySongId(songId: SongId, albumId: AlbumId)
+    fun setAlbumIdBySongId(map: Map<SongId, AlbumId>)
 
     fun cacheGenreIdByArtistId(artistId: ArtistId): GenreId?
     fun cacheGenreIdByArtistId(list: List<ArtistId>): Map<ArtistId, GenreId>
@@ -48,14 +58,4 @@ interface LocalCoreCacheDatasource {
     fun cacheCountryIdByArtistId(list: List<ArtistId>): Map<ArtistId, CountryId>
     fun setCountryIdByArtistId(artistId: ArtistId, countryId: CountryId)
     fun setCountryIdByArtistId(map: Map<GenreId, CountryId>)
-
-    fun cacheGenreIdBySongId(songId: SongId): GenreId?
-    fun cacheGenreIdBySongId(lis: List<SongId>): Map<SongId, GenreId>
-    fun setGenreIdBySongId(songId: SongId, countryId: GenreId)
-    fun setGenreIdBySongId(map: Map<SongId, GenreId>)
-
-    fun cacheSongAlbumIdBySongId(songId: SongId): AlbumId?
-    fun cacheSongAlbumIdBySongId(lis: List<SongId>): Map<SongId, AlbumId>
-    fun setAlbumIdBySongId(songId: SongId, albumId: AlbumId)
-    fun setAlbumIdBySongId(map: Map<SongId, AlbumId>)
 }

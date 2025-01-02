@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 fun provideUserDataRepositoryService() = module {
     single<SetupRepository> {
-        SetupRepositoryService()
+        SetupRepositoryService(get())
     }
 }
