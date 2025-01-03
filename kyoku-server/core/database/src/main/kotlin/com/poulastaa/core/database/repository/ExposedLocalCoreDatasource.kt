@@ -2,12 +2,16 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
-import com.poulastaa.core.database.dao.*
+import com.poulastaa.core.database.dao.DaoAlbum
+import com.poulastaa.core.database.dao.DaoGenre
+import com.poulastaa.core.database.dao.DaoPlaylist
+import com.poulastaa.core.database.dao.DaoUser
 import com.poulastaa.core.database.entity.app.*
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserPlaylist
 import com.poulastaa.core.database.mapper.*
 import com.poulastaa.core.domain.model.*
+import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.SongId
@@ -63,149 +67,21 @@ class ExposedLocalCoreDatasource(
         return playlist
     }
 
-    override suspend fun getArtistOnSongId(list: List<SongId>): List<Pair<SongId, List<DtoArtist>>> { // todo fix not returning artist
-        val dbMap = mutableMapOf<SongId, List<DtoDBArtist>>()
+    override suspend fun getArtistOnSongId(list: List<SongId>): List<Pair<SongId, List<DtoArtist>>> = coroutineScope {
+        val cacheSongIdArtistIdList = cache.cacheArtistIdBySongId(list)
 
-        // Step 1: Cache lookup and resolve missing artist IDs
-        val cacheIdList = cache.cacheArtistIdBySongId(list)
-        val cacheSongIdDtoArtist = cacheIdList.map { (songId, artistIds) ->
-            if (artistIds.isNotEmpty()) {
-                val artist = cache.cacheArtistById(artistIds)
+        if (cacheSongIdArtistIdList.isEmpty()) getArtistsOnSongId(list) else {
+            val notFoundSongIdList = list.filterNot { it in cacheSongIdArtistIdList.keys }
+            val dbResult = getArtistsOnSongId(notFoundSongIdList)
 
-                val missingArtistIds = artistIds.filterNot { id -> artist.any { it.id == id } }
-                if (missingArtistIds.isNotEmpty()) {
-                    val dbArtists = kyokuDbQuery {
-                        DaoArtist.find { EntityArtist.id inList missingArtistIds }
-                    }.map { it.toDbArtistDto() }
-
-                    dbMap[songId] = dbArtists
-                }
-
-                songId to artist
-            } else songId to emptyList()
+            cacheSongIdArtistIdList.map { (songId, artistLis) ->
+                if (artistLis.isNotEmpty()) {
+                    val cacheRes = cache.cacheArtistById(artistLis)
+                    if (cacheRes.isEmpty()) getArtistsOnSongId(songId)
+                    else songId to cacheRes
+                } else songId to emptyList()
+            } + dbResult
         }
-
-        println("list: $list")
-        println("list: $list")
-        println("list: $list")
-        println("list: $list")
-
-        println("cacheIdList: $cacheIdList")
-        println("cacheIdList: $cacheIdList")
-        println("cacheIdList: $cacheIdList")
-        println("cacheIdList: $cacheIdList")
-
-        // Step 2: get artists for missing song IDs
-        val missingSongIds = list.filterNot { it in cacheIdList.keys }
-
-        println("missingSongIds: $missingSongIds")
-        println("missingSongIds: $missingSongIds")
-        println("missingSongIds: $missingSongIds")
-        println("missingSongIds: $missingSongIds")
-
-        if (missingSongIds.isNotEmpty()) kyokuDbQuery {
-            EntityArtist.join(
-                otherTable = RelationEntitySongArtist,
-                onColumn = EntityArtist.id,
-                otherColumn = RelationEntitySongArtist.artistId,
-                joinType = JoinType.INNER
-            ).slice(
-                EntityArtist.id,
-                EntityArtist.name,
-                EntityArtist.coverImage,
-                EntityArtist.popularity,
-                RelationEntitySongArtist.songId
-            ).select {
-                RelationEntitySongArtist.songId inList missingSongIds
-            }.groupBy { it[RelationEntitySongArtist.songId] }.map {
-                dbMap[it.key] = it.value.map {
-                    DtoDBArtist(
-                        id = it[EntityArtist.id].value,
-                        name = it[EntityArtist.name],
-                        coverImage = it[EntityArtist.coverImage],
-                        popularity = it[EntityArtist.popularity]
-                    )
-                }
-            }
-        }
-
-        println("dbMap: $dbMap")
-        println("dbMap: $dbMap")
-        println("dbMap: $dbMap")
-        println("dbMap: $dbMap")
-        println("dbMap: $dbMap")
-
-        // Step 3: Convert DB artists to final DTOs concurrently
-        val dbSongIdDtoArtist = dbMap.map { (songId, artistList) ->
-            songId to artistList.map { artist ->
-                val genre = cache.cacheGenreIdByArtistId(artist.id)?.let { cache.cacheGenreById(it) }
-                    ?: kyokuDbQuery {
-                        EntityGenre.join(
-                            RelationEntityArtistGenre,
-                            JoinType.INNER,
-                            EntityGenre.id,
-                            RelationEntityArtistGenre.genreId
-                        ).slice(
-                            EntityGenre.id,
-                            EntityGenre.genre,
-                            EntityGenre.popularity
-                        ).select {
-                            RelationEntityArtistGenre.artistId eq artist.id
-                        }.firstOrNull()?.let {
-                            DtoGenre(
-                                id = it[EntityGenre.id].value,
-                                name = it[EntityGenre.genre],
-                                popularity = it[EntityGenre.popularity]
-                            )
-                        }
-                    }
-
-                val country = cache.cacheCountryIdByArtistId(artist.id)?.let { cache.cacheCountryById(it) }
-                    ?: kyokuDbQuery {
-                        EntityCountry.join(
-                            RelationEntityArtistCountry,
-                            JoinType.INNER,
-                            EntityCountry.id,
-                            RelationEntityArtistCountry.countryId
-                        ).slice(
-                            EntityCountry.id,
-                            EntityCountry.country
-                        ).select {
-                            EntityArtist.id eq artist.id
-                        }.firstOrNull()?.let {
-                            DtoCountry(
-                                id = it[EntityCountry.id].value,
-                                name = it[EntityCountry.country]
-                            )
-                        }
-                    }
-
-                // set cache
-                if (genre != null) {
-                    cache.setGenreIdByArtistId(artist.id, genre.id)
-                    cache.setGenreById(genre)
-                }
-                if (country != null) {
-                    cache.setCountryIdByArtistId(artist.id, country.id)
-                    cache.setCountryById(country)
-                }
-
-                artist.toArtistDto(
-                    genre = genre ?: DtoGenre(),
-                    country = country ?: DtoCountry()
-                )
-            }
-        }
-
-        val songIdToArtistDto = cacheSongIdDtoArtist + dbSongIdDtoArtist
-
-        // set cache
-        songIdToArtistDto.forEach { (songId, artistList) ->
-            cache.setArtistIdBySongId(songId, artistList.map { it.id })
-            cache.setArtistById(artistList)
-        }
-
-        return songIdToArtistDto
     }
 
     override suspend fun getInfoOnSongId(list: List<SongId>): List<Pair<SongId, DtoSongInfo>> {
@@ -329,6 +205,169 @@ class ExposedLocalCoreDatasource(
             }
 
             cacheAlbumDef.await() + dbAlbumDef.await()
+        }
+    }
+
+    private suspend fun getGenreOnArtistId(artistId: ArtistId) =
+        cache.cacheGenreIdByArtistId(artistId)?.let { cache.cacheGenreById(it) } ?: kyokuDbQuery {
+            EntityGenre
+                .join(
+                    otherTable = RelationEntityArtistGenre,
+                    onColumn = EntityGenre.id,
+                    otherColumn = RelationEntityArtistGenre.genreId,
+                    joinType = JoinType.INNER
+                )
+                .slice(
+                    EntityGenre.id,
+                    EntityGenre.genre,
+                    EntityGenre.popularity
+                ).select {
+                    RelationEntityArtistGenre.artistId eq artistId
+                }.firstOrNull()?.let {
+                    DtoGenre(
+                        id = it[EntityGenre.id].value,
+                        name = it[EntityGenre.genre],
+                        popularity = it[EntityGenre.popularity]
+                    )
+                }
+        }.also {
+            if (it != null) {
+                cache.setGenreById(it)
+                cache.setGenreIdByArtistId(artistId, it.id)
+            }
+        }
+
+    private suspend fun getCountryOnArtistId(artistId: ArtistId) =
+        cache.cacheCountryIdByArtistId(artistId)?.let { cache.cacheCountryById(it) } ?: kyokuDbQuery {
+            EntityCountry
+                .join(
+                    otherTable = RelationEntityArtistCountry,
+                    onColumn = EntityCountry.id,
+                    otherColumn = RelationEntityArtistCountry.countryId,
+                    joinType = JoinType.INNER
+                )
+                .slice(
+                    EntityCountry.id,
+                    EntityCountry.country,
+                ).select {
+                    RelationEntityArtistCountry.artistId eq artistId
+                }.firstOrNull()?.let {
+                    DtoCountry(
+                        id = it[EntityCountry.id].value,
+                        name = it[EntityCountry.country],
+                    )
+                }
+        }.also {
+            if (it != null) {
+                cache.setCountryById(it)
+                cache.setCountryIdByArtistId(artistId, it.id)
+            }
+        }
+
+    private suspend fun getArtistsOnSongId(songId: SongId): Pair<SongId, List<DtoArtist>> {
+        val pair = songId to kyokuDbQuery {
+            EntityArtist
+                .join(
+                    otherTable = RelationEntitySongArtist,
+                    onColumn = EntityArtist.id,
+                    otherColumn = RelationEntitySongArtist.artistId,
+                    joinType = JoinType.INNER
+                ).slice(
+                    EntityArtist.id,
+                    EntityArtist.name,
+                    EntityArtist.coverImage,
+                    EntityArtist.popularity
+                ).select {
+                    RelationEntitySongArtist.songId eq songId
+                }.map { resultRow ->
+                    DtoDBArtist(
+                        id = resultRow[EntityArtist.id].value,
+                        name = resultRow[EntityArtist.name],
+                        coverImage = resultRow[EntityArtist.coverImage],
+                        popularity = resultRow[EntityArtist.popularity]
+                    )
+                }
+        }
+
+        return convertDbArtistToDtoArtist(listOf(pair)).first()
+    }
+
+    private suspend fun getArtistsOnSongId(list: List<SongId>) = coroutineScope {
+        val dbResult = kyokuDbQuery {
+            val query = EntityArtist
+                .join(
+                    otherTable = RelationEntitySongArtist,
+                    onColumn = EntityArtist.id,
+                    otherColumn = RelationEntitySongArtist.artistId,
+                    joinType = JoinType.INNER
+                ).slice(
+                    EntityArtist.id,
+                    EntityArtist.name,
+                    EntityArtist.coverImage,
+                    EntityArtist.popularity,
+                    RelationEntitySongArtist.songId
+                ).select {// todo select statement not appending list to query
+                    RelationEntitySongArtist.songId inList list
+                }
+
+            println("query: ${query.toList()}") // todo why is query returning empty
+
+            query.groupBy {
+                it[RelationEntitySongArtist.songId]
+            }.map { (songId: SongId, resultList) ->
+                println("resultRow: $resultList")
+                println()
+                println()
+                println("resultRow: $resultList")
+                println()
+                println()
+                println("resultRow: $resultList")
+
+                songId to if (resultList.isEmpty()) emptyList()
+                else {
+                    resultList.map { resultRow ->
+                        DtoDBArtist(
+                            id = resultRow[EntityArtist.id].value,
+                            name = resultRow[EntityArtist.name],
+                            coverImage = resultRow[EntityArtist.coverImage],
+                            popularity = resultRow[EntityArtist.popularity]
+                        )
+                    }
+                }
+            }
+        }
+
+        println("dbResult: $dbResult")
+        println("dbResult: $dbResult")
+        println("dbResult: $dbResult")
+        println("dbResult: $dbResult")
+        println("dbResult: $dbResult")
+
+        convertDbArtistToDtoArtist(dbResult)
+    }
+
+    private suspend fun convertDbArtistToDtoArtist(dbResult: List<Pair<SongId, List<DtoDBArtist>>>) = coroutineScope {
+        dbResult.map { (songId, dbArtistList) ->
+            async {
+                songId to dbArtistList.map { dbArtist ->
+                    async {
+                        val genre = getGenreOnArtistId(dbArtist.id)
+                        val country = getCountryOnArtistId(dbArtist.id)
+
+                        dbArtist.toArtistDto(
+                            genre = genre,
+                            country = country
+                        )
+                    }
+                }.awaitAll()
+            }
+        }.awaitAll().also { resultList ->
+            resultList.forEach { it ->
+                if (it.second.isNotEmpty()) {
+                    cache.setArtistById(it.second)
+                    cache.setArtistIdBySongId(it.first, it.second.map { it.id })
+                }
+            }
         }
     }
 }

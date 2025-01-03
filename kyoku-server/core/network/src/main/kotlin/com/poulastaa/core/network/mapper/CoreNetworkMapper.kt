@@ -24,8 +24,8 @@ fun DtoArtist.toResponseArtist() = ResponseArtist(
     name = this.name,
     coverImage = this.coverImage,
     popularity = this.popularity,
-    genre = this.genre.toResponseGenre(),
-    country = this.country.toResponseCountry()
+    genre = this.genre?.toResponseGenre(),
+    country = this.country?.toResponseCountry()
 )
 
 fun DtoSongInfo.toResponseSongInfo() = ResponseSongInfo(

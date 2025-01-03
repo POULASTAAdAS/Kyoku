@@ -8,6 +8,6 @@ data class ResponseArtist(
     val name: String,
     val coverImage: String?,
     val popularity: Long,
-    val genre: ResponseGenre,
-    val country: ResponseCountry,
+    val genre: ResponseGenre?,
+    val country: ResponseCountry?,
 )

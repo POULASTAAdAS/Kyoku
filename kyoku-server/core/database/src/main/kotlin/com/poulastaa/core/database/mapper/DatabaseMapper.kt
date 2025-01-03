@@ -43,8 +43,8 @@ fun DaoArtist.toDbArtistDto() = DtoDBArtist(
 )
 
 fun DtoDBArtist.toArtistDto(
-    genre: DtoGenre,
-    country: DtoCountry,
+    genre: DtoGenre?,
+    country: DtoCountry?,
 ) = DtoArtist(
     id = this.id,
     name = this.name,

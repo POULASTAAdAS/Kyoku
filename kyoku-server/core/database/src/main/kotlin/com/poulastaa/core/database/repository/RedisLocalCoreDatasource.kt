@@ -187,7 +187,7 @@ class RedisLocalCoreDatasource(
     }
 
     private fun <K> setSingleValueWithExp(group: Group, key: K, value: String) {
-        if (value.isNotBlank()) return
+        if (value.isBlank()) return
 
         redisPool.resource.use { jedis ->
             jedis.setex(

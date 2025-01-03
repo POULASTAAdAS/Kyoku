@@ -29,10 +29,10 @@ class ExposedSetupDatasource(
     override suspend fun createPlaylistFromSpotifyPlaylist(
         user: DtoDBUser,
         spotifySongTitle: List<String>,
-    ): DtoPlaylistFull {
+    ): DtoPlaylistFull { // todo create playlist user relation
         val cacheResult = cache.cacheSongByTitle(spotifySongTitle)
         val notFoundTitle = spotifySongTitle.filter { title ->
-            cacheResult.none { it.title == title }
+            cacheResult.none { it.title.contains(title, ignoreCase = true) }
         }
 
         if (notFoundTitle.isEmpty()) {
@@ -41,7 +41,9 @@ class ExposedSetupDatasource(
         }
 
         return coroutineScope {
-            val foundSongIdList = cacheResult.filter { it.title in notFoundTitle }.map { it.id }
+            val foundSongIdList = cacheResult
+                .filter { notFoundTitle.any { title -> it.title.contains(title, ignoreCase = true) } }
+                .map { it.id }
 
             val dbSongs = notFoundTitle.map { title ->
                 async {
@@ -59,29 +61,31 @@ class ExposedSetupDatasource(
                 }
             }.awaitAll().flatten()
 
-            val idList = dbSongs.map { it.id.value } + cacheResult.map { it.id }
+            var idList = (dbSongs.map { it.id.value } + cacheResult.map { it.id }).distinctBy { it }
 
-            val albumDef = async { coreDB.getAlbumOnSongId(idList) }
-            val artistDef = async { coreDB.getArtistOnSongId(idList) }
-            val infoDef = async { coreDB.getInfoOnSongId(idList) }
-            val genreDef = async { coreDB.getGenreOnSongId(idList) }
+            val songs = if (idList.isNotEmpty()) {
+                val albumDef = async { coreDB.getAlbumOnSongId(idList) }
+                val artistDef = async { coreDB.getArtistOnSongId(idList) }
+                val infoDef = async { coreDB.getInfoOnSongId(idList) }
+                val genreDef = async { coreDB.getGenreOnSongId(idList) }
 
-            val dbResult = dbSongs.map { song ->
-                val artist = artistDef.await()
-                val album = albumDef.await()
-                val info = infoDef.await()
-                val genre = genreDef.await()
+                val dbResult = dbSongs.map { song ->
+                    val artist = artistDef.await()
+                    val album = albumDef.await()
+                    val info = infoDef.await()
+                    val genre = genreDef.await()
 
-                song.toSongDto(
-                    artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
-                    album = album.firstOrNull { it.first == song.id.value }?.second,
-                    info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
-                    genre = genre.firstOrNull { it.first == song.id.value }?.second,
-                )
-            }
+                    song.toSongDto(
+                        artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
+                        album = album.firstOrNull { it.first == song.id.value }?.second,
+                        info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
+                        genre = genre.firstOrNull { it.first == song.id.value }?.second,
+                    )
+                }
 
+                dbResult + cacheResult
+            } else cacheResult
 
-            val songs = dbResult + cacheResult
             cache.setSongById(songs)
             cache.setSongIdByTitle(songs)
 
