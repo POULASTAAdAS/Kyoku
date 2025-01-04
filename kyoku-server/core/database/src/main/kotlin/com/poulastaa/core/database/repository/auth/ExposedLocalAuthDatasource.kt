@@ -28,7 +28,7 @@ class ExposedLocalAuthDatasource(
 ) : LocalAuthDatasource {
     private val countryListMap = mapOf(
         "In" to "India",
-        "US" to "United States"
+        "US" to "United States of America" // UNITED STATES
     )
 
     override suspend fun getCountryIdFromCountryCode(countryCode: String): Int? {

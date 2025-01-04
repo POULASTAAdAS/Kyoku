@@ -249,3 +249,9 @@ val NightIcon: ImageVector
 val DayIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_day)
+
+
+val SongIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_music_note)
+

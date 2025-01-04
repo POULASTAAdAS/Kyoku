@@ -28,6 +28,7 @@ fun AppLoadingButton(
     text: String,
     isLoading: Boolean = false,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize,
+    fontWeight: FontWeight = FontWeight.Medium,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary
@@ -40,7 +41,8 @@ fun AppLoadingButton(
         colors = colors,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 8.dp,
-            pressedElevation = 0.dp
+            pressedElevation = 0.dp,
+            focusedElevation = 0.dp
         )
     ) {
         Box(
@@ -54,7 +56,7 @@ fun AppLoadingButton(
 
             Text(
                 text = text,
-                fontWeight = FontWeight.Medium,
+                fontWeight = fontWeight,
                 fontSize = fontSize,
                 modifier = Modifier.alpha(if (isLoading) 0f else 1f)
             )

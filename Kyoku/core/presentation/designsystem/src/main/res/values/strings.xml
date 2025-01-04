@@ -39,8 +39,7 @@
     <string name="error_invalid_password">Password doesn\'t match</string>
     <string name="error_email_already_exist">Email Already In User</string>
     <string name="link">Past Link</string>
-    <string name="add">A D D</string>
-    <string name="spotify_top_appbar_title">Import Your Spotify Playlist</string>
+    <string name="import_playlist">Import Your Spotify Playlist</string>
     <string name="skip">S K I P</string>
     <string name="error_invalid_spotify_link">Please enter valid playlist link</string>
     <string name="playlist_added">Playlist added</string>
@@ -164,4 +163,5 @@
     <string name="welcome_back">Welcome back !</string>
     <string name="welcome">Welcome</string>
     <string name="error_password_does_not_match">Password does n\'t match</string>
+    <string name="import_label">Import</string>
 </resources>

@@ -20,6 +20,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
+import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -152,7 +153,9 @@ fun NavGraphBuilder.authGraph(nav: NavHostController) {
 
 fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     composable<Screens.SetUp.ImportSpotifyPlaylist> {
-        // todo
+        ImportPlaylistRootScreen {
+            nav.navigate(Screens.SetUp.SetBirthDate)
+        }
     }
 
     composable<Screens.SetUp.SetBirthDate> {
