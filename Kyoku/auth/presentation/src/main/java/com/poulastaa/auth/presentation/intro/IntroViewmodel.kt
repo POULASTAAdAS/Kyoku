@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
@@ -61,77 +60,76 @@ class IntroViewmodel @Inject constructor(
             }
 
             is IntroUiAction.OnTokenReceive -> {
-                Log.d("token" , action.token)
-//                viewModelScope.launch {
-//                    val response = repo.googleAuth(
-//                        token = action.token,
-//                        countryCode = action.countryCode
-//                    )
-//
-//                    when (response) {
-//                        is Result.Error -> {
-//                            when (response.error) {
-//                                DataError.Network.NO_INTERNET -> _uiEvent.send(
-//                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_no_internet))
-//                                )
-//
-//                                else -> _uiEvent.send(
-//                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_something_went_wrong))
-//                                )
-//                            }
-//                        }
-//
-//                        is Result.Success -> {
-//                            when (response.data) {
-//                                AuthStatus.CREATED -> _uiEvent.send(
-//                                    IntroUiEvent.OnSuccess(
-//                                        SavedScreen.IMPORT_SPOTIFY_PLAYLIST
-//                                    )
-//                                )
-//
-//                                AuthStatus.USER_FOUND,
-//                                AuthStatus.USER_FOUND_HOME,
-//                                    -> _uiEvent.send(
-//                                    IntroUiEvent.OnSuccess(
-//                                        SavedScreen.HOME
-//                                    )
-//                                )
-//
-//                                AuthStatus.USER_FOUND_STORE_B_DATE -> _uiEvent.send(
-//                                    IntroUiEvent.OnSuccess(
-//                                        SavedScreen.SET_B_DATE
-//                                    )
-//                                )
-//
-//                                AuthStatus.USER_FOUND_SET_GENRE -> _uiEvent.send(
-//                                    IntroUiEvent.OnSuccess(
-//                                        SavedScreen.PIC_GENRE
-//                                    )
-//                                )
-//
-//                                AuthStatus.USER_FOUND_SET_ARTIST -> _uiEvent.send(
-//                                    IntroUiEvent.OnSuccess(
-//                                        SavedScreen.PIC_ARTIST
-//                                    )
-//                                )
-//
-//                                else -> _uiEvent.send(
-//                                    IntroUiEvent.EmitToast(
-//                                        UiText.StringResource(
-//                                            R.string.error_something_went_wrong
-//                                        )
-//                                    )
-//                                )
-//                            }
-//                        }
-//                    }
-//
-//                    _state.update {
-//                        it.copy(
-//                            isGoogleAuthLoading = false
-//                        )
-//                    }
-//                }
+                viewModelScope.launch {
+                    val response = repo.googleAuth(
+                        token = action.token,
+                        countryCode = action.countryCode
+                    )
+
+                    when (response) {
+                        is Result.Error -> {
+                            when (response.error) {
+                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_no_internet))
+                                )
+
+                                else -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(UiText.StringResource(R.string.error_something_went_wrong))
+                                )
+                            }
+                        }
+
+                        is Result.Success -> {
+                            when (response.data) {
+                                AuthStatus.CREATED -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.IMPORT_SPOTIFY_PLAYLIST
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND,
+                                AuthStatus.USER_FOUND_HOME,
+                                    -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.HOME
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_STORE_B_DATE -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.SET_B_DATE
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_SET_GENRE -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.PIC_GENRE
+                                    )
+                                )
+
+                                AuthStatus.USER_FOUND_SET_ARTIST -> _uiEvent.send(
+                                    IntroUiEvent.OnSuccess(
+                                        SavedScreen.PIC_ARTIST
+                                    )
+                                )
+
+                                else -> _uiEvent.send(
+                                    IntroUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    _state.update {
+                        it.copy(
+                            isGoogleAuthLoading = false
+                        )
+                    }
+                }
             }
         }
     }

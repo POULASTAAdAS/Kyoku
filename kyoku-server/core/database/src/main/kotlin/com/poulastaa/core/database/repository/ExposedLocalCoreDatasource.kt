@@ -70,7 +70,8 @@ class ExposedLocalCoreDatasource(
     override suspend fun getArtistOnSongId(list: List<SongId>): List<Pair<SongId, List<DtoArtist>>> = coroutineScope {
         val cacheSongIdArtistIdList = cache.cacheArtistIdBySongId(list)
 
-        if (cacheSongIdArtistIdList.isEmpty()) getArtistsOnSongId(list) else {
+        if (cacheSongIdArtistIdList.isEmpty()) getArtistsOnSongId(list)
+        else {
             val notFoundSongIdList = list.filterNot { it in cacheSongIdArtistIdList.keys }
             val dbResult = getArtistsOnSongId(notFoundSongIdList)
 
@@ -82,6 +83,8 @@ class ExposedLocalCoreDatasource(
                 } else songId to emptyList()
             } + dbResult
         }
+
+        getArtistsOnSongId(list)
     }
 
     override suspend fun getInfoOnSongId(list: List<SongId>): List<Pair<SongId, DtoSongInfo>> {
@@ -292,9 +295,9 @@ class ExposedLocalCoreDatasource(
         return convertDbArtistToDtoArtist(listOf(pair)).first()
     }
 
-    private suspend fun getArtistsOnSongId(list: List<SongId>) = coroutineScope {
+    private suspend fun getArtistsOnSongId(songIdList: List<SongId>): List<Pair<SongId, List<DtoArtist>>> {
         val dbResult = kyokuDbQuery {
-            val query = EntityArtist
+            EntityArtist
                 .join(
                     otherTable = RelationEntitySongArtist,
                     onColumn = EntityArtist.id,
@@ -306,44 +309,26 @@ class ExposedLocalCoreDatasource(
                     EntityArtist.coverImage,
                     EntityArtist.popularity,
                     RelationEntitySongArtist.songId
-                ).select {// todo select statement not appending list to query
-                    RelationEntitySongArtist.songId inList list
-                }
-
-            println("query: ${query.toList()}") // todo why is query returning empty
-
-            query.groupBy {
-                it[RelationEntitySongArtist.songId]
-            }.map { (songId: SongId, resultList) ->
-                println("resultRow: $resultList")
-                println()
-                println()
-                println("resultRow: $resultList")
-                println()
-                println()
-                println("resultRow: $resultList")
-
-                songId to if (resultList.isEmpty()) emptyList()
-                else {
-                    resultList.map { resultRow ->
-                        DtoDBArtist(
-                            id = resultRow[EntityArtist.id].value,
-                            name = resultRow[EntityArtist.name],
-                            coverImage = resultRow[EntityArtist.coverImage],
-                            popularity = resultRow[EntityArtist.popularity]
-                        )
+                ).select {
+                    RelationEntitySongArtist.songId inList songIdList
+                }.groupBy {
+                    it[RelationEntitySongArtist.songId]
+                }.map { (songId: SongId, resultList) ->
+                    songId to if (resultList.isEmpty()) emptyList()
+                    else {
+                        resultList.map { resultRow ->
+                            DtoDBArtist(
+                                id = resultRow[EntityArtist.id].value,
+                                name = resultRow[EntityArtist.name],
+                                coverImage = resultRow[EntityArtist.coverImage],
+                                popularity = resultRow[EntityArtist.popularity]
+                            )
+                        }
                     }
                 }
-            }
         }
 
-        println("dbResult: $dbResult")
-        println("dbResult: $dbResult")
-        println("dbResult: $dbResult")
-        println("dbResult: $dbResult")
-        println("dbResult: $dbResult")
-
-        convertDbArtistToDtoArtist(dbResult)
+        return convertDbArtistToDtoArtist(dbResult)
     }
 
     private suspend fun convertDbArtistToDtoArtist(dbResult: List<Pair<SongId, List<DtoDBArtist>>>) = coroutineScope {

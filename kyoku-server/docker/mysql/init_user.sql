@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS UserJWTRelation
 
 CREATE TABLE IF NOT EXISTS UserPinned
 (
-    userId     BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId     BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     otherId    BIGINT     NOT NULL,
     pinnedType VARCHAR(9) NOT NULL,
     PRIMARY KEY (userId, otherId, pinnedType)
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS UserPinned
 
 CREATE TABLE IF NOT EXISTS UserPlaylist
 (
-    userId     BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId     BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     playlistId BIGINT NOT NULL,
     PRIMARY KEY (userId, playlistId)
 );
@@ -39,35 +39,35 @@ CREATE TABLE IF NOT EXISTS UserPlaylist
 -- USER'S LIBRARY
 CREATE TABLE IF NOT EXISTS UserSavedPlaylist
 (
-    userId     BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId     BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     playlistId BIGINT NOT NULL,
     PRIMARY KEY (userId, playlistId)
 );
 
 CREATE TABLE IF NOT EXISTS UserFavouriteSong
 (
-    userId BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     songId BIGINT NOT NULL,
     PRIMARY KEY (userId, songId)
 );
 
 CREATE TABLE IF NOT EXISTS UserSavedArtist
 (
-    userId   BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId   BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     artistId BIGINT NOT NULL,
     PRIMARY KEY (userId, artistId)
 );
 
 CREATE TABLE IF NOT EXISTS UserSavedGenre
 (
-    userId  BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId  BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     genreId BIGINT NOT NULL,
     PRIMARY KEY (userId, genreId)
 );
 
 CREATE TABLE IF NOT EXISTS UserSavedAlbum
 (
-    userId  BIGINT UNIQUE REFERENCES `User` (id) ON DELETE CASCADE,
+    userId  BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
     albumId BIGINT NOT NULL,
     PRIMARY KEY (userId, albumId)
 );

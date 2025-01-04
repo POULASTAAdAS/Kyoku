@@ -8,8 +8,8 @@ import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserJWT
 import com.poulastaa.core.database.mapper.toDbUserDto
 import com.poulastaa.core.domain.model.DtoDBUser
-import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.DtoServerUser
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.auth.Email
@@ -56,7 +56,7 @@ class ExposedLocalAuthDatasource(
         val dbUser = when {
             (user.type == UserType.GOOGLE || user.type == UserType.EMAIL) && isDbStore -> {
                 SQLDbManager.userDbQuery {
-                    DaoUser.Companion.new { // todo fix insert ignore
+                    DaoUser.new { // todo fix insert ignore
                         this.email = user.email
                         this.username = user.username
                         this.userType = user.type.name

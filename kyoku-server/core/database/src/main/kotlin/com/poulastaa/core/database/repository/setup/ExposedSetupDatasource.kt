@@ -29,7 +29,7 @@ class ExposedSetupDatasource(
     override suspend fun createPlaylistFromSpotifyPlaylist(
         user: DtoDBUser,
         spotifySongTitle: List<String>,
-    ): DtoPlaylistFull { // todo create playlist user relation
+    ): DtoPlaylistFull {
         val cacheResult = cache.cacheSongByTitle(spotifySongTitle)
         val notFoundTitle = spotifySongTitle.filter { title ->
             cacheResult.none { it.title.contains(title, ignoreCase = true) }
@@ -69,12 +69,12 @@ class ExposedSetupDatasource(
                 val infoDef = async { coreDB.getInfoOnSongId(idList) }
                 val genreDef = async { coreDB.getGenreOnSongId(idList) }
 
-                val dbResult = dbSongs.map { song ->
-                    val artist = artistDef.await()
-                    val album = albumDef.await()
-                    val info = infoDef.await()
-                    val genre = genreDef.await()
+                val artist = artistDef.await()
+                val album = albumDef.await()
+                val info = infoDef.await()
+                val genre = genreDef.await()
 
+                val dbResult = dbSongs.map { song ->
                     song.toSongDto(
                         artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
                         album = album.firstOrNull { it.first == song.id.value }?.second,
@@ -90,7 +90,6 @@ class ExposedSetupDatasource(
             cache.setSongIdByTitle(songs)
 
             val playlist = coreDB.createPlaylist(user.id, songs.map { it.id })
-
 
             DtoPlaylistFull(
                 playlist = playlist,
