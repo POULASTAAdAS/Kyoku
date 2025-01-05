@@ -27,9 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,16 +38,15 @@ import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.SongIcon
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistUiAction
 import com.poulastaa.setup.presentation.spotify_playlist.UiPrevPlaylist
 
 @Composable
 internal fun SongList(
     item: UiPrevPlaylist,
-    haptic: HapticFeedback,
-    onAction: (ImportPlaylistUiAction) -> Unit,
+    onPlaylistClick: (id: Long) -> Unit,
     headingPadding: Dp = MaterialTheme.dimens.small1,
-    itemHeight: Dp = 95.dp
+    itemHeight: Dp = 100.dp,
+    contentPadding: Dp = MaterialTheme.dimens.small2,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -61,8 +59,7 @@ internal fun SongList(
             pressedElevation = 0.dp
         ),
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            onAction(ImportPlaylistUiAction.OnPlaylistClick(item.playlist.id))
+            onPlaylistClick(item.playlist.id)
         }
     ) {
         Card(
@@ -95,15 +92,16 @@ internal fun SongList(
 
                 IconButton(
                     onClick = {
-                        onAction(ImportPlaylistUiAction.OnPlaylistClick(item.playlist.id))
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onPlaylistClick(item.playlist.id)
                     }
                 ) {
                     Icon(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .rotate(if (item.isExpanded) 180f else 0f),
                         imageVector = ArrowDownIcon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
@@ -116,8 +114,10 @@ internal fun SongList(
             if (it) {
                 Column {
                     item.songs.forEach { song ->
+                        Spacer(Modifier.height(contentPadding))
+
                         Card(
-                            modifier = Modifier.padding(MaterialTheme.dimens.small2),
+                            modifier = Modifier.padding(horizontal = contentPadding),
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                             ),

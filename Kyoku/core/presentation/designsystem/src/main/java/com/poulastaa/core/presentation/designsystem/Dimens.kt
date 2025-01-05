@@ -23,7 +23,7 @@ val CompactSmallDimens = Dimens(
     medium3 = 20.dp,
 )
 
-val CompactMediumDimens = Dimens( // default
+val CompactMediumDimens = Dimens(
     small1 = 4.dp,
     small2 = 6.dp,
     small3 = 8.dp,
@@ -47,16 +47,16 @@ val CompactDimens = Dimens(
 
 val MediumDimens = Dimens(
     small1 = 8.dp,
-    small2 = 16.dp,
-    small3 = 20.dp,
-    medium1 = 32.dp,
-    medium2 = 38.dp,
-    medium3 = 42.dp,
+    small2 = 12.dp,
+    small3 = 16.dp,
+    medium1 = 20.dp,
+    medium2 = 24.dp,
+    medium3 = 28.dp,
 )
 
 val ExpandedDimens = Dimens(
-    small1 = 4.dp,
-    small2 = 8.dp,
+    small1 = 8.dp,
+    small2 = 12.dp,
     small3 = 16.dp,
     medium1 = 20.dp,
     medium2 = 24.dp,
