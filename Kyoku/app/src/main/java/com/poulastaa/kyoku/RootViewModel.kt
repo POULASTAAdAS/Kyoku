@@ -1,9 +1,8 @@
 package com.poulastaa.kyoku
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.core.domain.DatastoreRepository
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel

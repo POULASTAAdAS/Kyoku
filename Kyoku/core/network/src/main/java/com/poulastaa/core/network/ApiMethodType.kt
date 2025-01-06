@@ -1,4 +1,4 @@
-package com.poulastaa.core.data.model
+package com.poulastaa.core.network
 
 enum class ApiMethodType {
     GET,

@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain
+package com.poulastaa.core.domain.repository
 
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.model.UserDto

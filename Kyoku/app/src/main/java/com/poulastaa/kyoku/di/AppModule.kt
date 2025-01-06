@@ -9,7 +9,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.google.gson.Gson
 import com.poulastaa.auth.network.repository.AuthHeaderInterceptor
 import com.poulastaa.core.data.repository.DataStoreRepositoryImpl
-import com.poulastaa.core.domain.DatastoreRepository
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.kyoku.Kyoku
 import dagger.Module
 import dagger.Provides
@@ -39,7 +39,8 @@ object AppModule {
     @Singleton
     fun provideDataStoreRepository(
         dataStore: DataStore<Preferences>,
-    ): DatastoreRepository = DataStoreRepositoryImpl(dataStore)
+        gson: Gson,
+    ): DatastoreRepository = DataStoreRepositoryImpl(dataStore, gson)
 
     @Provides
     @Singleton

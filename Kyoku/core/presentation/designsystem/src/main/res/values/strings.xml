@@ -41,7 +41,7 @@
     <string name="link">Past Link</string>
     <string name="import_playlist">Import Your Spotify Playlist</string>
     <string name="skip">S K I P</string>
-    <string name="error_invalid_spotify_link">Please enter valid playlist link</string>
+    <string name="error_invalid_spotify_playlist_link">Please enter valid playlist link</string>
     <string name="playlist_added">Playlist added</string>
     <string name="error_empyt_BDate">Please fill this field</string>
     <string name="set_bDate_top_appbar_title">Set Your B\'Day</string>

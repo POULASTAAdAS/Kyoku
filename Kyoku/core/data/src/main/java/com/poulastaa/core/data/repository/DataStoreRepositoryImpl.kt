@@ -6,22 +6,22 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.gson.Gson
 import com.poulastaa.core.data.model.UserSerializable
 import com.poulastaa.core.data.toUser
 import com.poulastaa.core.data.toUserSerializable
-import com.poulastaa.core.domain.DatastoreRepository
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.model.UserDto
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class DataStoreRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>,
+    private val gson: Gson,
 ) : DatastoreRepository {
     private object PreferencesKeys {
         val SIGN_IN_STATE = stringPreferencesKey(name = "sign_in_state")
@@ -69,7 +69,7 @@ class DataStoreRepositoryImpl @Inject constructor(
     }.first()
 
     override suspend fun storeLocalUser(user: UserDto) {
-        val jsonString = Json.encodeToString(user.toUserSerializable())
+        val jsonString = gson.toJson(user.toUserSerializable())
 
         dataStore.edit {
             it[PreferencesKeys.LOCAL_USER] = jsonString
@@ -82,7 +82,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         }.first()
 
         val response = pref[PreferencesKeys.LOCAL_USER]?.let {
-            Json.decodeFromString<UserSerializable>(it)
+            gson.fromJson(it, UserSerializable::class.java)
         }
 
         return response?.toUser() ?: UserDto()

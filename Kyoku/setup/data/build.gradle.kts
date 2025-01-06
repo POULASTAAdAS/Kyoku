@@ -14,4 +14,5 @@ dependencies {
     implementation(libs.gson)
 
     implementation(projects.core.domain)
+    implementation(projects.setup.domain)
 }

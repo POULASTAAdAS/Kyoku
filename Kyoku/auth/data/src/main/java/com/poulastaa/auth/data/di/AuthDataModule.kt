@@ -5,7 +5,7 @@ import com.poulastaa.auth.data.UserDataValidator
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.RemoteAuthDataSource
-import com.poulastaa.core.domain.DatastoreRepository
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

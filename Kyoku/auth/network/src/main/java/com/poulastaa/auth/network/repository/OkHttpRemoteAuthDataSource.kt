@@ -14,9 +14,9 @@ import com.poulastaa.auth.network.model.JwtTokenResponse
 import com.poulastaa.auth.network.toAuthResponseDto
 import com.poulastaa.auth.network.toForgotPasswordStatus
 import com.poulastaa.auth.network.toJWTTokenDto
-import com.poulastaa.core.data.model.ApiMethodType
-import com.poulastaa.core.data.model.ReqParam
-import com.poulastaa.core.data.network.req
+import com.poulastaa.core.network.ApiMethodType
+import com.poulastaa.core.network.ReqParam
+import com.poulastaa.core.network.req
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
@@ -37,7 +37,7 @@ class OkHttpRemoteAuthDataSource @Inject constructor(
     ): Result<AuthResponseDto, DataError.Network> {
         val result = client.req<EmailSignUpRequest, AuthenticationResponse>(
             route = EndPoints.Auth.route,
-            method = ApiMethodType.POST,
+            method = com.poulastaa.core.network.ApiMethodType.POST,
             gson = gson,
             body = EmailSignUpRequest(
                 email = email,
@@ -56,7 +56,7 @@ class OkHttpRemoteAuthDataSource @Inject constructor(
     ): Result<AuthResponseDto, DataError.Network> {
         val result = client.req<EmailLogInRequest, AuthenticationResponse>(
             route = EndPoints.Auth.route,
-            method = ApiMethodType.POST,
+            method = com.poulastaa.core.network.ApiMethodType.POST,
             gson = gson,
             body = EmailLogInRequest(
                 email = email,
@@ -73,7 +73,7 @@ class OkHttpRemoteAuthDataSource @Inject constructor(
     ): Result<AuthResponseDto, DataError.Network> {
         val result = client.req<GoogleAuthRequest, AuthenticationResponse>(
             route = EndPoints.Auth.route,
-            method = ApiMethodType.POST,
+            method = com.poulastaa.core.network.ApiMethodType.POST,
             gson = gson,
             body = GoogleAuthRequest(
                 token = token,
@@ -87,10 +87,10 @@ class OkHttpRemoteAuthDataSource @Inject constructor(
     override suspend fun checkEmailVerificationState(email: String): Result<JwtTokenDto, DataError.Network> {
         val result = client.req<Unit, JwtTokenResponse>(
             route = EndPoints.GetJWTToken.route,
-            method = ApiMethodType.GET,
+            method = com.poulastaa.core.network.ApiMethodType.GET,
             gson = gson,
             params = listOf(
-                ReqParam(
+                com.poulastaa.core.network.ReqParam(
                     key = "email",
                     value = email
                 )
@@ -103,10 +103,10 @@ class OkHttpRemoteAuthDataSource @Inject constructor(
     override suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network> {
         val result = client.req<Unit, ForgotPasswordResponse>(
             route = EndPoints.ForgotPassword.route,
-            method = ApiMethodType.GET,
+            method = com.poulastaa.core.network.ApiMethodType.GET,
             gson = gson,
             params = listOf(
-                ReqParam(
+                com.poulastaa.core.network.ReqParam(
                     key = "email",
                     value = email
                 )

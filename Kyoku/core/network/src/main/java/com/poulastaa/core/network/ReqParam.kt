@@ -1,4 +1,4 @@
-package com.poulastaa.core.data.model
+package com.poulastaa.core.network
 
 data class ReqParam(
     val key: String,

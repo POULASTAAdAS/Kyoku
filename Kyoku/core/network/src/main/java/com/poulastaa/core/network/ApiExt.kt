@@ -1,9 +1,6 @@
-package com.poulastaa.core.data.network
+package com.poulastaa.core.network
 
 import com.google.gson.Gson
-import com.poulastaa.core.data.BuildConfig
-import com.poulastaa.core.data.model.ApiMethodType
-import com.poulastaa.core.data.model.ReqParam
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import kotlinx.coroutines.Dispatchers
@@ -50,91 +47,6 @@ suspend inline fun <reified Req : Any, reified Response : Any> OkHttpClient.req(
 
     return try {
         val response = makeCall(reqBuilder.build())
-        responseToResult<Response>(response, gson)
-    } catch (e: Exception) {
-        handleOtherException(e)
-    }
-}
-
-
-suspend inline fun <reified Req : Any, reified Response : Any> OkHttpClient.post(
-    route: String,
-    body: Req,
-    gson: Gson,
-): Result<Response, DataError.Network> {
-    val url = constructRoute(route)
-
-    val reqBody = gson.toJson(body).toRequestBody(mediaType)
-    val req = Request.Builder().url(url).post(reqBody).build()
-
-    return try {
-        val response = makeCall(req)
-        responseToResult<Response>(response, gson)
-    } catch (e: Exception) {
-        handleOtherException(e)
-    }
-}
-
-suspend inline fun <reified Request : Any, reified Response : Any> OkHttpClient.put(
-    route: String,
-    body: Request,
-    gson: Gson,
-): Result<Response, DataError.Network> {
-    val url = constructRoute(route)
-
-    val reqBody = gson.toJson(body).toRequestBody(mediaType)
-    val req = okhttp3.Request.Builder().url(url).put(reqBody).build()
-
-    return try {
-        val response = makeCall(req)
-        responseToResult<Response>(response, gson)
-    } catch (e: Exception) {
-        handleOtherException(e)
-    }
-}
-
-suspend inline fun <reified Response : Any> OkHttpClient.get(
-    route: String,
-    params: List<Pair<String, String>>,
-    gson: Gson,
-): Result<Response, DataError.Network> {
-    val urlBuilder =
-        constructRoute(route).toHttpUrlOrNull()?.newBuilder()
-            ?: return Result.Error(DataError.Network.UNKNOWN)
-
-    params.forEach {
-        urlBuilder.addQueryParameter(it.first, it.second)
-    }
-
-    val url = urlBuilder.build()
-    val req = Request.Builder().url(url).get().build()
-
-    return try {
-        val response = makeCall(req)
-        responseToResult<Response>(response, gson)
-    } catch (e: Exception) {
-        handleOtherException(e)
-    }
-}
-
-suspend inline fun <reified Response : Any> OkHttpClient.authGet(
-    route: String,
-    params: List<Pair<String, String>>,
-    gson: Gson,
-): Result<Response, DataError.Network> {
-    val urlBuilder =
-        constructRoute(route).toHttpUrlOrNull()?.newBuilder()
-            ?: return Result.Error(DataError.Network.UNKNOWN)
-
-    params.forEach {
-        urlBuilder.addQueryParameter(it.first, it.second)
-    }
-
-    val url = urlBuilder.build()
-    val req = Request.Builder().url(url).get().build()
-
-    return try {
-        val response = makeCall(req)
         responseToResult<Response>(response, gson)
     } catch (e: Exception) {
         handleOtherException(e)

@@ -6,8 +6,10 @@ import com.poulastaa.core.presentation.ui.model.UiPrevSong
 
 data class ImportPlaylistUiState(
     val isMakingApiCall: Boolean = false,
+    val header: String = "",
     val link: TextHolder = TextHolder(),
-    val data: List<UiPrevPlaylist> = (1..5).map { playlistId ->
+    val data: List<UiPrevPlaylist> = emptyList(),
+    /*(1..5).map { playlistId ->
         UiPrevPlaylist(
             playlist = UiPlaylist(
                 id = playlistId.toLong(),
@@ -23,7 +25,7 @@ data class ImportPlaylistUiState(
                 )
             }
         )
-    },
+    }*/
 ) {
     val floatActionButtonText: Int = if (data.isEmpty()) R.string.skip else R.string.continue_text
 }

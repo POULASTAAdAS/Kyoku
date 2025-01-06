@@ -5,5 +5,4 @@ sealed interface ImportPlaylistUiAction {
     data class OnPlaylistClick(val playlistId: Long) : ImportPlaylistUiAction
     data object OnImportClick : ImportPlaylistUiAction
     data object OnSkipClick : ImportPlaylistUiAction
-
 }
