@@ -1,8 +1,9 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.UiText
@@ -13,7 +14,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -76,9 +76,31 @@ class ImportPlaylistViewmodel @Inject constructor(
 
 
                 viewModelScope.launch {
-                    val result = repo.importPlaylist(playlistId)
+                    when (val result = repo.importPlaylist(playlistId)) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.NO_INTERNET -> _uiState.send(
+                                    ImportPlaylistUiEvent.EmitToast(UiText.StringResource(R.string.error_no_internet))
+                                )
 
-                    Log.d("result", result.toString())
+                                else -> _uiState.send(
+                                    ImportPlaylistUiEvent.EmitToast(UiText.StringResource(R.string.error_something_went_wrong))
+                                )
+                            }
+                        }
+
+                        is Result.Success -> {
+                            _uiState.send(ImportPlaylistUiEvent.OnSuccess)
+
+                            _state.update {
+                                it.copy(
+                                    link = it.link.copy(
+                                        value = ""
+                                    )
+                                )
+                            }
+                        }
+                    }
 
                     _state.update {
                         it.copy(
@@ -110,12 +132,14 @@ class ImportPlaylistViewmodel @Inject constructor(
         }
     }
 
-    private suspend fun readCookie() {
-        ds.readTokenOrCookie().collectLatest { cookie ->
-            _state.update {
-                it.copy(
-                    header = cookie
-                )
+    private fun readCookie() {
+        viewModelScope.launch {
+            ds.readTokenOrCookie().collectLatest { cookie ->
+                _state.update {
+                    it.copy(
+                        header = cookie
+                    )
+                }
             }
         }
     }

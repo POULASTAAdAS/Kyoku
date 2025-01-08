@@ -1,6 +1,7 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -121,6 +122,7 @@ fun ImportPlaylistExpandedScreen(
                         focusManager.clearFocus()
                     },
                     isLoading = state.isMakingApiCall,
+                    loadingColor = MaterialTheme.colorScheme.background,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.background
@@ -156,11 +158,10 @@ fun ImportPlaylistExpandedScreen(
                             item = item,
                             onPlaylistClick = {
                                 onAction(ImportPlaylistUiAction.OnPlaylistClick(it))
-                            },
+                            }
                         )
                     }
                 }
-
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,6 +19,7 @@ internal fun ImportPlaylistCompactScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
+
 
     ImportPlaylistScreenWrapper(
         modifier = Modifier.fillMaxWidth(.7f),

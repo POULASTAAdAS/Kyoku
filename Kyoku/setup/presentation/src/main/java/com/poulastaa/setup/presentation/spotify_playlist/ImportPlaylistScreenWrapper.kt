@@ -1,6 +1,5 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -114,6 +113,7 @@ fun ImportPlaylistScreenWrapper(
                         fontWeight = FontWeight.SemiBold,
                         onClick = onImportClick,
                         isLoading = state.isMakingApiCall,
+                        loadingColor = MaterialTheme.colorScheme.background,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.background

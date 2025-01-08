@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -29,6 +30,7 @@ fun AppLoadingButton(
     isLoading: Boolean = false,
     fontSize: TextUnit = MaterialTheme.typography.titleMedium.fontSize,
     fontWeight: FontWeight = FontWeight.Medium,
+    loadingColor: Color = MaterialTheme.colorScheme.primary,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary
@@ -50,7 +52,7 @@ fun AppLoadingButton(
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary,
+                color = loadingColor,
                 modifier = Modifier.alpha(if (isLoading) 1f else 0f)
             )
 

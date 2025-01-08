@@ -16,7 +16,8 @@ fun DtoCountry.toResponseCountry() = ResponseCountry(
 fun DtoAlbum.toResponseAlbum() = ResponseAlbum(
     id = this.id,
     name = this.name,
-    poster = this.poster
+    poster = this.poster,
+    popularity = this.popularity
 )
 
 fun DtoArtist.toResponseArtist() = ResponseArtist(

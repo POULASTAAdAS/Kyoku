@@ -9,23 +9,6 @@ data class ImportPlaylistUiState(
     val header: String = "",
     val link: TextHolder = TextHolder(),
     val data: List<UiPrevPlaylist> = emptyList(),
-    /*(1..5).map { playlistId ->
-        UiPrevPlaylist(
-            playlist = UiPlaylist(
-                id = playlistId.toLong(),
-                name = "Playlist $playlistId",
-                totalSongs = 10
-            ),
-            songs = (1..10).map { songId ->
-                UiPrevSong(
-                    id = songId.toLong(),
-                    title = "Song $songId",
-                    artists = "Artist $songId",
-                    releaseYear = 2021
-                )
-            }
-        )
-    }*/
 ) {
     val floatActionButtonText: Int = if (data.isEmpty()) R.string.skip else R.string.continue_text
 }

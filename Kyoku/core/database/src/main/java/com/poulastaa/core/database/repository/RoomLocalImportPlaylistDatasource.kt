@@ -1,5 +1,6 @@
 package com.poulastaa.core.database.repository
 
+import android.util.Log
 import com.poulastaa.core.domain.model.DtoFullPlaylist
 import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
@@ -12,6 +13,6 @@ class RoomLocalImportPlaylistDatasource : LocalImportPlaylistDatasource {
     }
 
     override suspend fun storePlaylist(playlist: DtoFullPlaylist) {
-
+        Log.d("playlist" , playlist.toString())
     }
 }
