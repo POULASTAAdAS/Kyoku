@@ -10,6 +10,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
         target.run {
             pluginManager.run {
                 apply("androidx.room")
+                apply("kotlin-kapt")
             }
 
             extensions.configure<RoomExtension> {
