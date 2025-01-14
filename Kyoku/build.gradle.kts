@@ -11,6 +11,5 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.kotlinx.serialization) apply false
-    alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.secrets.gradle.plugin) apply false
 }

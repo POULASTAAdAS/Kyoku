@@ -59,10 +59,10 @@ interface RootDao {
 
     // Genre
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCountry(genre: EntityGenre)
+    suspend fun insertGenre(genre: EntityGenre)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCountry(list: List<EntityGenre>)
+    suspend fun insertGenre(list: List<EntityGenre>)
 
 
     // Playlist
