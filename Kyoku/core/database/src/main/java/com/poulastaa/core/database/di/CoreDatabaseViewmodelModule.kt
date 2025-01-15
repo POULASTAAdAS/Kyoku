@@ -1,5 +1,6 @@
 package com.poulastaa.core.database.di
 
+import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import dagger.Module
@@ -13,6 +14,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object CoreDatabaseViewmodelModule {
     @Provides
     @ViewModelScoped
-    fun provideImportPlaylistDatasource(): LocalImportPlaylistDatasource =
-        RoomLocalImportPlaylistDatasource()
+    fun provideImportPlaylistDatasource(
+        dao: RootDao,
+    ): LocalImportPlaylistDatasource = RoomLocalImportPlaylistDatasource(dao)
 }

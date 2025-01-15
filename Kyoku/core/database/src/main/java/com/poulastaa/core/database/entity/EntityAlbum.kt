@@ -8,5 +8,6 @@ data class EntityAlbum(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     val name: String,
+    val poster: String? = null,
     val popularity: Long = 0,
 )

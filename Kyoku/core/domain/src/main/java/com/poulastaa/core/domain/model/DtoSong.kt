@@ -1,7 +1,9 @@
 package com.poulastaa.core.domain.model
 
+typealias SongId = Long
+
 data class DtoSong(
-    val id: Long,
+    val id: SongId,
     val title: String,
     val poster: String?,
     val masterPlaylist: String,
