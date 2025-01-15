@@ -2,8 +2,8 @@ package com.poulastaa.kyoku
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +45,7 @@ class RootViewModel @Inject constructor(
 
         _state.update {
             it.copy(
-                screen = Screens.SetUp.ImportSpotifyPlaylist
+                screen = screen
             )
         }
 

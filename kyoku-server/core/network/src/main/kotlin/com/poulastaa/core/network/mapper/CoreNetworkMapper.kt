@@ -39,7 +39,8 @@ fun DtoSongInfo.toResponseSongInfo() = ResponseSongInfo(
 fun DtoPlaylist.toResponsePlaylist() = ResponsePlaylist(
     id = this.id,
     name = this.name,
-    popularity = this.popularity
+    popularity = this.popularity,
+    visibilityState = this.visibilityState
 )
 
 fun DtoSong.toResponseSong() = ResponseSong(

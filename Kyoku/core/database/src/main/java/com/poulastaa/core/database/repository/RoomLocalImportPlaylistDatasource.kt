@@ -1,11 +1,13 @@
 package com.poulastaa.core.database.repository
 
+import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
 import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
+import com.poulastaa.core.database.mapper.toDtoPrevPlaylist
 import com.poulastaa.core.database.mapper.toEntityAlbum
 import com.poulastaa.core.database.mapper.toEntityArtist
 import com.poulastaa.core.database.mapper.toEntityCountry
@@ -20,14 +22,23 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RoomLocalImportPlaylistDatasource @Inject constructor(
     private val root: RootDao,
+    private val local: ImportPlaylistDao,
 ) : LocalImportPlaylistDatasource {
     override fun loadAllPlaylist(): Flow<List<DtoPrevPlaylist>> {
-        return flow { }
+        return local.getAllPlaylist().map { list ->
+            list.map { song ->
+                val releaseYear = local.getSongInfo(song.list.map { it.id })
+                    .associate { it.songId to it.releaseYear }
+                val artists = local.getArtistNameOnSongId(song.list.map { it.id })
+
+                song.toDtoPrevPlaylist(artists, releaseYear)
+            }
+        }
     }
 
     override suspend fun storePlaylist(playlist: DtoFullPlaylist) {

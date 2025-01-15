@@ -1,5 +1,6 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataError
@@ -32,6 +33,7 @@ class ImportPlaylistViewmodel @Inject constructor(
     val state = _state
         .onStart {
             readCookie()
+            loadData()
         }
         .stateIn(
             scope = viewModelScope,
@@ -138,6 +140,18 @@ class ImportPlaylistViewmodel @Inject constructor(
                 _state.update {
                     it.copy(
                         header = cookie
+                    )
+                }
+            }
+        }
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            repo.loadAllPlaylist().collectLatest { list ->
+                _state.update {
+                    it.copy(
+                        data = list.map { dto -> dto.toUiPrevPlaylist() }
                     )
                 }
             }

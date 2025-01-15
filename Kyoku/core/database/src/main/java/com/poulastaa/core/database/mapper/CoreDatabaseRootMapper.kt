@@ -7,13 +7,18 @@ import com.poulastaa.core.database.entity.EntityGenre
 import com.poulastaa.core.database.entity.EntityPlaylist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
+import com.poulastaa.core.database.relation.PlaylistWithSong
+import com.poulastaa.core.database.relation.SongIdWithArtistName
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
+import com.poulastaa.core.domain.model.DtoPrevPlaylist
+import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
+import com.poulastaa.core.domain.model.SongId
 
 fun DtoSong.toEntitySong() = EntitySong(
     id = this.id,
@@ -30,7 +35,7 @@ fun DtoPlaylist.toEntityPlaylist() = EntityPlaylist(
 )
 
 fun DtoSongInfo.toSongInfo() = EntitySongInfo(
-    songId = this.id,
+    songId = this.songId,
     releaseYear = this.releaseYear,
     popularity = this.popularity,
     composer = this.composer
@@ -59,4 +64,31 @@ fun DtoAlbum.toEntityAlbum() = EntityAlbum(
 fun DtoCountry.toEntityCountry() = EntityCountry(
     id = this.id,
     name = this.name,
+)
+
+
+fun EntityPlaylist.toDtoPlaylist() = DtoPlaylist(
+    id = this.id,
+    name = this.name,
+    visibilityState = this.visibilityState,
+    popularity = this.popularity
+)
+
+fun EntitySong.toDtoPrevSong(
+    artists: List<SongIdWithArtistName>,
+    releaseYears: Map<SongId, Int>,
+) = DtoPrevSong(
+    id = this.id,
+    title = this.title,
+    poster = this.poster,
+    artists = artists.firstOrNull { it.songId == this.id }?.artist,
+    releaseYear = releaseYears[this.id] ?: -1
+)
+
+fun PlaylistWithSong.toDtoPrevPlaylist(
+    artists: List<SongIdWithArtistName>,
+    releaseYears: Map<SongId, Int>,
+) = DtoPrevPlaylist(
+    playlist = this.playlist.toDtoPlaylist(),
+    list = this.list.map { it.toDtoPrevSong(artists, releaseYears) }
 )

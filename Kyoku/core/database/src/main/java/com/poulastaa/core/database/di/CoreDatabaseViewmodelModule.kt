@@ -1,5 +1,7 @@
 package com.poulastaa.core.database.di
 
+import com.poulastaa.core.database.KyokuDatabase
+import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
@@ -14,7 +16,14 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object CoreDatabaseViewmodelModule {
     @Provides
     @ViewModelScoped
+    fun provideImportPlaylistDao(
+        database: KyokuDatabase,
+    ): ImportPlaylistDao = database.importPlaylistDao
+
+    @Provides
+    @ViewModelScoped
     fun provideImportPlaylistDatasource(
         dao: RootDao,
-    ): LocalImportPlaylistDatasource = RoomLocalImportPlaylistDatasource(dao)
+        local: ImportPlaylistDao,
+    ): LocalImportPlaylistDatasource = RoomLocalImportPlaylistDatasource(dao, local)
 }

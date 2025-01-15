@@ -32,7 +32,8 @@ fun DaoSong.toSongDto(
 fun DaoPlaylist.toPlaylistDto() = DtoPlaylist(
     id = this.id.value,
     name = this.name,
-    popularity = this.popularity
+    popularity = this.popularity,
+    visibilityState = this.isPublic
 )
 
 fun DaoArtist.toDbArtistDto() = DtoDBArtist(

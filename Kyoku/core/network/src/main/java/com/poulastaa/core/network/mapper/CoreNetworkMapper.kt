@@ -18,7 +18,8 @@ import com.poulastaa.core.network.model.ResponseSongInfo
 fun ResponsePlaylist.toDtoPlaylist() = DtoPlaylist(
     id = this.id,
     name = this.name,
-    popularity = this.popularity
+    popularity = this.popularity,
+    visibilityState = this.visibilityState
 )
 
 fun ResponseGenre.toDtoGenre() = DtoGenre(
@@ -48,7 +49,7 @@ fun ResponseArtist.toDtoArtist() = DtoArtist(
 )
 
 fun ResponseSongInfo.toDtoSongInfo() = DtoSongInfo(
-    id = this.id,
+    songId = this.id,
     releaseYear = this.releaseYear,
     composer = this.composer,
     popularity = this.popularity

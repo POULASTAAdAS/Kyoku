@@ -22,5 +22,5 @@ data class UiPrevPlaylist(
 data class UiPlaylist(
     val id: Long = -1,
     val name: String = "",
-    val totalSongs: Long = 0,
+    val totalSongs: Int = 0,
 )
