@@ -21,7 +21,7 @@ fun DaoSong.toSongDto(
 ) = DtoSong(
     id = this.id.value,
     title = this.title,
-    poster = this.poster,
+    rawPoster = this.poster,
     masterPlaylist = this.masterPlaylist,
     artist = artist,
     album = album,

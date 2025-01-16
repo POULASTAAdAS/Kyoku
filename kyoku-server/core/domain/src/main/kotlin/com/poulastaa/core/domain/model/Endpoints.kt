@@ -12,5 +12,7 @@ sealed class Endpoints(val route: String) {
 
     data object ImportSpotifyPlaylist : Endpoints(route = "/api/v1/user/importSpotifyPlaylist")
 
+    data object Poster : Endpoints(route = "/api/v1/user/poster")
+
     data object UnAuthorized : Endpoints(route = "/api/v1/unauthorized")
 }
