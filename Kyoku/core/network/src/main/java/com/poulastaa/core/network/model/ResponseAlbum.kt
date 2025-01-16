@@ -7,5 +7,5 @@ data class ResponseAlbum(
     val id: Long,
     val name: String,
     val poster: String?,
-    val popularity:Long
+    val popularity: Long,
 )

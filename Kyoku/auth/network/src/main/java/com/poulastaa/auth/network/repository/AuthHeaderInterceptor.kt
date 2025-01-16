@@ -1,8 +1,8 @@
 package com.poulastaa.auth.network.repository
 
 import com.poulastaa.auth.domain.model.JwtTokenDto
-import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.model.EndPoints
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first

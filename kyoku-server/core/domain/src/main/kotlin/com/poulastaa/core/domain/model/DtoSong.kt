@@ -1,5 +1,7 @@
 package com.poulastaa.core.domain.model
 
+import com.poulastaa.core.domain.utils.Constants.POSTER_PARAM
+
 data class DtoSong(
     val id: Long,
     val title: String,
@@ -12,5 +14,5 @@ data class DtoSong(
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val poster = rawPoster?.let { "$baseUrl${Endpoints.Poster.route}/$rawPoster" }
+    val poster = rawPoster?.let { "$baseUrl${Endpoints.Poster.route}?$POSTER_PARAM=$rawPoster" }
 }

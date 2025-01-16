@@ -3,6 +3,7 @@ package com.poulastaa.app.plugins
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
 import com.poulastaa.user.domain.repository.SetupRepository
+import com.poulastaa.user.network.routes.getPoster
 import com.poulastaa.user.network.routes.setup.importSpotifyPlaylist
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -47,4 +48,5 @@ private fun Routing.setup(repo: SetupRepository) {
         clientSecret = this.environment.config.property("spotify.clientSecret").getString(),
         repo = repo
     )
+    getPoster()
 }

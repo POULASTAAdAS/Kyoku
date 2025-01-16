@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.Kyoku.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#1D3327</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_logo_dark_splash</item>

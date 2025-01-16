@@ -1,7 +1,6 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

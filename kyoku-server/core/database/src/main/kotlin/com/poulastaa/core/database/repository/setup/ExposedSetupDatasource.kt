@@ -77,7 +77,7 @@ class ExposedSetupDatasource(
                 val dbResult = dbSongs.map { song ->
                     song.toSongDto(
                         artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
-                        album = album.firstOrNull { it.first == song.id.value }?.second,
+                        album = album.firstOrNull { it.first == song.id.value }?.second?.copy(poster = song.poster),
                         info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
                         genre = genre.firstOrNull { it.first == song.id.value }?.second,
                     )

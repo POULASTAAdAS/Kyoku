@@ -44,14 +44,14 @@ data class CircleModel(
     var y: Float,
     val size: Dp,
     var velocityX: Float,
-    var velocityY: Float
+    var velocityY: Float,
 )
 
 fun generateRandomCircles(
     count: Int,
     screenWidth: Int,
     screenHeight: Int,
-    density: Density
+    density: Density,
 ): List<CircleModel> {
     return List(count) {
         val size = Random.nextInt(40, 130).dp

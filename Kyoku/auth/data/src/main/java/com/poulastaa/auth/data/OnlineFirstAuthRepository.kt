@@ -5,10 +5,10 @@ import com.poulastaa.auth.domain.RemoteAuthDataSource
 import com.poulastaa.auth.domain.model.AuthStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.core.domain.repository.DatastoreRepository
 import java.net.CookieManager
 import javax.inject.Inject
 

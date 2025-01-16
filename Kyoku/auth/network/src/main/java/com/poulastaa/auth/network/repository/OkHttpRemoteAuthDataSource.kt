@@ -14,13 +14,11 @@ import com.poulastaa.auth.network.model.JwtTokenResponse
 import com.poulastaa.auth.network.toAuthResponseDto
 import com.poulastaa.auth.network.toForgotPasswordStatus
 import com.poulastaa.auth.network.toJWTTokenDto
-import com.poulastaa.core.network.ApiMethodType
-import com.poulastaa.core.network.ReqParam
-import com.poulastaa.core.network.req
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.EndPoints
+import com.poulastaa.core.network.req
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Named

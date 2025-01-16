@@ -1,6 +1,7 @@
 package com.poulastaa.core.presentation.designsystem.components
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -34,8 +35,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CacheImageReq {
+class CacheImageReq @Inject constructor() {
     companion object REQUEST {
         @Volatile
         private var header: String = ""
@@ -101,7 +103,7 @@ fun AppCacheImage(
                 CircularProgressIndicator(
                     modifier = Modifier.size(loadingSize),
                     strokeWidth = 1.5.dp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.background
                 )
             }
         },
@@ -153,7 +155,7 @@ fun AppCacheImage(
 private fun Preview() {
     AppThem {
         Surface(
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.primary
         ) {
             AppCacheImage(
                 url = "",
