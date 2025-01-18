@@ -3,8 +3,8 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.data.mapper.toUserDto
 import com.poulastaa.auth.domain.model.*
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.DtoServerUser
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 import com.poulastaa.core.domain.repository.auth.Email
 import com.poulastaa.core.domain.repository.auth.JWTRepository
@@ -34,6 +34,12 @@ class AuthenticationService(
         ) return@coroutineScope AuthResponseDto(
             status = AuthResponseStatusDto.PASSWORD_DOES_NOT_MATCH
         )
+
+        val isGenreDef = async { db.isSavedGenre(user?.id ?: -1) }
+        val isArtistDef = async { db.isSavedArtist(user?.id ?: -1) }
+
+        val isGenre = isGenreDef.await()
+        val isArtist = isArtistDef.await()
 
         when {
             user == null -> {
@@ -77,7 +83,17 @@ class AuthenticationService(
                 )
             }
 
+            // todo check if user have any saved genre or artist
             else -> {
+                if (!isGenre) return@coroutineScope AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_SET_GENRE,
+                    user = user.toUserDto()
+                )
+                if (!isArtist) return@coroutineScope AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_SET_ARTIST,
+                    user = user.toUserDto()
+                )
+
                 db.sendMail(
                     message = Pair(
                         first = MailType.WELCOME_BACK,
@@ -127,14 +143,20 @@ class AuthenticationService(
         )
     }
 
-    override suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto {
-        if (!emailValidator.isValidEmail(payload.email)) return AuthResponseDto(
+    override suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto = coroutineScope {
+        if (!emailValidator.isValidEmail(payload.email)) return@coroutineScope AuthResponseDto(
             status = AuthResponseStatusDto.INVALID_EMAIL
         )
 
         val dbUser = db.getUsersByEmail(payload.email, UserType.EMAIL)
 
-        return when {
+        val isGenreDef = async { db.isSavedGenre(dbUser?.id ?: -1) }
+        val isArtistDef = async { db.isSavedArtist(dbUser?.id ?: -1) }
+
+        val isGenre = isGenreDef.await()
+        val isArtist = isArtistDef.await()
+
+        when {
             dbUser == null -> AuthResponseDto(
                 status = AuthResponseStatusDto.USER_NOT_FOUND
             )
@@ -163,6 +185,15 @@ class AuthenticationService(
                         first = MailType.EMAIL_VERIFICATION,
                         second = payload.email
                     )
+                )
+
+                if (!isGenre) return@coroutineScope AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_SET_GENRE,
+                    user = dbUser.toUserDto()
+                )
+                if (!isArtist) return@coroutineScope AuthResponseDto(
+                    status = AuthResponseStatusDto.USER_FOUND_SET_ARTIST,
+                    user = dbUser.toUserDto()
                 )
 
                 AuthResponseDto(

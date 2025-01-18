@@ -1,8 +1,8 @@
 package com.poulastaa.core.domain.repository.auth
 
 import com.poulastaa.core.domain.model.DtoDBUser
-import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.DtoServerUser
+import com.poulastaa.core.domain.model.MailType
 import com.poulastaa.core.domain.model.UserType
 
 typealias Email = String
@@ -26,4 +26,7 @@ interface LocalAuthDatasource {
 
     fun isResetPasswordTokenUsed(token: String): Boolean
     suspend fun updatePassword(email: Email, password: String)
+
+    suspend fun isSavedGenre(userId: Long): Boolean
+    suspend fun isSavedArtist(userId: Long): Boolean
 }

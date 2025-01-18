@@ -1,10 +1,13 @@
 package com.poulastaa.core.database.repository.auth
 
-import com.poulastaa.core.database.SQLDbManager
+import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
+import com.poulastaa.core.database.SQLDbManager.userDbQuery
 import com.poulastaa.core.database.dao.DaoCountry
 import com.poulastaa.core.database.dao.DaoUser
 import com.poulastaa.core.database.entity.app.EntityCountry
 import com.poulastaa.core.database.entity.user.EntityUser
+import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
+import com.poulastaa.core.database.entity.user.RelationEntityUserGenre
 import com.poulastaa.core.database.entity.user.RelationEntityUserJWT
 import com.poulastaa.core.database.mapper.toDbUserDto
 import com.poulastaa.core.domain.model.DtoDBUser
@@ -19,6 +22,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.upperCase
 import org.jetbrains.exposed.sql.upsert
 
@@ -38,8 +42,8 @@ class ExposedLocalAuthDatasource(
 
         cache.cachedCountryId(country.uppercase())?.let { return it }
 
-        val dao = SQLDbManager.kyokuDbQuery {
-            DaoCountry.Companion.find {
+        val dao = kyokuDbQuery {
+            DaoCountry.find {
                 EntityCountry.country.upperCase() eq country.uppercase()
             }.singleOrNull()
         } ?: return null
@@ -55,7 +59,7 @@ class ExposedLocalAuthDatasource(
     override suspend fun createUser(user: DtoServerUser, isDbStore: Boolean): DtoDBUser {
         val dbUser = when {
             (user.type == UserType.GOOGLE || user.type == UserType.EMAIL) && isDbStore -> {
-                SQLDbManager.userDbQuery {
+                userDbQuery {
                     DaoUser.new { // todo fix insert ignore
                         this.email = user.email
                         this.username = user.username
@@ -115,7 +119,7 @@ class ExposedLocalAuthDatasource(
         val user = getUsersByEmail(email, UserType.EMAIL)
         if (user == null || user.id == -1L) return
 
-        SQLDbManager.userDbQuery {
+        userDbQuery {
             RelationEntityUserJWT.upsert {
                 it[this.userId] = user.id
                 it[this.refreshToken] = token
@@ -126,14 +130,34 @@ class ExposedLocalAuthDatasource(
     override fun isResetPasswordTokenUsed(token: String): Boolean = cache.isResetPasswordTokenUsed(token)
 
     override suspend fun updatePassword(email: Email, password: String) {
-        val user = SQLDbManager.userDbQuery {
-            DaoUser.Companion.find {
+        val user = userDbQuery {
+            DaoUser.find {
                 EntityUser.email eq email and (EntityUser.userType eq UserType.EMAIL.name)
             }.singleOrNull()
         } ?: return
 
-        SQLDbManager.userDbQuery {
+        userDbQuery {
             user.passwordHash = password
         }
+    }
+
+    override suspend fun isSavedGenre(userId: Long): Boolean {
+        val entrys = userDbQuery {
+            RelationEntityUserGenre.select {
+                RelationEntityUserGenre.userId eq userId
+            }.count()
+        }
+
+        return entrys > 0
+    }
+
+    override suspend fun isSavedArtist(userId: Long): Boolean {
+        val entrys = userDbQuery {
+            RelationEntityUserArtist.select {
+                RelationEntityUserArtist.userId eq userId
+            }.count()
+        }
+
+        return entrys > 0
     }
 }

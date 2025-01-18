@@ -7,6 +7,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -191,7 +193,7 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     }
 
     composable<Screens.SetUp.PickGenre> {
-        // todo
+        
     }
 
     composable<Screens.SetUp.PickArtist> {

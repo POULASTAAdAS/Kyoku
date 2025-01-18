@@ -3,7 +3,7 @@ package com.poulastaa.core.database.entity.user
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
-object RelationEntityUserAlbum : Table(name = "UserAlbum") {
+object RelationEntityUserAlbum : Table(name = "UserSavedAlbum") {
     val userId = long("userId").references(EntityUser.id, onDelete = ReferenceOption.CASCADE)
     val albumId = long("albumId")
 
