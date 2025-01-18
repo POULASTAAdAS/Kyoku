@@ -49,9 +49,9 @@
     <string name="error_bDate_too_young">You are too young to use the app</string>
     <string name="error_bDate_too_old">Age can\'t exceed 99 year</string>
     <string name="success_bDate_stored">B\'Date stored successfully</string>
-    <string name="less_genre_selected">Please select at-list 5 genre to continue</string>
-    <string name="set_genre_title">Pick Your Favourite Genre</string>
-    <string name="set_artist_title">Pick Your Favourite Artist</string>
+    <string name="less_genre_selected">select at-list 5 genre to continue</string>
+    <string name="pic_genre_title">Select genres you like</string>
+    <string name="pic_artist_title">Pick artists you like</string>
     <string name="less_artist_selected">Please select at-lest 5 artist to continue</string>
     <string name="view_profile">View Profile</string>
     <string name="settings_title">S E T T I N G S</string>
@@ -164,4 +164,5 @@
     <string name="import_label">Import</string>
     <string name="bdate_label">DD-MM-YYYY</string>
     <string name="bdate_title">Set your birthday</string>
+    <string name="genre_label">Genre</string>
 </resources>

@@ -7,8 +7,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -23,6 +21,8 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
+import com.poulastaa.setup.presentation.pic_genre.PicGenreCompactScreen
+import com.poulastaa.setup.presentation.pic_genre.PicGenreUiState
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
 
@@ -193,7 +193,10 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     }
 
     composable<Screens.SetUp.PickGenre> {
-        
+        PicGenreCompactScreen(
+            state = PicGenreUiState(),
+            onAction = { }
+        )
     }
 
     composable<Screens.SetUp.PickArtist> {

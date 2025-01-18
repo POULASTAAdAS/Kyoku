@@ -66,7 +66,7 @@ fun AppTextField(
             {
                 Icon(
                     imageVector = it,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         },
