@@ -2,6 +2,7 @@ package com.poulastaa.setup.presentation.spotify_playlist
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,9 +24,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -40,6 +44,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.gradiantBackground
 import com.poulastaa.setup.presentation.spotify_playlist.components.SongList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,12 +81,20 @@ fun ImportPlaylistExpandedScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
                 )
-            }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent
+            )
         )
 
         Row(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = gradiantBackground()
+                    )
+                )
                 .padding(paddingValues)
                 .padding(horizontal = MaterialTheme.dimens.medium1)
         ) {
@@ -143,7 +156,12 @@ fun ImportPlaylistExpandedScreen(
             ) {
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                gradiantBackground()
+                            )
+                        ),
                     contentPadding = PaddingValues(MaterialTheme.dimens.small2),
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
                 ) {

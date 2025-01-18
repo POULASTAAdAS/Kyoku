@@ -4,4 +4,5 @@ data class UserSerializable(
     val name: String,
     val email: String,
     val profilePic: String,
+    val bDate: String? = null,
 )

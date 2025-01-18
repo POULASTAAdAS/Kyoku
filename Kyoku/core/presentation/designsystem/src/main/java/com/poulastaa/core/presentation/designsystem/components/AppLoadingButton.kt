@@ -48,7 +48,6 @@ fun AppLoadingButton(
         )
     ) {
         Box(
-            modifier = Modifier.padding(MaterialTheme.dimens.small1),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(

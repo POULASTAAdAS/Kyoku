@@ -11,4 +11,9 @@ interface LocalSetupDatasource {
         user: DtoDBUser,
         spotifySongTitle: List<String>,
     ): DtoPlaylistFull
+
+    suspend fun updateBDate(
+        user: DtoDBUser,
+        bDate: String,
+    ): Boolean
 }

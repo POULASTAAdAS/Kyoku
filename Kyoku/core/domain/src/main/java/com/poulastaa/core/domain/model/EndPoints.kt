@@ -9,4 +9,6 @@ sealed class EndPoints(val route: String) {
     data object ForgotPassword : EndPoints(route = "/api/v1/auth/forgotPassword")
 
     data object ImportSpotifyPlaylist : EndPoints(route = "/api/v1/user/importSpotifyPlaylist")
+
+    data object SetBDate : EndPoints(route = "/api/v1/user/setBDate")
 }

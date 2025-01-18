@@ -23,13 +23,13 @@ import kotlin.coroutines.suspendCoroutine
 
 val mediaType = "application/json; charset=utf-8".toMediaType()
 
-suspend inline fun <reified Req : Any, reified Response : Any> OkHttpClient.req(
+suspend inline fun <reified Req : Any, reified Res : Any> OkHttpClient.req(
     route: String,
     method: ApiMethodType,
     body: Req? = null,
     params: List<ReqParam>? = null,
     gson: Gson,
-): Result<Response, DataError.Network> {
+): Result<Res, DataError.Network> {
     val urlBuilder = constructRoute(route).toHttpUrlOrNull()?.newBuilder()
         ?: return Result.Error(DataError.Network.UNKNOWN)
 
@@ -47,7 +47,7 @@ suspend inline fun <reified Req : Any, reified Response : Any> OkHttpClient.req(
 
     return try {
         val response = makeCall(reqBuilder.build())
-        responseToResult<Response>(response, gson)
+        responseToResult<Res>(response, gson)
     } catch (e: Exception) {
         handleOtherException(e)
     }

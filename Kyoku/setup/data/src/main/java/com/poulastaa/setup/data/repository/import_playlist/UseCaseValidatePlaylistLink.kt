@@ -1,4 +1,4 @@
-package com.poulastaa.setup.data.repository
+package com.poulastaa.setup.data.repository.import_playlist
 
 import com.poulastaa.setup.domain.repository.import_playlist.SpotifyPlaylistLinkValidator
 

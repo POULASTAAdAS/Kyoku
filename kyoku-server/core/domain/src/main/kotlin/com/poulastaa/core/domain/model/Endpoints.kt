@@ -14,5 +14,7 @@ sealed class Endpoints(val route: String) {
 
     data object Poster : Endpoints(route = "/api/v1/user/poster")
 
+    data object SetBDate : Endpoints(route = "/api/v1/user/setBDate")
+
     data object UnAuthorized : Endpoints(route = "/api/v1/unauthorized")
 }

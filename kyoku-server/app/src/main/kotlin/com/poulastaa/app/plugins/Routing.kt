@@ -5,6 +5,7 @@ import com.poulastaa.auth.network.routes.*
 import com.poulastaa.user.domain.repository.SetupRepository
 import com.poulastaa.user.network.routes.getPoster
 import com.poulastaa.user.network.routes.setup.importSpotifyPlaylist
+import com.poulastaa.user.network.routes.setup.setBDate
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -49,4 +50,5 @@ private fun Routing.setup(repo: SetupRepository) {
         repo = repo
     )
     getPoster()
+    setBDate(repo)
 }

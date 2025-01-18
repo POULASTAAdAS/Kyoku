@@ -10,8 +10,8 @@ import com.google.gson.Gson
 import com.poulastaa.core.data.model.UserSerializable
 import com.poulastaa.core.data.toUser
 import com.poulastaa.core.data.toUserSerializable
+import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.domain.model.SavedScreen
-import com.poulastaa.core.domain.model.UserDto
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -68,7 +68,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         it[PreferencesKeys.REFRESH_TOKEN] ?: ""
     }.first()
 
-    override suspend fun storeLocalUser(user: UserDto) {
+    override suspend fun storeLocalUser(user: DtoUser) {
         val jsonString = gson.toJson(user.toUserSerializable())
 
         dataStore.edit {
@@ -76,7 +76,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun readLocalUser(): UserDto {
+    override suspend fun readLocalUser(): DtoUser {
         val pref = dataStore.data.catch {
             emit(emptyPreferences())
         }.first()
@@ -85,7 +85,23 @@ class DataStoreRepositoryImpl @Inject constructor(
             gson.fromJson(it, UserSerializable::class.java)
         }
 
-        return response?.toUser() ?: UserDto()
+        return response?.toUser() ?: DtoUser()
+    }
+
+    override suspend fun updateBDate(bDate: String) {
+        val pref = dataStore.data.catch {
+            emit(emptyPreferences())
+        }.first()
+
+        val user = pref[PreferencesKeys.LOCAL_USER]?.let {
+            gson.fromJson(it, UserSerializable::class.java)
+        } ?: return
+
+        val updatedUser = user.copy(bDate = bDate)
+
+        dataStore.edit {
+            it[PreferencesKeys.LOCAL_USER] = gson.toJson(updatedUser)
+        }
     }
 
     override suspend fun storeLibraryViewType(isGrid: Boolean) {

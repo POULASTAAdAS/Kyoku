@@ -17,4 +17,13 @@ class SetupRepositoryService(
 
         return db.createPlaylistFromSpotifyPlaylist(user, spotifyPayload)
     }
+
+    override suspend fun setBDate(
+        userPayload: ReqUserPayload,
+        bDate: String,
+    ): Boolean {
+        val user = db.getUserByEmail(userPayload.email,userPayload.userType) ?: return false
+
+        return db.updateBDate(user, bDate)
+    }
 }

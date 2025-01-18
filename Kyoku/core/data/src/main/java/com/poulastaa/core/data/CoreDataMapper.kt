@@ -1,15 +1,15 @@
 package com.poulastaa.core.data
 
 import com.poulastaa.core.data.model.UserSerializable
-import com.poulastaa.core.domain.model.UserDto
+import com.poulastaa.core.domain.model.DtoUser
 
-fun UserSerializable.toUser() = UserDto(
+fun UserSerializable.toUser() = DtoUser(
     name = name,
     email = email,
     profilePic = profilePic
 )
 
-fun UserDto.toUserSerializable() = UserSerializable(
+fun DtoUser.toUserSerializable() = UserSerializable(
     name = name,
     email = email,
     profilePic = profilePic

@@ -44,8 +44,6 @@
     <string name="error_invalid_spotify_playlist_link">Please enter valid playlist link</string>
     <string name="playlist_added">Playlist added</string>
     <string name="error_empyt_BDate">Please fill this field</string>
-    <string name="set_bDate_top_appbar_title">Set Your B\'Day</string>
-    <string name="select_b_date">Select B\'day</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="error_bDate_too_young">You are too young to use the app</string>
@@ -164,4 +162,6 @@
     <string name="welcome">Welcome</string>
     <string name="error_password_does_not_match">Password does n\'t match</string>
     <string name="import_label">Import</string>
+    <string name="bdate_label">DD-MM-YYYY</string>
+    <string name="bdate_title">Set your birthday</string>
 </resources>

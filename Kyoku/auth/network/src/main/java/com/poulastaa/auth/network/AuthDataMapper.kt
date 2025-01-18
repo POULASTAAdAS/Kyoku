@@ -9,14 +9,14 @@ import com.poulastaa.auth.network.model.AuthenticationResponse
 import com.poulastaa.auth.network.model.ForgotPasswordResponseStatus
 import com.poulastaa.auth.network.model.JwtTokenResponse
 import com.poulastaa.auth.network.model.ResponseUser
-import com.poulastaa.core.domain.model.UserDto
+import com.poulastaa.core.domain.model.DtoUser
 
 fun AuthenticationResponse.toAuthResponseDto() = AuthResponseDto(
     status = this.status.toAuthStatus(),
     user = user.toUserDto(),
 )
 
-fun ResponseUser.toUserDto() = UserDto(
+fun ResponseUser.toUserDto() = DtoUser(
     email = this.email,
     name = this.username,
     profilePic = this.profilePicUrl ?: ""

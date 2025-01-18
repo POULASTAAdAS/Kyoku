@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +21,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
+import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
@@ -158,8 +160,34 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
         }
     }
 
-    composable<Screens.SetUp.SetBirthDate> {
-        // todo
+    composable<Screens.SetUp.SetBirthDate>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetX = { it }
+                    )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideOutHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        targetOffsetX = { it }
+                    )
+        }
+    ) {
+        SetBDateRootScreen(
+            navigateBack = {
+                nav.popBackStack()
+            },
+            navigateToPicGenre = {
+                nav.navigate(Screens.SetUp.PickGenre) {
+                    popUpTo(Screens.SetUp.PickGenre) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
 
     composable<Screens.SetUp.PickGenre> {

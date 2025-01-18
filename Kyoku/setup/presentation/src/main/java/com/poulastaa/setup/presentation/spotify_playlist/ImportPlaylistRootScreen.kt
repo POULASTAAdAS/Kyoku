@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.core.presentation.designsystem.gradiantBackground
 import com.poulastaa.core.presentation.ui.KyokuWindowSize
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
 
