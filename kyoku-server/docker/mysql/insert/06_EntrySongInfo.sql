@@ -1,6 +1,5 @@
 USE Kyoku;
 
-
 INSERT IGNORE INTO SongInfo (songId,releaseYear,composer,popularity) VALUES
 (1,2022,'Kyoku',0),
 (2,2022,'Sidhu Moose Wala',0),

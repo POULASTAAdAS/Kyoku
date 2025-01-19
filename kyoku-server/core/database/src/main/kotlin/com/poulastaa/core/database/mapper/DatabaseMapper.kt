@@ -58,6 +58,7 @@ fun DtoDBArtist.toArtistDto(
 fun DaoGenre.toGenreDto() = DtoGenre(
     id = this.id.value,
     name = this.genre,
+    cover = this.cover,
     popularity = this.popularity
 )
 

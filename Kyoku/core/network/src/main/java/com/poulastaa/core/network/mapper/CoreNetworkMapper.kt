@@ -24,7 +24,8 @@ fun ResponsePlaylist.toDtoPlaylist() = DtoPlaylist(
 
 fun ResponseGenre.toDtoGenre() = DtoGenre(
     id = this.id,
-    name = this.name
+    name = this.name,
+    cover = this.cover
 )
 
 fun ResponseCountry.toDtoCountry() = DtoCountry(

@@ -5,7 +5,8 @@ import com.poulastaa.core.network.model.*
 
 fun DtoGenre.toResponseGenre() = ResponseGenre(
     id = this.id,
-    name = this.name
+    name = this.name,
+    cover = this.cover
 )
 
 fun DtoCountry.toResponseCountry() = ResponseCountry(

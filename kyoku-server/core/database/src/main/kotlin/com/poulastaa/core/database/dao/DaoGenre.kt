@@ -9,5 +9,6 @@ class DaoGenre(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<DaoGenre>(EntityGenre)
 
     val genre by EntityGenre.genre
+    val cover by EntityGenre.cover
     var popularity by EntityGenre.popularity
 }

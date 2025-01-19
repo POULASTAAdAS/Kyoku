@@ -10,5 +10,5 @@ data class EntityGenre(
     val id: Int,
     @ColumnInfo(index = true)
     val name: String,
-    val popularity: Long = 0,
+    val cover: String? = null,
 )

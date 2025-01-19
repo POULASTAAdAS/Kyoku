@@ -51,7 +51,7 @@ fun DtoArtist.toEntityArtist() = EntityArtist(
 fun DtoGenre.toEntityGenre() = EntityGenre(
     id = this.id,
     name = this.name,
-    popularity = this.popularity
+    cover = this.cover
 )
 
 fun DtoAlbum.toEntityAlbum() = EntityAlbum(

@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class ResponseGenre(
     val id: Int,
     val name: String,
+    val cover: String? = null,
 )
