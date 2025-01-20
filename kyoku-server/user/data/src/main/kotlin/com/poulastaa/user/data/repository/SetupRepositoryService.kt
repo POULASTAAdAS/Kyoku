@@ -1,5 +1,6 @@
 package com.poulastaa.user.data.repository
 
+import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylistFull
 import com.poulastaa.core.domain.model.ReqUserPayload
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
@@ -22,8 +23,10 @@ class SetupRepositoryService(
         userPayload: ReqUserPayload,
         bDate: String,
     ): Boolean {
-        val user = db.getUserByEmail(userPayload.email,userPayload.userType) ?: return false
+        val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return false
 
         return db.updateBDate(user, bDate)
     }
+
+    override suspend fun getGenre(genreIds: List<Int>): List<DtoGenre> = db.getPagingGenre(genreIds)
 }

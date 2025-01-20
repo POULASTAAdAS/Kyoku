@@ -12,9 +12,15 @@ sealed class Endpoints(val route: String) {
 
     data object ImportSpotifyPlaylist : Endpoints(route = "/api/v1/user/importSpotifyPlaylist")
 
-    data object Poster : Endpoints(route = "/api/v1/user/poster")
+    sealed class Poster {
+        data object SongPoster : Endpoints(route = "/api/v1/poster/song")
+        data object GenrePoster : Endpoints(route = "/api/v1/poster/genre")
+        data object ArtistPoster : Endpoints(route = "/api/v1/poster/artist")
+    }
 
     data object SetBDate : Endpoints(route = "/api/v1/user/setBDate")
+
+    data object PicGenre : Endpoints(route = "/api/v1/user/picGenre")
 
     data object UnAuthorized : Endpoints(route = "/api/v1/unauthorized")
 }

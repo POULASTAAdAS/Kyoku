@@ -10,9 +10,9 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 
-fun Route.getPoster() {
+fun Route.getSongPoster() {
     authenticate(configurations = SECURITY_LIST) {
-        route(Endpoints.Poster.route) {
+        route(Endpoints.Poster.SongPoster.route) {
             get {
                 val url = call.parameters[POSTER_PARAM] ?: return@get call.respond(HttpStatusCode.BadRequest)
 

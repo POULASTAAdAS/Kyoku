@@ -1,6 +1,7 @@
 package com.poulastaa.core.database.repository.setup
 
 import com.google.gson.Gson
+import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.RedisKeys
@@ -67,4 +68,25 @@ class RedisSetupDatasource(
     }
 
     override fun setSongById(list: List<DtoSong>) = core.setSongById(list)
+
+    override fun cacheGenre(
+        limit: Int,
+        exclude: List<Int>,
+    ): List<DtoGenre> {
+        redisPool.resource.use { jedis ->
+            val keys = jedis.keys("${Group.GENRE}")
+            val excludedKeys = exclude.map { id -> "${Group.GENRE}:$id" }
+
+            val freshKeys = (keys - excludedKeys).take(10)
+            if (freshKeys.isEmpty()) return emptyList()
+
+            val genreJson = jedis.mget(*freshKeys.toTypedArray())
+
+            return genreJson.filterNotNull().map {
+                gson.fromJson(it, DtoGenre::class.java)
+            }
+        }
+    }
+
+    override fun setGenreById(list: List<DtoGenre>) = core.setGenreById(list)
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.user.domain.repository
 
+import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylistFull
 import com.poulastaa.core.domain.model.ReqUserPayload
 
@@ -15,4 +16,6 @@ interface SetupRepository {
         userPayload: ReqUserPayload,
         bDate: String,
     ): Boolean
+
+    suspend fun getGenre(genreIds: List<Int>): List<DtoGenre>
 }

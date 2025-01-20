@@ -2,21 +2,22 @@ package com.poulastaa.core.database.repository.setup
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
+import com.poulastaa.core.database.dao.DaoGenre
 import com.poulastaa.core.database.dao.DaoSong
 import com.poulastaa.core.database.dao.DaoUser
+import com.poulastaa.core.database.entity.app.EntityGenre
 import com.poulastaa.core.database.entity.app.EntitySong
 import com.poulastaa.core.database.entity.user.EntityUser
+import com.poulastaa.core.database.mapper.toGenreDto
 import com.poulastaa.core.database.mapper.toSongDto
-import com.poulastaa.core.domain.model.DtoDBUser
-import com.poulastaa.core.domain.model.DtoPlaylistFull
-import com.poulastaa.core.domain.model.DtoSongInfo
-import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.not
 import java.text.SimpleDateFormat
@@ -107,19 +108,40 @@ class ExposedSetupDatasource(
     override suspend fun updateBDate(
         user: DtoDBUser,
         bDate: String,
-    ): Boolean = userDbQuery {
-        DaoUser.find {
-            EntityUser.id eq user.id
-        }.firstOrNull()?.let {
-            it.bDate =
-                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) // dd-MM-yyyy patter gets converted to yyyy-MM-dd
-                    .parse(bDate)
-                    .toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-
-
-            true
+    ): Boolean {
+        val date = try {
+            SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()) // dd-MM-yyyy patter gets converted to yyyy-MM-dd
+                .parse(bDate)
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        } catch (_: Exception) {
+            return false
         }
-    } == true
+
+        return userDbQuery {
+            DaoUser.find {
+                EntityUser.id eq user.id
+            }.firstOrNull()?.let {
+                it.bDate = date
+                true
+            }
+        } == true
+    }
+
+    override suspend fun getPagingGenre(genreIds: List<Int>): List<DtoGenre> {
+        val cacheGenre = cache.cacheGenre(10, genreIds)
+        if (cacheGenre.size == 10) return cacheGenre
+
+        val excludeFullList = genreIds + cacheGenre.map { it.id }
+        val limit = 10 - cacheGenre.size
+        val dbGenre = kyokuDbQuery {
+            DaoGenre.find {
+                EntityGenre.id notInList excludeFullList
+            }.orderBy(EntityGenre.popularity to SortOrder.DESC)
+                .limit(limit).map { it.toGenreDto() }
+        }.also { cache.setGenreById(it) }
+
+        return cacheGenre + dbGenre
+    }
 }
