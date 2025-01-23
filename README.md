@@ -2,14 +2,16 @@
 
 # Showcase
 
-# Design Preview
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/kyoku%20showcase.svg">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/kyoku%20showcase.svg" alt="ShowCase">
+</a>
 
 # Description
 
 > Kyoku is a music streaming application like Spotify or apple music.
 > It is using HLS protocol to stream music.
 
-# Figma Link
+# Figma Lik
 
 [Design file](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
 
