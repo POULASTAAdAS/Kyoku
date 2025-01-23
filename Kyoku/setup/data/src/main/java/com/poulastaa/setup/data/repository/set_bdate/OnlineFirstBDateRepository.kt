@@ -4,9 +4,9 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.asEmptyDataResult
 import com.poulastaa.core.domain.map
+import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.setup.domain.model.SetBDateStatus
 import com.poulastaa.setup.domain.repository.set_bdate.BDateRepository
-import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.setup.domain.repository.set_bdate.RemoteBDateDatasource
 import javax.inject.Inject
 

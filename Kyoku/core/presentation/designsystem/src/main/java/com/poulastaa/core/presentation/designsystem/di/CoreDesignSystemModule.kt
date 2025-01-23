@@ -1,6 +1,5 @@
 package com.poulastaa.core.presentation.designsystem.di
 
-import android.util.Log
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.presentation.designsystem.components.CacheImageReq
 import dagger.Module

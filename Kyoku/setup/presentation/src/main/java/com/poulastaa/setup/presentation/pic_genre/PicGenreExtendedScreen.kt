@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +43,6 @@ import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
 import com.poulastaa.setup.presentation.pic_genre.component.PicGenreItemList
 import com.poulastaa.setup.presentation.pic_genre.component.PigGenreFloatingActionButton
 import com.poulastaa.setup.presentation.pic_genre.component.PigGenreTopBar

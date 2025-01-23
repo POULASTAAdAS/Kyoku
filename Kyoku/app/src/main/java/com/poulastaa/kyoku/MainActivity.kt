@@ -17,12 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.presentation.designsystem.KyokuThem
-import com.poulastaa.core.presentation.designsystem.components.CacheImageReq
 import com.poulastaa.kyoku.navigation.RootNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

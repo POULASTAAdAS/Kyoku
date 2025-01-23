@@ -19,7 +19,6 @@ import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
 import com.poulastaa.core.presentation.ui.model.TextHolder
 import com.poulastaa.setup.presentation.set_bdate.components.SetBDateContent
-import com.poulastaa.setup.presentation.set_bdate.components.SetBDateTopBar
 
 @Composable
 internal fun SetBDateCompactScreen(
