@@ -48,7 +48,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.CalenderIcon
-import com.poulastaa.core.presentation.designsystem.CancelIcon
+import com.poulastaa.core.presentation.designsystem.CloseIcon
 import com.poulastaa.core.presentation.designsystem.DayIcon
 import com.poulastaa.core.presentation.designsystem.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.NightIcon
@@ -79,7 +79,7 @@ fun SettingsCompactScreen(
                         }
                     ) {
                         Icon(
-                            imageVector = CancelIcon,
+                            imageVector = CloseIcon,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize()
                         )

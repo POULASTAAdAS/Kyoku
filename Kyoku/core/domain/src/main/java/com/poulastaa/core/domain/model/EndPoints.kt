@@ -11,4 +11,7 @@ sealed class EndPoints(val route: String) {
     data object ImportSpotifyPlaylist : EndPoints(route = "/api/v1/user/importSpotifyPlaylist")
 
     data object SetBDate : EndPoints(route = "/api/v1/user/setBDate")
+
+    data object SuggestGenre : EndPoints(route = "/api/v1/user/suggestGenre")
+    data object UPSERTGenre : EndPoints(route = "/api/v1/user/upsertGenre")
 }

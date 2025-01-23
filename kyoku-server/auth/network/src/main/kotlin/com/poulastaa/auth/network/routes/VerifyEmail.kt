@@ -3,7 +3,7 @@ package com.poulastaa.auth.network.routes
 import com.poulastaa.auth.domain.model.EmailVerificationStatusDto
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.utils.responseVerificationMailHtml
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -11,9 +11,9 @@ import io.ktor.server.routing.*
 fun Route.verifyEmail(
     repo: AuthRepository,
 ) {
-    route(Endpoints.VerifyEmail.route) {
+    route(EndPoints.VerifyEmail.route) {
         get {
-            val token = call.parameters["token"] ?: return@get call.respondRedirect(Endpoints.UnAuthorized.route)
+            val token = call.parameters["token"] ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
             val status = repo.verifyEmail(token)
 
             val response = when (status) {

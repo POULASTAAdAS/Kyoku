@@ -1,9 +1,10 @@
 package com.poulastaa.setup.presentation.pic_genre
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,16 +13,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,20 +40,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppThem
+import androidx.paging.compose.LazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.SongIcon
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
+import com.poulastaa.setup.presentation.pic_genre.component.PicGenreItemList
+import com.poulastaa.setup.presentation.pic_genre.component.PigGenreFloatingActionButton
 import com.poulastaa.setup.presentation.pic_genre.component.PigGenreTopBar
 
 @Composable
-fun PicGenreCompactScreen(
+internal fun PicGenreCompactScreen(
     state: PicGenreUiState,
+    gridSize: Int,
+    cardHeight: Dp,
+    genre: LazyPagingItems<UiGenre>,
     onAction: (PicGenreUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
@@ -63,7 +68,10 @@ fun PicGenreCompactScreen(
     var searchHeight by remember { mutableStateOf(0.dp) }
 
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        floatingActionButton = {
+            PigGenreFloatingActionButton(state, onAction)
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -76,17 +84,20 @@ fun PicGenreCompactScreen(
                 .padding(paddingValues)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(
+                AnimatedContent(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        top = searchHeight + MaterialTheme.dimens.medium1,
-                        bottom = MaterialTheme.dimens.large1,
-                        start = MaterialTheme.dimens.medium1,
-                        end = MaterialTheme.dimens.medium1
-                    )
-                ) {
+                        .align(Alignment.Center),
+                    targetState = genre.itemCount == 0
+                ) { state ->
+                    when (state) {
+                        true -> CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .align(Alignment.Center)
+                        )
 
+                        false -> PicGenreItemList(gridSize, genre, cardHeight, onAction)
+                    }
                 }
 
                 Card(
@@ -128,7 +139,11 @@ fun PicGenreCompactScreen(
                                     onAction(PicGenreUiAction.OnGenreChange(it))
                                 },
                                 label = stringResource(R.string.genre_label),
-                                trailingIcon = SongIcon
+                                trailingIcon = SongIcon,
+                                isClearButtonEnabled = true,
+                                onClearClick = {
+                                    onAction(PicGenreUiAction.OnGenreChange(""))
+                                }
                             )
 
                             Spacer(Modifier.weight(1f))
@@ -142,8 +157,7 @@ fun PicGenreCompactScreen(
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.background
                                 ),
-                                modifier = Modifier
-                                    .size(56.dp)
+                                modifier = Modifier.size(56.dp)
                             ) {
                                 Icon(
                                     imageVector = SearchIcon,
@@ -152,16 +166,20 @@ fun PicGenreCompactScreen(
                             }
                         }
 
-                        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+                        AnimatedVisibility(visible = state.isMinLimitReached.not()) {
+                            Column {
+                                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                        Text(
-                            text = stringResource(R.string.less_genre_selected),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.SemiBold,
-                            textDecoration = TextDecoration.Underline
-                        )
+                                Text(
+                                    text = stringResource(R.string.less_genre_selected),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -169,12 +187,3 @@ fun PicGenreCompactScreen(
     }
 }
 
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        Surface {
-            PicGenreCompactScreen(PicGenreUiState(), onAction = {})
-        }
-    }
-}

@@ -3,6 +3,7 @@ package com.poulastaa.core.database.repository.setup
 import com.google.gson.Gson
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoSong
+import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.RedisKeys
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
@@ -69,18 +70,10 @@ class RedisSetupDatasource(
 
     override fun setSongById(list: List<DtoSong>) = core.setSongById(list)
 
-    override fun cacheGenre(
-        limit: Int,
-        exclude: List<Int>,
-    ): List<DtoGenre> {
+    override fun cacheGenre(id: List<GenreId>): List<DtoGenre> {
+        if (id.isEmpty()) return emptyList()
         redisPool.resource.use { jedis ->
-            val keys = jedis.keys("${Group.GENRE}")
-            val excludedKeys = exclude.map { id -> "${Group.GENRE}:$id" }
-
-            val freshKeys = (keys - excludedKeys).take(10)
-            if (freshKeys.isEmpty()) return emptyList()
-
-            val genreJson = jedis.mget(*freshKeys.toTypedArray())
+            val genreJson = jedis.mget(*id.map { "${Group.GENRE}:$it" }.toTypedArray())
 
             return genreJson.filterNotNull().map {
                 gson.fromJson(it, DtoGenre::class.java)
@@ -88,5 +81,30 @@ class RedisSetupDatasource(
         }
     }
 
+    override fun cacheGenreByQuery(query: String, size: Int): List<DtoGenre> {
+        redisPool.resource.use { jedis ->
+            val genre = jedis.mget("${Group.GENRE_TITLE}:$query*")
+            val idList = genre.filterNotNull().map { it.toInt() }.take(size)
+
+            return cacheGenre(idList)
+        }
+    }
+
     override fun setGenreById(list: List<DtoGenre>) = core.setGenreById(list)
+
+    override fun setGenreIdByName(list: Map<String, GenreId>) {
+        redisPool.resource.use { jedis ->
+            val pipeline = jedis.pipelined()
+
+            list.forEach { (name, id) ->
+                pipeline.setex(
+                    "${Group.GENRE_TITLE}:$name",
+                    Group.GENRE_TITLE.expTime,
+                    id.toString()
+                )
+            }
+
+            pipeline.sync()
+        }
+    }
 }

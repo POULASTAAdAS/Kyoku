@@ -2,7 +2,9 @@ package com.poulastaa.user.data.repository
 
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylistFull
+import com.poulastaa.core.domain.model.DtoUpsert
 import com.poulastaa.core.domain.model.ReqUserPayload
+import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import com.poulastaa.user.domain.repository.SetupRepository
 import com.poulastaa.user.domain.repository.SpotifySongTitle
@@ -28,5 +30,17 @@ class SetupRepositoryService(
         return db.updateBDate(user, bDate)
     }
 
-    override suspend fun getGenre(genreIds: List<Int>): List<DtoGenre> = db.getPagingGenre(genreIds)
+    override suspend fun getGenre(
+        page: Int,
+        size: Int,
+        query: String,
+    ): List<DtoGenre> = db.getPagingGenre(page, size, query)
+
+    override suspend fun upsertGenre(
+        userPayload: ReqUserPayload,
+        req: List<DtoUpsert<GenreId>>,
+    ): List<DtoGenre> {
+        val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return emptyList()
+        return db.upsertGenre(user, req)
+    }
 }

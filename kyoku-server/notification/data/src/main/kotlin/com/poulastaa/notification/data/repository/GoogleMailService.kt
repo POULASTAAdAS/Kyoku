@@ -1,6 +1,6 @@
 package com.poulastaa.notification.data.repository
 
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.repository.auth.JWTRepository
 import com.poulastaa.core.domain.utils.Constants.SMS_EMAIL_GOOGLE_SMTP_HOST
 import com.poulastaa.core.domain.utils.Constants.SMS_EMAIL_PORT
@@ -17,7 +17,7 @@ class GoogleMailService(
 
     override fun sendEmailVerificationMail(email: String) {
         val token = jwt.generateToken(email, JWTRepository.TokenType.TOKEN_VERIFICATION_MAIL)
-        val verificationUrl = "${System.getenv("BASE_URL")}${Endpoints.VerifyEmail.route}?token=$token"
+        val verificationUrl = "${System.getenv("BASE_URL")}${EndPoints.VerifyEmail.route}?token=$token"
 
         val sub = "Verify Your Email to Complete Registration"
         val content = """
@@ -100,7 +100,7 @@ class GoogleMailService(
 
     override fun sendPasswordResetMail(email: String) {
         val token = jwt.generateToken(email, JWTRepository.TokenType.TOKEN_FORGOT_PASSWORD)
-        val resetPasswordUrl = "${System.getenv("BASE_URL")}${Endpoints.ResetPassword.route}?token=$token"
+        val resetPasswordUrl = "${System.getenv("BASE_URL")}${EndPoints.ResetPassword.route}?token=$token"
 
         val sub = "Password Reset Mail"
         val content = """

@@ -2,6 +2,7 @@ package com.poulastaa.core.presentation.designsystem.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -35,12 +37,14 @@ fun AppLoadingButton(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary
     ),
+    shape: Shape = CircleShape,
     onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
         onClick = onClick,
         colors = colors,
+        shape = shape,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 8.dp,
             pressedElevation = 0.dp,

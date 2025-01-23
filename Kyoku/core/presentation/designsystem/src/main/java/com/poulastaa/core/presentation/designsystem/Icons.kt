@@ -169,7 +169,7 @@ val UnFollowArtistIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_unfollow_artist)
 
-val CancelIcon: ImageVector
+val CloseIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Close
 

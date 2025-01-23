@@ -1,7 +1,7 @@
 package com.poulastaa.auth.network.routes
 
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.auth.network.mapper.toAuthResponse
 import com.poulastaa.auth.network.mapper.toEmailSignInPayload
 import com.poulastaa.auth.network.mapper.toEmailSignUpPayload
@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 
 fun Route.auth(repo: AuthRepository) {
-    route(Endpoints.Auth.route) {
+    route(EndPoints.Auth.route) {
         post {
             val reqString = call.receiveText()
             val jsonObj = Json.parseToJsonElement(reqString).jsonObject

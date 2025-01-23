@@ -3,7 +3,7 @@ package com.poulastaa.auth.network.routes
 import com.poulastaa.auth.domain.model.ResetPasswordStatusDto
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.utils.responseVerificationMailHtml
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -11,10 +11,10 @@ import io.ktor.server.routing.*
 fun Route.resetPassword(
     repo: AuthRepository,
 ) {
-    route(Endpoints.ResetPassword.route) {
+    route(EndPoints.ResetPassword.route) {
         get {
             val token = call.request.queryParameters["token"]
-                ?: return@get call.respondRedirect(Endpoints.UnAuthorized.route)
+                ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
             val status = repo.verifyResetPasswordRequest(token)
 
@@ -61,7 +61,7 @@ private fun resetPasswordPage(
     val eyeOnUrl = "$url/images/eye_on.png"
     val eyeOffUrl = "$url/images/eye_off.png"
     val appLogo = "$url/images/app_logo.png"
-    val submitUrl = "$url${Endpoints.SubmitNewPassword.route}"
+    val submitUrl = "$url${EndPoints.SubmitNewPassword.route}"
 
     return """
     <!DOCTYPE html>

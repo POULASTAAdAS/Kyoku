@@ -59,3 +59,9 @@ fun DtoPlaylistFull.toResponsePlaylistFull() = ResponseFullPlaylist(
     playlist = this.playlist.toResponsePlaylist(),
     listOfSong = this.listOfSong.map { it.toResponseSong() }
 )
+
+fun UpsertOperation.toDtoUpsertOperation() = when (this) {
+    UpsertOperation.INSERT -> DtoUpsertOperation.INSERT
+    UpsertOperation.UPDATE -> DtoUpsertOperation.UPDATE
+    UpsertOperation.DELETE -> DtoUpsertOperation.DELETE
+}

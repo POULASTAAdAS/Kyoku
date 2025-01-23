@@ -1,6 +1,7 @@
 package com.poulastaa.core.presentation.designsystem.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CheckIcon
+import com.poulastaa.core.presentation.designsystem.CloseIcon
 import com.poulastaa.core.presentation.designsystem.EmailAlternateIcon
 
 @Composable
@@ -36,9 +38,11 @@ fun AppTextField(
     trailingIcon: ImageVector? = null,
     supportingText: String? = null,
     isError: Boolean = false,
+    isClearButtonEnabled: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    onClearClick: () -> Unit = {},
 ) {
     OutlinedTextField(
         value = text,
@@ -61,8 +65,19 @@ fun AppTextField(
                 )
             }
         } else null,
-        trailingIcon =
-        trailingIcon?.let {
+        trailingIcon = if (isClearButtonEnabled && text.isNotEmpty()) {
+            {
+                Icon(
+                    imageVector = CloseIcon,
+                    contentDescription = null,
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = null,
+                        onClick = onClearClick
+                    )
+                )
+            }
+        } else trailingIcon?.let {
             {
                 Icon(
                     imageVector = it,

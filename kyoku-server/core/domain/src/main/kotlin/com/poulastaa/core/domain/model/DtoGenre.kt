@@ -10,5 +10,5 @@ data class DtoGenre(
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val cover = rawCover?.let { "$baseUrl${Endpoints.Poster.GenrePoster.route}?$POSTER_PARAM=$rawCover" }
+    val cover = rawCover?.let { "$baseUrl${EndPoints.Poster.GenrePoster.route}?$POSTER_PARAM=$rawCover" }
 }

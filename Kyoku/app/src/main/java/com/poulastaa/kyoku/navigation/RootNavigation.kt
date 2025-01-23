@@ -21,8 +21,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
-import com.poulastaa.setup.presentation.pic_genre.PicGenreCompactScreen
-import com.poulastaa.setup.presentation.pic_genre.PicGenreUiState
+import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
 
@@ -192,11 +191,29 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
         )
     }
 
-    composable<Screens.SetUp.PickGenre> {
-        PicGenreCompactScreen(
-            state = PicGenreUiState(),
-            onAction = { }
-        )
+    composable<Screens.SetUp.PickGenre>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetX = { it }
+                    )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideOutHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        targetOffsetX = { it }
+                    )
+        }
+    ) {
+        PicGenreRootScreen {
+            nav.navigate(Screens.SetUp.PickArtist) {
+                popUpTo(Screens.SetUp.PickArtist) {
+                    inclusive = true
+                }
+            }
+        }
     }
 
     composable<Screens.SetUp.PickArtist> {

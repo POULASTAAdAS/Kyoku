@@ -5,7 +5,7 @@ import com.poulastaa.auth.network.mapper.toUpdatePasswordStatus
 import com.poulastaa.auth.network.model.NewPasswordRequest
 import com.poulastaa.auth.network.model.ResetPasswordRes
 import com.poulastaa.auth.network.model.UpdatePasswordStatus
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -14,10 +14,10 @@ import io.ktor.server.routing.*
 fun Route.changePassword(
     repo: AuthRepository,
 ) {
-    route(Endpoints.SubmitNewPassword.route) {
+    route(EndPoints.SubmitNewPassword.route) {
         post {
             val req = call.receiveNullable<NewPasswordRequest>()
-                ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
             val status = repo.updatePassword(
                 token = req.token,

@@ -14,5 +14,5 @@ data class DtoSong(
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val poster = rawPoster?.let { "$baseUrl${Endpoints.Poster.SongPoster.route}?$POSTER_PARAM=$rawPoster" }
+    val poster = rawPoster?.let { "$baseUrl${EndPoints.Poster.SongPoster.route}?$POSTER_PARAM=$rawPoster" }
 }

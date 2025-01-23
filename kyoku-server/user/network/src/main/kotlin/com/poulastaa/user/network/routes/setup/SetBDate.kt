@@ -1,6 +1,6 @@
 package com.poulastaa.user.network.routes.setup
 
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.user.domain.repository.SetupRepository
@@ -17,13 +17,13 @@ fun Route.setBDate(
     repo: SetupRepository,
 ) {
     authenticate(configurations = SECURITY_LIST) {
-        route(Endpoints.SetBDate.route) {
+        route(EndPoints.SetBDate.route) {
             post {
                 val req = call.receiveNullable<SetBDateReq>()
-                    ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val payload = call.getReqUserPayload()
-                    ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val status = when (repo.setBDate(payload, req.date)) {
                     true -> SetBDateStatus.SUCCESS

@@ -1,11 +1,12 @@
 package com.poulastaa.setup.presentation.pic_genre
 
+import com.poulastaa.core.domain.model.GenreId
 import com.poulastaa.core.presentation.ui.model.TextHolder
 
 data class PicGenreUiState(
     val isMakingApiCall: Boolean = false,
     val searchGenre: TextHolder = TextHolder(),
-    val data: List<UiGenre> = emptyList(),
+    val data: List<GenreId> = emptyList(),
 ) {
     val isMinLimitReached = data.size >= 5
 }

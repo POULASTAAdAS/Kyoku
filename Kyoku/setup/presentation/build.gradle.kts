@@ -17,4 +17,5 @@ dependencies {
     implementation(projects.setup.domain)
 
     implementation(libs.coil.compose)
+    implementation(libs.pagingCompose)
 }

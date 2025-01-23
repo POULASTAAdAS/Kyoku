@@ -4,7 +4,7 @@ import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.mapper.toForgotPasswordResponse
 import com.poulastaa.auth.network.model.ForgotPasswordResponse
 import com.poulastaa.auth.network.model.ForgotPasswordResponseStatus
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 fun Route.forgotPassword(
     repo: AuthRepository,
 ) {
-    route(Endpoints.ForgotPassword.route) {
+    route(EndPoints.ForgotPassword.route) {
         get {
             val email = call.parameters["email"] ?: return@get call.respond(
                 status = HttpStatusCode.OK,

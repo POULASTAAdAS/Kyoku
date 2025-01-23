@@ -1,6 +1,6 @@
 package com.poulastaa.user.network.routes.setup
 
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.core.network.mapper.toResponsePlaylistFull
@@ -27,16 +27,16 @@ fun Route.importSpotifyPlaylist(
     repo: SetupRepository,
 ) {
     authenticate(configurations = SECURITY_LIST) {
-        route(path = Endpoints.ImportSpotifyPlaylist.route) {
+        route(path = EndPoints.ImportSpotifyPlaylist.route) {
             post {
                 val playlistId = call.receiveNullable<ImportSpotifyPlaylistReq>()
-                    ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val payload = call.getReqUserPayload()
-                    ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val playlistJson = getPlaylist(playlistId.playlistId, clientId, clientSecret)
-                    ?: return@post call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val spotifyPayload = getSpotifySongPayload(playlistJson)
 

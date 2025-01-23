@@ -3,8 +3,11 @@ package com.poulastaa.setup.network.di
 import com.google.gson.Gson
 import com.poulastaa.setup.domain.repository.import_playlist.RemoteImportPlaylistDatasource
 import com.poulastaa.setup.domain.repository.set_bdate.RemoteBDateDatasource
+import com.poulastaa.setup.domain.repository.set_genre.RemoteSetGenreDatasource
+import com.poulastaa.setup.network.paging_source.SuggestGenrePagingSource
 import com.poulastaa.setup.network.repository.OkHttpImportPlaylistDatasource
 import com.poulastaa.setup.network.repository.OkHttpSetBDateDatasource
+import com.poulastaa.setup.network.repository.OkHttpSetGenreDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,5 +36,27 @@ object SetupNetworkModule {
     ): RemoteBDateDatasource = OkHttpSetBDateDatasource(
         client = client,
         gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSuggestGenreRemotePageSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): SuggestGenrePagingSource = SuggestGenrePagingSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideRemoteGenreDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        genre: SuggestGenrePagingSource,
+    ): RemoteSetGenreDatasource = OkHttpSetGenreDatasource(
+        client = client,
+        gson = gson,
+        genre = genre
     )
 }

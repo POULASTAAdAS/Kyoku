@@ -1,6 +1,6 @@
 package com.poulastaa.user.network.routes.setup
 
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.user.domain.repository.SetupRepository
@@ -14,17 +14,21 @@ fun Route.suggestGenre(
     repo: SetupRepository,
 ) {
     authenticate(configurations = SECURITY_LIST) {
-        route(Endpoints.PicGenre.route) {
+        route(EndPoints.SuggestGenre.route) {
             get {
-                val sentGenreIds = call.parameters["genreIds"]?.split(",")?.map { it.toInt() }
-                    ?: return@get call.respondRedirect(Endpoints.UnAuthorized.route)
+                val page = call.parameters["page"]?.toInt()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+                val query = call.parameters["query"]
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+                val size = call.parameters["size"]?.toInt()
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+
+                if (size <= 0) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 call.getReqUserPayload()
-                    ?: return@get call.respondRedirect(Endpoints.UnAuthorized.route)
+                    ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                val result = repo.getGenre(
-                    genreIds = sentGenreIds
-                ).toSuggestGenreDto()
+                val result = repo.getGenre(page, size, query).toSuggestGenreDto()
 
                 call.respond(
                     message = result,

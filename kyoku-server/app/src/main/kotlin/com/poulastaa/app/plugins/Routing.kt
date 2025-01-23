@@ -3,10 +3,12 @@ package com.poulastaa.app.plugins
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
 import com.poulastaa.user.domain.repository.SetupRepository
+import com.poulastaa.user.network.routes.getGenrePoster
 import com.poulastaa.user.network.routes.getSongPoster
 import com.poulastaa.user.network.routes.setup.importSpotifyPlaylist
 import com.poulastaa.user.network.routes.setup.setBDate
 import com.poulastaa.user.network.routes.setup.suggestGenre
+import com.poulastaa.user.network.routes.setup.upsertGenre
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -53,4 +55,6 @@ private fun Routing.setup(repo: SetupRepository) {
     getSongPoster()
     setBDate(repo)
     suggestGenre(repo)
+    getGenrePoster()
+    upsertGenre(repo)
 }

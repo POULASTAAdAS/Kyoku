@@ -16,7 +16,7 @@ import com.poulastaa.core.presentation.designsystem.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PigGenreTopBar() {
+internal fun PigGenreTopBar() {
     TopAppBar(
         title = {
             Text(

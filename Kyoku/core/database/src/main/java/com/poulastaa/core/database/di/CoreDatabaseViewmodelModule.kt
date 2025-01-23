@@ -5,9 +5,11 @@ import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
+import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
+import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,4 +37,11 @@ object CoreDatabaseViewmodelModule {
     fun provideLocalBDateDatasource(
         ds: DatastoreRepository,
     ): LocalBDateDatasource = DatastoreLocalBDateDatasource(ds)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalSetGenreDatasource(
+        ds: DatastoreRepository,
+        root: RootDao,
+    ): LocalSetGenreDatasource = RoomLocalSetGenreDatasource(ds, root)
 }

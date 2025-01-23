@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -79,6 +80,7 @@ fun AppCacheImage(
     url: String?,
     modifier: Modifier = Modifier,
     loadingSize: Dp = 20.dp,
+    shape: Shape = CircleShape,
     errorIcon: ImageVector? = null,
     errorImage: Painter? = null,
 ) {
@@ -96,7 +98,7 @@ fun AppCacheImage(
                     .border(
                         width = 1.4.dp,
                         color = MaterialTheme.colorScheme.background,
-                        shape = CircleShape
+                        shape = shape
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -114,7 +116,7 @@ fun AppCacheImage(
                     .border(
                         width = 1.4.dp,
                         color = MaterialTheme.colorScheme.background,
-                        shape = CircleShape
+                        shape = shape
                     ),
                 contentAlignment = Alignment.Center
             ) {

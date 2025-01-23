@@ -1,6 +1,6 @@
 package com.poulastaa.user.network.routes
 
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.CURRENT_PROJECT_FOLDER
 import com.poulastaa.core.domain.utils.Constants.POSTER_PARAM
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
@@ -12,7 +12,7 @@ import java.io.File
 
 fun Route.getSongPoster() {
     authenticate(configurations = SECURITY_LIST) {
-        route(Endpoints.Poster.SongPoster.route) {
+        route(EndPoints.Poster.SongPoster.route) {
             get {
                 val url = call.parameters[POSTER_PARAM] ?: return@get call.respond(HttpStatusCode.BadRequest)
 

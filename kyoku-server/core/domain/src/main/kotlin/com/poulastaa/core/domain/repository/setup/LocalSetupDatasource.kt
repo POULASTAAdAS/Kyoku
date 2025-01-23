@@ -1,9 +1,7 @@
 package com.poulastaa.core.domain.repository.setup
 
-import com.poulastaa.core.domain.model.DtoDBUser
-import com.poulastaa.core.domain.model.DtoGenre
-import com.poulastaa.core.domain.model.DtoPlaylistFull
-import com.poulastaa.core.domain.model.UserType
+import com.poulastaa.core.domain.model.*
+import com.poulastaa.core.domain.repository.GenreId
 
 interface LocalSetupDatasource {
     suspend fun getUserByEmail(email: String, userType: UserType): DtoDBUser?
@@ -19,6 +17,13 @@ interface LocalSetupDatasource {
     ): Boolean
 
     suspend fun getPagingGenre(
-        genreIds: List<Int>,
+        page: Int,
+        size: Int,
+        query: String,
+    ): List<DtoGenre>
+
+    suspend fun upsertGenre(
+        user: DtoDBUser,
+        list: List<DtoUpsert<GenreId>>,
     ): List<DtoGenre>
 }

@@ -1,7 +1,7 @@
 package com.poulastaa.app.plugins
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.poulastaa.core.domain.model.Endpoints
+import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.model.UserSession
 import io.ktor.server.application.*
@@ -27,14 +27,14 @@ fun Application.configureSecurity(
             }
 
             challenge { _, _ ->
-                call.respondRedirect(Endpoints.UnAuthorized.route)
+                call.respondRedirect(EndPoints.UnAuthorized.route)
             }
         }
 
         session<UserSession>(SECURITY_LIST[1]) {
             validate { it }
 
-            challenge { call.respondRedirect(Endpoints.UnAuthorized.route) }
+            challenge { call.respondRedirect(EndPoints.UnAuthorized.route) }
         }
     }
 }
