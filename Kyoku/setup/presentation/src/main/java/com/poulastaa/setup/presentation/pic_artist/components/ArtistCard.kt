@@ -21,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +59,9 @@ fun ArtistCard(
                     defaultElevation = 6.dp,
                     pressedElevation = 0.dp
                 ),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
                 onClick = onClick
             ) {
                 SubcomposeAsyncImage(
@@ -68,11 +73,12 @@ fun ArtistCard(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
                     loading = {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.secondary),
+                                .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
@@ -86,7 +92,7 @@ fun ArtistCard(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.secondary),
+                                .background(MaterialTheme.colorScheme.primary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -95,7 +101,7 @@ fun ArtistCard(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(MaterialTheme.dimens.medium1),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.background
                             )
                         }
                     }
@@ -126,8 +132,8 @@ fun ArtistCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textDecoration = if (artist.isSelected) TextDecoration.Underline else null,
-            color = if (artist.isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.secondary
+            fontWeight = if (artist.isSelected) FontWeight.Bold else FontWeight.Normal,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

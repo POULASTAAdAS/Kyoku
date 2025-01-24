@@ -11,6 +11,8 @@ open class RedisKeys {
         GENRE_TITLE(expTime = 15 * 60),
         ALBUM(expTime = 15 * 60),
         ARTIST(expTime = 15 * 60),
+        PREV_ARTIST(expTime = 15 * 60),
+        PREV_ARTIST_TITLE(expTime = 15 * 60),
         COUNTRY(expTime = 15 * 60),
         PLAYLIST(expTime = 20 * 60),
         COUNTRY_ID(expTime = 1 * 60 * 60),

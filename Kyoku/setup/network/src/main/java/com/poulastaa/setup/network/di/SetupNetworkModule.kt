@@ -2,10 +2,13 @@ package com.poulastaa.setup.network.di
 
 import com.google.gson.Gson
 import com.poulastaa.setup.domain.repository.import_playlist.RemoteImportPlaylistDatasource
+import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
 import com.poulastaa.setup.domain.repository.set_bdate.RemoteBDateDatasource
 import com.poulastaa.setup.domain.repository.set_genre.RemoteSetGenreDatasource
+import com.poulastaa.setup.network.paging_source.SuggestArtistPagingSource
 import com.poulastaa.setup.network.paging_source.SuggestGenrePagingSource
 import com.poulastaa.setup.network.repository.OkHttpImportPlaylistDatasource
+import com.poulastaa.setup.network.repository.OkHttpSetArtistDatasource
 import com.poulastaa.setup.network.repository.OkHttpSetBDateDatasource
 import com.poulastaa.setup.network.repository.OkHttpSetGenreDatasource
 import dagger.Module
@@ -58,5 +61,27 @@ object SetupNetworkModule {
         client = client,
         gson = gson,
         genre = genre
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSuggestArtistRemotePageSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): SuggestArtistPagingSource = SuggestArtistPagingSource(
+        client = client,
+        gson = gson
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideRemoteSetArtistDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        artist: SuggestArtistPagingSource,
+    ): RemoteSetArtistDatasource = OkHttpSetArtistDatasource(
+        client = client,
+        gson = gson,
+        artist = artist
     )
 }

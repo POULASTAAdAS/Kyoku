@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -122,7 +123,9 @@ class PicGenreViewmodel @Inject constructor(
 
         repo.getPagingGenre(
             query = _state.value.searchGenre.value.trim()
-        ).cachedIn(viewModelScope).collectLatest { pagingData ->
+        ).cachedIn(viewModelScope)
+            .distinctUntilChanged()
+            .collectLatest { pagingData ->
             _genre.value = pagingData.map { it.toUiGenre(_state.value.data) }
         }
     }

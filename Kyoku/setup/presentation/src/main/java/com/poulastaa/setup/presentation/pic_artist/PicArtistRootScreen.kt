@@ -70,7 +70,7 @@ fun PicArtistRootScreen(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id))
+                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
                         }
                     )
                 },
@@ -101,7 +101,7 @@ fun PicArtistRootScreen(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id))
+                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
                         }
                     )
                 },
@@ -132,7 +132,7 @@ fun PicArtistRootScreen(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id))
+                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
                         }
                     )
                 },
@@ -160,7 +160,7 @@ fun PicArtistRootScreen(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id))
+                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
                         }
                     )
                 },

@@ -2,13 +2,16 @@ package com.poulastaa.core.database.repository.setup
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
+import com.poulastaa.core.database.dao.DaoArtist
 import com.poulastaa.core.database.dao.DaoGenre
 import com.poulastaa.core.database.dao.DaoSong
 import com.poulastaa.core.database.dao.DaoUser
+import com.poulastaa.core.database.entity.app.EntityArtist
 import com.poulastaa.core.database.entity.app.EntityGenre
 import com.poulastaa.core.database.entity.app.EntitySong
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserGenre
+import com.poulastaa.core.database.mapper.toDtoPrevArtist
 import com.poulastaa.core.database.mapper.toGenreDto
 import com.poulastaa.core.database.mapper.toSongDto
 import com.poulastaa.core.domain.model.*
@@ -19,7 +22,6 @@ import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.not
@@ -138,11 +140,9 @@ class ExposedSetupDatasource(
         query: String,
     ): List<DtoGenre> {
         if (query.isBlank()) {
-            val list =    // as genre id starts from 1 we can calculate ids like this
-                if (page == 1) (page..size).toList() else
-                    (size * (page - 1) + (page - (page - 1))..size * page).toList()
+            val list = calculateIdList<Int>(page, size)
 
-            val cache = cache.cacheGenre(list)
+            val cache = cache.cacheGenreById(list)
             if (cache.size >= size) return cache
 
             val limit = size - cache.size
@@ -151,33 +151,34 @@ class ExposedSetupDatasource(
             val dbGenre = kyokuDbQuery {
                 DaoGenre.find {
                     EntityGenre.id inList idList
-                }.orderBy(EntityGenre.popularity to SortOrder.DESC)
-                    .limit(limit).map { it.toGenreDto() }
+                }.limit(limit).map { it.toGenreDto() }
             }.also { this.cache.setGenreById(it) }
 
             return (cache + dbGenre).distinctBy { it.id }
-        } else {
-            val cache = cache.cacheGenreByQuery(query, size)
-            if (cache.size >= size) return cache
-
-            val limit = size - cache.size
-
-            val dbGenre = kyokuDbQuery {
-                DaoGenre.find {
-                    EntityGenre.genre like "$query%" and
-                            (EntityGenre.genre notInList cache.map { it.name })
-                }.limit(limit).map { it.toGenreDto() }
-            }.also { this.cache.setGenreIdByName(it.associate { it.name to it.id }) }
-
-            return cache + dbGenre
         }
+
+
+        val cache = cache.cacheGenreByName(query, size)
+        if (cache.size >= size) return cache
+
+        val limit = size - cache.size
+
+        val dbGenre = kyokuDbQuery {
+            DaoGenre.find {
+                EntityGenre.genre like "$query%" and
+                        (EntityGenre.genre notInList cache.map { it.name })
+            }.limit(limit).map { it.toGenreDto() }
+        }.also { this.cache.setGenreIdByName(it.associate { it.name to it.id }) }
+
+        return cache + dbGenre
     }
+
 
     override suspend fun upsertGenre(
         user: DtoDBUser,
         list: List<DtoUpsert<GenreId>>,
     ): List<DtoGenre> = coroutineScope {
-        val cache = cache.cacheGenre(list.map { it.id })
+        val cache = cache.cacheGenreById(list.map { it.id })
         val notFound = list.map { it.id }.filter { id -> cache.none { it.id == id } }
 
         val dbGenre = async {
@@ -231,4 +232,46 @@ class ExposedSetupDatasource(
 
         result
     }
+
+    override suspend fun getPagingArtist(
+        page: Int,
+        size: Int,
+        query: String,
+    ): List<DtoPrevArtist> {
+        if (query.isBlank()) {
+            val idList = calculateIdList<Long>(page, size)
+            val cache = cache.cachePrevArtistById(idList)
+
+            if (cache.size >= size) return cache
+
+            val limit = size - cache.size
+            val list = idList.filterNot { cache.map { it.id }.any { id -> id == it } }
+
+            val dbArtist = kyokuDbQuery {
+                DaoArtist.find {
+                    EntityArtist.id inList list
+                }.limit(limit).map { it.toDtoPrevArtist() }
+            }.also { this.cache.setPrevArtistById(it) }
+
+            return (cache + dbArtist).sortedBy { it.id }.distinctBy { it.id }
+        }
+
+        val cache = cache.cachePrevArtistByName(query, size)
+        if (cache.size >= size) return cache
+
+        val limit = size - cache.size
+
+        val dbArtist = kyokuDbQuery {
+            DaoArtist.find {
+                EntityArtist.name like "$query%" and
+                        (EntityArtist.name notInList cache.map { it.name })
+            }.limit(limit).map { it.toDtoPrevArtist() }
+        }.also { this.cache.setPrevArtistIdByName(it.associate { it.name to it.id }) }
+
+        return cache + dbArtist
+    }
+
+    // as ids start from 1 we can calculate ids like this
+    private fun <T> calculateIdList(page: Int, size: Int): List<T> = (if (page == 1) (page..size).toList() else
+        (size * (page - 1) + (page - (page - 1))..size * page).toList()) as List<T>
 }

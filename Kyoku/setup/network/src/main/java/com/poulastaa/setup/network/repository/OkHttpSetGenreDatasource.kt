@@ -34,7 +34,6 @@ class OkHttpSetGenreDatasource @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
-                initialLoadSize = 15,
             ),
             initialKey = 1,
             pagingSourceFactory = { genre }

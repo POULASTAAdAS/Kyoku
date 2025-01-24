@@ -47,7 +47,7 @@ class RootViewModel @Inject constructor(
 
         _state.update {
             it.copy(
-                screen =Screens.SetUp.PickArtist
+                screen = screen
             )
         }
 

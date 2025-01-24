@@ -5,6 +5,7 @@ import com.poulastaa.core.domain.model.DtoPlaylistFull
 import com.poulastaa.core.domain.model.DtoUpsert
 import com.poulastaa.core.domain.model.ReqUserPayload
 import com.poulastaa.core.domain.repository.GenreId
+import com.poulastaa.core.domain.model.DtoPrevArtist
 
 typealias SpotifySongTitle = String
 
@@ -25,4 +26,6 @@ interface SetupRepository {
         userPayload: ReqUserPayload,
         req: List<DtoUpsert<GenreId>>,
     ): List<DtoGenre>
+
+    suspend fun getArtist(page: Int, size: Int, query: String): List<DtoPrevArtist>
 }

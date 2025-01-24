@@ -49,7 +49,7 @@ fun DtoDBArtist.toArtistDto(
 ) = DtoArtist(
     id = this.id,
     name = this.name,
-    coverImage = this.coverImage,
+    rawCoverImage = this.coverImage,
     popularity = this.popularity,
     genre = genre,
     country = country
@@ -62,9 +62,20 @@ fun DaoGenre.toGenreDto() = DtoGenre(
     popularity = this.popularity
 )
 
-
 fun DaoAlbum.toAlbumDto() = DtoAlbum(
     id = this.id.value,
     name = this.name,
     popularity = this.popularity
+)
+
+fun DaoArtist.toDtoPrevArtist() = DtoPrevArtist(
+    id = this.id.value,
+    name = this.name,
+    rawCover = this.coverImage
+)
+
+fun DtoArtist.toDtoPrevArtist() = DtoPrevArtist(
+    id = this.id,
+    name = this.name,
+    rawCover = this.coverImage
 )

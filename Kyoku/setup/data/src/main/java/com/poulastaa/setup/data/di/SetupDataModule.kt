@@ -5,12 +5,15 @@ import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.setup.data.repository.import_playlist.OnlineFirstImportPlaylistRepository
 import com.poulastaa.setup.data.repository.import_playlist.UseCaseValidatePlaylistLink
+import com.poulastaa.setup.data.repository.set_artist.OnlineFirstSetArtistRepository
 import com.poulastaa.setup.data.repository.set_bdate.OnlineFirstBDateRepository
 import com.poulastaa.setup.data.repository.set_bdate.UseCaseValidateBDate
 import com.poulastaa.setup.data.repository.set_genre.OnlineFirstSetGenreRepository
 import com.poulastaa.setup.domain.repository.import_playlist.ImportPlaylistRepository
 import com.poulastaa.setup.domain.repository.import_playlist.RemoteImportPlaylistDatasource
 import com.poulastaa.setup.domain.repository.import_playlist.SpotifyPlaylistLinkValidator
+import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
+import com.poulastaa.setup.domain.repository.set_artist.SetArtistRepository
 import com.poulastaa.setup.domain.repository.set_bdate.BDateRepository
 import com.poulastaa.setup.domain.repository.set_bdate.BDateValidator
 import com.poulastaa.setup.domain.repository.set_bdate.RemoteBDateDatasource
@@ -62,5 +65,15 @@ object SetupDataModule {
     ): SetGenreRepository = OnlineFirstSetGenreRepository(
         remote = remote,
         local = local
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideSetArtistRepository(
+        remote: RemoteSetArtistDatasource,
+//        local: LocalSetGenreDatasource,
+    ): SetArtistRepository = OnlineFirstSetArtistRepository(
+        remote = remote,
+//        local = local
     )
 }
