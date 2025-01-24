@@ -52,7 +52,7 @@
     <string name="less_genre_selected">select at-list 5 genre to continue</string>
     <string name="pic_genre_title">Select genres you like</string>
     <string name="pic_artist_title">Pick artists you like</string>
-    <string name="less_artist_selected">Please select at-lest 5 artist to continue</string>
+    <string name="less_artist_selected">select at-lest 5 artist to continue</string>
     <string name="view_profile">View Profile</string>
     <string name="settings_title">S E T T I N G S</string>
     <string name="history_title">H I S T O R Y</string>

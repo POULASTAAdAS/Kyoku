@@ -21,6 +21,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
+import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
@@ -216,8 +217,25 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
         }
     }
 
-    composable<Screens.SetUp.PickArtist> {
-        // todo
+    composable<Screens.SetUp.PickArtist>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetX = { it }
+                    )
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+        }
+    ) {
+        PicArtistRootScreen {
+            nav.navigate(Screens.Core.Home) {
+                popUpTo(Screens.Core.Home) {
+                    inclusive = true
+                }
+            }
+        }
     }
 }
 

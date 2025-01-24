@@ -2,18 +2,24 @@ package com.poulastaa.setup.presentation.pic_genre
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.ui.KyokuWindowSize
 import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.setup.presentation.components.PicItemCompactScreen
+import com.poulastaa.setup.presentation.components.PicItemExtendedScreen
+import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -43,36 +49,140 @@ fun PicGenreRootScreen(
     KyokuWindowSize(
         windowSizeClass = windowSizeClass,
         compactContent = {
-            PicGenreCompactScreen(
-                state = state,
+            PicItemCompactScreen(
+                title = R.string.pic_genre_title,
+                lessSelected = R.string.less_genre_selected,
+                label = R.string.genre_label,
                 gridSize = 2,
-                cardHeight = 80.dp,
-                genre = genre,
-                onAction = viewmodel::onAction
+                query = state.searchGenre.value,
+                isMinLimitReached = state.isMinLimitReached,
+                isMakingApiCall = state.isMakingApiCall,
+                data = genre,
+                itemContent = { item ->
+                    GenreCard(
+                        genre = item,
+                        modifier = Modifier.height(80.dp),
+                        onClick = {
+                            viewmodel.onAction(
+                                PicGenreUiAction.OnGenreSelect(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
+                        }
+                    )
+                },
+                onFloatingActionButtonClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnContinueClick)
+                },
+                onQueryChange = { data ->
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(data))
+                },
+                onClearClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(""))
+                }
             )
         },
         mediumContent = {
-            PicGenreCompactScreen(
-                state = state,
+            PicItemCompactScreen(
+                title = R.string.pic_genre_title,
+                lessSelected = R.string.less_genre_selected,
+                label = R.string.genre_label,
                 gridSize = 3,
-                cardHeight = 95.dp,
-                genre = genre,
-                onAction = viewmodel::onAction
+                query = state.searchGenre.value,
+                isMinLimitReached = state.isMinLimitReached,
+                isMakingApiCall = state.isMakingApiCall,
+                data = genre,
+                itemContent = { item ->
+                    GenreCard(
+                        genre = item,
+                        modifier = Modifier.height(95.dp),
+                        onClick = {
+                            viewmodel.onAction(
+                                PicGenreUiAction.OnGenreSelect(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
+                        }
+                    )
+                },
+                onFloatingActionButtonClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnContinueClick)
+                },
+                onQueryChange = { data ->
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(data))
+                },
+                onClearClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(""))
+                }
             )
         },
         expandedContent = {
-            if (config.screenWidthDp > 980) PicGenreExtendedScreen(
-                state = state,
+            if (config.screenWidthDp > 980) PicItemExtendedScreen(
+                title = R.string.pic_genre_title,
+                lessSelected = R.string.less_genre_selected,
+                label = R.string.genre_label,
                 gridSize = 3,
-                cardHeight = 95.dp,
-                genre = genre,
-                onAction = viewmodel::onAction
-            ) else PicGenreExtendedScreen(
-                state = state,
+                query = state.searchGenre.value,
+                isMinLimitReached = state.isMinLimitReached,
+                isMakingApiCall = state.isMakingApiCall,
+                data = genre,
+                itemContent = { item ->
+                    GenreCard(
+                        genre = item,
+                        modifier = Modifier.height(95.dp),
+                        onClick = {
+                            viewmodel.onAction(
+                                PicGenreUiAction.OnGenreSelect(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
+                        }
+                    )
+                },
+                onFloatingActionButtonClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnContinueClick)
+                },
+                onQueryChange = { data ->
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(data))
+                },
+                onClearClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(""))
+                }
+            ) else  PicItemExtendedScreen(
+                title = R.string.pic_genre_title,
+                lessSelected = R.string.less_genre_selected,
+                label = R.string.genre_label,
                 gridSize = 2,
-                cardHeight = 80.dp,
-                genre = genre,
-                onAction = viewmodel::onAction
+                query = state.searchGenre.value,
+                isMinLimitReached = state.isMinLimitReached,
+                isMakingApiCall = state.isMakingApiCall,
+                data = genre,
+                itemContent = { item ->
+                    GenreCard(
+                        genre = item,
+                        modifier = Modifier.height(80.dp),
+                        onClick = {
+                            viewmodel.onAction(
+                                PicGenreUiAction.OnGenreSelect(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
+                        }
+                    )
+                },
+                onFloatingActionButtonClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnContinueClick)
+                },
+                onQueryChange = { data ->
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(data))
+                },
+                onClearClick = {
+                    viewmodel.onAction(PicGenreUiAction.OnGenreChange(""))
+                }
             )
         }
     )

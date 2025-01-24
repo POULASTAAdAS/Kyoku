@@ -1,5 +1,7 @@
-package com.poulastaa.setup.presentation.pic_genre
+package com.poulastaa.setup.presentation.components
 
+import android.content.res.Configuration
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -34,26 +37,39 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.presentation.designsystem.AppThem
+import com.poulastaa.core.presentation.designsystem.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.SongIcon
 import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.setup.presentation.pic_genre.component.PicGenreItemList
-import com.poulastaa.setup.presentation.pic_genre.component.PigGenreFloatingActionButton
-import com.poulastaa.setup.presentation.pic_genre.component.PigGenreTopBar
+import com.poulastaa.setup.presentation.pic_genre.UiGenre
+import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
+import kotlinx.coroutines.flow.flowOf
+import kotlin.random.Random
 
 @Composable
-fun PicGenreExtendedScreen(
-    state: PicGenreUiState,
+fun <T : Any> PicItemExtendedScreen(
+    @StringRes title: Int,
+    @StringRes lessSelected: Int,
+    @StringRes label: Int,
     gridSize: Int,
-    cardHeight: Dp,
-    genre: LazyPagingItems<UiGenre>,
-    onAction: (PicGenreUiAction) -> Unit,
+    query: String,
+    isMinLimitReached: Boolean,
+    isMakingApiCall: Boolean,
+    data: LazyPagingItems<T>,
+    contentPadding: Dp = MaterialTheme.dimens.small1,
+    itemContent: @Composable LazyGridItemScope.(item: T) -> Unit,
+    onFloatingActionButtonClick: () -> Unit,
+    onQueryChange: (data: String) -> Unit,
+    onClearClick: () -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
@@ -61,7 +77,11 @@ fun PicGenreExtendedScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
-            PigGenreFloatingActionButton(state, onAction)
+            PicScreenFloatingActionButton(
+                isMakingApiCall = isMakingApiCall,
+                isMinLimitReached = isMinLimitReached,
+                onClick = onFloatingActionButtonClick
+            )
         }
     ) { paddingValues ->
         Box(
@@ -88,16 +108,12 @@ fun PicGenreExtendedScreen(
                 ) {
                     AppTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        text = state.searchGenre.value,
-                        onValueChange = {
-                            onAction(PicGenreUiAction.OnGenreChange(it))
-                        },
-                        label = stringResource(R.string.genre_label),
-                        trailingIcon = SongIcon,
+                        text = query,
+                        onValueChange = onQueryChange,
+                        label = stringResource(label),
+                        trailingIcon = FilterArtistIcon,
                         isClearButtonEnabled = true,
-                        onClearClick = {
-                            onAction(PicGenreUiAction.OnGenreChange(""))
-                        }
+                        onClearClick = onClearClick
                     )
 
                     Spacer(Modifier.height(MaterialTheme.dimens.large1))
@@ -131,7 +147,7 @@ fun PicGenreExtendedScreen(
                             color = MaterialTheme.colorScheme.primary,
                             shape = MaterialTheme.shapes.extraSmall
                         ),
-                    targetState = genre.itemCount == 0
+                    targetState = data.itemCount == 0
                 ) { state ->
                     when (state) {
                         true -> Box(
@@ -143,7 +159,14 @@ fun PicGenreExtendedScreen(
                             )
                         }
 
-                        false -> PicGenreItemList(gridSize, genre, cardHeight, onAction)
+                        false -> PicScreenItemList(
+                            modifier = Modifier.fillMaxSize(),
+                            searchBarHeight = 0.dp,
+                            contentPadding = contentPadding,
+                            gridSize = gridSize,
+                            data = data,
+                            itemContent = itemContent
+                        )
                     }
                 }
             }
@@ -153,13 +176,13 @@ fun PicGenreExtendedScreen(
                     .padding(top = MaterialTheme.dimens.medium1)
                     .fillMaxWidth(.45f)
             ) {
-                PigGenreTopBar()
+                PigScreenTopBar(title)
 
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                AnimatedVisibility(visible = state.isMinLimitReached.not()) {
+                AnimatedVisibility(visible = isMinLimitReached.not()) {
                     Text(
-                        text = stringResource(R.string.less_genre_selected),
+                        text = stringResource(lessSelected),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.primary,
@@ -172,3 +195,50 @@ fun PicGenreExtendedScreen(
     }
 }
 
+@Preview(
+    widthDp = 840,
+    heightDp = 540
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 840,
+    heightDp = 540
+)
+@Composable
+private fun Preview() {
+    val mockPagingData = PagingData.from(
+        (1..10).map {
+            UiGenre(
+                id = it,
+                name = "Genre $it",
+                isSelected = Random.nextBoolean()
+            )
+        }
+    )
+    val mockLazyPagingItems = flowOf(mockPagingData).collectAsLazyPagingItems()
+
+    AppThem {
+        PicItemExtendedScreen(
+            title = R.string.pic_genre_title,
+            lessSelected = R.string.less_genre_selected,
+            label = R.string.genre_label,
+            gridSize = 3,
+            query = "",
+            isMinLimitReached = false,
+            isMakingApiCall = false,
+            data = mockLazyPagingItems,
+            itemContent = { item ->
+                GenreCard(
+                    genre = item,
+                    modifier = Modifier.height(95.dp),
+                    onClick = {
+
+                    }
+                )
+            },
+            onFloatingActionButtonClick = {},
+            onQueryChange = {},
+            onClearClick = {}
+        )
+    }
+}

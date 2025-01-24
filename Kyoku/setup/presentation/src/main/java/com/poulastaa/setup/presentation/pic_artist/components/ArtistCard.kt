@@ -1,20 +1,14 @@
-package com.poulastaa.setup.presentation.pic_genre.component
+package com.poulastaa.setup.presentation.pic_artist.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,61 +21,62 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.poulastaa.core.domain.model.GenreId
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.CheckIcon
-import com.poulastaa.core.presentation.designsystem.FilterAlbumIcon
+import com.poulastaa.core.presentation.designsystem.UserIcon
 import com.poulastaa.core.presentation.designsystem.components.CacheImageReq
 import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.setup.presentation.pic_genre.UiGenre
+import com.poulastaa.setup.presentation.pic_artist.UiArtist
 
 @Composable
-internal fun GenreCard(
+fun ArtistCard(
     modifier: Modifier = Modifier,
-    genre: UiGenre,
+    artist: UiArtist,
     onClick: () -> Unit,
 ) {
-    Card(
+    Column(
         modifier = modifier,
-        shape = MaterialTheme.shapes.extraSmall,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 5.dp,
-            pressedElevation = 0.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        onClick = onClick
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Card(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .wrapContentWidth()
-                    .padding(end = MaterialTheme.dimens.small3),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxHeight(.78f)
+                    .aspectRatio(1f),
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 0.dp
+                ),
+                onClick = onClick
             ) {
                 SubcomposeAsyncImage(
                     model = CacheImageReq.imageReq(
-                        url = genre.poster,
+                        url = artist.cover,
                         context = LocalContext.current
                     ),
-                    contentDescription = genre.name,
-                    modifier = Modifier.aspectRatio(1f),
-                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape),
                     loading = {
                         Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.secondary),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
+                                modifier = Modifier.size(24.dp),
                                 strokeWidth = 1.5.dp,
                                 color = MaterialTheme.colorScheme.background
                             )
@@ -89,49 +84,51 @@ internal fun GenreCard(
                     },
                     error = {
                         Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.secondary),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = FilterAlbumIcon,
+                                imageVector = UserIcon,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(MaterialTheme.dimens.small3),
+                                    .padding(MaterialTheme.dimens.medium1),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }
                 )
-
-                Spacer(Modifier.width(MaterialTheme.dimens.medium1))
-
-                Text(
-                    text = genre.name,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
 
-            this@Card.AnimatedVisibility(
-                visible = genre.isSelected,
+            this@Column.AnimatedVisibility(
+                visible = artist.isSelected,
                 modifier = Modifier
-                    .padding(MaterialTheme.dimens.small2)
                     .align(Alignment.TopEnd)
+                    .padding(MaterialTheme.dimens.small1)
             ) {
                 Icon(
                     imageVector = CheckIcon,
                     contentDescription = null,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .size(24.dp)
-                        .background(MaterialTheme.colorScheme.primary)
-                        .padding(2.dp),
+                        .background(MaterialTheme.colorScheme.primary),
                     tint = MaterialTheme.colorScheme.background,
                 )
             }
         }
+
+        Text(
+            text = artist.name,
+            modifier = Modifier.fillMaxSize(),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textDecoration = if (artist.isSelected) TextDecoration.Underline else null,
+            color = if (artist.isSelected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
@@ -142,19 +139,15 @@ private fun Preview() {
         Surface {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .background(MaterialTheme.colorScheme.background)
+                    .padding(MaterialTheme.dimens.medium1),
             ) {
-                GenreCard(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .width(140.dp)
-                        .height(80.dp),
-                    genre = UiGenre(
+                ArtistCard(
+                    modifier = Modifier.size(150.dp),
+                    artist = UiArtist(
                         id = 1,
-                        name = "Rock",
-                        poster = "",
-                        isSelected = isSystemInDarkTheme()
+                        name = "Artist",
+                        cover = "",
+                        isSelected = true
                     ),
                     onClick = {}
                 )

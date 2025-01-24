@@ -1,5 +1,6 @@
-package com.poulastaa.setup.presentation.pic_genre.component
+package com.poulastaa.setup.presentation.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -16,11 +17,13 @@ import com.poulastaa.core.presentation.designsystem.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PigGenreTopBar() {
+internal fun PigScreenTopBar(
+    @StringRes title: Int,
+) {
     TopAppBar(
         title = {
             Text(
-                text = stringResource(R.string.pic_genre_title),
+                text = stringResource(title),
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -37,6 +40,6 @@ internal fun PigGenreTopBar() {
 @Composable
 private fun Preview() {
     AppThem {
-        PigGenreTopBar()
+        PigScreenTopBar(R.string.pic_genre_title)
     }
 }
