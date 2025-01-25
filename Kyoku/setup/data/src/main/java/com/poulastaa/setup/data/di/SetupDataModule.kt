@@ -2,6 +2,7 @@ package com.poulastaa.setup.data.di
 
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
+import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.setup.data.repository.import_playlist.OnlineFirstImportPlaylistRepository
 import com.poulastaa.setup.data.repository.import_playlist.UseCaseValidatePlaylistLink
@@ -71,9 +72,9 @@ object SetupDataModule {
     @ViewModelScoped
     fun provideSetArtistRepository(
         remote: RemoteSetArtistDatasource,
-//        local: LocalSetGenreDatasource,
+        local: LocalSetArtistDatasource,
     ): SetArtistRepository = OnlineFirstSetArtistRepository(
         remote = remote,
-//        local = local
+        local = local
     )
 }

@@ -60,4 +60,5 @@ private fun Routing.setup(repo: SetupRepository) {
 
     suggestArtist(repo)
     getArtistPoster()
+    upsertArtist(repo)
 }

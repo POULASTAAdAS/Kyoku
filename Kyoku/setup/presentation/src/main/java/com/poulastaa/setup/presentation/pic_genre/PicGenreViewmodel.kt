@@ -114,6 +114,12 @@ class PicGenreViewmodel @Inject constructor(
                         is Result.Success -> _uiEvent.send(PicGenreUiEvent.OnSuccess)
                     }
                 }
+
+                _state.update {
+                    it.copy(
+                        isMakingApiCall = false
+                    )
+                }
             }
         }
     }

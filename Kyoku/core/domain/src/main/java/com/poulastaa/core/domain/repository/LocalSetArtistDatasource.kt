@@ -1,5 +1,7 @@
 package com.poulastaa.core.domain.repository
 
-interface LocalSetArtistDatasource {
+import com.poulastaa.core.domain.model.DtoArtist
 
+interface LocalSetArtistDatasource {
+    suspend fun storeArtist(list: List<DtoArtist>)
 }

@@ -211,6 +211,20 @@ class ExposedLocalCoreDatasource(
         }
     }
 
+    override suspend fun getArtistFromDbArtist(list: List<DtoDBArtist>): List<DtoArtist> = coroutineScope {
+        list.map { artist ->
+            async {
+                val genre = getGenreOnArtistId(artist.id)
+                val country = getCountryOnArtistId(artist.id)
+
+                artist.toArtistDto(
+                    genre = genre,
+                    country = country
+                )
+            }
+        }.awaitAll().also { cache.setArtistById(it) }
+    }
+
     private suspend fun getGenreOnArtistId(artistId: ArtistId) =
         cache.cacheGenreIdByArtistId(artistId)?.let { cache.cacheGenreById(it) } ?: kyokuDbQuery {
             EntityGenre
@@ -346,12 +360,10 @@ class ExposedLocalCoreDatasource(
                     }
                 }.awaitAll()
             }
-        }.awaitAll().also { resultList ->
-            resultList.forEach { it ->
-                if (it.second.isNotEmpty()) {
-                    cache.setArtistById(it.second)
-                    cache.setArtistIdBySongId(it.first, it.second.map { it.id })
-                }
+        }.awaitAll().onEach { pair ->
+            if (pair.second.isNotEmpty()) {
+                cache.setArtistById(pair.second)
+                cache.setArtistIdBySongId(pair.first, pair.second.map { it.id })
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.poulastaa.core.domain.repository.setup
 
 import com.poulastaa.core.domain.model.*
+import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 
 interface LocalSetupDatasource {
@@ -32,4 +33,10 @@ interface LocalSetupDatasource {
         size: Int,
         query: String,
     ): List<DtoPrevArtist>
+
+    suspend fun upsertArtist(
+        user: DtoDBUser,
+        list: List<ArtistId>,
+        operation: DtoUpsertOperation,
+    ): List<DtoArtist>
 }

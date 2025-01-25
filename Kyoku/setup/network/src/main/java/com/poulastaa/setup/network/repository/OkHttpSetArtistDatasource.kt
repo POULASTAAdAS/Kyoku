@@ -4,8 +4,20 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.google.gson.Gson
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.map
+import com.poulastaa.core.domain.model.ArtistId
+import com.poulastaa.core.domain.model.DtoArtist
+import com.poulastaa.core.domain.model.EndPoints
+import com.poulastaa.core.network.ApiMethodType
+import com.poulastaa.core.network.mapper.toDtoArtist
+import com.poulastaa.core.network.model.UpsertArtistReq
+import com.poulastaa.core.network.model.UpsertOperation
+import com.poulastaa.core.network.req
 import com.poulastaa.setup.domain.model.DtoPrevArtist
 import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
+import com.poulastaa.setup.network.model.SaveArtistRes
 import com.poulastaa.setup.network.paging_source.SuggestArtistPagingSource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
@@ -27,5 +39,19 @@ class OkHttpSetArtistDatasource @Inject constructor(
             initialKey = 1,
             pagingSourceFactory = { artist }
         ).flow
+    }
+
+    override suspend fun storeArtist(list: List<ArtistId>): Result<List<DtoArtist>, DataError.Network> {
+        val result = client.req<UpsertArtistReq, SaveArtistRes>(
+            route = EndPoints.UPSERTArtist.route,
+            method = ApiMethodType.POST,
+            body = UpsertArtistReq(
+                list = list,
+                operation = UpsertOperation.INSERT
+            ),
+            gson = gson
+        )
+
+        return result.map { res -> res.list.map { it.toDtoArtist() } }
     }
 }

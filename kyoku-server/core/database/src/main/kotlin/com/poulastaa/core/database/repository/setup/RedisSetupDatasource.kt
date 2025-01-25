@@ -2,6 +2,7 @@ package com.poulastaa.core.database.repository.setup
 
 import com.google.gson.Gson
 import com.poulastaa.core.database.mapper.toDtoPrevArtist
+import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoSong
@@ -169,4 +170,6 @@ class RedisSetupDatasource(
             pipeline.sync()
         }
     }
+
+    override fun cacheArtistById(list: List<ArtistId>): List<DtoArtist> = core.cacheArtistById(list)
 }

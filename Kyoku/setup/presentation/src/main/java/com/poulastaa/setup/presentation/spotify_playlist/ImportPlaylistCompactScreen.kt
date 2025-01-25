@@ -20,7 +20,6 @@ internal fun ImportPlaylistCompactScreen(
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
 
-
     ImportPlaylistScreenWrapper(
         modifier = Modifier.fillMaxWidth(.7f),
         state = state,

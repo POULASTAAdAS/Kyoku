@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.UiText
 import com.poulastaa.setup.domain.repository.set_artist.SetArtistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -84,7 +88,35 @@ class PicArtistViewmodel @Inject constructor(
                 if (!_state.value.isMinLimitReached || _state.value.isMakingApiCall) return
 
                 viewModelScope.launch {
-                    // todo: save artists
+                    when (val result = repo.storeArtist(_state.value.data)) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                    PicArtistUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_no_internet
+                                        )
+                                    )
+                                )
+
+                                else -> _uiEvent.send(
+                                    PicArtistUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
+                        }
+
+                        is Result.Success -> _uiEvent.send(PicArtistUiEvent.OnSuccess)
+                    }
+
+                    _state.update {
+                        it.copy(
+                            isMakingApiCall = false
+                        )
+                    }
                 }
             }
         }

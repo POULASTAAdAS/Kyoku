@@ -10,11 +10,11 @@ import com.poulastaa.core.database.entity.app.EntityArtist
 import com.poulastaa.core.database.entity.app.EntityGenre
 import com.poulastaa.core.database.entity.app.EntitySong
 import com.poulastaa.core.database.entity.user.EntityUser
+import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserGenre
-import com.poulastaa.core.database.mapper.toDtoPrevArtist
-import com.poulastaa.core.database.mapper.toGenreDto
-import com.poulastaa.core.database.mapper.toSongDto
+import com.poulastaa.core.database.mapper.*
 import com.poulastaa.core.domain.model.*
+import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
@@ -23,6 +23,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.not
 import java.text.SimpleDateFormat
@@ -182,7 +183,8 @@ class ExposedSetupDatasource(
         val notFound = list.map { it.id }.filter { id -> cache.none { it.id == id } }
 
         val dbGenre = async {
-            kyokuDbQuery {
+            if (notFound.isEmpty()) emptyList()
+            else kyokuDbQuery {
                 DaoGenre.find {
                     EntityGenre.id inList notFound
                 }.map { it.toGenreDto() }
@@ -193,7 +195,7 @@ class ExposedSetupDatasource(
             async {
                 when (genre.operation) {
                     DtoUpsertOperation.INSERT -> {
-                        val insert = async {
+                        val insertRelation = async {
                             userDbQuery {
                                 RelationEntityUserGenre.insertIgnore {
                                     it[userId] = user.id
@@ -202,7 +204,7 @@ class ExposedSetupDatasource(
                             } // todo set up cache if needed
                         }
 
-                        val update = async {
+                        val updatePopularity = async {
                             kyokuDbQuery {
                                 DaoGenre.find {
                                     EntityGenre.id eq genre.id
@@ -216,8 +218,8 @@ class ExposedSetupDatasource(
                         }
 
                         listOf(
-                            insert,
-                            update
+                            insertRelation,
+                            updatePopularity
                         ).awaitAll()
                     }
 
@@ -271,7 +273,73 @@ class ExposedSetupDatasource(
         return cache + dbArtist
     }
 
-    // as ids start from 1 we can calculate ids like this
+    override suspend fun upsertArtist(
+        user: DtoDBUser,
+        list: List<ArtistId>,
+        operation: DtoUpsertOperation,
+    ): List<DtoArtist> = coroutineScope {
+        val cache = cache.cacheArtistById(list)
+        val notFound = list.filter { id -> cache.none { it.id == id } }
+
+        val dbArtist = async {
+            if (notFound.isEmpty()) emptyList()
+            else {
+                kyokuDbQuery {
+                    DaoArtist.find {
+                        EntityArtist.id inList notFound
+                    }.map { it.toDbArtistDto() }
+                }.let {
+                    coreDB.getArtistFromDbArtist(it)
+                }
+            }
+        }
+
+        val op = async {
+            when (operation) {
+                DtoUpsertOperation.INSERT -> {
+                    val insertRelation = async {
+                        userDbQuery {
+                            RelationEntityUserArtist.batchInsert(
+                                data = list.map { user.id to it },
+                                body = { (userId, artistId) ->
+                                    this[RelationEntityUserArtist.userId] = userId
+                                    this[RelationEntityUserArtist.artistId] = artistId
+                                },
+                                ignore = true,
+                                shouldReturnGeneratedValues = false
+                            )
+                        }
+                    }
+
+                    val updatePopularity = async {
+                        kyokuDbQuery {
+                            DaoArtist.find {
+                                EntityArtist.id inList list
+                            }.map {
+                                it.popularity += 1
+                            }
+                        }
+                    }
+
+                    listOf(
+                        insertRelation,
+                        updatePopularity
+                    ).awaitAll()
+                }
+
+                DtoUpsertOperation.UPDATE -> TODO()
+                DtoUpsertOperation.DELETE -> TODO()
+            }
+        }
+
+        op.await()
+        val result = cache + dbArtist.await()
+
+        result
+    }
+
+
+    @Suppress("UNCHECKED_CAST") // as ids start from 1 we can calculate ids like this
     private fun <T> calculateIdList(page: Int, size: Int): List<T> = (if (page == 1) (page..size).toList() else
         (size * (page - 1) + (page - (page - 1))..size * page).toList()) as List<T>
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.core.domain.repository.setup
 
+import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoSong
@@ -21,4 +22,7 @@ interface LocalSetupCacheDatasource {
     fun cachePrevArtistByName(query: String, size: Int): List<DtoPrevArtist>
 
     fun setPrevArtistById(list: List<DtoPrevArtist>)
-    fun setPrevArtistIdByName(list: Map<String, ArtistId>)}
+    fun setPrevArtistIdByName(list: Map<String, ArtistId>)
+
+    fun cacheArtistById(list: List<ArtistId>): List<DtoArtist>
+}

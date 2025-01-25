@@ -1,6 +1,7 @@
 package com.poulastaa.user.data.repository
 
 import com.poulastaa.core.domain.model.*
+import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import com.poulastaa.user.domain.repository.SetupRepository
@@ -44,4 +45,13 @@ class SetupRepositoryService(
         size: Int,
         query: String,
     ): List<DtoPrevArtist> = db.getPagingArtist(page, size, query)
+
+    override suspend fun upsertArtist(
+        userPayload: ReqUserPayload,
+        list: List<ArtistId>,
+        operation: DtoUpsertOperation,
+    ): List<DtoArtist> {
+        val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return emptyList()
+        return db.upsertArtist(user, list, operation)
+    }
 }
