@@ -175,7 +175,7 @@ object SQLDbManager {
     private fun updateArtistPopularityOnceADay() {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
-                delay(12 * 60 * 60 * 1000) // sleep for 12 hours
+                delay(12 * 60 * 60 * 1000) // wait for 12 hours
 
                 // update artist popularity
                 val artist = kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
