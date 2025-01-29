@@ -20,7 +20,8 @@ storage {
   driverClassName = "com.mysql.cj.jdbc.Driver"
 
   userJdbcURL = "your jdbc url"
-  JdbcURL = "your jdbc url"
+  kyokuJdbcURL = your jdbc url"
+  genreArtistShard = "your jdbc url"
 }
 
 cache {
@@ -32,4 +33,9 @@ cache {
 session {
   encryptionKey = "your session encryption key"
   secretKey = "your secret key"
+}
+
+spotify{
+  clientId = "your client id"
+  clientSecret = "your client secret"
 }
