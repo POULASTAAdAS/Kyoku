@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -46,12 +45,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.SadIcon
 import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -72,6 +73,7 @@ fun <T : Any> PicItemCompactScreen(
     isMakingApiCall: Boolean,
     data: LazyPagingItems<T>,
     contentPadding: Dp = MaterialTheme.dimens.small1,
+    itemLoadingContent: @Composable (searchHeight: Dp) -> Unit = {},
     itemContent: @Composable LazyGridItemScope.(item: T) -> Unit,
     onFloatingActionButtonClick: () -> Unit,
     onQueryChange: (data: String) -> Unit,
@@ -105,20 +107,30 @@ fun <T : Any> PicItemCompactScreen(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AnimatedContent(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    targetState = data.itemCount == 0
-                ) { state ->
-                    when (state) {
-                        true -> CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .align(Alignment.Center)
-                        )
-
-                        false -> PicScreenItemList(
+                    modifier = Modifier.fillMaxSize(),
+                    targetState = data.loadState.refresh
+                ) { loadingState ->
+                    when (loadingState) {
+                        is LoadState.Error -> Column(
                             modifier = Modifier
                                 .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = SadIcon,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(.6f),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        LoadState.Loading -> itemLoadingContent(searchHeight)
+
+                        is LoadState.NotLoading -> PicScreenItemList(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .align(Alignment.Center),
                             searchBarHeight = searchHeight,
                             contentPadding = contentPadding,
                             gridSize = gridSize,

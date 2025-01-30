@@ -17,11 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,12 +39,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.AppThem
 import com.poulastaa.core.presentation.designsystem.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.SadIcon
 import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
@@ -66,6 +67,7 @@ fun <T : Any> PicItemExtendedScreen(
     isMakingApiCall: Boolean,
     data: LazyPagingItems<T>,
     contentPadding: Dp = MaterialTheme.dimens.small1,
+    itemLoadingContent: @Composable () -> Unit = {},
     itemContent: @Composable LazyGridItemScope.(item: T) -> Unit,
     onFloatingActionButtonClick: () -> Unit,
     onQueryChange: (data: String) -> Unit,
@@ -147,19 +149,26 @@ fun <T : Any> PicItemExtendedScreen(
                             color = MaterialTheme.colorScheme.primary,
                             shape = MaterialTheme.shapes.extraSmall
                         ),
-                    targetState = data.itemCount == 0
-                ) { state ->
-                    when (state) {
-                        true -> Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                    targetState = data.loadState.refresh
+                ) { loadState ->
+                    when (loadState) {
+                        is LoadState.Error -> Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(80.dp)
+                            Icon(
+                                imageVector = SadIcon,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(.6f),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
 
-                        false -> PicScreenItemList(
+                        LoadState.Loading -> itemLoadingContent()
+
+                        is LoadState.NotLoading -> PicScreenItemList(
                             modifier = Modifier.fillMaxSize(),
                             searchBarHeight = 0.dp,
                             contentPadding = contentPadding,

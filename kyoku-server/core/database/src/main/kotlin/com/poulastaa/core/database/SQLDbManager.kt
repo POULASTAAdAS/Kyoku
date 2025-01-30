@@ -77,7 +77,7 @@ object SQLDbManager {
             addLogger(StdOutSqlLogger)
         }
         transaction(GENRE_ARTIST_SHARD_DB) {
-//            createGenreArtistShardTables() // TODO temp comment as takes to much time to start
+            createGenreArtistShardTables()
             addLogger(StdOutSqlLogger)
         }
 

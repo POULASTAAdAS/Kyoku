@@ -165,4 +165,5 @@
     <string name="bdate_label">DD-MM-YYYY</string>
     <string name="bdate_title">Set your birthday</string>
     <string name="genre_label">Genre</string>
+    <string name="end_of_list">End of list.</string>
 </resources>

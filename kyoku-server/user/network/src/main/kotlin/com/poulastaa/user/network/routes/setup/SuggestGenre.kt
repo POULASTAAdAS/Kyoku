@@ -26,13 +26,6 @@ fun Route.suggestGenre(
                 if (size < 1) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
                 if (size > 20) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                println(page)
-                println(page)
-                println(page)
-                println(page)
-                println(page)
-                println(page)
-
                 call.getReqUserPayload()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 

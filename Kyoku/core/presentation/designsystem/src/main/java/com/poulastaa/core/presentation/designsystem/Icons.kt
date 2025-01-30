@@ -10,6 +10,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
@@ -255,3 +256,7 @@ val SongIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_music_note)
 
+
+val RetryIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Refresh
