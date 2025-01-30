@@ -23,8 +23,15 @@ fun Route.suggestGenre(
                 val size = call.parameters["size"]?.toInt()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                if (size <= 0) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
-                if (size >= 21) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+                if (size < 1) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+                if (size > 20) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+
+                println(page)
+                println(page)
+                println(page)
+                println(page)
+                println(page)
+                println(page)
 
                 call.getReqUserPayload()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)

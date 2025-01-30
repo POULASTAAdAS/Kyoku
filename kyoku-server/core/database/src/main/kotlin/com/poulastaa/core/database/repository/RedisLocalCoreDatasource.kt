@@ -18,7 +18,7 @@ class RedisLocalCoreDatasource(
         setSingleValueWithExp(Group.USER, "${type.name}:$key", value)
 
     // playlist
-    override fun setPlaylist(playlistDto: DtoPlaylist) =
+    override fun setPlaylistById(playlistDto: DtoPlaylist) =
         setSingleValueWithExp(Group.PLAYLIST, playlistDto.id, playlistDto)
 
 
@@ -245,14 +245,14 @@ class RedisLocalCoreDatasource(
         jedis.get("${group.name}:$key")
     }?.toLong()
 
-    private inline fun <T, reified V> cacheMultipleValue(group: Group, key: List<T>) = redisPool.resource.use { jedis ->
-        jedis.mget(*key.map { "${group.name}:$it" }.toTypedArray())
+    private inline fun <T, reified V> cacheMultipleValue(group: Group, keys: List<T>) = redisPool.resource.use { jedis ->
+        jedis.mget(*keys.map { "${group.name}:$it" }.toTypedArray())
             .mapNotNull { it }
             .map { gson.fromJson(it, V::class.java) }
     }
 
-    private fun <T> cacheMultipleValue(group: Group, key: List<T>) = redisPool.resource.use { jedis ->
-        key.map {
+    private fun <T> cacheMultipleValue(group: Group, keys: List<T>) = redisPool.resource.use { jedis ->
+        keys.map {
             it to jedis.get("${group.name}:$it")?.toLong()
         }.mapNotNull {
             if (it.second != null) it.first to it.second!!

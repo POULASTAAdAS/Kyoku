@@ -33,7 +33,8 @@ class OkHttpSetGenreDatasource @Inject constructor(
 
         return Pager(
             config = PagingConfig(
-                pageSize = 10,
+                pageSize = 15,
+                initialLoadSize = 15
             ),
             initialKey = 1,
             pagingSourceFactory = { genre }
@@ -45,12 +46,10 @@ class OkHttpSetGenreDatasource @Inject constructor(
             route = EndPoints.UPSERTGenre.route,
             method = ApiMethodType.POST,
             body = UpsertGenreReq(
-                list = list.map {
-                    UpsertReq(
-                        id = it,
-                        operation = UpsertOperation.INSERT
-                    )
-                }
+                data = UpsertReq(
+                    list = list,
+                    operation = UpsertOperation.INSERT
+                )
             ),
             gson = gson
         )

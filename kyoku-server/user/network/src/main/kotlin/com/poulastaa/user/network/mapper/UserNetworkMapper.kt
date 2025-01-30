@@ -3,6 +3,7 @@ package com.poulastaa.user.network.mapper
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoUpsert
+import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.network.mapper.toDtoUpsertOperation
 import com.poulastaa.core.network.mapper.toResponseGenre
@@ -16,7 +17,12 @@ fun List<DtoGenre>.toSuggestGenreDto() = SuggestedGenreRes(
 )
 
 fun UpsertReq<GenreId>.toDtoUpsertGenre() = DtoUpsert<GenreId>(
-    id = this.id,
+    idList = this.list,
+    operation = this.operation.toDtoUpsertOperation()
+)
+
+fun UpsertReq<ArtistId>.toDtoUpsertArtist() = DtoUpsert<ArtistId>(
+    idList = this.list,
     operation = this.operation.toDtoUpsertOperation()
 )
 

@@ -83,7 +83,6 @@ class AuthenticationService(
                 )
             }
 
-            // todo check if user have any saved genre or artist
             else -> {
                 if (!isGenre) return@coroutineScope AuthResponseDto(
                     status = AuthResponseStatusDto.USER_FOUND_SET_GENRE,

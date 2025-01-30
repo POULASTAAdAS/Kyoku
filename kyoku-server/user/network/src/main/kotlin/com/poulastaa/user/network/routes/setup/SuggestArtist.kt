@@ -24,10 +24,10 @@ fun Route.suggestArtist(repo: SetupRepository) {
                 if (size <= 0) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
                 if (size >= 50) return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                call.getReqUserPayload()
+                val payload = call.getReqUserPayload()
                     ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                val result = repo.getArtist(page, size, query).toSuggestedArtistRes()
+                val result = repo.getArtist(page, size, query, payload).toSuggestedArtistRes()
 
                 call.respond(
                     message = result,

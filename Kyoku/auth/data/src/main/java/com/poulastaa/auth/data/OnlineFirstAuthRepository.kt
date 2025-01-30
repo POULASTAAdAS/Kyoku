@@ -9,6 +9,9 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.repository.DatastoreRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.net.CookieManager
 import javax.inject.Inject
 
@@ -71,17 +74,22 @@ class OnlineFirstAuthRepository @Inject constructor(
         ) {
             val cookie = cookieManager.cookieStore.cookies.firstOrNull()?.toString()
                 ?: return Result.Error(DataError.Network.SERVER_ERROR)
-            ds.storeTokenOrCookie(cookie)
-
-            ds.storeLocalUser(result.data.user)
-            when (result.data.status) {
-                AuthStatus.CREATED -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
-                AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> ds.storeSignInState(SavedScreen.HOME)
-                AuthStatus.USER_FOUND_STORE_B_DATE -> ds.storeSignInState(SavedScreen.SET_B_DATE)
-                AuthStatus.USER_FOUND_SET_GENRE -> ds.storeSignInState(SavedScreen.PIC_GENRE)
-                AuthStatus.USER_FOUND_SET_ARTIST -> ds.storeSignInState(SavedScreen.PIC_ARTIST)
-                else -> Unit
+            val screen = when (result.data.status) {
+                AuthStatus.CREATED -> SavedScreen.IMPORT_SPOTIFY_PLAYLIST
+                AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> SavedScreen.HOME
+                AuthStatus.USER_FOUND_STORE_B_DATE -> SavedScreen.SET_B_DATE
+                AuthStatus.USER_FOUND_SET_GENRE -> SavedScreen.PIC_GENRE
+                AuthStatus.USER_FOUND_SET_ARTIST -> SavedScreen.PIC_ARTIST
+                else -> return result.map { it.status }
             }
+
+            coroutineScope {
+                listOf(
+                    async { ds.storeTokenOrCookie(cookie) },
+                    async { ds.storeLocalUser(result.data.user) },
+                    async { ds.storeSignInState(screen) }
+                )
+            }.awaitAll()
         }
 
         return result.map { it.status }

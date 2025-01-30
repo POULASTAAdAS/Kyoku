@@ -1,14 +1,13 @@
 package com.poulastaa.core.database.repository.setup
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
+import com.poulastaa.core.database.SQLDbManager.shardGenreArtistDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
 import com.poulastaa.core.database.dao.DaoArtist
 import com.poulastaa.core.database.dao.DaoGenre
 import com.poulastaa.core.database.dao.DaoSong
 import com.poulastaa.core.database.dao.DaoUser
-import com.poulastaa.core.database.entity.app.EntityArtist
-import com.poulastaa.core.database.entity.app.EntityGenre
-import com.poulastaa.core.database.entity.app.EntitySong
+import com.poulastaa.core.database.entity.app.*
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserGenre
@@ -22,13 +21,11 @@ import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.batchInsert
-import org.jetbrains.exposed.sql.insertIgnore
-import org.jetbrains.exposed.sql.not
+import org.jetbrains.exposed.sql.*
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.max
 
 class ExposedSetupDatasource(
     private val coreDB: LocalCoreDatasource,
@@ -147,7 +144,7 @@ class ExposedSetupDatasource(
             if (cache.size >= size) return cache
 
             val limit = size - cache.size
-            val idList = list - cache.map { it.id }
+            val idList = list.filter { id -> cache.map { it.id }.none { it == id } }
 
             val dbGenre = kyokuDbQuery {
                 DaoGenre.find {
@@ -174,13 +171,12 @@ class ExposedSetupDatasource(
         return cache + dbGenre
     }
 
-
     override suspend fun upsertGenre(
         user: DtoDBUser,
-        list: List<DtoUpsert<GenreId>>,
+        data: DtoUpsert<GenreId>,
     ): List<DtoGenre> = coroutineScope {
-        val cache = cache.cacheGenreById(list.map { it.id })
-        val notFound = list.map { it.id }.filter { id -> cache.none { it.id == id } }
+        val cache = cache.cacheGenreById(data.idList)
+        val notFound = data.idList.filter { id -> cache.none { it.id == id } }
 
         val dbGenre = async {
             if (notFound.isEmpty()) emptyList()
@@ -191,45 +187,51 @@ class ExposedSetupDatasource(
             }
         }
 
-        val op = list.map { genre ->
-            async {
-                when (genre.operation) {
-                    DtoUpsertOperation.INSERT -> {
-                        val insertRelation = async {
-                            userDbQuery {
-                                RelationEntityUserGenre.insertIgnore {
-                                    it[userId] = user.id
-                                    it[genreId] = genre.id.toLong() // todo change table to int
-                                }
-                            } // todo set up cache if needed
-                        }
-
-                        val updatePopularity = async {
-                            kyokuDbQuery {
-                                DaoGenre.find {
-                                    EntityGenre.id eq genre.id
-                                }.firstOrNull()?.let {
-                                    it.popularity += 1
-                                    it.toGenreDto()
-                                }
-                            }?.also {
-                                this@ExposedSetupDatasource.cache.setGenreById(listOf(it))
+        val op = async {
+            when (data.operation) {
+                DtoUpsertOperation.INSERT -> {
+                    val insertRelation = async {
+                        userDbQuery {
+                            RelationEntityUserGenre.batchInsert(
+                                data = data.idList,
+                                ignore = true,
+                                shouldReturnGeneratedValues = false
+                            ) {
+                                this[RelationEntityUserGenre.genreId] = it
+                                this[RelationEntityUserGenre.userId] = user.id
                             }
                         }
-
-                        listOf(
-                            insertRelation,
-                            updatePopularity
-                        ).awaitAll()
                     }
 
-                    DtoUpsertOperation.UPDATE -> TODO()
-                    DtoUpsertOperation.DELETE -> TODO()
+                    val updatePopularity = async {
+                        kyokuDbQuery {
+                            DaoGenre.find {
+                                EntityGenre.id inList data.idList
+                            }.map {
+                                it.popularity += 1
+                                it.toGenreDto()
+                            }
+                        }.also { list ->
+                            this@ExposedSetupDatasource.cache.setGenreById(list)
+                            this@ExposedSetupDatasource.cache.setPrevGenreByUserId(
+                                userId = user.id,
+                                data = list.map { it.toDtoPrevGenre() }
+                            )
+                        }
+                    }
+
+                    listOf(
+                        insertRelation,
+                        updatePopularity
+                    ).awaitAll()
                 }
+
+                DtoUpsertOperation.UPDATE -> TODO()
+                DtoUpsertOperation.DELETE -> TODO()
             }
         }
 
-        op.awaitAll()
+        op.await()
         val result = cache + dbGenre.await()
 
         result
@@ -239,47 +241,129 @@ class ExposedSetupDatasource(
         page: Int,
         size: Int,
         query: String,
-    ): List<DtoPrevArtist> {
-        if (query.isBlank()) {
-            val idList = calculateIdList<Long>(page, size)
-            val cache = cache.cachePrevArtistById(idList)
+        userId: Long,
+    ): List<DtoPrevArtist> = coroutineScope {
+        //  get user selected genre
+        val genre = cache.cachePrevGenreByUserId(userId).ifEmpty {
+            val genreIds = userDbQuery {
+                RelationEntityUserGenre
+                    .slice(RelationEntityUserGenre.genreId)
+                    .select {
+                        RelationEntityUserGenre.userId eq userId
+                    }.map {
+                        it[RelationEntityUserGenre.genreId]
+                    }
+            }
 
-            if (cache.size >= size) return cache
+            val genre = cache.cacheGenreById(genreIds).map { it.toDtoPrevGenre() }
+            if (genreIds.size == genre.size) return@ifEmpty genre
 
-            val limit = size - cache.size
-            val list = idList.filterNot { cache.map { it.id }.any { id -> id == it } }
+            val notFoundGenre = genreIds.filter { id -> genre.map { dto -> dto.id }.none { id == it } }
+            genre + kyokuDbQuery {
+                DaoGenre.find {
+                    EntityGenre.id inList notFoundGenre
+                }.map { it.toGenreDto().toDtoPrevGenre() }
+            }.also { cache.setPrevGenreByUserId(userId, it) }
+        }.ifEmpty { return@coroutineScope emptyList() }
 
+        query.ifBlank {
+            //  get artist according to genre and popularity
+            val limit = max(size / genre.size, 1) //  calculate number of artist for each genre
+            val genreArtistIds = genre.map { dto ->
+                async {
+                    shardGenreArtistDbQuery {
+                        try {
+                            val table = ShardRelationEntityGenreTypeArtist(dto.name)
+
+                            table
+                                .slice(
+                                    table.artistId,
+                                    table.popularity
+                                )
+                                .select {
+                                    table.genreId eq dto.id
+                                }.orderBy(table.popularity to SortOrder.DESC)
+                                .limit(limit, page.offset(limit))
+                                .map {
+                                    it[table.artistId]
+                                }
+                        } catch (_: Exception) {
+                            emptyList()
+                        }
+                    }
+                }
+            }.awaitAll().flatten()
+
+            val genreArtist = cache.cacheArtistById(genreArtistIds)
+                .map { it.toDtoPrevArtist() }.ifEmpty {
+                    cache.cachePrevArtistById(genreArtistIds).ifEmpty {
+                        kyokuDbQuery {
+                            DaoArtist.find {
+                                EntityArtist.id inList genreArtistIds
+                            }.map { it.toDtoPrevArtist() }
+                        }.also { cache.setPrevArtistById(it) }
+                    }
+                }
+
+            if (genreArtist.size >= size) return@coroutineScope genreArtist
+
+            val newLimit = size - genreArtist.size
             val dbArtist = kyokuDbQuery {
-                DaoArtist.find {
-                    EntityArtist.id inList list
-                }.limit(limit).map { it.toDtoPrevArtist() }
-            }.also { this.cache.setPrevArtistById(it) }
+                EntityArtist
+                    .join(
+                        otherTable = RelationEntityArtistGenre,
+                        joinType = JoinType.LEFT,
+                        onColumn = EntityArtist.id,
+                        otherColumn = RelationEntityArtistGenre.artistId,
+                        additionalConstraint = {
+                            RelationEntityArtistGenre.artistId eq EntityArtist.id as Column<*>
+                        }
+                    )
+                    .slice(
+                        EntityArtist.id,
+                        EntityArtist.name,
+                        EntityArtist.coverImage,
+                        EntityArtist.popularity
+                    )
+                    .select {
+                        RelationEntityArtistGenre.genreId notInList genre.map { it.id } or
+                                (RelationEntityArtistGenre.genreId.isNull())
+                    }.orderBy(EntityArtist.popularity to SortOrder.DESC)
+                    .limit(newLimit, page.offset(newLimit))
+                    .map {
+                        DtoPrevArtist(
+                            id = it[EntityArtist.id].value,
+                            name = it[EntityArtist.name],
+                            rawCover = it[EntityArtist.coverImage]
+                        )
+                    }
+            }.also { cache.setPrevArtistById(it) }
 
-            return (cache + dbArtist).sortedBy { it.id }.distinctBy { it.id }
+            return@coroutineScope genreArtist + dbArtist
         }
 
         val cache = cache.cachePrevArtistByName(query, size)
-        if (cache.size >= size) return cache
+        if (cache.size >= size) return@coroutineScope cache
 
         val limit = size - cache.size
-
         val dbArtist = kyokuDbQuery {
             DaoArtist.find {
                 EntityArtist.name like "$query%" and
                         (EntityArtist.name notInList cache.map { it.name })
-            }.limit(limit).map { it.toDtoPrevArtist() }
-        }.also { this.cache.setPrevArtistIdByName(it.associate { it.name to it.id }) }
+            }.orderBy(EntityArtist.popularity to SortOrder.DESC)
+                .limit(limit, page.offset(limit))
+                .map { it.toDtoPrevArtist() }
+        }.also { this@ExposedSetupDatasource.cache.setPrevArtistIdByName(it.associate { it.name to it.id }) }
 
-        return cache + dbArtist
+        cache + dbArtist
     }
 
     override suspend fun upsertArtist(
         user: DtoDBUser,
-        list: List<ArtistId>,
-        operation: DtoUpsertOperation,
+        data: DtoUpsert<ArtistId>,
     ): List<DtoArtist> = coroutineScope {
-        val cache = cache.cacheArtistById(list)
-        val notFound = list.filter { id -> cache.none { it.id == id } }
+        val cache = cache.cacheArtistById(data.idList)
+        val notFound = data.idList.filter { id -> cache.none { it.id == id } }
 
         val dbArtist = async {
             if (notFound.isEmpty()) emptyList()
@@ -295,12 +379,12 @@ class ExposedSetupDatasource(
         }
 
         val op = async {
-            when (operation) {
+            when (data.operation) {
                 DtoUpsertOperation.INSERT -> {
                     val insertRelation = async {
                         userDbQuery {
                             RelationEntityUserArtist.batchInsert(
-                                data = list.map { user.id to it },
+                                data = data.idList.map { user.id to it },
                                 body = { (userId, artistId) ->
                                     this[RelationEntityUserArtist.userId] = userId
                                     this[RelationEntityUserArtist.artistId] = artistId
@@ -314,7 +398,7 @@ class ExposedSetupDatasource(
                     val updatePopularity = async {
                         kyokuDbQuery {
                             DaoArtist.find {
-                                EntityArtist.id inList list
+                                EntityArtist.id inList data.idList
                             }.map {
                                 it.popularity += 1
                             }
@@ -338,8 +422,9 @@ class ExposedSetupDatasource(
         result
     }
 
-
     @Suppress("UNCHECKED_CAST") // as ids start from 1 we can calculate ids like this
     private fun <T> calculateIdList(page: Int, size: Int): List<T> = (if (page == 1) (page..size).toList() else
         (size * (page - 1) + (page - (page - 1))..size * page).toList()) as List<T>
+
+    private fun Int.offset(limit: Int) = if (this == 1) 0L else (this * limit).toLong()
 }

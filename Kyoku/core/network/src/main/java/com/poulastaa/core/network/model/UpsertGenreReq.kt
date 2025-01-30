@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpsertGenreReq(
-    val list: List<UpsertReq<Int>>,
+    val data: UpsertReq<Int>,
 )

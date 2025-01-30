@@ -2,10 +2,7 @@ package com.poulastaa.core.database.repository.setup
 
 import com.google.gson.Gson
 import com.poulastaa.core.database.mapper.toDtoPrevArtist
-import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoGenre
-import com.poulastaa.core.domain.model.DtoPrevArtist
-import com.poulastaa.core.domain.model.DtoSong
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
@@ -74,9 +71,9 @@ class RedisSetupDatasource(
 
     override fun setSongById(list: List<DtoSong>) = core.setSongById(list)
 
-    override fun cacheGenreById(id: List<GenreId>): List<DtoGenre> {
-        if (id.isEmpty()) return emptyList()
-        return core.cacheGenreById(id)
+    override fun cacheGenreById(list: List<GenreId>): List<DtoGenre> {
+        if (list.isEmpty()) return emptyList()
+        return core.cacheGenreById(list)
     }
 
     override fun cacheGenreByName(query: String, size: Int): List<DtoGenre> {
@@ -106,13 +103,39 @@ class RedisSetupDatasource(
         }
     }
 
-    override fun cachePrevArtistById(id: List<ArtistId>): List<DtoPrevArtist> {
-        if (id.isEmpty()) return emptyList()
-        val fromDtoArtist = core.cacheArtistById(id).map { it.toDtoPrevArtist() }
+    override fun cachePrevGenreByUserId(userId: Long): List<DtoPrevGenre> {
+        redisPool.resource.use { jedis ->
+            val jsonList = jedis.lrange("${Group.RELATION_PREV_GENRE_USER}:$userId", 0, -1)
+            return jsonList.map { gson.fromJson(it, DtoPrevGenre::class.java) }
+        }
+    }
 
-        if (fromDtoArtist.size == id.size) return fromDtoArtist
+    override fun setPrevGenreByUserId(
+        userId: Long,
+        data: List<DtoPrevGenre>,
+    ) { // todo move to core cache if needed
+        redisPool.resource.use { jedis ->
+            val pipeline = jedis.pipelined()
+            val key = "${Group.RELATION_PREV_GENRE_USER}:$userId"
 
-        val notFoundIdList = id.filterNot { artistId -> fromDtoArtist.any { it.id == artistId } }
+            pipeline.del(key)
+            data.forEach { genre ->
+                pipeline.rpush(key, gson.toJson(genre))
+            }
+
+            pipeline.expire(key, Group.RELATION_PREV_GENRE_USER.expTime)
+
+            pipeline.sync()
+        }
+    }
+
+    override fun cachePrevArtistById(list: List<ArtistId>): List<DtoPrevArtist> {
+        if (list.isEmpty()) return emptyList()
+        val fromDtoArtist = core.cacheArtistById(list).map { it.toDtoPrevArtist() }
+
+        if (fromDtoArtist.size == list.size) return fromDtoArtist
+
+        val notFoundIdList = list.filterNot { artistId -> fromDtoArtist.any { it.id == artistId } }
 
         val cache = redisPool.resource.use { jedis ->
             jedis.mget(*notFoundIdList.map { "${Group.PREV_ARTIST}:${it}" }.toTypedArray())

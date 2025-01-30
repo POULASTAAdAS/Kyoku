@@ -62,7 +62,7 @@ class ExposedLocalCoreDatasource(
             }
         }
         val playlist = dbPlaylist.toPlaylistDto()
-        cache.setPlaylist(playlist)
+        cache.setPlaylistById(playlist)
 
         return playlist
     }

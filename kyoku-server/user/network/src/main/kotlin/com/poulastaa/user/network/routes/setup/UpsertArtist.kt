@@ -6,6 +6,7 @@ import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.core.network.mapper.toDtoUpsertOperation
 import com.poulastaa.core.network.mapper.toResponseArtist
 import com.poulastaa.user.domain.repository.SetupRepository
+import com.poulastaa.user.network.mapper.toDtoUpsertArtist
 import com.poulastaa.user.network.model.SaveArtistRes
 import com.poulastaa.user.network.model.UpsertArtistReq
 import io.ktor.http.*
@@ -26,8 +27,7 @@ fun Route.upsertArtist(repo: SetupRepository) {
 
                 val result = repo.upsertArtist(
                     userPayload = payload,
-                    list = req.list,
-                    operation = req.operation.toDtoUpsertOperation()
+                    req = req.data.toDtoUpsertArtist()
                 )
 
                 call.respond(

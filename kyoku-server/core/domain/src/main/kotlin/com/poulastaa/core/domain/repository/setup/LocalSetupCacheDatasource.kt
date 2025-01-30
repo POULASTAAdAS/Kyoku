@@ -1,9 +1,6 @@
 package com.poulastaa.core.domain.repository.setup
 
-import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoGenre
-import com.poulastaa.core.domain.model.DtoPrevArtist
-import com.poulastaa.core.domain.model.DtoSong
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 
@@ -12,13 +9,16 @@ interface LocalSetupCacheDatasource {
     fun setSongIdByTitle(list: List<DtoSong>)
     fun setSongById(list: List<DtoSong>)
 
-    fun cacheGenreById(id: List<GenreId>): List<DtoGenre>
+    fun cacheGenreById(list: List<GenreId>): List<DtoGenre>
     fun cacheGenreByName(query: String, size: Int): List<DtoGenre>
 
     fun setGenreById(list: List<DtoGenre>)
     fun setGenreIdByName(list: Map<String, GenreId>)
 
-    fun cachePrevArtistById(id: List<ArtistId>): List<DtoPrevArtist>
+    fun cachePrevGenreByUserId(userId: Long): List<DtoPrevGenre>
+    fun setPrevGenreByUserId(userId: Long, data: List<DtoPrevGenre>)
+
+    fun cachePrevArtistById(list: List<ArtistId>): List<DtoPrevArtist>
     fun cachePrevArtistByName(query: String, size: Int): List<DtoPrevArtist>
 
     fun setPrevArtistById(list: List<DtoPrevArtist>)

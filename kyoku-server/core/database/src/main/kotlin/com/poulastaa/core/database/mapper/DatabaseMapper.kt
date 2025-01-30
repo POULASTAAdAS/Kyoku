@@ -79,3 +79,8 @@ fun DtoArtist.toDtoPrevArtist() = DtoPrevArtist(
     name = this.name,
     rawCover = this.coverImage
 )
+
+internal fun DtoGenre.toDtoPrevGenre() = DtoPrevGenre(
+    id = this.id,
+    name = this.name
+)

@@ -11,6 +11,6 @@ enum class UpsertOperation {
 
 @Serializable
 data class UpsertReq<T>(
-    val id: T,
+    val list: List<T>,
     val operation: UpsertOperation,
 )

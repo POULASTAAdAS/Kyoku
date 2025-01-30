@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS UserSavedArtist
 CREATE TABLE IF NOT EXISTS UserSavedGenre
 (
     userId  BIGINT REFERENCES `User` (id) ON DELETE CASCADE,
-    genreId BIGINT NOT NULL,
+    genreId INT NOT NULL,
     PRIMARY KEY (userId, genreId)
 );
 

@@ -7,7 +7,7 @@ interface LocalCoreCacheDatasource {
     fun cacheUsersByEmail(email: String, type: UserType): DtoDBUser?
     fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser)
 
-    fun setPlaylist(playlistDto: DtoPlaylist)
+    fun setPlaylistById(playlistDto: DtoPlaylist)
 
     fun setSongById(song: DtoSong)
     fun setSongById(list: List<DtoSong>)

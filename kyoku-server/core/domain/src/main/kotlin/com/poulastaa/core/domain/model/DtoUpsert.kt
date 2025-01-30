@@ -7,6 +7,6 @@ enum class DtoUpsertOperation {
 }
 
 data class DtoUpsert<T>(
-    val id: T,
+    val idList: List<T>,
     val operation: DtoUpsertOperation,
 )

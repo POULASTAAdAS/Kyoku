@@ -34,24 +34,30 @@ class SetupRepositoryService(
 
     override suspend fun upsertGenre(
         userPayload: ReqUserPayload,
-        req: List<DtoUpsert<GenreId>>,
+        req: DtoUpsert<GenreId>,
     ): List<DtoGenre> {
+        if (req.idList.isEmpty()) return emptyList()
+
         val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return emptyList()
         return db.upsertGenre(user, req)
     }
 
     override suspend fun getArtist(
-        page: Int,
-        size: Int,
+        page: Int, size: Int,
         query: String,
-    ): List<DtoPrevArtist> = db.getPagingArtist(page, size, query)
+        payload: ReqUserPayload,
+    ): List<DtoPrevArtist> {
+        val user = db.getUserByEmail(payload.email, payload.userType) ?: return emptyList()
+        return db.getPagingArtist(page, size, query, user.id)
+    }
 
     override suspend fun upsertArtist(
         userPayload: ReqUserPayload,
-        list: List<ArtistId>,
-        operation: DtoUpsertOperation,
+        req: DtoUpsert<ArtistId>,
     ): List<DtoArtist> {
+        if (req.idList.isEmpty()) return emptyList()
+
         val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return emptyList()
-        return db.upsertArtist(user, list, operation)
+        return db.upsertArtist(user, req)
     }
 }

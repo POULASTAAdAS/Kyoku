@@ -77,7 +77,7 @@ object SQLDbManager {
             addLogger(StdOutSqlLogger)
         }
         transaction(GENRE_ARTIST_SHARD_DB) {
-            createGenreArtistShardTables()
+//            createGenreArtistShardTables() // TODO temp comment as takes to much time to start
             addLogger(StdOutSqlLogger)
         }
 
@@ -169,6 +169,7 @@ object SQLDbManager {
                 }
             }.awaitAll()
         }
+
         updateArtistPopularityOnceADay()
     }
 

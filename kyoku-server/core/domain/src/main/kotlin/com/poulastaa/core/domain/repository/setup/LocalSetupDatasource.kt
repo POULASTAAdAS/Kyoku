@@ -25,18 +25,18 @@ interface LocalSetupDatasource {
 
     suspend fun upsertGenre(
         user: DtoDBUser,
-        list: List<DtoUpsert<GenreId>>,
+        data: DtoUpsert<GenreId>,
     ): List<DtoGenre>
 
     suspend fun getPagingArtist(
         page: Int,
         size: Int,
         query: String,
+        userId: Long,
     ): List<DtoPrevArtist>
 
     suspend fun upsertArtist(
         user: DtoDBUser,
-        list: List<ArtistId>,
-        operation: DtoUpsertOperation,
+        data: DtoUpsert<ArtistId>,
     ): List<DtoArtist>
 }
