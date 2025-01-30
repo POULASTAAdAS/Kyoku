@@ -7,16 +7,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -57,6 +62,7 @@ import com.poulastaa.core.presentation.designsystem.SearchIcon
 import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
+import com.poulastaa.setup.presentation.pic_artist.components.ArtistLoadingCard
 import com.poulastaa.setup.presentation.pic_genre.UiGenre
 import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
 import kotlinx.coroutines.flow.flowOf
@@ -227,6 +233,7 @@ fun <T : Any> PicItemCompactScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
@@ -251,6 +258,29 @@ private fun Preview() {
             isMinLimitReached = false,
             isMakingApiCall = false,
             data = mockLazyPagingItems,
+            itemLoadingContent = {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = it)
+                        .padding(MaterialTheme.dimens.small2)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center,
+                    maxItemsInEachRow = 3
+                ) {
+                    Spacer(Modifier.aspectRatio(6f))
+
+                    repeat(32) {
+                        ArtistLoadingCard(
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                    }
+                }
+            },
             itemContent = { item ->
                 GenreCard(
                     genre = item,

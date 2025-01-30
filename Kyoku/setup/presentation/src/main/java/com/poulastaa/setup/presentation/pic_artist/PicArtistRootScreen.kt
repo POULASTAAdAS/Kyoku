@@ -2,13 +2,20 @@ package com.poulastaa.setup.presentation.pic_artist
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,10 +31,10 @@ import com.poulastaa.core.presentation.ui.ObserveAsEvent
 import com.poulastaa.setup.presentation.components.PicItemCompactScreen
 import com.poulastaa.setup.presentation.components.PicItemExtendedScreen
 import com.poulastaa.setup.presentation.pic_artist.components.ArtistCard
-import com.poulastaa.setup.presentation.pic_genre.PicGenreUiAction
-import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
+import com.poulastaa.setup.presentation.pic_artist.components.ArtistLoadingCard
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun PicArtistRootScreen(
     viewmodel: PicArtistViewmodel = hiltViewModel(),
@@ -39,6 +46,7 @@ fun PicArtistRootScreen(
     val config = LocalConfiguration.current
 
     val windowSizeClass = calculateWindowSizeClass(activity)
+    val verticalScroll = rememberScrollState()
 
     ObserveAsEvent(viewmodel.event) { event ->
         when (event) {
@@ -65,12 +73,40 @@ fun PicArtistRootScreen(
                 isMakingApiCall = state.isMakingApiCall,
                 data = artist,
                 contentPadding = MaterialTheme.dimens.medium1,
+                itemLoadingContent = {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = it)
+                            .padding(horizontal = MaterialTheme.dimens.small2)
+                            .verticalScroll(verticalScroll),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Center,
+                        maxItemsInEachRow = 3
+                    ) {
+                        Spacer(Modifier.aspectRatio(6f))
+
+                        repeat(30) {
+                            ArtistLoadingCard(
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .weight(1f)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                },
                 itemContent = { item ->
                     ArtistCard(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
+                            viewmodel.onAction(
+                                PicArtistUiAction.OnArtistToggle(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
                         }
                     )
                 },
@@ -96,12 +132,40 @@ fun PicArtistRootScreen(
                 isMakingApiCall = state.isMakingApiCall,
                 data = artist,
                 contentPadding = MaterialTheme.dimens.medium1,
+                itemLoadingContent = {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = it)
+                            .padding(MaterialTheme.dimens.small2)
+                            .verticalScroll(verticalScroll),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Center,
+                        maxItemsInEachRow = 4
+                    ) {
+                        Spacer(Modifier.aspectRatio(8.5f))
+
+                        repeat(28) {
+                            ArtistLoadingCard(
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .weight(1f)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                },
                 itemContent = { item ->
                     ArtistCard(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
+                            viewmodel.onAction(
+                                PicArtistUiAction.OnArtistToggle(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
                         }
                     )
                 },
@@ -127,12 +191,39 @@ fun PicArtistRootScreen(
                 isMakingApiCall = state.isMakingApiCall,
                 data = artist,
                 contentPadding = MaterialTheme.dimens.medium1,
+                itemLoadingContent = {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.dimens.small2)
+                            .verticalScroll(verticalScroll),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Center,
+                        maxItemsInEachRow = 5
+                    ) {
+                        Spacer(Modifier.aspectRatio(10f))
+
+                        repeat(30) {
+                            ArtistLoadingCard(
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .weight(1f)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                },
                 itemContent = { item ->
                     ArtistCard(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
+                            viewmodel.onAction(
+                                PicArtistUiAction.OnArtistToggle(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
                         }
                     )
                 },
@@ -145,7 +236,7 @@ fun PicArtistRootScreen(
                 onClearClick = {
                     viewmodel.onAction(PicArtistUiAction.OnQueryChange(""))
                 }
-            ) else  PicItemExtendedScreen(
+            ) else PicItemExtendedScreen(
                 title = R.string.pic_artist_title,
                 lessSelected = R.string.less_artist_selected,
                 label = R.string.artist,
@@ -155,12 +246,39 @@ fun PicArtistRootScreen(
                 isMakingApiCall = state.isMakingApiCall,
                 data = artist,
                 contentPadding = MaterialTheme.dimens.medium1,
+                itemLoadingContent = {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.dimens.small2)
+                            .verticalScroll(verticalScroll),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Center,
+                        maxItemsInEachRow = 4
+                    ) {
+                        Spacer(Modifier.aspectRatio(9f))
+
+                        repeat(28) {
+                            ArtistLoadingCard(
+                                modifier = Modifier
+                                    .aspectRatio(1f)
+                                    .weight(1f)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+                },
                 itemContent = { item ->
                     ArtistCard(
                         modifier = Modifier.fillMaxSize(),
                         artist = item,
                         onClick = {
-                            viewmodel.onAction(PicArtistUiAction.OnArtistToggle(item.id,item.isSelected))
+                            viewmodel.onAction(
+                                PicArtistUiAction.OnArtistToggle(
+                                    item.id,
+                                    item.isSelected
+                                )
+                            )
                         }
                     )
                 },

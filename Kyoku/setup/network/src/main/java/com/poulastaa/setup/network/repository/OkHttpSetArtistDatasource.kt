@@ -14,6 +14,7 @@ import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.mapper.toDtoArtist
 import com.poulastaa.core.network.model.UpsertArtistReq
 import com.poulastaa.core.network.model.UpsertOperation
+import com.poulastaa.core.network.model.UpsertReq
 import com.poulastaa.core.network.req
 import com.poulastaa.setup.domain.model.DtoPrevArtist
 import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
@@ -46,8 +47,10 @@ class OkHttpSetArtistDatasource @Inject constructor(
             route = EndPoints.UPSERTArtist.route,
             method = ApiMethodType.POST,
             body = UpsertArtistReq(
-                list = list,
-                operation = UpsertOperation.INSERT
+                data = UpsertReq(
+                    list = list,
+                    operation = UpsertOperation.INSERT
+                )
             ),
             gson = gson
         )
