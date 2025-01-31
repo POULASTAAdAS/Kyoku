@@ -1,0 +1,122 @@
+package com.poulastaa.kyoku.shardmanager.app.plugins
+
+import com.google.gson.Gson
+import com.poulastaa.kyoku.shardmanager.app.core.database.model.DatabasePayload
+import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createGenreArtistShardTables
+import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createSuggestionShardTables
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
+
+private var IS_INITIALIZED = false
+
+private lateinit var USER_DB: Database
+private lateinit var KYOKU_DB: Database
+private lateinit var GENRE_ARTIST_SHARD_DB: Database
+private lateinit var POPULAR_SONG_SHARD_DB: Database
+
+suspend fun <T> userDbQuery(block: suspend () -> T): T =
+    newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
+        block()
+    }
+
+suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
+    newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
+        block()
+    }
+
+suspend fun <T> shardGenreArtistDbQuery(block: suspend () -> T): T =
+    newSuspendedTransaction(context = Dispatchers.IO, db = GENRE_ARTIST_SHARD_DB) {
+        block()
+    }
+
+suspend fun <T> popularDbQuery(block: suspend () -> T): T =
+    newSuspendedTransaction(context = Dispatchers.IO, db = POPULAR_SONG_SHARD_DB) {
+        block()
+    }
+
+@Synchronized
+fun configureDatabase() {
+    if (IS_INITIALIZED) throw IllegalArgumentException("Database already initialized")
+    IS_INITIALIZED = true
+
+    val payload = getDatabasePayload()
+
+    USER_DB = Database.Companion.connect(
+        provideDatasource(
+            jdbcUrl = payload.kyokuUserUrl,
+            driverClass = payload.driverClassName
+        )
+    )
+
+    KYOKU_DB = Database.Companion.connect(
+        provideDatasource(
+            jdbcUrl = payload.kyokuUrl,
+            driverClass = payload.driverClassName,
+        )
+    )
+
+    GENRE_ARTIST_SHARD_DB = Database.Companion.connect(
+        provideDatasource(
+            jdbcUrl = payload.shardGenreArtistUrl,
+            driverClass = payload.driverClassName,
+        )
+    )
+
+    POPULAR_SONG_SHARD_DB = Database.Companion.connect(
+        provideDatasource(
+            jdbcUrl = payload.shardPopularSongUrl,
+            driverClass = payload.driverClassName,
+        )
+    )
+
+    transaction(USER_DB) {
+        addLogger(StdOutSqlLogger)
+    }
+    transaction(KYOKU_DB) {
+        addLogger(StdOutSqlLogger)
+    }
+    transaction(GENRE_ARTIST_SHARD_DB) {
+        createGenreArtistShardTables()
+        addLogger(StdOutSqlLogger)
+    }
+    transaction(POPULAR_SONG_SHARD_DB) {
+        createSuggestionShardTables()
+        addLogger(StdOutSqlLogger)
+    }
+}
+
+private fun provideDatasource(
+    driverClass: String,
+    jdbcUrl: String,
+    maximumPoolSize: Int = 15,
+) = HikariDataSource(
+    HikariConfig().apply {
+        driverClassName = driverClass
+        this.jdbcUrl = jdbcUrl
+        this.maximumPoolSize = maximumPoolSize
+        isAutoCommit = false
+        validate()
+    }
+)
+
+private fun getDatabasePayload(): DatabasePayload {
+    val gson = Gson()
+
+    val str = File("src/main/resources/res.json").readText()
+    val obj = gson.toJsonTree(str).asJsonObject
+
+    return DatabasePayload(
+        driverClassName = obj.get("driverClassName").asString,
+        kyokuUserUrl = obj.get("kyokuUserUrl").asString,
+        kyokuUrl = obj.get("kyokuUrl").asString,
+        shardGenreArtistUrl = obj.get("shardGenreArtistUrl").asString,
+        shardPopularSongUrl = obj.get("shardPopularSongUrl").asString,
+    )
+}
