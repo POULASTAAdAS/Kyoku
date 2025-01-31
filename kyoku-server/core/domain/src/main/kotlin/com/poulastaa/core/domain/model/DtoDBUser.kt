@@ -8,6 +8,6 @@ data class DtoDBUser(
     val userName: String,
     val passwordHash: String,
     val profilePicUrl: String? = null,
-    val countryCode: Int,
+    val countryId: Int,
     val bDate: LocalDate? = null,
 )

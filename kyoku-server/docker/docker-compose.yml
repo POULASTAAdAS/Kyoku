@@ -36,7 +36,7 @@ services:
 
       - ./mysql-kyoku-data/data:/var/lib/mysql
 
-  mysql-artist-shard:
+  mysql-genre-artist-shard:
     image: mysql:8.4.0
     container_name: mysql-genre-artist-shard
     environment:
@@ -46,6 +46,17 @@ services:
     volumes:
       - ./mysql/init_shard_genre_artist.sql:/docker-entrypoint-initdb.d/init_shard_genre_artist.sql
       - ./mysql-kyoku-shard-genre-artist-data/data:/var/lib/mysql
+
+  mysql-suggestion-shard:
+    image: mysql:8.4.0
+    container_name: mysql-suggestion-shard
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./mysql/init_shard_suggestion.sql:/docker-entrypoint-initdb.d/init_shard_suggestion.sql
+      - ./mysql-kyoku-shard-suggestion-data/data:/var/lib/mysql
 
   redis-kyoku:
     image: redis/redis-stack:latest

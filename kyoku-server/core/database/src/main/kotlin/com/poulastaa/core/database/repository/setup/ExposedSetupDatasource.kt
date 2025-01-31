@@ -39,17 +39,14 @@ class ExposedSetupDatasource(
     override suspend fun createPlaylistFromSpotifyPlaylist(
         user: DtoDBUser,
         spotifySongTitle: List<String>,
-    ): DtoPlaylistFull {
+    ): DtoFullPlaylist {
         val cacheResult = cache.cacheSongByTitle(spotifySongTitle)
         val notFoundTitle = spotifySongTitle.filter { title ->
             cacheResult.none { it.title.contains(title, ignoreCase = true) }
-        }
-
-        if (notFoundTitle.isEmpty()) {
+        }.ifEmpty {
             val playlist = coreDB.createPlaylist(user.id, cacheResult.map { it.id })
-            return DtoPlaylistFull(playlist, cacheResult)
+            return DtoFullPlaylist(playlist, cacheResult)
         }
-
         return coroutineScope {
             val foundSongIdList = cacheResult
                 .filter { notFoundTitle.any { title -> it.title.contains(title, ignoreCase = true) } }
@@ -101,7 +98,7 @@ class ExposedSetupDatasource(
 
             val playlist = coreDB.createPlaylist(user.id, songs.map { it.id })
 
-            DtoPlaylistFull(
+            DtoFullPlaylist(
                 playlist = playlist,
                 listOfSong = songs
             )

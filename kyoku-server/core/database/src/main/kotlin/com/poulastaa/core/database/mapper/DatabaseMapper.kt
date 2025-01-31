@@ -4,13 +4,13 @@ import com.poulastaa.core.database.dao.*
 import com.poulastaa.core.domain.model.*
 
 fun DaoUser.toDbUserDto() = DtoDBUser(
-    id = id.value,
-    email = email,
-    userName = username,
-    passwordHash = passwordHash,
-    profilePicUrl = profilePicUrl,
-    countryCode = countryId,
-    bDate = bDate
+    id = this.id.value,
+    email = this.email,
+    userName = this.username,
+    passwordHash = this.passwordHash,
+    profilePicUrl = this.profilePicUrl,
+    countryId = this.countryId,
+    bDate = this.bDate
 )
 
 fun DaoSong.toSongDto(

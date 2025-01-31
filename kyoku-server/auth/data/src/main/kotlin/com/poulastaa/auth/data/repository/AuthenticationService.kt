@@ -218,7 +218,7 @@ class AuthenticationService(
                 username = user.userName,
                 password = user.passwordHash,
                 profilePicUrl = user.profilePicUrl,
-                countryId = user.countryCode
+                countryId = user.countryId
             )
         )
 

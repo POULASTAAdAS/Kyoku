@@ -77,7 +77,7 @@ class ExposedLocalAuthDatasource(
                 userName = user.username,
                 passwordHash = user.password,
                 profilePicUrl = user.profilePicUrl,
-                countryCode = user.countryId
+                countryId = user.countryId
             )
         }
 

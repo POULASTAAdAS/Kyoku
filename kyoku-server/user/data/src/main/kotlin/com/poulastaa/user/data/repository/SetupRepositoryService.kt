@@ -13,7 +13,7 @@ class SetupRepositoryService(
     override suspend fun getSpotifyPlaylist(
         userPayload: ReqUserPayload,
         spotifyPayload: List<SpotifySongTitle>,
-    ): DtoPlaylistFull? {
+    ): DtoFullPlaylist? {
         val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return null
         return db.createPlaylistFromSpotifyPlaylist(user, spotifyPayload)
     }

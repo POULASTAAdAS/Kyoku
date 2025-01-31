@@ -10,7 +10,7 @@ interface SetupRepository {
     suspend fun getSpotifyPlaylist(
         userPayload: ReqUserPayload,
         spotifyPayload: List<SpotifySongTitle>,
-    ): DtoPlaylistFull?
+    ): DtoFullPlaylist?
 
     suspend fun setBDate(
         userPayload: ReqUserPayload,

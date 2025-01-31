@@ -10,7 +10,7 @@ interface LocalSetupDatasource {
     suspend fun createPlaylistFromSpotifyPlaylist(
         user: DtoDBUser,
         spotifySongTitle: List<String>,
-    ): DtoPlaylistFull
+    ): DtoFullPlaylist
 
     suspend fun updateBDate(
         user: DtoDBUser,
