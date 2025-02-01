@@ -46,10 +46,10 @@ bin/
 
 # Ignore environment files
 app/src/main/resources/application.conf
-docker/.env
 
 # Ignore MySQL data folders
 docker/mysql-kyoku-data/
 docker/mysql-kyoku-user-data/
 docker/redis-data/
 docker/mysql-kyoku-shard-genre-artist-data/
+docker/mysql-kyoku-shard-suggestion-data/

@@ -126,5 +126,8 @@ fun createSuggestionShardTables() = runBlocking {
                 }
             }.awaitAll()
         }
+        val artistPopularSong = async {
+
+        }
     }
 }

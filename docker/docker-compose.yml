@@ -18,7 +18,7 @@ services:
     ports:
       - "3308:3306"
     volumes: # sequence in file name is important
-      - ./mysql/init_kyoku.sql:/docker-entrypoint-initdb.d/init_kyoku.sql
+      - ./mysql/001_init_kyoku.sql:/docker-entrypoint-initdb.d/001_init_kyoku.sql
 
       - ./mysql/insert/01_EntryAlbum.sql:/docker-entrypoint-initdb.d/01_EntryAlbum.sql
       - ./mysql/insert/02_EntryArtist.sql:/docker-entrypoint-initdb.d/02_EntryArtist.sql
