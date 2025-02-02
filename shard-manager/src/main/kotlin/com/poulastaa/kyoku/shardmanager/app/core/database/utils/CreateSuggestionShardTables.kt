@@ -38,28 +38,31 @@ fun createSuggestionShardTables() = runBlocking {
                     it[EntitySong.id].value to it[EntitySongInfo.popularity]
                 }
         }.chunked(10000).map {
-            async {
-                popularDbQuery {
-                    ShardEntitySong.batchInsert(
-                        data = it,
-                        ignore = true,
-                        shouldReturnGeneratedValues = false
-                    ) {
-                        this[ShardEntitySong.id] = it.first
-                        this[ShardEntitySong.popularity] = it.second
-                    }
+            println("Inserting ${it.size} songs")
+
+            popularDbQuery {
+                ShardEntitySong.batchInsert(
+                    data = it,
+                    ignore = true,
+                    shouldReturnGeneratedValues = false
+                ) {
+                    this[ShardEntitySong.id] = it.first
+                    this[ShardEntitySong.popularity] = it.second
                 }
             }
-        }.awaitAll()
+        }
 
         // insert country most popular song
         val countryPopularSongDef = async {
+            val songId = EntitySong.id.alias("songId")
+            val countryId = EntityCountry.id.alias("countryId")
+
             val rank = kyokuDbQuery {
                 RowNumber()
                     .over()
                     .partitionBy(EntityCountry.id)
                     .orderBy(EntitySongInfo.popularity, SortOrder.DESC)
-                    .alias("rank")
+                    .alias("rankk")
             }
 
             val rankedQuery = kyokuDbQuery {
@@ -93,9 +96,9 @@ fun createSuggestionShardTables() = runBlocking {
                         }
                     )
                     .slice(
-                        EntitySong.id,
+                        songId,
                         EntitySongInfo.popularity,
-                        EntityCountry.id,
+                        countryId,
                         rank
                     )
                     .selectAll()
@@ -108,29 +111,28 @@ fun createSuggestionShardTables() = runBlocking {
                         (rankedQuery[rank]).lessEq(longLiteral(4))
                     }
                     .orderBy(
-                        rankedQuery[EntityCountry.id] to SortOrder.DESC,
+                        rankedQuery[countryId] to SortOrder.DESC,
                         rankedQuery[EntitySongInfo.popularity] to SortOrder.DESC
-                    )
-                    .map {
+                    ).map {
                         DtoCountryPopularSong(
-                            songId = it[EntitySong.id].value,
-                            countryId = it[EntityCountry.id].value
+                            songId = it[rankedQuery.fields[0]].toString().toLong(),
+                            countryId = it[rankedQuery.fields[2]].toString().toInt()
                         )
                     }
             }.chunked(3000).map {
-                async {
-                    popularDbQuery {
-                        ShardEntityCountryPopularSong.batchInsert(
-                            data = it,
-                            ignore = true,
-                            shouldReturnGeneratedValues = false
-                        ) {
-                            this[ShardEntityCountryPopularSong.id] = it.songId
-                            this[ShardEntityCountryPopularSong.countryId] = it.countryId
-                        }
+                println("Inserting ${it.size} country popular songs")
+
+                popularDbQuery {
+                    ShardEntityCountryPopularSong.batchInsert(
+                        data = it,
+                        ignore = true,
+                        shouldReturnGeneratedValues = false
+                    ) {
+                        this[ShardEntityCountryPopularSong.id] = it.songId
+                        this[ShardEntityCountryPopularSong.countryId] = it.countryId
                     }
                 }
-            }.awaitAll()
+            }
         }
 
         // insert artist most popular
@@ -140,7 +142,7 @@ fun createSuggestionShardTables() = runBlocking {
                     .over()
                     .partitionBy(RelationEntitySongArtist.artistId)
                     .orderBy(EntitySongInfo.popularity, SortOrder.DESC)
-                    .alias("rank")
+                    .alias("rankk")
             }
 
             val rankedQuery = kyokuDbQuery {
@@ -184,23 +186,23 @@ fun createSuggestionShardTables() = runBlocking {
                     .orderBy(rankedQuery[EntitySongInfo.popularity] to SortOrder.DESC)
                     .map {
                         DtoArtistPopularSong(
-                            songId = it[RelationEntitySongArtist.songId],
-                            artistId = it[RelationEntitySongArtist.artistId],
-                            countryId = it[RelationEntityArtistCountry.countryId]
+                            songId = it[rankedQuery.fields[0]].toString().toLong(),
+                            artistId = it[rankedQuery.fields[1]].toString().toLong(),
+                            countryId = it[rankedQuery.fields[2]].toString().toInt()
                         )
                     }
             }.chunked(5000).map {
-                async {
-                    popularDbQuery {
-                        ShardEntityArtistPopularSong.batchInsert(
-                            data = it,
-                            ignore = true,
-                            shouldReturnGeneratedValues = false
-                        ) {
-                            this[ShardEntityArtistPopularSong.id] = it.songId
-                            this[ShardEntityArtistPopularSong.artistId] = it.artistId
-                            this[ShardEntityArtistPopularSong.countryId] = it.countryId
-                        }
+                println("Inserting ${it.size} artist popular songs")
+
+                popularDbQuery {
+                    ShardEntityArtistPopularSong.batchInsert(
+                        data = it,
+                        ignore = true,
+                        shouldReturnGeneratedValues = false
+                    ) {
+                        this[ShardEntityArtistPopularSong.id] = it.songId
+                        this[ShardEntityArtistPopularSong.artistId] = it.artistId
+                        this[ShardEntityArtistPopularSong.countryId] = it.countryId
                     }
                 }
             }
@@ -212,7 +214,7 @@ fun createSuggestionShardTables() = runBlocking {
                 .over()
                 .partitionBy(EntitySongInfo.releaseYear)
                 .orderBy(EntitySongInfo.popularity, SortOrder.DESC)
-                .alias("rank")
+                .alias("rankk")
 
             val rankedQuery = kyokuDbQuery {
                 EntitySongInfo
@@ -237,21 +239,21 @@ fun createSuggestionShardTables() = runBlocking {
                     )
                     .map {
                         DtoYearPopularSong(
-                            songId = it[EntitySongInfo.songId].value,
-                            year = it[EntitySongInfo.releaseYear]
+                            songId = it[rankedQuery.fields[0]].toString().toLong(),
+                            year = it[rankedQuery.fields[1]].toString().toInt(),
                         )
                     }
             }.chunked(5000).map {
-                async {
-                    popularDbQuery {
-                        ShardEntityYearPopularSong.batchInsert(
-                            data = it,
-                            ignore = true,
-                            shouldReturnGeneratedValues = false
-                        ) {
-                            this[ShardEntityYearPopularSong.id] = it.songId
-                            this[ShardEntityYearPopularSong.year] = it.year
-                        }
+                println("Inserting ${it.size} year popular songs")
+
+                popularDbQuery {
+                    ShardEntityYearPopularSong.batchInsert(
+                        data = it,
+                        ignore = true,
+                        shouldReturnGeneratedValues = false
+                    ) {
+                        this[ShardEntityYearPopularSong.id] = it.songId
+                        this[ShardEntityYearPopularSong.year] = it.year
                     }
                 }
             }

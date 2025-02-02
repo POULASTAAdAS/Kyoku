@@ -9,10 +9,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 
 private var IS_INITIALIZED = false
@@ -77,20 +74,8 @@ fun configureDatabase() {
         )
     )
 
-    transaction(USER_DB) {
-        addLogger(StdOutSqlLogger)
-    }
-    transaction(KYOKU_DB) {
-        addLogger(StdOutSqlLogger)
-    }
-    transaction(GENRE_ARTIST_SHARD_DB) {
-        createGenreArtistShardTables()
-        addLogger(StdOutSqlLogger)
-    }
-    transaction(POPULAR_SONG_SHARD_DB) {
-        createSuggestionShardTables()
-        addLogger(StdOutSqlLogger)
-    }
+    createGenreArtistShardTables()
+    createSuggestionShardTables()
 }
 
 private fun provideDatasource(
@@ -108,7 +93,6 @@ private fun provideDatasource(
 )
 
 private fun getDatabasePayload(): DatabasePayload {
-
     val gson = Gson()
 
     val str = File("src/main/resources/res.json").readText()

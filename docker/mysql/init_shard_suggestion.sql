@@ -22,25 +22,8 @@ CREATE TABLE IF NOT EXISTS ArtistPopularSong (
 );
 
 CREATE TABLE IF NOT EXISTS YearPopularSong (
-    id          BIGINT NOT NULL,
+    songId      BIGINT NOT NULL,
     `year`      INT NOT NULL,
 
-    Primary Key (id, `year`)
+    Primary Key (songId, `year`)
 );
-
-
-WITH RankedSongs AS (
-    SELECT 
-        songId, 
-        releaseYear, 
-        popularity,
-        ROW_NUMBER() OVER (
-            PARTITION BY releaseYear 
-            ORDER BY popularity DESC
-            ) AS `rank`
-    FROM SongInfo
-)
-SELECT songId, releaseYear, popularity
-FROM RankedSongs
-WHERE `rank` <= 4
-ORDER BY releaseYear DESC, popularity DESC;
