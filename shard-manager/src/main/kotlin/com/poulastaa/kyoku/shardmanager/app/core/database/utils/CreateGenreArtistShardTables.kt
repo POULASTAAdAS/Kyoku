@@ -1,7 +1,6 @@
 package com.poulastaa.kyoku.shardmanager.app.core.database.utils
 
 import com.poulastaa.kyoku.shardmanager.app.core.database.dao.kyoku.DaoArtist
-import com.poulastaa.kyoku.shardmanager.app.core.database.dao.shard.genre_artist.ShardDaoArtist
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.kyoku.EntityArtist
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.kyoku.EntityGenre
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.kyoku.RelationEntityArtistGenre
@@ -11,10 +10,22 @@ import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoGenreArtistRe
 import com.poulastaa.kyoku.shardmanager.app.core.database.toDbArtistDto
 import com.poulastaa.kyoku.shardmanager.app.plugins.kyokuDbQuery
 import com.poulastaa.kyoku.shardmanager.app.plugins.shardGenreArtistDbQuery
-import kotlinx.coroutines.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 
 fun createGenreArtistShardTables() = runBlocking {
+    val isPopulated = shardGenreArtistDbQuery {
+        ShardEntityArtist.exists() || try {
+            ShardEntityArtist.selectAll().count() > 0
+        } catch (_: Exception) {
+            false
+        }
+    }
+    if (isPopulated) return@runBlocking println("Artist Shard Tables are populated")
+
     coroutineScope {
         val artistDeferred = async {
             kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
@@ -58,11 +69,15 @@ fun createGenreArtistShardTables() = runBlocking {
                 if (!e.message?.contains("Duplicate key name")!!) throw e
             }
 
-            ShardEntityArtist.batchInsert(artistEntry, ignore = true, shouldReturnGeneratedValues = false) {
-                this[ShardEntityArtist.id] = it.id
-                this[ShardEntityArtist.name] = it.name
-                this[ShardEntityArtist.coverImage] = it.coverImage
-                this[ShardEntityArtist.popularity] = it.popularity
+            artistEntry.chunked(5000).map { entry ->
+                println("Inserting ${entry.size} artists")
+
+                ShardEntityArtist.batchInsert(entry, ignore = true, shouldReturnGeneratedValues = false) {
+                    this[ShardEntityArtist.id] = it.id
+                    this[ShardEntityArtist.name] = it.name
+                    this[ShardEntityArtist.coverImage] = it.coverImage
+                    this[ShardEntityArtist.popularity] = it.popularity
+                }
             }
         }
         genreArtist.map { (genre, relation) ->
@@ -82,30 +97,8 @@ fun createGenreArtistShardTables() = runBlocking {
                     }
                 }
             }
-        }.awaitAll()
-    }
-
-    updateArtistPopularityOnceADay()
-}
-
-private fun updateArtistPopularityOnceADay() {
-    CoroutineScope(Dispatchers.IO).launch {
-        while (true) {
-            delay(12 * 60 * 60 * 1000) // wait for 12 hours
-
-            // update artist popularity
-            val artist =
-                kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
-
-            artist.map { dto ->
-                async {
-                    shardGenreArtistDbQuery {
-                        ShardDaoArtist.findById(dto.id)?.let { table ->
-                            if (dto.popularity != table.popularity) table.popularity = dto.popularity
-                        }
-                    }
-                }
-            }.awaitAll()
+        }.awaitAll().also {
+            println("Inserted Genres Most Popular Artists")
         }
     }
 }

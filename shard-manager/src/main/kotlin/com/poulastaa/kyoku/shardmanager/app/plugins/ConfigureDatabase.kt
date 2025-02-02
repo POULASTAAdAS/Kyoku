@@ -14,15 +14,9 @@ import java.io.File
 
 private var IS_INITIALIZED = false
 
-private lateinit var USER_DB: Database
 private lateinit var KYOKU_DB: Database
 private lateinit var GENRE_ARTIST_SHARD_DB: Database
 private lateinit var POPULAR_SONG_SHARD_DB: Database
-
-suspend fun <T> userDbQuery(block: suspend () -> T): T =
-    newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
-        block()
-    }
 
 suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
     newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
@@ -45,13 +39,6 @@ fun configureDatabase() {
     IS_INITIALIZED = true
 
     val payload = getDatabasePayload()
-
-    USER_DB = Database.Companion.connect(
-        provideDatasource(
-            jdbcUrl = payload.kyokuUserUrl,
-            driverClass = payload.driverClassName
-        )
-    )
 
     KYOKU_DB = Database.Companion.connect(
         provideDatasource(

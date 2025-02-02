@@ -17,6 +17,9 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
 
 fun createSuggestionShardTables() = runBlocking {
+    val isPopulated = popularDbQuery { ShardEntitySong.selectAll().count() > 0 }
+    if (isPopulated) return@runBlocking println("Suggestion shard tables already populated")
+
     coroutineScope {
         // insert song
         kyokuDbQuery {
