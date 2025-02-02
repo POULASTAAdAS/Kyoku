@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS Song (
 
 CREATE TABLE IF NOT EXISTS CountryPopularSong (
     songId      BIGINT NOT NULL,
-    countryId   INT NOT NULL
+    countryId   INT NOT NULL,
 
     Primary Key (songId, countryId)
 );
@@ -16,15 +16,31 @@ CREATE TABLE IF NOT EXISTS CountryPopularSong (
 CREATE TABLE IF NOT EXISTS ArtistPopularSong (
     songId      BIGINT NOT NULL,
     artistId    BIGINT NOT NULL,
-    countryId   INT NOT NULL
+    countryId   INT NOT NULL,
 
     Primary Key (songId, artistId, countryId)
 );
 
 CREATE TABLE IF NOT EXISTS YearPopularSong (
-    id          BIGINT PRIMARY KEY,
-    countryId   INT NOT NULL,
-    `year`      INT NOT NULL
+    id          BIGINT NOT NULL,
+    `year`      INT NOT NULL,
 
-    Primary Key (id, countryId, `year`)
+    Primary Key (id, `year`)
 );
+
+
+WITH RankedSongs AS (
+    SELECT 
+        songId, 
+        releaseYear, 
+        popularity,
+        ROW_NUMBER() OVER (
+            PARTITION BY releaseYear 
+            ORDER BY popularity DESC
+            ) AS `rank`
+    FROM SongInfo
+)
+SELECT songId, releaseYear, popularity
+FROM RankedSongs
+WHERE `rank` <= 4
+ORDER BY releaseYear DESC, popularity DESC;

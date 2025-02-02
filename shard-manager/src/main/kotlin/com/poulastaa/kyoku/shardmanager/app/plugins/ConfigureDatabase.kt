@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.shardmanager.app.plugins
 
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.poulastaa.kyoku.shardmanager.app.core.database.model.DatabasePayload
 import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createGenreArtistShardTables
 import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createSuggestionShardTables
@@ -107,16 +108,19 @@ private fun provideDatasource(
 )
 
 private fun getDatabasePayload(): DatabasePayload {
+
     val gson = Gson()
 
     val str = File("src/main/resources/res.json").readText()
-    val obj = gson.toJsonTree(str).asJsonObject
+    val obj = gson.fromJson(str, JsonObject::class.java)
+
+    val storage = obj.get("storage").asJsonObject
 
     return DatabasePayload(
-        driverClassName = obj.get("driverClassName").asString,
-        kyokuUserUrl = obj.get("kyokuUserUrl").asString,
-        kyokuUrl = obj.get("kyokuUrl").asString,
-        shardGenreArtistUrl = obj.get("shardGenreArtistUrl").asString,
-        shardPopularSongUrl = obj.get("shardPopularSongUrl").asString,
+        driverClassName = storage.get("driverClassName").asString,
+        kyokuUserUrl = storage.get("userJdbcURL").asString,
+        kyokuUrl = storage.get("kyokuJdbcURL").asString,
+        shardGenreArtistUrl = storage.get("genreArtistShard").asString,
+        shardPopularSongUrl = storage.get("shardPopularSongUrl").asString,
     )
 }
