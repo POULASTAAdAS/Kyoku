@@ -11,6 +11,6 @@ class ShardUpdateJobArtistGenre : Job {
     override fun execute(p0: JobExecutionContext?) = runBlocking {
         println("Updating genre most popular artists")
 
-        db.updateGenreMostPopularArtists()
+        db.updateShardGenreArtistsRelation()
     }
 }

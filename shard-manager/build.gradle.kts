@@ -16,7 +16,7 @@ dependencies {
     val kotlinxCoroutines = "1.8.1"
     val kotlinxSerializationJSON = "1.7.2"
 
-    val exposed = "0.45.0"
+    val exposed = "0.58.0"
     val mysql = "8.0.33"
     val hikaricp = "5.0.1"
     val koin = "3.5.6"

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.poulastaa.kyoku.shardmanager.app.core.database.model.DatabasePayload
 import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createGenreArtistShardTables
 import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createSuggestionShardTables
+import com.poulastaa.kyoku.shardmanager.app.core.domain.repository.LocalShardUpdateDatasource
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
@@ -28,13 +29,13 @@ suspend fun <T> shardGenreArtistDbQuery(block: suspend () -> T): T =
         block()
     }
 
-suspend fun <T> popularDbQuery(block: suspend () -> T): T =
+suspend fun <T> shardPopularDbQuery(block: suspend () -> T): T =
     newSuspendedTransaction(context = Dispatchers.IO, db = POPULAR_SONG_SHARD_DB) {
         block()
     }
 
 @Synchronized
-fun configureDatabase() {
+fun configureDatabase(db: LocalShardUpdateDatasource) {
     if (IS_INITIALIZED) throw IllegalArgumentException("Database already initialized")
     IS_INITIALIZED = true
 
@@ -61,8 +62,8 @@ fun configureDatabase() {
         )
     )
 
-    createGenreArtistShardTables()
-    createSuggestionShardTables()
+    createGenreArtistShardTables(db)
+    createSuggestionShardTables(db)
 }
 
 private fun provideDatasource(

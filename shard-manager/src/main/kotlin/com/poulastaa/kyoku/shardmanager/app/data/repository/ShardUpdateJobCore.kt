@@ -13,8 +13,8 @@ class ShardUpdateJobCore : Job {
 
         CoroutineScope(Dispatchers.IO).launch {
             listOf(
-                async { db.updateSongPopularity() },
-                async { db.updateArtistPopularity() }
+                async { db.upsertSongPopularity() },
+                async { db.upsertArtistPopularity() }
             ).awaitAll()
         }
     }
