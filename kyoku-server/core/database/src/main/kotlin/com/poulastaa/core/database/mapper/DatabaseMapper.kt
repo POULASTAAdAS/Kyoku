@@ -84,3 +84,15 @@ internal fun DtoGenre.toDtoPrevGenre() = DtoPrevGenre(
     id = this.id,
     name = this.name
 )
+
+internal fun DtoSong.toDtoPrevSong() = DtoPrevSong(
+    id = this.id,
+    title = this.title,
+    rawPoster = this.poster
+)
+
+fun DaoSong.toDtoPrevSong() = DtoPrevSong(
+    id = this.id.value,
+    title = this.title,
+    rawPoster = this.poster
+)

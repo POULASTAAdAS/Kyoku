@@ -10,5 +10,8 @@ data class DtoPrevSong(
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val poster = rawPoster?.let { "$baseUrl${EndPoints.Poster.SongPoster.route}?$POSTER_PARAM=$rawPoster" }
+    val poster = rawPoster?.let {
+        if (it.startsWith("http")) it
+        else "$baseUrl${EndPoints.Poster.SongPoster.route}?$POSTER_PARAM=$rawPoster"
+    }
 }

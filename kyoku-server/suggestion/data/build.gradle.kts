@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.kyoku.jvm.library)
+    alias(libs.plugins.kyoku.ktor.koin)
 }
 
-
 dependencies {
-    implementation(project(":core:core-domain"))
-    implementation(project(":suggestion:suggestion-domain"))
+    implementation(projects.core.coreDomain)
+    implementation(projects.suggestion.suggestionDomain)
 }

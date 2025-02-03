@@ -1,17 +1,20 @@
 package com.poulastaa.core.database.repository.suggestion
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
+import com.poulastaa.core.database.SQLDbManager.shardPopularDbQuery
+import com.poulastaa.core.database.dao.DaoSong
 import com.poulastaa.core.database.entity.app.EntitySong
-import com.poulastaa.core.database.entity.app.RelationEntitySongCountry
+import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityCountryPopularSong
+import com.poulastaa.core.database.mapper.toDtoPrevSong
 import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.*
+import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.and
+import kotlin.random.Random
 
-class ExposedRedisLocalSuggestionDatasource(
+class ExposedLocalSuggestionDatasource(
     private val core: LocalCoreDatasource,
+    private val cache: LocalSuggestionCacheDatasource,
 ) : LocalSuggestionDatasource {
     override suspend fun getUserByEmail(
         email: String,
@@ -22,36 +25,30 @@ class ExposedRedisLocalSuggestionDatasource(
         userId: Long,
         countryId: CountryId,
         oldList: List<SongId>,
-    ): List<DtoPrevSong> = kyokuDbQuery {
-
-
-        EntitySong
-            .join(
-                otherColumn = RelationEntitySongCountry.songId,
-                otherTable = RelationEntitySongCountry,
-                joinType = JoinType.INNER,
-                onColumn = EntitySong.id,
-                additionalConstraint = {
-                    RelationEntitySongCountry.songId eq EntitySong.id as Column<*>
-                }
-            )
-            .select(
-                EntitySong.id,
-                EntitySong.title,
-                EntitySong.poster
-            ).where {
-                if (oldList.isNotEmpty()) RelationEntitySongCountry.countryId eq countryId and (EntitySong.id notInList oldList)
-                else RelationEntitySongCountry.countryId eq countryId
+    ): List<DtoPrevSong> {
+        val list = shardPopularDbQuery {
+            ShardEntityCountryPopularSong.select(ShardEntityCountryPopularSong.id).where {
+                ShardEntityCountryPopularSong.countryId eq countryId
+            }.map {
+                it[ShardEntityCountryPopularSong.id].value
             }
-            .limit(4)
-            .map {
-                DtoPrevSong(
-                    id = it[EntitySong.id].value,
-                    title = it[EntitySong.title],
-                    rawPoster = it[EntitySong.poster]
-                )
-            }
+        }
+
+        val songIdList = list.filterNot { a -> oldList.any { it == a } }.let {
+            if (it.size < 4) it + oldList.shuffled(Random).take(4 - it.size)
+            else it
+        }
+
+        if (songIdList.isEmpty()) return emptyList()
+        return cache.cachePrevSongById(songIdList).ifEmpty {
+            kyokuDbQuery {
+                DaoSong.find {
+                    EntitySong.id inList songIdList
+                }.map { it.toDtoPrevSong() }
+            }.also { cache.setPrevSongById(it) }
+        }
     }
+
 
     override suspend fun getPrevPopularArtistMix(
         userId: Long,

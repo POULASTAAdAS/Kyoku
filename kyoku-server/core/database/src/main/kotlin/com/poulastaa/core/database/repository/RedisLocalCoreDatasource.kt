@@ -21,11 +21,14 @@ class RedisLocalCoreDatasource(
     override fun setPlaylistById(playlistDto: DtoPlaylist) =
         setSingleValueWithExp(Group.PLAYLIST, playlistDto.id, playlistDto)
 
-
     // song
     override fun setSongById(song: DtoSong) = setSingleValueWithExp(Group.SONG, song.id, song)
-
     override fun setSongById(list: List<DtoSong>) = setMultipleValueWithExp(Group.SONG, list.associateBy { it.id })
+
+    override fun cacheSongById(songId: SongId): DtoSong? = cacheSingleValue<SongId, DtoSong>(Group.SONG, songId)
+
+    override fun cacheSongById(list: List<SongId>): List<DtoSong> =
+        cacheMultipleValue<SongId, DtoSong>(Group.SONG, list)
 
     // genre
     override fun cacheGenreById(genreId: GenreId): DtoGenre? = cacheSingleValue<GenreId, DtoGenre>(Group.GENRE, genreId)
@@ -235,6 +238,7 @@ class RedisLocalCoreDatasource(
         }
     }
 
+    // get
     private inline fun <T, reified V> cacheSingleValue(group: Group, key: T) = redisPool.resource.use { jedis ->
         jedis.get("${group.name}:$key")
     }?.let {
@@ -245,11 +249,12 @@ class RedisLocalCoreDatasource(
         jedis.get("${group.name}:$key")
     }?.toLong()
 
-    private inline fun <T, reified V> cacheMultipleValue(group: Group, keys: List<T>) = redisPool.resource.use { jedis ->
-        jedis.mget(*keys.map { "${group.name}:$it" }.toTypedArray())
-            .mapNotNull { it }
-            .map { gson.fromJson(it, V::class.java) }
-    }
+    private inline fun <T, reified V> cacheMultipleValue(group: Group, keys: List<T>) =
+        redisPool.resource.use { jedis ->
+            jedis.mget(*keys.map { "${group.name}:$it" }.toTypedArray())
+                .mapNotNull { it }
+                .map { gson.fromJson(it, V::class.java) }
+        }
 
     private fun <T> cacheMultipleValue(group: Group, keys: List<T>) = redisPool.resource.use { jedis ->
         keys.map {

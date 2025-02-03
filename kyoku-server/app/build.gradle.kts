@@ -27,6 +27,7 @@ dependencies {
     implementation(projects.auth.authData)
     implementation(projects.core.coreData)
     implementation(projects.user.userData)
+    implementation(projects.suggestion.suggestionData)
 
     // notification
     implementation(projects.notification.notificationData)

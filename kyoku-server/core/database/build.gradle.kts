@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:core-domain"))
+    implementation(projects.core.coreDomain)
 
     implementation(libs.redis.clients.jedis)
     implementation(libs.kotlin.gson)
