@@ -9,7 +9,6 @@ import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
 
 class ExposedRedisLocalSuggestionDatasource(
     private val core: LocalCoreDatasource,
@@ -19,11 +18,13 @@ class ExposedRedisLocalSuggestionDatasource(
         userType: UserType,
     ): DtoDBUser? = core.getUserByEmail(email, userType)
 
-    override suspend fun getPrevPopularSongMix(
+    override suspend fun getPrevPopularCountrySong(
         userId: Long,
         countryId: CountryId,
         oldList: List<SongId>,
     ): List<DtoPrevSong> = kyokuDbQuery {
+
+
         EntitySong
             .join(
                 otherColumn = RelationEntitySongCountry.songId,
@@ -34,11 +35,11 @@ class ExposedRedisLocalSuggestionDatasource(
                     RelationEntitySongCountry.songId eq EntitySong.id as Column<*>
                 }
             )
-            .slice(
+            .select(
                 EntitySong.id,
                 EntitySong.title,
                 EntitySong.poster
-            ).select {
+            ).where {
                 if (oldList.isNotEmpty()) RelationEntitySongCountry.countryId eq countryId and (EntitySong.id notInList oldList)
                 else RelationEntitySongCountry.countryId eq countryId
             }
@@ -60,7 +61,7 @@ class ExposedRedisLocalSuggestionDatasource(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPrevOldGem(
+    override suspend fun getPrevPopularYearSongs(
         userId: Long,
         countryId: CountryId,
         oldList: List<SongId>,

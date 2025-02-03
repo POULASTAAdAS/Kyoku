@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.upperCase
 import org.jetbrains.exposed.sql.upsert
 
@@ -143,7 +144,7 @@ class ExposedLocalAuthDatasource(
 
     override suspend fun isSavedGenre(userId: Long): Boolean {
         val entrys = userDbQuery {
-            RelationEntityUserGenre.select {
+            RelationEntityUserGenre.selectAll().where {
                 RelationEntityUserGenre.userId eq userId
             }.count()
         }
@@ -153,7 +154,7 @@ class ExposedLocalAuthDatasource(
 
     override suspend fun isSavedArtist(userId: Long): Boolean {
         val entrys = userDbQuery {
-            RelationEntityUserArtist.select {
+            RelationEntityUserArtist.selectAll().where {
                 RelationEntityUserArtist.userId eq userId
             }.count()
         }

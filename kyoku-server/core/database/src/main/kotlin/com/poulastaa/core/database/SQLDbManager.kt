@@ -1,14 +1,11 @@
 package com.poulastaa.core.database
 
-import com.poulastaa.core.database.dao.DaoArtist
-import com.poulastaa.core.database.dao.ShardDaoArtist
-import com.poulastaa.core.database.entity.app.*
-import com.poulastaa.core.database.entity.model.DtoGenreArtistRelation
-import com.poulastaa.core.database.mapper.toDbArtistDto
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.*
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -16,22 +13,33 @@ object SQLDbManager {
     private lateinit var USER_DB: Database
     private lateinit var KYOKU_DB: Database
     private lateinit var GENRE_ARTIST_SHARD_DB: Database
+    private lateinit var POPULAR_SONG_SHARD_DB: Database
+
     private var IS_INITIALIZED = false
 
-    internal suspend fun <T> userDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
-            block()
-        }
+    internal suspend fun <T> userDbQuery(
+        block: suspend () -> T,
+    ) = newSuspendedTransaction(context = Dispatchers.IO, db = USER_DB) {
+        block()
+    }
 
-    internal suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
-            block()
-        }
+    internal suspend fun <T> kyokuDbQuery(
+        block: suspend () -> T,
+    ) = newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
+        block()
+    }
 
-    internal suspend fun <T> shardGenreArtistDbQuery(block: suspend () -> T): T =
-        newSuspendedTransaction(context = Dispatchers.IO, db = GENRE_ARTIST_SHARD_DB) {
-            block()
-        }
+    internal suspend fun <T> shardGenreArtistDbQuery(
+        block: suspend () -> T,
+    ) = newSuspendedTransaction(context = Dispatchers.IO, db = GENRE_ARTIST_SHARD_DB) {
+        block()
+    }
+
+    suspend fun <T> shardPopularDbQuery(
+        block: suspend () -> T,
+    ) = newSuspendedTransaction(context = Dispatchers.IO, db = POPULAR_SONG_SHARD_DB) {
+        block()
+    }
 
     @Synchronized
     fun initializeDatabases(
@@ -39,10 +47,12 @@ object SQLDbManager {
         userDbUrl: String,
         kyokuDbUrl: String,
         genreArtistShardDbUrl: String,
+        popularShardDbUrl: String,
     ) {
         require(userDbUrl.isNotBlank()) { "USER JDBC URL cannot be blank" }
         require(kyokuDbUrl.isNotBlank()) { "KYOKU JDBC URL cannot be blank" }
         require(genreArtistShardDbUrl.isNotBlank()) { "ARTIST SHARD JDBC URL cannot be blank" }
+        require(popularShardDbUrl.isNotBlank()) { "POPULAR SHARD JDBC URL cannot be blank" }
         require(driverClass.isNotBlank()) { "Driver class cannot be blank" }
 
         if (IS_INITIALIZED) throw IllegalStateException("Databases are already initialized!")
@@ -50,7 +60,8 @@ object SQLDbManager {
         USER_DB = Database.Companion.connect(
             provideDatasource(
                 jdbcUrl = userDbUrl,
-                driverClass = driverClass
+                driverClass = driverClass,
+                maximumPoolSize = 15
             )
         )
 
@@ -70,6 +81,14 @@ object SQLDbManager {
             )
         )
 
+        POPULAR_SONG_SHARD_DB = Database.Companion.connect(
+            provideDatasource(
+                jdbcUrl = popularShardDbUrl,
+                driverClass = driverClass,
+                maximumPoolSize = 10
+            )
+        )
+
         transaction(USER_DB) {
             addLogger(StdOutSqlLogger)
         }
@@ -77,6 +96,9 @@ object SQLDbManager {
             addLogger(StdOutSqlLogger)
         }
         transaction(GENRE_ARTIST_SHARD_DB) {
+            addLogger(StdOutSqlLogger)
+        }
+        transaction(POPULAR_SONG_SHARD_DB) {
             addLogger(StdOutSqlLogger)
         }
 

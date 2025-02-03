@@ -7,7 +7,11 @@ import com.poulastaa.core.database.dao.DaoArtist
 import com.poulastaa.core.database.dao.DaoGenre
 import com.poulastaa.core.database.dao.DaoSong
 import com.poulastaa.core.database.dao.DaoUser
-import com.poulastaa.core.database.entity.app.*
+import com.poulastaa.core.database.entity.app.EntityArtist
+import com.poulastaa.core.database.entity.app.EntityGenre
+import com.poulastaa.core.database.entity.app.EntitySong
+import com.poulastaa.core.database.entity.app.RelationEntityArtistGenre
+import com.poulastaa.core.database.entity.shard.artist_genre.ShardRelationEntityGenreTypeArtist
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserGenre
@@ -244,8 +248,8 @@ class ExposedSetupDatasource(
         val genre = cache.cachePrevGenreByUserId(userId).ifEmpty {
             val genreIds = userDbQuery {
                 RelationEntityUserGenre
-                    .slice(RelationEntityUserGenre.genreId)
-                    .select {
+                    .select(RelationEntityUserGenre.genreId)
+                    .where {
                         RelationEntityUserGenre.userId eq userId
                     }.map {
                         it[RelationEntityUserGenre.genreId]
@@ -266,27 +270,26 @@ class ExposedSetupDatasource(
         query.ifBlank {
             //  get artist according to genre and popularity
             val limit = max(size / genre.size, 1) //  calculate number of artist for each genre
+
             val genreArtistIds = genre.map { dto ->
                 async {
-                    shardGenreArtistDbQuery {
-                        try {
-                            val table = ShardRelationEntityGenreTypeArtist(dto.name)
+                    shardGenreArtistDbQuery { // todo add try cache if error
+                        val table = ShardRelationEntityGenreTypeArtist(dto.name)
 
-                            table
-                                .slice(
-                                    table.artistId,
-                                    table.popularity
-                                )
-                                .select {
-                                    table.genreId eq dto.id
-                                }.orderBy(table.popularity to SortOrder.DESC)
-                                .limit(limit, page.offset(limit))
-                                .map {
-                                    it[table.artistId]
-                                }
-                        } catch (_: Exception) {
-                            emptyList()
-                        }
+                        if (table.exists()) table
+                            .select(
+                                table.artistId,
+                                table.popularity
+                            )
+                            .where {
+                                table.genreId eq dto.id
+                            }.orderBy(table.popularity to SortOrder.DESC)
+                            .limit(limit)
+                            .offset(page.offset(limit))
+                            .map {
+                                it[table.artistId]
+                            }
+                        else emptyList()
                     }
                 }
             }.awaitAll().flatten()
@@ -305,7 +308,7 @@ class ExposedSetupDatasource(
             if (genreArtist.size >= size) return@coroutineScope genreArtist
 
             val newLimit = size - genreArtist.size
-            val dbArtist = kyokuDbQuery {
+            val dbArtist = kyokuDbQuery { // add artist outside of picked genre
                 EntityArtist
                     .join(
                         otherTable = RelationEntityArtistGenre,
@@ -316,17 +319,18 @@ class ExposedSetupDatasource(
                             RelationEntityArtistGenre.artistId eq EntityArtist.id as Column<*>
                         }
                     )
-                    .slice(
+                    .select(
                         EntityArtist.id,
                         EntityArtist.name,
                         EntityArtist.coverImage,
                         EntityArtist.popularity
                     )
-                    .select {
+                    .where {
                         RelationEntityArtistGenre.genreId notInList genre.map { it.id } or
                                 (RelationEntityArtistGenre.genreId.isNull())
                     }.orderBy(EntityArtist.popularity to SortOrder.DESC)
-                    .limit(newLimit, page.offset(newLimit))
+                    .limit(newLimit)
+                    .offset(page.offset(newLimit))
                     .map {
                         DtoPrevArtist(
                             id = it[EntityArtist.id].value,
@@ -348,7 +352,8 @@ class ExposedSetupDatasource(
                 EntityArtist.name like "$query%" and
                         (EntityArtist.name notInList cache.map { it.name })
             }.orderBy(EntityArtist.popularity to SortOrder.DESC)
-                .limit(limit, page.offset(limit))
+                .limit(limit)
+                .offset(page.offset(limit))
                 .map { it.toDtoPrevArtist() }
         }.also { this@ExposedSetupDatasource.cache.setPrevArtistIdByName(it.associate { it.name to it.id }) }
 

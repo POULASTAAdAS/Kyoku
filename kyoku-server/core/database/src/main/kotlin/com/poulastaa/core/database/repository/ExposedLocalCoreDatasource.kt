@@ -92,7 +92,7 @@ class ExposedLocalCoreDatasource(
 
         val missingSongIds = list.filterNot { it in cacheInfo.keys }
         val dbInfo = if (missingSongIds.isNotEmpty()) kyokuDbQuery {
-            EntitySongInfo.select {
+            EntitySongInfo.selectAll().where {
                 EntitySongInfo.songId inList missingSongIds
             }.map {
                 it[EntitySongInfo.songId].value to DtoSongInfo(
@@ -134,13 +134,13 @@ class ExposedLocalCoreDatasource(
                             joinType = JoinType.INNER,
                             onColumn = EntityGenre.id,
                             otherColumn = RelationEntitySongGenre.genreId
-                        ).slice(
+                        ).select(
                             EntityGenre.id,
                             EntityGenre.genre,
                             EntityGenre.popularity,
                             RelationEntitySongGenre.songId
                         )
-                        .select {
+                        .where {
                             RelationEntitySongGenre.songId inList missingSongIds
                         }.map {
                             it[RelationEntitySongGenre.songId] to DtoGenre(
@@ -186,13 +186,13 @@ class ExposedLocalCoreDatasource(
                             joinType = JoinType.INNER,
                             onColumn = EntityAlbum.id,
                             otherColumn = RelationEntitySongAlbum.albumId
-                        ).slice(
+                        ).select(
                             EntityAlbum.id,
                             EntityAlbum.name,
                             EntityAlbum.popularity,
                             RelationEntitySongAlbum.songId
                         )
-                        .select {
+                        .where {
                             RelationEntitySongAlbum.songId inList missingSongIds
                         }.map {
                             it[RelationEntitySongAlbum.songId] to DtoAlbum(
@@ -234,11 +234,11 @@ class ExposedLocalCoreDatasource(
                     otherColumn = RelationEntityArtistGenre.genreId,
                     joinType = JoinType.INNER
                 )
-                .slice(
+                .select(
                     EntityGenre.id,
                     EntityGenre.genre,
                     EntityGenre.popularity
-                ).select {
+                ).where {
                     RelationEntityArtistGenre.artistId eq artistId
                 }.firstOrNull()?.let {
                     DtoGenre(
@@ -263,10 +263,10 @@ class ExposedLocalCoreDatasource(
                     otherColumn = RelationEntityArtistCountry.countryId,
                     joinType = JoinType.INNER
                 )
-                .slice(
+                .select(
                     EntityCountry.id,
                     EntityCountry.country,
-                ).select {
+                ).where {
                     RelationEntityArtistCountry.artistId eq artistId
                 }.firstOrNull()?.let {
                     DtoCountry(
@@ -289,12 +289,12 @@ class ExposedLocalCoreDatasource(
                     onColumn = EntityArtist.id,
                     otherColumn = RelationEntitySongArtist.artistId,
                     joinType = JoinType.INNER
-                ).slice(
+                ).select(
                     EntityArtist.id,
                     EntityArtist.name,
                     EntityArtist.coverImage,
                     EntityArtist.popularity
-                ).select {
+                ).where {
                     RelationEntitySongArtist.songId eq songId
                 }.map { resultRow ->
                     DtoDBArtist(
@@ -317,13 +317,13 @@ class ExposedLocalCoreDatasource(
                     onColumn = EntityArtist.id,
                     otherColumn = RelationEntitySongArtist.artistId,
                     joinType = JoinType.INNER
-                ).slice(
+                ).select(
                     EntityArtist.id,
                     EntityArtist.name,
                     EntityArtist.coverImage,
                     EntityArtist.popularity,
                     RelationEntitySongArtist.songId
-                ).select {
+                ).where {
                     RelationEntitySongArtist.songId inList songIdList
                 }.groupBy {
                     it[RelationEntitySongArtist.songId]

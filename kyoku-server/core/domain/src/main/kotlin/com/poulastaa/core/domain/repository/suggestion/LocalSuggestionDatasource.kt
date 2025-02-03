@@ -9,7 +9,7 @@ import com.poulastaa.core.domain.repository.SongId
 interface LocalSuggestionDatasource {
     suspend fun getUserByEmail(email: String, userType: UserType): DtoDBUser?
 
-    suspend fun getPrevPopularSongMix(
+    suspend fun getPrevPopularCountrySong(
         userId: Long,
         countryId: CountryId,
         oldList: List<SongId> = emptyList(),
@@ -21,7 +21,7 @@ interface LocalSuggestionDatasource {
         oldList: List<SongId> = emptyList(),
     ): List<DtoPrevSong>
 
-    suspend fun getPrevOldGem(
+    suspend fun getPrevPopularYearSongs(
         userId: Long,
         countryId: CountryId,
         oldList: List<SongId> = emptyList(),

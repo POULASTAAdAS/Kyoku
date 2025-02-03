@@ -9,11 +9,13 @@ fun Application.configureDatabases() {
     val userJdbcUrl = environment.config.property("storage.userJdbcURL").getString()
     val kyokuJdbcUrl = environment.config.property("storage.kyokuJdbcURL").getString()
     val genreArtistShardDbUrl = environment.config.property("storage.genreArtistShard").getString()
+    val popularShardDbUrl = environment.config.property("storage.popularShard").getString()
 
     SQLDbManager.initializeDatabases(
         driverClass = driverClass,
         userDbUrl = userJdbcUrl,
         kyokuDbUrl = kyokuJdbcUrl,
-        genreArtistShardDbUrl = genreArtistShardDbUrl
+        genreArtistShardDbUrl = genreArtistShardDbUrl,
+        popularShardDbUrl = popularShardDbUrl
     )
 }

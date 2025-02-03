@@ -1,4 +1,4 @@
-package com.poulastaa.core.database.entity.app
+package com.poulastaa.core.database.entity.shard.artist_genre
 
 import org.jetbrains.exposed.sql.Table
 

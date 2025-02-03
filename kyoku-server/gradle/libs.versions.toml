@@ -5,9 +5,9 @@ kotlinxDatetime = "0.6.1"
 kotlinxSerializationJSON = "1.7.2"
 kotlinxCoroutines = "1.8.1"
 
-exposed = "0.45.0"
+exposed = "0.58.0"
 mysql = "8.0.33"
-hikaricp = "5.0.1"
+hikaricp = "6.2.1"
 
 koin = "3.5.6"
 
