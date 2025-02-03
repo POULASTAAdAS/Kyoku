@@ -11,8 +11,9 @@ import org.quartz.impl.StdSchedulerFactory
 
 private var IS_INITIALIZED = false
 
-private const val TRIGGER_HOUR = 20
-private const val TRIGGER_MINUTE = 23
+// default time set to 12 am
+private const val TRIGGER_HOUR = 0
+private const val TRIGGER_MINUTE = 0
 
 @Synchronized
 fun scheduleJobs() {
@@ -21,13 +22,13 @@ fun scheduleJobs() {
     val scheduler = StdSchedulerFactory.getDefaultScheduler().apply { start() }
 
     val jobUpdateCore = JobBuilder.newJob(ShardUpdateJobCore::class.java)
-        .withIdentity("updateCore", "update")
+        .withIdentity("updateCore", "upsert")
         .build()
     val jobUpdateGenresMostPopularArtist = JobBuilder.newJob(ShardUpdateJobArtistGenre::class.java)
-        .withIdentity("updateGenresMostPopularArtist", "update")
+        .withIdentity("updateGenresMostPopularArtist", "upsert")
         .build()
     val jobUpdateSuggestion = JobBuilder.newJob(ShardUpdateJobSuggestion::class.java)
-        .withIdentity("updateSuggestion", "update")
+        .withIdentity("updateSuggestion", "upsert")
         .build()
 
     val trigger = TriggerBuilder.newTrigger()

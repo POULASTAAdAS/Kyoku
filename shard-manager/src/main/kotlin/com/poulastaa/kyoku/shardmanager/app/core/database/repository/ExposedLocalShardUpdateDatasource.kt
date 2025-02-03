@@ -16,8 +16,10 @@ import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoGenreArtistRe
 import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoYearPopularSong
 import com.poulastaa.kyoku.shardmanager.app.core.database.toDbArtistDto
 import com.poulastaa.kyoku.shardmanager.app.core.domain.model.DtoDBArtist
+import com.poulastaa.kyoku.shardmanager.app.core.domain.model.DtoDbSong
 import com.poulastaa.kyoku.shardmanager.app.core.domain.repository.Genre
 import com.poulastaa.kyoku.shardmanager.app.core.domain.repository.LocalShardUpdateDatasource
+import com.poulastaa.kyoku.shardmanager.app.core.domain.utils.CURRENT_TIME
 import com.poulastaa.kyoku.shardmanager.app.plugins.kyokuDbQuery
 import com.poulastaa.kyoku.shardmanager.app.plugins.shardGenreArtistDbQuery
 import com.poulastaa.kyoku.shardmanager.app.plugins.shardPopularDbQuery
@@ -84,7 +86,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
 
     override suspend fun insertIntoShardArtist(data: List<DtoDBArtist>) {
         shardGenreArtistDbQuery {
-            println("Inserting ${data.size} artists")
+            println("$CURRENT_TIME Inserting ${data.size} artists")
 
             ShardEntityArtist.batchInsert(data, ignore = true, shouldReturnGeneratedValues = false) {
                 this[ShardEntityArtist.id] = it.id
@@ -111,18 +113,26 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
 
     override suspend fun upsertSongPopularity() {
         coroutineScope {
-            val song = kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
+            val song = kyokuDbQuery {
+                EntitySongInfo.selectAll().map {
+                    DtoDbSong(
+                        id = it[EntitySongInfo.songId].value,
+                        popularity = it[EntitySongInfo.popularity]
+                    )
+                }
+            }
 
             shardPopularDbQuery {
                 song.chunked(5000).map { list ->
                     async {
                         list.map { dto ->
-                            val dao = ShardDaoSong.findById(dto.id)
+                            val dao = shardPopularDbQuery { ShardDaoSong.findById(dto.id) }
 
-                            if (dao != null) if (dao.popularity != dto.popularity) dao.popularity = dto.popularity
+                            if (dao != null) if (dao.popularity != dto.popularity) shardPopularDbQuery { dao.popularity = dto.popularity }
                             else shardPopularDbQuery {
-                                ShardDaoSong.new(dto.id) {
-                                    this.popularity = dto.popularity
+                                ShardEntitySong.insertIgnore {
+                                    it[this.id] = dto.id
+                                    it[this.popularity] = dto.popularity
                                 }
                             }
                         }
@@ -140,14 +150,15 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                 artist.chunked(3000).map { list ->
                     async {
                         list.map { dto ->
-                            val dao = ShardDaoArtist.findById(dto.id)
+                            val dao = shardGenreArtistDbQuery { ShardDaoArtist.findById(dto.id) }
 
-                            if (dao != null) if (dao.popularity != dao.popularity) dao.popularity = dto.popularity
+                            if (dao != null) if (dao.popularity != dao.popularity) shardPopularDbQuery { dao.popularity = dto.popularity }
                             else shardGenreArtistDbQuery {
-                                ShardDaoArtist.new(dto.id) {
-                                    this.popularity = dto.popularity
-                                    this.name = dto.name
-                                    this.coverImage = dto.coverImage
+                                ShardEntityArtist.insertIgnore {
+                                    it[this.id] = dto.id
+                                    it[this.name] = dto.name
+                                    it[this.coverImage] = dto.coverImage
+                                    it[this.popularity] = dto.popularity
                                 }
                             }
                         }
@@ -225,7 +236,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
 
     override suspend fun insertCountrysMostPopularSongs() {
         getCountrysMostPopularSongs().let {
-            println("Inserting ${it.size} country popular songs")
+            println("$CURRENT_TIME Inserting ${it.size} country popular songs")
 
             shardPopularDbQuery {
                 ShardEntityCountryPopularSong.batchInsert(
@@ -242,7 +253,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
 
     override suspend fun insertYearMostPopularSongs() {
         getYearMostPopularSongs().let {
-            println("Inserting ${it.size} year popular songs")
+            println("$CURRENT_TIME Inserting ${it.size} year popular songs")
 
             shardPopularDbQuery {
                 ShardEntityYearPopularSong.batchInsert(
@@ -266,7 +277,39 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                 .alias("rankk")
         }
 
-        val rankedQuery = kyokuDbQuery {
+        val rankedQuery = insertArtistsMostPopularSongsQuery(rank)
+
+        kyokuDbQuery {
+            rankedQuery.selectAll().where {
+                (rankedQuery[rank]).lessEq(longLiteral(ARTIST_MOST_POPULAR_SONGS_LIMIT))
+            }
+                .orderBy(rankedQuery[EntitySongInfo.popularity] to SortOrder.DESC)
+                .map {
+                    DtoArtistPopularSong(
+                        songId = it[rankedQuery.fields[0]].toString().toLong(),
+                        artistId = it[rankedQuery.fields[1]].toString().toLong(),
+                        countryId = it[rankedQuery.fields[2]].toString().toInt()
+                    )
+                }
+        }.chunked(5000).map {
+            println("$CURRENT_TIME Inserting ${it.size} artist popular songs")
+
+            shardPopularDbQuery {
+                ShardEntityArtistPopularSong.batchInsert(
+                    data = it,
+                    ignore = true,
+                    shouldReturnGeneratedValues = false
+                ) {
+                    this[ShardEntityArtistPopularSong.id] = it.songId
+                    this[ShardEntityArtistPopularSong.artistId] = it.artistId
+                    this[ShardEntityArtistPopularSong.countryId] = it.countryId
+                }
+            }
+        }
+    }
+
+    private suspend fun insertArtistsMostPopularSongsQuery(rank: ExpressionWithColumnTypeAlias<Long>): QueryAlias =
+        kyokuDbQuery {
             RelationEntitySongArtist
                 .join(
                     otherTable = EntitySongInfo,
@@ -298,35 +341,6 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                 )
                 .alias("RankedSongs")
         }
-
-        kyokuDbQuery {
-            rankedQuery.selectAll().where {
-                (rankedQuery[rank]).lessEq(longLiteral(ARTIST_MOST_POPULAR_SONGS_LIMIT))
-            }
-                .orderBy(rankedQuery[EntitySongInfo.popularity] to SortOrder.DESC)
-                .map {
-                    DtoArtistPopularSong(
-                        songId = it[rankedQuery.fields[0]].toString().toLong(),
-                        artistId = it[rankedQuery.fields[1]].toString().toLong(),
-                        countryId = it[rankedQuery.fields[2]].toString().toInt()
-                    )
-                }
-        }.chunked(5000).map {
-            println("Inserting ${it.size} artist popular songs")
-
-            shardPopularDbQuery {
-                ShardEntityArtistPopularSong.batchInsert(
-                    data = it,
-                    ignore = true,
-                    shouldReturnGeneratedValues = false
-                ) {
-                    this[ShardEntityArtistPopularSong.id] = it.songId
-                    this[ShardEntityArtistPopularSong.artistId] = it.artistId
-                    this[ShardEntityArtistPopularSong.countryId] = it.countryId
-                }
-            }
-        }
-    }
 
     override suspend fun updateCountryMostPopularSongs() {
         coroutineScope {
@@ -439,18 +453,89 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                             }
                         }
 
-                        listOf(
-                            rem,
-                            ins
-                        ).awaitAll()
+                        listOf(rem, ins).awaitAll()
                     }
                 }
         }
     }
 
     override suspend fun updateArtistMostPopularSongs() {
-        coroutineScope {// TODO: idea create index based fetch of entry as size is big
+        val chunkSize = 5000
+        var offset = 0L
+        coroutineScope {
+            val rank = kyokuDbQuery {
+                RowNumber()
+                    .over()
+                    .partitionBy(RelationEntitySongArtist.artistId)
+                    .orderBy(EntitySongInfo.popularity, SortOrder.DESC)
+                    .alias("rankk")
+            }
 
+            val query = insertArtistsMostPopularSongsQuery(rank)
+
+            while (true) {
+                val chunk = kyokuDbQuery {
+                    query.selectAll()
+                        .where {
+                            (query[rank]).lessEq(longLiteral(ARTIST_MOST_POPULAR_SONGS_LIMIT))
+                        }.orderBy(query[EntitySongInfo.popularity] to SortOrder.DESC)
+                        .limit(chunkSize)
+                        .offset(offset).map {
+                            DtoArtistPopularSong(
+                                songId = it[query.fields[0]].toString().toLong(),
+                                artistId = it[query.fields[1]].toString().toLong(),
+                                countryId = it[query.fields[2]].toString().toInt()
+                            )
+                        }
+                }
+
+                if (chunk.isEmpty()) break
+                else {
+                    chunk.groupBy { it.artistId }.map {
+                        val artistId = it.key
+                        val countryId = it.value.first().countryId
+                        val songIdList = it.value.map { it.songId }
+
+                        val entry = shardPopularDbQuery {
+                            ShardEntityArtistPopularSong.select(ShardEntityArtistPopularSong.id).where {
+                                ShardEntityArtistPopularSong.artistId eq artistId and
+                                        (ShardEntityArtistPopularSong.countryId eq countryId)
+                            }.map {
+                                it[ShardEntityArtistPopularSong.id].value
+                            }
+                        }
+
+                        val rev = entry.filterNot { a -> songIdList.any { it == a } }
+                        val newEntry = songIdList.filterNot { a -> entry.any { it == a } }
+
+                        val rem = async {
+                            if (rev.isNotEmpty()) shardPopularDbQuery {
+                                ShardEntityArtistPopularSong.deleteWhere {
+                                    this.artistId eq artistId and (this.countryId eq countryId) and (this.id inList rev)
+                                }
+                            }
+                        }
+                        val ins = async {
+                            if (newEntry.isNotEmpty()) shardPopularDbQuery {
+                                ShardEntityArtistPopularSong.batchInsert(
+                                    data = newEntry,
+                                    ignore = false,
+                                    shouldReturnGeneratedValues = false,
+                                    body = {
+                                        this[ShardEntityArtistPopularSong.id] = it
+                                        this[ShardEntityArtistPopularSong.countryId] = countryId
+                                        this[ShardEntityArtistPopularSong.artistId] = artistId
+                                    }
+                                )
+                            }
+                        }
+
+                        listOf(rem, ins).awaitAll()
+                    }
+
+                    offset += chunkSize
+                }
+            }
         }
     }
 
