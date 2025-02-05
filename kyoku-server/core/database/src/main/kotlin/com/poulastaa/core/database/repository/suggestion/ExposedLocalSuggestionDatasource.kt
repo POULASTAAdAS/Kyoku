@@ -49,7 +49,6 @@ class ExposedLocalSuggestionDatasource(
         }
     }
 
-
     override suspend fun getPrevPopularArtistMix(
         userId: Long,
         countryId: CountryId,
