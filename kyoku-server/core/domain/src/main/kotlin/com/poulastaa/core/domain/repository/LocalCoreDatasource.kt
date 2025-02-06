@@ -7,6 +7,7 @@ typealias SongId = Long
 typealias AlbumId = Long
 typealias GenreId = Int
 typealias CountryId = Int
+typealias PlaylistId = Long
 
 interface LocalCoreDatasource {
     suspend fun getUserByEmail(email: String, userType: UserType): DtoDBUser?
@@ -16,6 +17,9 @@ interface LocalCoreDatasource {
     suspend fun getInfoOnSongId(list: List<SongId>): List<Pair<SongId, DtoSongInfo>>
     suspend fun getGenreOnSongId(list: List<SongId>): List<Pair<SongId, DtoGenre>>
     suspend fun getAlbumOnSongId(list: List<SongId>): List<Pair<SongId, DtoAlbum>>
+
+    suspend fun getSongOnId(songId: SongId): DtoSong?
+    suspend fun getSongOnId(list: List<SongId>): List<DtoSong>
 
     suspend fun getArtistFromDbArtist(list: List<DtoDBArtist>): List<DtoArtist>
 }

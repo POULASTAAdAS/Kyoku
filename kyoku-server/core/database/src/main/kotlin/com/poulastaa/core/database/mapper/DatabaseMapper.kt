@@ -29,7 +29,7 @@ fun DaoSong.toSongDto(
     genre = genre
 )
 
-fun DaoPlaylist.toPlaylistDto() = DtoPlaylist(
+fun DaoPlaylist.toDtoPlaylist() = DtoPlaylist(
     id = this.id.value,
     name = this.name,
     popularity = this.popularity,

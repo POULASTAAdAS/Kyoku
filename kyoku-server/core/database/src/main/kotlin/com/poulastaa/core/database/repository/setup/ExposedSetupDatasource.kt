@@ -72,6 +72,8 @@ class ExposedSetupDatasource(
                 }
             }.awaitAll().flatten()
 
+            dbSongs.map { it.toDtoPrevSong() }
+
             var idList = (dbSongs.map { it.id.value } + cacheResult.map { it.id }).distinctBy { it }
 
             val songs = if (idList.isNotEmpty()) {
@@ -88,7 +90,7 @@ class ExposedSetupDatasource(
                 val dbResult = dbSongs.map { song ->
                     song.toSongDto(
                         artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
-                        album = album.firstOrNull { it.first == song.id.value }?.second?.copy(poster = song.poster),
+                        album = album.firstOrNull { it.first == song.id.value }?.second?.copy(rawPoster = song.poster),
                         info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
                         genre = genre.firstOrNull { it.first == song.id.value }?.second,
                     )

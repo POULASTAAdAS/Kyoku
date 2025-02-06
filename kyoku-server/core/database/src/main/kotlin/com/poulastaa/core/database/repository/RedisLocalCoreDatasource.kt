@@ -84,6 +84,19 @@ class RedisLocalCoreDatasource(
         setMultipleValueWithExp(Group.SONG_INFO, list.associateBy { it.id })
 
 
+    // Playlist
+    override fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist? =
+        cacheSingleValue<PlaylistId, DtoPlaylist>(Group.PLAYLIST, playlistId)
+
+    override fun cachePlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist> =
+        cacheMultipleValue<PlaylistId, DtoPlaylist>(Group.PLAYLIST, list)
+
+    override fun setPlaylistOnId(playlist: DtoPlaylist) = setSingleValueWithExp(Group.PLAYLIST, playlist.id, playlist)
+
+    override fun setPlaylistOnId(list: List<DtoPlaylist>) =
+        setMultipleValueWithExp(Group.PLAYLIST, list.associateBy { it.id })
+
+
     // relation songId artistId
     override fun cacheArtistIdBySongId(songId: SongId): List<ArtistId> = redisPool.resource.use { jedis ->
         jedis.get("${Group.RELATION_SONG_ARTIST}:$songId")?.let { list ->

@@ -33,9 +33,14 @@ interface LocalSuggestionDatasource {
         oldList: List<ArtistId> = emptyList(),
     ): List<DtoPrevArtist>
 
-    suspend fun getSuggestedAlbum(userId: Long, oldList: List<AlbumId> = emptyList()): List<DtoPrevAlbum>
+    suspend fun getSuggestedAlbum(
+        userId: Long,
+        oldList: List<AlbumId> = emptyList(),
+    ): List<DtoAlbum>
+
     suspend fun getSuggestedArtistSong(
         userId: Long,
+        suggestedArtistIdList: List<ArtistId>,
         oldList: List<ArtistId> = emptyList(),
     ): List<DtoSuggestedArtistSong>
 

@@ -2,8 +2,10 @@ package com.poulastaa.core.database.repository.suggestion
 
 import com.google.gson.Gson
 import com.poulastaa.core.database.mapper.toDtoPrevSong
+import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
+import com.poulastaa.core.domain.repository.PlaylistId
 import com.poulastaa.core.domain.repository.RedisKeys
 import com.poulastaa.core.domain.repository.SongId
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
@@ -55,4 +57,9 @@ class RedisLocalSuggestionDatasource(
         core.cacheSongById(songId)?.toDtoPrevSong() ?: redisPool.resource.use { jedis ->
             jedis.get("${Group.PREV_SONG}:$songId")
         }?.let { gson.fromJson(it, DtoPrevSong::class.java) }
+
+    override fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist? = core.cachePlaylistOnId(playlistId)
+    override fun cachePlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist> = core.cachePlaylistOnId(list)
+    override fun setPlaylistOnId(data: DtoPlaylist) = core.setPlaylistOnId(data)
+    override fun setPlaylistOnId(list: List<DtoPlaylist>) = core.setPlaylistOnId(list)
 }

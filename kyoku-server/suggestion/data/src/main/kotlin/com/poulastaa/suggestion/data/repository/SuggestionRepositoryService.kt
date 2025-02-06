@@ -21,20 +21,27 @@ class SuggestionRepositoryService(
             val prevPopularArtistMixDef = async { db.getPrevPopularArtistMix(user.id) }
             val prevOldGemDef = async { db.getPrevPopularYearSongs(user.id, user.bDate!!.year, user.countryId) }
 
-            val suggestedArtisteDef = async { db.getSuggestedArtist(user.id,user.countryId) }
+            val suggestedArtisteDef = async { db.getSuggestedArtist(user.id, user.countryId) }
             val suggestedAlbumDef = async { db.getSuggestedAlbum(user.id) }
-            val suggestedArtistSongDef = async { db.getSuggestedArtistSong(user.id) }
 
             val playlistDef = async { db.getSavedPlaylist(user.id) }
             val albumDef = async { db.getSavedAlbum(user.id) }
             val artistDef = async { db.getSavedArtist(user.id) }
+
+            val suggestedArtist = suggestedArtisteDef.await()
+            val suggestedArtistSongDef = async {
+                db.getSuggestedArtistSong(
+                    userId = user.id,
+                    suggestedArtistIdList = suggestedArtist.map { it.id }
+                )
+            }
 
             DtoHome(
                 refresh = DtoRefresh(
                     prevPopularSongMix = prevPopularSongMixDef.await(),
                     prevPopularArtistMix = prevPopularArtistMixDef.await(),
                     prevOldGem = prevOldGemDef.await(),
-                    suggestedArtist = suggestedArtisteDef.await(),
+                    suggestedArtist = suggestedArtist,
                     suggestedAlbum = suggestedAlbumDef.await(),
                     suggestedArtistSong = suggestedArtistSongDef.await()
                 ),

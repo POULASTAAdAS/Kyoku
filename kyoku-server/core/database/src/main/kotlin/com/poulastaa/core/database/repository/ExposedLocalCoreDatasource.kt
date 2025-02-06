@@ -2,10 +2,7 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
-import com.poulastaa.core.database.dao.DaoAlbum
-import com.poulastaa.core.database.dao.DaoGenre
-import com.poulastaa.core.database.dao.DaoPlaylist
-import com.poulastaa.core.database.dao.DaoUser
+import com.poulastaa.core.database.dao.*
 import com.poulastaa.core.database.entity.app.*
 import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserPlaylist
@@ -61,7 +58,7 @@ class ExposedLocalCoreDatasource(
                 }
             }
         }
-        val playlist = dbPlaylist.toPlaylistDto()
+        val playlist = dbPlaylist.toDtoPlaylist()
         cache.setPlaylistById(playlist)
 
         return playlist
@@ -208,6 +205,39 @@ class ExposedLocalCoreDatasource(
             }
 
             cacheAlbumDef.await() + dbAlbumDef.await()
+        }
+    }
+
+    override suspend fun getSongOnId(songId: SongId): DtoSong? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSongOnId(list: List<SongId>): List<DtoSong> = coroutineScope {
+        val daoSongs = kyokuDbQuery {
+            DaoSong.find {
+                EntitySong.id inList list
+            }.toList()
+        }
+
+        val idList = kyokuDbQuery { daoSongs.map { it.id.value as SongId } }
+
+        val albumDef = async { getAlbumOnSongId(idList) }
+        val artistDef = async { getArtistOnSongId(idList) }
+        val infoDef = async { getInfoOnSongId(idList) }
+        val genreDef = async { getGenreOnSongId(idList) }
+
+        val artist = artistDef.await()
+        val album = albumDef.await()
+        val info = infoDef.await()
+        val genre = genreDef.await()
+
+        daoSongs.map { song ->
+            song.toSongDto(
+                artist = artist.firstOrNull { it.first == song.id.value }?.second ?: emptyList(),
+                album = album.firstOrNull { it.first == song.id.value }?.second?.copy(rawPoster = song.poster),
+                info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
+                genre = genre.firstOrNull { it.first == song.id.value }?.second,
+            )
         }
     }
 

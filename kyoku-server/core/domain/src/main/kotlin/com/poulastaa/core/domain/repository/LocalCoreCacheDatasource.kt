@@ -39,6 +39,11 @@ interface LocalCoreCacheDatasource {
     fun setSongInfoById(songInfo: DtoSongInfo)
     fun setSongInfoById(list: List<DtoSongInfo>)
 
+    fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist?
+    fun cachePlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist>
+    fun setPlaylistOnId(playlist: DtoPlaylist)
+    fun setPlaylistOnId(list: List<DtoPlaylist>)
+
     fun cacheArtistIdBySongId(songId: SongId): List<ArtistId>
     fun cacheArtistIdBySongId(list: List<SongId>): Map<SongId, List<ArtistId>>
     fun setArtistIdBySongId(songId: SongId, list: List<ArtistId>)
