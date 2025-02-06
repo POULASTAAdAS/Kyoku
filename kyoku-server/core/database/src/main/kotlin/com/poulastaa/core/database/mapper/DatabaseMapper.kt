@@ -62,7 +62,7 @@ fun DaoGenre.toGenreDto() = DtoGenre(
     popularity = this.popularity
 )
 
-fun DaoAlbum.toAlbumDto() = DtoAlbum(
+fun DaoAlbum.toDtoAlbum() = DtoAlbum(
     id = this.id.value,
     name = this.name,
     popularity = this.popularity

@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.auth.authNetwork)
     implementation(projects.core.coreNetwork)
     implementation(projects.user.userNetwork)
+    implementation(projects.suggestion.suggestionNetwork)
 
     // data
     implementation(projects.auth.authData)

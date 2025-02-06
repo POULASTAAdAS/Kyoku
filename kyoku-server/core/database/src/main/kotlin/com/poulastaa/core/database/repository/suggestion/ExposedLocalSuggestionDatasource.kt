@@ -4,6 +4,7 @@ import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.shardGenreArtistDbQuery
 import com.poulastaa.core.database.SQLDbManager.shardPopularDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
+import com.poulastaa.core.database.dao.DaoAlbum
 import com.poulastaa.core.database.dao.DaoArtist
 import com.poulastaa.core.database.dao.DaoPlaylist
 import com.poulastaa.core.database.dao.DaoSong
@@ -14,14 +15,13 @@ import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityYearPopula
 import com.poulastaa.core.database.entity.user.RelationEntityUserAlbum
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserPlaylist
-import com.poulastaa.core.database.mapper.toDtoPlaylist
-import com.poulastaa.core.database.mapper.toDtoPrevArtist
-import com.poulastaa.core.database.mapper.toDtoPrevSong
+import com.poulastaa.core.database.mapper.*
 import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.*
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.*
 import java.time.LocalDate
@@ -283,32 +283,80 @@ class ExposedLocalSuggestionDatasource(
             }.groupBy { it.first as PlaylistId }
                 .map { it.key to it.value.map { it.second } }
                 .map { (playlistId, songIdList) ->
-                    val playlist = async {
-                        cache.cachePlaylistOnId(playlistId) ?: kyokuDbQuery {
-                            DaoPlaylist.find {
-                                EntityPlaylist.id eq playlistId
-                            }.first().toDtoPlaylist().also { cache.setPlaylistOnId(it) }
+                    async {
+                        val playlist = async {
+                            cache.cachePlaylistOnId(playlistId) ?: kyokuDbQuery {
+                                DaoPlaylist.find {
+                                    EntityPlaylist.id eq playlistId
+                                }.first().toDtoPlaylist().also { cache.setPlaylistOnId(it) }
+                            }
                         }
-                    }
 
-                    val songs = async {
-                        core.getSongOnId(songIdList)
-                    }
+                        val songs = async {
+                            core.getSongOnId(songIdList)
+                        }
 
-                    DtoFullPlaylist(
-                        playlist = playlist.await(),
-                        listOfSong = songs.await()
-                    )
-                }
+                        DtoFullPlaylist(
+                            playlist = playlist.await(),
+                            listOfSong = songs.await()
+                        )
+                    }
+                }.awaitAll()
         }
     }
 
     override suspend fun getSavedAlbum(userId: Long): List<DtoFullAlbum> {
-        TODO("Not yet implemented")
+        val albumIdList = userDbQuery {
+            RelationEntityUserAlbum.select(RelationEntityUserAlbum.albumId)
+                .where { RelationEntityUserAlbum.userId eq userId }
+                .map { it[RelationEntityUserAlbum.albumId] as AlbumId }
+        }
+
+        val cacheAlbums = cache.cacheAlbumById(albumIdList)
+        val notFound = albumIdList.filter { id -> cacheAlbums.none { it.id == id } }
+
+        val albums = kyokuDbQuery {
+            DaoAlbum.find {
+                EntityAlbum.id inList notFound
+            }.map { it.toDtoAlbum() }.also { cache.setAlbumById(it) }
+        } + cacheAlbums
+
+        return kyokuDbQuery {
+            RelationEntitySongAlbum.selectAll()
+                .where { RelationEntitySongAlbum.albumId inList albums.map { it.id } }
+                .map { it[RelationEntitySongAlbum.albumId] to it[RelationEntitySongAlbum.songId] }
+        }.groupBy { it.first }.map { it.key as AlbumId to it.value.map { it.second as SongId } }
+            .map { (albumId, songIdList) ->
+                DtoFullAlbum(
+                    album = albums.first { it.id == albumId },
+                    songs = core.getSongOnId(songIdList)
+                )
+            }
     }
 
-    override suspend fun getSavedArtist(userId: Long): List<DtoArtist> {
-        TODO("Not yet implemented")
+    override suspend fun getSavedArtist(userId: Long): List<DtoArtist> = coroutineScope {
+        val artistIdList = userDbQuery {
+            RelationEntityUserArtist.select(RelationEntityUserArtist.artistId).where {
+                RelationEntityUserArtist.userId eq userId
+            }.map { it[RelationEntityUserArtist.artistId] as ArtistId }
+        }
+
+        val cacheArtist = cache.cacheArtistById(artistIdList)
+        val notFound = artistIdList.filter { id -> cacheArtist.none { it.id == id } }
+
+        kyokuDbQuery {
+            DaoArtist.find {
+                EntityArtist.id inList notFound
+            }.map { it.toDbArtistDto() }
+        }.map { artist ->
+            val genre = core.getGenreOnArtistId(artist.id)
+            val country = core.getCountryOnArtistId(artist.id)
+
+            artist.toArtistDto(
+                genre = genre,
+                country = country
+            )
+        }.also { cache.setArtistById(it) } + cacheArtist
     }
 
     private suspend fun getSavedArtistIdOnUserId(userId: Long): List<ArtistId> = userDbQuery {
@@ -319,12 +367,16 @@ class ExposedLocalSuggestionDatasource(
         }
     }
 
-    private suspend fun getPrevSongById(songIdList: List<Long>): List<DtoPrevSong> =
-        cache.cachePrevSongById(songIdList).ifEmpty {
-            kyokuDbQuery {
-                DaoSong.find {
-                    EntitySong.id inList songIdList
-                }.map { it.toDtoPrevSong() }
-            }.also { cache.setPrevSongById(it) }
-        }
+    private suspend fun getPrevSongById(songIdList: List<Long>): List<DtoPrevSong> {
+        val cache = cache.cachePrevSongById(songIdList)
+        val notFound = songIdList.filter { id -> cache.none { it.id == id } }
+
+        val db = kyokuDbQuery {
+            DaoSong.find {
+                EntitySong.id inList notFound
+            }.map { it.toDtoPrevSong() }
+        }.also { this.cache.setPrevSongById(it) }
+
+        return cache + db
+    }
 }

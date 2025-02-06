@@ -22,4 +22,7 @@ interface LocalCoreDatasource {
     suspend fun getSongOnId(list: List<SongId>): List<DtoSong>
 
     suspend fun getArtistFromDbArtist(list: List<DtoDBArtist>): List<DtoArtist>
+
+    suspend fun getGenreOnArtistId(artistId: ArtistId): DtoGenre?
+    suspend fun getCountryOnArtistId(artistId: ArtistId): DtoCountry?
 }

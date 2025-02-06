@@ -2,6 +2,8 @@ package com.poulastaa.app.plugins
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
+import com.poulastaa.suggestion.domain.repository.SuggestionRepository
+import com.poulastaa.suggestion.network.routes.home
 import com.poulastaa.user.domain.repository.SetupRepository
 import com.poulastaa.user.network.routes.getArtistPoster
 import com.poulastaa.user.network.routes.getGenrePoster
@@ -16,10 +18,12 @@ import java.io.File
 fun Application.configureRouting() {
     val authRepository: AuthRepository by inject()
     val setUpRepository: SetupRepository by inject()
+    val suggestionRepository: SuggestionRepository by inject()
 
     routing {
         authen(authRepository)
         setup(setUpRepository)
+        suggestion(suggestionRepository)
 
         staticFiles(
             remotePath = ".well-known",
@@ -61,4 +65,8 @@ private fun Routing.setup(repo: SetupRepository) {
     suggestArtist(repo)
     getArtistPoster()
     upsertArtist(repo)
+}
+
+private fun Routing.suggestion(repo: SuggestionRepository) {
+    home(repo)
 }

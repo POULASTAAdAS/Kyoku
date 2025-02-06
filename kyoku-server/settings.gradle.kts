@@ -7,6 +7,9 @@ pluginManagement {
         maven { url = uri("https://packages.confluent.io/maven/") }
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
 
 rootProject.name = "kyoku-server"
@@ -62,3 +65,5 @@ include("notification:domain")
 project(":notification:domain").name = "notification-domain"
 include("notification:data")
 project(":notification:data").name = "notification-data"
+include("suggestion:network")
+findProject(":suggestion:network")?.name = "suggestion-network"

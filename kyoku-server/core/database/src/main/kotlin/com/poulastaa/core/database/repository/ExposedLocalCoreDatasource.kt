@@ -14,6 +14,7 @@ import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.SongId
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
+import javax.print.Doc
 
 class ExposedLocalCoreDatasource(
     private val cache: LocalCoreCacheDatasource,
@@ -165,7 +166,7 @@ class ExposedLocalCoreDatasource(
                     async {
                         val album = cache.cacheAlbumById(albumId) ?: kyokuDbQuery {
                             DaoAlbum.find { EntityAlbum.id eq albumId }
-                                .firstOrNull()?.toAlbumDto()?.also { cache.setAlbumById(it) }
+                                .firstOrNull()?.toDtoAlbum()?.also { cache.setAlbumById(it) }
                         }
 
                         album?.let { songId to it }
@@ -255,7 +256,7 @@ class ExposedLocalCoreDatasource(
         }.awaitAll().also { cache.setArtistById(it) }
     }
 
-    private suspend fun getGenreOnArtistId(artistId: ArtistId) =
+    override suspend fun getGenreOnArtistId(artistId: ArtistId): DtoGenre? =
         cache.cacheGenreIdByArtistId(artistId)?.let { cache.cacheGenreById(it) } ?: kyokuDbQuery {
             EntityGenre
                 .join(
@@ -284,7 +285,7 @@ class ExposedLocalCoreDatasource(
             }
         }
 
-    private suspend fun getCountryOnArtistId(artistId: ArtistId) =
+    override suspend fun getCountryOnArtistId(artistId: ArtistId): DtoCountry? =
         cache.cacheCountryIdByArtistId(artistId)?.let { cache.cacheCountryById(it) } ?: kyokuDbQuery {
             EntityCountry
                 .join(

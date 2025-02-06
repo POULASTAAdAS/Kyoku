@@ -1,12 +1,11 @@
-package com.poulastaa.core.network.model
+package com.poulastaa.suggestion.network.domain
 
 import com.poulastaa.core.domain.repository.AlbumId
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseAlbum(
+data class ResponsePrevAlbum(
     val id: AlbumId = -1,
     val name: String = "",
     val poster: String? = null,
-    val popularity: Long = -1,
 )

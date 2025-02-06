@@ -65,3 +65,14 @@ fun UpsertOperation.toDtoUpsertOperation() = when (this) {
     UpsertOperation.UPDATE -> DtoUpsertOperation.UPDATE
     UpsertOperation.DELETE -> DtoUpsertOperation.DELETE
 }
+
+fun DtoFullAlbum.toResponseFullAlbum() = ResponseFullAlbum(
+    album = this.album.toResponseAlbum(),
+    songs = this.songs.map { it.toResponseSong() }
+)
+
+fun DtoPrevArtist.toPrevArtistRes() = ResponsePrevArtist(
+    id = this.id,
+    name = this.name,
+    cover = this.cover
+)

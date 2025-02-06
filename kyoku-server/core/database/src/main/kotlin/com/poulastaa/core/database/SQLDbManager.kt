@@ -49,11 +49,12 @@ object SQLDbManager {
         genreArtistShardDbUrl: String,
         popularShardDbUrl: String,
     ) {
+        require(driverClass.isNotBlank()) { "Driver class cannot be blank" }
+
         require(userDbUrl.isNotBlank()) { "USER JDBC URL cannot be blank" }
         require(kyokuDbUrl.isNotBlank()) { "KYOKU JDBC URL cannot be blank" }
         require(genreArtistShardDbUrl.isNotBlank()) { "ARTIST SHARD JDBC URL cannot be blank" }
         require(popularShardDbUrl.isNotBlank()) { "POPULAR SHARD JDBC URL cannot be blank" }
-        require(driverClass.isNotBlank()) { "Driver class cannot be blank" }
 
         if (IS_INITIALIZED) throw IllegalStateException("Databases are already initialized!")
 

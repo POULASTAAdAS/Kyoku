@@ -2,12 +2,11 @@ package com.poulastaa.core.database.repository.suggestion
 
 import com.google.gson.Gson
 import com.poulastaa.core.database.mapper.toDtoPrevSong
+import com.poulastaa.core.domain.model.DtoAlbum
+import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
-import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
-import com.poulastaa.core.domain.repository.PlaylistId
-import com.poulastaa.core.domain.repository.RedisKeys
-import com.poulastaa.core.domain.repository.SongId
+import com.poulastaa.core.domain.repository.*
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import redis.clients.jedis.JedisPool
 
@@ -62,4 +61,14 @@ class RedisLocalSuggestionDatasource(
     override fun cachePlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist> = core.cachePlaylistOnId(list)
     override fun setPlaylistOnId(data: DtoPlaylist) = core.setPlaylistOnId(data)
     override fun setPlaylistOnId(list: List<DtoPlaylist>) = core.setPlaylistOnId(list)
+
+    override fun cacheAlbumById(albumId: AlbumId): DtoAlbum? = core.cacheAlbumById(albumId)
+    override fun cacheAlbumById(list: List<AlbumId>): List<DtoAlbum> = core.cacheAlbumById(list)
+    override fun setAlbumById(album: DtoAlbum) = core.setAlbumById(album)
+    override fun setAlbumById(list: List<DtoAlbum>) = core.setAlbumById(list)
+
+    override fun cacheArtistById(artistId: ArtistId): DtoArtist? = core.cacheArtistById(artistId)
+    override fun cacheArtistById(list: List<ArtistId>): List<DtoArtist> = core.cacheArtistById(list)
+    override fun setArtistById(artist: DtoArtist) = core.setArtistById(artist)
+    override fun setArtistById(list: List<DtoArtist>) = core.setArtistById(list)
 }
