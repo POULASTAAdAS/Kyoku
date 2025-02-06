@@ -428,5 +428,6 @@ class ExposedSetupDatasource(
     private fun <T> calculateIdList(page: Int, size: Int): List<T> = (if (page == 1) (page..size).toList() else
         (size * (page - 1) + (page - (page - 1))..size * page).toList()) as List<T>
 
+    @Suppress("KotlinConstantConditions")
     private fun Int.offset(limit: Int) = if (this == 1) 0L else (this * limit).toLong()
 }

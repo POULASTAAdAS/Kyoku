@@ -14,12 +14,14 @@ class SuggestionRepositoryService(
     override suspend fun getHomeData(payload: ReqUserPayload): DtoHome? {
         val user = db.getUserByEmail(payload.email, payload.userType) ?: return null
 
+        if (user.bDate == null) return null
+
         return coroutineScope {
             val prevPopularSongMixDef = async { db.getPrevPopularCountrySong(user.id, user.countryId) }
-            val prevPopularArtistMixDef = async { db.getPrevPopularArtistMix(user.id, user.countryId) }
-            val prevOldGemDef = async { db.getPrevPopularYearSongs(user.id, user.countryId) }
+            val prevPopularArtistMixDef = async { db.getPrevPopularArtistMix(user.id) }
+            val prevOldGemDef = async { db.getPrevPopularYearSongs(user.id, user.bDate!!.year, user.countryId) }
 
-            val suggestedArtisteDef = async { db.getSuggestedArtist(user.id) }
+            val suggestedArtisteDef = async { db.getSuggestedArtist(user.id,user.countryId) }
             val suggestedAlbumDef = async { db.getSuggestedAlbum(user.id) }
             val suggestedArtistSongDef = async { db.getSuggestedArtistSong(user.id) }
 

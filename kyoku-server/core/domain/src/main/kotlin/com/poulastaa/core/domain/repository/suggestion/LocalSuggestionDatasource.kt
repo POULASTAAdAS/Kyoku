@@ -17,17 +17,22 @@ interface LocalSuggestionDatasource {
 
     suspend fun getPrevPopularArtistMix(
         userId: Long,
-        countryId: CountryId,
         oldList: List<SongId> = emptyList(),
     ): List<DtoPrevSong>
 
     suspend fun getPrevPopularYearSongs(
         userId: Long,
+        birthYear: Int,
         countryId: CountryId,
         oldList: List<SongId> = emptyList(),
     ): List<DtoPrevSong>
 
-    suspend fun getSuggestedArtist(userId: Long, oldList: List<ArtistId> = emptyList()): List<DtoPrevArtist>
+    suspend fun getSuggestedArtist(
+        userId: Long,
+        countryId: CountryId,
+        oldList: List<ArtistId> = emptyList(),
+    ): List<DtoPrevArtist>
+
     suspend fun getSuggestedAlbum(userId: Long, oldList: List<AlbumId> = emptyList()): List<DtoPrevAlbum>
     suspend fun getSuggestedArtistSong(
         userId: Long,
