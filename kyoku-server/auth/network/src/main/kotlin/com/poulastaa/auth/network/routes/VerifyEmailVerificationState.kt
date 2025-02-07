@@ -1,9 +1,9 @@
 package com.poulastaa.auth.network.routes
 
 import com.poulastaa.auth.domain.repository.AuthRepository
-import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.auth.network.mapper.toJWTResponse
 import com.poulastaa.auth.network.model.JwtTokenResponse
+import com.poulastaa.core.domain.model.EndPoints
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

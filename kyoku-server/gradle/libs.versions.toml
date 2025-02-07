@@ -81,7 +81,7 @@ kotlin-bycrypt = { module = "org.mindrot:jbcrypt", version.ref = "jbcrype" }
 
 kotlin-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
-jakarta-mail = {module = "com.sun.mail:jakarta.mail" , version.ref = "mail"}
+jakarta-mail = { module = "com.sun.mail:jakarta.mail", version.ref = "mail" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
 ktor-client-jvm = { module = "io.ktor:ktor-client-apache-jvm", version.ref = "ktor" }

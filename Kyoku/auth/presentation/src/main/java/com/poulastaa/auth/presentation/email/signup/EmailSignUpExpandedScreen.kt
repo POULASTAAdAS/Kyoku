@@ -20,8 +20,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.Autofill
+import androidx.compose.ui.autofill.AutofillNode
+import androidx.compose.ui.autofill.AutofillType
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -44,8 +52,12 @@ import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
 import com.poulastaa.core.presentation.designsystem.dimens
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EmailSignUpExpandedScreen(
+    autoFill: Autofill?,
+    autoFillUserName: AutofillNode,
+    autoFillPassword: AutofillNode,
     state: EmailSignUpUiState,
     onAction: (EmailSignUpUiAction) -> Unit,
 ) {
@@ -107,7 +119,17 @@ fun EmailSignUpExpandedScreen(
                     )
 
                     AppTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .fillMaxWidth()
+                            .onGloballyPositioned {
+                                autoFillUserName.boundingBox = it.boundsInParent()
+                            }
+                            .onFocusChanged {
+                                autoFill?.run {
+                                    if (it.isFocused) requestAutofillForNode(autoFillUserName)
+                                    else cancelAutofillForNode(autoFillUserName)
+                                }
+                            },
                         text = state.username.value,
                         onValueChange = { onAction(EmailSignUpUiAction.OnEmailChange(it)) },
                         label = stringResource(R.string.username),
@@ -117,7 +139,16 @@ fun EmailSignUpExpandedScreen(
                     )
 
                     AppPasswordField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .onGloballyPositioned {
+                                autoFillPassword.boundingBox = it.boundsInParent()
+                            }
+                            .onFocusChanged {
+                                autoFill?.run {
+                                    if (it.isFocused) requestAutofillForNode(autoFillPassword)
+                                    else cancelAutofillForNode(autoFillPassword)
+                                }
+                            },
                         text = state.password.value,
                         onValueChange = { onAction(EmailSignUpUiAction.OnPasswordChange(it)) },
                         label = stringResource(R.string.password),
@@ -132,7 +163,16 @@ fun EmailSignUpExpandedScreen(
                     )
 
                     AppPasswordField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .onGloballyPositioned {
+                                autoFillPassword.boundingBox = it.boundsInParent()
+                            }
+                            .onFocusChanged {
+                                autoFill?.run {
+                                    if (it.isFocused) requestAutofillForNode(autoFillPassword)
+                                    else cancelAutofillForNode(autoFillPassword)
+                                }
+                            },
                         text = state.conformPassword.value,
                         onValueChange = { onAction(EmailSignUpUiAction.OnConformPasswordChange(it)) },
                         label = stringResource(R.string.conform_password),
@@ -198,6 +238,7 @@ fun EmailSignUpExpandedScreen(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Preview(
     widthDp = 840,
     heightDp = 540
@@ -210,10 +251,23 @@ fun EmailSignUpExpandedScreen(
 @Composable
 private fun Preview() {
     AppThem {
+        val autoFill = LocalAutofill.current
+        val autoFillPassword = AutofillNode(
+            autofillTypes = listOf(AutofillType.Password),
+            onFill = {}
+        )
+        val autoFillUserName = AutofillNode(
+            autofillTypes = listOf(AutofillType.NewUsername),
+            onFill = {}
+        )
+
         Surface(
             color = MaterialTheme.colorScheme.background,
         ) {
             EmailSignUpExpandedScreen(
+                autoFill = autoFill,
+                autoFillPassword = autoFillPassword,
+                autoFillUserName = autoFillUserName,
                 state = EmailSignUpUiState(),
                 onAction = {}
             )

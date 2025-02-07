@@ -7,6 +7,7 @@ import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.RedisKeys
+import com.poulastaa.core.domain.repository.auth.Email
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.params.ScanParams
@@ -70,6 +71,8 @@ class RedisSetupDatasource(
     }
 
     override fun setSongById(list: List<DtoSong>) = core.setSongById(list)
+
+    override fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser) = core.setUserByEmail(key, type, value)
 
     override fun cacheGenreById(list: List<GenreId>): List<DtoGenre> {
         if (list.isEmpty()) return emptyList()

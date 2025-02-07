@@ -2,15 +2,16 @@ package com.poulastaa.core.database.mapper
 
 import com.poulastaa.core.database.dao.*
 import com.poulastaa.core.domain.model.*
+import java.time.LocalDate
 
-fun DaoUser.toDbUserDto() = DtoDBUser(
+fun DaoUser.toDbUserDto(bDate: LocalDate? = null) = DtoDBUser(
     id = this.id.value,
     email = this.email,
     userName = this.username,
     passwordHash = this.passwordHash,
     profilePicUrl = this.profilePicUrl,
     countryId = this.countryId,
-    bDate = this.bDate
+    bDate = bDate ?: this.bDate
 )
 
 fun DaoSong.toSongDto(

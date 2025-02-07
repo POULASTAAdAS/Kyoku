@@ -1,6 +1,5 @@
 package com.poulastaa.core.database.entity.app
 
-import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 

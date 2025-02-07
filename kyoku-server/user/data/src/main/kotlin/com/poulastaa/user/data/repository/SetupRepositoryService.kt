@@ -23,7 +23,7 @@ class SetupRepositoryService(
         bDate: String,
     ): Boolean {
         val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return false
-        return db.updateBDate(user, bDate)
+        return db.updateBDate(user, userPayload.userType, bDate)
     }
 
     override suspend fun getGenre(

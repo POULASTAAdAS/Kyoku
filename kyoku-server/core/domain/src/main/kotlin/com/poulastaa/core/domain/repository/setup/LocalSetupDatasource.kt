@@ -14,6 +14,7 @@ interface LocalSetupDatasource {
 
     suspend fun updateBDate(
         user: DtoDBUser,
+        userType: UserType,
         bDate: String,
     ): Boolean
 

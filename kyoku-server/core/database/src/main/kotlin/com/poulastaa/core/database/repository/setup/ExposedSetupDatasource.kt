@@ -113,6 +113,7 @@ class ExposedSetupDatasource(
 
     override suspend fun updateBDate(
         user: DtoDBUser,
+        userType: UserType,
         bDate: String,
     ): Boolean {
         val date = try {
@@ -126,12 +127,16 @@ class ExposedSetupDatasource(
         }
 
         return userDbQuery {
-            DaoUser.find {
+            val dbUser = DaoUser.find {
                 EntityUser.id eq user.id
-            }.firstOrNull()?.let {
+            }.firstOrNull()
+
+            dbUser?.let {
                 it.bDate = date
-                true
+                cache.setUserByEmail(it.email, userType, it.toDbUserDto(date))
             }
+
+            true
         } == true
     }
 
@@ -275,26 +280,33 @@ class ExposedSetupDatasource(
 
             val genreArtistIds = genre.map { dto ->
                 async {
-                    shardGenreArtistDbQuery { // todo add try cache if error
+                    shardGenreArtistDbQuery {
                         val table = ShardRelationEntityGenreTypeArtist(dto.name)
 
-                        if (table.exists()) table
-                            .select(
+                        try {
+                            table.select(
                                 table.artistId,
                                 table.popularity
                             )
-                            .where {
-                                table.genreId eq dto.id
-                            }.orderBy(table.popularity to SortOrder.DESC)
-                            .limit(limit)
-                            .offset(page.offset(limit))
-                            .map {
-                                it[table.artistId]
-                            }
-                        else emptyList()
+                                .where {
+                                    table.genreId eq dto.id
+                                }.orderBy(table.popularity to SortOrder.DESC)
+                                .limit(limit)
+                                .offset(page.offset(limit))
+                                .map {
+                                    it[table.artistId]
+                                }
+                        } catch (_: Exception) {
+                            emptyList()
+                        }
                     }
                 }
             }.awaitAll().flatten()
+
+            println(genreArtistIds)
+            println(genreArtistIds)
+            println(genreArtistIds)
+            println(genreArtistIds)
 
             val genreArtist = cache.cacheArtistById(genreArtistIds)
                 .map { it.toDtoPrevArtist() }.ifEmpty {

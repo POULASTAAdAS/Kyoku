@@ -3,11 +3,15 @@ package com.poulastaa.core.domain.repository.setup
 import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.GenreId
+import com.poulastaa.core.domain.repository.auth.Email
+import java.time.LocalDate
 
 interface LocalSetupCacheDatasource {
     fun cacheSongByTitle(list: List<String>): List<DtoSong>
     fun setSongIdByTitle(list: List<DtoSong>)
     fun setSongById(list: List<DtoSong>)
+
+    fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser)
 
     fun cacheGenreById(list: List<GenreId>): List<DtoGenre>
     fun cacheGenreByName(query: String, size: Int): List<DtoGenre>

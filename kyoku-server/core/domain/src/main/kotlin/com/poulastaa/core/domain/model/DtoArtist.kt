@@ -9,8 +9,9 @@ data class DtoArtist(
     val popularity: Long,
     val genre: DtoGenre?,
     val country: DtoCountry?,
-){
+) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val coverImage: String? = rawCoverImage?.let { "$baseUrl${EndPoints.Poster.ArtistPoster.route}?$POSTER_PARAM=$rawCoverImage" }
+    val coverImage: String? =
+        rawCoverImage?.let { "$baseUrl${EndPoints.Poster.ArtistPoster.route}?$POSTER_PARAM=$rawCoverImage" }
 }

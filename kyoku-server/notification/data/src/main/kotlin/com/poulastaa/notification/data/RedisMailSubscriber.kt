@@ -21,6 +21,7 @@ class RedisMailSubscriber(
                         email = email.split(',')[0],
                         username = email.split(',')[1]
                     )
+
                     MailType.WELCOME_BACK -> mail.sendWelcomeBackMail(
                         email = email.split(',')[0],
                         username = email.split(',')[1]

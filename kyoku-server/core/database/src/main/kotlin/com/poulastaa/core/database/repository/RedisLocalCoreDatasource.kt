@@ -264,12 +264,16 @@ class RedisLocalCoreDatasource(
 
     private inline fun <T, reified V> cacheMultipleValue(group: Group, keys: List<T>) =
         redisPool.resource.use { jedis ->
+            keys.ifEmpty { return@ifEmpty emptyList() }
+
             jedis.mget(*keys.map { "${group.name}:$it" }.toTypedArray())
                 .mapNotNull { it }
                 .map { gson.fromJson(it, V::class.java) }
         }
 
     private fun <T> cacheMultipleValue(group: Group, keys: List<T>) = redisPool.resource.use { jedis ->
+        keys.ifEmpty { return@ifEmpty emptyList() }
+
         keys.map {
             it to jedis.get("${group.name}:$it")?.toLong()
         }.mapNotNull {

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ResponseFullAlbum(
     val album: ResponseAlbum = ResponseAlbum(),
-    val songs: List<ResponseSong> = emptyList()
+    val songs: List<ResponseSong> = emptyList(),
 )

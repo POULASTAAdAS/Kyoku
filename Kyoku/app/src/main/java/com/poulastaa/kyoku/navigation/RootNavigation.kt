@@ -33,7 +33,7 @@ fun RootNavigation(
     nav: NavHostController,
     screen: Screens,
 ) {
-    NavHost(
+    `    NavHost(
         navController = nav,
         startDestination = screen
     ) {
@@ -43,7 +43,9 @@ fun RootNavigation(
     }
 }
 
-fun NavGraphBuilder.authGraph(nav: NavHostController) {
+fun NavGraphBuilder.authGraph(
+    nav: NavHostController,
+) {
     composable<Screens.Auth.Intro> {
         IntroRootScreen(
             navigateToEmailLogIn = {
@@ -66,16 +68,16 @@ fun NavGraphBuilder.authGraph(nav: NavHostController) {
 
     composable<Screens.Auth.EmailLogIn>(
         enterTransition = {
-            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
-                    slideInHorizontally(
-                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                        initialOffsetX = { it })
-        },
-        popEnterTransition = {
-            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) + slideInHorizontally(
+                animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                initialOffsetX = { it }
+            )
         },
         exitTransition = {
-            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) + slideOutHorizontally(
+                animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                targetOffsetX = { it }
+            )
         }
     ) {
         EmailLogInRootScreen(
@@ -101,7 +103,21 @@ fun NavGraphBuilder.authGraph(nav: NavHostController) {
         )
     }
 
-    composable<Screens.Auth.EmailSignUp> {
+    composable<Screens.Auth.EmailSignUp>(
+        enterTransition = {
+            fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideInHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        initialOffsetX = { it })
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                    slideOutHorizontally(
+                        animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                        targetOffsetX = { it }
+                    )
+        }
+    ) {
         EmailSignUpRootScreen(
             navigateToLogin = {
                 nav.navigate(Screens.Auth.EmailLogIn) {

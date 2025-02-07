@@ -3,7 +3,6 @@ package com.poulastaa.user.network.routes.setup
 import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
-import com.poulastaa.core.network.mapper.toDtoUpsertOperation
 import com.poulastaa.core.network.mapper.toResponseArtist
 import com.poulastaa.user.domain.repository.SetupRepository
 import com.poulastaa.user.network.mapper.toDtoUpsertArtist

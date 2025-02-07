@@ -10,7 +10,7 @@ import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
 import java.util.*
 
-class GoogleMailService(
+internal class GoogleMailService(
     private val jwt: JWTRepository,
 ) : MailServiceRepository {
     private val appLogoUrl = "${System.getenv("BASE_URL")}/images/app_logo.png"

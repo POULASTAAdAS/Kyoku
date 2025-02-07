@@ -1,7 +1,5 @@
 package com.poulastaa.core.database.entity.app
 
-import com.poulastaa.core.domain.model.EndPoints
-import com.poulastaa.core.domain.utils.Constants.POSTER_PARAM
 import org.jetbrains.exposed.dao.id.LongIdTable
 
 object EntitySong : LongIdTable(name = "Song") {
