@@ -33,7 +33,7 @@ fun RootNavigation(
     nav: NavHostController,
     screen: Screens,
 ) {
-    `    NavHost(
+    NavHost(
         navController = nav,
         startDestination = screen
     ) {

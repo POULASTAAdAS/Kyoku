@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.platform.LocalConfiguration
@@ -40,15 +39,16 @@ fun EmailSignUpRootScreen(
             viewModel.onAction(EmailSignUpUiAction.OnConformPasswordChange(it))
         }
     )
-    val autoFillUserName = AutofillNode(
-        autofillTypes = listOf(AutofillType.NewUsername),
+    val autoFillEmail = AutofillNode(
+        autofillTypes = listOf(AutofillType.EmailAddress),
         onFill = {
-            viewModel.onAction(EmailSignUpUiAction.OnUsernameChange(it))
+            viewModel.onAction(EmailSignUpUiAction.OnEmailChange(it))
         }
     )
 
-    LocalAutofillTree.current += autoFillPassword
-    LocalAutofillTree.current += autoFillUserName
+    val tree = LocalAutofillTree.current
+    tree += autoFillEmail
+    tree += autoFillPassword
 
     ObserveAsEvent(viewModel.uiEvent) { event ->
         when (event) {
@@ -70,7 +70,7 @@ fun EmailSignUpRootScreen(
             EmailSignUpCompactScreen(
                 autoFill = autoFill,
                 autoFillPassword = autoFillPassword,
-                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
                 state = state,
                 onAction = viewModel::onAction
             )
@@ -79,7 +79,7 @@ fun EmailSignUpRootScreen(
             EmailSignUpMediumScreen(
                 autoFill = autoFill,
                 autoFillPassword = autoFillPassword,
-                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
                 state = state,
                 onAction = viewModel::onAction
             )
@@ -88,13 +88,13 @@ fun EmailSignUpRootScreen(
             if (config.screenWidthDp > 980) EmailSignUpExpandedScreen(
                 autoFill = autoFill,
                 autoFillPassword = autoFillPassword,
-                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
                 state = state,
                 onAction = viewModel::onAction
             ) else EmailSignUpCompactExpandedScreen(
                 autoFill = autoFill,
                 autoFillPassword = autoFillPassword,
-                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillEmail,
                 state = state,
                 onAction = viewModel::onAction
             )

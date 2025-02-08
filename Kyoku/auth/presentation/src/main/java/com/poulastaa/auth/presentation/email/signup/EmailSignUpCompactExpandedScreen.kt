@@ -57,7 +57,7 @@ import com.poulastaa.core.presentation.designsystem.dimens
 @Composable
 fun EmailSignUpCompactExpandedScreen(
     autoFill: Autofill?,
-    autoFillUserName: AutofillNode,
+    autoFillEmail: AutofillNode,
     autoFillPassword: AutofillNode,
     state: EmailSignUpUiState,
     onAction: (EmailSignUpUiAction) -> Unit,
@@ -155,7 +155,17 @@ fun EmailSignUpCompactExpandedScreen(
                     modifier = Modifier.padding(MaterialTheme.dimens.medium1)
                 ) {
                     AppTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .fillMaxWidth()
+                            .onGloballyPositioned {
+                                autoFillEmail.boundingBox = it.boundsInParent()
+                            }
+                            .onFocusChanged {
+                                autoFill?.run {
+                                    if (it.isFocused) requestAutofillForNode(autoFillEmail)
+                                    else cancelAutofillForNode(autoFillEmail)
+                                }
+                            },
                         text = state.email.value,
                         onValueChange = { onAction(EmailSignUpUiAction.OnEmailChange(it)) },
                         label = stringResource(R.string.email),
@@ -166,17 +176,7 @@ fun EmailSignUpCompactExpandedScreen(
                     )
 
                     AppTextField(
-                        modifier = Modifier.fillMaxWidth()
-                            .fillMaxWidth()
-                            .onGloballyPositioned {
-                                autoFillUserName.boundingBox = it.boundsInParent()
-                            }
-                            .onFocusChanged {
-                                autoFill?.run {
-                                    if (it.isFocused) requestAutofillForNode(autoFillUserName)
-                                    else cancelAutofillForNode(autoFillUserName)
-                                }
-                            },
+                        modifier = Modifier.fillMaxWidth(),
                         text = state.username.value,
                         onValueChange = { onAction(EmailSignUpUiAction.OnEmailChange(it)) },
                         label = stringResource(R.string.username),
@@ -271,7 +271,7 @@ private fun Preview() {
             EmailSignUpCompactExpandedScreen(
                 autoFill = autoFill,
                 autoFillPassword = autoFillPassword,
-                autoFillUserName = autoFillUserName,
+                autoFillEmail = autoFillUserName,
                 state = EmailSignUpUiState(),
                 onAction = {}
             )
