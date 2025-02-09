@@ -10,4 +10,7 @@ sealed interface EmailSignUpUiAction {
 
     data object OnEmailLogInClick : EmailSignUpUiAction
     data class OnConformClick(val countryCode: String) : EmailSignUpUiAction
+
+    data object OnCreatePasskey : EmailSignUpUiAction
+    data object OnCancelPasskeyCreation : EmailSignUpUiAction
 }

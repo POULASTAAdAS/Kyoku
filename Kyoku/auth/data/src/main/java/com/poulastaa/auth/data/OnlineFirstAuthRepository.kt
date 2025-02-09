@@ -107,7 +107,6 @@ class OnlineFirstAuthRepository @Inject constructor(
 
             when (resultState) {
                 AuthStatus.CREATED,
-                AuthStatus.EMAIL_NOT_VERIFIED,
                 AuthStatus.USER_FOUND,
                     -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
 

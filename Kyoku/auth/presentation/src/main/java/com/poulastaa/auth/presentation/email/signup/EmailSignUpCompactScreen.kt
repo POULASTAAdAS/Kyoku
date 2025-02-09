@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,7 +54,7 @@ import com.poulastaa.core.presentation.designsystem.components.AppTextField
 import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
 import com.poulastaa.core.presentation.designsystem.dimens
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun EmailSignUpCompactScreen(
     autoFill: Autofill?,
@@ -109,7 +110,8 @@ fun EmailSignUpCompactScreen(
                     modifier = Modifier.padding(MaterialTheme.dimens.medium1)
                 ) {
                     AppTextField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .onGloballyPositioned {
                                 autoFillEmail.boundingBox = it.boundsInParent()
                             }
@@ -142,7 +144,8 @@ fun EmailSignUpCompactScreen(
                     )
 
                     AppPasswordField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .onGloballyPositioned {
                                 autoFillPassword.boundingBox = it.boundsInParent()
                             }

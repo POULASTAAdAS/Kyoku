@@ -287,6 +287,23 @@ class EmailSignUpViewModel @Inject constructor(
                     )
                 }
             }
+
+            EmailSignUpUiAction.OnCreatePasskey -> {
+                // todo
+            }
+
+            EmailSignUpUiAction.OnCancelPasskeyCreation -> {
+                _state.update {
+                    it.copy(
+                        isPasskeyCreatePopUp = false
+                    )
+                }
+
+                viewModelScope.launch {
+                    delay(300)
+                    _uiEvent.send(EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.IMPORT_SPOTIFY_PLAYLIST))
+                }
+            }
         }
     }
 
@@ -443,30 +460,30 @@ class EmailSignUpViewModel @Inject constructor(
                         )
                     )
 
-                    when (authState) {
-                        AuthStatus.CREATED, AuthStatus.USER_FOUND -> {
-                            _uiEvent.send(
-                                EmailSignUpUiEvent.OnSuccess(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
+                    return@launch when (authState) {
+                        AuthStatus.CREATED, AuthStatus.USER_FOUND -> _state.update {
+                            it.copy(
+                                isPasskeyCreatePopUp = true
                             )
                         }
 
                         AuthStatus.USER_FOUND_STORE_B_DATE -> _uiEvent.send(
-                            EmailSignUpUiEvent.OnSuccess(SavedScreen.SET_B_DATE)
+                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.SET_B_DATE)
                         )
 
                         AuthStatus.USER_FOUND_SET_GENRE -> _uiEvent.send(
-                            EmailSignUpUiEvent.OnSuccess(SavedScreen.PIC_GENRE)
+                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.PIC_GENRE)
                         )
 
                         AuthStatus.USER_FOUND_SET_ARTIST -> _uiEvent.send(
-                            EmailSignUpUiEvent.OnSuccess(SavedScreen.PIC_ARTIST)
+                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.PIC_ARTIST)
                         )
 
                         AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
-                            EmailSignUpUiEvent.OnSuccess(SavedScreen.HOME)
+                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.HOME)
                         )
 
-                        else -> return@launch
+                        else -> Unit
                     }
                 }
             }

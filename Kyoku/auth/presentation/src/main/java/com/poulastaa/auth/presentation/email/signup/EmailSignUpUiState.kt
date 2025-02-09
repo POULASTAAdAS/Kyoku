@@ -11,4 +11,6 @@ data class EmailSignUpUiState(
     val conformPassword: TextHolder = TextHolder(),
 
     val isPasswordVisible: Boolean = false,
+
+    val isPasskeyCreatePopUp: Boolean = true,
 )

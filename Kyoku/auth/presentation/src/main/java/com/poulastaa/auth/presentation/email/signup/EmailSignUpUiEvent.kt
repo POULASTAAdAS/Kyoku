@@ -5,7 +5,7 @@ import com.poulastaa.core.presentation.ui.UiText
 
 sealed interface EmailSignUpUiEvent {
     data class EmitToast(val message: UiText) : EmailSignUpUiEvent
-    data class OnSuccess(val screen: SavedScreen) : EmailSignUpUiEvent
+    data class OnSuccessNavigate(val screen: SavedScreen) : EmailSignUpUiEvent
 
     data object NavigateToLogIn : EmailSignUpUiEvent
 }
