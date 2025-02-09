@@ -2,6 +2,9 @@ package com.poulastaa.core.domain.model
 
 sealed class EndPoints(val route: String) {
     data object Auth : EndPoints(route = "/api/v1/auth")
+    data object GetPasskey : EndPoints(route = "/api/v1/auth/getPasskeyRequest")
+    data object CreatePasskeyUser : EndPoints(route = "/api/v1/auth/createPasskeyUser")
+    data object GetPasskeyUser : EndPoints(route = "/api/v1/auth/getPasskeyUser")
 
     data object VerifyEmail : EndPoints(route = "/api/v1/auth/verifyEmail")
     data object GetJWTToken : EndPoints(route = "/api/v1/auth/getJWTToken")

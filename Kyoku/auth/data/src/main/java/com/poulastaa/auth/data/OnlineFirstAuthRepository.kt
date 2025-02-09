@@ -4,6 +4,7 @@ import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.RemoteAuthDataSource
 import com.poulastaa.auth.domain.model.AuthStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
+import com.poulastaa.auth.domain.model.PasskeyPayload
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
@@ -126,4 +127,7 @@ class OnlineFirstAuthRepository @Inject constructor(
 
     override suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network> =
         remote.sendForgotPasswordMail(email)
+
+    override suspend fun getPasskeyRequest(email: String): PasskeyPayload =
+        TODO("can only be implemented for https request")
 }

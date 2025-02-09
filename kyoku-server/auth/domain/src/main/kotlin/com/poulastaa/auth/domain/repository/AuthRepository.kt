@@ -9,6 +9,8 @@ interface AuthRepository {
     suspend fun emailSignUp(payload: EmailSignUpPayload): AuthResponseDto
     suspend fun emailLogIn(payload: EmailLogInPayload): AuthResponseDto
 
+    suspend fun getPasskeyUser(email: Email): Unit?
+
     suspend fun verifyEmail(token: String): EmailVerificationStatusDto
     suspend fun getJWTToken(email: String): JwtTokenDto?
 

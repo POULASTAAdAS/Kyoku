@@ -12,5 +12,5 @@ data class EmailSignUpUiState(
 
     val isPasswordVisible: Boolean = false,
 
-    val isPasskeyCreatePopUp: Boolean = true,
+    val isPasskeyCreatePopUp: Boolean = false,
 )

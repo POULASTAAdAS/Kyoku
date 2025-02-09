@@ -2,6 +2,7 @@ package com.poulastaa.auth.domain
 
 import com.poulastaa.auth.domain.model.AuthStatus
 import com.poulastaa.auth.domain.model.ForgotPasswordStatus
+import com.poulastaa.auth.domain.model.PasskeyPayload
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 
@@ -29,4 +30,6 @@ interface AuthRepository {
     ): Result<Boolean, DataError.Network>
 
     suspend fun sendForgotPasswordMail(email: String): Result<ForgotPasswordStatus, DataError.Network>
+
+    suspend fun getPasskeyRequest(email: String): PasskeyPayload
 }

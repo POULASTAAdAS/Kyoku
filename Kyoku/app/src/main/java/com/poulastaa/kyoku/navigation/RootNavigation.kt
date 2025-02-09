@@ -74,10 +74,7 @@ fun NavGraphBuilder.authGraph(
             )
         },
         exitTransition = {
-            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) + slideOutHorizontally(
-                animationSpec = tween(DEFAULT_ANIMATION_TIME),
-                targetOffsetX = { it }
-            )
+            fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME))
         }
     ) {
         EmailLogInRootScreen(

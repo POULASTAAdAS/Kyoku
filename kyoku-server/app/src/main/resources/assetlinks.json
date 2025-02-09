@@ -1,0 +1,15 @@
+[
+  {
+    "relation" : [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target" : {
+      "namespace" : "android_app",
+      "package_name" : "com.poulastaa.kyoku",
+      "sha256_cert_fingerprints" : [
+        "5B:31:66:C6:BA:F9:1C:49:CF:33:5D:58:61:02:59:2E:8A:19:FE:4F:6E:CF:AD:3A:FA:01:FC:F2:F9:84:CE:ED"
+      ]
+    }
+  }
+]

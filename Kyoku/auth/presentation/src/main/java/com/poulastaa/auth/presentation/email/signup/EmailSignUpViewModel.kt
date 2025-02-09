@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.model.AuthStatus
+import com.poulastaa.auth.domain.model.PasskeyPayload
 import com.poulastaa.auth.domain.model.PasswordState
 import com.poulastaa.auth.domain.model.UsernameState
 import com.poulastaa.core.domain.DataError
@@ -289,7 +290,16 @@ class EmailSignUpViewModel @Inject constructor(
             }
 
             EmailSignUpUiAction.OnCreatePasskey -> {
-                // todo
+//                viewModelScope.launch { // todo can only be implemented for https request
+//                    val result = repo.getPasskeyRequest(_state.value.email.value.trim())
+//
+//                    when (result.type) {
+//                        PasskeyType.LOGIN -> validatePasskey(result)
+//                        PasskeyType.SIGNUP -> createPasskey(result)
+//                    }
+//                }
+
+                onAction(EmailSignUpUiAction.OnCancelPasskeyCreation)
             }
 
             EmailSignUpUiAction.OnCancelPasskeyCreation -> {
@@ -488,4 +498,12 @@ class EmailSignUpViewModel @Inject constructor(
                 }
             }
         }
+
+    private fun createPasskey(payload: PasskeyPayload) {
+
+    }
+
+    private fun validatePasskey(payload: PasskeyPayload) {
+
+    }
 }
