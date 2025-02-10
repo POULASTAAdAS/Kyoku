@@ -55,9 +55,11 @@ object AppModule {
     fun provideHttClient(
         cookieManager: CookieManager,
         ds: DatastoreRepository,
+        gson: Gson,
+        @ApplicationContext context: Context,
     ): OkHttpClient = OkHttpClient
         .Builder()
-        .addInterceptor(AuthHeaderInterceptor(ds))
+        .addInterceptor(AuthHeaderInterceptor(ds, gson, context))
         .cookieJar(JavaNetCookieJar(cookieManager))
         .build()
 

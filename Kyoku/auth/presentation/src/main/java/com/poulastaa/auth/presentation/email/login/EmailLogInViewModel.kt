@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.email.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
@@ -104,8 +103,6 @@ class EmailLogInViewModel @Inject constructor(
                         email = _state.value.email.value.trim(),
                         password = _state.value.password.value.trim()
                     )
-
-                    Log.d("result", result.toString())
 
                     when (result) {
                         is Result.Error -> {
@@ -416,7 +413,7 @@ class EmailLogInViewModel @Inject constructor(
                     )
 
                     when (authState) {
-                        AuthStatus.CREATED, AuthStatus.USER_FOUND -> {
+                        AuthStatus.CREATED -> {
                             _uiEvent.send(
                                 EmailLogInUiEvent.OnSuccess(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
                             )
@@ -434,7 +431,7 @@ class EmailLogInViewModel @Inject constructor(
                             EmailLogInUiEvent.OnSuccess(SavedScreen.PIC_ARTIST)
                         )
 
-                        AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
+                        AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
                             EmailLogInUiEvent.OnSuccess(SavedScreen.HOME)
                         )
 

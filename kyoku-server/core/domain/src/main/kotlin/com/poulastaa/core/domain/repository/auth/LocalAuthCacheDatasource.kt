@@ -21,7 +21,7 @@ interface LocalAuthCacheDatasource {
     suspend fun consumeMail(block: (Pair<MailType, Email>) -> Unit)
 
     fun cacheJWTTokenState(email: String): Boolean
-    fun storeJWTTokenState(email: Email)
+    fun setJWTTokenState(email: Email)
 
     fun isResetPasswordTokenUsed(token: String): Boolean
 }

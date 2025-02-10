@@ -107,14 +107,14 @@ class OnlineFirstAuthRepository @Inject constructor(
             ds.storeRefreshToken(result.data.refreshToken)
 
             when (resultState) {
-                AuthStatus.CREATED,
-                AuthStatus.USER_FOUND,
-                    -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
-
+                AuthStatus.CREATED -> ds.storeSignInState(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
                 AuthStatus.USER_FOUND_STORE_B_DATE -> ds.storeSignInState(SavedScreen.SET_B_DATE)
                 AuthStatus.USER_FOUND_SET_GENRE -> ds.storeSignInState(SavedScreen.PIC_GENRE)
                 AuthStatus.USER_FOUND_SET_ARTIST -> ds.storeSignInState(SavedScreen.PIC_ARTIST)
-                AuthStatus.USER_FOUND_HOME -> ds.storeSignInState(SavedScreen.HOME)
+
+                AuthStatus.USER_FOUND,
+                AuthStatus.USER_FOUND_HOME,
+                    -> ds.storeSignInState(SavedScreen.HOME)
 
                 else -> Unit
             }

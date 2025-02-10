@@ -110,7 +110,8 @@ fun EmailLogInCompactScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AppTextField(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .onGloballyPositioned {
                                     autoFillEmail.boundingBox = it.boundsInParent()
                                 }
@@ -131,7 +132,8 @@ fun EmailLogInCompactScreen(
                         )
 
                         AppPasswordField(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .onGloballyPositioned {
                                     autoFillPassword.boundingBox = it.boundsInParent()
                                 }
@@ -241,6 +243,7 @@ fun EmailLogInCompactScreen(
             AppLoadingButton(
                 modifier = Modifier
                     .fillMaxWidth(.75f),
+                isLoading = state.isMakingApiCall,
                 text = stringResource(R.string.continue_text),
                 onClick = {
                     onAction(EmailLogInUiAction.OnConformClick)

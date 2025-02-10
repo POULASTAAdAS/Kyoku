@@ -107,13 +107,14 @@ class ExposedLocalAuthDatasource(
         val status = cache.cacheEmailVerificationStatus(email)?.not() ?: return null
         if (status) {
             cache.deleteEmailVerificationStatus(email)
-            cache.storeJWTTokenState(email)
+            cache.setJWTTokenState(email)
         }
 
         return status
     }
 
     override fun getJWTTokenStatus(email: Email): Boolean = cache.cacheJWTTokenState(email)
+    override fun setJWTTokenStatus(email: Email) = cache.setJWTTokenState(email)
 
     override suspend fun saveRefreshToken(token: String, email: Email) {
         val user = getUsersByEmail(email, UserType.EMAIL)

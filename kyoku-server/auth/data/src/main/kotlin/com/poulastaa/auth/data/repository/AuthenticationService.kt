@@ -203,6 +203,8 @@ class AuthenticationService(
         }
     }
 
+    override suspend fun getPasskeyUser(email: Email) = TODO("Implement getPasskeyUser")
+
     override suspend fun verifyEmail(token: String): EmailVerificationStatusDto {
         if (db.isVerificationTokenUsed(token)) return EmailVerificationStatusDto.TOKEN_USED
 
@@ -309,10 +311,21 @@ class AuthenticationService(
         if (verifyPassword(newPassword, user.passwordHash)) return UpdatePasswordStatusDto.SAME_PASSWORD
 
         db.storeUsedVerificationToken(token)
-
         db.updatePassword(email, newPassword.encryptPassword() ?: return UpdatePasswordStatusDto.SERVER_ERROR)
 
         return UpdatePasswordStatusDto.RESET
+    }
+
+    override suspend fun refreshJWTToken(oldToken: String, email: Email): JwtTokenDto? {
+        val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return null
+        val Email = jwt.verifyToken(
+            token = oldToken,
+            type = JWTRepository.TokenType.TOKEN_REFRESH
+        ) ?: return null
+
+        if (user.email != Email) return null
+        db.setJWTTokenStatus(email)
+        return getJWTToken(email)
     }
 
     private suspend fun checkIfEmailUserAlreadyExists(payload: EmailSignUpPayload): AuthResponseDto? {

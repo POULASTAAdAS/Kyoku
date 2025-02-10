@@ -21,6 +21,7 @@ interface LocalAuthDatasource {
     fun updateVerificationMailStatus(email: Email): Boolean?
 
     fun getJWTTokenStatus(email: Email): Boolean
+    fun setJWTTokenStatus(email: Email)
 
     suspend fun saveRefreshToken(token: String, email: Email)
 

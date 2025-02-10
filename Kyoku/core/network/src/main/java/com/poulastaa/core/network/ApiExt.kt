@@ -47,7 +47,7 @@ suspend inline fun <reified Req : Any, reified Res : Any> OkHttpClient.req(
 
     return try {
         val response = makeCall(reqBuilder.build())
-        responseToResult<Res>(response, gson)
+        responseToResult<Res>(response, gson).also { response.close() }
     } catch (e: Exception) {
         handleOtherException(e)
     }
@@ -79,7 +79,8 @@ suspend inline fun <reified T> responseToResult(
 ): Result<T, DataError.Network> = withContext(Dispatchers.IO) {
     when (response.code) {
         in 200..299 -> {
-            val body = response.body!!.string()
+            val body = response.body?.string()
+                ?: return@withContext Result.Error(DataError.Network.SERVER_ERROR)
             val obj = gson.fromJson(body, T::class.java)
 
             Result.Success(obj)

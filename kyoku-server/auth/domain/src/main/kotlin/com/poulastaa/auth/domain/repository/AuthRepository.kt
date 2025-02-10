@@ -18,4 +18,6 @@ interface AuthRepository {
     suspend fun verifyResetPasswordRequest(token: String): Pair<Email, ResetPasswordStatusDto>
     fun getSubmitNewPasswordToken(email: String): JWTToken
     suspend fun updatePassword(token: String, newPassword: String): UpdatePasswordStatusDto
+
+    suspend fun refreshJWTToken(oldToken: String, email: Email): JwtTokenDto?
 }

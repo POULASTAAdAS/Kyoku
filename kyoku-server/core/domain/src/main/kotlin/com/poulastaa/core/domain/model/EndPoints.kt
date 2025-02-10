@@ -8,6 +8,7 @@ sealed class EndPoints(val route: String) {
 
     data object VerifyEmail : EndPoints(route = "/api/v1/auth/verifyEmail")
     data object GetJWTToken : EndPoints(route = "/api/v1/auth/getJWTToken")
+    data object RefreshToken : EndPoints(route = "/api/v1/auth/refreshToken")
 
     data object ForgotPassword : EndPoints(route = "/api/v1/auth/forgotPassword")
     data object ResetPassword : EndPoints(route = "/api/v1/auth/resetPassword")

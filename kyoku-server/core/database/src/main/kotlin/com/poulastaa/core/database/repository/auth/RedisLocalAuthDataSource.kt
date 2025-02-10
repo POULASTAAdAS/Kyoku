@@ -113,7 +113,7 @@ class RedisLocalAuthDataSource(
         } else false
     }
 
-    override fun storeJWTTokenState(email: Email) {
+    override fun setJWTTokenState(email: Email) {
         redisPool.resource.use { jedis ->
             jedis.set(
                 "${Group.JWT_TOKEN_STATUS}:$email",

@@ -41,6 +41,7 @@ private fun Routing.authen(repo: AuthRepository) {
     auth(repo)
     verifyEmail(repo)
     getJWTToken(repo)
+    getRefreshToken(repo)
 
     getPasskey(repo)
 
