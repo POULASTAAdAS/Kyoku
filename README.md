@@ -15,8 +15,8 @@
 
 ### <h2 align='center'>Setup</h2>
 
-<video src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/setup.mp4" title="Setup Compact Dark"></video>
-<video src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/setup.mp4" title="Setup Extended Light"></video>
+![Setup Compact Dark](https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/setup.mp4)
+![Setup Extended Light](https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/setup.mp4)
 
 ## <h2 align='center'>Figma Link</h2>
 
@@ -24,20 +24,7 @@
 
 ## <h2 align='center'>License</h2>
 
-```xml
-Designed and developed by Poulastaa Das
+### License
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-
- <!-- ctrl + shift + v to prev readme -->
+Designed and developed by Poulastaa Das  
+Licensed under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
