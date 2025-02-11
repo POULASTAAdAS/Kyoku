@@ -15,6 +15,9 @@
 
 ### <h2 align='center'>Setup</h2>
 
+<video src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/setup.mp4" title="Setup Compact Dark"></video>
+<video src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/setup.mp4" title="Setup Extended Light"></video>
+
 ## <h2 align='center'>Figma Link</h2>
 
 [Design file](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
