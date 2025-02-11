@@ -178,7 +178,7 @@ fun EmailSignUpCompactExpandedScreen(
                     AppTextField(
                         modifier = Modifier.fillMaxWidth(),
                         text = state.username.value,
-                        onValueChange = { onAction(EmailSignUpUiAction.OnEmailChange(it)) },
+                        onValueChange = { onAction(EmailSignUpUiAction.OnUsernameChange(it)) },
                         label = stringResource(R.string.username),
                         isError = state.username.isErr,
                         supportingText = state.username.errText.asString(),

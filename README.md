@@ -11,6 +11,10 @@
 > Kyoku is a music streaming application like Spotify or apple music.
 > It is using HLS protocol to stream music.
 
+## <h2 align='center'>Preview</h2>
+
+### <h2 align='center'>Setup</h2>
+
 ## <h2 align='center'>Figma Link</h2>
 
 [Design file](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
