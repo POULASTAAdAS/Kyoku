@@ -8,11 +8,11 @@
 
 </a>
 
-<br>
+---
 
 **Design Link -** [Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
 
-<br>
+---
 
 ## <h2  align='center'>Description</h2>
 
@@ -174,9 +174,12 @@ storage  {
 Add Properties as environment variables
 
 ```kotlin
-BASE_URL=
-EMAIL=
-PASSWORD=
+BASE_URL= "your base url"
+CLIENT_ID="abc"
+DEV_EMAIL=
+ISSUER=https://accounts.google.com
+SENDER_EMAIL=
+SENDER_PASSWORD=
 ```
 
 ## <h2  align='center'>License</h2>

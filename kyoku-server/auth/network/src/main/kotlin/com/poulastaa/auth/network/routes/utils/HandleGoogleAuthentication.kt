@@ -45,7 +45,8 @@ suspend fun RoutingContext.handleGoogleAuthentication(
         response.status == AuthResponseStatusDto.USER_FOUND_HOME ||
         response.status == AuthResponseStatusDto.USER_FOUND_SET_GENRE ||
         response.status == AuthResponseStatusDto.USER_FOUND_STORE_B_DATE ||
-        response.status == AuthResponseStatusDto.USER_FOUND_SET_ARTIST
+        response.status == AuthResponseStatusDto.USER_FOUND_SET_ARTIST ||
+        response.status == AuthResponseStatusDto.USER_FOUND
     ) call.sessions.set<UserSession>(
         UserSession(
             userId = response.user.id,

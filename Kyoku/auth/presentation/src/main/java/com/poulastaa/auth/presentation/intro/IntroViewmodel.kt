@@ -61,6 +61,8 @@ class IntroViewmodel @Inject constructor(
             }
 
             is IntroUiAction.OnTokenReceive -> {
+                Log.d("token", action.token)
+
                 viewModelScope.launch {
                     val response = repo.googleAuth(
                         token = action.token,

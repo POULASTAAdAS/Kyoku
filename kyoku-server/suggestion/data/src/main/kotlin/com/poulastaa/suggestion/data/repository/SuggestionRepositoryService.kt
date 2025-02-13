@@ -13,7 +13,6 @@ class SuggestionRepositoryService(
 ) : SuggestionRepository {
     override suspend fun getHomeData(payload: ReqUserPayload): DtoHome? {
         val user = db.getUserByEmail(payload.email, payload.userType) ?: return null
-
         if (user.bDate == null) return null
 
         return coroutineScope {

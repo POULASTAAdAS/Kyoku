@@ -55,7 +55,7 @@ class ExposedLocalSuggestionDatasource(
         }
 
         if (songIdList.isEmpty()) return emptyList()
-        return getPrevSongById(songIdList)
+        return getPrevSongById(songIdList).shuffled(Random).take(4)
     }
 
     override suspend fun getPrevPopularArtistMix(
@@ -140,8 +140,6 @@ class ExposedLocalSuggestionDatasource(
             }
         }
 
-        if (oldList.isEmpty() && savedAlbumIdList.isEmpty()) return emptyList()
-
         return kyokuDbQuery {
             EntityAlbum
                 .join(
@@ -165,12 +163,14 @@ class ExposedLocalSuggestionDatasource(
                     EntityAlbum.id,
                     EntityAlbum.name,
                     EntitySong.poster
-                )
-                .where {
-                    EntityAlbum.id notInList oldList + savedAlbumIdList
+                ).run {
+                    if (savedAlbumIdList.isEmpty() && oldList.isEmpty()) this
+                    else where {
+                        EntityAlbum.id notInList oldList + savedAlbumIdList
+                    }
                 }
                 .orderBy(EntityAlbum.popularity to SortOrder.DESC)
-                .distinct()
+                .distinctBy { it[EntityAlbum.id] }
                 .take(20)
                 .map {
                     DtoAlbum(

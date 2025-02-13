@@ -36,7 +36,7 @@ open class RedisKeys {
         RELATION_ARTIST_GENRE(expTime = ExpTime.TWENTY.time),
         RELATION_ARTIST_COUNTRY(expTime = ExpTime.TWENTY.time),
 
-        RELATION_PREV_GENRE_USER(expTime = ExpTime.FIFTEEN.time)
+        RELATION_USER_PREV_GENRE(expTime = ExpTime.FIFTEEN.time)
     }
 
     protected enum class Channel(val delay: Long) {

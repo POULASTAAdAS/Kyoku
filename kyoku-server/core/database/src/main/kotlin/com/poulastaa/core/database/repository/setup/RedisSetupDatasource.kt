@@ -17,7 +17,7 @@ class RedisSetupDatasource(
     private val redisPool: JedisPool,
     private val core: LocalCoreCacheDatasource,
 ) : LocalSetupCacheDatasource, RedisKeys() {
-    override fun cacheSongByTitle(list: List<String>): List<DtoSong> { // todo set just id to reduce overhead
+    override fun cacheSongByTitle(list: List<String>): List<DtoSong> { // todo set just id to reduce overhead on cacheSongByTitle
         val result = mutableListOf<DtoSong>()
         val filterExclusions = listOf("lofi", "remix", "slowed", "mashup", "ringtone")
 
@@ -108,7 +108,7 @@ class RedisSetupDatasource(
 
     override fun cachePrevGenreByUserId(userId: Long): List<DtoPrevGenre> {
         redisPool.resource.use { jedis ->
-            val jsonList = jedis.lrange("${Group.RELATION_PREV_GENRE_USER}:$userId", 0, -1)
+            val jsonList = jedis.lrange("${Group.RELATION_USER_PREV_GENRE}:$userId", 0, -1)
             return jsonList.map { gson.fromJson(it, DtoPrevGenre::class.java) }
         }
     }
@@ -119,14 +119,14 @@ class RedisSetupDatasource(
     ) { // todo move to core cache if needed
         redisPool.resource.use { jedis ->
             val pipeline = jedis.pipelined()
-            val key = "${Group.RELATION_PREV_GENRE_USER}:$userId"
+            val key = "${Group.RELATION_USER_PREV_GENRE}:$userId"
 
             pipeline.del(key)
             data.forEach { genre ->
                 pipeline.rpush(key, gson.toJson(genre))
             }
 
-            pipeline.expire(key, Group.RELATION_PREV_GENRE_USER.expTime)
+            pipeline.expire(key, Group.RELATION_USER_PREV_GENRE.expTime)
 
             pipeline.sync()
         }
