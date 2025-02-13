@@ -34,6 +34,19 @@
 
 ### Expanded
 
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif" alt="Auth Preview">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif"alt="Import Playlist">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif"alt="Select Genre">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif" alt="Select Artist">
+</a>
+
 <br>
 <br>
 
@@ -119,7 +132,7 @@ Remove .example from file [application.conf.example](https://github.com/POULASTA
 
 The databse urls should be same on both [application.conf.example](https://github.com/POULASTAAdAS/Kyoku/blob/dev/kyoku-server/app/src/main/resources/application.conf.example) and [res.json.example](https://github.com/POULASTAAdAS/Kyoku/blob/dev/shard-manager/src/main/resources/res.json.example)
 
-```conf
+```sh
 storage  {
 	driverClassName  =  "com.mysql.cj.jdbc.Driver"
 	userJdbcURL  =  "your jdbc url"
@@ -131,7 +144,7 @@ storage  {
 
 Add Properties as environment variables
 
-```sh
+```kotlin
 BASE_URL=
 EMAIL=
 PASSWORD=
