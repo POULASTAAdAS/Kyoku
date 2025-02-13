@@ -63,21 +63,21 @@
 
 ## <h2  align='center'>Technology</h2>
 
-| **Client**                                                                                                                                                                           | **Server**               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
-| [Jetpack Compose](https://developer.android.com/jetpack?gad_source=1&gclid=CjwKCAiAzba9BhBhEiwA7glbanDtWkSrUjunIXb3dKY88xH_WZeZrqg99eS59XMENKk_SXU_buOVqRoClmEQAvD_BwE&gclsrc=aw.ds) | [Ktor](https://ktor.io/) |
-| Splash Screen                                                                                                                                                                        | Exposed                  |
-| Credentials                                                                                                                                                                          | SQL                      |
-| WorkManager                                                                                                                                                                          | Session                  |
-| Dagger Hilt                                                                                                                                                                          | Redis                    |
-| WindowSizeClass                                                                                                                                                                      |                          |
-| Media 3                                                                                                                                                                              |                          |
-| Navigation                                                                                                                                                                           |                          |
-| OkHttp                                                                                                                                                                               |                          |
-| Paging                                                                                                                                                                               |                          |
-| Room                                                                                                                                                                                 |                          |
-| Coil                                                                                                                                                                                 |                          |
-| Palette                                                                                                                                                                              |                          |
+| **Client**                                                                                                                                                                           | **Server**                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| [Jetpack Compose](https://developer.android.com/jetpack?gad_source=1&gclid=CjwKCAiAzba9BhBhEiwA7glbanDtWkSrUjunIXb3dKY88xH_WZeZrqg99eS59XMENKk_SXU_buOVqRoClmEQAvD_BwE&gclsrc=aw.ds) | [Ktor](https://ktor.io/)                                       |
+| [Splash Screen ](https://developer.android.com/develop/ui/views/launch/splash-screen)                                                                                                | [Exposed](https://ktor.io/docs/server-integrate-database.html) |
+| [Credentials](https://developer.android.com/identity/sign-in/credential-manager)                                                                                                     | [MySQL](https://www.mysql.com/)                                |
+| [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)                                                                                                | [Session](https://ktor.io/docs/server-session-auth.html)       |
+| [Dagger Hilt](https://developer.android.com/training/dependency-injection/hilt-android)                                                                                              | [JWT](https://jwt.io/)                                         |
+| [WindowSizeClass](https://developer.android.com/reference/kotlin/androidx/compose/material3/windowsizeclass/WindowSizeClass)                                                         | [Jedis](https://github.com/redis/jedis)                        |
+| [Media3](https://developer.android.com/media/media3)                                                                                                                                 |                                                                |
+| [Navigation](https://developer.android.com/develop/ui/compose/navigation)                                                                                                            |                                                                |
+| [OkHttp](https://square.github.io/okhttp/)                                                                                                                                           |                                                                |
+| [Paging](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)                                                                                              |                                                                |
+| [Room](https://developer.android.com/training/data-storage/room)                                                                                                                     |                                                                |
+| [Coil](https://coil-kt.github.io/coil/compose/)                                                                                                                                      |                                                                |
+| Palette                                                                                                                                                                              |                                                                |
 
 ## <h2  align='center'>Installation</h2>
 
