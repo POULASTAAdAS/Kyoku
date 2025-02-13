@@ -35,16 +35,16 @@
 ### Expanded
 
 <a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif" alt="Auth Preview">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif" width="400" height="250" alt="Auth Preview">
 </a>
 <a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif"alt="Import Playlist">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif" width="400" height="250" alt="Import Playlist">
 </a>
 <a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif"alt="Select Genre">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif" width="400" height="250" alt="Select Genre">
 </a>
 <a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif" alt="Select Artist">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif" width="400" height="250" alt="Select Artist">
 </a>
 
 <br>
