@@ -8,15 +8,34 @@
 
 </a>
 
-<h2>Design Link</h2>
-
-[Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
+**Design Link -** [Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
 
 ## <h2  align='center'>Description</h2>
 
-> Kyoku is a music streaming application like Spotify or apple music. It is using HLS protocol to stream music.
+> Kyoku is a music streaming application like Spotify or apple music
+> It is using HLS protocol to stream music.
 
 ## <h2  align='center'>Preview</h2>
+
+### Compact
+
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/google%20auth.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/google%20auth.gif" width="200" height="400" alt="Auth Preview">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/import%20playlist.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/import%20playlist.gif" width="200" height="400" alt="Import Playlist">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20genre.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20genre.gif" width="200" height="400" alt="Select Genre">
+</a>
+<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20artist.gif">
+    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20artist.gif" width="200" height="400" alt="Select Artist">
+</a>
+
+### Expanded
+
+<br>
+<br>
 
 ## <h2  align='center'>Installation</h2>
 
@@ -32,7 +51,7 @@ Remove .example from file [.env.example](https://github.com/POULASTAAdAS/Kyoku/b
 
 Add passwrords on file .env
 
-```sh
+```kotlin
 MYSQL_USER_PASSWORD=your_password
 MYSQL_PASSWORD=your_password
 REDIS_PASSWORD=your_password
@@ -48,7 +67,7 @@ docker-compose  start  -d
 
 **Setup environment variables on local.properties file of the android app**
 
-```sh
+```kotlin
 BASE_URL="your base url"
 CLIENT_ID=abcd
 ```
@@ -89,6 +108,7 @@ Run [shard-manager](https://github.com/POULASTAAdAS/Kyoku/tree/dev/shard-manager
 
 - shard-manager also updates needed data i.e. song , artist etc popularity add new data at 12 am every day. [Code file](https://github.com/POULASTAAdAS/Kyoku/blob/dev/shard-manager/src/main/kotlin/com/poulastaa/kyoku/shardmanager/app/plugins/ScheduleJobs.kt)
 
+<br>
 <br>
 
 **2. kyoku-server**
