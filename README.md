@@ -8,12 +8,17 @@
 
 </a>
 
+<br>
+
 **Design Link -** [Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
+
+<br>
 
 ## <h2  align='center'>Description</h2>
 
 > Kyoku is a music streaming application like Spotify or apple music
-> It is using HLS protocol to stream music.
+> It is using HLS protocol to stream music with a backed build using ktor and the application is build using jetpack compose library.
+> With over 70 thousand+ songs to play
 
 ## <h2  align='center'>Preview</h2>
 
@@ -49,6 +54,30 @@
 
 <br>
 <br>
+
+## <h2  align='center'>Features</h2>
+
+- Supports Every Screen size
+- Authentication using google and email
+- Auto Sync data with backend on each device
+
+## <h2  align='center'>Technology</h2>
+
+| **Client**      | **Server** |
+| --------------- | ---------- |
+| [Jetpack Compose](https://developer.android.com/jetpack?gad_source=1&gclid=CjwKCAiAzba9BhBhEiwA7glbanDtWkSrUjunIXb3dKY88xH_WZeZrqg99eS59XMENKk_SXU_buOVqRoClmEQAvD_BwE&gclsrc=aw.ds) |    [Ktor](https://ktor.io/)       |
+| Splash Screen   | Exposed    |
+| Credentials     | SQL        |
+| WorkManager     | Session    |
+| Dagger Hilt     | Redis      |
+| WindowSizeClass |            |
+| Media 3         |            |
+| Navigation      |            |
+| OkHttp          |            |
+| Paging          |            |
+| Room            |            |
+| Coil            |            |
+| Palette         |            |
 
 ## <h2  align='center'>Installation</h2>
 
