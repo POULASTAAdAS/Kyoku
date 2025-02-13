@@ -63,21 +63,21 @@
 
 ## <h2  align='center'>Technology</h2>
 
-| **Client**      | **Server** |
-| --------------- | ---------- |
-| [Jetpack Compose](https://developer.android.com/jetpack?gad_source=1&gclid=CjwKCAiAzba9BhBhEiwA7glbanDtWkSrUjunIXb3dKY88xH_WZeZrqg99eS59XMENKk_SXU_buOVqRoClmEQAvD_BwE&gclsrc=aw.ds) |    [Ktor](https://ktor.io/)       |
-| Splash Screen   | Exposed    |
-| Credentials     | SQL        |
-| WorkManager     | Session    |
-| Dagger Hilt     | Redis      |
-| WindowSizeClass |            |
-| Media 3         |            |
-| Navigation      |            |
-| OkHttp          |            |
-| Paging          |            |
-| Room            |            |
-| Coil            |            |
-| Palette         |            |
+| **Client**                                                                                                                                                                           | **Server**               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
+| [Jetpack Compose](https://developer.android.com/jetpack?gad_source=1&gclid=CjwKCAiAzba9BhBhEiwA7glbanDtWkSrUjunIXb3dKY88xH_WZeZrqg99eS59XMENKk_SXU_buOVqRoClmEQAvD_BwE&gclsrc=aw.ds) | [Ktor](https://ktor.io/) |
+| Splash Screen                                                                                                                                                                        | Exposed                  |
+| Credentials                                                                                                                                                                          | SQL                      |
+| WorkManager                                                                                                                                                                          | Session                  |
+| Dagger Hilt                                                                                                                                                                          | Redis                    |
+| WindowSizeClass                                                                                                                                                                      |                          |
+| Media 3                                                                                                                                                                              |                          |
+| Navigation                                                                                                                                                                           |                          |
+| OkHttp                                                                                                                                                                               |                          |
+| Paging                                                                                                                                                                               |                          |
+| Room                                                                                                                                                                                 |                          |
+| Coil                                                                                                                                                                                 |                          |
+| Palette                                                                                                                                                                              |                          |
 
 ## <h2  align='center'>Installation</h2>
 
