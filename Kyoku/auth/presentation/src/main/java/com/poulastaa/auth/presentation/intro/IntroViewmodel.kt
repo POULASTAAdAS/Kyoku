@@ -64,7 +64,7 @@ class IntroViewmodel @Inject constructor(
                 viewModelScope.launch {
                     val response = repo.googleAuth(
                         token = action.token,
-                        countryCode = "In"
+                        countryCode = action.countryCode
                     )
 
                     when (response) {
