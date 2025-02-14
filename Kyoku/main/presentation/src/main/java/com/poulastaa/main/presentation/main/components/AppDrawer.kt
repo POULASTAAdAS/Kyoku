@@ -69,10 +69,10 @@ import com.poulastaa.main.presentation.main.MainUiAction
 private const val ANIMATION_TIME = 600
 
 @Composable
-fun AppDrawer(
+internal fun AppDrawer(
     isOpen: Boolean,
     user: UiUser,
-    navigate: (MainUiAction.Navigate) -> Unit,
+    navigate: (MainUiAction.NavigateToDrawerScreen) -> Unit,
     onCloseClick: () -> Unit,
 ) {
     val rotate by animateFloatAsState(
@@ -148,7 +148,7 @@ fun AppDrawer(
                     .fillMaxWidth()
                     .clip(CircleShape)
                     .clickable {
-                        navigate(MainUiAction.Navigate(AppDrawerScreen.PROFILE))
+                        navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.PROFILE))
                     },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -156,6 +156,7 @@ fun AppDrawer(
                 AppCacheImage(
                     url = user.profilePic,
                     modifier = Modifier
+                        .clip(CircleShape)
                         .weight(if (LocalConfiguration.current.screenWidthDp > 480) .3f else .4f)
                         .aspectRatio(1f),
                     errorIcon = UserIcon,
@@ -187,13 +188,13 @@ fun AppDrawer(
             Spacer(Modifier.height(MaterialTheme.dimens.large2))
 
             DrawerItem(R.string.history_title, CalenderIcon) {
-                navigate(MainUiAction.Navigate(AppDrawerScreen.HISTORY))
+                navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.HISTORY))
             }
 
             Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
             DrawerItem(R.string.settings_title, SettingsIcon) {
-                navigate(MainUiAction.Navigate(AppDrawerScreen.SETTINGS))
+                navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.SETTINGS))
             }
 
             Spacer(Modifier.weight(1f))
@@ -202,7 +203,7 @@ fun AppDrawer(
                 R.string.Theme_title,
                 if (isSystemInDarkTheme()) DayIcon else NightIcon
             ) {
-                navigate(MainUiAction.Navigate(AppDrawerScreen.THEME))
+                navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.THEME))
             }
         }
     }

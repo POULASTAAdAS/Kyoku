@@ -8,7 +8,9 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
@@ -92,6 +94,10 @@ val SettingsIcon: ImageVector
 val LogoutIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ExitToApp
+
+val HomeIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Home
 
 val HomeSelectedIcon: ImageVector
     @Composable
@@ -208,6 +214,10 @@ val ThreeDotIcon: ImageVector
 val ListIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_more_hor)
+
+val MenuIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Menu
 
 val ShuffleIcon: ImageVector
     @Composable

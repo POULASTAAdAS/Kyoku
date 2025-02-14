@@ -6,14 +6,18 @@ import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.presentation.ui.toUiUser
 import com.poulastaa.main.domain.model.AppDrawerScreen
 import com.poulastaa.main.domain.model.AppDrawerState
+import com.poulastaa.main.domain.model.AppNavigationRailState
 import com.poulastaa.main.domain.model.isOpened
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class MainViewmodel @Inject constructor(
     private val ds: DatastoreRepository,
 ) : ViewModel() {
@@ -36,7 +40,7 @@ class MainViewmodel @Inject constructor(
                 )
             }
 
-            is MainUiAction.Navigate -> {
+            is MainUiAction.NavigateToDrawerScreen -> {
                 if (action.screen != AppDrawerScreen.THEME) {
                     _state.value = _state.value.copy(
                         drawerState = AppDrawerState.CLOSED
@@ -45,6 +49,26 @@ class MainViewmodel @Inject constructor(
                     // todo navigate to screen
                 }
             }
+
+            MainUiAction.ToggleNavigationRail -> {
+                _state.value = _state.value.copy(
+                    navigationRailState = if (_state.value.navigationRailState.isOpened()) AppNavigationRailState.CLOSED
+                    else AppNavigationRailState.OPENED
+                )
+            }
+
+            is MainUiAction.NavigateToNavigationRailScreen -> {
+                if (_state.value.navigationRailScreen == action.screen) return
+                _state.update {
+                    it.copy(
+                        navigationRailScreen = action.screen
+                    )
+                }
+
+                // todo navigate to screen
+            }
+
+            MainUiAction.NavigateBottomNavigationScreen -> TODO("NavigateBottomNavigationScreen: needed to be implemented")
         }
     }
 
