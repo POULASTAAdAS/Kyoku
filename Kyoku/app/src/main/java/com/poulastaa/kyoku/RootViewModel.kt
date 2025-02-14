@@ -46,7 +46,7 @@ class RootViewModel @Inject constructor(
 
         _state.update {
             it.copy(
-                screen = screen
+                screen = Screens.Core.Main()
             )
         }
 

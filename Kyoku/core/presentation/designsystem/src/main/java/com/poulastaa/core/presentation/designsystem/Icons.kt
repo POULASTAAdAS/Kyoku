@@ -12,7 +12,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
@@ -87,7 +86,7 @@ val SearchIcon: ImageVector
 
 val SettingsIcon: ImageVector
     @Composable
-    get() = Icons.Rounded.Settings
+    get() = ImageVector.vectorResource(id = R.drawable.ic_settings)
 
 
 val LogoutIcon: ImageVector
@@ -205,6 +204,10 @@ val ViewIcon: ImageVector
 val ThreeDotIcon: ImageVector
     @Composable
     get() = Icons.Rounded.MoreVert
+
+val ListIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.ic_more_hor)
 
 val ShuffleIcon: ImageVector
     @Composable

@@ -16,6 +16,7 @@ dependencies {
 
     implementation(projects.core.domain)
     implementation(projects.main.domain)
+    implementation(projects.core.presentation.designsystem)
 
     implementation(libs.coil.compose)
     implementation(libs.pagingCompose)
