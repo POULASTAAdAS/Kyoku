@@ -432,7 +432,7 @@ class EmailLogInViewModel @Inject constructor(
                         )
 
                         AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
-                            EmailLogInUiEvent.OnSuccess(SavedScreen.HOME)
+                            EmailLogInUiEvent.OnSuccess(SavedScreen.MAIN)
                         )
 
                         else -> return@launch

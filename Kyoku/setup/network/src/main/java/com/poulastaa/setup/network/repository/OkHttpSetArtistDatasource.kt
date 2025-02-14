@@ -16,7 +16,7 @@ import com.poulastaa.core.network.model.UpsertArtistReq
 import com.poulastaa.core.network.model.UpsertOperation
 import com.poulastaa.core.network.model.UpsertReq
 import com.poulastaa.core.network.req
-import com.poulastaa.setup.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
 import com.poulastaa.setup.network.model.SaveArtistRes
 import com.poulastaa.setup.network.paging_source.SuggestArtistPagingSource

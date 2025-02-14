@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
@@ -92,7 +91,7 @@ class IntroViewmodel @Inject constructor(
                                 AuthStatus.USER_FOUND_HOME,
                                     -> _uiEvent.send(
                                     IntroUiEvent.OnSuccess(
-                                        SavedScreen.HOME
+                                        SavedScreen.MAIN
                                     )
                                 )
 

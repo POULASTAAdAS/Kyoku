@@ -14,6 +14,6 @@ class RoomLocalSetArtistDatasource @Inject constructor(
 ) : LocalSetArtistDatasource {
     override suspend fun storeArtist(list: List<DtoArtist>) {
         root.insertArtist(list.map { it.toEntityArtist() })
-        ds.storeSignInState(SavedScreen.HOME)
+        ds.storeSignInState(SavedScreen.MAIN)
     }
 }

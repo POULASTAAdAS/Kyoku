@@ -19,7 +19,9 @@ import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewM
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
+import com.poulastaa.core.domain.model.DtoScreens
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
 import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
@@ -43,7 +45,7 @@ fun RootNavigation(
     }
 }
 
-fun NavGraphBuilder.authGraph(
+private fun NavGraphBuilder.authGraph(
     nav: NavHostController,
 ) {
     composable<Screens.Auth.Intro> {
@@ -58,7 +60,7 @@ fun NavGraphBuilder.authGraph(
                     SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
                     SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
                     SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
-                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+                    SavedScreen.MAIN -> nav.navigate(Screens.Core.Main(true))
 
                     else -> Unit
                 }
@@ -92,7 +94,7 @@ fun NavGraphBuilder.authGraph(
                     SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
                     SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
                     SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
-                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+                    SavedScreen.MAIN -> nav.navigate(Screens.Core.Main(true))
 
                     else -> Unit
                 }
@@ -131,7 +133,7 @@ fun NavGraphBuilder.authGraph(
                     SavedScreen.SET_B_DATE -> nav.navigate(Screens.SetUp.SetBirthDate)
                     SavedScreen.PIC_GENRE -> nav.navigate(Screens.SetUp.PickGenre)
                     SavedScreen.PIC_ARTIST -> nav.navigate(Screens.SetUp.PickArtist)
-                    SavedScreen.HOME -> nav.navigate(Screens.Core.Home)
+                    SavedScreen.MAIN -> nav.navigate(Screens.Core.Main(true))
 
                     else -> Unit
                 }
@@ -168,7 +170,7 @@ fun NavGraphBuilder.authGraph(
     }
 }
 
-fun NavGraphBuilder.setupGraph(nav: NavHostController) {
+private fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     composable<Screens.SetUp.ImportSpotifyPlaylist> {
         ImportPlaylistRootScreen {
             nav.navigate(Screens.SetUp.SetBirthDate)
@@ -243,8 +245,8 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
         }
     ) {
         PicArtistRootScreen {
-            nav.navigate(Screens.Core.Home) {
-                popUpTo(Screens.Core.Home) {
+            nav.navigate(Screens.Core.Main(true)) {
+                popUpTo(Screens.Core.Main(true)) {
                     inclusive = true
                 }
             }
@@ -252,13 +254,16 @@ fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     }
 }
 
-fun NavGraphBuilder.coreGraph(nav: NavHostController) {
-    composable<Screens.Core.Home> {
-        // todo
-    }
-
-    composable<Screens.Core.Library> {
-        // todo
+private fun NavGraphBuilder.coreGraph(nav: NavHostController) {
+    composable<Screens.Core.Main>(
+        enterTransition = { fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) }
+    ) {
+        val payload = it.toRoute<Screens.Core.Main>()
+        MainRootScreen(payload.isInitial) { dtoScreens ->
+            when (dtoScreens) {
+                is DtoScreens.ViewArtist -> TODO("implement navigation")
+            }
+        }
     }
 
     composable<Screens.Core.Settings> {

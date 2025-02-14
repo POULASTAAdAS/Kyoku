@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.EmptyResult
 import com.poulastaa.core.domain.model.ArtistId
-import com.poulastaa.setup.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import kotlinx.coroutines.flow.Flow
 
 interface SetArtistRepository {

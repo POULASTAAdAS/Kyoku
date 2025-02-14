@@ -12,7 +12,7 @@ import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.ReqParam
 import com.poulastaa.core.network.req
-import com.poulastaa.setup.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.setup.network.model.SuggestedArtistRes
 import com.poulastaa.setup.network.toDtoPrevArtist
 import okhttp3.OkHttpClient

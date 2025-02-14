@@ -8,6 +8,5 @@ enum class SavedScreen {
     PIC_GENRE,
     PIC_ARTIST,
 
-    HOME,
-    LIBRARY
+    MAIN,
 }

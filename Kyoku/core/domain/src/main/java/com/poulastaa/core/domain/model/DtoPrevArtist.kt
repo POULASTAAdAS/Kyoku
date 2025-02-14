@@ -1,6 +1,4 @@
-package com.poulastaa.setup.domain.model
-
-import com.poulastaa.core.domain.model.ArtistId
+package com.poulastaa.core.domain.model
 
 data class DtoPrevArtist(
     val id: ArtistId,

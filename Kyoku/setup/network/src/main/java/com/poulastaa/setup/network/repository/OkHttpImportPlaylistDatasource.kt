@@ -10,7 +10,7 @@ import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.req
 import com.poulastaa.setup.domain.repository.import_playlist.RemoteImportPlaylistDatasource
 import com.poulastaa.setup.network.model.ImportSpotifyPlaylistReq
-import com.poulastaa.setup.network.model.ResponseFullPlaylist
+import com.poulastaa.core.network.model.ResponseFullPlaylist
 import com.poulastaa.setup.network.toDtoPlaylist
 import okhttp3.OkHttpClient
 import javax.inject.Inject

@@ -7,7 +7,7 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.asEmptyDataResult
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
-import com.poulastaa.setup.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.setup.domain.repository.set_artist.RemoteSetArtistDatasource
 import com.poulastaa.setup.domain.repository.set_artist.SetArtistRepository
 import kotlinx.coroutines.flow.Flow

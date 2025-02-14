@@ -41,8 +41,7 @@ class RootViewModel @Inject constructor(
             SavedScreen.SET_B_DATE -> Screens.SetUp.SetBirthDate
             SavedScreen.PIC_GENRE -> Screens.SetUp.PickGenre
             SavedScreen.PIC_ARTIST -> Screens.SetUp.PickArtist
-            SavedScreen.HOME -> Screens.Core.Home
-            SavedScreen.LIBRARY -> Screens.Core.Library
+            SavedScreen.MAIN -> Screens.Core.Main()
         }
 
         _state.update {

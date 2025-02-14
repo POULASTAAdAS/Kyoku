@@ -5,7 +5,7 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.setup.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import kotlinx.coroutines.flow.Flow
 
 interface RemoteSetArtistDatasource {

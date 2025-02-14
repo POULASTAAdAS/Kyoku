@@ -31,7 +31,10 @@ sealed interface Screens {
         data object PickArtist : Screens
     }
 
-    sealed interface Core : Screens {
+    sealed class Core : Screens {
+        @Serializable
+        data class Main(val isInitial: Boolean = false) : Screens
+
         @Serializable
         data object Home : Screens
 

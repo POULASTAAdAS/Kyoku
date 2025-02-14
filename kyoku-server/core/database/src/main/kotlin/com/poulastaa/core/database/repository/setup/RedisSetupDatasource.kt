@@ -17,7 +17,7 @@ class RedisSetupDatasource(
     private val redisPool: JedisPool,
     private val core: LocalCoreCacheDatasource,
 ) : LocalSetupCacheDatasource, RedisKeys() {
-    override fun cacheSongByTitle(list: List<String>): List<DtoSong> { // todo set just id to reduce overhead on cacheSongByTitle
+    override fun cacheSongByTitle(list: List<String>): List<DtoSong> { // todo set just id to reduce overhead
         val result = mutableListOf<DtoSong>()
         val filterExclusions = listOf("lofi", "remix", "slowed", "mashup", "ringtone")
 

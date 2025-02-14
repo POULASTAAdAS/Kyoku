@@ -77,7 +77,7 @@ class OnlineFirstAuthRepository @Inject constructor(
                 ?: return Result.Error(DataError.Network.SERVER_ERROR)
             val screen = when (result.data.status) {
                 AuthStatus.CREATED -> SavedScreen.IMPORT_SPOTIFY_PLAYLIST
-                AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> SavedScreen.HOME
+                AuthStatus.USER_FOUND, AuthStatus.USER_FOUND_HOME -> SavedScreen.MAIN
                 AuthStatus.USER_FOUND_STORE_B_DATE -> SavedScreen.SET_B_DATE
                 AuthStatus.USER_FOUND_SET_GENRE -> SavedScreen.PIC_GENRE
                 AuthStatus.USER_FOUND_SET_ARTIST -> SavedScreen.PIC_ARTIST
@@ -114,7 +114,7 @@ class OnlineFirstAuthRepository @Inject constructor(
 
                 AuthStatus.USER_FOUND,
                 AuthStatus.USER_FOUND_HOME,
-                    -> ds.storeSignInState(SavedScreen.HOME)
+                    -> ds.storeSignInState(SavedScreen.MAIN)
 
                 else -> Unit
             }

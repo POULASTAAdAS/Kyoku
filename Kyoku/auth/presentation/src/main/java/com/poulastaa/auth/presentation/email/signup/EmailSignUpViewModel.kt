@@ -490,7 +490,7 @@ class EmailSignUpViewModel @Inject constructor(
                         )
 
                         AuthStatus.USER_FOUND_HOME -> _uiEvent.send(
-                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.HOME)
+                            EmailSignUpUiEvent.OnSuccessNavigate(SavedScreen.MAIN)
                         )
 
                         else -> Unit
