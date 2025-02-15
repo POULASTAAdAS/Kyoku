@@ -1,4 +1,4 @@
-package toggleDrawer
+package com.poulastaa.main.presentation.library
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.main.presentation.library.LibraryViewmodel
 
 @Composable
 internal fun LibraryRootScreen(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
@@ -50,12 +52,14 @@ import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.model.DtoScreens
 import com.poulastaa.core.presentation.designsystem.dimens
 import com.poulastaa.core.presentation.designsystem.gradiantBackground
+import com.poulastaa.main.domain.model.AppBottomScrren
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.home.HomeRootScreen
 import com.poulastaa.main.presentation.home.HomeViewmodel
 import com.poulastaa.main.presentation.main.components.AppDrawer
 import com.poulastaa.main.presentation.main.components.AppNavigationRail
-import toggleDrawer.LibraryRootScreen
+import com.poulastaa.main.presentation.library.LibraryRootScreen
+import com.poulastaa.main.presentation.main.components.AppBottomBar
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -157,6 +161,12 @@ fun MainRootScreen(
                 state = state,
                 onAction = viewmodel::onAction
             )
+
+            AppBottomBar(
+                modifier = Modifier.fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                screen = AppBottomScrren.HOME
+            ) { }
         }
     }
 }
