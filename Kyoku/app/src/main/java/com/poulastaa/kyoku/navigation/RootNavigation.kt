@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.navigation
 
+import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -19,7 +21,7 @@ import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewM
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
-import com.poulastaa.core.domain.model.DtoScreens
+import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.settings.presentation.SettingsRootScreen
@@ -258,12 +260,31 @@ private fun NavGraphBuilder.coreGraph(nav: NavHostController) {
     composable<Screens.Core.Main>(
         enterTransition = { fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) }
     ) {
+        val context = LocalContext.current
+
         val payload = it.toRoute<Screens.Core.Main>()
         MainRootScreen(payload.isInitial) { dtoScreens ->
             when (dtoScreens) {
-                is DtoScreens.ViewArtist -> TODO("implement navigation")
+                DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
+                DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
+                DtoCoreScreens.Settings -> nav.navigate(dtoScreens.toCoreScreen())
+                DtoCoreScreens.ToggleTheme -> {
+                    Toast.makeText(
+                        context,
+                        "Implement them change on RootNavigation",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
+    }
+
+    composable<Screens.Core.Profile> {
+
+    }
+
+    composable<Screens.Core.History> {
+
     }
 
     composable<Screens.Core.Settings> {

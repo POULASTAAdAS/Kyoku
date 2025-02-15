@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -50,19 +51,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.model.UiUser
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
 import com.poulastaa.core.presentation.designsystem.ui.ListIcon
 import com.poulastaa.core.presentation.designsystem.ui.NightIcon
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
-import com.poulastaa.core.presentation.ui.components.AppCacheImage
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
-import com.poulastaa.core.presentation.designsystem.model.UiUser
+import com.poulastaa.core.presentation.ui.components.AppCacheImage
 import com.poulastaa.main.domain.model.AppDrawerScreen
 import com.poulastaa.main.presentation.main.MainUiAction
 
@@ -93,6 +94,7 @@ internal fun AppDrawer(
             .padding(MaterialTheme.dimens.medium1)
             .navigationBarsPadding()
             .systemBarsPadding()
+            .alpha(if (isOpen) 1f else 0f)
     ) {
         Column(
             modifier = Modifier

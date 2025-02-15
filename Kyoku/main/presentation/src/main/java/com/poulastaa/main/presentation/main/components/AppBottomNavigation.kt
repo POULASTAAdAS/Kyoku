@@ -10,26 +10,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.bottom_bar.Height
 import com.poulastaa.core.presentation.designsystem.bottom_bar.Parabolic
-import com.poulastaa.core.presentation.ui.components.AnimatedNavigationBottomBar
 import com.poulastaa.core.presentation.designsystem.ui.shapeCornerRadius
-import com.poulastaa.main.domain.model.AppBottomScreen
+import com.poulastaa.core.presentation.ui.components.AnimatedNavigationBottomBar
+import com.poulastaa.main.domain.model.AppNavigationBottomBarScreen
 
 private const val ANIMATION_TIME = 500
-private val BOTTOM_NAVIGATION_HEIGHT = 60.dp
 private val ICON_SIZE = 30.dp
 
 @Composable
 internal fun AppBottomBar(
     modifier: Modifier = Modifier,
-    screen: AppBottomScreen,
-    onClick: (AppBottomScreen) -> Unit,
+    screen: AppNavigationBottomBarScreen,
+    onClick: (AppNavigationBottomBarScreen) -> Unit,
 ) {
     AnimatedNavigationBottomBar(
-        modifier = modifier.height(BOTTOM_NAVIGATION_HEIGHT),
-        selectedIndex = if (screen == AppBottomScreen.HOME) 0 else 1,
+        modifier = modifier.height(BOTTOM_BAR_HEIGHT),
+        selectedIndex = if (screen == AppNavigationBottomBarScreen.HOME) 0 else 1,
         ballColor = MaterialTheme.colorScheme.primary,
         barColor = MaterialTheme.colorScheme.background,
         cornerRadius = shapeCornerRadius(60.dp),
@@ -46,8 +46,8 @@ internal fun AppBottomBar(
         WiggleButton(
             modifier = Modifier.fillMaxSize(),
             iconSize = ICON_SIZE,
-            isSelected = screen == AppBottomScreen.HOME,
-            onClick = { onClick(AppBottomScreen.HOME) },
+            isSelected = screen == AppNavigationBottomBarScreen.HOME,
+            onClick = { onClick(AppNavigationBottomBarScreen.HOME) },
             icon = R.drawable.ic_home_empty,
             backgroundIcon = R.drawable.ic_home,
             enterExitAnimationSpec = tween(
@@ -59,8 +59,8 @@ internal fun AppBottomBar(
         WiggleButton(
             modifier = Modifier.fillMaxSize(),
             iconSize = ICON_SIZE,
-            isSelected = screen == AppBottomScreen.LIBRARY,
-            onClick = { onClick(AppBottomScreen.LIBRARY) },
+            isSelected = screen == AppNavigationBottomBarScreen.LIBRARY,
+            onClick = { onClick(AppNavigationBottomBarScreen.LIBRARY) },
             icon = R.drawable.ic_library_empty,
             backgroundIcon = R.drawable.ic_library,
             enterExitAnimationSpec = tween(

@@ -37,5 +37,11 @@ sealed interface Screens {
 
         @Serializable
         data object Settings : Screens
+
+        @Serializable
+        data object Profile : Screens
+
+        @Serializable
+        data object History : Screens
     }
 }

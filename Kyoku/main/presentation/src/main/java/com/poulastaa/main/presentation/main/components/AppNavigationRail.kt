@@ -1,7 +1,6 @@
 package com.poulastaa.main.presentation.main.components
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,6 +53,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
@@ -60,11 +61,10 @@ import com.poulastaa.core.presentation.designsystem.ui.HomeIcon
 import com.poulastaa.core.presentation.designsystem.ui.LibrarySelectedIcon
 import com.poulastaa.core.presentation.designsystem.ui.MenuIcon
 import com.poulastaa.core.presentation.designsystem.ui.NightIcon
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
-import com.poulastaa.core.presentation.ui.components.AppCacheImage
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppCacheImage
 import com.poulastaa.main.domain.model.AppNavigationRailScreen
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.main.MainUiAction
@@ -178,11 +178,11 @@ internal fun AppNavigationRail(
                             .clip(CircleShape)
                             .aspectRatio(1f)
                             .clickable {
-                                Toast.makeText(
-                                    activity,
-                                    "Implement Profile Screen",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                onAction(
+                                    MainUiAction.NavigateToNavigationRailScreen(
+                                        AppNavigationRailScreen.PROFILE
+                                    )
+                                )
                             },
                         errorIcon = UserIcon,
                         border = 1.4.dp,
@@ -284,11 +284,11 @@ internal fun AppNavigationRail(
 
             IconButton(
                 onClick = {
-                    Toast.makeText(
-                        activity,
-                        "Implement Theme Change",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    onAction(
+                        MainUiAction.NavigateToNavigationRailScreen(
+                            AppNavigationRailScreen.THEME
+                        )
+                    )
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
