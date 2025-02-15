@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation.email.signup
 
 import com.poulastaa.core.domain.model.SavedScreen
-import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.core.presentation.designsystem.UiText
 
 sealed interface EmailSignUpUiEvent {
     data class EmitToast(val message: UiText) : EmailSignUpUiEvent

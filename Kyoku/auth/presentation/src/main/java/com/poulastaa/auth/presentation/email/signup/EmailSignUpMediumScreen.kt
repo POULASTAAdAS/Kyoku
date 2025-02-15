@@ -1,7 +1,6 @@
 package com.poulastaa.auth.presentation.email.signup
 
 import android.content.res.Configuration
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,17 +39,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.CheckIcon
-import com.poulastaa.core.presentation.designsystem.EmailAlternateIcon
-import com.poulastaa.core.presentation.designsystem.PasswordIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.UserIcon
-import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
-import com.poulastaa.core.presentation.designsystem.components.AppPasswordField
-import com.poulastaa.core.presentation.designsystem.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
+import com.poulastaa.core.presentation.designsystem.ui.EmailAlternateIcon
+import com.poulastaa.core.presentation.designsystem.ui.PasswordIcon
+import com.poulastaa.core.presentation.designsystem.ui.UserIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppLoadingButton
+import com.poulastaa.core.presentation.ui.components.AppPasswordField
+import com.poulastaa.core.presentation.ui.components.AppTextField
+import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -108,7 +108,8 @@ fun EmailSignUpMediumScreen(
                     modifier = Modifier.padding(MaterialTheme.dimens.medium1)
                 ) {
                     AppTextField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .onGloballyPositioned {
                                 autoFillEmail.boundingBox = it.boundsInParent()
                             }
@@ -138,7 +139,8 @@ fun EmailSignUpMediumScreen(
                     )
 
                     AppPasswordField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .onGloballyPositioned {
                                 autoFillPassword.boundingBox = it.boundsInParent()
                             }
@@ -162,7 +164,8 @@ fun EmailSignUpMediumScreen(
                     )
 
                     AppPasswordField(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .onGloballyPositioned {
                                 autoFillPassword.boundingBox = it.boundsInParent()
                             }
@@ -209,10 +212,7 @@ fun EmailSignUpMediumScreen(
                     textDecoration = TextDecoration.Underline,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
+                    modifier = Modifier.noRippleClickable {
                         onAction(EmailSignUpUiAction.OnEmailLogInClick)
                     }
                 )

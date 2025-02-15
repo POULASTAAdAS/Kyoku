@@ -1,6 +1,6 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
-import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.core.presentation.designsystem.UiText
 
 sealed interface ImportPlaylistUiEvent {
     data object OnSuccess : ImportPlaylistUiEvent

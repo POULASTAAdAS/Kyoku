@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,14 +24,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.KyokuWindowSize
-import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.setup.presentation.components.PicItemCompactScreen
 import com.poulastaa.setup.presentation.components.PicItemExtendedScreen
 import com.poulastaa.setup.presentation.pic_artist.components.ArtistCard
 import com.poulastaa.setup.presentation.pic_artist.components.ArtistLoadingCard
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLayoutApi::class)
 @Composable

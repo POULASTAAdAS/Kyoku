@@ -8,7 +8,7 @@ import com.poulastaa.auth.domain.model.ForgotPasswordStatus
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

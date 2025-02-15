@@ -16,8 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.domain.model.SavedScreen
-import com.poulastaa.core.presentation.ui.KyokuWindowSize
-import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalComposeUiApi::class)
 @Composable

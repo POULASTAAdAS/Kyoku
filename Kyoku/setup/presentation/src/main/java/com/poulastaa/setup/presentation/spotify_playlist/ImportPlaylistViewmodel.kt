@@ -6,7 +6,7 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.ui.UiText
+import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.setup.domain.repository.import_playlist.ImportPlaylistRepository
 import com.poulastaa.setup.domain.repository.import_playlist.SpotifyPlaylistLinkValidator
 import dagger.hilt.android.lifecycle.HiltViewModel

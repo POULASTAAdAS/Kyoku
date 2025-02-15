@@ -45,16 +45,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.ArrowDownIcon
-import com.poulastaa.core.presentation.designsystem.CalenderIcon
-import com.poulastaa.core.presentation.designsystem.CloseIcon
-import com.poulastaa.core.presentation.designsystem.DayIcon
-import com.poulastaa.core.presentation.designsystem.LogoutIcon
-import com.poulastaa.core.presentation.designsystem.NightIcon
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
+import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
+import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
+import com.poulastaa.core.presentation.designsystem.ui.DayIcon
+import com.poulastaa.core.presentation.designsystem.ui.LogoutIcon
+import com.poulastaa.core.presentation.designsystem.ui.NightIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.UserIcon
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.ui.UserIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

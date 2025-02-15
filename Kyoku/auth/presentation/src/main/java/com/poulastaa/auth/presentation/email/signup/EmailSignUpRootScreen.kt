@@ -47,11 +47,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.domain.model.SavedScreen
-import com.poulastaa.core.presentation.designsystem.ArrowBackIcon
+import com.poulastaa.core.presentation.designsystem.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.ui.KyokuWindowSize
-import com.poulastaa.core.presentation.ui.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 
 @OptIn(
     ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalComposeUiApi::class,

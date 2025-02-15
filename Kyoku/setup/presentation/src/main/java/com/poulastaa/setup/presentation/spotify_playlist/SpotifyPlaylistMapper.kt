@@ -3,7 +3,7 @@ package com.poulastaa.setup.presentation.spotify_playlist
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
-import com.poulastaa.core.presentation.ui.model.UiPrevSong
+import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
 
 fun DtoPlaylist.toUiPlaylist(totalSongs: Int) = UiPlaylist(
     id = this.id,

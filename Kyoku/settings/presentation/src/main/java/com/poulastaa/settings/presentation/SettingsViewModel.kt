@@ -3,7 +3,7 @@ package com.poulastaa.settings.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.repository.DatastoreRepository
-import com.poulastaa.core.presentation.ui.toUiUser
+import com.poulastaa.core.presentation.designsystem.toUiUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

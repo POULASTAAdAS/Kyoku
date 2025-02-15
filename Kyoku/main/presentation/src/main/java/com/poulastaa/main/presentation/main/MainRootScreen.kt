@@ -4,7 +4,6 @@ import android.app.Activity
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -50,16 +49,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.model.DtoScreens
-import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.main.domain.model.AppBottomScrren
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.home.HomeRootScreen
 import com.poulastaa.main.presentation.home.HomeViewmodel
-import com.poulastaa.main.presentation.main.components.AppDrawer
-import com.poulastaa.main.presentation.main.components.AppNavigationRail
 import com.poulastaa.main.presentation.library.LibraryRootScreen
 import com.poulastaa.main.presentation.main.components.AppBottomBar
+import com.poulastaa.main.presentation.main.components.AppDrawer
+import com.poulastaa.main.presentation.main.components.AppNavigationRail
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -127,7 +126,6 @@ fun MainRootScreen(
                 else 1f,
                 label = "Animated Scale"
             )
-
             AppDrawer(
                 isOpen = state.drawerState.isOpened(),
                 user = state.user,
@@ -148,14 +146,9 @@ fun MainRootScreen(
                         color = Color.Black,
                         alpha = 0.5f,
                     )
-                    .clickable(
-                        enabled = state.drawerState.isOpened(),
-                        interactionSource = null,
-                        indication = null,
-                        onClick = {
-                            viewmodel.onAction(MainUiAction.ToggleDrawer)
-                        }
-                    ),
+                    .noRippleClickable(state.drawerState.isOpened()) {
+                        viewmodel.onAction(MainUiAction.ToggleDrawer)
+                    },
                 nav = nav,
                 isInitial = isInitial,
                 state = state,
@@ -163,10 +156,20 @@ fun MainRootScreen(
             )
 
             AppBottomBar(
-                modifier = Modifier.fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                screen = AppBottomScrren.HOME
-            ) { }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(MaterialTheme.dimens.medium1)
+                    .padding(start = if (state.drawerState.isOpened()) MaterialTheme.dimens.medium1 else 0.dp)
+                    .offset { IntOffset(animatedOffset.roundToPx(), 0) }
+                    .scale(scale = animatedScale),
+                screen = state.navigationBottomBarScreen,
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    if (state.drawerState.isOpened()) viewmodel.onAction(MainUiAction.ToggleDrawer)
+                    else viewmodel.onAction(MainUiAction.NavigateBottomBarScreen(it))
+                }
+            )
         }
     }
 }
@@ -208,6 +211,7 @@ private fun Navigation(
         }
     }
 }
+
 
 private fun Modifier.coloredShadow(
     color: Color,

@@ -5,12 +5,11 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -31,38 +30,31 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.poulastaa.core.presentation.designsystem.model.WiggleButtonParams
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.toPxf
 
 @Composable
-fun WiggleButton(
+internal fun WiggleButton(
     modifier: Modifier = Modifier,
+    iconSize: Dp,
     isSelected: Boolean,
     onClick: () -> Unit,
     @DrawableRes icon: Int,
     @DrawableRes backgroundIcon: Int,
     contentDescription: String? = null,
-    backgroundIconColor: Color = Color.White,
-    wiggleColor: Color = Color.Blue,
-    outlineColor: Color = Color.LightGray,
-    iconSize: Dp = 25.dp,
-    enterExitAnimationSpec: AnimationSpec<Float> = spring(),
-    wiggleAnimationSpec: AnimationSpec<Float> =
-        spring(dampingRatio = 0.6f, stiffness = 35f),
+    enterExitAnimationSpec: AnimationSpec<Float>,
+    backgroundIconColor: Color = MaterialTheme.colorScheme.background,
+    wiggleColor: Color = MaterialTheme.colorScheme.primary,
+    outlineColor: Color = MaterialTheme.colorScheme.primary,
+    wiggleAnimationSpec: AnimationSpec<Float> = spring(dampingRatio = 0.6f, stiffness = 35f),
 ) {
     Box(
-        modifier = modifier
-            .clickable(
-                indication = null,
-                interactionSource = null,
-                onClick = onClick
-            )
+        modifier = modifier.noRippleClickable(onClick = onClick)
     ) {
-
         DrawWithBlendMode(
             modifier = Modifier
                 .size(iconSize)
@@ -132,7 +124,6 @@ private fun DrawWithBlendMode(
             .onGloballyPositioned { canvasSize = it.size.toSize() },
         contentDescription = contentDescription ?: ""
     ) {
-
         with(backgroundPainter) {
             draw(
                 size = Size(sizePx, sizePx),
@@ -204,16 +195,5 @@ private fun calculateRadius(
     minRadius: Float,
 ) = (fraction * (maxRadius - minRadius)) + minRadius
 
-private fun radiusInterpolator(
-    fraction: Float,
-): Float = if (fraction < 0.5f) {
-    fraction * 2
-} else {
-    (1 - fraction) * 2
-}
-
-fun Dp.toPxf(density: Density): Float = with(density) { this@toPxf.toPx() }
-
-@Stable
-@Composable
-fun Dp.toPxf(): Float = toPxf(LocalDensity.current)
+private fun radiusInterpolator(fraction: Float) = if (fraction < 0.5f) fraction * 2
+else (1 - fraction) * 2

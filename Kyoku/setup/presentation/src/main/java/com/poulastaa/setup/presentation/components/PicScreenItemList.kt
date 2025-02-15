@@ -33,9 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.RetryIcon
-import com.poulastaa.core.presentation.designsystem.SadIcon
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.ui.RetryIcon
+import com.poulastaa.core.presentation.designsystem.ui.SadIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
 fun <T : Any> PicScreenItemList(
@@ -87,10 +88,7 @@ fun <T : Any> PicScreenItemList(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(56.dp)
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = null
-                                    ) {
+                                    .noRippleClickable {
                                         retryAttempt++
                                         data.retry()
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)

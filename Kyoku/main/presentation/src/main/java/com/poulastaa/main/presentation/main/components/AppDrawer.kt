@@ -50,19 +50,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.CalenderIcon
-import com.poulastaa.core.presentation.designsystem.CloseIcon
-import com.poulastaa.core.presentation.designsystem.DayIcon
-import com.poulastaa.core.presentation.designsystem.ListIcon
-import com.poulastaa.core.presentation.designsystem.NightIcon
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
+import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
+import com.poulastaa.core.presentation.designsystem.ui.DayIcon
+import com.poulastaa.core.presentation.designsystem.ui.ListIcon
+import com.poulastaa.core.presentation.designsystem.ui.NightIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.SettingsIcon
-import com.poulastaa.core.presentation.designsystem.UserIcon
-import com.poulastaa.core.presentation.designsystem.components.AppCacheImage
-import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.core.presentation.ui.model.UiUser
+import com.poulastaa.core.presentation.designsystem.ui.SettingsIcon
+import com.poulastaa.core.presentation.designsystem.ui.UserIcon
+import com.poulastaa.core.presentation.ui.components.AppCacheImage
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
+import com.poulastaa.core.presentation.designsystem.model.UiUser
 import com.poulastaa.main.domain.model.AppDrawerScreen
 import com.poulastaa.main.presentation.main.MainUiAction
 
@@ -161,7 +161,8 @@ internal fun AppDrawer(
                         .aspectRatio(1f),
                     errorIcon = UserIcon,
                     border = 2.dp,
-                    borderColor = MaterialTheme.colorScheme.primary
+                    borderColor = MaterialTheme.colorScheme.primary,
+                    iconColor = MaterialTheme.colorScheme.primary
                 )
 
                 Spacer(Modifier.width(MaterialTheme.dimens.medium1))
@@ -199,11 +200,23 @@ internal fun AppDrawer(
 
             Spacer(Modifier.weight(1f))
 
-            DrawerItem(
-                R.string.Theme_title,
-                if (isSystemInDarkTheme()) DayIcon else NightIcon
+            IconButton(
+                onClick = {
+                    navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.THEME))
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.background
+                ),
+                modifier = Modifier.padding(MaterialTheme.dimens.medium1)
             ) {
-                navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.THEME))
+                Icon(
+                    imageVector = if (isSystemInDarkTheme()) DayIcon else NightIcon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(6.dp)
+                )
             }
         }
     }

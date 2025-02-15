@@ -43,17 +43,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppLogo
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.CheckIcon
-import com.poulastaa.core.presentation.designsystem.EmailAlternateIcon
-import com.poulastaa.core.presentation.designsystem.PasswordIcon
+import com.poulastaa.core.presentation.designsystem.ui.AppLogo
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
+import com.poulastaa.core.presentation.designsystem.ui.EmailAlternateIcon
+import com.poulastaa.core.presentation.designsystem.ui.PasswordIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
-import com.poulastaa.core.presentation.designsystem.components.AppPasswordField
-import com.poulastaa.core.presentation.designsystem.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.ui.components.AppLoadingButton
+import com.poulastaa.core.presentation.ui.components.AppPasswordField
+import com.poulastaa.core.presentation.ui.components.AppTextField
+import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -202,10 +203,7 @@ fun EmailLogInMediumScreen(
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                    modifier = Modifier.clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
+                    modifier = Modifier.noRippleClickable {
                         onAction(EmailLogInUiAction.OnForgotPasswordClick)
                     }
                 )
@@ -231,10 +229,7 @@ fun EmailLogInMediumScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    modifier = Modifier.clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
+                    modifier = Modifier.noRippleClickable {
                         onAction(EmailLogInUiAction.OnEmailSignUpClick)
                     }
                 )

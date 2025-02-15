@@ -1,7 +1,7 @@
 package com.poulastaa.setup.presentation.pic_genre
 
 import com.poulastaa.core.domain.model.GenreId
-import com.poulastaa.core.presentation.ui.model.TextHolder
+import com.poulastaa.core.presentation.designsystem.model.TextHolder
 
 data class PicGenreUiState(
     val isMakingApiCall: Boolean = false,

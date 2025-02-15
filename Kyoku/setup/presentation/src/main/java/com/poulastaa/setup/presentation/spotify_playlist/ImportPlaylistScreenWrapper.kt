@@ -33,12 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.LinkIcon
+import com.poulastaa.core.presentation.designsystem.ui.LinkIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
-import com.poulastaa.core.presentation.designsystem.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.dimens
-import com.poulastaa.core.presentation.designsystem.gradiantBackground
+import com.poulastaa.core.presentation.ui.components.AppLoadingButton
+import com.poulastaa.core.presentation.ui.components.AppTextField
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.setup.presentation.spotify_playlist.components.SongList
 
 @OptIn(ExperimentalMaterial3Api::class)

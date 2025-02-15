@@ -16,7 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.poulastaa.core.presentation.designsystem.KyokuThem
+import com.poulastaa.core.presentation.designsystem.ui.KyokuThem
 import com.poulastaa.kyoku.navigation.RootNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

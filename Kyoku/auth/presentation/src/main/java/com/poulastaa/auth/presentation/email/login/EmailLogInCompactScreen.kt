@@ -42,17 +42,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.AppLogo
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.CheckIcon
-import com.poulastaa.core.presentation.designsystem.EmailAlternateIcon
-import com.poulastaa.core.presentation.designsystem.PasswordIcon
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.components.AppLoadingButton
-import com.poulastaa.core.presentation.designsystem.components.AppPasswordField
-import com.poulastaa.core.presentation.designsystem.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.components.MovingCirclesWithMetaballEffect
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.ui.AppLogo
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
+import com.poulastaa.core.presentation.designsystem.ui.EmailAlternateIcon
+import com.poulastaa.core.presentation.designsystem.ui.PasswordIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppLoadingButton
+import com.poulastaa.core.presentation.ui.components.AppPasswordField
+import com.poulastaa.core.presentation.ui.components.AppTextField
+import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -201,10 +202,7 @@ fun EmailLogInCompactScreen(
                     text = stringResource(R.string.forgot_password),
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
+                    modifier = Modifier.noRippleClickable {
                         onAction(EmailLogInUiAction.OnForgotPasswordClick)
                     }
                 )
@@ -229,10 +227,7 @@ fun EmailLogInCompactScreen(
                     textDecoration = TextDecoration.Underline,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(
-                        interactionSource = null,
-                        indication = null
-                    ) {
+                    modifier = Modifier.noRippleClickable {
                         onAction(EmailLogInUiAction.OnEmailSignUpClick)
                     }
                 )

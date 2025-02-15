@@ -3,7 +3,7 @@ package com.poulastaa.main.presentation.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.repository.DatastoreRepository
-import com.poulastaa.core.presentation.ui.toUiUser
+import com.poulastaa.core.presentation.designsystem.toUiUser
 import com.poulastaa.main.domain.model.AppDrawerScreen
 import com.poulastaa.main.domain.model.AppDrawerState
 import com.poulastaa.main.domain.model.AppNavigationRailState
@@ -68,7 +68,16 @@ class MainViewmodel @Inject constructor(
                 // todo navigate to screen
             }
 
-            MainUiAction.NavigateBottomNavigationScreen -> TODO("NavigateBottomNavigationScreen: needed to be implemented")
+            is MainUiAction.NavigateBottomBarScreen -> {
+                if (_state.value.navigationBottomBarScreen == action.screen) return
+                _state.update {
+                    it.copy(
+                        navigationBottomBarScreen = action.screen
+                    )
+                }
+
+                // todo navigate to screen
+            }
         }
     }
 

@@ -30,11 +30,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.poulastaa.core.presentation.designsystem.AppThem
-import com.poulastaa.core.presentation.designsystem.CheckIcon
-import com.poulastaa.core.presentation.designsystem.UserIcon
-import com.poulastaa.core.presentation.designsystem.components.CacheImageReq
-import com.poulastaa.core.presentation.designsystem.dimens
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
+import com.poulastaa.core.presentation.designsystem.ui.UserIcon
+import com.poulastaa.core.presentation.ui.components.CacheImageReq
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.setup.presentation.pic_artist.UiArtist
 
 @Composable

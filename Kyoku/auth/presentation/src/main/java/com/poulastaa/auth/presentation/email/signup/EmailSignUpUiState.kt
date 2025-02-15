@@ -1,6 +1,6 @@
 package com.poulastaa.auth.presentation.email.signup
 
-import com.poulastaa.core.presentation.ui.model.TextHolder
+import com.poulastaa.core.presentation.designsystem.model.TextHolder
 
 data class EmailSignUpUiState(
     val isMakingApiCall: Boolean = false,

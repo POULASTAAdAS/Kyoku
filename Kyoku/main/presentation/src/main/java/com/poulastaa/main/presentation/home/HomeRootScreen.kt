@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import com.poulastaa.core.presentation.designsystem.gradiantBackground
-import com.poulastaa.core.presentation.ui.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
+import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable

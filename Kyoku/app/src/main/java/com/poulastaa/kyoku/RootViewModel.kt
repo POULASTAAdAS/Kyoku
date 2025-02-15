@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.repository.DatastoreRepository
-import com.poulastaa.core.presentation.designsystem.components.CacheImageReq
+import com.poulastaa.core.presentation.ui.components.CacheImageReq
 import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
