@@ -54,6 +54,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.coloredShadow
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
@@ -245,6 +246,7 @@ private fun Navigation(
 
             HomeRootScreen(
                 viewmodel = homeViewmodel,
+                user = state.user,
                 toggleDrawer = {
                     onAction(MainUiAction.ToggleDrawer)
                 }
@@ -271,41 +273,6 @@ private fun Navigation(
                 toggleDrawer = {
                     onAction(MainUiAction.ToggleDrawer)
                 }
-            )
-        }
-    }
-}
-
-
-private fun Modifier.coloredShadow(
-    color: Color,
-    alpha: Float = 0.2f,
-    borderRadius: Dp = 0.dp,
-    shadowRadius: Dp = 20.dp,
-    offsetY: Dp = 0.dp,
-    offsetX: Dp = 0.dp,
-) = composed {
-    val shadowColor = color.copy(alpha = alpha).toArgb()
-    val transparent = color.copy(alpha = 0f).toArgb()
-    this.drawBehind {
-        this.drawIntoCanvas {
-            val paint = Paint()
-            val frameworkPaint = paint.asFrameworkPaint()
-            frameworkPaint.color = transparent
-            frameworkPaint.setShadowLayer(
-                shadowRadius.toPx(),
-                offsetX.toPx(),
-                offsetY.toPx(),
-                shadowColor
-            )
-            it.drawRoundRect(
-                0f,
-                0f,
-                this.size.width,
-                this.size.height,
-                borderRadius.toPx(),
-                borderRadius.toPx(),
-                paint
             )
         }
     }
