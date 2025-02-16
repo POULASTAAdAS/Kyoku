@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,17 +38,20 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppCacheImage
 
 @OptIn(ExperimentalMaterial3Api::class)
+internal val MAIN_TOP_BAR_PADDING = TopAppBarDefaults.TopAppBarExpandedHeight + 30.dp
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar(
-    isExpanded: Boolean = false,
+internal fun MainTopBar(
     scroll: TopAppBarScrollBehavior,
     user: UiUser,
     dayStatus: String,
+    modifier: Modifier = Modifier,
     onSearchClick: () -> Unit,
     onProfileClick: () -> Unit,
 ) {
     TopAppBar(
-        modifier = Modifier.padding(horizontal = if (isExpanded) 0.dp else MaterialTheme.dimens.small2),
+        modifier = modifier.padding(start = MaterialTheme.dimens.small2),
         scrollBehavior = scroll,
         title = {
             Column(
@@ -86,20 +92,36 @@ fun HomeTopBar(
             )
         },
         actions = {
-            IconButton(
-                onClick = onSearchClick,
+            Card(
+                modifier = Modifier
+                    .padding(end =  MaterialTheme.dimens.small2)
+                    .size(50.dp),
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 0.dp
+                ),
+                onClick = {
+                    onSearchClick()
+                },
+                interactionSource = null,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.background
+                )
             ) {
                 Icon(
                     imageVector = SearchIcon,
                     contentDescription = stringResource(R.string.search),
                     modifier = Modifier
-                        .fillMaxSize(),
-                    tint = MaterialTheme.colorScheme.primary
+                        .fillMaxSize()
+                        .padding(9.dp)
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Transparent
+            containerColor = Color.Transparent,
+            scrolledContainerColor = Color.Transparent
         )
     )
 }
@@ -110,11 +132,11 @@ fun HomeTopBar(
 private fun Preview() {
     AppThem {
         Surface {
-            HomeTopBar(
-                isExpanded = false,
+            MainTopBar(
                 TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 UiUser(username = "Poulastaa"),
                 "Good Morning",
+                modifier = Modifier,
                 {},
                 {}
             )

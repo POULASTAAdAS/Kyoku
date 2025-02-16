@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +31,7 @@ class MainViewmodel @Inject constructor(
     val state = _state
         .onStart {
             loadUser()
+            loadGreeting()
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
@@ -145,6 +147,26 @@ class MainViewmodel @Inject constructor(
             _state.value = _state.value.copy(user = user.toUiUser())
         }
     }
+
+    private fun loadGreeting() {
+        val now = LocalTime.now()
+
+        val greetings = when {
+            now >= LocalTime.of(7, 0) && now <= LocalTime.of(11, 59) -> "Good Morning"
+            now >= LocalTime.of(12, 0) && now <= LocalTime.of(17, 59) -> "Good Afternoon"
+            now >= LocalTime.of(18, 0) && now <= LocalTime.of(23, 59) -> "Good Evening"
+            now >= LocalTime.MIDNIGHT && now <= LocalTime.of(3, 59) -> "Night Owl"
+            now >= LocalTime.of(4, 0) && now <= LocalTime.of(6, 59) -> "Early Bird"
+            else -> "Hello"
+        }
+
+        _state.update {
+            it.copy(
+                greetings = greetings
+            )
+        }
+    }
+
 
     private fun AppNavigationBottomBarScreen.toAppNavigationRailScreen() = when (this) {
         AppNavigationBottomBarScreen.HOME -> AppNavigationRailScreen.HOME

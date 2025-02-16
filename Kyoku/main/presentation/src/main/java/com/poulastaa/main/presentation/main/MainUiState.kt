@@ -12,4 +12,5 @@ data class MainUiState(
     val navigationRailScreen: AppNavigationRailScreen = AppNavigationRailScreen.HOME,
     val navigationBottomBarScreen: AppNavigationBottomBarScreen = AppNavigationBottomBarScreen.HOME,
     val user: UiUser = UiUser(),
+    val greetings: String = "Hello",
 )

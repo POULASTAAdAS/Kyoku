@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -86,7 +85,8 @@ internal fun AppNavigationRail(
 
     Surface(
         modifier = Modifier
-            .padding(MaterialTheme.dimens.medium1)
+            .padding(start = MaterialTheme.dimens.medium1)
+            .padding(vertical = MaterialTheme.dimens.medium1)
             .animateContentSize(
                 animationSpec = tween(durationMillis = ANIMATION_TIME)
             )
@@ -186,7 +186,8 @@ internal fun AppNavigationRail(
                             },
                         errorIcon = UserIcon,
                         border = 1.4.dp,
-                        borderColor = MaterialTheme.colorScheme.primary
+                        borderColor = MaterialTheme.colorScheme.primary,
+                        iconColor = MaterialTheme.colorScheme.primary
                     )
 
                     Text(

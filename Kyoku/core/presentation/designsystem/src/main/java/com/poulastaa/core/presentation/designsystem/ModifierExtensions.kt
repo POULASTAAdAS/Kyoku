@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,7 @@ fun Modifier.ballTransform(ballAnimInfo: BallAnimInfo) = this
         transformOrigin = TransformOrigin(pivotFractionX = 0.5f, 0f)
     }
 
+@Stable
 fun Modifier.shimmerEffect(): Modifier = composed {
     var size by remember { mutableStateOf(IntSize.Zero) }
 
