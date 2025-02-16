@@ -252,7 +252,7 @@ private fun Navigation(
     NavHost(
         modifier = modifier,
         navController = nav,
-        startDestination = ScreensCore.Home,
+        startDestination = ScreensCore.Library // todo change to Home
     ) {
         composable<ScreensCore.Home>(
             enterTransition = {
@@ -298,11 +298,7 @@ private fun Navigation(
                 ) + fadeOut(tween(ANIMATION_TIME))
             }
         ) {
-            LibraryRootScreen(
-                toggleDrawer = {
-                    onAction(MainUiAction.ToggleDrawer)
-                }
-            )
+            LibraryRootScreen(scroll = mainTopBarScroll)
         }
     }
 }

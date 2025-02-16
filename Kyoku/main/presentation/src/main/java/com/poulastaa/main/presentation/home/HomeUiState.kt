@@ -2,9 +2,9 @@ package com.poulastaa.main.presentation.home
 
 import androidx.compose.runtime.Stable
 import com.poulastaa.core.domain.model.AlbumId
-import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
+import com.poulastaa.main.presentation.components.UiSavedItem
 
 @Stable
 internal data class HomeUiState(
@@ -14,21 +14,6 @@ internal data class HomeUiState(
     val canShowUi = staticData.popularAlbum.isNotEmpty()
             && staticData.popularArtistSong.isNotEmpty()
             && staticData.suggestedArtist.isNotEmpty()
-}
-
-
-@Stable
-internal data class UiSavedItem(
-    val id: PlaylistId = -1,
-    val name: String = "",
-    val posters: List<String> = emptyList(),
-    val type: UiSaveItemType? = null,
-)
-
-internal enum class UiSaveItemType {
-    PLAYLIST,
-    ALBUM,
-    ARTIST
 }
 
 @Stable

@@ -1,36 +1,50 @@
 package com.poulastaa.main.presentation.library
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import android.app.Activity
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.font.FontWeight
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryRootScreen(toggleDrawer: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = gradiantBackground()
-                )
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Library",
-            fontSize = MaterialTheme.typography.displayLarge.fontSize,
-            fontWeight = FontWeight.Black,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
+internal fun LibraryRootScreen(
+    scroll: TopAppBarScrollBehavior,
+    viewmodel: LibraryViewmodel = hiltViewModel(),
+) {
+    val activity = LocalContext.current as Activity
+    val windowSizeClass = calculateWindowSizeClass(activity)
+
+    val state by viewmodel.state.collectAsStateWithLifecycle()
+
+    KyokuWindowSize(
+        windowSizeClass = windowSizeClass,
+        compactContent = {
+            LibraryCompactScreen(
+                scroll = scroll,
+                state = state,
+                onAction = viewmodel::onAction
+            )
+        },
+        mediumContent = {
+            LibraryCompactScreen(
+                scroll = scroll,
+                state = state,
+                onAction = viewmodel::onAction
+            )
+        },
+        expandedContent = {
+            LibraryCompactScreen(
+                scroll = scroll,
+                state = state,
+                onAction = viewmodel::onAction
+            )
+        }
+    )
 }
