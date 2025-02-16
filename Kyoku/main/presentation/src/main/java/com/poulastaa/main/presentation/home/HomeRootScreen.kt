@@ -26,20 +26,23 @@ internal fun HomeRootScreen(
         windowSizeClass = windowSizeClass,
         compactContent = {
             HomeCompactScreen(
-                scrollBehavior = scrollBehavior,
+                scroll = scrollBehavior,
                 state = state,
+                onAction = viewmodel::onAction
             )
         },
         mediumContent = {
-            HomeCompactScreen(
-                scrollBehavior = scrollBehavior,
+            HomeMediumScreen(
+                scroll = scrollBehavior,
                 state = state,
+                onAction = viewmodel::onAction
             )
         },
         expandedContent = {
-            HomeCompactScreen(
-                scrollBehavior = scrollBehavior,
+            HomeExpandedScreen(
+                scroll = scrollBehavior,
                 state = state,
+                onAction = viewmodel::onAction
             )
         }
     )

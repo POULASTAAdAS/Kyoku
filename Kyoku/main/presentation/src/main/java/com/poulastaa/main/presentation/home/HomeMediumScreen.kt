@@ -19,14 +19,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
-import com.poulastaa.main.presentation.home.components.HomeCompactLoadingScreen
+import com.poulastaa.main.presentation.home.components.HomeMediumLoadingScreen
 import com.poulastaa.main.presentation.home.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeCompactScreen(
-    scroll: TopAppBarScrollBehavior,
+internal fun HomeMediumScreen(
     state: HomeUiState,
+    scroll: TopAppBarScrollBehavior,
     onAction: (HomeUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
@@ -37,7 +37,7 @@ internal fun HomeCompactScreen(
         AnimatedContent(state.canShowUi) {
             when (it) {
                 true -> LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                    columns = GridCells.Fixed(4),
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
@@ -57,7 +57,7 @@ internal fun HomeCompactScreen(
 
                 }
 
-                false -> HomeCompactLoadingScreen(paddingValues, scroll)
+                false -> HomeMediumLoadingScreen(paddingValues, scroll)
             }
         }
     }
