@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.main.presentation.home.components.HomeCompactLoadingScreen
-import com.poulastaa.main.presentation.home.components.MAIN_TOP_BAR_PADDING
+import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

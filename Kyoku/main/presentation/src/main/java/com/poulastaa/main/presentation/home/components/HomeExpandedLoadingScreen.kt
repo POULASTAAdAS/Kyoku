@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.main.presentation.components.LoadingScreenWrapper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

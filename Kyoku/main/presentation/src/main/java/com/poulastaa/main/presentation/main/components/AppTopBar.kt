@@ -1,5 +1,7 @@
-package com.poulastaa.main.presentation.home.components
+package com.poulastaa.main.presentation.main.components
 
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
@@ -36,17 +38,19 @@ import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppCacheImage
+import com.poulastaa.main.domain.model.AppNavigationBottomBarScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 internal val MAIN_TOP_BAR_PADDING = TopAppBarDefaults.TopAppBarExpandedHeight + 30.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MainTopBar(
+internal fun AppTopBar(
     scroll: TopAppBarScrollBehavior,
     user: UiUser,
     dayStatus: String,
     modifier: Modifier = Modifier,
+    screen: AppNavigationBottomBarScreen,
     onSearchClick: () -> Unit,
     onProfileClick: () -> Unit,
 ) {
@@ -60,22 +64,35 @@ internal fun MainTopBar(
                     .padding(start = MaterialTheme.dimens.medium1),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = dayStatus,
-                    color = MaterialTheme.colorScheme.primary.copy(.8f),
-                )
+                AnimatedContent(screen) {
+                    when (it) {
+                        AppNavigationBottomBarScreen.HOME -> Column {
+                            Text(
+                                text = dayStatus,
+                                color = MaterialTheme.colorScheme.primary.copy(.8f),
+                            )
 
-                Text(
-                    text = user.username,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.offset {
-                        IntOffset(x = 0, y = -10)
+                            Text(
+                                text = user.username,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.offset {
+                                    IntOffset(x = 0, y = -10)
+                                }
+                            )
+                        }
+
+                        AppNavigationBottomBarScreen.LIBRARY -> Text(
+                            text = stringResource(R.string.library_title),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                        )
                     }
-                )
+                }
             }
         },
         navigationIcon = {
@@ -94,7 +111,7 @@ internal fun MainTopBar(
         actions = {
             Card(
                 modifier = Modifier
-                    .padding(end =  MaterialTheme.dimens.small2)
+                    .padding(end = MaterialTheme.dimens.small2)
                     .size(50.dp),
                 shape = CircleShape,
                 elevation = CardDefaults.cardElevation(
@@ -127,16 +144,38 @@ internal fun MainTopBar(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewLightDark
+@Preview
 @Composable
-private fun Preview() {
+private fun PreviewLight() {
     AppThem {
         Surface {
-            MainTopBar(
+            AppTopBar(
                 TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 UiUser(username = "Poulastaa"),
                 "Good Morning",
                 modifier = Modifier,
+                screen = AppNavigationBottomBarScreen.HOME,
+                {},
+                {}
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun PreviewDark() {
+    AppThem {
+        Surface {
+            AppTopBar(
+                TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                UiUser(username = "Poulastaa"),
+                "Good Morning",
+                modifier = Modifier,
+                screen = AppNavigationBottomBarScreen.LIBRARY,
                 {},
                 {}
             )

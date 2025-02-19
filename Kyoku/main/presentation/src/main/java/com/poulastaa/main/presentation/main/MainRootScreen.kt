@@ -58,11 +58,11 @@ import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.home.HomeRootScreen
 import com.poulastaa.main.presentation.home.HomeViewmodel
-import com.poulastaa.main.presentation.home.components.MainTopBar
 import com.poulastaa.main.presentation.library.LibraryRootScreen
 import com.poulastaa.main.presentation.main.components.AppBottomBar
 import com.poulastaa.main.presentation.main.components.AppDrawer
 import com.poulastaa.main.presentation.main.components.AppNavigationRail
+import com.poulastaa.main.presentation.main.components.AppTopBar
 import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
 
@@ -133,11 +133,12 @@ fun MainRootScreen(
                         onAction = viewmodel::onAction
                     )
 
-                    MainTopBar(
+                    AppTopBar(
                         modifier = Modifier.navigationBarsPadding(),
                         scroll = scroll,
                         user = state.user,
                         dayStatus = state.greetings,
+                        screen = state.navigationBottomBarScreen,
                         onSearchClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
@@ -219,7 +220,7 @@ fun MainRootScreen(
                 }
             )
 
-            MainTopBar(
+            AppTopBar(
                 modifier = Modifier
                     .padding(start = if (state.navigationDrawerState.isOpened()) MaterialTheme.dimens.medium1 else 0.dp)
                     .offset { IntOffset(animatedOffset.roundToPx(), 0) }
@@ -227,6 +228,7 @@ fun MainRootScreen(
                 scroll = scroll,
                 user = state.user,
                 dayStatus = state.greetings,
+                screen = state.navigationBottomBarScreen,
                 onSearchClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
@@ -252,7 +254,7 @@ private fun Navigation(
     NavHost(
         modifier = modifier,
         navController = nav,
-        startDestination = ScreensCore.Library // todo change to Home
+        startDestination = ScreensCore.Home
     ) {
         composable<ScreensCore.Home>(
             enterTransition = {

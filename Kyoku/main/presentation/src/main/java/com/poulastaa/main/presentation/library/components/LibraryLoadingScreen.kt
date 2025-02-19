@@ -33,7 +33,7 @@ import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
 import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.main.presentation.home.components.LoadingScreenWrapper
+import com.poulastaa.main.presentation.components.LoadingScreenWrapper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

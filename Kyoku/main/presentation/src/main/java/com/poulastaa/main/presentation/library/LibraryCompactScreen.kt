@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
-import com.poulastaa.main.presentation.home.components.MAIN_TOP_BAR_PADDING
+import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 import com.poulastaa.main.presentation.library.components.LibraryLoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)

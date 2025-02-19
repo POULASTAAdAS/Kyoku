@@ -18,7 +18,7 @@ import kotlin.time.toDuration
 internal class LibraryViewmodel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow(LibraryUiState())
     val state = _state.onStart {
-//        stopLoadingAfterFiveSecIfNoData()
+        stopLoadingAfterFiveSecIfNoData()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),

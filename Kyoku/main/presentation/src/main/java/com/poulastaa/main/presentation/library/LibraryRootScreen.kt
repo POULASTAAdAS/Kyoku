@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
-import com.poulastaa.main.presentation.library.components.LibraryExpandedScreen
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
