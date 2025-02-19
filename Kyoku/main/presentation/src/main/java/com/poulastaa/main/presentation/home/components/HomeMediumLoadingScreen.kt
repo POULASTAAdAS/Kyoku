@@ -15,7 +15,6 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -31,7 +30,7 @@ fun HomeMediumLoadingScreen(
         containerColor = MaterialTheme.colorScheme.background
     )
 
-    HomeLoadingScreenWrapper(paddingValues, scroll) {
+    LoadingScreenWrapper(paddingValues, scroll) {
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         HomeLoadingTopRow(

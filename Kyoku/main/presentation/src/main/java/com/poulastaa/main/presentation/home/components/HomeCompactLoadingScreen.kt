@@ -29,7 +29,7 @@ internal fun HomeCompactLoadingScreen(
         containerColor = MaterialTheme.colorScheme.background
     )
 
-    HomeLoadingScreenWrapper(paddingValues, scroll) {
+    LoadingScreenWrapper(paddingValues, scroll) {
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         HomeLoadingTopRow(

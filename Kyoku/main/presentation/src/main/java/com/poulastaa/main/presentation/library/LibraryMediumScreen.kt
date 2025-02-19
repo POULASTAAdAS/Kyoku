@@ -23,7 +23,7 @@ import com.poulastaa.main.presentation.library.components.LibraryCompactMediumLo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun LibraryCompactScreen(
+internal fun LibraryMediumScreen(
     scroll: TopAppBarScrollBehavior,
     state: LibraryUiState,
     onAction: (LibraryUiAction) -> Unit,

@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
@@ -41,7 +40,7 @@ internal fun HomeExpandedLoadingScreen(
         containerColor = MaterialTheme.colorScheme.background
     )
 
-    HomeLoadingScreenWrapper(
+    LoadingScreenWrapper(
         paddingValues = paddingValues,
         scroll = scroll
     ) {

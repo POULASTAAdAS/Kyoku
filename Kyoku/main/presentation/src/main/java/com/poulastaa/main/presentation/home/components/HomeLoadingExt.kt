@@ -41,7 +41,7 @@ import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeLoadingScreenWrapper(
+internal fun LoadingScreenWrapper(
     paddingValues: PaddingValues,
     scroll: TopAppBarScrollBehavior,
     content: @Composable ColumnScope.() -> Unit,
