@@ -5,6 +5,9 @@ import com.poulastaa.core.domain.model.SavedScreen
 import kotlinx.coroutines.flow.Flow
 
 interface DatastoreRepository {
+    suspend fun storeThem(them: Boolean)
+    fun readThem(): Flow<Boolean>
+
     suspend fun storeSignInState(state: SavedScreen)
     suspend fun readSignInState(): SavedScreen
 

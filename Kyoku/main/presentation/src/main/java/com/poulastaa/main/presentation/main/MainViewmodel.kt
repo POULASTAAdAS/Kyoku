@@ -1,5 +1,8 @@
 package com.poulastaa.main.presentation.main
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.toOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.model.DtoCoreScreens
@@ -13,6 +16,7 @@ import com.poulastaa.main.domain.model.AppNavigationRailState
 import com.poulastaa.main.domain.model.isOpened
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -22,6 +26,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import javax.inject.Inject
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @HiltViewModel
 class MainViewmodel @Inject constructor(
@@ -44,42 +50,51 @@ class MainViewmodel @Inject constructor(
     fun onAction(action: MainUiAction) {
         when (action) {
             MainUiAction.ToggleDrawer -> {
-                _state.value = _state.value.copy(
-                    navigationDrawerState = if (_state.value.navigationDrawerState.isOpened()) AppNavigationDrawerState.CLOSED
-                    else AppNavigationDrawerState.OPENED
-                )
+                _state.update {
+                    it.copy(
+                        navigationDrawerState = if (_state.value.navigationDrawerState.isOpened()) AppNavigationDrawerState.CLOSED
+                        else AppNavigationDrawerState.OPENED
+                    )
+                }
             }
 
             is MainUiAction.NavigateToDrawerScreen -> {
-                if (action.screen != AppDrawerScreen.THEME) _state.value = _state.value.copy(
-                    navigationDrawerState = AppNavigationDrawerState.CLOSED
-                )
-
                 viewModelScope.launch {
+                    if (action.screen == AppDrawerScreen.THEME) startThemChangeTransition(action.offset)
+                    else _state.update {
+                        it.copy(
+                            navigationDrawerState = AppNavigationDrawerState.CLOSED
+                        )
+                    }
+
                     _uiEvent.send(MainUiEvent.Navigate(action.screen.toDtoCoreScreen()))
                 }
             }
 
             MainUiAction.ToggleNavigationRail -> {
-                _state.value = _state.value.copy(
-                    navigationRailState = if (_state.value.navigationRailState.isOpened()) AppNavigationRailState.CLOSED
-                    else AppNavigationRailState.OPENED
-                )
+                _state.update {
+                    it.copy(
+                        navigationRailState = if (it.navigationRailState.isOpened()) AppNavigationRailState.CLOSED
+                        else AppNavigationRailState.OPENED
+                    )
+                }
             }
 
             is MainUiAction.NavigateToNavigationRailScreen -> {
                 if (_state.value.navigationRailScreen == action.screen) return
 
-                if (action.screen != AppNavigationRailScreen.THEME) _state.update {
-                    it.copy(
-                        navigationRailScreen = action.screen,
-                        navigationBottomBarScreen = action.screen.toAppBottomBarScreen()
-                            ?: it.navigationBottomBarScreen,
-                        navigationRailState = AppNavigationRailState.CLOSED
-                    )
-                }
-
                 viewModelScope.launch {
+                    if (action.screen == AppNavigationRailScreen.THEME)
+                        startThemChangeTransition(action.offset)
+                    else _state.update {
+                        it.copy(
+                            navigationRailScreen = action.screen,
+                            navigationBottomBarScreen = action.screen.toAppBottomBarScreen()
+                                ?: it.navigationBottomBarScreen,
+                            navigationRailState = AppNavigationRailState.CLOSED
+                        )
+                    }
+
                     when (action.screen) {
                         AppNavigationRailScreen.HOME -> _uiEvent.send(
                             MainUiEvent.NavigateMain(
@@ -115,6 +130,14 @@ class MainViewmodel @Inject constructor(
                     _uiEvent.send(MainUiEvent.NavigateMain(action.screen.toMainScreen()))
                 }
             }
+
+            MainUiAction.ResetRevelAnimation -> {
+                _state.update {
+                    it.copy(
+                        offset = IntOffset(0, 0).toOffset()
+                    )
+                }
+            }
         }
     }
 
@@ -144,7 +167,11 @@ class MainViewmodel @Inject constructor(
     private fun loadUser() {
         viewModelScope.launch {
             val user = ds.readLocalUser()
-            _state.value = _state.value.copy(user = user.toUiUser())
+            _state.update {
+                it.copy(
+                    user = user.toUiUser()
+                )
+            }
         }
     }
 
@@ -167,6 +194,17 @@ class MainViewmodel @Inject constructor(
         }
     }
 
+    private suspend fun startThemChangeTransition(offset: Offset?) {
+        offset?.let {
+            _state.update {
+                it.copy(
+                    offset = offset
+                )
+            }
+        }
+        // Delay for the animation to complete
+        delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
+    }
 
     private fun AppNavigationBottomBarScreen.toAppNavigationRailScreen() = when (this) {
         AppNavigationBottomBarScreen.HOME -> AppNavigationRailScreen.HOME
@@ -189,6 +227,7 @@ class MainViewmodel @Inject constructor(
         AppNavigationRailScreen.HISTORY -> DtoCoreScreens.History
         AppNavigationRailScreen.SETTINGS -> DtoCoreScreens.Settings
         AppNavigationRailScreen.THEME -> DtoCoreScreens.ToggleTheme
+
         AppNavigationRailScreen.PROFILE -> DtoCoreScreens.Profile
         else -> throw IllegalArgumentException("Home and Library should not occur on file MainViewModel")
     }

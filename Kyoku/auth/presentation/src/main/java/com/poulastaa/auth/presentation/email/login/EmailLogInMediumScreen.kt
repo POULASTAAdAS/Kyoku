@@ -2,7 +2,6 @@ package com.poulastaa.auth.presentation.email.login
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,18 +42,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.AppLogo
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
 import com.poulastaa.core.presentation.designsystem.ui.EmailAlternateIcon
 import com.poulastaa.core.presentation.designsystem.ui.PasswordIcon
-import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.noRippleClickable
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppLoadingButton
 import com.poulastaa.core.presentation.ui.components.AppPasswordField
 import com.poulastaa.core.presentation.ui.components.AppTextField
 import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
-import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -115,7 +114,8 @@ fun EmailLogInMediumScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AppTextField(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .onGloballyPositioned {
                                     autoFillEmail.boundingBox = it.boundsInParent()
                                 }
@@ -135,7 +135,8 @@ fun EmailLogInMediumScreen(
                         )
 
                         AppPasswordField(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .onGloballyPositioned {
                                     autoFillPassword.boundingBox = it.boundsInParent()
                                 }

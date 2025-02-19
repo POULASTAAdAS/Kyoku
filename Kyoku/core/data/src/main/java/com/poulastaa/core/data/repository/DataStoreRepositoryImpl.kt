@@ -1,5 +1,6 @@
 package com.poulastaa.core.data.repository
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -29,6 +30,21 @@ class DataStoreRepositoryImpl @Inject constructor(
         val REFRESH_TOKEN = stringPreferencesKey(name = "refresh_token")
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
         val LIBRARY_VIEW_TYPE = booleanPreferencesKey(name = "library_view_type")
+        val APP_THEME = booleanPreferencesKey(name = "app_theme")
+    }
+
+    override suspend fun storeThem(them: Boolean) {
+        dataStore.edit {
+            it[PreferencesKeys.APP_THEME] = them
+        }
+    }
+
+    override fun readThem(): Flow<Boolean> = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        Log.d("called", "called")
+
+        it[PreferencesKeys.APP_THEME] ?: true // first dark theme
     }
 
     override suspend fun storeSignInState(state: SavedScreen) {

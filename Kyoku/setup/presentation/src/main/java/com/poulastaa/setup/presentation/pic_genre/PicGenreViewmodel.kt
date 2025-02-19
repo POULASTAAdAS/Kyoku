@@ -132,7 +132,7 @@ class PicGenreViewmodel @Inject constructor(
         ).cachedIn(viewModelScope)
             .distinctUntilChanged()
             .collectLatest { pagingData ->
-            _genre.value = pagingData.map { it.toUiGenre(_state.value.data) }
-        }
+                _genre.value = pagingData.map { it.toUiGenre(_state.value.data) }
+            }
     }
 }

@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.KyokuThem
 import com.poulastaa.kyoku.navigation.RootNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewmodel by viewModels<RootViewModel>()
+    private val them by viewModels<ThemChanger.Companion>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            KyokuThem {
+            KyokuThem(
+                darkTheme = them.them
+            ) {
                 val nav = rememberNavController()
                 val state by viewmodel.state.collectAsStateWithLifecycle()
 
@@ -44,7 +48,10 @@ class MainActivity : ComponentActivity() {
                     state.screen?.let {
                         RootNavigation(
                             nav = nav,
-                            screen = it
+                            screen = it,
+                            toggleThem = {
+                                them.toggleTheme()
+                            }
                         )
                     }
                 }

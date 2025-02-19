@@ -34,10 +34,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.EmailIcon
 import com.poulastaa.core.presentation.designsystem.ui.GoogleIcon
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable

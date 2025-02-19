@@ -43,14 +43,14 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.FilterArtistIcon
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.SadIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppLoadingButton
 import com.poulastaa.core.presentation.ui.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.setup.presentation.pic_genre.UiGenre
 import com.poulastaa.setup.presentation.pic_genre.component.GenreCard
 import kotlinx.coroutines.flow.flowOf
@@ -91,7 +91,7 @@ fun <T : Any> PicItemExtendedScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = gradiantBackground()
+                        colors = ThemChanger.getGradiantBackground()
                     )
                 )
                 .padding(paddingValues)

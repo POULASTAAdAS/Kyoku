@@ -38,13 +38,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.LinkIcon
-import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppLoadingButton
 import com.poulastaa.core.presentation.ui.components.AppTextField
-import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.setup.presentation.spotify_playlist.components.SongList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,7 +92,7 @@ fun ImportPlaylistExpandedScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = gradiantBackground()
+                        colors = ThemChanger.getGradiantBackground()
                     )
                 )
                 .padding(paddingValues)
@@ -159,7 +159,7 @@ fun ImportPlaylistExpandedScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                gradiantBackground()
+                                ThemChanger.getGradiantBackground()
                             )
                         ),
                     contentPadding = PaddingValues(MaterialTheme.dimens.small2),

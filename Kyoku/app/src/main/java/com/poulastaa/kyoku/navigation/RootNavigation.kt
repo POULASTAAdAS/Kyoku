@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.navigation
 
-import android.widget.Toast
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,7 +8,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -36,6 +34,7 @@ private const val DEFAULT_ANIMATION_TIME = 600
 fun RootNavigation(
     nav: NavHostController,
     screen: Screens,
+    toggleThem: () -> Unit,
 ) {
     NavHost(
         navController = nav,
@@ -43,7 +42,7 @@ fun RootNavigation(
     ) {
         authGraph(nav)
         setupGraph(nav)
-        coreGraph(nav)
+        coreGraph(nav, toggleThem)
     }
 }
 
@@ -256,25 +255,21 @@ private fun NavGraphBuilder.setupGraph(nav: NavHostController) {
     }
 }
 
-private fun NavGraphBuilder.coreGraph(nav: NavHostController) {
+private fun NavGraphBuilder.coreGraph(
+    nav: NavHostController,
+    toggleThem: () -> Unit,
+) {
     composable<Screens.Core.Main>(
         enterTransition = { fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) }
     ) {
-        val context = LocalContext.current
-
         val payload = it.toRoute<Screens.Core.Main>()
+
         MainRootScreen(payload.isInitial) { dtoScreens ->
             when (dtoScreens) {
                 DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
                 DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
                 DtoCoreScreens.Settings -> nav.navigate(dtoScreens.toCoreScreen())
-                DtoCoreScreens.ToggleTheme -> {
-                    Toast.makeText(
-                        context,
-                        "Implement them change on RootNavigation",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                DtoCoreScreens.ToggleTheme -> toggleThem()
             }
         }
     }

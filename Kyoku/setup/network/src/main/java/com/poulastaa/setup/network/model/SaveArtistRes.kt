@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SaveArtistRes(
-    val list: List<ResponseArtist>
+    val list: List<ResponseArtist>,
 )

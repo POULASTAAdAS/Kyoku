@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable

@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.shimmerEffect
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
 
 @Composable
 internal fun GenreLoadingCard(modifier: Modifier = Modifier) {

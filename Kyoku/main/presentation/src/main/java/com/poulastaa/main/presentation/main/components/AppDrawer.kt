@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -34,18 +33,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +56,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.model.UiUser
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
@@ -64,7 +67,6 @@ import com.poulastaa.core.presentation.designsystem.ui.NightIcon
 import com.poulastaa.core.presentation.designsystem.ui.SettingsIcon
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.core.presentation.ui.components.AppCacheImage
 import com.poulastaa.main.domain.model.AppDrawerScreen
 import com.poulastaa.main.presentation.main.MainUiAction
@@ -78,6 +80,7 @@ internal fun AppDrawer(
     navigate: (MainUiAction.NavigateToDrawerScreen) -> Unit,
     onCloseClick: () -> Unit,
 ) {
+    var offset: Offset = remember { Offset(0f, 0f) }
     val rotate by animateFloatAsState(
         targetValue = if (isOpen) 0f else 180f,
         animationSpec = tween(durationMillis = ANIMATION_TIME, delayMillis = 120)
@@ -87,7 +90,7 @@ internal fun AppDrawer(
         modifier = Modifier
             .background(
                 brush = Brush.linearGradient(
-                    colors = gradiantBackground().map {
+                    colors = ThemChanger.getGradiantBackground().map {
                         it.copy(alpha = .7f)
                     }
                 )
@@ -206,16 +209,28 @@ internal fun AppDrawer(
 
             IconButton(
                 onClick = {
-                    navigate(MainUiAction.NavigateToDrawerScreen(AppDrawerScreen.THEME))
+                    navigate(
+                        MainUiAction.NavigateToDrawerScreen(
+                            screen = AppDrawerScreen.THEME,
+                            offset = offset
+                        )
+                    )
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.background
                 ),
-                modifier = Modifier.padding(MaterialTheme.dimens.medium1)
+                modifier = Modifier
+                    .padding(MaterialTheme.dimens.medium1)
+                    .onGloballyPositioned {
+                        offset = Offset(
+                            x = it.positionInWindow().x + it.size.width / 2,
+                            y = it.positionInWindow().y + it.size.height / 2,
+                        )
+                    }
             ) {
                 Icon(
-                    imageVector = if (isSystemInDarkTheme()) DayIcon else NightIcon,
+                    imageVector = if (ThemChanger.them == isSystemInDarkTheme()) DayIcon else NightIcon,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -270,7 +285,7 @@ private fun Preview() {
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = gradiantBackground().map {
+                        colors = ThemChanger.getGradiantBackground().map {
                             it.copy(alpha = .8f)
                         }
                     )

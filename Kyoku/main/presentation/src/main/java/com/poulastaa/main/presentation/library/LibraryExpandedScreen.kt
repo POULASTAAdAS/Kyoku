@@ -16,10 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
-import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 import com.poulastaa.main.presentation.library.components.LibraryLoadingScreen
+import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +39,7 @@ internal fun LibraryExpandedScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = gradiantBackground()
+                                colors = ThemChanger.getGradiantBackground()
                             )
                         )
                         .padding(paddingValues)

@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.kyoku.android.library.compose)
-    alias(libs.plugins.kyoku.android.dagger)
 }
 
 android {

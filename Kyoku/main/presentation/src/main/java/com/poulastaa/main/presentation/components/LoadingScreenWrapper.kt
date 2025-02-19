@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +30,7 @@ internal fun LoadingScreenWrapper(
         modifier = Modifier
             .background(
                 brush = Brush.verticalGradient(
-                    colors = gradiantBackground()
+                    colors = ThemChanger.getGradiantBackground()
                 )
             )
             .fillMaxSize()

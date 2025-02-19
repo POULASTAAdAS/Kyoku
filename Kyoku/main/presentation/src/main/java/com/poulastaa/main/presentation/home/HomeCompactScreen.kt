@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.main.presentation.home.components.HomeCompactLoadingScreen
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
@@ -42,7 +42,7 @@ internal fun HomeCompactScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = gradiantBackground()
+                                colors = ThemChanger.getGradiantBackground()
                             )
                         )
                         .padding(paddingValues)

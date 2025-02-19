@@ -18,11 +18,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.ui.ShapeCornerRadius
 import com.poulastaa.core.presentation.designsystem.ballSize
 import com.poulastaa.core.presentation.designsystem.lerp
 import com.poulastaa.core.presentation.designsystem.repository.IndentAnimation
 import com.poulastaa.core.presentation.designsystem.toPxf
+import com.poulastaa.core.presentation.designsystem.ui.ShapeCornerRadius
 
 @Stable
 class Height(

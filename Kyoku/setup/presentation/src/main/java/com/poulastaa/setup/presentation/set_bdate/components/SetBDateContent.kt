@@ -1,6 +1,5 @@
 package com.poulastaa.setup.presentation.set_bdate.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,11 +17,11 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
-import com.poulastaa.core.presentation.ui.components.AppLoadingButton
+import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppLoadingButton
 import com.poulastaa.setup.presentation.set_bdate.SetBDateUiAction
 import com.poulastaa.setup.presentation.set_bdate.SetBDateUiState
 

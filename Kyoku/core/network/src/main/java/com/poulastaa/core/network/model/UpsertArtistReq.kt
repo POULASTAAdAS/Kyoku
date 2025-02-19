@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpsertArtistReq(
-    val data : UpsertReq<ArtistId>
+    val data: UpsertReq<ArtistId>,
 )

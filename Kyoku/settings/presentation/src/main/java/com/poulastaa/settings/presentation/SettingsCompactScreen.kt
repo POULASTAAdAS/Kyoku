@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
@@ -52,7 +53,6 @@ import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
 import com.poulastaa.core.presentation.designsystem.ui.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.ui.NightIcon
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 

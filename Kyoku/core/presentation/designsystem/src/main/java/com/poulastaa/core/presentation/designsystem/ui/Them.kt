@@ -29,7 +29,8 @@ private val lightScheme = lightColorScheme(
     error = errorLight,
     errorContainer = errorContainerLight,
     background = backgroundLight,
-    surface = backgroundLight
+    surface = backgroundLight,
+    onBackground = backgroundDark
 )
 
 private val darkScheme = darkColorScheme(
@@ -41,6 +42,7 @@ private val darkScheme = darkColorScheme(
     errorContainer = errorContainerDark,
     background = backgroundDark,
     surface = backgroundDark,
+    onBackground = backgroundLight
 )
 
 private val LocalAppDimens = compositionLocalOf {

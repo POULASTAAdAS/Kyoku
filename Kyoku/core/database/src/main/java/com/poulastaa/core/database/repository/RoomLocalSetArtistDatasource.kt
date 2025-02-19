@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class RoomLocalSetArtistDatasource @Inject constructor(
     private val root: RootDao,
-    private val ds: DatastoreRepository
+    private val ds: DatastoreRepository,
 ) : LocalSetArtistDatasource {
     override suspend fun storeArtist(list: List<DtoArtist>) {
         root.insertArtist(list.map { it.toEntityArtist() })

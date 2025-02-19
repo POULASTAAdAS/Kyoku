@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.repository.DatastoreRepository
-import com.poulastaa.core.presentation.ui.components.CacheImageReq
+import com.poulastaa.core.presentation.designsystem.CacheImageReq
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.kyoku.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class RootViewModel @Inject constructor(
     private val ds: DatastoreRepository,
     private val cache: CacheImageReq, // must be initialized
+    private val them: ThemChanger, // must be initialized
 ) : ViewModel() {
     private val _state = MutableStateFlow(RootUiState())
     val state = _state

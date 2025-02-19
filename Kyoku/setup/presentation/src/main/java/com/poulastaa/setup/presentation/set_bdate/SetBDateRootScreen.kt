@@ -33,12 +33,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
-import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
-import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
+import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.setup.presentation.set_bdate.components.SetBDateTopBar
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)

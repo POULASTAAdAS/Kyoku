@@ -1,6 +1,5 @@
 package com.poulastaa.main.presentation.main.components
 
-import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -39,20 +38,25 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
@@ -74,10 +78,10 @@ private const val ANIMATION_TIME = 500
 @Composable
 internal fun AppNavigationRail(
     state: MainUiState,
-    activity: Activity,
     haptic: HapticFeedback,
     onAction: (MainUiAction) -> Unit,
 ) {
+    var offset: Offset = remember { Offset(0f, 0f) }
     val rotate by animateFloatAsState(
         targetValue = if (state.navigationRailState.isOpened()) 0f else 180f,
         animationSpec = tween(durationMillis = ANIMATION_TIME)
@@ -287,17 +291,25 @@ internal fun AppNavigationRail(
                 onClick = {
                     onAction(
                         MainUiAction.NavigateToNavigationRailScreen(
-                            AppNavigationRailScreen.THEME
+                            screen = AppNavigationRailScreen.THEME,
+                            offset = offset
                         )
                     )
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.background
-                )
+                ),
+                modifier = Modifier
+                    .onGloballyPositioned {
+                        offset = Offset(
+                            x = it.positionInWindow().x + it.size.width / 2,
+                            y = it.positionInWindow().y + it.size.height / 2,
+                        )
+                    }
             ) {
                 Icon(
-                    imageVector = if (isSystemInDarkTheme()) DayIcon else NightIcon,
+                    imageVector = if (isSystemInDarkTheme() == ThemChanger.them) DayIcon else NightIcon,
                     contentDescription = null,
                     modifier = Modifier.padding(4.dp)
                 )

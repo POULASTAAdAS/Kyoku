@@ -29,12 +29,12 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.auth.presentation.intro.components.AppAuthButton
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppLogo
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.GoogleIcon
-import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.MovingCirclesWithMetaballEffect
 
 @Composable
 fun IntroCompactScreen(

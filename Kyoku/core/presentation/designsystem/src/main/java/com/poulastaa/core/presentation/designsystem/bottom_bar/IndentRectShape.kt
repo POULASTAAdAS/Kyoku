@@ -8,8 +8,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import com.poulastaa.core.presentation.designsystem.ui.ShapeCornerRadius
 import com.poulastaa.core.presentation.designsystem.chooseCornerSize
+import com.poulastaa.core.presentation.designsystem.ui.ShapeCornerRadius
 
 internal class IndentRectShape(
     private val indentShapeData: IndentShapeData,

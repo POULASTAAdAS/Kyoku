@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.setup.presentation.components.PicItemCompactScreen
 import com.poulastaa.setup.presentation.components.PicItemExtendedScreen
 import com.poulastaa.setup.presentation.pic_genre.component.GenreCard

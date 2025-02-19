@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 
 @Stable
 val ballSize = 10.dp
+
 @Stable
 val BOTTOM_BAR_HEIGHT = 60.dp
 
