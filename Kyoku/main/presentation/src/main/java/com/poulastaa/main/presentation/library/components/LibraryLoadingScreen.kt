@@ -1,10 +1,8 @@
 package com.poulastaa.main.presentation.library.components
 
-import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,13 +24,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
@@ -41,18 +35,13 @@ import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.home.components.LoadingScreenWrapper
 
-@OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class,
-    ExperimentalMaterial3WindowSizeClassApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibraryCompactMediumLoadingScreen(
+internal fun LibraryLoadingScreen(
     scroll: TopAppBarScrollBehavior,
     paddingValues: PaddingValues,
+    itemCount: Int,
 ) {
-    val activity = LocalContext.current as Activity
-    val windowSizeClass = calculateWindowSizeClass(activity)
-
     val cardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.background
     )
@@ -112,7 +101,7 @@ fun LibraryCompactMediumLoadingScreen(
         LibraryLoadingRow(
             defaultPadding = defaultPadding,
             cardColors = cardColors,
-            itemCount = if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 3 else 4
+            itemCount = itemCount
         )
 
         Spacer(Modifier.height(MaterialTheme.dimens.medium2))
@@ -120,7 +109,7 @@ fun LibraryCompactMediumLoadingScreen(
         LibraryLoadingRow(
             defaultPadding = defaultPadding,
             cardColors = cardColors,
-            itemCount = if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 4 else 5
+            itemCount = itemCount
         )
 
         Spacer(Modifier.height(MaterialTheme.dimens.medium2))
@@ -129,7 +118,7 @@ fun LibraryCompactMediumLoadingScreen(
             defaultPadding = defaultPadding,
             cardColors = cardColors,
             shapes = CircleShape,
-            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 4 else 5
+            itemCount = itemCount
         )
 
         Spacer(Modifier.height(BOTTOM_BAR_HEIGHT + MaterialTheme.dimens.medium3))
@@ -141,7 +130,7 @@ private fun LibraryLoadingRow(
     defaultPadding: CardElevation,
     cardColors: CardColors,
     shapes: CornerBasedShape = MaterialTheme.shapes.extraSmall,
-    itemCount: Int = 3
+    itemCount: Int,
 ) {
     Column {
         Card(
@@ -198,9 +187,10 @@ private fun LibraryLoadingRow(
 private fun Preview() {
     AppThem {
         Surface {
-            LibraryCompactMediumLoadingScreen(
+            LibraryLoadingScreen(
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
-                paddingValues = PaddingValues()
+                paddingValues = PaddingValues(),
+                itemCount = 4
             )
         }
     }

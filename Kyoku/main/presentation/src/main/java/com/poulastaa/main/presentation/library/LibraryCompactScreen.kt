@@ -19,7 +19,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.designsystem.ui.gradiantBackground
 import com.poulastaa.main.presentation.home.components.MAIN_TOP_BAR_PADDING
-import com.poulastaa.main.presentation.library.components.LibraryCompactMediumLoadingScreen
+import com.poulastaa.main.presentation.library.components.LibraryLoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +54,7 @@ internal fun LibraryCompactScreen(
 
                 }
 
-                false -> LibraryCompactMediumLoadingScreen(scroll, paddingValues)
+                false -> LibraryLoadingScreen(scroll, paddingValues,3)
             }
         }
     }
