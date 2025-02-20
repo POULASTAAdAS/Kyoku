@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain.model
 
-data class DtoPrevSong(
+data class DtoDetailedPrevSong(
     val id: SongId = -1,
     val title: String = "",
     val poster: String? = null,

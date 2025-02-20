@@ -15,7 +15,7 @@ import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevPlaylist
-import com.poulastaa.core.domain.model.DtoPrevSong
+import com.poulastaa.core.domain.model.DtoDetailedPrevSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
 import com.poulastaa.core.domain.model.SongId
@@ -74,10 +74,10 @@ fun EntityPlaylist.toDtoPlaylist() = DtoPlaylist(
     popularity = this.popularity
 )
 
-fun EntitySong.toDtoPrevSong(
+fun EntitySong.toDtoDetailedPrevSong(
     artists: List<SongIdWithArtistName>,
     releaseYears: Map<SongId, Int>,
-) = DtoPrevSong(
+) = DtoDetailedPrevSong(
     id = this.id,
     title = this.title,
     poster = this.poster,
@@ -90,5 +90,5 @@ fun PlaylistWithSong.toDtoPrevPlaylist(
     releaseYears: Map<SongId, Int>,
 ) = DtoPrevPlaylist(
     playlist = this.playlist.toDtoPlaylist(),
-    list = this.list.map { it.toDtoPrevSong(artists, releaseYears) }
+    list = this.list.map { it.toDtoDetailedPrevSong(artists, releaseYears) }
 )

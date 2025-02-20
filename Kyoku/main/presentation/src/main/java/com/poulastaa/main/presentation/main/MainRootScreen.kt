@@ -2,7 +2,6 @@ package com.poulastaa.main.presentation.main
 
 import android.app.Activity
 import android.widget.Toast
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -30,14 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -59,8 +55,6 @@ import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.coloredShadow
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
-import com.poulastaa.core.presentation.designsystem.ui.backgroundDark
-import com.poulastaa.core.presentation.designsystem.ui.backgroundLight
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.home.HomeRootScreen
@@ -70,7 +64,6 @@ import com.poulastaa.main.presentation.main.components.AppBottomBar
 import com.poulastaa.main.presentation.main.components.AppDrawer
 import com.poulastaa.main.presentation.main.components.AppNavigationRail
 import com.poulastaa.main.presentation.main.components.AppTopBar
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlin.math.roundToInt
 
@@ -90,6 +83,16 @@ fun MainRootScreen(
     val haptic = LocalHapticFeedback.current
 
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val triple = ThemChanger.compute(
+        density,
+        configuration,
+        state.offset,
+        state.themChangeAnimationTime,
+        resetAnimation = { viewmodel.onAction(MainUiAction.ResetRevelAnimation) }
+    )
 
     LaunchedEffect(nav.currentBackStackEntryFlow) {
         nav.currentBackStackEntryFlow.first().destination.route?.let {
@@ -112,49 +115,6 @@ fun MainRootScreen(
                 nav.navigate(event.screen)
             }
         }
-    }
-
-    var animationOffset by remember { mutableStateOf(Offset(0f, 0f)) }
-    val configuration = LocalConfiguration.current
-    val revealSize = remember { Animatable(0f) }
-
-    // prevents color change when changing them
-    var them by remember { mutableStateOf(ThemChanger.them) }
-    val backgroundColor = if (them) backgroundLight else backgroundDark
-
-    val density = LocalDensity.current
-    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
-    val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
-
-    LaunchedEffect(state.offset) {
-        animationOffset = state.offset
-        if (state.offset.x > 0f) {
-            // Calculate maximum radius from touch point to screen corners
-            val maxRadius = listOf(
-                (animationOffset - Offset(0f, 0f)).getDistance(),
-                (animationOffset - Offset(screenWidthPx, 0f)).getDistance(),
-                (animationOffset - Offset(0f, screenHeightPx)).getDistance(),
-                (animationOffset - Offset(screenWidthPx, screenHeightPx)).getDistance()
-            ).maxOrNull() ?: 0f
-
-            // Animate circle expansion
-            revealSize.snapTo(0f)
-            revealSize.animateTo(
-                targetValue = maxRadius,
-                animationSpec = tween(state.themChangeAnimationTime)
-            )
-            // Reset offset after animation to trigger contraction
-            viewmodel.onAction(MainUiAction.ResetRevelAnimation)
-            delay(100) // Delay to stop screen flickering
-        } else {
-            // Animate circle contraction when offset is reset
-            revealSize.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(state.themChangeAnimationTime)
-            )
-        }
-
-        them = ThemChanger.them // set new them
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -289,11 +249,11 @@ fun MainRootScreen(
         }
 
         Canvas(modifier = Modifier.fillMaxSize()) {
-            if (revealSize.value > 0) {
+            if (triple.revealSize.value > 0) {
                 drawCircle(
-                    color = backgroundColor,
-                    radius = revealSize.value,
-                    center = animationOffset
+                    color = triple.backgroundColor,
+                    radius = triple.revealSize.value,
+                    center = triple.center
                 )
             }
         }
