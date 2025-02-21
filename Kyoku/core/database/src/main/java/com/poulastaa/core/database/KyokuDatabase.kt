@@ -22,7 +22,6 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
-import com.poulastaa.core.database.entity.EntityRelationSuggested
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
@@ -55,7 +54,6 @@ import com.poulastaa.core.database.entity.EntitySongInfo
         EntityPrevArtist::class,
 
         EntityPrevExplore::class,
-        EntityRelationSuggested::class,
         EntityRelationSuggestedSongByArtist::class
     ],
     version = 1,

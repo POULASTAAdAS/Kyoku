@@ -6,7 +6,6 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.asEmptyDataResult
 import com.poulastaa.core.domain.model.DtoExploreType
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
-import com.poulastaa.main.data.mapper.toDtoPrevAlbum
 import com.poulastaa.main.data.mapper.toDtoRelationSongAlbum
 import com.poulastaa.main.data.mapper.toDtoRelationSongPlaylist
 import com.poulastaa.main.data.mapper.toDtoSuggestedArtistSong
@@ -34,8 +33,10 @@ class OnlineFirstHomeRepository @Inject constructor(
                     val songIdsDef = async { local.storeSong(dto.songs) }
 
                     playlistIdDef.await() to songIdsDef.await()
-                }.let {
-                    local.storeRelationSongPlaylist(it.toDtoRelationSongPlaylist())
+                }.also { _ ->
+                    val list =
+                        home.playlist.map { dto -> dto.playlist.id to dto.songs.map { it.id } }
+                    local.storeRelationSongPlaylist(list.toDtoRelationSongPlaylist())
                 }
             }
             val albumDef = scope.async {
@@ -44,8 +45,9 @@ class OnlineFirstHomeRepository @Inject constructor(
                     val songIdsDef = async { local.storeSong(dto.songs) }
 
                     albumIdDef.await() to songIdsDef.await()
-                }.let {
-                    local.stoRelationSongAlbum(it.toDtoRelationSongAlbum())
+                }.let { _ ->
+                    val list = home.album.map { dto -> dto.album.id to dto.songs.map { it.id } }
+                    local.stoRelationSongAlbum(list.toDtoRelationSongAlbum())
                 }
             }
             val artistDef = scope.async {
@@ -76,7 +78,6 @@ class OnlineFirstHomeRepository @Inject constructor(
                     )
                 )
             }
-
             val prevArtist = scope.async {
                 local.storePrevArtist(home.refresh.suggestedArtist)
             }
@@ -89,8 +90,11 @@ class OnlineFirstHomeRepository @Inject constructor(
                     val artistId = async { local.storePrevArtist(artist) }
 
                     artistId.await() to songId.await()
-                }.let {
-                    local.storeRelationSuggestedArtistSong(it.toDtoSuggestedArtistSong())
+                }.let { _ ->
+                    val list = home.refresh.suggestedArtistSong.map { (artist, prevSongs) ->
+                        artist.id to prevSongs.map { it.id }
+                    }
+                    local.storeRelationSuggestedArtistSong(list.toDtoSuggestedArtistSong())
                 }
             }
 

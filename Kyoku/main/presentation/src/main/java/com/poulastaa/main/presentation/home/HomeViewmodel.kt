@@ -2,6 +2,7 @@ package com.poulastaa.main.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.main.domain.repository.HomeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,10 +10,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class HomeViewmodel @Inject constructor() : ViewModel() {
+internal class HomeViewmodel @Inject constructor(
+    private val repo: HomeRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.onStart {
 
@@ -26,7 +30,9 @@ internal class HomeViewmodel @Inject constructor() : ViewModel() {
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun init(isInitial: Boolean) {
-
+        if (isInitial) viewModelScope.launch {
+            repo.getHome()
+        }
     }
 
     fun onAction(action: HomeUiAction) {

@@ -13,12 +13,10 @@ import com.poulastaa.core.database.mapper.toEntityPrevExploreType
 import com.poulastaa.core.database.mapper.toEntityPrevSong
 import com.poulastaa.core.database.mapper.toEntityRelationSongAlbum
 import com.poulastaa.core.database.mapper.toEntityRelationSongPlaylist
-import com.poulastaa.core.database.mapper.toEntityRelationSuggested
 import com.poulastaa.core.database.mapper.toEntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.mapper.toEntitySong
 import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.ArtistId
-import com.poulastaa.core.domain.model.CountryId
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoCountry
@@ -32,8 +30,6 @@ import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.DtoSong
-import com.poulastaa.core.domain.model.DtoSuggestedType
-import com.poulastaa.core.domain.model.GenreId
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
@@ -118,10 +114,6 @@ class RoomLocalHomeDatasource @Inject constructor(
                 it.toEntityRelationSongAlbum()
             }.flatten()
         )
-
-    override suspend fun storeRelationSuggested(type: DtoSuggestedType, data: List<Long>) {
-        root.insertRelationSuggested(type.toEntityRelationSuggested(data))
-    }
 
     override suspend fun storeRelationSuggestedArtistSong(list: List<DtoRelationSuggestedArtistSong>) =
         root.insertRelationSuggestedSongByArtist(

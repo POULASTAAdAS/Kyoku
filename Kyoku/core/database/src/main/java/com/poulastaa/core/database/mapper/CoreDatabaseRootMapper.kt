@@ -12,7 +12,6 @@ import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
 import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
-import com.poulastaa.core.database.entity.EntityRelationSuggested
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
@@ -34,7 +33,6 @@ import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
-import com.poulastaa.core.domain.model.DtoSuggestedType
 import com.poulastaa.core.domain.model.SongId
 
 fun DtoSong.toEntitySong() = EntitySong(
@@ -149,17 +147,6 @@ fun DtoExploreType.toEntityPrevExploreType(list: List<SongId>) = list.map { song
 fun DtoExploreType.toEntityPrevExploreType(songId: SongId) = EntityPrevExplore(
     typeId = this,
     dataId = songId
-)
-
-@JvmName("listRelationSuggested")
-fun DtoSuggestedType.toEntityRelationSuggested(list: List<Long>) = list.map { dataId ->
-    this.toEntityRelationSuggested(dataId)
-}
-
-@JvmName("singleRelationSuggested")
-fun DtoSuggestedType.toEntityRelationSuggested(dataId: Long) = EntityRelationSuggested(
-    typeId = this,
-    dataId = dataId
 )
 
 fun DtoRelationSuggestedArtistSong.toEntityRelationSuggestedSongByArtist() = list.map { songId ->

@@ -21,14 +21,11 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
-import com.poulastaa.core.database.entity.EntityRelationSuggested
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.ArtistId
-import com.poulastaa.core.domain.model.CountryId
-import com.poulastaa.core.domain.model.GenreId
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
 
@@ -124,15 +121,6 @@ interface RootDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongInfo(list: List<EntitySongInfo>)
 
-    // Suggested
-    // ---------------------------------------------------------------------------------------------
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggested(suggested: EntityRelationSuggested)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggested(list: List<EntityRelationSuggested>)
-
     // Relation with song
     // ---------------------------------------------------------------------------------------------
 
@@ -166,13 +154,6 @@ interface RootDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRelationSongPlaylist(list: List<EntityRelationSongPlaylist>)
-
-    // Relation Suggested
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationSuggested(entityRelationSuggested: EntityRelationSuggested)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationSuggested(list: List<EntityRelationSuggested>)
 
     // Relation Suggested Song by Artist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
