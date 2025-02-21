@@ -7,11 +7,11 @@ import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.DtoFullPlaylist
 import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.network.ApiMethodType
+import com.poulastaa.core.network.mapper.toDtoFullPlaylist
 import com.poulastaa.core.network.model.ResponseFullPlaylist
 import com.poulastaa.core.network.req
 import com.poulastaa.setup.domain.repository.import_playlist.RemoteImportPlaylistDatasource
 import com.poulastaa.setup.network.model.ImportSpotifyPlaylistReq
-import com.poulastaa.setup.network.toDtoPlaylist
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -29,6 +29,6 @@ class OkHttpImportPlaylistDatasource @Inject constructor(
             )
         )
 
-        return response.map { it.toDtoPlaylist() }
+        return response.map { it.toDtoFullPlaylist() }
     }
 }

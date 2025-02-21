@@ -6,9 +6,14 @@ import androidx.room.OnConflictStrategy
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
+import com.poulastaa.core.database.entity.EntityExplore
 import com.poulastaa.core.database.entity.EntityFavourite
 import com.poulastaa.core.database.entity.EntityGenre
 import com.poulastaa.core.database.entity.EntityPlaylist
+import com.poulastaa.core.database.entity.EntityPrevAlbum
+import com.poulastaa.core.database.entity.EntityPrevArtist
+import com.poulastaa.core.database.entity.EntityPrevExplore
+import com.poulastaa.core.database.entity.EntityPrevSong
 import com.poulastaa.core.database.entity.EntityRelationArtistAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
@@ -16,62 +21,65 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
-import com.poulastaa.core.database.entity.EntityRelationSuggestedPlaylist
+import com.poulastaa.core.database.entity.EntityRelationSuggested
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
-import com.poulastaa.core.database.entity.EntitySuggestedAlbum
-import com.poulastaa.core.database.entity.EntitySuggestedArtist
+import com.poulastaa.core.domain.model.AlbumId
+import com.poulastaa.core.domain.model.ArtistId
+import com.poulastaa.core.domain.model.CountryId
+import com.poulastaa.core.domain.model.GenreId
+import com.poulastaa.core.domain.model.PlaylistId
+import com.poulastaa.core.domain.model.SongId
 
 @Dao
 interface RootDao {
     // Song
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSong(song: EntitySong)
+    suspend fun insertSong(song: EntitySong): SongId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSong(list: List<EntitySong>)
+    suspend fun insertSong(list: List<EntitySong>): List<SongId>
 
 
     // Artist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertArtist(artist: EntityArtist)
+    suspend fun insertArtist(artist: EntityArtist): ArtistId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertArtist(list: List<EntityArtist>)
+    suspend fun insertArtist(list: List<EntityArtist>): List<ArtistId>
 
 
     // Album
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAlbum(album: EntityAlbum)
+    suspend fun insertAlbum(album: EntityAlbum): AlbumId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAlbum(list: List<EntityAlbum>)
+    suspend fun insertAlbum(list: List<EntityAlbum>): List<AlbumId>
 
 
     // Country
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCountry(country: EntityCountry)
+    suspend fun insertCountry(country: EntityCountry): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCountry(list: List<EntityCountry>)
+    suspend fun insertCountry(list: List<EntityCountry>): List<Long>
 
 
     // Genre
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertGenre(genre: EntityGenre)
+    suspend fun insertGenre(genre: EntityGenre): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertGenre(list: List<EntityGenre>)
+    suspend fun insertGenre(list: List<EntityGenre>): List<Long>
 
 
     // Playlist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPlaylist(playlist: EntityPlaylist)
+    suspend fun insertPlaylist(playlist: EntityPlaylist): PlaylistId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPlaylist(list: List<EntityPlaylist>)
-
+    suspend fun insertPlaylist(list: List<EntityPlaylist>): List<PlaylistId>
 
     // Favourite
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -80,9 +88,36 @@ interface RootDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFavourite(list: List<EntityFavourite>)
 
+    // PREVIEW
     // ---------------------------------------------------------------------------------------------
 
+    // Song
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevSong(song: EntityPrevSong): SongId
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevSong(list: List<EntityPrevSong>): List<SongId>
+
+
+    // Artist
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevArtist(artist: EntityPrevArtist): ArtistId
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevArtist(list: List<EntityPrevArtist>): List<ArtistId>
+
+
+    // Album
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevAlbum(album: EntityPrevAlbum): AlbumId
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevAlbum(list: List<EntityPrevAlbum>): List<AlbumId>
+
+
     // SongInfo
+    // ---------------------------------------------------------------------------------------------
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongInfo(songInfo: EntitySongInfo)
 
@@ -92,20 +127,11 @@ interface RootDao {
     // Suggested
     // ---------------------------------------------------------------------------------------------
 
-    // SuggestedAlbum
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggestedAlbum(suggestedAlbum: EntitySuggestedAlbum)
+    suspend fun insertSuggested(suggested: EntityRelationSuggested)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggestedAlbum(list: List<EntitySuggestedAlbum>)
-
-
-    // SuggestedArtist
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggestedArtist(suggestedArtist: EntitySuggestedArtist)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertSuggestedArtist(list: List<EntitySuggestedArtist>)
+    suspend fun insertSuggested(list: List<EntityRelationSuggested>)
 
     // Relation with song
     // ---------------------------------------------------------------------------------------------
@@ -142,21 +168,18 @@ interface RootDao {
     suspend fun insertRelationSongPlaylist(list: List<EntityRelationSongPlaylist>)
 
     // Relation Suggested
-    // ---------------------------------------------------------------------------------------------
-
-    // Relation Suggested Playlist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationSuggestedPlaylist(relationSuggestedPlaylist: EntityRelationSuggestedPlaylist)
+    suspend fun insertRelationSuggested(entityRelationSuggested: EntityRelationSuggested)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationSuggestedPlaylist(list: List<EntityRelationSuggestedPlaylist>)
+    suspend fun insertRelationSuggested(list: List<EntityRelationSuggested>)
 
     // Relation Suggested Song by Artist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationPromotedSongByArtist(relationPromotedSongByArtist: EntityRelationSuggestedSongByArtist)
+    suspend fun insertRelationSuggestedSongByArtist(relationPromotedSongByArtist: EntityRelationSuggestedSongByArtist)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationPromotedSongByArtist(list: List<EntityRelationSuggestedSongByArtist>)
+    suspend fun insertRelationSuggestedSongByArtist(list: List<EntityRelationSuggestedSongByArtist>)
 
     // Relation with artist
     // ---------------------------------------------------------------------------------------------
@@ -182,4 +205,21 @@ interface RootDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRelationArtistGenre(list: List<EntityRelationArtistGenre>)
+
+    // Explore Type
+    // ---------------------------------------------------------------------------------------------
+
+    // Explore
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertExploreType(explore: EntityExplore)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertExploreType(list: List<EntityExplore>)
+
+    // Prev Explore
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevExploreType(explore: EntityPrevExplore)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPrevExploreType(list: List<EntityPrevExplore>)
 }

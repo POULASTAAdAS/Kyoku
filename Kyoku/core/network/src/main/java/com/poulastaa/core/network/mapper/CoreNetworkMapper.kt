@@ -3,15 +3,19 @@ package com.poulastaa.core.network.mapper
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoCountry
+import com.poulastaa.core.domain.model.DtoFullPlaylist
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
 import com.poulastaa.core.network.model.ResponseAlbum
 import com.poulastaa.core.network.model.ResponseArtist
 import com.poulastaa.core.network.model.ResponseCountry
+import com.poulastaa.core.network.model.ResponseFullPlaylist
 import com.poulastaa.core.network.model.ResponseGenre
 import com.poulastaa.core.network.model.ResponsePlaylist
+import com.poulastaa.core.network.model.ResponsePrevArtist
 import com.poulastaa.core.network.model.ResponseSong
 import com.poulastaa.core.network.model.ResponseSongInfo
 
@@ -22,7 +26,18 @@ fun ResponsePlaylist.toDtoPlaylist() = DtoPlaylist(
     visibilityState = this.visibilityState
 )
 
+fun ResponseFullPlaylist.toDtoFullPlaylist() = DtoFullPlaylist(
+    playlist = this.playlist.toDtoPlaylist(),
+    songs = this.listOfSong.map { it.toDtoSong() }
+)
+
 fun ResponseGenre.toDtoGenre() = DtoGenre(
+    id = this.id,
+    name = this.name,
+    cover = this.cover
+)
+
+fun ResponsePrevArtist.toDtoPrevArtist() = DtoPrevArtist(
     id = this.id,
     name = this.name,
     cover = this.cover
@@ -64,5 +79,4 @@ fun ResponseSong.toDtoSong() = DtoSong(
     artist = this.artist.map { it.toDtoArtist() },
     album = this.album?.toDtoAlbum(),
     info = this.info.toDtoSongInfo(),
-    genre = this.genre?.toDtoGenre()
 )

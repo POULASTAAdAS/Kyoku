@@ -11,5 +11,4 @@ data class ResponseSong(
     val artist: List<ResponseArtist>,
     val album: ResponseAlbum?,
     val info: ResponseSongInfo,
-    val genre: ResponseGenre?,
 )

@@ -44,11 +44,6 @@ class RoomLocalImportPlaylistDatasource @Inject constructor(
     override suspend fun storePlaylist(playlist: DtoFullPlaylist) {
         coroutineScope {
             val songs = playlist.songs
-            val songGenre = songs.mapNotNull { song ->
-                song.genre?.let {
-                    song.id to it.toEntityGenre()
-                }
-            }
             val songAlbum = songs.mapNotNull { song ->
                 song.album?.let {
                     song.id to it
@@ -71,10 +66,7 @@ class RoomLocalImportPlaylistDatasource @Inject constructor(
             val playlistDef = async { root.insertPlaylist(playlist.playlist.toEntityPlaylist()) }
             val songDef = async { root.insertSong(songs.map { it.toEntitySong() }) }
             val artistDef = async { root.insertArtist(artist.map { it.toEntityArtist() }) }
-            val genreDef = async {
-                root.insertGenre((songGenre + artistGenre).distinctBy { it.second.id }
-                    .map { it.second })
-            }
+            val genreDef = async { root.insertGenre((artistGenre).map { it.second }) }
             val albumDef = async { root.insertAlbum(songAlbum.map { it.second.toEntityAlbum() }) }
             val countryDef = async { root.insertCountry(artistCountry.map { it.second }) }
 

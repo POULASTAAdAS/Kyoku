@@ -9,8 +9,11 @@ import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoExploreType
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
+import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoPrevSong
+import com.poulastaa.core.domain.model.DtoRelationSongAlbum
+import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSuggestedType
@@ -36,13 +39,23 @@ interface LocalHomeDatasource {
     suspend fun storeAlbum(album: DtoAlbum): AlbumId
     suspend fun storeAlbum(list: List<DtoAlbum>): List<AlbumId>
 
-    suspend fun storeGenre(genre: DtoGenre): GenreId
-    suspend fun storeGenre(list: List<DtoGenre>): List<GenreId>
+    suspend fun storePrevAlbum(album: DtoPrevAlbum): AlbumId
+    suspend fun storePrevAlbum(list: List<DtoPrevAlbum>): List<AlbumId>
 
-    suspend fun storeCountry(country: DtoCountry): CountryId
-    suspend fun storeCountry(list: List<DtoCountry>): List<CountryId>
+    suspend fun storeGenre(genre: DtoGenre): Long
+    suspend fun storeGenre(list: List<DtoGenre>): List<Long>
 
-    suspend fun storePrevExploreType(type: DtoExploreType, data: List<DtoPrevSong>)
+    suspend fun storeCountry(country: DtoCountry): Long
+    suspend fun storeCountry(list: List<DtoCountry>): List<Long>
+
+    suspend fun storeExploreType(type: DtoExploreType, data: List<SongId>)
+    suspend fun storePrevExploreType(type: DtoExploreType, data: List<SongId>)
+
+    suspend fun storeRelationSongPlaylist(relation: DtoRelationSongPlaylist)
+    suspend fun storeRelationSongPlaylist(list: List<DtoRelationSongPlaylist>)
+
+    suspend fun stoRelationSongAlbum(relation: DtoRelationSongAlbum)
+    suspend fun stoRelationSongAlbum(list: List<DtoRelationSongAlbum>)
 
     suspend fun storeRelationSuggested(type: DtoSuggestedType, data: List<Long>)
     suspend fun storeRelationSuggestedArtistSong(list: List<DtoRelationSuggestedArtistSong>)

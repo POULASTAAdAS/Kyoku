@@ -10,5 +10,4 @@ data class DtoSong(
     val artist: List<DtoArtist>,
     val album: DtoAlbum?,
     val info: DtoSongInfo,
-    val genre: DtoGenre?,
 )

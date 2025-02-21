@@ -4,11 +4,13 @@ import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
+import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
+import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
@@ -53,4 +55,10 @@ object CoreDatabaseViewmodelModule {
         ds: DatastoreRepository,
         root: RootDao,
     ): LocalSetArtistDatasource = RoomLocalSetArtistDatasource(root, ds)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalHomeDatasource(
+        root: RootDao,
+    ): LocalHomeDatasource = RoomLocalHomeDatasource(root)
 }

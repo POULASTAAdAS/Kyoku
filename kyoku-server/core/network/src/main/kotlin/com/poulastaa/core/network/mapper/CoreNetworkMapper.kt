@@ -51,8 +51,7 @@ fun DtoSong.toResponseSong() = ResponseSong(
     masterPlaylist = this.masterPlaylist,
     artist = this.artist.map { it.toResponseArtist() },
     album = this.album?.toResponseAlbum(),
-    info = this.info.toResponseSongInfo(),
-    genre = this.genre?.toResponseGenre(),
+    info = this.info.toResponseSongInfo()
 )
 
 fun DtoFullPlaylist.toResponsePlaylistFull() = ResponseFullPlaylist(

@@ -7,9 +7,14 @@ import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
+import com.poulastaa.core.database.entity.EntityExplore
 import com.poulastaa.core.database.entity.EntityFavourite
 import com.poulastaa.core.database.entity.EntityGenre
 import com.poulastaa.core.database.entity.EntityPlaylist
+import com.poulastaa.core.database.entity.EntityPrevAlbum
+import com.poulastaa.core.database.entity.EntityPrevArtist
+import com.poulastaa.core.database.entity.EntityPrevExplore
+import com.poulastaa.core.database.entity.EntityPrevSong
 import com.poulastaa.core.database.entity.EntityRelationArtistAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
@@ -17,12 +22,10 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
-import com.poulastaa.core.database.entity.EntityRelationSuggestedPlaylist
+import com.poulastaa.core.database.entity.EntityRelationSuggested
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
-import com.poulastaa.core.database.entity.EntitySuggestedAlbum
-import com.poulastaa.core.database.entity.EntitySuggestedArtist
 
 @Database(
     entities = [
@@ -33,10 +36,10 @@ import com.poulastaa.core.database.entity.EntitySuggestedArtist
         EntityCountry::class,
         EntityPlaylist::class,
 
+        EntityExplore::class,
+
         EntitySongInfo::class,
         EntityFavourite::class,
-        EntitySuggestedAlbum::class,
-        EntitySuggestedArtist::class,
 
         EntityRelationSongAlbum::class,
         EntityRelationSongArtist::class,
@@ -47,10 +50,15 @@ import com.poulastaa.core.database.entity.EntitySuggestedArtist
         EntityRelationArtistGenre::class,
         EntityRelationArtistCountry::class,
 
-        EntityRelationSuggestedPlaylist::class,
+        EntityPrevSong::class,
+        EntityPrevAlbum::class,
+        EntityPrevArtist::class,
+
+        EntityPrevExplore::class,
+        EntityRelationSuggested::class,
         EntityRelationSuggestedSongByArtist::class
     ],
-    version = 3,
+    version = 1,
     exportSchema = true
 )
 abstract class KyokuDatabase : RoomDatabase() {
