@@ -11,13 +11,16 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.home.components.HomeCompactLoadingScreen
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
@@ -60,5 +63,18 @@ internal fun HomeCompactScreen(
                 false -> HomeCompactLoadingScreen(paddingValues, scroll)
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun Preview() {
+    AppThem {
+        HomeCompactScreen(
+            scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+            state = prevData,
+            onAction = {}
+        )
     }
 }

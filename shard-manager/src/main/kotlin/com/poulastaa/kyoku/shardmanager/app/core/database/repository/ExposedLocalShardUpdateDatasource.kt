@@ -145,27 +145,26 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
         coroutineScope {
             val artist = kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
 
-            shardGenreArtistDbQuery {
-                artist.chunked(3000).map { list ->
-                    async {
-                        list.map { dto ->
-                            val dao = shardGenreArtistDbQuery { ShardDaoArtist.findById(dto.id) }
+            artist.chunked(3000).map { list ->
+                async {
+                    list.map { dto ->
+                        val dao = shardGenreArtistDbQuery { ShardDaoArtist.findById(dto.id) }
 
-                            if (dao != null) if (dao.popularity != dao.popularity) shardPopularDbQuery {
+                        if (dao != null) {
+                            if (dao.popularity != dao.popularity) shardPopularDbQuery {
                                 dao.popularity = dto.popularity
                             }
-                            else shardGenreArtistDbQuery {
-                                ShardEntityArtist.insertIgnore {
-                                    it[this.id] = dto.id
-                                    it[this.name] = dto.name
-                                    it[this.coverImage] = dto.coverImage
-                                    it[this.popularity] = dto.popularity
-                                }
+                        } else shardGenreArtistDbQuery {
+                            ShardEntityArtist.insertIgnore {
+                                it[this.id] = dto.id
+                                it[this.name] = dto.name
+                                it[this.coverImage] = dto.coverImage
+                                it[this.popularity] = dto.popularity
                             }
                         }
                     }
-                }.awaitAll()
-            }
+                }
+            }.awaitAll()
         }
     }
 

@@ -10,6 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
+import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
+import com.poulastaa.main.presentation.components.UiSaveItemType
+import com.poulastaa.main.presentation.components.UiSavedItem
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -47,3 +51,86 @@ internal fun HomeRootScreen(
         }
     )
 }
+
+internal val prevData = HomeUiState(
+    savedItems = listOf(
+        UiSavedItem(
+            id = 1,
+            name = "Saved Item 1",
+            posters = listOf(""),
+            type = UiSaveItemType.ALBUM
+        ),
+        UiSavedItem(
+            id = 1,
+            name = "Saved Item 1",
+            posters = listOf(""),
+            type = UiSaveItemType.ARTIST
+        ),
+        UiSavedItem(
+            id = 4,
+            name = "Saved Item 1",
+            posters = listOf(""),
+            type = UiSaveItemType.PLAYLIST
+        ),
+        UiSavedItem(
+            id = 5,
+            name = "Saved Item 1",
+            posters = listOf("", "", "", ""),
+            type = UiSaveItemType.PLAYLIST
+        )
+    ),
+    staticData = UiHomeData(
+        popularSongMix = (1..10).map { id ->
+            UiPrevSong(
+                id = id.toLong(),
+                title = "Song 1",
+                artists = (1..3).joinToString { "Artist $it" },
+                releaseYear = 2021
+            )
+        },
+        popularSongFromYourTime = (1..10).map {
+            UiPrevSong(
+                id = it.toLong(),
+                title = "Song 1",
+                artists = (1..3).joinToString { "Artist $it" },
+                releaseYear = 2021
+            )
+        },
+        favouriteArtistMix = (1..10).map {
+            UiPrevSong(
+                id = it.toLong(),
+                title = "Song 1",
+                artists = (1..3).joinToString { "Artist $it" },
+                releaseYear = 2021
+            )
+        },
+        popularAlbum = (1..10).map {
+            UiPrevAlbum(
+                id = it.toLong(),
+                name = "Album $it",
+            )
+        },
+        suggestedArtist = (1..10).map {
+            UiPrevArtist(
+                id = it.toLong(),
+                name = "Artist $it",
+            )
+        },
+        popularArtistSong = (1..10).map { artistId ->
+            UiArtistWithSong(
+                artist = UiPrevArtist(
+                    id = artistId.toLong(),
+                    name = "Artist $artistId",
+                ),
+                songs = (1..10).map { songId ->
+                    UiPrevSong(
+                        id = songId.toLong(),
+                        title = "Song $songId",
+                        artists = (1..3).joinToString { "Artist $it" },
+                        releaseYear = 2021
+                    )
+                }
+            )
+        }
+    )
+)

@@ -12,8 +12,8 @@ import org.quartz.impl.StdSchedulerFactory
 private var IS_INITIALIZED = false
 
 // default time set to 12 am
-private const val TRIGGER_HOUR = 0
-private const val TRIGGER_MINUTE = 0
+private const val TRIGGER_HOUR = 3
+private const val TRIGGER_MINUTE = 16
 
 @Synchronized
 fun scheduleJobs() {
@@ -46,4 +46,6 @@ fun scheduleJobs() {
         jobUpdateSuggestion,
         trigger.withIdentity("updateSuggestion").build()
     )
+
+    IS_INITIALIZED = true
 }
