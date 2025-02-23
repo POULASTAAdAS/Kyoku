@@ -1,7 +1,6 @@
 package com.poulastaa.core.presentation.designsystem
 
 import android.content.Context
-import android.util.Log
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.request.ImageRequest

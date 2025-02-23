@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
@@ -39,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -112,279 +114,7 @@ internal fun HomeCompactScreen(
                         )
                     }
 
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Headline(R.string.explore)
-                    }
-
-                    if (state.staticData.popularSongMix.isNotEmpty()) item {
-                        MainBoxImageCard(
-                            title = stringResource(R.string.popular_song_mix),
-                            urls = state.staticData.popularSongMix.map { it.poster },
-                            icon = SongIcon,
-                            onClick = {
-
-                            }
-                        )
-                    }
-
-                    if (state.staticData.favouriteArtistMix.isNotEmpty()) item {
-                        MainBoxImageCard(
-                            title = stringResource(R.string.favourite_artist_mix),
-                            urls = state.staticData.favouriteArtistMix.map { it.poster },
-                            icon = SongIcon,
-                            onClick = {
-
-                            }
-                        )
-                    }
-
-                    if (state.staticData.popularSongFromYourTime.isNotEmpty()) item {
-                        MainBoxImageCard(
-                            title = stringResource(R.string.popular_songs_from_your_time),
-                            urls = state.staticData.popularSongFromYourTime.map { it.poster },
-                            icon = SongIcon,
-                            onClick = {
-
-                            }
-                        )
-                    }
-
-                    if (state.staticData.dayTypeSong.isNotEmpty()) item {
-                        MainBoxImageCard(
-                            title = stringResource(R.string.lofi_mix),
-                            urls = state.staticData.dayTypeSong.map { it.poster },
-                            icon = SongIcon,
-                            onClick = {
-
-                            }
-                        )
-                    }
-
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Headline(R.string.artist_you_may_like)
-                    }
-
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(140.dp)
-                                .removeParentWidthPadding(MaterialTheme.dimens.medium1),
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-                            contentPadding = PaddingValues(
-                                start = MaterialTheme.dimens.medium1,
-                                end = MaterialTheme.dimens.medium1
-                            )
-                        ) {
-                            items(state.staticData.suggestedArtist) { artist ->
-                                MainArtistCard(
-                                    modifier = Modifier
-                                        .aspectRatio(1f),
-                                    artist = artist,
-                                    onClick = {
-
-                                    }
-                                )
-                            }
-
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .aspectRatio(1f),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    HomeMoreButton {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Headline(R.string.popular_albums)
-                    }
-
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(170.dp)
-                                .removeParentWidthPadding(MaterialTheme.dimens.medium1),
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-                            contentPadding = PaddingValues(
-                                start = MaterialTheme.dimens.medium1,
-                                end = MaterialTheme.dimens.medium1
-                            )
-                        ) {
-
-                            items(state.staticData.popularAlbum) { album ->
-                                MainBoxImageCard(
-                                    title = album.name,
-                                    urls = listOf(album.poster),
-                                    icon = FilterAlbumIcon,
-                                    onClick = {
-
-                                    }
-                                )
-                            }
-
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize(.8f)
-                                        .aspectRatio(1f),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    HomeMoreButton {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        Headline(R.string.best_from_artist)
-                    }
-
-                    if (state.staticData.popularArtistSong.isNotEmpty()) items(
-                        items = state.staticData.popularArtistSong,
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) { (artist, songs) ->
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(45.dp),
-                                shape = CircleShape,
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.background
-                                ),
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 3.dp,
-                                    pressedElevation = 0.dp
-                                ),
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                }
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(end = MaterialTheme.dimens.medium1),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Card(
-                                        modifier = Modifier.aspectRatio(1f),
-                                        shape = CircleShape,
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.primary
-                                        ),
-                                        onClick = {
-
-                                        }
-                                    ) {
-                                        MainImageCard(
-                                            errorIcon = FilterArtistIcon,
-                                            url = artist.cover,
-                                            contentDescription = stringResource(R.string.artist),
-                                            modifier = Modifier.fillMaxSize(),
-                                            iconColor = MaterialTheme.colorScheme.background
-                                        )
-                                    }
-
-                                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
-
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxHeight(),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.more_from_artist),
-                                            color = MaterialTheme.colorScheme.primary.copy(.7f),
-                                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                                        )
-
-                                        Text(
-                                            modifier = Modifier.offset(y = (-8).dp),
-                                            text = artist.name,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-
-                                    Spacer(Modifier.weight(1f))
-
-                                    Icon(
-                                        modifier = Modifier.offset(y = 2.dp),
-                                        imageVector = ShowMoreIcon,
-                                        contentDescription = stringResource(R.string.view_more),
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-
-                            LazyRow(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(140.dp)
-                                    .removeParentWidthPadding(MaterialTheme.dimens.medium1),
-                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-                                contentPadding = PaddingValues(
-                                    start = MaterialTheme.dimens.medium1,
-                                    end = MaterialTheme.dimens.medium1
-                                )
-                            ) {
-                                items(songs) { song ->
-                                    MainBoxImageCard(
-                                        title = song.title,
-                                        urls = listOf(song.poster),
-                                        icon = SongIcon,
-                                        onClick = {
-
-                                        }
-                                    )
-                                }
-
-                                item {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize(.8f)
-                                            .aspectRatio(1f),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        HomeMoreButton {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    item {
-                        Spacer(Modifier.height(BOTTOM_BAR_HEIGHT))
-                    }
+                    homeCommonContent(state, haptic, false, onAction)
                 }
 
                 false -> HomeCompactLoadingScreen(paddingValues, scroll)
@@ -393,9 +123,310 @@ internal fun HomeCompactScreen(
     }
 }
 
+internal fun LazyGridScope.homeCommonContent(
+    state: HomeUiState,
+    haptic: HapticFeedback,
+    isMedium: Boolean,
+    onAction: (HomeUiAction) -> Unit,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Headline(R.string.explore)
+    }
+
+    if (state.staticData.popularSongMix.isNotEmpty()) item {
+        MainBoxImageCard(
+            title = stringResource(R.string.popular_song_mix),
+            urls = state.staticData.popularSongMix.map { it.poster },
+            icon = SongIcon,
+            onClick = {
+
+            }
+        )
+    }
+
+    if (state.staticData.favouriteArtistMix.isNotEmpty()) item {
+        MainBoxImageCard(
+            title = stringResource(R.string.favourite_artist_mix),
+            urls = state.staticData.favouriteArtistMix.map { it.poster },
+            icon = SongIcon,
+            onClick = {
+
+            }
+        )
+    }
+
+    if (state.staticData.popularSongFromYourTime.isNotEmpty()) item {
+        MainBoxImageCard(
+            title = stringResource(R.string.popular_songs_from_your_time),
+            urls = state.staticData.popularSongFromYourTime.map { it.poster },
+            icon = SongIcon,
+            onClick = {
+
+            }
+        )
+    }
+
+    if (state.staticData.dayTypeSong.isNotEmpty()) item {
+        MainBoxImageCard(
+            title = stringResource(R.string.lofi_mix),
+            urls = state.staticData.dayTypeSong.map { it.poster },
+            icon = SongIcon,
+            onClick = {
+
+            }
+        )
+    }
+
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Headline(R.string.artist_you_may_like)
+    }
+
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (isMedium) 180.dp else 140.dp)
+                .removeParentWidthPadding(
+                    if (isMedium) MaterialTheme.dimens.medium2
+                    else MaterialTheme.dimens.medium1
+                ),
+            horizontalArrangement = Arrangement.spacedBy(
+                if (isMedium) MaterialTheme.dimens.small2
+                else MaterialTheme.dimens.small3
+            ),
+            contentPadding = PaddingValues(
+                start = MaterialTheme.dimens.medium1,
+                end = MaterialTheme.dimens.medium1
+            )
+        ) {
+            items(state.staticData.suggestedArtist) { artist ->
+                MainArtistCard(
+                    modifier = Modifier
+                        .aspectRatio(1f),
+                    artist = artist,
+                    onClick = {
+
+                    }
+                )
+            }
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    HomeMoreButton {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
+                }
+            }
+        }
+    }
+
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Headline(R.string.popular_albums)
+    }
+
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (isMedium) 200.dp else 170.dp)
+                .removeParentWidthPadding(
+                    if (isMedium) MaterialTheme.dimens.medium2
+                    else MaterialTheme.dimens.medium1
+                ),
+            horizontalArrangement = Arrangement.spacedBy(
+                if (isMedium) MaterialTheme.dimens.small1
+                else MaterialTheme.dimens.small3
+            ),
+            contentPadding = PaddingValues(
+                start = MaterialTheme.dimens.medium1,
+                end = MaterialTheme.dimens.medium1
+            )
+        ) {
+
+            items(state.staticData.popularAlbum) { album ->
+                MainBoxImageCard(
+                    title = album.name,
+                    urls = listOf(album.poster),
+                    icon = FilterAlbumIcon,
+                    onClick = {
+
+                    }
+                )
+            }
+
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(.8f)
+                        .aspectRatio(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    HomeMoreButton {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
+                }
+            }
+        }
+    }
+
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Headline(R.string.best_from_artist)
+    }
+
+    if (state.staticData.popularArtistSong.isNotEmpty()) items(
+        items = state.staticData.popularArtistSong,
+        span = { GridItemSpan(maxLineSpan) }
+    ) { (artist, songs) ->
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (isMedium) 50.dp else 45.dp),
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 3.dp,
+                    pressedElevation = 0.dp
+                ),
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = MaterialTheme.dimens.medium1),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Card(
+                        modifier = Modifier.aspectRatio(1f),
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        onClick = {
+
+                        }
+                    ) {
+                        MainImageCard(
+                            errorIcon = FilterArtistIcon,
+                            url = artist.cover,
+                            contentDescription = stringResource(R.string.artist),
+                            modifier = Modifier.fillMaxSize(),
+                            iconColor = MaterialTheme.colorScheme.background
+                        )
+                    }
+
+                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.more_from_artist),
+                            color = MaterialTheme.colorScheme.primary.copy(.7f),
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                        )
+
+                        Text(
+                            modifier = Modifier.offset(y = (-8).dp),
+                            text = artist.name,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    Spacer(Modifier.weight(1f))
+
+                    Icon(
+                        modifier = Modifier.offset(y = 2.dp),
+                        imageVector = ShowMoreIcon,
+                        contentDescription = stringResource(R.string.view_more),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(if (isMedium) 180.dp else 140.dp)
+                    .removeParentWidthPadding(
+                        if (isMedium) MaterialTheme.dimens.medium2
+                        else MaterialTheme.dimens.medium1
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(
+                    if (isMedium) MaterialTheme.dimens.small1
+                    else MaterialTheme.dimens.small3
+                ),
+                contentPadding = PaddingValues(
+                    start = if (isMedium) MaterialTheme.dimens.medium2
+                    else MaterialTheme.dimens.medium1,
+                    end = if (isMedium) MaterialTheme.dimens.medium2
+                    else MaterialTheme.dimens.medium1
+                )
+            ) {
+                items(songs) { song ->
+                    MainBoxImageCard(
+                        title = song.title,
+                        urls = listOf(song.poster),
+                        icon = SongIcon,
+                        onClick = {
+
+                        }
+                    )
+                }
+
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(.8f)
+                            .aspectRatio(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        HomeMoreButton {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    item {
+        Spacer(Modifier.height(if (isMedium) BOTTOM_BAR_HEIGHT + MaterialTheme.dimens.medium3 else BOTTOM_BAR_HEIGHT))
+    }
+}
+
 
 @Composable
-private fun Headline(@StringRes id: Int) {
+fun Headline(@StringRes id: Int) {
     Column {
         Spacer(Modifier.height(MaterialTheme.dimens.medium2))
 

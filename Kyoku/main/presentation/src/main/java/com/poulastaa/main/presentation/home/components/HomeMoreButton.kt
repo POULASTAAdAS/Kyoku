@@ -3,7 +3,6 @@ package com.poulastaa.main.presentation.home.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -57,7 +56,8 @@ fun HomeMoreButton(
             .isElementVisible {
                 isMoreIconVisible = it
                 showIcon = false
-            }.noRippleClickable {
+            }
+            .noRippleClickable {
                 onClick()
             },
         contentAlignment = Alignment.Center

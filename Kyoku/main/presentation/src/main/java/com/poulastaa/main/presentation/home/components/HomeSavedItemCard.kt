@@ -146,7 +146,7 @@ internal fun HomeSavedItemCard(
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                lineHeight = MaterialTheme.typography.titleMedium.fontSize
+                lineHeight = MaterialTheme.typography.titleMedium.fontSize,
             )
         }
     }

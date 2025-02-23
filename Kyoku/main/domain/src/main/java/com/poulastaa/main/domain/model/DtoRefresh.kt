@@ -1,6 +1,5 @@
 package com.poulastaa.main.domain.model
 
-import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoPrevSong

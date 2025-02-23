@@ -22,7 +22,7 @@ internal fun MainImageCard(
     contentDescription: String? = null,
     errorIcon: ImageVector,
     modifier: Modifier,
-    iconColor: Color = MaterialTheme.colorScheme.primary
+    iconColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     SubcomposeAsyncImage(
         modifier = modifier,
