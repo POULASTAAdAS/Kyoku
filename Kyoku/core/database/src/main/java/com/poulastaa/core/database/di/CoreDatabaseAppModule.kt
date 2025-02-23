@@ -16,7 +16,7 @@ import javax.inject.Singleton
 object CoreDatabaseAppModule {
     @Provides
     @Singleton
-    fun provideDatabase(
+    internal fun provideDatabase(
         @ApplicationContext context: Context,
     ): KyokuDatabase = Room.databaseBuilder(
         context = context,
@@ -27,7 +27,7 @@ object CoreDatabaseAppModule {
 
     @Provides
     @Singleton
-    fun provideRootDao(
+    internal fun provideRootDao(
         database: KyokuDatabase,
     ): RootDao = database.rootDao
 }

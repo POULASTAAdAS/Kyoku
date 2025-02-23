@@ -66,9 +66,9 @@
     <string name="more_from_artist">More From</string>
     <string name="view_more">view\nmore</string>
     <string name="explore_more">Explore More</string>
-    <string name="popular_artist_mix">Popular Artist Mix</string>
-    <string name="popular_song_mix">Popular Songs Mix</string>
-    <string name="popular_songs_from_your_time">Old Gems</string>
+    <string name="popular_artist_mix">Popular artist mix</string>
+    <string name="popular_song_mix">Popular songs mix</string>
+    <string name="popular_songs_from_your_time">Old gems</string>
     <string name="popular_albums">"Popular Albums "</string>
     <string name="artist_you_may_like">Artist\'s You May Like</string>
     <string name="best_from_artist">Best From Artists</string>
@@ -81,7 +81,7 @@
     <string name="add_as_playlist">Add as Playlist</string>
     <string name="download">Download</string>
     <string name="old_gem">Old Gem</string>
-    <string name="favourite_artist_mix">Favourite Artist Mix</string>
+    <string name="favourite_artist_mix">Favourite artist mix</string>
     <string name="play_next_on_queue">Play Next On Queue</string>
     <string name="follow">Follow</string>
     <string name="explore">Explore</string>
@@ -169,4 +169,5 @@
     <string name="create_passkey">Create a passkey for password less authentication</string>
     <string name="maybe_latter">Maybe latter</string>
     <string name="Theme_title">T H E M E</string>
+    <string name="lofi_mix">Lofi mix</string>
 </resources>

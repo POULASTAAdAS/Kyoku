@@ -19,7 +19,7 @@ import com.poulastaa.core.presentation.designsystem.ui.FilterArtistIcon
 
 
 @Composable
-fun MainArtist(
+fun MainArtistCard(
     modifier: Modifier = Modifier,
     artist: UiPrevArtist,
     onClick: () -> Unit,
@@ -50,7 +50,7 @@ fun MainArtist(
 private fun Preview() {
     AppThem {
         Surface {
-            MainArtist(
+            MainArtistCard(
                 modifier = Modifier.size(120.dp),
                 artist = UiPrevArtist(
                     name = "Artist Name",

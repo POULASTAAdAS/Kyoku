@@ -9,6 +9,10 @@ import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import com.poulastaa.main.data.mapper.toDtoRelationSongAlbum
 import com.poulastaa.main.data.mapper.toDtoRelationSongPlaylist
 import com.poulastaa.main.data.mapper.toDtoSuggestedArtistSong
+import com.poulastaa.main.data.mapper.toPayloadItem
+import com.poulastaa.main.domain.model.DtoSuggestedArtistSong
+import com.poulastaa.main.domain.model.PayloadHomeData
+import com.poulastaa.main.domain.model.PayloadStaticData
 import com.poulastaa.main.domain.repository.HomeRepository
 import com.poulastaa.main.domain.repository.RemoteHomeDataSource
 import kotlinx.coroutines.CoroutineScope
@@ -110,5 +114,51 @@ class OnlineFirstHomeRepository @Inject constructor(
         }
 
         return result.asEmptyDataResult()
+    }
+
+    override suspend fun loadData(): PayloadHomeData {
+        val album = scope.async { local.getSavedPrevAlbum().map { it.toPayloadItem() } }
+        val artist = scope.async { local.getSavedPrevArtist().map { it.toPayloadItem() } }
+        val playlist = scope.async { local.getSavedPrevPlaylist().map { it.toPayloadItem() } }
+
+        val popularSongMix =
+            scope.async { local.getPrevExploreType(DtoExploreType.POPULAR_SONG_MIX) }
+        val popularSongFromYourTime =
+            scope.async { local.getPrevExploreType(DtoExploreType.POPULAR_YEAR_MIX) }
+        val favouriteArtistMix =
+            scope.async { local.getPrevExploreType(DtoExploreType.POPULAR_ARTIST_SONG_MIX) }
+        val dayTypeSong = scope.async { local.getPrevExploreType(DtoExploreType.DAY_TYPE_MIX) }
+
+        val popularAlbum = scope.async { local.getSuggestedAlbum() }
+        val suggestedArtist = scope.async { local.getSuggestedArtist() }
+        val popularArtistSong = scope.async {
+            local.getSuggestedArtistSong().map { (artist, songs) ->
+                artist to songs.map { it }
+            }.mapNotNull {
+                if (it.second.isEmpty() || it.second.size <= 2) null
+                else DtoSuggestedArtistSong(
+                    artist = it.first,
+                    prevSong = it.second
+                )
+            }
+        }
+
+        return PayloadHomeData(
+            savedItems = listOf(
+                artist,
+                album,
+                playlist
+            ).awaitAll().flatten(),
+            staticData = PayloadStaticData(
+                popularSongMix = popularSongMix.await(),
+                popularSongFromYourTime = popularSongFromYourTime.await(),
+                favouriteArtistMix = favouriteArtistMix.await(),
+                dayTypeSong = dayTypeSong.await(),
+
+                popularAlbum = popularAlbum.await(),
+                suggestedArtist = suggestedArtist.await(),
+                popularArtistSong = popularArtistSong.await()
+            )
+        )
     }
 }

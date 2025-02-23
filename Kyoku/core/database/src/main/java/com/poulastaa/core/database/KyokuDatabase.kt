@@ -2,6 +2,7 @@ package com.poulastaa.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.entity.EntityAlbum
@@ -59,7 +60,8 @@ import com.poulastaa.core.database.entity.EntitySongInfo
     version = 1,
     exportSchema = true
 )
-abstract class KyokuDatabase : RoomDatabase() {
+internal abstract class KyokuDatabase : RoomDatabase() {
     abstract val rootDao: RootDao
     abstract val importPlaylistDao: ImportPlaylistDao
+    abstract val homeDao: HomeDao
 }

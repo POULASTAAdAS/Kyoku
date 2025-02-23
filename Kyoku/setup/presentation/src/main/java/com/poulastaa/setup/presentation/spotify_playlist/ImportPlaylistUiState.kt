@@ -2,7 +2,7 @@ package com.poulastaa.setup.presentation.spotify_playlist
 
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.TextHolder
-import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 
 data class ImportPlaylistUiState(
     val isMakingApiCall: Boolean = false,
@@ -15,7 +15,7 @@ data class ImportPlaylistUiState(
 
 data class UiPrevPlaylist(
     val playlist: UiPlaylist = UiPlaylist(),
-    val songs: List<UiPrevSong> = emptyList(),
+    val songs: List<UiDetailedPrevSong> = emptyList(),
     val isExpanded: Boolean = false,
 )
 

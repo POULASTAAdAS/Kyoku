@@ -1,9 +1,9 @@
 package com.poulastaa.setup.presentation.spotify_playlist
 
 import com.poulastaa.core.domain.model.DtoPlaylist
-import com.poulastaa.core.domain.model.DtoPrevPlaylist
+import com.poulastaa.core.domain.model.DtoPrevFullPlaylist
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
-import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 
 fun DtoPlaylist.toUiPlaylist(totalSongs: Int) = UiPlaylist(
     id = this.id,
@@ -11,7 +11,7 @@ fun DtoPlaylist.toUiPlaylist(totalSongs: Int) = UiPlaylist(
     totalSongs = totalSongs
 )
 
-fun DtoDetailedPrevSong.toUiPrevSong() = UiPrevSong(
+fun DtoDetailedPrevSong.toUiDetailedPrevSong() = UiDetailedPrevSong(
     id = this.id,
     title = this.title,
     artists = this.artists,
@@ -19,7 +19,7 @@ fun DtoDetailedPrevSong.toUiPrevSong() = UiPrevSong(
 )
 
 
-fun DtoPrevPlaylist.toUiPrevPlaylist() = UiPrevPlaylist(
+fun DtoPrevFullPlaylist.toUiPrevPlaylist() = UiPrevPlaylist(
     playlist = this.playlist.toUiPlaylist(this.list.size),
-    songs = this.list.map { it.toUiPrevSong() }
+    songs = this.list.map { it.toUiDetailedPrevSong() }
 )

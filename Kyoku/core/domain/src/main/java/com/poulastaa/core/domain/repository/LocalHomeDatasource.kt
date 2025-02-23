@@ -4,12 +4,11 @@ import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoExploreType
-import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
@@ -39,12 +38,6 @@ interface LocalHomeDatasource {
     suspend fun storePrevAlbum(album: DtoPrevAlbum): AlbumId
     suspend fun storePrevAlbum(list: List<DtoPrevAlbum>): List<AlbumId>
 
-    suspend fun storeGenre(genre: DtoGenre): Long
-    suspend fun storeGenre(list: List<DtoGenre>): List<Long>
-
-    suspend fun storeCountry(country: DtoCountry): Long
-    suspend fun storeCountry(list: List<DtoCountry>): List<Long>
-
     suspend fun storeExploreType(type: DtoExploreType, data: List<SongId>)
     suspend fun storePrevExploreType(type: DtoExploreType, data: List<SongId>)
 
@@ -55,4 +48,14 @@ interface LocalHomeDatasource {
     suspend fun stoRelationSongAlbum(list: List<DtoRelationSongAlbum>)
 
     suspend fun storeRelationSuggestedArtistSong(list: List<DtoRelationSuggestedArtistSong>)
+
+    suspend fun getSavedPrevAlbum(limit: Int = 2): List<DtoPrevAlbum>
+    suspend fun getSavedPrevArtist(limit: Int = 2): List<DtoPrevArtist>
+    suspend fun getSavedPrevPlaylist(limit: Int = 2): List<DtoPrevPlaylist>
+
+    suspend fun getPrevExploreType(type: DtoExploreType): List<DtoPrevSong>
+
+    suspend fun getSuggestedAlbum(): List<DtoPrevAlbum>
+    suspend fun getSuggestedArtist(): List<DtoPrevArtist>
+    suspend fun getSuggestedArtistSong(): Map<DtoPrevArtist, List<DtoPrevSong>>
 }

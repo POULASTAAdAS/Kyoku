@@ -82,6 +82,7 @@ internal fun HomeSavedItemCard(
                 if (item.posters.size <= 3) MainImageCard(
                     url = item.posters.firstOrNull(),
                     errorIcon = errorIcon,
+                    iconColor = MaterialTheme.colorScheme.background,
                     contentDescription = item.type?.name,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -96,6 +97,7 @@ internal fun HomeSavedItemCard(
                         MainImageCard(
                             url = item.posters.getOrNull(0),
                             errorIcon = errorIcon,
+                            iconColor = MaterialTheme.colorScheme.background,
                             contentDescription = item.type?.name,
                             modifier = Modifier
                                 .fillMaxWidth(.5f)
@@ -105,6 +107,7 @@ internal fun HomeSavedItemCard(
                         MainImageCard(
                             url = item.posters.getOrNull(1),
                             errorIcon = errorIcon,
+                            iconColor = MaterialTheme.colorScheme.background,
                             contentDescription = item.type?.name,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -117,6 +120,7 @@ internal fun HomeSavedItemCard(
                         MainImageCard(
                             url = item.posters.getOrNull(2),
                             errorIcon = errorIcon,
+                            iconColor = MaterialTheme.colorScheme.background,
                             contentDescription = item.type?.name,
                             modifier = Modifier
                                 .fillMaxWidth(.5f)
@@ -126,6 +130,7 @@ internal fun HomeSavedItemCard(
                         MainImageCard(
                             url = item.posters.getOrNull(3),
                             errorIcon = errorIcon,
+                            iconColor = MaterialTheme.colorScheme.background,
                             contentDescription = item.type?.name,
                             modifier = Modifier.fillMaxSize()
                         )

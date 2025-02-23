@@ -8,7 +8,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +26,8 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -117,5 +121,32 @@ fun Modifier.coloredShadow(
                 paint
             )
         }
+    }
+}
+
+fun Modifier.removeParentWidthPadding(horizontal: Dp) = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(
+        constraints = constraints.copy(
+            maxWidth = constraints.maxWidth + 2 * horizontal.roundToPx()
+        )
+    )
+
+    layout(placeable.width, placeable.height) {
+        placeable.place(0, 0)
+    }
+}
+
+fun Modifier.isElementVisible(onVisibilityChanged: (Boolean) -> Unit) = composed {
+    val isVisible by remember { derivedStateOf { mutableStateOf(false) } }
+    LaunchedEffect(isVisible.value) {
+        onVisibilityChanged.invoke(isVisible.value)
+    }
+
+    this.onGloballyPositioned { layoutCoordinates ->
+        isVisible.value = layoutCoordinates.parentLayoutCoordinates?.let {
+            val parentBounds = it.boundsInWindow()
+            val childBounds = layoutCoordinates.boundsInWindow()
+            parentBounds.overlaps(childBounds)
+        } ?: false
     }
 }

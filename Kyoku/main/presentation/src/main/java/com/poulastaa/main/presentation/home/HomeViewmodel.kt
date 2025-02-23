@@ -3,6 +3,7 @@ package com.poulastaa.main.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.main.domain.repository.HomeRepository
+import com.poulastaa.main.presentation.home.mapper.toUiHomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +24,7 @@ internal class HomeViewmodel @Inject constructor(
 
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5000), // 5 seconds
         initialValue = HomeUiState()
     )
 
@@ -30,8 +32,9 @@ internal class HomeViewmodel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun init(isInitial: Boolean) {
-        if (isInitial) viewModelScope.launch {
-            repo.getHome()
+        viewModelScope.launch {
+            if (isInitial) repo.getHome()
+            loadData()
         }
     }
 
@@ -40,6 +43,12 @@ internal class HomeViewmodel @Inject constructor(
             is HomeUiAction.OnSavedItemCLick -> {
 
             }
+        }
+    }
+
+    private suspend fun loadData() {
+        _state.update {
+            repo.loadData().toUiHomeState()
         }
     }
 }

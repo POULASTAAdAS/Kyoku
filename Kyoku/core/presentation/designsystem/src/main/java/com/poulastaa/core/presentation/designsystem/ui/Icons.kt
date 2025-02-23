@@ -120,7 +120,7 @@ val ThreeLineIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_three_line)
 
-val MoreFromArtistIcon: ImageVector
+val ShowMoreIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_more_from_artist)
 

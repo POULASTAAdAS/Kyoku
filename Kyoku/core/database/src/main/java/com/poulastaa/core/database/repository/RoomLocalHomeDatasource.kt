@@ -1,11 +1,13 @@
 package com.poulastaa.core.database.repository
 
+import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.RootDao
+import com.poulastaa.core.database.mapper.toDtoPrevAlbum
+import com.poulastaa.core.database.mapper.toDtoPrevArtist
+import com.poulastaa.core.database.mapper.toDtoPrevSong
 import com.poulastaa.core.database.mapper.toEntityAlbum
 import com.poulastaa.core.database.mapper.toEntityArtist
-import com.poulastaa.core.database.mapper.toEntityCountry
 import com.poulastaa.core.database.mapper.toEntityExploreType
-import com.poulastaa.core.database.mapper.toEntityGenre
 import com.poulastaa.core.database.mapper.toEntityPlaylist
 import com.poulastaa.core.database.mapper.toEntityPrevAlbum
 import com.poulastaa.core.database.mapper.toEntityPrevArtist
@@ -19,12 +21,11 @@ import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoExploreType
-import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
@@ -34,9 +35,11 @@ import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import javax.inject.Inject
+import kotlin.random.Random
 
-class RoomLocalHomeDatasource @Inject constructor(
+internal class RoomLocalHomeDatasource @Inject constructor(
     private val root: RootDao,
+    private val home: HomeDao,
 ) : LocalHomeDatasource {
     override suspend fun storeSong(song: DtoSong): SongId =
         root.insertSong(song.toEntitySong())
@@ -77,18 +80,6 @@ class RoomLocalHomeDatasource @Inject constructor(
     override suspend fun storePrevAlbum(list: List<DtoPrevAlbum>): List<AlbumId> =
         root.insertPrevAlbum(list.map { it.toEntityPrevAlbum() })
 
-    override suspend fun storeGenre(genre: DtoGenre): Long =
-        root.insertGenre(genre.toEntityGenre())
-
-    override suspend fun storeGenre(list: List<DtoGenre>): List<Long> =
-        root.insertGenre(list.map { it.toEntityGenre() })
-
-    override suspend fun storeCountry(country: DtoCountry): Long =
-        root.insertCountry(country.toEntityCountry())
-
-    override suspend fun storeCountry(list: List<DtoCountry>): List<Long> =
-        root.insertCountry(list.map { it.toEntityCountry() })
-
     override suspend fun storeExploreType(type: DtoExploreType, data: List<SongId>) =
         root.insertExploreType(type.toEntityExploreType(data))
 
@@ -120,4 +111,40 @@ class RoomLocalHomeDatasource @Inject constructor(
             list.map { it.toEntityRelationSuggestedSongByArtist() }
                 .flatten()
         )
+
+    override suspend fun getSavedPrevAlbum(limit: Int): List<DtoPrevAlbum> =
+        home.getRandomSavedPrevAlbum(limit).map { it.toDtoPrevAlbum() }
+
+    override suspend fun getSavedPrevArtist(limit: Int): List<DtoPrevArtist> =
+        home.getRandomSavedPrevArtist(limit).map { it.toDtoPrevArtist() }
+
+    override suspend fun getSavedPrevPlaylist(limit: Int): List<DtoPrevPlaylist> {
+        val playlist = home.getRandomSavedPrevPlaylist(limit).groupBy { it.id }
+
+        return playlist.map { entry ->
+            DtoPrevPlaylist(
+                id = entry.key,
+                title = entry.value.first().title,
+                posters = entry.value.map { it.poster }.shuffled(Random).take(4)
+            )
+        }
+    }
+
+    override suspend fun getPrevExploreType(type: DtoExploreType): List<DtoPrevSong> {
+        val songIdList = home.getPrevExploreType(type.name)
+        return home.getPrevSong(songIdList)
+    }
+
+    override suspend fun getSuggestedAlbum(): List<DtoPrevAlbum> = home.getPrevAlbum().map {
+        it.toDtoPrevAlbum()
+    }
+
+    override suspend fun getSuggestedArtist(): List<DtoPrevArtist> = home.getPrevArtist().map {
+        it.toDtoPrevArtist()
+    }
+
+    override suspend fun getSuggestedArtistSong(): Map<DtoPrevArtist, List<DtoPrevSong>> =
+        home.getSuggestedArtistSong().associate { dto ->
+            dto.artist.toDtoPrevArtist() to dto.list.map { it.toDtoPrevSong() }
+        }
 }

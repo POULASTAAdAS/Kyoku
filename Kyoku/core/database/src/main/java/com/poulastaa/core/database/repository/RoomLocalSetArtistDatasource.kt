@@ -8,7 +8,7 @@ import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import javax.inject.Inject
 
-class RoomLocalSetArtistDatasource @Inject constructor(
+internal class RoomLocalSetArtistDatasource @Inject constructor(
     private val root: RootDao,
     private val ds: DatastoreRepository,
 ) : LocalSetArtistDatasource {

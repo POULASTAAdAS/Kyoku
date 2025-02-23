@@ -26,7 +26,7 @@ import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
-import com.poulastaa.core.domain.model.DtoPrevPlaylist
+import com.poulastaa.core.domain.model.DtoPrevFullPlaylist
 import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
@@ -35,79 +35,79 @@ import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
 import com.poulastaa.core.domain.model.SongId
 
-fun DtoSong.toEntitySong() = EntitySong(
+internal fun DtoSong.toEntitySong() = EntitySong(
     id = this.id,
     title = this.title,
     poster = this.poster,
     masterPlaylist = this.masterPlaylist
 )
 
-fun DtoPlaylist.toEntityPlaylist() = EntityPlaylist(
+internal fun DtoPlaylist.toEntityPlaylist() = EntityPlaylist(
     id = this.id,
     name = this.name,
     visibilityState = this.visibilityState,
     popularity = this.popularity
 )
 
-fun DtoSongInfo.toSongInfo() = EntitySongInfo(
+internal fun DtoSongInfo.toSongInfo() = EntitySongInfo(
     songId = this.songId,
     releaseYear = this.releaseYear,
     popularity = this.popularity,
     composer = this.composer
 )
 
-fun DtoArtist.toEntityArtist() = EntityArtist(
+internal fun DtoArtist.toEntityArtist() = EntityArtist(
     id = this.id,
     name = this.name,
     coverImage = this.coverImage,
     popularity = this.popularity
 )
 
-fun DtoGenre.toEntityGenre() = EntityGenre(
+internal fun DtoGenre.toEntityGenre() = EntityGenre(
     id = this.id,
     name = this.name,
     cover = this.cover
 )
 
-fun DtoAlbum.toEntityAlbum() = EntityAlbum(
+internal fun DtoAlbum.toEntityAlbum() = EntityAlbum(
     id = this.id,
     name = this.name,
     poster = this.poster,
     popularity = this.popularity
 )
 
-fun DtoCountry.toEntityCountry() = EntityCountry(
+internal fun DtoCountry.toEntityCountry() = EntityCountry(
     id = this.id,
     name = this.name,
 )
 
-fun DtoPrevSong.toEntityPrevSong() = EntityPrevSong(
+internal fun DtoPrevSong.toEntityPrevSong() = EntityPrevSong(
     id = this.id,
     title = this.title,
     poster = this.poster,
 )
 
-fun DtoPrevArtist.toEntityPrevArtist() = EntityPrevArtist(
+internal fun DtoPrevArtist.toEntityPrevArtist() = EntityPrevArtist(
     id = this.id,
     name = this.name,
     coverImage = this.cover,
 )
 
-fun DtoPrevAlbum.toEntityPrevAlbum() = EntityPrevAlbum(
+internal fun DtoPrevAlbum.toEntityPrevAlbum() = EntityPrevAlbum(
     id = this.id,
     title = this.name,
     poster = this.poster
 )
 
 
-fun EntityPlaylist.toDtoPlaylist() = DtoPlaylist(
+internal fun EntityPlaylist.toDtoPlaylist() = DtoPlaylist(
     id = this.id,
     name = this.name,
     visibilityState = this.visibilityState,
     popularity = this.popularity
 )
 
-fun EntitySong.toDtoDetailedPrevSong(
+internal fun EntitySong.toDtoDetailedPrevSong(
     artists: List<SongIdWithArtistName>,
     releaseYears: Map<SongId, Int>,
 ) = DtoDetailedPrevSong(
@@ -118,54 +118,85 @@ fun EntitySong.toDtoDetailedPrevSong(
     releaseYear = releaseYears[this.id] ?: -1
 )
 
-fun PlaylistWithSong.toDtoPrevPlaylist(
+internal fun PlaylistWithSong.toDtoPrevPlaylist(
     artists: List<SongIdWithArtistName>,
     releaseYears: Map<SongId, Int>,
-) = DtoPrevPlaylist(
+) = DtoPrevFullPlaylist(
     playlist = this.playlist.toDtoPlaylist(),
     list = this.list.map { it.toDtoDetailedPrevSong(artists, releaseYears) }
 )
 
 @JvmName("listExploreType")
-fun DtoExploreType.toEntityExploreType(list: List<SongId>) = list.map { songId ->
+internal fun DtoExploreType.toEntityExploreType(list: List<SongId>) = list.map { songId ->
     this.toEntityExploreType(songId)
 }
 
 @JvmName("singleExploreType")
-fun DtoExploreType.toEntityExploreType(songId: SongId) = EntityExplore(
+internal fun DtoExploreType.toEntityExploreType(songId: SongId) = EntityExplore(
     typeId = this,
     dataId = songId
 )
 
 
 @JvmName("listPrevExploreType")
-fun DtoExploreType.toEntityPrevExploreType(list: List<SongId>) = list.map { songId ->
+internal fun DtoExploreType.toEntityPrevExploreType(list: List<SongId>) = list.map { songId ->
     this.toEntityPrevExploreType(songId)
 }
 
 @JvmName("singlePrevExploreType")
-fun DtoExploreType.toEntityPrevExploreType(songId: SongId) = EntityPrevExplore(
+internal fun DtoExploreType.toEntityPrevExploreType(songId: SongId) = EntityPrevExplore(
     typeId = this,
     dataId = songId
 )
 
-fun DtoRelationSuggestedArtistSong.toEntityRelationSuggestedSongByArtist() = list.map { songId ->
-    EntityRelationSuggestedSongByArtist(
-        artistId = this.artistId,
-        songId = songId
-    )
-}
+internal fun DtoRelationSuggestedArtistSong.toEntityRelationSuggestedSongByArtist() =
+    list.map { songId ->
+        EntityRelationSuggestedSongByArtist(
+            artistId = this.artistId,
+            songId = songId
+        )
+    }
 
-fun DtoRelationSongPlaylist.toEntityRelationSongPlaylist() = this.list.map { songId ->
+internal fun DtoRelationSongPlaylist.toEntityRelationSongPlaylist() = this.list.map { songId ->
     EntityRelationSongPlaylist(
         playlistId = this.playlistId,
         songId = songId
     )
 }
 
-fun DtoRelationSongAlbum.toEntityRelationSongAlbum() = this.list.map { ialbumId ->
+internal fun DtoRelationSongAlbum.toEntityRelationSongAlbum() = this.list.map { ialbumId ->
     EntityRelationSongAlbum(
         albumId = this.albumId,
         songId = ialbumId
     )
 }
+
+internal fun EntityAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
+    id = this.id,
+    name = this.name,
+    poster = this.poster
+)
+
+internal fun EntityArtist.toDtoPrevArtist() = DtoPrevArtist(
+    id = this.id,
+    name = this.name,
+    cover = this.coverImage
+)
+
+internal fun EntityPrevArtist.toDtoPrevArtist() = DtoPrevArtist(
+    id = this.id,
+    name = this.name,
+    cover = this.coverImage
+)
+
+internal fun EntityPrevAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
+    id = this.id,
+    name = this.title,
+    poster = this.poster
+)
+
+internal fun EntityPrevSong.toDtoPrevSong() = DtoPrevSong(
+    id = this.id,
+    title = this.title,
+    poster = this.poster
+)

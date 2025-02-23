@@ -16,7 +16,7 @@ import com.poulastaa.core.database.mapper.toEntityPlaylist
 import com.poulastaa.core.database.mapper.toEntitySong
 import com.poulastaa.core.database.mapper.toSongInfo
 import com.poulastaa.core.domain.model.DtoFullPlaylist
-import com.poulastaa.core.domain.model.DtoPrevPlaylist
+import com.poulastaa.core.domain.model.DtoPrevFullPlaylist
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,11 +25,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class RoomLocalImportPlaylistDatasource @Inject constructor(
+internal class RoomLocalImportPlaylistDatasource @Inject constructor(
     private val root: RootDao,
     private val local: ImportPlaylistDao,
 ) : LocalImportPlaylistDatasource {
-    override fun loadAllPlaylist(): Flow<List<DtoPrevPlaylist>> {
+    override fun loadAllPlaylist(): Flow<List<DtoPrevFullPlaylist>> {
         return local.getAllPlaylist().map { list ->
             list.map { song ->
                 val releaseYear = local.getSongInfo(song.list.map { it.id })

@@ -1,9 +1,9 @@
 package com.poulastaa.core.presentation.designsystem.model
 
-data class UiPrevSong(
-    val id: Long = -1,
+import com.poulastaa.core.domain.model.SongId
+
+data class UiPreSong(
+    val id: SongId = -1,
     val title: String = "",
     val poster: String? = null,
-    val artists: String? = null,
-    val releaseYear: Int? = null,
 )

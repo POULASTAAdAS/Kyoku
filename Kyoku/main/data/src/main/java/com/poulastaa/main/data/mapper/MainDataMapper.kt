@@ -1,13 +1,16 @@
 package com.poulastaa.main.data.mapper
 
 import com.poulastaa.core.domain.model.ArtistId
-import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoPrevAlbum
+import com.poulastaa.core.domain.model.DtoPrevArtist
+import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
+import com.poulastaa.main.domain.model.PayloadSaveItemType
+import com.poulastaa.main.domain.model.PayloadSavedItem
 
 @JvmName("toDtoRelationSongPlaylist")
 internal fun List<Pair<PlaylistId, List<SongId>>>.toDtoRelationSongPlaylist() =
@@ -27,10 +30,25 @@ internal fun List<Pair<SongId, List<SongId>>>.toDtoRelationSongAlbum() =
         )
     }
 
-internal fun DtoAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
+internal fun DtoPrevArtist.toPayloadItem() = PayloadSavedItem(
     id = this.id,
     name = this.name,
-    poster = this.poster,
+    posters = listOf(this.cover ?: ""),
+    type = PayloadSaveItemType.ARTIST
+)
+
+internal fun DtoPrevPlaylist.toPayloadItem() = PayloadSavedItem(
+    id = this.id,
+    name = this.title,
+    posters = this.posters.map { it ?: "" },
+    type = PayloadSaveItemType.PLAYLIST
+)
+
+internal fun DtoPrevAlbum.toPayloadItem() = PayloadSavedItem(
+    id = this.id,
+    name = this.name,
+    posters = listOf(this.poster ?: ""),
+    type = PayloadSaveItemType.ALBUM
 )
 
 internal fun List<Pair<ArtistId, List<SongId>>>.toDtoSuggestedArtistSong() =

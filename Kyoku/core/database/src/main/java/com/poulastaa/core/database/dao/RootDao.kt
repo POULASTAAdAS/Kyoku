@@ -30,7 +30,7 @@ import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
 
 @Dao
-interface RootDao {
+internal interface RootDao {
     // Song
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSong(song: EntitySong): SongId

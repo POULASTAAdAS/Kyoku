@@ -40,6 +40,7 @@ class SuggestionRepositoryService(
                     prevPopularSongMix = prevPopularSongMixDef.await(),
                     prevPopularArtistMix = prevPopularArtistMixDef.await(),
                     prevOldGem = prevOldGemDef.await(),
+
                     suggestedArtist = suggestedArtist,
                     suggestedAlbum = suggestedAlbumDef.await(),
                     suggestedArtistSong = suggestedArtistSongDef.await()

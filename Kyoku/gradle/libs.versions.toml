@@ -44,6 +44,8 @@ secretsPlugin = "2.0.1"
 palette = "1.0.0"
 work = "2.10.0"
 
+lottie = "6.6.2"
+
 composeCompiler = "1.5.15"
 
 #gradle
@@ -126,6 +128,7 @@ media = { group = "androidx.media", name = "media", version.ref = "media" }
 legacy-support-V4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupport" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 androidx-palette = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }
 

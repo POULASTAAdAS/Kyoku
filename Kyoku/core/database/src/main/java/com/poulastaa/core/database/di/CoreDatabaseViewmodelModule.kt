@@ -1,6 +1,7 @@
 package com.poulastaa.core.database.di
 
 import com.poulastaa.core.database.KyokuDatabase
+import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
@@ -22,7 +23,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object CoreDatabaseViewmodelModule {
+internal object CoreDatabaseViewmodelModule {
     @Provides
     @ViewModelScoped
     fun provideImportPlaylistDao(
@@ -51,6 +52,12 @@ object CoreDatabaseViewmodelModule {
 
     @Provides
     @ViewModelScoped
+    fun provideHomeDao(
+        database: KyokuDatabase,
+    ): HomeDao = database.homeDao
+
+    @Provides
+    @ViewModelScoped
     fun provideLocalSetArtistDatasource(
         ds: DatastoreRepository,
         root: RootDao,
@@ -60,5 +67,6 @@ object CoreDatabaseViewmodelModule {
     @ViewModelScoped
     fun provideLocalHomeDatasource(
         root: RootDao,
-    ): LocalHomeDatasource = RoomLocalHomeDatasource(root)
+        home: HomeDao,
+    ): LocalHomeDatasource = RoomLocalHomeDatasource(root, home)
 }

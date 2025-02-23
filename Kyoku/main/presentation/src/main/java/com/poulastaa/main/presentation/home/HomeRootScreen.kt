@@ -11,7 +11,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
-import com.poulastaa.core.presentation.designsystem.model.UiPrevSong
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
+import com.poulastaa.core.presentation.designsystem.model.UiPreSong
 import com.poulastaa.main.presentation.components.UiSaveItemType
 import com.poulastaa.main.presentation.components.UiSavedItem
 
@@ -81,27 +82,21 @@ internal val prevData = HomeUiState(
     ),
     staticData = UiHomeData(
         popularSongMix = (1..10).map { id ->
-            UiPrevSong(
+            UiPreSong(
                 id = id.toLong(),
                 title = "Song 1",
-                artists = (1..3).joinToString { "Artist $it" },
-                releaseYear = 2021
             )
         },
         popularSongFromYourTime = (1..10).map {
-            UiPrevSong(
+            UiPreSong(
                 id = it.toLong(),
                 title = "Song 1",
-                artists = (1..3).joinToString { "Artist $it" },
-                releaseYear = 2021
             )
         },
         favouriteArtistMix = (1..10).map {
-            UiPrevSong(
+            UiPreSong(
                 id = it.toLong(),
                 title = "Song 1",
-                artists = (1..3).joinToString { "Artist $it" },
-                releaseYear = 2021
             )
         },
         popularAlbum = (1..10).map {
@@ -123,11 +118,9 @@ internal val prevData = HomeUiState(
                     name = "Artist $artistId",
                 ),
                 songs = (1..10).map { songId ->
-                    UiPrevSong(
+                    UiPreSong(
                         id = songId.toLong(),
                         title = "Song $songId",
-                        artists = (1..3).joinToString { "Artist $it" },
-                        releaseYear = 2021
                     )
                 }
             )
