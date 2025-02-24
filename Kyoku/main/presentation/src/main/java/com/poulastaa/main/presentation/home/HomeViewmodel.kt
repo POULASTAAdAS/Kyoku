@@ -43,6 +43,13 @@ internal class HomeViewmodel @Inject constructor(
             is HomeUiAction.OnSavedItemCLick -> {
 
             }
+
+            is HomeUiAction.OnExploreTypeItemClick -> TODO()
+            is HomeUiAction.OnSuggestedArtistClick -> TODO()
+            is HomeUiAction.OnSuggestArtistSongClick -> TODO()
+            is HomeUiAction.OnSuggestedAlbumClick -> TODO()
+            is HomeUiAction.OnSongClick -> TODO()
+            is HomeUiAction.OnViewMore -> TODO()
         }
     }
 

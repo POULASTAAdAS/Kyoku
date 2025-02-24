@@ -38,7 +38,6 @@ import com.poulastaa.main.presentation.components.UiSavedItem
 internal fun HomeSavedItemCard(
     modifier: Modifier = Modifier,
     item: UiSavedItem,
-    onClick: () -> Unit,
 ) {
     val shape = if (item.posters.size <= 3) CircleShape
     else MaterialTheme.shapes.extraSmall
@@ -60,7 +59,6 @@ internal fun HomeSavedItemCard(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         shape = shape,
-        onClick = onClick
     ) {
         Row(
             modifier = Modifier
@@ -177,7 +175,7 @@ private fun Preview() {
                                 name = "That Cool Album",
                                 type = UiSaveItemType.ALBUM
                             )
-                        ) {}
+                        )
 
                         HomeSavedItemCard(
                             modifier = Modifier
@@ -188,7 +186,7 @@ private fun Preview() {
                                 name = "That Cool Artist",
                                 type = UiSaveItemType.ARTIST
                             )
-                        ) {}
+                        )
                     }
                 }
 
@@ -212,7 +210,7 @@ private fun Preview() {
                                 posters = listOf("", "", ""),
                                 type = UiSaveItemType.PLAYLIST
                             )
-                        ) {}
+                        )
 
                         HomeSavedItemCard(
                             modifier = Modifier
@@ -224,7 +222,7 @@ private fun Preview() {
                                 posters = listOf("", "", "", ""),
                                 type = UiSaveItemType.PLAYLIST
                             )
-                        ) {}
+                        )
                     }
                 }
             }

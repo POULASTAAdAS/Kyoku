@@ -4,8 +4,10 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +45,21 @@ fun Modifier.noRippleClickable(
         enabled = enabled,
         indication = null,
         interactionSource = null,
+        onClick = onClick
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.noRippleCombineClickable(
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) = composed {
+    this.combinedClickable(
+        indication = null,
+        interactionSource = null,
+        enabled = enabled,
+        onLongClick = onLongClick,
         onClick = onClick
     )
 }

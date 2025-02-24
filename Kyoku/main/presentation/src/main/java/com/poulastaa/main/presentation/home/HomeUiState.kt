@@ -38,3 +38,10 @@ internal data class UiArtistWithSong(
     val artist: UiPrevArtist = UiPrevArtist(),
     val songs: List<UiPreSong> = emptyList(),
 )
+
+internal enum class UiHomeExploreType {
+    POPULAR_SONG_MIX,
+    POPULAR_YEAR_MIX,
+    SAVED_ARTIST_SONG_MIX,
+    DAY_TYPE_MIX
+}

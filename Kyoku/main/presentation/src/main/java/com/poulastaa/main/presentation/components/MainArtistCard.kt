@@ -22,7 +22,6 @@ import com.poulastaa.core.presentation.designsystem.ui.FilterArtistIcon
 fun MainArtistCard(
     modifier: Modifier = Modifier,
     artist: UiPrevArtist,
-    onClick: () -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -34,7 +33,6 @@ fun MainArtistCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        onClick = onClick
     ) {
         MainImageCard(
             errorIcon = FilterArtistIcon,
@@ -55,7 +53,7 @@ private fun Preview() {
                 artist = UiPrevArtist(
                     name = "Artist Name",
                 )
-            ) {}
+            )
         }
     }
 }

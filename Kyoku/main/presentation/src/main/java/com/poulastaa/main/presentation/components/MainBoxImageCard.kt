@@ -44,7 +44,6 @@ fun MainBoxImageCard(
     urls: List<String?>,
     description: String? = null,
     icon: ImageVector,
-    onClick: () -> Unit,
 ) {
     val density = LocalDensity.current
     var cardWidthDp by remember { mutableStateOf(0.dp) }
@@ -52,7 +51,7 @@ fun MainBoxImageCard(
     else MaterialTheme.typography.titleMedium.fontSize
 
     Column(
-        modifier = modifier.noRippleClickable { onClick() },
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -71,7 +70,6 @@ fun MainBoxImageCard(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
             shape = MaterialTheme.shapes.small,
-            onClick = onClick
         ) {
             if (urls.size <= 3) MainImageCard(
                 errorIcon = icon,
@@ -160,7 +158,6 @@ private fun Preview() {
                         urls = listOf(),
                         title = "That Cool Album",
                         icon = SongIcon,
-                        onClick = {}
                     )
 
                     Spacer(Modifier.width(MaterialTheme.dimens.medium1))
@@ -170,7 +167,6 @@ private fun Preview() {
                         urls = listOf(""),
                         title = "That Cool Album",
                         icon = SongIcon,
-                        onClick = {}
                     )
                 }
 
@@ -185,7 +181,6 @@ private fun Preview() {
                         urls = listOf("", "", "", ""),
                         title = "That Cool Playlist",
                         icon = SongIcon,
-                        onClick = {}
                     )
 
                     Spacer(Modifier.width(MaterialTheme.dimens.medium1))
@@ -195,7 +190,6 @@ private fun Preview() {
                         urls = listOf("", "", "", ""),
                         title = "That Cool Playlist",
                         icon = SongIcon,
-                        onClick = {}
                     )
                 }
             }

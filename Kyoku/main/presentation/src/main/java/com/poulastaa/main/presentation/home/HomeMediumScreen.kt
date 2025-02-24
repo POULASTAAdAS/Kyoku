@@ -91,9 +91,6 @@ internal fun HomeMediumScreen(
                             title = state.savedItems.first().name,
                             urls = state.savedItems.first().posters,
                             icon = FilterArtistIcon,
-                            onClick = {
-
-                            }
                         )
                     }
 
@@ -109,9 +106,6 @@ internal fun HomeMediumScreen(
                                     .fillMaxWidth()
                                     .height(cardWidthDp / 3),
                                 item = state.savedItems[1],
-                                onClick = {
-
-                                }
                             )
 
                             state.savedItems.getOrNull(2)?.let {
@@ -120,9 +114,6 @@ internal fun HomeMediumScreen(
                                         .fillMaxWidth()
                                         .height(cardWidthDp / 3),
                                     item = it,
-                                    onClick = {
-
-                                    }
                                 )
                             }
 
@@ -132,9 +123,6 @@ internal fun HomeMediumScreen(
                                         .fillMaxWidth()
                                         .height(cardWidthDp / 3),
                                     item = it,
-                                    onClick = {
-
-                                    }
                                 )
                             }
                         }
@@ -143,10 +131,7 @@ internal fun HomeMediumScreen(
                     if (state.savedItems.size >= 6) items(state.savedItems) { item ->
                         HomeSavedItemCard(
                             modifier = Modifier.height(70.dp),
-                            item = item,
-                            onClick = {
-
-                            }
+                            item = item
                         )
                     }
 
