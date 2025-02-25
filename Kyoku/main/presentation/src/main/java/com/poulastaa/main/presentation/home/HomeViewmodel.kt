@@ -1,5 +1,6 @@
 package com.poulastaa.main.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.main.domain.repository.HomeRepository
@@ -14,12 +15,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 internal class HomeViewmodel @Inject constructor(
     private val repo: HomeRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(HomeUiState())
+    private val _state = MutableStateFlow(prevData)
     val state = _state.onStart {
 
     }.stateIn(
@@ -39,23 +41,23 @@ internal class HomeViewmodel @Inject constructor(
     }
 
     fun onAction(action: HomeUiAction) {
+        Log.d("Action", action.toString())
+
         when (action) {
-            is HomeUiAction.OnSavedItemCLick -> {
-
-            }
-
-            is HomeUiAction.OnExploreTypeItemClick -> TODO()
-            is HomeUiAction.OnSuggestedArtistClick -> TODO()
-            is HomeUiAction.OnSuggestArtistSongClick -> TODO()
-            is HomeUiAction.OnSuggestedAlbumClick -> TODO()
-            is HomeUiAction.OnSongClick -> TODO()
-            is HomeUiAction.OnViewMore -> TODO()
+            is HomeUiAction.OnSavedItemCLick -> {}
+            is HomeUiAction.OnExploreTypeItemClick -> {}
+            is HomeUiAction.OnViewMore -> {}
+            is HomeUiAction.OnSuggestedAlbumLongClick -> {}
+            is HomeUiAction.OnSuggestedArtistLongClick -> {}
+            is HomeUiAction.OnSuggestArtistSongClick -> {}
         }
     }
 
     private suspend fun loadData() {
+        val home = repo.loadData()
+
         _state.update {
-            repo.loadData().toUiHomeState()
+            home.toUiHomeState(home.savedItems.random(Random))
         }
     }
 }

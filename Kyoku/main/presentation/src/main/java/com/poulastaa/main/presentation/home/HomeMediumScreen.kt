@@ -28,13 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.model.ItemClickType
+import com.poulastaa.core.presentation.designsystem.noRippleCombineClickable
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -50,7 +51,7 @@ internal fun HomeMediumScreen(
     scroll: TopAppBarScrollBehavior,
     onAction: (HomeUiAction) -> Unit,
 ) {
-    val density = LocalDensity.current
+    val itemPaddingHeight = MaterialTheme.dimens.small3 * 2
     var cardWidthDp by remember { mutableStateOf(0.dp) }
 
     val haptic = LocalHapticFeedback.current
@@ -72,7 +73,7 @@ internal fun HomeMediumScreen(
                         .padding(paddingValues)
                         .nestedScroll(scroll.nestedScrollConnection),
                     contentPadding = PaddingValues(
-                        top = MAIN_TOP_BAR_PADDING,
+                        top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium2,
                         end = MaterialTheme.dimens.medium2,
                         bottom = MaterialTheme.dimens.medium2
@@ -80,18 +81,41 @@ internal fun HomeMediumScreen(
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
                 ) {
-                    if (state.savedItems.isNotEmpty()) item(
-                        span = { GridItemSpan(2) }
-                    ) {
-                        MainBoxImageCard(
-                            modifier = Modifier
-                                .onSizeChanged { size ->
-                                    cardWidthDp = with(density) { (size.width - 20).toDp() }
-                                },
-                            title = state.savedItems.first().name,
-                            urls = state.savedItems.first().posters,
-                            icon = FilterArtistIcon,
-                        )
+                    state.spotlightItem?.let { item ->
+                        item(
+                            span = { GridItemSpan(2) }
+                        ) {
+                            MainBoxImageCard(
+                                modifier = Modifier
+                                    .noRippleCombineClickable(
+                                        onLongClick = {
+                                            onAction(
+                                                HomeUiAction.OnSavedItemCLick(
+                                                    id = item.id,
+                                                    type = item.type,
+                                                    clickType = ItemClickType.LONG_CLICK
+                                                )
+                                            )
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        },
+                                        onClick = {
+                                            onAction(
+                                                HomeUiAction.OnSavedItemCLick(
+                                                    id = item.id,
+                                                    type = item.type,
+                                                    clickType = ItemClickType.CLICK
+                                                )
+                                            )
+                                        }
+                                    ),
+                                title = item.name,
+                                urls = item.posters,
+                                icon = FilterArtistIcon,
+                                returnCardHeight = {
+                                    cardWidthDp = it - itemPaddingHeight
+                                }
+                            )
+                        }
                     }
 
                     if (state.savedItems.size >= 2) item(
@@ -101,28 +125,93 @@ internal fun HomeMediumScreen(
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
                         ) {
-                            HomeSavedItemCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(cardWidthDp / 3),
-                                item = state.savedItems[1],
-                            )
-
-                            state.savedItems.getOrNull(2)?.let {
+                            state.savedItems.getOrNull(0)?.let { item ->
                                 HomeSavedItemCard(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(cardWidthDp / 3),
-                                    item = it,
+                                        .height(cardWidthDp / 3)
+                                        .noRippleCombineClickable(
+                                            onLongClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.LONG_CLICK
+                                                    )
+                                                )
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            },
+                                            onClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.CLICK
+                                                    )
+                                                )
+                                            }
+                                        ),
+                                    item = item,
                                 )
                             }
 
-                            state.savedItems.getOrNull(3)?.let {
+                            state.savedItems.getOrNull(1)?.let { item ->
                                 HomeSavedItemCard(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(cardWidthDp / 3),
-                                    item = it,
+                                        .height(cardWidthDp / 3)
+                                        .noRippleCombineClickable(
+                                            onLongClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.LONG_CLICK
+                                                    )
+                                                )
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            },
+                                            onClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.CLICK
+                                                    )
+                                                )
+                                            }
+                                        ),
+                                    item = item,
+                                )
+                            }
+
+                            state.savedItems.getOrNull(2)?.let { item ->
+                                HomeSavedItemCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(cardWidthDp / 3)
+                                        .noRippleCombineClickable(
+                                            onLongClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.LONG_CLICK
+                                                    )
+                                                )
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                            },
+                                            onClick = {
+                                                onAction(
+                                                    HomeUiAction.OnSavedItemCLick(
+                                                        id = item.id,
+                                                        type = item.type,
+                                                        clickType = ItemClickType.CLICK
+                                                    )
+                                                )
+                                            }
+                                        ),
+                                    item = item,
                                 )
                             }
                         }
@@ -130,11 +219,34 @@ internal fun HomeMediumScreen(
 
                     if (state.savedItems.size >= 6) items(state.savedItems) { item ->
                         HomeSavedItemCard(
-                            modifier = Modifier.height(70.dp),
+                            modifier = Modifier
+                                .height(75.dp)
+                                .noRippleCombineClickable(
+                                    onLongClick = {
+                                        onAction(
+                                            HomeUiAction.OnSavedItemCLick(
+                                                id = item.id,
+                                                type = item.type,
+                                                clickType = ItemClickType.LONG_CLICK
+                                            )
+                                        )
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    },
+                                    onClick = {
+                                        onAction(
+                                            HomeUiAction.OnSavedItemCLick(
+                                                id = item.id,
+                                                type = item.type,
+                                                clickType = ItemClickType.CLICK
+                                            )
+                                        )
+                                    }
+                                ),
                             item = item
                         )
                     }
 
+                    homeCompactMediumCommon(state, onAction)
                     homeCommonContent(state, haptic, true, onAction)
                 }
 

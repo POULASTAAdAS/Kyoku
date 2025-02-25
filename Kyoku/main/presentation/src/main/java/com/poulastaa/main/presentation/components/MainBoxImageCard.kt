@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.SongIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -44,6 +45,8 @@ fun MainBoxImageCard(
     urls: List<String?>,
     description: String? = null,
     icon: ImageVector,
+    shape: CornerBasedShape = MaterialTheme.shapes.small,
+    returnCardHeight: (height: Dp) -> Unit = {},
 ) {
     val density = LocalDensity.current
     var cardWidthDp by remember { mutableStateOf(0.dp) }
@@ -61,6 +64,7 @@ fun MainBoxImageCard(
                 .aspectRatio(1f)
                 .onSizeChanged { size ->
                     cardWidthDp = with(density) { size.width.toDp() }
+                    returnCardHeight(cardWidthDp) // width and height are same
                 },
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp,
@@ -69,7 +73,7 @@ fun MainBoxImageCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
-            shape = MaterialTheme.shapes.small,
+            shape = shape,
         ) {
             if (urls.size <= 3) MainImageCard(
                 errorIcon = icon,

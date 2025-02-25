@@ -15,14 +15,6 @@ fun Route.getRefreshToken(repo: AuthRepository) {
             val req = call.receiveNullable<RefreshTokenRequest>()
                 ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
-            println(req.toString())
-            println(req.toString())
-            println(req.toString())
-            println(req.toString())
-            println(req.toString())
-            println(req.toString())
-            println(req.toString())
-
             val result = repo.refreshJWTToken(req.token, req.email)
                 ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 

@@ -105,7 +105,7 @@ internal fun HomeCompactScreen(
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
                 ) {
                     if (state.savedItems.isNotEmpty()) items(
-                        items = state.savedItems,
+                        items = state.savedItems + if (state.spotlightItem != null) listOf(state.spotlightItem) else emptyList(),
                         span = { GridItemSpan(2) }
                     ) { item ->
                         HomeSavedItemCard(
@@ -120,6 +120,7 @@ internal fun HomeCompactScreen(
                                                 clickType = ItemClickType.LONG_CLICK
                                             )
                                         )
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                     },
                                     onClick = {
                                         onAction(
@@ -134,6 +135,8 @@ internal fun HomeCompactScreen(
                             item = item
                         )
                     }
+
+                    homeCompactMediumCommon(state, onAction)
 
                     homeCommonContent(state, haptic, false, onAction)
                 }
@@ -150,117 +153,6 @@ internal fun LazyGridScope.homeCommonContent(
     isMedium: Boolean,
     onAction: (HomeUiAction) -> Unit,
 ) {
-    item(
-        span = { GridItemSpan(maxLineSpan) }
-    ) {
-        Headline(R.string.explore)
-    }
-
-    if (state.staticData.popularSongMix.isNotEmpty()) item {
-        MainBoxImageCard(
-            modifier = Modifier.noRippleCombineClickable(
-                onLongClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.POPULAR_SONG_MIX,
-                            ItemClickType.LONG_CLICK
-                        )
-                    )
-                },
-                onClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.POPULAR_SONG_MIX,
-                            ItemClickType.CLICK
-                        )
-                    )
-                }
-            ),
-            title = stringResource(R.string.popular_song_mix),
-            urls = state.staticData.popularSongMix.map { it.poster },
-            icon = SongIcon,
-
-            )
-    }
-
-    if (state.staticData.favouriteArtistMix.isNotEmpty()) item {
-        MainBoxImageCard(
-            modifier = Modifier.noRippleCombineClickable(
-                onLongClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.SAVED_ARTIST_SONG_MIX,
-                            ItemClickType.LONG_CLICK
-                        )
-                    )
-                },
-                onClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.SAVED_ARTIST_SONG_MIX,
-                            ItemClickType.CLICK
-                        )
-                    )
-                }
-            ),
-            title = stringResource(R.string.favourite_artist_mix),
-            urls = state.staticData.favouriteArtistMix.map { it.poster },
-            icon = SongIcon,
-        )
-    }
-
-    if (state.staticData.popularSongFromYourTime.isNotEmpty()) item {
-        MainBoxImageCard(
-            modifier = Modifier.noRippleCombineClickable(
-                onLongClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.POPULAR_YEAR_MIX,
-                            ItemClickType.LONG_CLICK
-                        )
-                    )
-                },
-                onClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.POPULAR_YEAR_MIX,
-                            ItemClickType.CLICK
-                        )
-                    )
-                }
-            ),
-            title = stringResource(R.string.popular_songs_from_your_time),
-            urls = state.staticData.popularSongFromYourTime.map { it.poster },
-            icon = SongIcon
-        )
-    }
-
-    if (state.staticData.dayTypeSong.isNotEmpty()) item {
-        MainBoxImageCard(
-            modifier = Modifier.noRippleCombineClickable(
-                onLongClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.DAY_TYPE_MIX,
-                            ItemClickType.LONG_CLICK
-                        )
-                    )
-                },
-                onClick = {
-                    onAction(
-                        HomeUiAction.OnExploreTypeItemClick(
-                            UiHomeExploreType.DAY_TYPE_MIX,
-                            ItemClickType.CLICK
-                        )
-                    )
-                }
-            ),
-            title = stringResource(R.string.lofi_mix),
-            urls = state.staticData.dayTypeSong.map { it.poster },
-            icon = SongIcon
-        )
-    }
-
     item(
         span = { GridItemSpan(maxLineSpan) }
     ) {
@@ -294,17 +186,14 @@ internal fun LazyGridScope.homeCommonContent(
                         .noRippleCombineClickable(
                             onLongClick = {
                                 onAction(
-                                    HomeUiAction.OnSuggestedArtistClick(
-                                        id = artist.id,
-                                        clickType = ItemClickType.LONG_CLICK
-                                    )
+                                    HomeUiAction.OnSuggestedArtistLongClick(artist.id)
                                 )
                             },
                             onClick = {
                                 onAction(
-                                    HomeUiAction.OnSuggestedArtistClick(
+                                    HomeUiAction.OnViewMore(
                                         id = artist.id,
-                                        clickType = ItemClickType.CLICK
+                                        type = UiMainViewMoreItemType.EXPLORE_ARTIST
                                     )
                                 )
                             }
@@ -354,23 +243,19 @@ internal fun LazyGridScope.homeCommonContent(
                 end = MaterialTheme.dimens.medium1
             )
         ) {
-
             items(state.staticData.popularAlbum) { album ->
                 MainBoxImageCard(
                     modifier = Modifier.noRippleCombineClickable(
                         onLongClick = {
                             onAction(
-                                HomeUiAction.OnSuggestedAlbumClick(
-                                    id = album.id,
-                                    clickType = ItemClickType.LONG_CLICK
-                                )
+                                HomeUiAction.OnSuggestedAlbumLongClick(album.id)
                             )
                         },
                         onClick = {
                             onAction(
-                                HomeUiAction.OnSuggestedAlbumClick(
+                                HomeUiAction.OnViewMore(
                                     id = album.id,
-                                    clickType = ItemClickType.CLICK
+                                    type = UiMainViewMoreItemType.EXPLORE_ALBUM,
                                 )
                             )
                         }
@@ -523,7 +408,7 @@ internal fun LazyGridScope.homeCommonContent(
                         modifier = Modifier.noRippleCombineClickable(
                             onLongClick = {
                                 onAction(
-                                    HomeUiAction.OnSongClick(
+                                    HomeUiAction.OnSuggestArtistSongClick(
                                         songId = song.id,
                                         artistId = artist.id,
                                         clickType = ItemClickType.LONG_CLICK
@@ -532,7 +417,7 @@ internal fun LazyGridScope.homeCommonContent(
                             },
                             onClick = {
                                 onAction(
-                                    HomeUiAction.OnSongClick(
+                                    HomeUiAction.OnSuggestArtistSongClick(
                                         songId = song.id,
                                         artistId = artist.id,
                                         clickType = ItemClickType.CLICK
@@ -570,6 +455,121 @@ internal fun LazyGridScope.homeCommonContent(
 
     item {
         Spacer(Modifier.height(if (isMedium) BOTTOM_BAR_HEIGHT + MaterialTheme.dimens.medium3 else BOTTOM_BAR_HEIGHT))
+    }
+}
+
+internal fun LazyGridScope.homeCompactMediumCommon(
+    state: HomeUiState,
+    onAction: (HomeUiAction) -> Unit,
+) {
+    item(
+        span = { GridItemSpan(maxLineSpan) }
+    ) {
+        Headline(R.string.explore)
+    }
+
+    if (state.staticData.popularSongMix.isNotEmpty()) item {
+        MainBoxImageCard(
+            modifier = Modifier.noRippleCombineClickable(
+                onLongClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.POPULAR_SONG_MIX,
+                            ItemClickType.LONG_CLICK
+                        )
+                    )
+                },
+                onClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.POPULAR_SONG_MIX,
+                            ItemClickType.CLICK
+                        )
+                    )
+                }
+            ),
+            title = stringResource(R.string.popular_song_mix),
+            urls = state.staticData.popularSongMix.map { it.poster },
+            icon = SongIcon,
+        )
+    }
+
+    if (state.staticData.favouriteArtistMix.isNotEmpty()) item {
+        MainBoxImageCard(
+            modifier = Modifier.noRippleCombineClickable(
+                onLongClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.SAVED_ARTIST_SONG_MIX,
+                            ItemClickType.LONG_CLICK
+                        )
+                    )
+                },
+                onClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.SAVED_ARTIST_SONG_MIX,
+                            ItemClickType.CLICK
+                        )
+                    )
+                }
+            ),
+            title = stringResource(R.string.favourite_artist_mix),
+            urls = state.staticData.favouriteArtistMix.map { it.poster },
+            icon = SongIcon,
+        )
+    }
+
+    if (state.staticData.popularSongFromYourTime.isNotEmpty()) item {
+        MainBoxImageCard(
+            modifier = Modifier.noRippleCombineClickable(
+                onLongClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.POPULAR_YEAR_MIX,
+                            ItemClickType.LONG_CLICK
+                        )
+                    )
+                },
+                onClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.POPULAR_YEAR_MIX,
+                            ItemClickType.CLICK
+                        )
+                    )
+                }
+            ),
+            title = stringResource(R.string.popular_songs_from_your_time),
+            urls = state.staticData.popularSongFromYourTime.map { it.poster },
+            icon = SongIcon
+        )
+    }
+
+    if (state.staticData.dayTypeSong.isNotEmpty()) item {
+        MainBoxImageCard(
+            modifier = Modifier.noRippleCombineClickable(
+                onLongClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.DAY_TYPE_MIX,
+                            ItemClickType.LONG_CLICK
+                        )
+                    )
+                },
+                onClick = {
+                    onAction(
+                        HomeUiAction.OnExploreTypeItemClick(
+                            UiHomeExploreType.DAY_TYPE_MIX,
+                            ItemClickType.CLICK
+                        )
+                    )
+                }
+            ),
+            title = stringResource(R.string.lofi_mix),
+            urls = state.staticData.dayTypeSong.map { it.poster },
+            icon = SongIcon
+        )
     }
 }
 

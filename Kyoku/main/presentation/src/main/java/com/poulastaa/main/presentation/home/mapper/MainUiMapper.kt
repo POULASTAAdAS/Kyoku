@@ -5,6 +5,7 @@ import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.toUiPrevSong
 import com.poulastaa.main.domain.model.PayloadHomeData
 import com.poulastaa.main.domain.model.PayloadSaveItemType
+import com.poulastaa.main.domain.model.PayloadSavedItem
 import com.poulastaa.main.presentation.components.UiSaveItemType
 import com.poulastaa.main.presentation.components.UiSavedItem
 import com.poulastaa.main.presentation.home.HomeUiState
@@ -18,19 +19,20 @@ internal fun DtoPrevArtist.toUiPrevArtist() = UiPrevArtist(
     cover = this.cover
 )
 
-internal fun PayloadHomeData.toUiHomeState() = HomeUiState(
-    savedItems = this.savedItems.map {
-        UiSavedItem(
-            id = it.id,
-            name = it.name,
-            posters = it.posters,
-            type = when (it.type) {
-                PayloadSaveItemType.PLAYLIST -> UiSaveItemType.PLAYLIST
-                PayloadSaveItemType.ALBUM -> UiSaveItemType.ALBUM
-                PayloadSaveItemType.ARTIST -> UiSaveItemType.ARTIST
-            }
-        )
-    },
+internal fun PayloadSavedItem.toUiSavedItem() = UiSavedItem(
+    id = this.id,
+    name = this.name,
+    posters = this.posters,
+    type = when (this.type) {
+        PayloadSaveItemType.PLAYLIST -> UiSaveItemType.PLAYLIST
+        PayloadSaveItemType.ALBUM -> UiSaveItemType.ALBUM
+        PayloadSaveItemType.ARTIST -> UiSaveItemType.ARTIST
+    }
+)
+
+internal fun PayloadHomeData.toUiHomeState(spotlightItem: PayloadSavedItem) = HomeUiState(
+    spotlightItem = spotlightItem.toUiSavedItem(),
+    savedItems = this.savedItems.map { it.toUiSavedItem() }.filterNot { it.id == spotlightItem.id },
     staticData = UiHomeData(
         popularSongMix = this.staticData.popularSongMix.map { it.toUiPrevSong() },
         popularSongFromYourTime = this.staticData.popularSongFromYourTime.map { it.toUiPrevSong() },

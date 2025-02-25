@@ -8,6 +8,7 @@ import com.poulastaa.main.presentation.components.UiSavedItem
 
 @Stable
 internal data class HomeUiState(
+    val spotlightItem: UiSavedItem? = null,
     val savedItems: List<UiSavedItem> = emptyList(),
     val staticData: UiHomeData = UiHomeData(),
 ) {

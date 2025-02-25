@@ -11,38 +11,25 @@ internal sealed interface HomeUiAction {
     data class OnSavedItemCLick(
         val id: Long,
         val type: UiSaveItemType?,
-        val clickType: ItemClickType
+        val clickType: ItemClickType,
     ) : HomeUiAction
 
     data class OnExploreTypeItemClick(
         val type: UiHomeExploreType,
-        val clickType: ItemClickType
+        val clickType: ItemClickType,
     ) : HomeUiAction
 
-    data class OnSuggestedArtistClick(
-        val id: ArtistId,
-        val clickType: ItemClickType
-    ) : HomeUiAction
+    data class OnSuggestedArtistLongClick(val id: ArtistId) : HomeUiAction
+    data class OnSuggestedAlbumLongClick(val id: AlbumId) : HomeUiAction
 
-    data class OnSuggestedAlbumClick(
-        val id: AlbumId,
-        val clickType: ItemClickType
+    data class OnViewMore(
+        val type: UiMainViewMoreItemType,
+        val id: Long = -1,
     ) : HomeUiAction
 
     data class OnSuggestArtistSongClick(
         val artistId: ArtistId,
         val songId: SongId,
-        val clickType: ItemClickType
-    ) : HomeUiAction
-
-    data class OnViewMore(
-        val type: UiMainViewMoreItemType,
-        val id: Long = -1
-    ) : HomeUiAction
-
-    data class OnSongClick(
-        val songId: SongId,
-        val artistId: ArtistId,
-        val clickType: ItemClickType
+        val clickType: ItemClickType,
     ) : HomeUiAction
 }
