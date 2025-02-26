@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -44,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.BOTTOM_BAR_HEIGHT
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.AddIcon
@@ -52,6 +54,7 @@ import com.poulastaa.core.presentation.designsystem.ui.SortTypeGridIcon
 import com.poulastaa.core.presentation.designsystem.ui.SortTypeListIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.components.MainBoxImageCard
+import com.poulastaa.main.presentation.library.components.LibraryListItem
 import com.poulastaa.main.presentation.library.components.LibraryLoadingScreen
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
@@ -79,7 +82,8 @@ internal fun LibraryCompactScreen(
                             )
                         )
                         .padding(paddingValues)
-                        .nestedScroll(scroll.nestedScrollConnection),
+                        .nestedScroll(scroll.nestedScrollConnection)
+                        .animateContentSize(tween(400)),
                     contentPadding = PaddingValues(
                         top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium1,
@@ -196,44 +200,103 @@ internal fun LibraryCompactScreen(
                         onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.PLAYLIST))
                     }
 
-                    items(state.playlist) { playlist ->
-                        MainBoxImageCard(
-                            title = playlist.name,
-                            urls = playlist.posters,
-                            icon = SongIcon,
-                            description = playlist.name
-                        )
+                    items(
+                        state.playlist,
+                        span = if (state.viewType == UiLibraryViewType.LIST) {
+                            {
+                                GridItemSpan(maxLineSpan)
+                            }
+                        } else null
+                    ) { playlist ->
+                        AnimatedContent(state.viewType) {
+                            when (it) {
+                                UiLibraryViewType.GRID -> MainBoxImageCard(
+                                    title = playlist.name,
+                                    urls = playlist.posters,
+                                    icon = SongIcon,
+                                    description = playlist.name
+                                )
+
+                                UiLibraryViewType.LIST -> LibraryListItem(
+                                    modifier = Modifier.height(80.dp),
+                                    title = playlist.name,
+                                    posters = playlist.posters,
+                                    type = playlist.type
+                                )
+                            }
+                        }
                     }
 
                     libraryHeading(R.string.album) {
                         onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.ALBUM))
                     }
 
-                    items(state.album) { album ->
-                        MainBoxImageCard(
-                            title = album.name,
-                            urls = album.posters,
-                            icon = SongIcon,
-                            description = album.name
-                        )
+                    items(
+                        state.album,
+                        span = if (state.viewType == UiLibraryViewType.LIST) {
+                            {
+                                GridItemSpan(maxLineSpan)
+                            }
+                        } else null
+                    ) { album ->
+                        AnimatedContent(state.viewType) {
+                            when (it) {
+                                UiLibraryViewType.GRID -> MainBoxImageCard(
+                                    title = album.name,
+                                    urls = album.posters,
+                                    icon = SongIcon,
+                                    description = album.name
+                                )
+
+                                UiLibraryViewType.LIST -> LibraryListItem(
+                                    modifier = Modifier.height(80.dp),
+                                    title = album.name,
+                                    posters = album.posters,
+                                    type = album.type
+                                )
+                            }
+                        }
                     }
 
                     libraryHeading(R.string.artist) {
                         onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.ARTIST))
                     }
 
-                    items(state.artist) { artist ->
-                        MainBoxImageCard(
-                            title = artist.name,
-                            urls = artist.posters,
-                            icon = SongIcon,
-                            description = artist.name,
-                            shape = CircleShape
-                        )
+                    items(
+                        state.artist,
+                        span = if (state.viewType == UiLibraryViewType.LIST) {
+                            {
+                                GridItemSpan(maxLineSpan)
+                            }
+                        } else null
+                    ) { artist ->
+                        AnimatedContent(state.viewType) {
+                            when (it) {
+                                UiLibraryViewType.GRID -> MainBoxImageCard(
+                                    title = artist.name,
+                                    urls = artist.posters,
+                                    icon = SongIcon,
+                                    description = artist.name,
+                                    shape = CircleShape
+                                )
+
+                                UiLibraryViewType.LIST -> LibraryListItem(
+                                    modifier = Modifier.height(80.dp),
+                                    title = artist.name,
+                                    posters = artist.posters,
+                                    type = artist.type,
+                                    shape = CircleShape
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Spacer(Modifier.height(BOTTOM_BAR_HEIGHT))
                     }
                 }
 
-                false -> LibraryLoadingScreen(scroll, paddingValues, 3)
+                false -> LibraryLoadingScreen(scroll, paddingValues, 4)
             }
         }
     }
