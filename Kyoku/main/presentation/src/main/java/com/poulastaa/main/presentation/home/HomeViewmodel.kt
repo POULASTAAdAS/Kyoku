@@ -30,7 +30,7 @@ internal class HomeViewmodel @Inject constructor(
         initialValue = HomeUiState()
     )
 
-    private val _uiEvent = Channel<HomeUiAction>()
+    private val _uiEvent = Channel<HomeUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun init(isInitial: Boolean) {
@@ -41,8 +41,6 @@ internal class HomeViewmodel @Inject constructor(
     }
 
     fun onAction(action: HomeUiAction) {
-        Log.d("Action", action.toString())
-
         when (action) {
             is HomeUiAction.OnSavedItemCLick -> {}
             is HomeUiAction.OnExploreTypeItemClick -> {}

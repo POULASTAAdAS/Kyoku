@@ -1,5 +1,6 @@
 package com.poulastaa.main.presentation.library
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.repository.DatastoreRepository
@@ -37,6 +38,8 @@ internal class LibraryViewmodel @Inject constructor(
     )
 
     fun onAction(action: LibraryUiAction) {
+        Log.d("action", action.toString())
+
         when (action) {
             is LibraryUiAction.OnFilterTypeToggle -> {
                 if (action.type == _state.value.filterType) return

@@ -99,7 +99,6 @@ fun EmailSignUpRootScreen(
             EmailSignUpUiEvent.NavigateToLogIn -> navigateToLogin()
 
             is EmailSignUpUiEvent.OnSuccessNavigate -> {
-                Log.d("called", "Called")
                 navigateToScreen(event.screen)
             }
         }

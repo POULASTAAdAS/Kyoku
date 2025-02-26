@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.model.ItemClickType
+import com.poulastaa.core.presentation.designsystem.noRippleCombineClickable
 import com.poulastaa.core.presentation.designsystem.ui.SongIcon
 import com.poulastaa.main.presentation.components.MainBoxImageCard
 import com.poulastaa.main.presentation.components.UiSaveItemType
@@ -33,6 +35,26 @@ internal fun LazyGridScope.libraryLazyGridItem(
         AnimatedContent(viewType) {
             when (it) {
                 UiLibraryViewType.GRID -> MainBoxImageCard(
+                    modifier = Modifier.noRippleCombineClickable(
+                        onClick = {
+                            onAction(
+                                LibraryUiAction.OnItemClick(
+                                    item.id,
+                                    item.type,
+                                    ItemClickType.CLICK
+                                )
+                            )
+                        },
+                        onLongClick = {
+                            onAction(
+                                LibraryUiAction.OnItemClick(
+                                    item.id,
+                                    item.type,
+                                    ItemClickType.LONG_CLICK
+                                )
+                            )
+                        }
+                    ),
                     title = item.name,
                     urls = item.posters,
                     icon = SongIcon,
@@ -42,7 +64,27 @@ internal fun LazyGridScope.libraryLazyGridItem(
                 )
 
                 UiLibraryViewType.LIST -> LibraryListItem(
-                    modifier = Modifier.height(80.dp),
+                    modifier = Modifier.height(80.dp)
+                        .noRippleCombineClickable(
+                            onClick = {
+                                onAction(
+                                    LibraryUiAction.OnItemClick(
+                                        item.id,
+                                        item.type,
+                                        ItemClickType.CLICK
+                                    )
+                                )
+                            },
+                            onLongClick = {
+                                onAction(
+                                    LibraryUiAction.OnItemClick(
+                                        item.id,
+                                        item.type,
+                                        ItemClickType.LONG_CLICK
+                                    )
+                                )
+                            }
+                        ),
                     title = item.name,
                     posters = item.posters,
                     type = item.type,

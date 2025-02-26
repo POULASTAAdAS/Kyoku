@@ -8,7 +8,8 @@ internal sealed interface LibraryUiAction {
     data object OnViewTypeToggle : LibraryUiAction
     data class OnEditSavedItemTypeClick(val type: UiLibraryEditSavedItemType) : LibraryUiAction
     data class OnItemClick(
-        val id: Long, val type: UiSaveItemType,
+        val id: Long,
+        val type: UiSaveItemType?,
         val clickType: ItemClickType,
     ) : LibraryUiAction
 }

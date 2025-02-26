@@ -42,8 +42,6 @@ class DataStoreRepositoryImpl @Inject constructor(
     override fun readThem(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
-        Log.d("called", "called")
-
         it[PreferencesKeys.APP_THEME] ?: true // first dark theme
     }
 
