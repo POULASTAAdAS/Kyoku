@@ -1,6 +1,7 @@
 package com.poulastaa.main.presentation.home
 
 import android.app.Activity
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -19,7 +20,7 @@ import com.poulastaa.main.presentation.components.UiSavedItem
 @Composable
 internal fun HomeRootScreen(
     viewmodel: HomeViewmodel,
-    scrollBehavior: TopAppBarScrollBehavior,
+    topBarScroll: TopAppBarScrollBehavior,
 ) {
     val activity = LocalContext.current as Activity
     val windowSizeClass = calculateWindowSizeClass(activity)
@@ -30,22 +31,22 @@ internal fun HomeRootScreen(
         windowSizeClass = windowSizeClass,
         compactContent = {
             HomeCompactScreen(
-                scroll = scrollBehavior,
                 state = state,
+                topBarScroll = topBarScroll,
                 onAction = viewmodel::onAction
             )
         },
         mediumContent = {
             HomeMediumScreen(
-                scroll = scrollBehavior,
                 state = state,
+                topBarScroll = topBarScroll,
                 onAction = viewmodel::onAction
             )
         },
         expandedContent = {
             HomeExpandedScreen(
-                scroll = scrollBehavior,
                 state = state,
+                topAppBarScroll = topBarScroll,
                 onAction = viewmodel::onAction
             )
         }

@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -38,8 +40,8 @@ import com.poulastaa.main.presentation.components.LoadingScreenWrapper
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun LibraryLoadingScreen(
-    scroll: TopAppBarScrollBehavior,
     paddingValues: PaddingValues,
+    topAppBarScroll: TopAppBarScrollBehavior,
     itemCount: Int,
 ) {
     val cardColors = CardDefaults.cardColors(
@@ -50,10 +52,7 @@ internal fun LibraryLoadingScreen(
         defaultElevation = 6.dp
     )
 
-    LoadingScreenWrapper(
-        paddingValues = paddingValues,
-        scroll = scroll,
-    ) {
+    LoadingScreenWrapper(paddingValues, topAppBarScroll) {
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         Row(
@@ -188,7 +187,7 @@ private fun Preview() {
     AppThem {
         Surface {
             LibraryLoadingScreen(
-                scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                topAppBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 paddingValues = PaddingValues(),
                 itemCount = 4
             )

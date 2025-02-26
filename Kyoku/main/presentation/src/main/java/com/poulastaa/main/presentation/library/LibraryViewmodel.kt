@@ -60,6 +60,7 @@ internal class LibraryViewmodel @Inject constructor(
             }
 
             is LibraryUiAction.OnEditSavedItemTypeClick -> {}
+            is LibraryUiAction.OnItemClick -> {}
         }
     }
 

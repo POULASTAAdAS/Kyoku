@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,13 +27,13 @@ import com.poulastaa.main.presentation.components.LoadingScreenWrapper
 @Composable
 fun HomeMediumLoadingScreen(
     paddingValues: PaddingValues,
-    scroll: TopAppBarScrollBehavior,
+    topBarScroll: TopAppBarScrollBehavior,
 ) {
     val cardColors = CardDefaults.cardColors(
         containerColor = MaterialTheme.colorScheme.background
     )
 
-    LoadingScreenWrapper(paddingValues, scroll) {
+    LoadingScreenWrapper(paddingValues, topBarScroll) {
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         HomeLoadingTopRow(
@@ -92,7 +94,7 @@ private fun Preview() {
         Surface {
             HomeMediumLoadingScreen(
                 PaddingValues(),
-                TopAppBarDefaults.enterAlwaysScrollBehavior()
+                TopAppBarDefaults.enterAlwaysScrollBehavior(),
             )
         }
     }

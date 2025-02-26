@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -57,7 +59,7 @@ import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 @Composable
 internal fun HomeExpandedScreen(
     state: HomeUiState,
-    scroll: TopAppBarScrollBehavior,
+    topAppBarScroll: TopAppBarScrollBehavior,
     onAction: (HomeUiAction) -> Unit,
 ) {
     var cardWidthDp by remember { mutableStateOf(0.dp) }
@@ -78,7 +80,7 @@ internal fun HomeExpandedScreen(
                             )
                         )
                         .padding(paddingValues)
-                        .nestedScroll(scroll.nestedScrollConnection),
+                        .nestedScroll(topAppBarScroll.nestedScrollConnection),
                     contentPadding = PaddingValues(
                         top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium1,
@@ -294,7 +296,7 @@ internal fun HomeExpandedScreen(
                     homeCommonContent(state, haptic, true, onAction)
                 }
 
-                false -> HomeExpandedLoadingScreen(paddingValues, scroll)
+                false -> HomeExpandedLoadingScreen(paddingValues, topAppBarScroll)
             }
         }
     }
@@ -314,7 +316,7 @@ private fun Preview() {
     AppThem {
         HomeExpandedScreen(
             state = HomeUiState(),
-            scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+            topAppBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
             onAction = {}
         )
     }

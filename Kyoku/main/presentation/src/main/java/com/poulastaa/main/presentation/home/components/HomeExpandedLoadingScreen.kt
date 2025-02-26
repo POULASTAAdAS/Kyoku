@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +33,7 @@ import com.poulastaa.main.presentation.components.LoadingScreenWrapper
 @Composable
 internal fun HomeExpandedLoadingScreen(
     paddingValues: PaddingValues,
-    scroll: TopAppBarScrollBehavior,
+    topAppBarScroll: TopAppBarScrollBehavior,
 ) {
     val config = LocalConfiguration.current
     val isTablet = config.screenWidthDp > 980
@@ -41,10 +43,7 @@ internal fun HomeExpandedLoadingScreen(
         containerColor = MaterialTheme.colorScheme.background
     )
 
-    LoadingScreenWrapper(
-        paddingValues = paddingValues,
-        scroll = scroll
-    ) {
+    LoadingScreenWrapper(paddingValues, topAppBarScroll) {
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         Row(
@@ -142,7 +141,7 @@ private fun Preview() {
     AppThem {
         HomeExpandedLoadingScreen(
             paddingValues = PaddingValues(0.dp),
-            scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+            topAppBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
         )
     }
 }

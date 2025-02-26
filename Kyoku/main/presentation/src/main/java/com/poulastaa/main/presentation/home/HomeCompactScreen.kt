@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,8 +43,8 @@ import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeCompactScreen(
-    scroll: TopAppBarScrollBehavior,
     state: HomeUiState,
+    topBarScroll: TopAppBarScrollBehavior,
     onAction: (HomeUiAction) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
@@ -62,7 +64,7 @@ internal fun HomeCompactScreen(
                             )
                         )
                         .padding(paddingValues)
-                        .nestedScroll(scroll.nestedScrollConnection),
+                        .nestedScroll(topBarScroll.nestedScrollConnection),
                     contentPadding = PaddingValues(
                         top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium1,
@@ -108,7 +110,7 @@ internal fun HomeCompactScreen(
                     homeCommonContent(state, haptic, false, onAction)
                 }
 
-                false -> HomeCompactLoadingScreen(paddingValues, scroll)
+                false -> HomeCompactLoadingScreen(paddingValues, topBarScroll)
             }
         }
     }
@@ -122,8 +124,8 @@ private fun Preview() {
     AppThem {
         Surface {
             HomeCompactScreen(
-                scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 state = prevData,
+                topBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 onAction = {}
             )
         }

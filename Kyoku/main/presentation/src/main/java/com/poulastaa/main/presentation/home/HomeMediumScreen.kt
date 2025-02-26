@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,7 +52,7 @@ import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 @Composable
 internal fun HomeMediumScreen(
     state: HomeUiState,
-    scroll: TopAppBarScrollBehavior,
+    topBarScroll: TopAppBarScrollBehavior,
     onAction: (HomeUiAction) -> Unit,
 ) {
     val itemPaddingHeight = MaterialTheme.dimens.small3 * 2
@@ -73,7 +75,7 @@ internal fun HomeMediumScreen(
                             )
                         )
                         .padding(paddingValues)
-                        .nestedScroll(scroll.nestedScrollConnection),
+                        .nestedScroll(topBarScroll.nestedScrollConnection),
                     contentPadding = PaddingValues(
                         top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium2,
@@ -252,7 +254,7 @@ internal fun HomeMediumScreen(
                     homeCommonContent(state, haptic, true, onAction)
                 }
 
-                false -> HomeMediumLoadingScreen(paddingValues, scroll)
+                false -> HomeMediumLoadingScreen(paddingValues, topBarScroll)
             }
         }
     }
@@ -273,7 +275,7 @@ private fun Preview() {
     AppThem {
         Surface {
             HomeMediumScreen(
-                scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                topBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 state = prevData,
                 onAction = {}
             )

@@ -2,13 +2,14 @@ package com.poulastaa.main.presentation.main
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,7 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -82,7 +86,8 @@ fun MainRootScreen(
     val windowSizeClass = calculateWindowSizeClass(activity)
     val haptic = LocalHapticFeedback.current
 
-    val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val topBarScroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var isBottomNavigationVisible by remember { mutableStateOf(false) }
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -137,16 +142,15 @@ fun MainRootScreen(
 
                     Box(Modifier.fillMaxSize()) {
                         Navigation(
-                            isExpanded = true,
                             nav = nav,
                             isInitial = isInitial,
-                            mainTopBarScroll = scroll,
+                            topBarScroll = topBarScroll,
                             onAction = viewmodel::onAction
                         )
 
                         AppTopBar(
                             modifier = Modifier.navigationBarsPadding(),
-                            scroll = scroll,
+                            scroll = topBarScroll,
                             user = state.user,
                             dayStatus = state.greetings,
                             screen = state.navigationBottomBarScreen,
@@ -204,36 +208,50 @@ fun MainRootScreen(
                         },
                     nav = nav,
                     isInitial = isInitial,
-                    mainTopBarScroll = scroll,
+                    topBarScroll = topBarScroll,
                     onAction = viewmodel::onAction
                 )
 
-                AppBottomBar(
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .align(Alignment.BottomCenter)
-                        .padding(MaterialTheme.dimens.medium1)
-                        .fillMaxWidth(
-                            if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 1f
-                            else .7f
-                        )
-                        .padding(start = if (state.navigationDrawerState.isOpened()) MaterialTheme.dimens.medium1 else 0.dp)
-                        .offset { IntOffset(animatedOffset.roundToPx(), 0) }
-                        .scale(scale = animatedScale),
-                    screen = state.navigationBottomBarScreen,
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        if (state.navigationDrawerState.isOpened()) viewmodel.onAction(MainUiAction.ToggleDrawer)
-                        else viewmodel.onAction(MainUiAction.NavigateBottomBarScreen(it))
-                    }
-                )
+                AnimatedVisibility(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    visible = isBottomNavigationVisible,
+                    enter = fadeIn(tween(400)) + slideInVertically(tween(400)) { it },
+                    exit = fadeOut(tween(400)) + slideOutVertically(tween(400)) { it }
+                ) {
+                    AppBottomBar(
+                        modifier = Modifier
+                            .padding(MaterialTheme.dimens.medium1)
+                            .fillMaxWidth(
+                                if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) 1f
+                                else .7f
+                            )
+                            .padding(start = if (state.navigationDrawerState.isOpened()) MaterialTheme.dimens.medium1 else 0.dp)
+                            .offset { IntOffset(animatedOffset.roundToPx(), 0) }
+                            .scale(scale = animatedScale)
+                            .coloredShadow(
+                                Color.Black,
+                                alpha = .3f,
+                            ),
+                        screen = state.navigationBottomBarScreen,
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            if (state.navigationDrawerState.isOpened()) viewmodel.onAction(
+                                MainUiAction.ToggleDrawer
+                            )
+                            else viewmodel.onAction(MainUiAction.NavigateBottomBarScreen(it))
+                        }
+                    )
+                }
 
                 AppTopBar(
                     modifier = Modifier
                         .padding(start = if (state.navigationDrawerState.isOpened()) MaterialTheme.dimens.medium1 else 0.dp)
                         .offset { IntOffset(animatedOffset.roundToPx(), 0) }
-                        .scale(scale = animatedScale),
-                    scroll = scroll,
+                        .scale(scale = animatedScale)
+                        .onGloballyPositioned {
+                            isBottomNavigationVisible = topBarScroll.state.collapsedFraction == 0f
+                        },
+                    scroll = topBarScroll,
                     user = state.user,
                     dayStatus = state.greetings,
                     screen = state.navigationBottomBarScreen,
@@ -264,31 +282,22 @@ fun MainRootScreen(
 @Composable
 private fun Navigation(
     modifier: Modifier = Modifier,
-    isExpanded: Boolean = false,
     isInitial: Boolean,
     nav: NavHostController,
-    mainTopBarScroll: TopAppBarScrollBehavior,
+    topBarScroll: TopAppBarScrollBehavior,
     onAction: (MainUiAction) -> Unit,
 ) {
     NavHost(
         modifier = modifier,
         navController = nav,
-        startDestination = ScreensCore.Library
+        startDestination = ScreensCore.Home
     ) {
         composable<ScreensCore.Home>(
             enterTransition = {
-                if (isExpanded) fadeIn(tween(ANIMATION_TIME))
-                else slideInHorizontally(
-                    animationSpec = tween(ANIMATION_TIME),
-                    initialOffsetX = { -it }
-                ) + fadeIn(tween(ANIMATION_TIME))
+                fadeIn(tween(ANIMATION_TIME))
             },
             exitTransition = {
-                if (isExpanded) fadeOut(tween(ANIMATION_TIME))
-                else slideOutHorizontally(
-                    tween(ANIMATION_TIME),
-                    targetOffsetX = { -it }
-                ) + fadeOut(tween(ANIMATION_TIME))
+                fadeOut(tween(ANIMATION_TIME))
             }
         ) {
             val homeViewmodel = hiltViewModel<HomeViewmodel>()
@@ -299,27 +308,19 @@ private fun Navigation(
 
             HomeRootScreen(
                 viewmodel = homeViewmodel,
-                scrollBehavior = mainTopBarScroll,
+                topBarScroll = topBarScroll,
             )
         }
 
         composable<ScreensCore.Library>(
             enterTransition = {
-                if (isExpanded) fadeIn(tween(ANIMATION_TIME))
-                else slideInHorizontally(
-                    tween(ANIMATION_TIME),
-                    initialOffsetX = { it }
-                ) + fadeIn(tween(ANIMATION_TIME))
+                fadeIn(tween(ANIMATION_TIME))
             },
             exitTransition = {
-                if (isExpanded) fadeOut(tween(ANIMATION_TIME))
-                else slideOutHorizontally(
-                    tween(ANIMATION_TIME),
-                    targetOffsetX = { it }
-                ) + fadeOut(tween(ANIMATION_TIME))
+                fadeOut(tween(ANIMATION_TIME))
             }
         ) {
-            LibraryRootScreen(scroll = mainTopBarScroll)
+            LibraryRootScreen(topBarScroll)
         }
     }
 }

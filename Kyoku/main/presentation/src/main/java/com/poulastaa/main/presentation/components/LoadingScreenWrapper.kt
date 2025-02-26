@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 @Composable
 internal fun LoadingScreenWrapper(
     paddingValues: PaddingValues,
-    scroll: TopAppBarScrollBehavior,
+    topAppBarScroll: TopAppBarScrollBehavior,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -34,7 +35,7 @@ internal fun LoadingScreenWrapper(
                 )
             )
             .fillMaxSize()
-            .nestedScroll(scroll.nestedScrollConnection)
+            .nestedScroll(topAppBarScroll.nestedScrollConnection)
             .verticalScroll(rememberScrollState())
             .windowInsetsPadding(WindowInsets(top = MAIN_TOP_BAR_PADDING))
             .padding(paddingValues),
