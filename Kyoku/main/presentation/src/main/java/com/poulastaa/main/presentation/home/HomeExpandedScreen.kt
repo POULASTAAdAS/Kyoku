@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +50,7 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.components.MainBoxImageCard
 import com.poulastaa.main.presentation.components.UiSaveItemType
 import com.poulastaa.main.presentation.home.components.HomeExpandedLoadingScreen
+import com.poulastaa.main.presentation.home.components.homeCommonContent
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,7 +80,7 @@ internal fun HomeExpandedScreen(
                         .padding(paddingValues)
                         .nestedScroll(scroll.nestedScrollConnection),
                     contentPadding = PaddingValues(
-                        top = MAIN_TOP_BAR_PADDING  + MaterialTheme.dimens.medium1,
+                        top = MAIN_TOP_BAR_PADDING + MaterialTheme.dimens.medium1,
                         start = MaterialTheme.dimens.medium1,
                         end = MaterialTheme.dimens.medium1,
                         bottom = MaterialTheme.dimens.medium1

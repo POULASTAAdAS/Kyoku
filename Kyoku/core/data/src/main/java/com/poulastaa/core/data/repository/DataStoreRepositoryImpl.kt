@@ -126,11 +126,11 @@ class DataStoreRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun readLibraryViewType(): Boolean = dataStore.data.catch {
+    override fun readLibraryViewType(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
         it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
-    }.first()
+    }
 
     override suspend fun logOut() {
         dataStore.edit {

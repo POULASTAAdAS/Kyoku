@@ -42,6 +42,8 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.components.MainBoxImageCard
 import com.poulastaa.main.presentation.home.components.HomeMediumLoadingScreen
 import com.poulastaa.main.presentation.home.components.HomeSavedItemCard
+import com.poulastaa.main.presentation.home.components.homeCommonContent
+import com.poulastaa.main.presentation.home.components.homeCompactMediumCommon
 import com.poulastaa.main.presentation.main.components.MAIN_TOP_BAR_PADDING
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -22,7 +22,7 @@ interface DatastoreRepository {
     suspend fun updateBDate(bDate: String)
 
     suspend fun storeLibraryViewType(isGrid: Boolean)
-    suspend fun readLibraryViewType(): Boolean
+    fun readLibraryViewType(): Flow<Boolean>
 
     suspend fun logOut()
 }

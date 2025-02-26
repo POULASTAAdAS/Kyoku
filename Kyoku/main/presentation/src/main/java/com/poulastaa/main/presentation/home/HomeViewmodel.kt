@@ -21,7 +21,7 @@ import kotlin.random.Random
 internal class HomeViewmodel @Inject constructor(
     private val repo: HomeRepository,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(prevData)
+    private val _state = MutableStateFlow(HomeUiState())
     val state = _state.onStart {
 
     }.stateIn(

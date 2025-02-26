@@ -273,7 +273,7 @@ private fun Navigation(
     NavHost(
         modifier = modifier,
         navController = nav,
-        startDestination = ScreensCore.Home
+        startDestination = ScreensCore.Library
     ) {
         composable<ScreensCore.Home>(
             enterTransition = {

@@ -20,7 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import javax.inject.Inject
 
-class OnlineFirstHomeRepository @Inject constructor(
+internal class OnlineFirstHomeRepository @Inject constructor(
     private val local: LocalHomeDatasource,
     private val remote: RemoteHomeDataSource,
     private val scope: CoroutineScope,
