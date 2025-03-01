@@ -79,9 +79,12 @@ class ThemChanger @Inject constructor() {
             val screenWidthPx = with(density) { config.screenWidthDp.dp.toPx() }
             val screenHeightPx = with(density) { config.screenHeightDp.dp.toPx() }
 
+            var initialOffset by remember { mutableStateOf(offset) }
+
             LaunchedEffect(offset) {
                 animationOffset = offset
                 if (offset.x > 0f) {
+                    initialOffset = offset
                     // Calculate maximum radius from touch point to screen corners
                     val maxRadius = listOf(
                         (animationOffset - Offset(0f, 0f)).getDistance(),
@@ -99,6 +102,8 @@ class ThemChanger @Inject constructor() {
                     // Reset offset after animation to trigger contraction
                     resetAnimation()
                 } else {
+                    animationOffset = initialOffset
+
                     // Animate circle contraction when offset is reset
                     revealSize.animateTo(
                         targetValue = 0f,

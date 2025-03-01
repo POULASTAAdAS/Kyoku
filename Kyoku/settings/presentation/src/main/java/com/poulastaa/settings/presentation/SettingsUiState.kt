@@ -9,6 +9,7 @@ data class SettingsUiState(
     val isLogoutDialogVisible: Boolean = false,
     val isDeleteAccountDialogVisible: Boolean = false,
     val offset: Offset = IntOffset(0, 0).toOffset(),
+    val dragOffset: IntOffset = IntOffset(0, 0),
     val themChangeAnimationTime: Int = 800,
     val user: UiUser = UiUser(),
 )

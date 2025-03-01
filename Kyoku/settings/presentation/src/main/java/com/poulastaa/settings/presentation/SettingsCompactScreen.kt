@@ -1,8 +1,10 @@
 package com.poulastaa.settings.presentation
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,37 +36,54 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
-import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
 import com.poulastaa.core.presentation.designsystem.ui.LogoutIcon
 import com.poulastaa.core.presentation.designsystem.ui.NightIcon
-import com.poulastaa.core.presentation.designsystem.ui.UserIcon
+import com.poulastaa.core.presentation.designsystem.ui.ShowMoreIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.settings.presentation.components.ProfilePlaceHolder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsCompactScreen(
     state: SettingsUiState,
     onAction: (SettingsUiAction) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
+    var offset: Offset = remember { Offset(0f, 0f) }
+    val haptic = LocalHapticFeedback.current
+    var dragScope by remember { mutableFloatStateOf(0f) }
+    var cardMaxWidth by remember { mutableIntStateOf(0) }
+    var sliderMaxWidth by remember { mutableIntStateOf(0) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -97,8 +117,7 @@ fun SettingsCompactScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = MaterialTheme.dimens.medium1)
-                .navigationBarsPadding(),
+                .padding(MaterialTheme.dimens.medium1),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
         ) {
             Card(
@@ -150,19 +169,29 @@ fun SettingsCompactScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        SubcomposeAsyncImage(
-                            model = state.user.profilePic,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            error = {
-                                ProfilePlaceHolder()
-                            },
-                            loading = {
-                                ProfilePlaceHolder()
-                            }
-                        )
+                        Card(
+                            modifier = Modifier.size(100.dp),
+                            shape = CircleShape,
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 6.dp
+                            ),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            SubcomposeAsyncImage(
+                                model = state.user.profilePic,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                error = {
+                                    ProfilePlaceHolder()
+                                },
+                                loading = {
+                                    ProfilePlaceHolder()
+                                }
+                            )
+                        }
 
                         Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
@@ -200,9 +229,15 @@ fun SettingsCompactScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Switch(
+                    modifier = Modifier.onGloballyPositioned {
+                        offset = Offset(
+                            x = it.positionInWindow().x + it.size.width / 2,
+                            y = it.positionInWindow().y + it.size.height / 2,
+                        )
+                    },
                     checked = ThemChanger.them,
                     onCheckedChange = {
-                        onAction(SettingsUiAction.OnToggleTheme)
+                        onAction(SettingsUiAction.OnStartThemChange(offset))
                     },
                     thumbContent = {
                         AnimatedContent(
@@ -274,7 +309,7 @@ fun SettingsCompactScreen(
                         Spacer(Modifier.weight(1f))
 
                         Icon(
-                            imageVector = ArrowDownIcon,
+                            imageVector = ShowMoreIcon,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(30.dp)
@@ -340,7 +375,10 @@ fun SettingsCompactScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(60.dp),
+                    .height(60.dp)
+                    .onGloballyPositioned {
+                        cardMaxWidth = it.size.width
+                    },
                 shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -349,47 +387,19 @@ fun SettingsCompactScreen(
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 8.dp,
                     pressedElevation = 0.dp
-                ),
-                onClick = { // todo remove this and make logout card slidable
-                    onAction(SettingsUiAction.OpenLogoutDialog)
-                }
+                )
             ) {
-                Row(
+                Box(
                     modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Card(
-                        shape = CircleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.error
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp
-                        ),
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .wrapContentWidth()
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxHeight(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.logout_label),
-                                modifier = Modifier
-                                    .padding(horizontal = MaterialTheme.dimens.medium3),
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.weight(1f))
-
                     Card(
                         modifier = Modifier
                             .padding(4.dp)
-                            .aspectRatio(1f),
+                            .aspectRatio(1f)
+                            .align(Alignment.CenterEnd)
+                            .onGloballyPositioned {
+                                sliderMaxWidth = it.size.width - 8 // removing padding
+                            },
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.error,
@@ -404,6 +414,67 @@ fun SettingsCompactScreen(
                                 imageVector = LogoutIcon,
                                 contentDescription = null,
                                 modifier = Modifier.size(30.dp)
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        repeat(3) {
+                            Icon(
+                                imageVector = ShowMoreIcon,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(45f)
+                                    .aspectRatio(1f)
+                                    .padding(12.dp)
+                            )
+                        }
+                    }
+
+                    Card(
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFCE9B99),
+                            contentColor = MaterialTheme.colorScheme.errorContainer
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 8.dp
+                        ),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .wrapContentWidth()
+                            .offset {
+                                IntOffset(dragScope.toInt(), 0)
+                            }
+                            .draggable(
+                                state = rememberDraggableState {
+                                    if (it > 0) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    dragScope = (it + dragScope).coerceAtLeast(0f)
+                                },
+                                orientation = Orientation.Horizontal,
+                                onDragStopped = { _ ->
+                                    dragScope = if (dragScope < cardMaxWidth / 2) 0f
+                                    else {
+//                                        onAction(SettingsUiAction.OpenLogoutDialog)
+                                        (cardMaxWidth - (sliderMaxWidth * 2)).toFloat()
+                                    }
+                                }
+                            )
+                            .align(Alignment.CenterStart)
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxHeight(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.logout_label),
+                                modifier = Modifier.padding(horizontal = MaterialTheme.dimens.medium3),
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -445,30 +516,6 @@ fun SettingsCompactScreen(
     }
 }
 
-@Composable
-fun ProfilePlaceHolder() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {}
-
-        Image(
-            imageVector = UserIcon,
-            contentDescription = null,
-            modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape),
-            colorFilter = ColorFilter.tint(
-                color = MaterialTheme.colorScheme.primary
-            )
-        )
-    }
-}
 
 @PreviewLightDark
 @Composable

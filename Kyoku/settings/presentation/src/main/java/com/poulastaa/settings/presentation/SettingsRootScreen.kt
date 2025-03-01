@@ -22,6 +22,7 @@ import com.poulastaa.core.presentation.designsystem.ThemChanger
 @Composable
 fun SettingsRootScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
+    navigateBack: () -> Unit,
     onLogOut: () -> Unit,
 ) {
     val context = LocalContext.current as Activity
@@ -51,9 +52,7 @@ fun SettingsRootScreen(
                 SettingsCompactScreen(
                     state = state,
                     onAction = viewModel::onAction,
-                    navigateBack = {
-
-                    }
+                    navigateBack = navigateBack
                 )
             },
             mediumContent = {

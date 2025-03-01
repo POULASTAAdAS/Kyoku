@@ -1,5 +1,6 @@
 package com.poulastaa.settings.presentation
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.toOffset
 import androidx.lifecycle.ViewModel
@@ -87,11 +88,14 @@ class SettingsViewModel @Inject constructor(
             SettingsUiAction.OnHistoryClick -> {}
             SettingsUiAction.OnProfileClick -> {}
 
-            SettingsUiAction.OnToggleTheme -> {
+            is SettingsUiAction.OnStartThemChange -> {
                 viewModelScope.launch {
-                    delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
-                    ThemChanger.toggleTheme()
+                    startThemChangeTransition(action.offset)
                 }
+            }
+
+            is SettingsUiAction.DragOffset -> {
+                drag(action.x)
             }
         }
     }
@@ -105,6 +109,27 @@ class SettingsViewModel @Inject constructor(
                     user = user
                 )
             }
+        }
+    }
+
+    private suspend fun startThemChangeTransition(offset: Offset?) {
+        offset?.let {
+            _state.update {
+                it.copy(
+                    offset = offset
+                )
+            }
+        }
+        // Delay for the animation to complete
+        delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
+        ThemChanger.toggleTheme()
+    }
+
+    fun drag(x: Int) {
+        _state.update {
+            it.copy(
+                dragOffset = IntOffset(x, 0)
+            )
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.poulastaa.settings.presentation
 
+import androidx.compose.ui.geometry.Offset
+
 sealed interface SettingsUiAction {
     data object ResetRevelAnimation : SettingsUiAction
 
@@ -11,7 +13,9 @@ sealed interface SettingsUiAction {
     data object CancelLogoutDialog : SettingsUiAction
     data object OnLogoutDialog : SettingsUiAction
 
-    data object OnToggleTheme : SettingsUiAction
+    data class OnStartThemChange(val offset: Offset) : SettingsUiAction
     data object OnProfileClick : SettingsUiAction
     data object OnHistoryClick : SettingsUiAction
+
+    data class DragOffset(val x: Int) : SettingsUiAction
 }

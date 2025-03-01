@@ -283,12 +283,17 @@ private fun NavGraphBuilder.coreGraph(
     }
 
     composable<Screens.Core.Settings> {
-        SettingsRootScreen {
-            nav.navigate(Screens.Auth.Intro) {
-                popUpTo(Screens.Auth.Intro) {
-                    inclusive = true
+        SettingsRootScreen(
+            navigateBack = {
+                nav.popBackStack()
+            },
+            onLogOut = {
+                nav.navigate(Screens.Auth.Intro) {
+                    popUpTo(Screens.Auth.Intro) {
+                        inclusive = true
+                    }
                 }
             }
-        }
+        )
     }
 }
