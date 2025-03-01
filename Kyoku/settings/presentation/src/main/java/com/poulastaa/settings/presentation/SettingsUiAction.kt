@@ -17,5 +17,5 @@ sealed interface SettingsUiAction {
     data object OnProfileClick : SettingsUiAction
     data object OnHistoryClick : SettingsUiAction
 
-    data class DragOffset(val x: Int) : SettingsUiAction
+    data class OnDragOffset(val x: Int) : SettingsUiAction
 }

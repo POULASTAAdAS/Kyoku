@@ -1,6 +1,5 @@
 package com.poulastaa.main.presentation.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.main.domain.repository.HomeRepository
@@ -35,7 +34,7 @@ internal class HomeViewmodel @Inject constructor(
 
     fun init(isInitial: Boolean) {
         viewModelScope.launch {
-            if (isInitial) repo.getHome()
+            if (isInitial && _state.value.staticData.suggestedArtist.isEmpty()) repo.getHome()
             loadData()
         }
     }

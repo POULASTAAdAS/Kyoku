@@ -302,6 +302,7 @@ class AuthenticationService(
         type = JWTRepository.TokenType.TOKEN_SUBMIT_NEW_PASSWORD
     )
 
+    // todo fix: server needed to be restarted after password reset else showing password miss match
     override suspend fun updatePassword(token: String, newPassword: String): UpdatePasswordStatusDto {
         if (db.isVerificationTokenUsed(token)) return UpdatePasswordStatusDto.TOKEN_USED
         val email = jwt.verifyToken(token, JWTRepository.TokenType.TOKEN_SUBMIT_NEW_PASSWORD)
@@ -309,6 +310,17 @@ class AuthenticationService(
 
         val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return UpdatePasswordStatusDto.USER_NOT_FOUND
         if (verifyPassword(newPassword, user.passwordHash)) return UpdatePasswordStatusDto.SAME_PASSWORD
+
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
+        println("password: $newPassword")
 
         db.storeUsedVerificationToken(token)
         db.updatePassword(email, newPassword.encryptPassword() ?: return UpdatePasswordStatusDto.SERVER_ERROR)

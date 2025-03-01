@@ -5,9 +5,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.toOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.core.domain.repository.DatastoreRepository
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.toUiUser
+import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
+import com.poulastaa.settings.domain.repository.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -24,7 +29,7 @@ import kotlin.time.toDuration
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val ds: DatastoreRepository,
+    private val repo: SettingRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsUiState())
     val state = _state
@@ -41,6 +46,8 @@ class SettingsViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun onAction(action: SettingsUiAction) {
+        if (_state.value.isLoading) return
+
         when (action) {
             SettingsUiAction.ResetRevelAnimation -> {
                 _state.update {
@@ -53,7 +60,7 @@ class SettingsViewModel @Inject constructor(
             SettingsUiAction.OpenLogoutDialog -> {
                 _state.update {
                     it.copy(
-                        isLogoutDialogVisible = true
+                        isLogoutBottomSheetVisible = true
                     )
                 }
             }
@@ -61,17 +68,28 @@ class SettingsViewModel @Inject constructor(
             SettingsUiAction.CancelLogoutDialog -> {
                 _state.update {
                     it.copy(
-                        isLogoutDialogVisible = false
+                        isLogoutBottomSheetVisible = false
                     )
                 }
             }
 
-            SettingsUiAction.OnLogoutDialog -> {}
+            SettingsUiAction.OnLogoutDialog -> {
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
+
+                viewModelScope.launch {
+                    repo.logOut()
+                    _uiEvent.send(SettingsUiEvent.OnLogOutSuccess)
+                }
+            }
 
             SettingsUiAction.OpenDeleteAccountDialog -> {
                 _state.update {
                     it.copy(
-                        isDeleteAccountDialogVisible = true
+                        isDeleteAccountVBottomSheetVisible = true
                     )
                 }
             }
@@ -79,14 +97,71 @@ class SettingsViewModel @Inject constructor(
             SettingsUiAction.CancelDeleteAccountDialog -> {
                 _state.update {
                     it.copy(
-                        isDeleteAccountDialogVisible = false
+                        isDeleteAccountVBottomSheetVisible = false
                     )
                 }
             }
 
-            SettingsUiAction.OnDeleteAccountDialog -> {}
-            SettingsUiAction.OnHistoryClick -> {}
-            SettingsUiAction.OnProfileClick -> {}
+            SettingsUiAction.OnDeleteAccountDialog -> {
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
+
+                viewModelScope.launch {
+                    when (val result = repo.deleteAccount()) {
+                        is Result.Error -> {
+                            when (result.error) {
+                                DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                    SettingsUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_no_internet
+                                        )
+                                    )
+                                )
+
+                                else -> _uiEvent.send(
+                                    SettingsUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.error_something_went_wrong
+                                        )
+                                    )
+                                )
+                            }
+                        }
+
+                        is Result.Success -> {
+                            _uiEvent.send(
+                                SettingsUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        R.string.account_deleted
+                                    )
+                                )
+                            )
+                            _uiEvent.send(SettingsUiEvent.OnLogOutSuccess)
+                        }
+                    }
+
+                    _state.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+
+            SettingsUiAction.OnHistoryClick -> {
+                viewModelScope.launch {
+                    _uiEvent.send(SettingsUiEvent.Navigate(SettingsAllowedNavigationScreens.HISTORY))
+                }
+            }
+
+            SettingsUiAction.OnProfileClick -> {
+                viewModelScope.launch {
+                    _uiEvent.send(SettingsUiEvent.Navigate(SettingsAllowedNavigationScreens.HISTORY))
+                }
+            }
 
             is SettingsUiAction.OnStartThemChange -> {
                 viewModelScope.launch {
@@ -94,15 +169,19 @@ class SettingsViewModel @Inject constructor(
                 }
             }
 
-            is SettingsUiAction.DragOffset -> {
-                drag(action.x)
+            is SettingsUiAction.OnDragOffset -> {
+                _state.update {
+                    it.copy(
+                        dragOffset = IntOffset(action.x, 0)
+                    )
+                }
             }
         }
     }
 
     private fun loadUser() {
         viewModelScope.launch {
-            val user = ds.readLocalUser().toUiUser()
+            val user = repo.getUser().toUiUser()
 
             _state.update {
                 it.copy(
@@ -123,13 +202,5 @@ class SettingsViewModel @Inject constructor(
         // Delay for the animation to complete
         delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
         ThemChanger.toggleTheme()
-    }
-
-    fun drag(x: Int) {
-        _state.update {
-            it.copy(
-                dragOffset = IntOffset(x, 0)
-            )
-        }
     }
 }

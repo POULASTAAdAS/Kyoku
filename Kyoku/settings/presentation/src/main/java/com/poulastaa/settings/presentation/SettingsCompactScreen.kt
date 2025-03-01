@@ -36,6 +36,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -80,9 +81,14 @@ fun SettingsCompactScreen(
 ) {
     var offset: Offset = remember { Offset(0f, 0f) }
     val haptic = LocalHapticFeedback.current
+
     var dragScope by remember { mutableFloatStateOf(0f) }
     var cardMaxWidth by remember { mutableIntStateOf(0) }
     var sliderMaxWidth by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(dragScope > 0 && state.isLogoutBottomSheetVisible) {
+        dragScope = 0f
+    }
 
     Scaffold(
         topBar = {
@@ -287,7 +293,7 @@ fun SettingsCompactScreen(
                         pressedElevation = 0.dp
                     ),
                     onClick = {
-                        // todo on profile click
+                        // todo change theme
                     }
                 ) {
                     Row(
@@ -460,7 +466,7 @@ fun SettingsCompactScreen(
                                 onDragStopped = { _ ->
                                     dragScope = if (dragScope < cardMaxWidth / 2) 0f
                                     else {
-//                                        onAction(SettingsUiAction.OpenLogoutDialog)
+                                        onAction(SettingsUiAction.OpenLogoutDialog)
                                         (cardMaxWidth - (sliderMaxWidth * 2)).toFloat()
                                     }
                                 }

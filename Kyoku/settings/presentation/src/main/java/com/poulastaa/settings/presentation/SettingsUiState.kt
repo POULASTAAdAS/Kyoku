@@ -6,8 +6,9 @@ import androidx.compose.ui.unit.toOffset
 import com.poulastaa.core.presentation.designsystem.model.UiUser
 
 data class SettingsUiState(
-    val isLogoutDialogVisible: Boolean = false,
-    val isDeleteAccountDialogVisible: Boolean = false,
+    val isLoading: Boolean = false,
+    val isLogoutBottomSheetVisible: Boolean = false,
+    val isDeleteAccountVBottomSheetVisible: Boolean = false,
     val offset: Offset = IntOffset(0, 0).toOffset(),
     val dragOffset: IntOffset = IntOffset(0, 0),
     val themChangeAnimationTime: Int = 800,

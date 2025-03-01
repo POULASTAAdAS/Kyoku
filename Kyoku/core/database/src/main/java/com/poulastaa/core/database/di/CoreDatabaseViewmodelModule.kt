@@ -11,6 +11,7 @@ import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
+import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
@@ -18,6 +19,7 @@ import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalLibraryDatasource
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
+import com.poulastaa.core.domain.repository.LocalSettingsDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,4 +86,10 @@ internal object CoreDatabaseViewmodelModule {
     fun provideLocalLibraryDatasource(
         dao: LibraryDao,
     ): LocalLibraryDatasource = RoomLocalLibraryDatasource(dao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalSettingsDatasource(
+        database: KyokuDatabase,
+    ): LocalSettingsDatasource = RoomLocalSettingsDatasource(database)
 }

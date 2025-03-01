@@ -22,6 +22,7 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.main.presentation.main.MainRootScreen
+import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
 import com.poulastaa.settings.presentation.SettingsRootScreen
 import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
@@ -292,6 +293,12 @@ private fun NavGraphBuilder.coreGraph(
                     popUpTo(Screens.Auth.Intro) {
                         inclusive = true
                     }
+                }
+            },
+            navigate = {
+                when (it) {
+                    SettingsAllowedNavigationScreens.PROFILE -> nav.navigate(Screens.Core.Profile)
+                    SettingsAllowedNavigationScreens.HISTORY -> nav.navigate(Screens.Core.History)
                 }
             }
         )
