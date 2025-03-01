@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
@@ -61,6 +62,7 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 fun SettingsCompactScreen(
     state: SettingsUiState,
     onAction: (SettingsUiAction) -> Unit,
+    navigateBack: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -74,9 +76,7 @@ fun SettingsCompactScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            // todo: handle back press
-                        }
+                        onClick = navigateBack
                     ) {
                         Icon(
                             imageVector = CloseIcon,
@@ -112,7 +112,7 @@ fun SettingsCompactScreen(
                     pressedElevation = 0.dp
                 ),
                 onClick = {
-                    // todo on profile click
+                    onAction(SettingsUiAction.OnProfileClick)
                 }
             ) {
                 Column(
@@ -200,13 +200,13 @@ fun SettingsCompactScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Switch(
-                    checked = state.isDarkTheme,
+                    checked = ThemChanger.them,
                     onCheckedChange = {
-                        // todo: handle dark theme
+                        onAction(SettingsUiAction.OnToggleTheme)
                     },
                     thumbContent = {
                         AnimatedContent(
-                            state.isDarkTheme,
+                            ThemChanger.them,
                             label = "switch thumb animation",
                         ) {
                             when (it) {
@@ -294,7 +294,7 @@ fun SettingsCompactScreen(
                     pressedElevation = 0.dp
                 ),
                 onClick = {
-                    // todo on history click
+                    onAction(SettingsUiAction.OnHistoryClick)
                 }
             ) {
                 Row(
@@ -351,7 +351,7 @@ fun SettingsCompactScreen(
                     pressedElevation = 0.dp
                 ),
                 onClick = { // todo remove this and make logout card slidable
-                    onAction(SettingsUiAction.OnLogOutCLick)
+                    onAction(SettingsUiAction.OpenLogoutDialog)
                 }
             ) {
                 Row(
@@ -416,7 +416,8 @@ fun SettingsCompactScreen(
                 modifier = Modifier
                     .fillMaxWidth(.6f)
                     .height(50.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .align(Alignment.CenterHorizontally)
+                    .navigationBarsPadding(),
                 shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.error,
@@ -427,7 +428,7 @@ fun SettingsCompactScreen(
                     pressedElevation = 0.dp
                 ),
                 onClick = {
-                    // todo delete account
+                    onAction(SettingsUiAction.OpenDeleteAccountDialog)
                 }
             ) {
                 Box(
@@ -478,7 +479,7 @@ private fun Preview() {
         ) {
             SettingsCompactScreen(
                 state = SettingsUiState(),
-                onAction = {}
+                onAction = {}, {}
             )
         }
     }

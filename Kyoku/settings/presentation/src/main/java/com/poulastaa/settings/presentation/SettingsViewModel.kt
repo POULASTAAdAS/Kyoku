@@ -1,11 +1,15 @@
 package com.poulastaa.settings.presentation
 
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.toOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.repository.DatastoreRepository
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.toUiUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -14,6 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -35,11 +41,56 @@ class SettingsViewModel @Inject constructor(
 
     fun onAction(action: SettingsUiAction) {
         when (action) {
-            SettingsUiAction.OnLogOutCLick -> {
+            SettingsUiAction.ResetRevelAnimation -> {
+                _state.update {
+                    it.copy(
+                        offset = IntOffset(0, 0).toOffset(),
+                    )
+                }
+            }
+
+            SettingsUiAction.OpenLogoutDialog -> {
+                _state.update {
+                    it.copy(
+                        isLogoutDialogVisible = true
+                    )
+                }
+            }
+
+            SettingsUiAction.CancelLogoutDialog -> {
+                _state.update {
+                    it.copy(
+                        isLogoutDialogVisible = false
+                    )
+                }
+            }
+
+            SettingsUiAction.OnLogoutDialog -> {}
+
+            SettingsUiAction.OpenDeleteAccountDialog -> {
+                _state.update {
+                    it.copy(
+                        isDeleteAccountDialogVisible = true
+                    )
+                }
+            }
+
+            SettingsUiAction.CancelDeleteAccountDialog -> {
+                _state.update {
+                    it.copy(
+                        isDeleteAccountDialogVisible = false
+                    )
+                }
+            }
+
+            SettingsUiAction.OnDeleteAccountDialog -> {}
+            SettingsUiAction.OnHistoryClick -> {}
+            SettingsUiAction.OnProfileClick -> {}
+
+            SettingsUiAction.OnToggleTheme -> {
                 viewModelScope.launch {
-                    ds.logOut().also {
-                        _uiEvent.send(SettingsUiEvent.OnLogOutSuccess)
-                    }
+                    delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
+                    ThemChanger.toggleTheme()
                 }
             }
         }
