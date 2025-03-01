@@ -101,10 +101,18 @@ fun SettingsRootScreen(
                 )
             },
             mediumContent = {
-
+                SettingsCompactScreen(
+                    state = state,
+                    onAction = viewModel::onAction,
+                    navigateBack = navigateBack
+                )
             },
             expandedContent = {
-
+                SettingsExpandedScreen(
+                    state = state,
+                    onAction = viewModel::onAction,
+                    navigateBack = navigateBack
+                )
             }
         )
 
