@@ -103,7 +103,7 @@
     <string name="album_removed_from_favourite">Album removed from library</string>
     <string name="added_as_playlist">added as playlist</string>
     <string name="playlist_name_conflict">Playlist can\'t have same name</string>
-    <string name="setting">Setting</string>
+    <string name="settings">Settings</string>
     <string name="account">Account</string>
     <string name="logout_text">"Are you sure you want to logout ? "</string>
     <string name="yes">yes</string>
@@ -149,7 +149,7 @@
     <string name="song">Song</string>
     <string name="nothing_to_show">Nothing to show</string>
     <string name="release_year">"Release year: "</string>
-    <string name="profile_title">Profile</string>
+    <string name="profile">Profile</string>
     <string name="saved_playlist">saved playlist</string>
     <string name="saved_albums">saved albums</string>
     <string name="followed_artists">followed artists</string>
@@ -171,4 +171,6 @@
     <string name="Theme_title">T H E M E</string>
     <string name="lofi_mix">Lofi mix</string>
     <string name="account_deleted">It\'s sad to see you go :(</string>
+    <string name="favourite_songs">favourite songs</string>
+    <string name="go_to_library">go to library</string>
 </resources>

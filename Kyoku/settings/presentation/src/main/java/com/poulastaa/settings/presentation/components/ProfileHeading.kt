@@ -39,7 +39,7 @@ internal fun ProfileHeading() {
         Spacer(Modifier.width(MaterialTheme.dimens.small3))
 
         Text(
-            text = stringResource(R.string.profile_title),
+            text = stringResource(R.string.profile),
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold
         )

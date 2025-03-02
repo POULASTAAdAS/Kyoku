@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppBasicTopBar
 import com.poulastaa.settings.presentation.components.DeleteAccount
 import com.poulastaa.settings.presentation.components.HistoryCard
 import com.poulastaa.settings.presentation.components.LogoutCard
 import com.poulastaa.settings.presentation.components.ProfileHeading
 import com.poulastaa.settings.presentation.components.ProfileImageCard
-import com.poulastaa.settings.presentation.components.SettingsTopAppBar
 import com.poulastaa.settings.presentation.components.ThemModeChanger
 import com.poulastaa.settings.presentation.components.ThemPicker
 
@@ -49,7 +49,7 @@ fun SettingsCompactScreen(
 
     Scaffold(
         topBar = {
-            SettingsTopAppBar {
+            AppBasicTopBar(R.string.settings) {
                 navigateBack()
             }
         },

@@ -1,6 +1,5 @@
 package com.poulastaa.core.data.repository
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -116,6 +115,18 @@ class DataStoreRepositoryImpl @Inject constructor(
         dataStore.edit {
             it[PreferencesKeys.LOCAL_USER] = gson.toJson(updatedUser)
         }
+    }
+
+    override suspend fun readBDate(): String? {
+        val pref = dataStore.data.catch {
+            emit(emptyPreferences())
+        }.first()
+
+        val response = pref[PreferencesKeys.LOCAL_USER]?.let {
+            gson.fromJson(it, UserSerializable::class.java)
+        }
+
+        return response?.bDate
     }
 
     override suspend fun storeLibraryViewType(isGrid: Boolean) {

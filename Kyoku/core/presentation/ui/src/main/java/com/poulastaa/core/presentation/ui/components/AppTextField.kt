@@ -10,6 +10,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -42,6 +43,20 @@ fun AppTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(.7f),
+        unfocusedLabelColor = MaterialTheme.colorScheme.primary.copy(.7f),
+        unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
+        unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
+
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
+        focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+
+        focusedTextColor = MaterialTheme.colorScheme.primary,
+        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+    ),
     onClearClick: () -> Unit = {},
 ) {
     OutlinedTextField(
@@ -100,20 +115,7 @@ fun AppTextField(
             )
         },
         shape = MaterialTheme.shapes.extraLarge,
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary.copy(.7f),
-            unfocusedLabelColor = MaterialTheme.colorScheme.primary.copy(.7f),
-            unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
-            unfocusedTrailingIconColor = MaterialTheme.colorScheme.primary.copy(.7f),
-
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
-            focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-
-            focusedTextColor = MaterialTheme.colorScheme.primary,
-            unfocusedTextColor = MaterialTheme.colorScheme.primary,
-        ),
+        colors = colors,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = imeAction

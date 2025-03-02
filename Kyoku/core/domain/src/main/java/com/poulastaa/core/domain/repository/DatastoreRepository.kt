@@ -20,6 +20,7 @@ interface DatastoreRepository {
     suspend fun storeLocalUser(user: DtoUser)
     suspend fun readLocalUser(): DtoUser
     suspend fun updateBDate(bDate: String)
+    suspend fun readBDate(): String?
 
     suspend fun storeLibraryViewType(isGrid: Boolean)
     fun readLibraryViewType(): Flow<Boolean>

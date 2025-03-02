@@ -22,6 +22,7 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.main.presentation.main.MainRootScreen
+import com.poulastaa.profile.presentation.ProfileRootScreen
 import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
 import com.poulastaa.settings.presentation.SettingsRootScreen
 import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
@@ -276,7 +277,9 @@ private fun NavGraphBuilder.coreGraph(
     }
 
     composable<Screens.Core.Profile> {
-
+        ProfileRootScreen {
+            nav.popBackStack()
+        }
     }
 
     composable<Screens.Core.History> {

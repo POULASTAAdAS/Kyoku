@@ -195,7 +195,7 @@ internal fun AppNavigationRail(
                     )
 
                     Text(
-                        text = stringResource(R.string.profile_title),
+                        text = stringResource(R.string.profile),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = MaterialTheme.typography.bodySmall.fontSize,
                         color = MaterialTheme.colorScheme.primary,
