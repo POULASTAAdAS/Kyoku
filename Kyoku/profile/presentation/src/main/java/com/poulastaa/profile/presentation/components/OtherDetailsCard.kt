@@ -17,7 +17,6 @@ import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.EmailAlternateIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
-
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 internal fun OtherDetailsCard(email: String, bDate: String) {
@@ -42,7 +41,7 @@ internal fun OtherDetailsCard(email: String, bDate: String) {
 
         Spacer(Modifier.weight(1f))
 
-        ProfileOutlinedCard(Modifier) {
+        if (bDate.isNotEmpty() && bDate.isNotBlank()) ProfileOutlinedCard(Modifier) {
             Row(
                 modifier = Modifier.padding(MaterialTheme.dimens.medium1),
                 verticalAlignment = Alignment.CenterVertically

@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
@@ -66,4 +67,5 @@ internal abstract class KyokuDatabase : RoomDatabase() {
     abstract val importPlaylistDao: ImportPlaylistDao
     abstract val homeDao: HomeDao
     abstract val libraryDao: LibraryDao
+    abstract val profileDao: ProfileDao
 }

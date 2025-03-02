@@ -4,11 +4,13 @@ import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.LibraryDao
+import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDatasource
+import com.poulastaa.core.database.repository.RoomLocalProfileDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
@@ -17,6 +19,7 @@ import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalLibraryDatasource
+import com.poulastaa.core.domain.repository.LocalProfileDatasource
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.LocalSettingsDatasource
@@ -92,4 +95,16 @@ internal object CoreDatabaseViewmodelModule {
     fun provideLocalSettingsDatasource(
         database: KyokuDatabase,
     ): LocalSettingsDatasource = RoomLocalSettingsDatasource(database)
+
+    @Provides
+    @ViewModelScoped
+    fun provideProfileDao(
+        database: KyokuDatabase,
+    ): ProfileDao = database.profileDao
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalProfileDatasource(
+        profileDao: ProfileDao
+    ): LocalProfileDatasource = RoomLocalProfileDatasource(profileDao)
 }

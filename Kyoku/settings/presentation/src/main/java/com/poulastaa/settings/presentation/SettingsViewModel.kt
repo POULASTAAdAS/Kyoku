@@ -159,7 +159,7 @@ class SettingsViewModel @Inject constructor(
 
             SettingsUiAction.OnProfileClick -> {
                 viewModelScope.launch {
-                    _uiEvent.send(SettingsUiEvent.Navigate(SettingsAllowedNavigationScreens.HISTORY))
+                    _uiEvent.send(SettingsUiEvent.Navigate(SettingsAllowedNavigationScreens.PROFILE))
                 }
             }
 
