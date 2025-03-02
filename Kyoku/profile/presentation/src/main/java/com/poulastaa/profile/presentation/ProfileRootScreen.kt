@@ -5,6 +5,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,7 +40,11 @@ fun ProfileRootScreen(
             )
         },
         expandedContent = {
-
+            ProfileExpandedScreen(
+                state = state,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

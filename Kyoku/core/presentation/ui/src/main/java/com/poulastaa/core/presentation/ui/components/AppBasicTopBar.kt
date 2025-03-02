@@ -22,26 +22,27 @@ fun AppBasicTopBar(
     @StringRes title: Int,
     navigateBack: () -> Unit,
 ) {
-    CenterAlignedTopAppBar(title = {
-        Text(
-            text = stringResource(title),
-            fontWeight = FontWeight.Bold,
-            fontSize = MaterialTheme.typography.headlineMedium.fontSize
-        )
-    }, navigationIcon = {
-        IconButton(
-            onClick = navigateBack
-        ) {
-            Icon(
-                imageVector = CloseIcon,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(title),
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.headlineMedium.fontSize
             )
-        }
-    }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary,
-        navigationIconContentColor = MaterialTheme.colorScheme.primary
-    )
+        }, navigationIcon = {
+            IconButton(
+                onClick = navigateBack
+            ) {
+                Icon(
+                    imageVector = CloseIcon,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color.Transparent,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
