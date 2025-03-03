@@ -56,7 +56,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.coloredShadow
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -91,7 +91,7 @@ fun MainRootScreen(
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
-    val triple = ThemChanger.compute(
+    val triple = ThemModeChanger.compute(
         density,
         configuration,
         state.offset,
@@ -129,7 +129,7 @@ fun MainRootScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = ThemChanger.getGradiantBackground()
+                                colors = ThemModeChanger.getGradiantBackground()
                             )
                         )
                         .fillMaxSize(),

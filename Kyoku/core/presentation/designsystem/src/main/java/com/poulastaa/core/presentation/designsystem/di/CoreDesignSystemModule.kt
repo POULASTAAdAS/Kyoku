@@ -3,6 +3,7 @@ package com.poulastaa.core.presentation.designsystem.di
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.presentation.designsystem.CacheImageReq
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,18 +15,21 @@ import javax.inject.Singleton
 object CoreDesignSystemModule {
     @Provides
     @Singleton
-    fun provideImageCacheReq(
-        ds: DatastoreRepository,
-    ): CacheImageReq {
+    fun provideImageCacheReq(ds: DatastoreRepository): CacheImageReq {
         CacheImageReq.init(ds)
         return CacheImageReq()
     }
 
     @Provides
     @Singleton
-    fun provideThemChangerViewmodel(
-        ds: DatastoreRepository,
-    ): ThemChanger {
+    fun provideThemModeChangerViewmodel(ds: DatastoreRepository): ThemModeChanger {
+        ThemModeChanger.init(ds)
+        return ThemModeChanger()
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemChangerViewmodel(ds: DatastoreRepository): ThemChanger {
         ThemChanger.init(ds)
         return ThemChanger()
     }

@@ -2,8 +2,15 @@ package com.poulastaa.settings.presentation
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,14 +20,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -30,6 +47,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -39,10 +60,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.core.domain.model.ThemColor
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.ui.ArrowBackIcon
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
 
@@ -61,7 +86,7 @@ fun SettingsRootScreen(
 
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
-    val triple = ThemChanger.compute(
+    val triple = ThemModeChanger.compute(
         density,
         configuration,
         state.offset,
@@ -123,6 +148,117 @@ fun SettingsRootScreen(
                     radius = triple.revealSize.value,
                     center = triple.center
                 )
+            }
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            visible = state.isThemChangeScreenVisible,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
+        ) {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.pic_them),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                                modifier = Modifier.padding(start = MaterialTheme.dimens.medium1)
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = {
+                                    viewModel.onAction(SettingsUiAction.OnThemPicToggle)
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = ArrowBackIcon,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .rotate(-90f)
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                }
+            ) { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = ThemModeChanger.getGradiantBackground()
+                            )
+                        )
+                        .padding(MaterialTheme.dimens.medium1)
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1)
+                ) {
+                    ThemColor.entries.forEach { them ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 5.dp,
+                                pressedElevation = 0.dp
+                            ),
+                            onClick = {
+                                viewModel.onAction(SettingsUiAction.OnThemChange(them))
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        brush = Brush.linearGradient(
+                                            colors = ThemChanger.themBackground(them)
+                                        )
+                                    )
+                                    .fillMaxWidth()
+                                    .padding(MaterialTheme.dimens.medium1)
+                            ) {
+                                Text(
+                                    text = when (them) {
+                                        ThemColor.GREEN -> stringResource(R.string.royal_green)
+                                        ThemColor.BLUE -> stringResource(R.string.royal_blue)
+                                    },
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                )
+
+                                Spacer(Modifier.weight(1f))
+
+                                AnimatedVisibility(visible = ThemChanger.themColor == them) {
+                                    Icon(
+                                        imageVector = CheckIcon,
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary)
+                                            .padding(3.dp),
+                                        tint = MaterialTheme.colorScheme.background
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            BackHandler {
+                viewModel.onAction(SettingsUiAction.OnThemPicToggle)
             }
         }
     }

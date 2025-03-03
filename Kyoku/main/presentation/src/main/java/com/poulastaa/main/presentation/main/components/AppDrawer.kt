@@ -56,7 +56,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.UiUser
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
@@ -90,7 +90,7 @@ internal fun AppDrawer(
         modifier = Modifier
             .background(
                 brush = Brush.linearGradient(
-                    colors = ThemChanger.getGradiantBackground().map {
+                    colors = ThemModeChanger.getGradiantBackground().map {
                         it.copy(alpha = .7f)
                     }
                 )
@@ -230,7 +230,7 @@ internal fun AppDrawer(
                     }
             ) {
                 Icon(
-                    imageVector = if (ThemChanger.them == isSystemInDarkTheme()) DayIcon else NightIcon,
+                    imageVector = if (ThemModeChanger.themMode == isSystemInDarkTheme()) DayIcon else NightIcon,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -285,7 +285,7 @@ private fun Preview() {
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = ThemChanger.getGradiantBackground().map {
+                        colors = ThemModeChanger.getGradiantBackground().map {
                             it.copy(alpha = .8f)
                         }
                     )

@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.TextHolder
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.setup.presentation.set_bdate.components.SetBDateContent
@@ -35,7 +35,7 @@ internal fun SetBDateMediumScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = ThemChanger.getGradiantBackground()
+                        colors = ThemModeChanger.getGradiantBackground()
                     )
                 ),
             contentAlignment = Alignment.Center

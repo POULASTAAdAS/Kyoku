@@ -173,4 +173,7 @@
     <string name="account_deleted">It\'s sad to see you go :(</string>
     <string name="favourite_songs">favourite songs</string>
     <string name="go_to_library">go to library</string>
+    <string name="pic_them">Pic Them</string>
+    <string name="royal_blue">Royal Blue</string>
+    <string name="royal_green">Royal Green</string>
 </resources>

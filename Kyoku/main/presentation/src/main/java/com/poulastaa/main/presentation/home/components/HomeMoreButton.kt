@@ -22,7 +22,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.isElementVisible
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.ShowMoreIcon
@@ -33,7 +33,7 @@ fun HomeMoreButton(
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(
-            if (ThemChanger.them) R.raw.lottie_more_light else R.raw.lottie_more_dark
+            if (ThemModeChanger.themMode) R.raw.lottie_more_light else R.raw.lottie_more_dark
         )
     )
     val animatable = rememberLottieAnimatable()

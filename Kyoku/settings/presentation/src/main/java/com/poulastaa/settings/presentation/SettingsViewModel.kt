@@ -9,6 +9,7 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.toUiUser
 import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
@@ -44,6 +45,8 @@ class SettingsViewModel @Inject constructor(
 
     private val _uiEvent = Channel<SettingsUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var isThemChangeCoolDown = false
 
     fun onAction(action: SettingsUiAction) {
         if (_state.value.isLoading) return
@@ -169,6 +172,24 @@ class SettingsViewModel @Inject constructor(
                 }
             }
 
+            SettingsUiAction.OnThemPicToggle -> {
+                _state.update {
+                    it.copy(
+                        isThemChangeScreenVisible = it.isThemChangeScreenVisible.not()
+                    )
+                }
+            }
+
+            is SettingsUiAction.OnThemChange -> {
+                if (isThemChangeCoolDown) return
+                if (action.them == ThemChanger.themColor) return
+
+                ThemChanger.changeThem(action.them)
+                viewModelScope.launch {
+                    themChangeCoolDown()
+                }
+            }
+
             is SettingsUiAction.OnDragOffset -> {
                 _state.update {
                     it.copy(
@@ -201,6 +222,12 @@ class SettingsViewModel @Inject constructor(
         }
         // Delay for the animation to complete
         delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
-        ThemChanger.toggleTheme()
+        ThemModeChanger.toggleThemeMode()
+    }
+
+    private suspend fun themChangeCoolDown() {
+        isThemChangeCoolDown = true
+        delay(800)
+        isThemChangeCoolDown = false
     }
 }

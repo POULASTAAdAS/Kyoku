@@ -56,7 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.CalenderIcon
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
@@ -309,7 +309,7 @@ internal fun AppNavigationRail(
                     }
             ) {
                 Icon(
-                    imageVector = if (isSystemInDarkTheme() == ThemChanger.them) DayIcon else NightIcon,
+                    imageVector = if (isSystemInDarkTheme() == ThemModeChanger.themMode) DayIcon else NightIcon,
                     contentDescription = null,
                     modifier = Modifier.padding(4.dp)
                 )

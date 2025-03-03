@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.core.presentation.designsystem.noRippleCombineClickable
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -74,7 +74,7 @@ internal fun HomeExpandedScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = ThemChanger.getGradiantBackground()
+                                colors = ThemModeChanger.getGradiantBackground()
                             )
                         )
                         .padding(paddingValues)

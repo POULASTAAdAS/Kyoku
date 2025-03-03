@@ -133,7 +133,9 @@ fun SettingsCompactScreen(
                     Modifier
                         .fillMaxWidth()
                         .height(65.dp)
-                )
+                ) {
+                    onAction(SettingsUiAction.OnThemPicToggle)
+                }
             }
 
             HistoryCard(Modifier.fillMaxWidth(), onAction)

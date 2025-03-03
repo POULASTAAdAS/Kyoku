@@ -158,7 +158,9 @@ internal fun SettingsExpandedScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .height(cardHeightDp / 3)
-                        )
+                        ) {
+                            onAction(SettingsUiAction.OnThemPicToggle)
+                        }
                     }
 
                     Spacer(Modifier.height(MaterialTheme.dimens.medium1))

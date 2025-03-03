@@ -9,6 +9,7 @@ data class SettingsUiState(
     val isLoading: Boolean = false,
     val isLogoutBottomSheetVisible: Boolean = false,
     val isDeleteAccountVBottomSheetVisible: Boolean = false,
+    val isThemChangeScreenVisible: Boolean = false,
     val offset: Offset = IntOffset(0, 0).toOffset(),
     val dragOffset: IntOffset = IntOffset(0, 0),
     val themChangeAnimationTime: Int = 800,

@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.main.presentation.library.components.LibraryLoadingScreen
 import com.poulastaa.main.presentation.library.components.libraryFilterRow
@@ -54,7 +54,7 @@ internal fun LibraryExpandedScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = ThemChanger.getGradiantBackground()
+                                colors = ThemModeChanger.getGradiantBackground()
                             )
                         )
                         .padding(paddingValues)

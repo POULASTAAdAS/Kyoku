@@ -26,12 +26,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.ui.SongIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppCacheImage
+import com.poulastaa.setup.presentation.spotify_playlist.UiPlaylist
 import com.poulastaa.setup.presentation.spotify_playlist.UiPrevPlaylist
 
 @Composable

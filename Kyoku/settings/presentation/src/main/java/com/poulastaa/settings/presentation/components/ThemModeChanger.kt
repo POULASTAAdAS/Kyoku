@@ -13,7 +13,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.unit.dp
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.DayIcon
 import com.poulastaa.core.presentation.designsystem.ui.NightIcon
 import com.poulastaa.settings.presentation.SettingsUiAction
@@ -32,13 +32,13 @@ internal fun ThemModeChanger(
                 y = it.positionInWindow().y + it.size.height / 2,
             )
         },
-        checked = ThemChanger.them,
+        checked = ThemModeChanger.themMode,
         onCheckedChange = {
             onAction(SettingsUiAction.OnStartThemChange(offset))
         },
         thumbContent = {
             AnimatedContent(
-                ThemChanger.them,
+                ThemModeChanger.themMode,
                 label = "switch thumb animation",
             ) {
                 when (it) {

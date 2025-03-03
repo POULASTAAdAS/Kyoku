@@ -19,7 +19,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.profile.presentation.UiItemType
 import com.poulastaa.profile.presentation.UiSavedItems
 
@@ -31,10 +31,10 @@ internal fun ItemCard(
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(
             when (item.itemType) {
-                UiItemType.PLAYLIST -> if (ThemChanger.them) R.raw.lottie_playlist_dark else R.raw.lottie_playlist_light
-                UiItemType.ALBUM -> if (ThemChanger.them) R.raw.lottie_album_dark else R.raw.lottie_album_light
-                UiItemType.ARTIST -> if (ThemChanger.them) R.raw.lottie_artist_dark else R.raw.lottie_artist_light
-                UiItemType.FAVOURITE -> if (ThemChanger.them) R.raw.lottie_favourite_dark else R.raw.lottie_favourite_light
+                UiItemType.PLAYLIST -> if (ThemModeChanger.themMode) R.raw.lottie_playlist_dark else R.raw.lottie_playlist_light
+                UiItemType.ALBUM -> if (ThemModeChanger.themMode) R.raw.lottie_album_dark else R.raw.lottie_album_light
+                UiItemType.ARTIST -> if (ThemModeChanger.themMode) R.raw.lottie_artist_dark else R.raw.lottie_artist_light
+                UiItemType.FAVOURITE -> if (ThemModeChanger.themMode) R.raw.lottie_favourite_dark else R.raw.lottie_favourite_light
             }
         )
     )

@@ -19,12 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.domain.model.ThemColor
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ui.ShowMoreIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun ThemPicker(modifier: Modifier) {
+internal fun ThemPicker(
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
     Card(
         modifier = modifier,
         shape = CircleShape,
@@ -35,36 +40,37 @@ internal fun ThemPicker(modifier: Modifier) {
             defaultElevation = 6.dp,
             pressedElevation = 0.dp
         ),
-        onClick = {
-            // todo change theme
-        }
+        onClick = onClick
     ) {
-       Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-           Row(
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(
-                       vertical = MaterialTheme.dimens.small3,
-                       horizontal = MaterialTheme.dimens.medium1
-                   ),
-               verticalAlignment = Alignment.CenterVertically,
-           ) {
-               Text(
-                   text = stringResource(R.string.color_type_1),
-                   color = MaterialTheme.colorScheme.primary,
-                   fontWeight = FontWeight.Bold,
-                   fontSize = MaterialTheme.typography.headlineSmall.fontSize
-               )
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = MaterialTheme.dimens.small3,
+                        horizontal = MaterialTheme.dimens.medium1
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = when (ThemChanger.themColor) {
+                        ThemColor.GREEN -> stringResource(R.string.royal_green)
+                        ThemColor.BLUE -> stringResource(R.string.royal_blue)
+                    },
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize
+                )
 
-               Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(1f))
 
-               Icon(
-                   imageVector = ShowMoreIcon,
-                   contentDescription = null,
-                   tint = MaterialTheme.colorScheme.primary,
-                   modifier = Modifier.size(30.dp)
-               )
-           }
-       }
+                Icon(
+                    imageVector = ShowMoreIcon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
     }
 }

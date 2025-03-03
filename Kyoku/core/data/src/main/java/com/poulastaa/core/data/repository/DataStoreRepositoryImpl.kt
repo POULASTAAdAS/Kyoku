@@ -12,6 +12,7 @@ import com.poulastaa.core.data.toUser
 import com.poulastaa.core.data.toUserSerializable
 import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.core.domain.model.ThemColor
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,19 +30,20 @@ class DataStoreRepositoryImpl @Inject constructor(
         val REFRESH_TOKEN = stringPreferencesKey(name = "refresh_token")
         val LOCAL_USER = stringPreferencesKey(name = "local_user")
         val LIBRARY_VIEW_TYPE = booleanPreferencesKey(name = "library_view_type")
-        val APP_THEME = booleanPreferencesKey(name = "app_theme")
+        val APP_THEME_MODE = booleanPreferencesKey(name = "app_theme_mode")
+        val APP_THEM = stringPreferencesKey(name = "app_theme_color")
     }
 
-    override suspend fun storeThem(them: Boolean) {
+    override suspend fun storeThemMode(them: Boolean) {
         dataStore.edit {
-            it[PreferencesKeys.APP_THEME] = them
+            it[PreferencesKeys.APP_THEME_MODE] = them
         }
     }
 
-    override fun readThem(): Flow<Boolean> = dataStore.data.catch {
+    override fun readThemMode(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
-        it[PreferencesKeys.APP_THEME] ?: true // first dark theme
+        it[PreferencesKeys.APP_THEME_MODE] ?: true // first dark theme
     }
 
     override suspend fun storeSignInState(state: SavedScreen) {
@@ -139,6 +141,22 @@ class DataStoreRepositoryImpl @Inject constructor(
         emit(emptyPreferences())
     }.map {
         it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
+    }
+
+    override suspend fun storeThemeColor(color: ThemColor) {
+        val curColor = readThemeColor().first()
+        if (curColor == color) return
+
+        dataStore.edit {
+            it[PreferencesKeys.APP_THEM] = color.name
+        }
+    }
+
+    override suspend fun readThemeColor(): Flow<ThemColor> = dataStore.data.catch {
+        emit(emptyPreferences())
+    }.map {
+        val them = it[PreferencesKeys.APP_THEM] ?: ThemColor.GREEN.name
+        ThemColor.valueOf(them)
     }
 
     override suspend fun logOut() {

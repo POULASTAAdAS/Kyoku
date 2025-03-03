@@ -20,29 +20,55 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.poulastaa.core.domain.model.ThemColor
+import com.poulastaa.core.presentation.designsystem.ThemChanger
 
-private val lightScheme = lightColorScheme(
-    primary = primaryLight,
-    secondary = secondaryLight,
-    tertiary = tertiaryLight,
-    primaryContainer = containerLight,
-    error = errorLight,
-    errorContainer = errorContainerLight,
-    background = backgroundLight,
-    surface = backgroundLight,
-    onBackground = backgroundDark
+private val greenLightScheme = lightColorScheme(
+    primary = greenPrimaryLight,
+    secondary = greenSecondaryLight,
+    tertiary = greenTertiaryLight,
+    primaryContainer = greenContainerLight,
+    error = greenErrorLight,
+    errorContainer = greenErrorContainerLight,
+    background = greenBackgroundLight,
+    surface = greenBackgroundLight,
+    onBackground = greenBackgroundDark
 )
 
-private val darkScheme = darkColorScheme(
-    primary = primaryDark,
-    secondary = secondaryDark,
-    tertiary = tertiaryDark,
-    primaryContainer = containerDark,
-    error = errorDark,
-    errorContainer = errorContainerDark,
-    background = backgroundDark,
-    surface = backgroundDark,
-    onBackground = backgroundLight
+private val greenDarkScheme = darkColorScheme(
+    primary = greenPrimaryDark,
+    secondary = greenSecondaryDark,
+    tertiary = greenTertiaryDark,
+    primaryContainer = greenContainerDark,
+    error = greenErrorDark,
+    errorContainer = greenErrorContainerDark,
+    background = greenBackgroundDark,
+    surface = greenBackgroundDark,
+    onBackground = greenBackgroundLight
+)
+
+private val blueLightScheme = lightColorScheme(
+    primary = bluePrimaryLight,
+    secondary = blueSecondaryLight,
+    tertiary = blueTertiaryLight,
+    primaryContainer = blueContainerLight,
+    error = blueErrorLight,
+    errorContainer = blueErrorContainerLight,
+    background = blueBackgroundLight,
+    surface = blueBackgroundLight,
+    onBackground = blueBackgroundDark
+)
+
+private val blueDarkScheme = darkColorScheme(
+    primary = bluePrimaryDark,
+    secondary = blueSecondaryDark,
+    tertiary = blueTertiaryDark,
+    primaryContainer = blueContainerDark,
+    error = blueErrorDark,
+    errorContainer = blueErrorContainerDark,
+    background = blueBackgroundDark,
+    surface = blueBackgroundDark,
+    onBackground = blueBackgroundLight
 )
 
 private val LocalAppDimens = compositionLocalOf {
@@ -56,7 +82,7 @@ val MaterialTheme.dimens
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun KyokuThem(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     content: @Composable () -> Unit,
 ) {
     val activity = LocalContext.current
@@ -71,8 +97,7 @@ fun KyokuThem(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             window.isNavigationBarContrastEnforced = false
 
-        val windowsInsetsController =
-            WindowCompat.getInsetsController(window, view)
+        val windowsInsetsController = WindowCompat.getInsetsController(window, view)
 
         windowsInsetsController.isAppearanceLightStatusBars = !darkTheme
         windowsInsetsController.isAppearanceLightNavigationBars = !darkTheme
@@ -104,10 +129,11 @@ fun AppThem(
     appDimens: Dimens = CompactMediumDimens,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        isDarkTheme -> darkScheme
-        else -> lightScheme
+    val colorScheme = when (ThemChanger.themColor) {
+        ThemColor.GREEN -> if (isDarkTheme) greenDarkScheme else greenLightScheme
+        ThemColor.BLUE -> if (isDarkTheme) blueDarkScheme else blueLightScheme
     }
+
     val dimens = remember { appDimens }
 
     CompositionLocalProvider(value = LocalAppDimens provides dimens) {

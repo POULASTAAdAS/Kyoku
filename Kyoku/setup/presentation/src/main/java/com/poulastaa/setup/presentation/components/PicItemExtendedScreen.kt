@@ -44,7 +44,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.FilterArtistIcon
 import com.poulastaa.core.presentation.designsystem.ui.SadIcon
@@ -91,7 +91,7 @@ fun <T : Any> PicItemExtendedScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = ThemChanger.getGradiantBackground()
+                        colors = ThemModeChanger.getGradiantBackground()
                     )
                 )
                 .padding(paddingValues)

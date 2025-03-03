@@ -34,7 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.LinkIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppLoadingButton
@@ -91,7 +91,7 @@ fun ImportPlaylistScreenWrapper(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = ThemChanger.getGradiantBackground()
+                        colors = ThemModeChanger.getGradiantBackground()
                     )
                 )
                 .padding(paddingValues)
@@ -148,7 +148,7 @@ fun ImportPlaylistScreenWrapper(
                         modifier = Modifier
                             .background(
                                 brush = Brush.verticalGradient(
-                                    ThemChanger.getGradiantBackground()
+                                    ThemModeChanger.getGradiantBackground()
                                 )
                             )
                             .fillMaxSize(),

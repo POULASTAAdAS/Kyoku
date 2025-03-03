@@ -39,7 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemChanger
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.LinkIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -92,7 +92,7 @@ fun ImportPlaylistExpandedScreen(
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = ThemChanger.getGradiantBackground()
+                        colors = ThemModeChanger.getGradiantBackground()
                     )
                 )
                 .padding(paddingValues)
@@ -159,7 +159,7 @@ fun ImportPlaylistExpandedScreen(
                         .fillMaxSize()
                         .background(
                             brush = Brush.verticalGradient(
-                                ThemChanger.getGradiantBackground()
+                                ThemModeChanger.getGradiantBackground()
                             )
                         ),
                     contentPadding = PaddingValues(MaterialTheme.dimens.small2),
