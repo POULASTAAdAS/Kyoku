@@ -16,4 +16,5 @@ dependencies {
 
     implementation(projects.core.domain)
     implementation(projects.profile.domain)
+    implementation(projects.core.network)
 }

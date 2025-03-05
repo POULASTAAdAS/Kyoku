@@ -24,7 +24,7 @@ import com.poulastaa.profile.presentation.ProfileUiAction
 internal fun EmailCard(
     username: String,
     haptic: HapticFeedback,
-    onAction: (ProfileUiAction.OnEditUserName) -> Unit,
+    onAction: (ProfileUiAction.OnEditUserNameToggle) -> Unit,
 ) {
     ProfileOutlinedCard(Modifier.fillMaxWidth()) {
         Row(
@@ -51,7 +51,7 @@ internal fun EmailCard(
                 contentDescription = null,
                 modifier = Modifier.noRippleClickable {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onAction(ProfileUiAction.OnEditUserName)
+                    onAction(ProfileUiAction.OnEditUserNameToggle)
                 }
             )
         }

@@ -40,4 +40,6 @@ interface LocalSetupDatasource {
         user: DtoDBUser,
         data: DtoUpsert<ArtistId>,
     ): List<DtoArtist>
+
+    suspend fun updateUsername(username: String, userId: Long,type: UserType)
 }

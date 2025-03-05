@@ -77,6 +77,7 @@ private const val ANIMATION_TIME = 600
 @Composable
 fun MainRootScreen(
     isInitial: Boolean,
+    screen: ScreensCore,
     viewmodel: MainViewmodel = hiltViewModel(),
     navigate: (DtoCoreScreens) -> Unit,
 ) {
@@ -144,6 +145,7 @@ fun MainRootScreen(
                         Navigation(
                             nav = nav,
                             isInitial = isInitial,
+                            screen = screen,
                             topBarScroll = topBarScroll,
                             onAction = viewmodel::onAction
                         )
@@ -208,6 +210,7 @@ fun MainRootScreen(
                         },
                     nav = nav,
                     isInitial = isInitial,
+                    screen = screen,
                     topBarScroll = topBarScroll,
                     onAction = viewmodel::onAction
                 )
@@ -283,6 +286,7 @@ fun MainRootScreen(
 private fun Navigation(
     modifier: Modifier = Modifier,
     isInitial: Boolean,
+    screen: ScreensCore,
     nav: NavHostController,
     topBarScroll: TopAppBarScrollBehavior,
     onAction: (MainUiAction) -> Unit,
@@ -290,7 +294,7 @@ private fun Navigation(
     NavHost(
         modifier = modifier,
         navController = nav,
-        startDestination = ScreensCore.Home
+        startDestination = screen
     ) {
         composable<ScreensCore.Home>(
             enterTransition = {

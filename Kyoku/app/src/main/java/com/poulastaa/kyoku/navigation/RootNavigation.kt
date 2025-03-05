@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.navigation
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -23,6 +22,8 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.main.presentation.main.MainRootScreen
+import com.poulastaa.main.presentation.main.ScreensCore
+import com.poulastaa.profile.domain.model.ProfileAllowedNavigationScreen
 import com.poulastaa.profile.presentation.ProfileRootScreen
 import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
 import com.poulastaa.settings.presentation.SettingsRootScreen
@@ -267,7 +268,10 @@ private fun NavGraphBuilder.coreGraph(
     ) {
         val payload = it.toRoute<Screens.Core.Main>()
 
-        MainRootScreen(payload.isInitial) { dtoScreens ->
+        MainRootScreen(
+            isInitial = payload.isInitial,
+            screen = if (payload.isHome) ScreensCore.Home else ScreensCore.Library
+        ) { dtoScreens ->
             when (dtoScreens) {
                 DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
                 DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
@@ -278,11 +282,26 @@ private fun NavGraphBuilder.coreGraph(
     }
 
     composable<Screens.Core.Profile> {
-        Log.d("called", "Profile")
-
-        ProfileRootScreen {
-            nav.popBackStack()
-        }
+        ProfileRootScreen(
+            navigate = {
+                when (it) {
+                    ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add playlist screen")
+                    ProfileAllowedNavigationScreen.ALBUM -> TODO("Add album screen")
+                    ProfileAllowedNavigationScreen.ARTIST -> TODO("Add artist screen")
+                    ProfileAllowedNavigationScreen.FAVOURITE -> TODO("Add favourite screen")
+                    ProfileAllowedNavigationScreen.LIBRARY -> {
+                        nav.navigate(Screens.Core.Main(isHome = false)) {
+                            popUpTo(Screens.Core.Main()) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
     }
 
     composable<Screens.Core.History> {

@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,9 +20,7 @@ internal class HomeViewmodel @Inject constructor(
     private val repo: HomeRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
-    val state = _state.onStart {
-
-    }.stateIn(
+    val state = _state.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000), // 5 seconds
         initialValue = HomeUiState()
@@ -34,8 +31,11 @@ internal class HomeViewmodel @Inject constructor(
 
     fun init(isInitial: Boolean) {
         viewModelScope.launch {
-            if (isInitial && _state.value.staticData.suggestedArtist.isEmpty()) repo.getHome()
             loadData()
+            if (isInitial && _state.value.staticData.suggestedArtist.isEmpty()) {
+                repo.getHome()
+                loadData()
+            }
         }
     }
 
@@ -53,6 +53,7 @@ internal class HomeViewmodel @Inject constructor(
     private suspend fun loadData() {
         val home = repo.loadData()
 
+        if (home.savedItems.isEmpty()) return
         _state.update {
             home.toUiHomeState(home.savedItems.random(Random))
         }

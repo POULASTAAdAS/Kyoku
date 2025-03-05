@@ -60,4 +60,18 @@ class SetupRepositoryService(
         val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return emptyList()
         return db.upsertArtist(user, req)
     }
+
+    override suspend fun getBDate(userPayload: ReqUserPayload): String? {
+        val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return null
+        return user.bDate?.toString()
+    }
+
+    override suspend fun updateUsername(
+        userPayload: ReqUserPayload,
+        username: String,
+    ): Boolean? {
+        val user = db.getUserByEmail(userPayload.email, userPayload.userType) ?: return null
+        if (user.userName == username) return true
+        db.updateUsername(username, user.id, userPayload.userType).also { return true }
+    }
 }

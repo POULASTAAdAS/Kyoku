@@ -19,7 +19,7 @@ import com.poulastaa.profile.presentation.ProfileUiAction
 @Composable
 internal fun GoToLibrary(
     modifier: Modifier,
-    onAction: (ProfileUiAction.OnNavigateToGallery) -> Unit,
+    onAction: (ProfileUiAction.OnNavigateToLibrary) -> Unit,
 ) {
     Card(
         modifier = modifier,
@@ -33,7 +33,7 @@ internal fun GoToLibrary(
             pressedElevation = 0.dp
         ),
         onClick = {
-            onAction(ProfileUiAction.OnNavigateToGallery)
+            onAction(ProfileUiAction.OnNavigateToLibrary)
         }
     ) {
         Text(

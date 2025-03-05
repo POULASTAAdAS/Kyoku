@@ -22,7 +22,7 @@ class OkHttpSetBDateDatasource @Inject constructor(
     override suspend fun setBDate(bDate: String): Result<SetBDateStatus, DataError.Network> {
         val result = client.req<SetBDateReq, SetBDateRes>(
             route = EndPoints.SetBDate.route,
-            method = ApiMethodType.POST,
+            method = ApiMethodType.PUT,
             body = SetBDateReq(bDate),
             gson = gson
         )

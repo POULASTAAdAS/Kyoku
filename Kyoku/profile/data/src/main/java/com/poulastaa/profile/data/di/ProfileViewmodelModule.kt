@@ -4,6 +4,7 @@ import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalProfileDatasource
 import com.poulastaa.profile.data.repository.OfflineFirstProfileRepository
 import com.poulastaa.profile.domain.repository.ProfileRepository
+import com.poulastaa.profile.domain.repository.RemoteProfileDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,5 +19,6 @@ internal object ProfileViewmodelModule {
     fun provideProfileRepository(
         ds: DatastoreRepository,
         local: LocalProfileDatasource,
-    ): ProfileRepository = OfflineFirstProfileRepository(ds, local)
+        remote: RemoteProfileDatasource,
+    ): ProfileRepository = OfflineFirstProfileRepository(ds, remote, local)
 }

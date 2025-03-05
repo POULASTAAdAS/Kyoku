@@ -438,6 +438,17 @@ class ExposedSetupDatasource(
         result
     }
 
+    override suspend fun updateUsername(username: String, userId: Long, type: UserType) {
+        userDbQuery {
+            DaoUser.find { EntityUser.id eq userId }.firstOrNull()?.let {
+                it.username = username
+                it.toDbUserDto(it.bDate)
+            }?.also {
+                cache.setUserByEmail(it.email, type, it)
+            }
+        }
+    }
+
     @Suppress("UNCHECKED_CAST") // as ids start from 1 we can calculate ids like this
     private fun <T> calculateIdList(page: Int, size: Int): List<T> = (if (page == 1) (page..size).toList() else
         (size * (page - 1) + (page - (page - 1))..size * page).toList()) as List<T>

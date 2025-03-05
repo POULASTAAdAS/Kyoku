@@ -8,6 +8,8 @@ internal data class ProfileUiState(
     val bDate: String = "",
     val username: TextHolder = TextHolder(),
     val savedItems: List<UiSavedItems> = emptyList(),
+    val isUpdateUsernameBottomSheetVisible: Boolean = false,
+    val isMakingApiCall: Boolean = false,
 )
 
 internal data class UiSavedItems(

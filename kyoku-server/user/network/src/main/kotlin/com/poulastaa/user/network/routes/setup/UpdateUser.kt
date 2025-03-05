@@ -4,36 +4,28 @@ import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.user.domain.repository.SetupRepository
-import com.poulastaa.user.network.model.SetBDateReq
-import com.poulastaa.user.network.model.SetBDateRes
-import com.poulastaa.user.network.model.SetBDateStatus
+import com.poulastaa.user.network.model.UpdateUsernameReq
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.setBDate(
-    repo: SetupRepository,
-) {
+fun Routing.updateUser(repo: SetupRepository) {
     authenticate(configurations = SECURITY_LIST) {
-        route(EndPoints.SetBDate.route) {
+        route(EndPoints.UpdateUsername.route) {
             put {
-                val req = call.receiveNullable<SetBDateReq>()
+                val req = call.receiveNullable<UpdateUsernameReq>()
                     ?: return@put call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val payload = call.getReqUserPayload()
                     ?: return@put call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                val status = when (repo.setBDate(payload, req.date)) {
-                    true -> SetBDateStatus.SUCCESS
-                    false -> SetBDateStatus.FAILURE
+                when (repo.updateUsername(payload, req.username)) {
+                    true -> call.respond(HttpStatusCode.OK)
+                    false -> call.respond(HttpStatusCode.BadRequest)
+                    null -> call.respondRedirect(EndPoints.UnAuthorized.route)
                 }
-
-                call.respond(
-                    message = SetBDateRes(status),
-                    status = HttpStatusCode.OK
-                )
             }
         }
     }

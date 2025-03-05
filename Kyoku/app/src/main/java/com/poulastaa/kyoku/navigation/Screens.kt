@@ -33,7 +33,10 @@ sealed interface Screens {
 
     sealed interface Core : Screens {
         @Serializable
-        data class Main(val isInitial: Boolean = false) : Screens
+        data class Main(
+            val isInitial: Boolean = false,
+            val isHome: Boolean = true,
+        ) : Screens
 
         @Serializable
         data object Settings : Screens

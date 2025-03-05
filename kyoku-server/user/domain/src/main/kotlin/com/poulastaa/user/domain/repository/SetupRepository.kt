@@ -35,4 +35,10 @@ interface SetupRepository {
         userPayload: ReqUserPayload,
         req: DtoUpsert<ArtistId>,
     ): List<DtoArtist>
+
+    suspend fun getBDate(userPayload: ReqUserPayload): String?
+    suspend fun updateUsername(
+        userPayload: ReqUserPayload,
+        username: String,
+    ): Boolean?
 }
