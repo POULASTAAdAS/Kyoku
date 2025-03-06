@@ -58,9 +58,13 @@
             <option value="$PROJECT_DIR$/setup/domain" />
             <option value="$PROJECT_DIR$/setup/network" />
             <option value="$PROJECT_DIR$/setup/presentation" />
+            <option value="$PROJECT_DIR$/view" />
+            <option value="$PROJECT_DIR$/view/data" />
+            <option value="$PROJECT_DIR$/view/domain" />
+            <option value="$PROJECT_DIR$/view/network" />
+            <option value="$PROJECT_DIR$/view/presentation" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/misc.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="2twx3sfzKxtxxtd5sn5Plg0X92J" />
+  <component name="ProjectViewState">
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showScratchesAndConsoles" value="false" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build kyoku-server.executor": "Run",
+    "Kotlin.AppKt.executor": "Run",
+    "Ktor.EngineMain.executor": "Run",
+    "Ktor.Unnamed.executor": "Run",
+    "Ktor.app.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "dev",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "copyright.filetypes.JAVA",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="app" type="KtorApplicationConfigurationType" factoryName="Ktor">
+      <option name="ALTERNATIVE_JRE_PATH" value="23" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <envs>
+        <env name="BASE_URL" value="http://kyoku.poulastaa.online:9292/" />
+        <env name="CLIENT_ID" value="791240515987-vsvo9cimabfr81gicfp8bogfho8pkh90.apps.googleusercontent.com" />
+        <env name="DEV_EMAIL" value="poulastaadas2@gmail.com" />
+        <env name="ISSUER" value="https://accounts.google.com" />
+        <env name="SENDER_EMAIL" value="kyoku.official.no.replay@gmail.com" />
+        <env name="SENDER_PASSWORD" value="ivop bmon crrl krcr" />
+      </envs>
+      <option name="MAIN_CLASS_NAME" value="com.poulastaa.app.AppKt" />
+      <module name="kyoku-server.app.main" />
+      <option name="alternativeJrePath" value="23" />
+      <option name="alternativeJrePathEnabled" value="true" />
+      <option name="includeProvidedScope" value="false" />
+      <option name="mainClass" value="com.poulastaa.app.AppKt" />
+      <option name="passParentEnvs" value="true" />
+      <option name="programParameters" value="" />
+      <option name="shortenCommandLine" />
+      <option name="vmParameters" />
+      <option name="workingDirectory" value="D:\Kyoku\kyoku-server" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="" />
+      <created>1741276741596</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1741276741596</updated>
+      <workItem from="1741276742702" duration="1670000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

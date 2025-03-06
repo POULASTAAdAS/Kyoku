@@ -21,6 +21,7 @@ import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
+import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
 import com.poulastaa.profile.domain.model.ProfileAllowedNavigationScreen
@@ -31,6 +32,8 @@ import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
+import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
+import com.poulastaa.view.presentation.artist.ViewArtistRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -47,12 +50,11 @@ fun RootNavigation(
         authGraph(nav)
         setupGraph(nav)
         coreGraph(nav, toggleThem)
+        viewGraph(nav)
     }
 }
 
-private fun NavGraphBuilder.authGraph(
-    nav: NavHostController,
-) {
+private fun NavGraphBuilder.authGraph(nav: NavHostController) {
     composable<Screens.Auth.Intro> {
         IntroRootScreen(
             navigateToEmailLogIn = {
@@ -270,30 +272,35 @@ private fun NavGraphBuilder.coreGraph(
 
         MainRootScreen(
             isInitial = payload.isInitial,
-            screen = if (payload.isHome) ScreensCore.Home else ScreensCore.Library
-        ) { dtoScreens ->
-            when (dtoScreens) {
-                DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
-                DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
-                DtoCoreScreens.Settings -> nav.navigate(dtoScreens.toCoreScreen())
-                DtoCoreScreens.ToggleTheme -> toggleThem()
+            screen = if (payload.isHome) ScreensCore.Home else ScreensCore.Library,
+            navigate = { dtoScreens ->
+                when (dtoScreens) {
+                    DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
+                    DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
+                    DtoCoreScreens.Settings -> nav.navigate(dtoScreens.toCoreScreen())
+                    DtoCoreScreens.ToggleTheme -> toggleThem()
+                }
             }
-        }
+        )
     }
 
     composable<Screens.Core.Profile> {
         ProfileRootScreen(
             navigate = {
                 when (it) {
-                    ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add playlist screen")
-                    ProfileAllowedNavigationScreen.ALBUM -> TODO("Add album screen")
-                    ProfileAllowedNavigationScreen.ARTIST -> TODO("Add artist screen")
-                    ProfileAllowedNavigationScreen.FAVOURITE -> TODO("Add favourite screen")
-                    ProfileAllowedNavigationScreen.LIBRARY -> {
-                        nav.navigate(Screens.Core.Main(isHome = false)) {
-                            popUpTo(Screens.Core.Main()) {
-                                inclusive = true
-                            }
+                    ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add all saved view playlist screen")
+                    ProfileAllowedNavigationScreen.ALBUM -> TODO("Add all saved view album screen")
+                    ProfileAllowedNavigationScreen.ARTIST -> TODO("Add all saved view artist screen")
+                    ProfileAllowedNavigationScreen.FAVOURITE -> nav.navigate(
+                        Screens.View.Other(
+                            otherId = -1,
+                            type = ViewType.FAVOURITE
+                        )
+                    )
+
+                    ProfileAllowedNavigationScreen.LIBRARY -> nav.navigate(Screens.Core.Main(isHome = false)) {
+                        popUpTo(Screens.Core.Main()) {
+                            inclusive = true
                         }
                     }
                 }
@@ -327,5 +334,34 @@ private fun NavGraphBuilder.coreGraph(
                 }
             }
         )
+    }
+}
+
+
+private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
+    composable<Screens.View.Artist> {
+        val payload = it.toRoute<Screens.View.Artist>()
+
+        ViewArtistRootScreen(
+            artistId = payload.artistId,
+            navigate = { screen ->
+                when (screen) {
+                    is ViewArtistAllowedNavigationScreen.Explore -> TODO("Add explore artist screen")
+                    is ViewArtistAllowedNavigationScreen.ViewAlbum -> nav.navigate(
+                        Screens.View.Other(
+                            otherId = screen.albumId,
+                            type = ViewType.ALBUM
+                        )
+                    )
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
+    }
+
+    composable<Screens.View.Other> {
+
     }
 }

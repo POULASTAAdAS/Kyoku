@@ -53,7 +53,7 @@ fun Modifier.noRippleClickable(
 fun Modifier.noRippleCombineClickable(
     enabled: Boolean = true,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
 ) = composed {
     this.combinedClickable(
         indication = null,
@@ -78,33 +78,35 @@ fun Modifier.ballTransform(ballAnimInfo: BallAnimInfo) = this
     }
 
 @Stable
-fun Modifier.shimmerEffect(): Modifier = composed {
-    var size by remember { mutableStateOf(IntSize.Zero) }
+fun Modifier.shimmerEffect(color: Color? = null): Modifier =
+    composed {
+        var size by remember { mutableStateOf(IntSize.Zero) }
+        val stateColor = color ?: MaterialTheme.colorScheme.secondary
 
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val startOffsetX by transition.animateFloat(
-        initialValue = -2 * size.width.toFloat(),
-        targetValue = 2 * size.width.toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000)
-        ),
-        label = "shimmer"
-    )
-
-    background(
-        brush = Brush.linearGradient(
-            colors = listOf(
-                Color.Transparent,
-                MaterialTheme.colorScheme.secondary.copy(.7f),
-                Color.Transparent,
+        val transition = rememberInfiniteTransition(label = "shimmer")
+        val startOffsetX by transition.animateFloat(
+            initialValue = -2 * size.width.toFloat(),
+            targetValue = 2 * size.width.toFloat(),
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000)
             ),
-            start = Offset(startOffsetX, 0f),
-            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+            label = "shimmer"
         )
-    ).onGloballyPositioned {
-        size = it.size
+
+        background(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    stateColor.copy(.7f),
+                    Color.Transparent,
+                ),
+                start = Offset(startOffsetX, 0f),
+                end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+            )
+        ).onGloballyPositioned {
+            size = it.size
+        }
     }
-}
 
 
 fun Modifier.coloredShadow(

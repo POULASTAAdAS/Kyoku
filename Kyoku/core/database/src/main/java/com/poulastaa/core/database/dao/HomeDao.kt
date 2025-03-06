@@ -2,6 +2,7 @@ package com.poulastaa.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityPrevAlbum
@@ -41,6 +42,7 @@ internal interface HomeDao {
     @Query("Select * from EntityPrevAlbum")
     suspend fun getPrevAlbum(): List<EntityPrevAlbum>
 
+    @Transaction
     @Query("Select * from EntityPrevArtist")
     suspend fun getSuggestedArtistSong(): List<SuggestedArtistWithSong>
 }

@@ -91,4 +91,9 @@ dependencies {
     implementation(projects.profile.data)
     implementation(projects.profile.netwokr)
     implementation(projects.profile.presentation)
+
+    implementation(projects.view.domain)
+    implementation(projects.view.data)
+    implementation(projects.view.network)
+    implementation(projects.view.presentation)
 }
