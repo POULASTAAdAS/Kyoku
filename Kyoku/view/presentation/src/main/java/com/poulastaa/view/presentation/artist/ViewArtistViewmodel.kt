@@ -75,12 +75,12 @@ internal class ViewArtistViewmodel @Inject constructor(
                 }
             }
 
-            _state.update {
-                it.copy(
-                    loadingType = if (it.artist.name.isEmpty()) LoadingType.ERROR
-                    else LoadingType.CONTENT
-                )
-            }
+//            _state.update {
+//                it.copy(
+//                    loadingType = if (it.artist.name.isEmpty()) LoadingType.ERROR
+//                    else LoadingType.CONTENT
+//                )
+//            }
         }
     }
 }

@@ -58,10 +58,20 @@ fun ViewArtistRootScreen(
             )
         },
         mediumContent = {
-
+            ViewArtistMediumScreen(
+                scroll = scroll,
+                state = state,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         },
         expandedContent = {
-
+            ViewArtistExtendedScreen(
+                scroll = scroll,
+                state = state,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

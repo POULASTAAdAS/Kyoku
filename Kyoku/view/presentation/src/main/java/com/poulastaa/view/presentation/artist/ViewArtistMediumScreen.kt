@@ -1,5 +1,6 @@
 package com.poulastaa.view.presentation.artist
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,16 +16,16 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.view.presentation.artist.components.ViewArtistCompactLoadingScreen
+import com.poulastaa.view.presentation.artist.components.ViewArtistMediumLoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ViewArtistCompactScreen(
+internal fun ViewArtistMediumScreen(
     scroll: TopAppBarScrollBehavior,
     state: ViewArtistUiState,
     onAction: (ViewArtistUiAction) -> Unit,
@@ -37,7 +38,7 @@ internal fun ViewArtistCompactScreen(
     ) { paddingValues ->
         AnimatedContent(targetState = state.loadingType) {
             when (it) {
-                LoadingType.LOADING -> ViewArtistCompactLoadingScreen(
+                LoadingType.LOADING -> ViewArtistMediumLoadingScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -74,12 +75,18 @@ internal fun ViewArtistCompactScreen(
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewLightDark
+@Preview(
+    device = "spec:width=800dp,height=1280dp,dpi=480",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Preview(
+    device = "spec:width=800dp,height=1280dp,dpi=480",
+)
 @Composable
 private fun Preview() {
     AppThem {
         Surface {
-            ViewArtistCompactScreen(
+            ViewArtistMediumScreen(
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 state = PREV_DATA,
                 onAction = {},

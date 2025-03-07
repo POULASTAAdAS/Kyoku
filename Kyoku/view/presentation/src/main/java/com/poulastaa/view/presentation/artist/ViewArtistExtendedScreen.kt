@@ -1,5 +1,6 @@
 package com.poulastaa.view.presentation.artist
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,16 +16,17 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.view.presentation.artist.components.ViewArtistCompactLoadingScreen
+import com.poulastaa.view.presentation.artist.components.ViewArtistExtendedLoadingScreen
+import com.poulastaa.view.presentation.artist.components.ViewArtistMediumLoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ViewArtistCompactScreen(
+internal fun ViewArtistExtendedScreen(
     scroll: TopAppBarScrollBehavior,
     state: ViewArtistUiState,
     onAction: (ViewArtistUiAction) -> Unit,
@@ -37,7 +39,7 @@ internal fun ViewArtistCompactScreen(
     ) { paddingValues ->
         AnimatedContent(targetState = state.loadingType) {
             when (it) {
-                LoadingType.LOADING -> ViewArtistCompactLoadingScreen(
+                LoadingType.LOADING -> ViewArtistExtendedLoadingScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -74,12 +76,20 @@ internal fun ViewArtistCompactScreen(
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@PreviewLightDark
+@Preview(
+    widthDp = 1024,
+    heightDp = 540
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 1280,
+    heightDp = 740
+)
 @Composable
 private fun Preview() {
     AppThem {
         Surface {
-            ViewArtistCompactScreen(
+            ViewArtistExtendedScreen(
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 state = PREV_DATA,
                 onAction = {},
