@@ -50,7 +50,7 @@ class RootViewModel @Inject constructor(
 
         _state.update {
             it.copy(
-                screen = Screens.View.Artist(artistId = 1)
+                screen = screen
             )
         }
 

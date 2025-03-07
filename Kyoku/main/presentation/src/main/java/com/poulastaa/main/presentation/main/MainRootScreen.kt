@@ -60,6 +60,7 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.coloredShadow
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.domain.model.isOpened
 import com.poulastaa.main.presentation.home.HomeRootScreen
 import com.poulastaa.main.presentation.home.HomeViewmodel
@@ -79,7 +80,8 @@ fun MainRootScreen(
     isInitial: Boolean,
     screen: ScreensCore,
     viewmodel: MainViewmodel = hiltViewModel(),
-    navigate: (DtoCoreScreens) -> Unit,
+    navigateToCoreScreen: (DtoCoreScreens) -> Unit,
+    navigateToOtherScreen: (MainAllowedNavigationScreens) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
     val nav = rememberNavController()
@@ -114,7 +116,7 @@ fun MainRootScreen(
                 Toast.LENGTH_LONG
             ).show()
 
-            is MainUiEvent.Navigate -> navigate(event.screen)
+            is MainUiEvent.Navigate -> navigateToCoreScreen(event.screen)
 
             is MainUiEvent.NavigateMain -> {
                 nav.popBackStack()
@@ -147,7 +149,8 @@ fun MainRootScreen(
                             isInitial = isInitial,
                             screen = screen,
                             topBarScroll = topBarScroll,
-                            onAction = viewmodel::onAction
+                            onAction = viewmodel::onAction,
+                            navigateToOtherScreen = navigateToOtherScreen
                         )
 
                         AppTopBar(
@@ -159,7 +162,7 @@ fun MainRootScreen(
                             onSearchClick = {
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
-                            onProfileClick = {}
+                            onProfileClick = {} // no need to implement
                         )
                     }
                 }
@@ -212,7 +215,8 @@ fun MainRootScreen(
                     isInitial = isInitial,
                     screen = screen,
                     topBarScroll = topBarScroll,
-                    onAction = viewmodel::onAction
+                    onAction = viewmodel::onAction,
+                    navigateToOtherScreen = navigateToOtherScreen
                 )
 
                 AnimatedVisibility(
@@ -290,6 +294,7 @@ private fun Navigation(
     nav: NavHostController,
     topBarScroll: TopAppBarScrollBehavior,
     onAction: (MainUiAction) -> Unit,
+    navigateToOtherScreen: (MainAllowedNavigationScreens) -> Unit,
 ) {
     NavHost(
         modifier = modifier,
@@ -313,6 +318,7 @@ private fun Navigation(
             HomeRootScreen(
                 viewmodel = homeViewmodel,
                 topBarScroll = topBarScroll,
+                navigate = navigateToOtherScreen
             )
         }
 
@@ -324,7 +330,10 @@ private fun Navigation(
                 fadeOut(tween(ANIMATION_TIME))
             }
         ) {
-            LibraryRootScreen(topBarScroll)
+            LibraryRootScreen(
+                topBarScroll = topBarScroll,
+                navigate = navigateToOtherScreen
+            )
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.poulastaa.main.presentation.home
 
 import android.app.Activity
-import androidx.compose.material3.BottomAppBarScrollBehavior
+import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -11,21 +11,37 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.model.UiPreSong
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
+import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.components.UiSaveItemType
 import com.poulastaa.main.presentation.components.UiSavedItem
+import com.poulastaa.main.presentation.home.mapper.toMainAllowedNavigationScreensHome
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeRootScreen(
     viewmodel: HomeViewmodel,
     topBarScroll: TopAppBarScrollBehavior,
+    navigate: (MainAllowedNavigationScreens) -> Unit,
 ) {
     val activity = LocalContext.current as Activity
     val windowSizeClass = calculateWindowSizeClass(activity)
 
     val state by viewmodel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvent(viewmodel.uiEvent) { event ->
+        when (event) {
+            is HomeUiEvent.EmitToast -> Toast.makeText(
+                activity,
+                event.message.asString(activity),
+                Toast.LENGTH_LONG
+            ).show()
+
+            is HomeUiEvent.NavigateToView -> navigate(event.toMainAllowedNavigationScreensHome())
+        }
+    }
 
     KyokuWindowSize(
         windowSizeClass = windowSizeClass,

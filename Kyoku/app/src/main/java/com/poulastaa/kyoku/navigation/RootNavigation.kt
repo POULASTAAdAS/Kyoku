@@ -22,6 +22,7 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.model.ViewType
+import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
 import com.poulastaa.profile.domain.model.ProfileAllowedNavigationScreen
@@ -273,12 +274,26 @@ private fun NavGraphBuilder.coreGraph(
         MainRootScreen(
             isInitial = payload.isInitial,
             screen = if (payload.isHome) ScreensCore.Home else ScreensCore.Library,
-            navigate = { dtoScreens ->
+            navigateToCoreScreen = { dtoScreens ->
                 when (dtoScreens) {
                     DtoCoreScreens.History -> nav.navigate(dtoScreens.toCoreScreen())
                     DtoCoreScreens.Profile -> nav.navigate(dtoScreens.toCoreScreen())
                     DtoCoreScreens.Settings -> nav.navigate(dtoScreens.toCoreScreen())
                     DtoCoreScreens.ToggleTheme -> toggleThem()
+                }
+            },
+            navigateToOtherScreen = { screens ->
+                when (screens) {
+                    is MainAllowedNavigationScreens.NavigateToView -> when (screens.type) {
+                        ViewType.ARTIST -> nav.navigate(Screens.View.Artist(screens.otherId))
+
+                        else -> nav.navigate(
+                            Screens.View.Other(
+                                otherId = screens.otherId,
+                                type = screens.type
+                            )
+                        )
+                    }
                 }
             }
         )

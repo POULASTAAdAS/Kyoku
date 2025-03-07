@@ -201,6 +201,7 @@ internal fun HomeExpandedScreen(
                                                     ItemClickType.LONG_CLICK
                                                 )
                                             )
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         },
                                         onClick = {
                                             onAction(
@@ -225,6 +226,7 @@ internal fun HomeExpandedScreen(
                                                     ItemClickType.LONG_CLICK
                                                 )
                                             )
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         },
                                         onClick = {
                                             onAction(
@@ -249,6 +251,7 @@ internal fun HomeExpandedScreen(
                                                     ItemClickType.LONG_CLICK
                                                 )
                                             )
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         },
                                         onClick = {
                                             onAction(
@@ -273,6 +276,7 @@ internal fun HomeExpandedScreen(
                                                     ItemClickType.LONG_CLICK
                                                 )
                                             )
+                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                         },
                                         onClick = {
                                             onAction(

@@ -3,6 +3,8 @@ package com.poulastaa.main.presentation.home.components
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
@@ -14,6 +16,7 @@ import com.poulastaa.main.presentation.home.HomeUiState
 import com.poulastaa.main.presentation.home.UiHomeExploreType
 
 internal fun LazyGridScope.homeCompactMediumCommon(
+    haptic:HapticFeedback,
     state: HomeUiState,
     onAction: (HomeUiAction) -> Unit,
 ) {
@@ -33,6 +36,7 @@ internal fun LazyGridScope.homeCompactMediumCommon(
                             ItemClickType.LONG_CLICK
                         )
                     )
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
                 onClick = {
                     onAction(
@@ -59,6 +63,7 @@ internal fun LazyGridScope.homeCompactMediumCommon(
                             ItemClickType.LONG_CLICK
                         )
                     )
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
                 onClick = {
                     onAction(
@@ -85,6 +90,7 @@ internal fun LazyGridScope.homeCompactMediumCommon(
                             ItemClickType.LONG_CLICK
                         )
                     )
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
                 onClick = {
                     onAction(
@@ -111,6 +117,7 @@ internal fun LazyGridScope.homeCompactMediumCommon(
                             ItemClickType.LONG_CLICK
                         )
                     )
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
                 onClick = {
                     onAction(

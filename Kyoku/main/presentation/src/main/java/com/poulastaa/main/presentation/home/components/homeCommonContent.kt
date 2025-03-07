@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -88,9 +89,8 @@ internal fun LazyGridScope.homeCommonContent(
                         .aspectRatio(1f)
                         .noRippleCombineClickable(
                             onLongClick = {
-                                onAction(
-                                    HomeUiAction.OnSuggestedArtistLongClick(artist.id)
-                                )
+                                onAction(HomeUiAction.OnSuggestedArtistLongClick(artist.id))
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
                             onClick = {
                                 onAction(
@@ -150,9 +150,8 @@ internal fun LazyGridScope.homeCommonContent(
                 MainBoxImageCard(
                     modifier = Modifier.noRippleCombineClickable(
                         onLongClick = {
-                            onAction(
-                                HomeUiAction.OnSuggestedAlbumLongClick(album.id)
-                            )
+                            onAction(HomeUiAction.OnSuggestedAlbumLongClick(album.id))
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         },
                         onClick = {
                             onAction(
@@ -317,6 +316,7 @@ internal fun LazyGridScope.homeCommonContent(
                                         clickType = ItemClickType.LONG_CLICK
                                     )
                                 )
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             },
                             onClick = {
                                 onAction(

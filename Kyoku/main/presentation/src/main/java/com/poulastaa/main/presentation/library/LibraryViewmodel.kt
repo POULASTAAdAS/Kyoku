@@ -1,17 +1,20 @@
 package com.poulastaa.main.presentation.library
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.repository.DatastoreRepository
+import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.main.domain.repository.LibraryRepository
+import com.poulastaa.main.presentation.home.mapper.toNavigateToViewLibrary
 import com.poulastaa.main.presentation.home.mapper.toUiSavedItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,9 +40,10 @@ internal class LibraryViewmodel @Inject constructor(
         initialValue = LibraryUiState()
     )
 
-    fun onAction(action: LibraryUiAction) {
-        Log.d("action", action.toString())
+    private val _uiEvent = Channel<LibraryUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
+    fun onAction(action: LibraryUiAction) {
         when (action) {
             is LibraryUiAction.OnFilterTypeToggle -> {
                 if (action.type == _state.value.filterType) return
@@ -63,7 +67,19 @@ internal class LibraryViewmodel @Inject constructor(
             }
 
             is LibraryUiAction.OnEditSavedItemTypeClick -> {}
-            is LibraryUiAction.OnItemClick -> {}
+            is LibraryUiAction.OnItemClick -> viewModelScope.launch {
+                when (action.clickType) {
+                    ItemClickType.CLICK -> when (action.type) {
+                        null -> return@launch
+                        else -> _uiEvent.send(action.type.toNavigateToViewLibrary(action.id))
+                    }
+
+                    ItemClickType.LONG_CLICK -> when (action.type) {
+                        null -> return@launch
+                        else -> TODO("Implement long click of OnItemClick in Library screen")
+                    }
+                }
+            }
         }
     }
 

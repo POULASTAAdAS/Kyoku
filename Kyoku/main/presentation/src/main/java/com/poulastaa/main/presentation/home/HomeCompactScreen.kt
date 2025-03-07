@@ -104,7 +104,7 @@ internal fun HomeCompactScreen(
                         )
                     }
 
-                    homeCompactMediumCommon(state, onAction)
+                    homeCompactMediumCommon(haptic,state, onAction)
                     homeCommonContent(state, haptic, false, onAction)
                 }
 

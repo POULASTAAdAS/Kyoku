@@ -6,5 +6,5 @@ fun DtoCoreScreens.toCoreScreen() = when (this) {
     DtoCoreScreens.History -> Screens.Core.History
     DtoCoreScreens.Profile -> Screens.Core.Profile
     DtoCoreScreens.Settings -> Screens.Core.Settings
-    DtoCoreScreens.ToggleTheme -> throw IllegalArgumentException("Navigation for Toggle Them should not be triggered when converting to Screens.Core.Settings On File NavigationExt")
+    else -> throw IllegalArgumentException("Navigation for Toggle Them should not be triggered when converting to Screens.Core.Settings On File NavigationExt")
 }
