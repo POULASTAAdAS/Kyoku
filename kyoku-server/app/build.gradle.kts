@@ -11,23 +11,26 @@ dependencies {
     // domain
     implementation(projects.core.coreDomain)
     implementation(projects.auth.authDomain)
-    implementation(projects.details.detailsDomain)
     implementation(projects.play.playDomain)
-    implementation(projects.search.searchDomain)
-    implementation(projects.suggestion.suggestionDomain)
     implementation(projects.user.userDomain)
+    implementation(projects.view.viewDomain)
+    implementation(projects.search.searchDomain)
+    implementation(projects.details.detailsDomain)
+    implementation(projects.suggestion.suggestionDomain)
     implementation(projects.notification.notificationDomain)
 
     // network
     implementation(projects.auth.authNetwork)
     implementation(projects.core.coreNetwork)
     implementation(projects.user.userNetwork)
+    implementation(projects.view.viewNetwork)
     implementation(projects.suggestion.suggestionNetwork)
 
     // data
     implementation(projects.auth.authData)
     implementation(projects.core.coreData)
     implementation(projects.user.userData)
+    implementation(projects.view.viewData)
     implementation(projects.suggestion.suggestionData)
 
     // notification

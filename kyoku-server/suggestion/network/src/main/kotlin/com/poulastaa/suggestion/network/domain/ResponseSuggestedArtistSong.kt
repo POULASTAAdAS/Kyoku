@@ -1,6 +1,7 @@
 package com.poulastaa.suggestion.network.domain
 
 import com.poulastaa.core.network.model.ResponsePrevArtist
+import com.poulastaa.core.network.model.ResponsePrevSong
 import kotlinx.serialization.Serializable
 
 @Serializable

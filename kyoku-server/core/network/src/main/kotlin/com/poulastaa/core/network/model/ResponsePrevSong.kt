@@ -1,4 +1,4 @@
-package com.poulastaa.suggestion.network.domain
+package com.poulastaa.core.network.model
 
 import com.poulastaa.core.domain.repository.SongId
 import kotlinx.serialization.Serializable

@@ -30,6 +30,18 @@ class RedisLocalCoreDatasource(
     override fun cacheSongById(list: List<SongId>): List<DtoSong> =
         cacheMultipleValue<SongId, DtoSong>(Group.SONG, list)
 
+    // prev song
+    override fun setPrevSongById(song: DtoPrevSong) = setSingleValueWithExp(Group.PREV_SONG, song.id, song)
+
+    override fun setPrevSongById(list: List<DtoPrevSong>) =
+        setMultipleValueWithExp(Group.PREV_SONG, list.associateBy { it.id })
+
+    override fun cachePrevSongById(songId: SongId): DtoPrevSong? =
+        cacheSingleValue<SongId, DtoPrevSong>(Group.PREV_SONG, songId)
+
+    override fun cachePrevSongById(list: List<SongId>): List<DtoPrevSong> =
+        cacheMultipleValue<SongId, DtoPrevSong>(Group.PREV_SONG, list)
+
     // genre
     override fun cacheGenreById(genreId: GenreId): DtoGenre? = cacheSingleValue<GenreId, DtoGenre>(Group.GENRE, genreId)
     override fun cacheGenreById(list: List<GenreId>): List<DtoGenre> =

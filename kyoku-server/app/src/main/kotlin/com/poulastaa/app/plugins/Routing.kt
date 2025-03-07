@@ -9,6 +9,8 @@ import com.poulastaa.user.network.routes.getArtistPoster
 import com.poulastaa.user.network.routes.getGenrePoster
 import com.poulastaa.user.network.routes.getSongPoster
 import com.poulastaa.user.network.routes.setup.*
+import com.poulastaa.view.domain.repository.ViewRepository
+import com.poulastaa.view.network.routes.getArtist
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -19,11 +21,13 @@ fun Application.configureRouting() {
     val authRepository: AuthRepository by inject()
     val setUpRepository: SetupRepository by inject()
     val suggestionRepository: SuggestionRepository by inject()
+    val viewRepository: ViewRepository by inject()
 
     routing {
         authen(authRepository)
         setup(setUpRepository)
         suggestion(suggestionRepository)
+        view(viewRepository)
 
         staticFiles(
             remotePath = ".well-known",
@@ -75,4 +79,8 @@ private fun Routing.setup(repo: SetupRepository) {
 
 private fun Routing.suggestion(repo: SuggestionRepository) {
     home(repo)
+}
+
+private fun Routing.view(repo: ViewRepository) {
+    getArtist(repo)
 }

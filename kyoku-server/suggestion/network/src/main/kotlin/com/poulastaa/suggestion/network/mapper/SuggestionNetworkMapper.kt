@@ -1,21 +1,14 @@
 package com.poulastaa.suggestion.network.mapper
 
 import com.poulastaa.core.domain.model.DtoAlbum
-import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoSuggestedArtistSong
-import com.poulastaa.core.network.mapper.toPrevArtistRes
-import com.poulastaa.core.network.mapper.toResponseArtist
-import com.poulastaa.core.network.mapper.toResponseFullAlbum
-import com.poulastaa.core.network.mapper.toResponsePlaylistFull
+import com.poulastaa.core.network.mapper.*
 import com.poulastaa.suggestion.domain.model.DtoHome
 import com.poulastaa.suggestion.domain.model.DtoRefresh
-import com.poulastaa.suggestion.network.domain.*
-
-internal fun DtoPrevSong.toResponsePrevSong() = ResponsePrevSong(
-    id = this.id,
-    title = this.title,
-    poster = this.poster
-)
+import com.poulastaa.suggestion.network.domain.ResponseHome
+import com.poulastaa.suggestion.network.domain.ResponsePrevAlbum
+import com.poulastaa.suggestion.network.domain.ResponseRefresh
+import com.poulastaa.suggestion.network.domain.ResponseSuggestedArtistSong
 
 internal fun DtoAlbum.toResponsePrevAlbum() = ResponsePrevAlbum(
     id = this.id,
@@ -27,7 +20,6 @@ internal fun DtoSuggestedArtistSong.toResponseSuggestedArtistSong() = ResponseSu
     artist = this.artist.toPrevArtistRes(),
     prevSongs = this.prevSong.map { it.toResponsePrevSong() }
 )
-
 
 internal fun DtoRefresh.toResponseRefresh() = ResponseRefresh(
     prevPopularSongMix = this.prevPopularSongMix.map { it.toResponsePrevSong() },

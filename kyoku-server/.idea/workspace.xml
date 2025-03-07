@@ -5,22 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shard-manager/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../shard-manager/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/data/src/main/kotlin/com/poulastaa/core/data/di/DataModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/data/src/main/kotlin/com/poulastaa/core/data/di/DataModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/di/DatabaseModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/di/DatabaseModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/ExposedSetupDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/ExposedSetupDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/RedisLocalSuggestionDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/RedisLocalSuggestionDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/network/src/main/kotlin/com/poulastaa/core/network/mapper/CoreNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/network/src/main/kotlin/com/poulastaa/core/network/mapper/CoreNetworkMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/domain/ResponsePrevSong.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/domain/ResponseRefresh.kt" beforeDir="false" afterPath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/domain/ResponseRefresh.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/domain/ResponseSuggestedArtistSong.kt" beforeDir="false" afterPath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/domain/ResponseSuggestedArtistSong.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/mapper/SuggestionNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/suggestion/network/src/main/kotlin/com/poulastaa/suggestion/network/mapper/SuggestionNetworkMapper.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,13 +38,26 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Interface" />
+        <option value="Kotlin Class" />
+        <option value="Kotlin File" />
+        <option value="Kotlin Data Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2twx3sfzKxtxxtd5sn5Plg0X92J" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="showExcludedFiles" value="false" />
     <option name="showLibraryContents" value="true" />
@@ -53,6 +72,7 @@
     "Ktor.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "ShowUsagesActions.previewPropertyKey": "true",
     "git-widget-placeholder": "dev",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -63,7 +83,28 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="com.poulastaa.core.domain.repository.view" />
+    </key>
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.poulastaa.core.network.model" />
+      <recent name="com.poulastaa.view.network.mapper" />
+      <recent name="com.poulastaa.core.database.repository.view" />
+    </key>
+  </component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Kotlin Scripts.KotlinBuildScript.auth\data\build.gradle.kts" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Kotlin Scripts.KotlinBuildScript.auth\data\build.gradle.kts" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
     <configuration name="app" type="KtorApplicationConfigurationType" factoryName="Ktor">
       <option name="ALTERNATIVE_JRE_PATH" value="23" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -82,7 +123,7 @@
       <option name="includeProvidedScope" value="false" />
       <option name="mainClass" value="com.poulastaa.app.AppKt" />
       <option name="passParentEnvs" value="true" />
-      <option name="programParameters" value="" />
+      <option name="programParameters" />
       <option name="shortenCommandLine" />
       <option name="vmParameters" />
       <option name="workingDirectory" value="D:\Kyoku\kyoku-server" />
@@ -108,6 +149,7 @@
       <option name="presentableId" value="Default" />
       <updated>1741276741596</updated>
       <workItem from="1741276742702" duration="1670000" />
+      <workItem from="1741381461110" duration="7101000" />
     </task>
     <servers />
   </component>

@@ -13,7 +13,9 @@ fun provideGsonService() = module {
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .create()
     }
+}
 
+fun provideSessionService() = module {
     single<RedisSessionStorageRepository> {
         RedisSessionStorageRepository(
             storage = get()

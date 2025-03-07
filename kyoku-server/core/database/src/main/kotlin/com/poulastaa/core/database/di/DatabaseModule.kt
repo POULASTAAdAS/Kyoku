@@ -10,6 +10,8 @@ import com.poulastaa.core.database.repository.setup.ExposedSetupDatasource
 import com.poulastaa.core.database.repository.setup.RedisSetupDatasource
 import com.poulastaa.core.database.repository.suggestion.ExposedLocalSuggestionDatasource
 import com.poulastaa.core.database.repository.suggestion.RedisLocalSuggestionDatasource
+import com.poulastaa.core.database.repository.view.ExposedLocalViewDatasource
+import com.poulastaa.core.database.repository.view.RedisLocalViewDatasource
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
 import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
@@ -19,6 +21,8 @@ import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
+import com.poulastaa.core.domain.repository.view.LocalViewCacheDatasource
+import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 
@@ -92,6 +96,21 @@ fun provideCoreDatabaseService() = module {
 
     single<LocalSuggestionDatasource> {
         ExposedLocalSuggestionDatasource(
+            core = get(),
+            cache = get()
+        )
+    }
+
+    single<LocalViewCacheDatasource> {
+        RedisLocalViewDatasource(
+            gson = get(),
+            redisPool = get(),
+            core = get()
+        )
+    }
+
+    single<LocalViewDatasource> {
+        ExposedLocalViewDatasource(
             core = get(),
             cache = get()
         )

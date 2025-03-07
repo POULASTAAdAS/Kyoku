@@ -1,7 +1,6 @@
 package com.poulastaa.core.database.repository.suggestion
 
 import com.google.gson.Gson
-import com.poulastaa.core.database.mapper.toDtoPrevSong
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoPlaylist
@@ -15,47 +14,10 @@ class RedisLocalSuggestionDatasource(
     private val redisPool: JedisPool,
     private val core: LocalCoreCacheDatasource,
 ) : LocalSuggestionCacheDatasource, RedisKeys() {
-    override fun setPrevSongById(song: DtoPrevSong) {
-        redisPool.resource.use { jedis ->
-            jedis.setex(
-                "${Group.PREV_SONG}:${song.id}",
-                Group.PREV_SONG.expTime,
-                gson.toJson(song)
-            )
-        }
-    }
-
-    override fun setPrevSongById(list: List<DtoPrevSong>) {
-        if (list.isEmpty()) return
-
-        redisPool.resource.use { jedis ->
-            val pipeline = jedis.pipelined()
-
-            list.associateBy { it.id }.forEach { (k, v) ->
-                pipeline.setex(
-                    "${Group.PREV_SONG}:$k",
-                    Group.GENRE.expTime,
-                    gson.toJson(v)
-                )
-            }
-
-            pipeline.sync()
-        }
-    }
-
-    override fun cachePrevSongById(list: List<SongId>): List<DtoPrevSong> =
-        core.cacheSongById(list).map { it.toDtoPrevSong() }.ifEmpty {
-            redisPool.resource.use { jedis ->
-                jedis.mget(*list.map { "${Group.PREV_SONG}:$it" }.toTypedArray())
-                    .mapNotNull { it }
-                    .map { gson.fromJson(it, DtoPrevSong::class.java) }
-            }
-        }
-
-    override fun cachePrevSongById(songId: SongId): DtoPrevSong? =
-        core.cacheSongById(songId)?.toDtoPrevSong() ?: redisPool.resource.use { jedis ->
-            jedis.get("${Group.PREV_SONG}:$songId")
-        }?.let { gson.fromJson(it, DtoPrevSong::class.java) }
+    override fun setPrevSongById(song: DtoPrevSong) = core.setPrevSongById(song)
+    override fun setPrevSongById(list: List<DtoPrevSong>) = core.setPrevSongById(list)
+    override fun cachePrevSongById(list: List<SongId>): List<DtoPrevSong> = core.cachePrevSongById(list)
+    override fun cachePrevSongById(songId: SongId): DtoPrevSong? = core.cachePrevSongById(songId)
 
     override fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist? = core.cachePlaylistOnId(playlistId)
     override fun cachePlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist> = core.cachePlaylistOnId(list)

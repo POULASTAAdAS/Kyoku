@@ -241,6 +241,18 @@ class ExposedLocalCoreDatasource(
         }
     }
 
+    override suspend fun getPrevSongOnId(songId: SongId): DtoPrevSong? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getPrevSongOnId(list: List<SongId>): List<DtoPrevSong> = kyokuDbQuery {
+        DaoSong.find {
+            EntitySong.id inList list
+        }.map { it.toDtoPrevSong() }.also {
+            cache.setPrevSongById(it)
+        }
+    }
+
     override suspend fun getArtistFromDbArtist(list: List<DtoDBArtist>): List<DtoArtist> = coroutineScope {
         list.map { artist ->
             async {

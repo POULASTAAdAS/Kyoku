@@ -67,3 +67,10 @@ include("notification:data")
 project(":notification:data").name = "notification-data"
 include("suggestion:network")
 findProject(":suggestion:network")?.name = "suggestion-network"
+
+include("view:domain")
+findProject(":view:domain")?.name = "view-domain"
+include("view:data")
+findProject(":view:data")?.name = "view-data"
+include("view:network")
+findProject(":view:network")?.name = "view-network"

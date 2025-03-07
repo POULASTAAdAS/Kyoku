@@ -303,11 +303,6 @@ class ExposedSetupDatasource(
                 }
             }.awaitAll().flatten()
 
-            println(genreArtistIds)
-            println(genreArtistIds)
-            println(genreArtistIds)
-            println(genreArtistIds)
-
             val genreArtist = cache.cacheArtistById(genreArtistIds)
                 .map { it.toDtoPrevArtist() }.ifEmpty {
                     cache.cachePrevArtistById(genreArtistIds).ifEmpty {
