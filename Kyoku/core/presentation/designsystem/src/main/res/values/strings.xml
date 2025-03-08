@@ -141,7 +141,7 @@
     <string name="by_name">release year</string>
     <string name="search_artist">search artist</string>
     <string name="international">International</string>
-    <string name="explore_artist">Explore Artist</string>
+    <string name="explore_artist">Explore artist</string>
     <string name="build_your_playlist">Build your playlist with this songs</string>
     <string name="search">search</string>
     <string name="error_playlist_name_conflict">Two playlist can\'t have same name</string>

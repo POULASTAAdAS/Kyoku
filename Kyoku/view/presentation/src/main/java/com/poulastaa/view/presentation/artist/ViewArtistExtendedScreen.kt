@@ -3,7 +3,6 @@ package com.poulastaa.view.presentation.artist
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,8 +20,8 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.view.presentation.artist.components.ViewArtistErrorScreen
 import com.poulastaa.view.presentation.artist.components.ViewArtistExtendedLoadingScreen
-import com.poulastaa.view.presentation.artist.components.ViewArtistMediumLoadingScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,9 +36,9 @@ internal fun ViewArtistExtendedScreen(
 
         }
     ) { paddingValues ->
-        AnimatedContent(targetState = state.loadingType) {
-            when (it) {
-                LoadingType.LOADING -> ViewArtistExtendedLoadingScreen(
+        AnimatedContent(targetState = state.loadingType) { loadingState ->
+            when (loadingState) {
+                LoadingType.Loading -> ViewArtistExtendedLoadingScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -47,7 +46,7 @@ internal fun ViewArtistExtendedScreen(
                         .fillMaxSize()
                 )
 
-                LoadingType.ERROR -> Column(
+                is LoadingType.Error -> ViewArtistErrorScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -55,11 +54,9 @@ internal fun ViewArtistExtendedScreen(
                         .fillMaxSize()
                         .padding(paddingValues)
                         .padding(MaterialTheme.dimens.medium1),
-                ) {
-
-                }
-
-                LoadingType.CONTENT -> LazyColumn(
+                    error = loadingState
+                )
+                LoadingType.Content -> LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)

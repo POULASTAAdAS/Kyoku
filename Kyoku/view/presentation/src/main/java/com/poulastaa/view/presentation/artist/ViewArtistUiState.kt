@@ -2,12 +2,12 @@ package com.poulastaa.view.presentation.artist
 
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.model.UiPreSong
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 
 internal data class ViewArtistUiState(
-    val loadingType: LoadingType = LoadingType.LOADING,
+    val loadingType: LoadingType = LoadingType.Loading,
     val artist: UiViewArtist = UiViewArtist(),
-    val mostPopularSongs: List<UiPreSong> = emptyList(),
+    val mostPopularSongs: List<UiDetailedPrevSong> = emptyList(),
 )
 
 internal data class UiViewArtist(

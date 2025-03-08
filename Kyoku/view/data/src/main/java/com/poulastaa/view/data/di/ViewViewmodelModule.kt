@@ -1,6 +1,8 @@
 package com.poulastaa.view.data.di
 
+import com.poulastaa.core.domain.repository.LocalViewArtistDatasource
 import com.poulastaa.view.data.repository.OnlineFirstViewArtistRepository
+import com.poulastaa.view.domain.repository.RemoteViewArtistDatasource
 import com.poulastaa.view.domain.repository.ViewArtistRepository
 import dagger.Module
 import dagger.Provides
@@ -13,5 +15,8 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object ViewViewmodelModule {
     @Provides
     @ViewModelScoped
-    fun provideViewArtistRepository(): ViewArtistRepository = OnlineFirstViewArtistRepository()
+    fun provideViewArtistRepository(
+        remote: RemoteViewArtistDatasource,
+        local: LocalViewArtistDatasource,
+    ): ViewArtistRepository = OnlineFirstViewArtistRepository(remote, local)
 }

@@ -19,6 +19,11 @@ interface LocalCoreCacheDatasource {
     fun cachePrevSongById(list: List<SongId>): List<DtoPrevSong>
     fun cachePrevSongById(songId: SongId): DtoPrevSong?
 
+    fun setDetailedPrevSongById(song: DtoDetailedPrevSong)
+    fun setDetailedPrevSongById(list: List<DtoDetailedPrevSong>)
+    fun cacheDetailedPrevSongById(list: List<SongId>): List<DtoDetailedPrevSong>
+    fun cacheDetailedPrevSongById(songId: SongId): DtoDetailedPrevSong?
+
     fun cacheGenreById(genreId: GenreId): DtoGenre?
     fun cacheGenreById(list: List<GenreId>): List<DtoGenre>
     fun setGenreById(genre: DtoGenre)

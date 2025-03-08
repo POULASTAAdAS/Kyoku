@@ -6,9 +6,8 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.toUiPrevSong
+import com.poulastaa.core.presentation.designsystem.toUiDetailedPrevSong
 import com.poulastaa.view.domain.repository.ViewArtistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -46,41 +46,49 @@ internal class ViewArtistViewmodel @Inject constructor(
         viewModelScope.launch {
             when (val result = repo.loadArtist(artistId)) {
                 is Result.Error -> when (result.error) {
-                    DataError.Network.NO_INTERNET -> {
-                        _uiEvent.send(
-                            ViewArtistUiEvent.EmitToast(
-                                UiText.StringResource(
-                                    R.string.error_no_internet
-                                )
+                    DataError.Network.NO_INTERNET -> _state.update {
+                        it.copy(
+                            loadingType = LoadingType.Error(
+                                type = LoadingType.ERROR_TYPE.NO_INTERNET,
+                                lottieId = listOf(
+                                    R.raw.lottie_error_1,
+                                    R.raw.lottie_error_2,
+                                    R.raw.lottie_error_3,
+                                    R.raw.lottie_error_4,
+                                    R.raw.lottie_error_5,
+                                    R.raw.lottie_error_6,
+                                ).random(Random)
                             )
                         )
                     }
 
-                    else -> _uiEvent.send(
-                        ViewArtistUiEvent.EmitToast(
-                            UiText.StringResource(
-                                R.string.error_something_went_wrong
+                    else -> _state.update {
+                        it.copy(
+                            loadingType = LoadingType.Error(
+                                type = LoadingType.ERROR_TYPE.UNKNOWN,
+                                lottieId = listOf(
+                                    R.raw.lottie_error_1,
+                                    R.raw.lottie_error_2,
+                                    R.raw.lottie_error_3,
+                                    R.raw.lottie_error_4,
+                                    R.raw.lottie_error_5,
+                                    R.raw.lottie_error_6,
+                                ).random(Random)
                             )
                         )
-                    )
+                    }
                 }
 
                 is Result.Success -> {
                     _state.update { state ->
                         state.copy(
                             artist = result.data.artist.toUiViewArtist(),
-                            mostPopularSongs = result.data.mostPopularSongs.map { it.toUiPrevSong() }
+                            mostPopularSongs = result.data.mostPopularSongs.map { it.toUiDetailedPrevSong() },
+                            loadingType = LoadingType.Content
                         )
                     }
                 }
             }
-
-//            _state.update {
-//                it.copy(
-//                    loadingType = if (it.artist.name.isEmpty()) LoadingType.ERROR
-//                    else LoadingType.CONTENT
-//                )
-//            }
         }
     }
 }

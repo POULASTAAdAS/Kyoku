@@ -6,6 +6,7 @@ import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
+import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
@@ -14,6 +15,7 @@ import com.poulastaa.core.database.repository.RoomLocalProfileDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
+import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
@@ -23,6 +25,7 @@ import com.poulastaa.core.domain.repository.LocalProfileDatasource
 import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.LocalSettingsDatasource
+import com.poulastaa.core.domain.repository.LocalViewArtistDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -105,6 +108,18 @@ internal object CoreDatabaseViewmodelModule {
     @Provides
     @ViewModelScoped
     fun provideLocalProfileDatasource(
-        profileDao: ProfileDao
+        profileDao: ProfileDao,
     ): LocalProfileDatasource = RoomLocalProfileDatasource(profileDao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideViewDao(
+        database: KyokuDatabase,
+    ): ViewDao = database.viewDao
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalViewDatasource(
+        viewDao: ViewDao,
+    ): LocalViewArtistDatasource = RoomLocalViewArtistDatasource(viewDao)
 }

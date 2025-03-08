@@ -15,4 +15,6 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.pagingCompose)
+
+    implementation(libs.lottie)
 }

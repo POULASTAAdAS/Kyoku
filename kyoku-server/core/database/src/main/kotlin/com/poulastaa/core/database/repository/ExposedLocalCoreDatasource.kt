@@ -241,15 +241,25 @@ class ExposedLocalCoreDatasource(
         }
     }
 
-    override suspend fun getPrevSongOnId(songId: SongId): DtoPrevSong? {
+    override suspend fun getDetailedPrevSongOnId(songId: SongId): DtoDetailedPrevSong? {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getPrevSongOnId(list: List<SongId>): List<DtoPrevSong> = kyokuDbQuery {
-        DaoSong.find {
-            EntitySong.id inList list
-        }.map { it.toDtoPrevSong() }.also {
-            cache.setPrevSongById(it)
+    override suspend fun getDetailedPrevSongOnId(list: List<SongId>): List<DtoDetailedPrevSong> = coroutineScope {
+        kyokuDbQuery {
+            DaoSong.find {
+                EntitySong.id inList list
+            }.map { it.toDtoPrevSong() }
+        }.map {
+            val artistDef = async { getArtistOnSongId(listOf(it.id)).firstOrNull()?.second?.map { it.name } }
+            val infoDef = async { getInfoOnSongId(listOf(it.id)).map { it.second.releaseYear }.firstOrNull() }
+
+            it.toDetailedPrevSong(
+                artist = artistDef.await()?.joinToString(","),
+                releaseYear = infoDef.await() ?: -1
+            )
+        }.also {
+            cache.setDetailedPrevSongById(it)
         }
     }
 

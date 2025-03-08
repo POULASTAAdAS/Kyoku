@@ -16,7 +16,7 @@ import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.model.UiPreSong
+import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
 import kotlin.random.Random
 
@@ -77,15 +77,16 @@ fun ViewArtistRootScreen(
 }
 
 internal val PREV_DATA = ViewArtistUiState(
-    loadingType = LoadingType.CONTENT,
+    loadingType = LoadingType.Content,
     artist = UiViewArtist(
         name = "Artist Name",
         isFollowing = Random.nextBoolean()
     ),
     mostPopularSongs = (1..10).map {
-        UiPreSong(
+        UiDetailedPrevSong(
             id = it.toLong(),
-            title = "Song $it",
+            title = "That Cool Song $it",
+            artists = "Those Cool Artists",
         )
     }
 )

@@ -13,6 +13,7 @@ open class RedisKeys {
         SONG_TITLE(expTime = ExpTime.FIFTEEN.time),
         SONG_INFO(expTime = ExpTime.FIFTEEN.time),
         PREV_SONG(expTime = ExpTime.FIFTEEN.time),
+        PREV_DETAILED_SONG(expTime = ExpTime.FIFTEEN.time),
         GENRE(expTime = ExpTime.FIFTEEN.time),
         GENRE_TITLE(expTime = ExpTime.FIFTEEN.time),
         ALBUM(expTime = ExpTime.FIFTEEN.time),

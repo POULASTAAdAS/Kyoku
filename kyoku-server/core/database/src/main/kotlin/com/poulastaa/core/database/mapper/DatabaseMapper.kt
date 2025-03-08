@@ -97,3 +97,11 @@ fun DaoSong.toDtoPrevSong() = DtoPrevSong(
     title = this.title,
     rawPoster = this.poster
 )
+
+fun DtoPrevSong.toDetailedPrevSong(artist: String?, releaseYear: Int) = DtoDetailedPrevSong(
+    id = this.id,
+    title = this.title,
+    poster = this.poster,
+    artists = artist,
+    releaseYear = releaseYear,
+)
