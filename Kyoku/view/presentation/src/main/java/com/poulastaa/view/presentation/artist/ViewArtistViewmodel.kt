@@ -40,13 +40,13 @@ internal class ViewArtistViewmodel @Inject constructor(
 
     fun onAction(action: ViewArtistUiAction) {
         when (action) {
-            is ViewArtistUiAction.OnPlayAll -> TODO()
-            is ViewArtistUiAction.OnSongClick -> TODO()
+            is ViewArtistUiAction.OnPlayAll -> {}
+            is ViewArtistUiAction.OnSongClick -> {}
 
-            is ViewArtistUiAction.OnSongOptionsToggle -> TODO()
+            is ViewArtistUiAction.OnSongOptionsToggle -> {}
 
-            ViewArtistUiAction.OnExploreArtist -> TODO()
-            ViewArtistUiAction.OnFollowToggle -> TODO()
+            ViewArtistUiAction.OnExploreArtist -> {}
+            ViewArtistUiAction.OnFollowToggle -> {}
         }
     }
 

@@ -69,7 +69,6 @@ fun ViewArtistRootScreen(
         },
         expandedContent = {
             ViewArtistExtendedScreen(
-                scroll = scroll,
                 state = state,
                 onAction = viewmodel::onAction,
                 navigateBack = navigateBack

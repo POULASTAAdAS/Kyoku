@@ -235,7 +235,10 @@ internal fun ViewArtistMediumScreen(
                                 )
                                 .padding(horizontal = MaterialTheme.dimens.medium1)
                         ) {
-                            ViewControllerCard(state, onAction)
+                            ViewControllerCard(
+                                state = state,
+                                onAction = onAction
+                            )
                         }
                     }
 

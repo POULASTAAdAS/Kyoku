@@ -56,12 +56,14 @@ internal fun ViewSongCard(
             .fillMaxWidth()
             .height(cardHeight)
             .padding(horizontal = MaterialTheme.dimens.medium1)
-            .offset {
-                IntOffset(
-                    y = -(controllerHeight - (controllerHeight / 2)),
-                    x = 0
-                )
-            }
+            .then(
+                if (controllerHeight > 0) Modifier.offset {
+                    IntOffset(
+                        y = -(controllerHeight - (controllerHeight / 2)),
+                        x = 0
+                    )
+                } else Modifier
+            )
             .clip(MaterialTheme.shapes.extraSmall)
             .combinedClickable(
                 onClick = {
@@ -78,6 +80,9 @@ internal fun ViewSongCard(
             shape = MaterialTheme.shapes.extraSmall,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
             )
         ) {
             SubcomposeAsyncImage(

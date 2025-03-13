@@ -35,26 +35,32 @@ import com.poulastaa.view.presentation.artist.ViewArtistUiState
 @Composable
 internal fun ViewControllerCard(
     state: ViewArtistUiState,
+    textAlignment: Alignment.Horizontal = Alignment.Start,
     onAction: (ViewArtistUiAction) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(
-            text = state.artist.name,
-            fontWeight = FontWeight.Bold,
-            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-            color = MaterialTheme.colorScheme.primary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = textAlignment
+        ) {
+            Text(
+                text = state.artist.name,
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-        Text(
-            text = "Total songs: ${state.mostPopularSongs.size}",
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.primary.copy(.7f),
-            fontSize = MaterialTheme.typography.titleSmall.fontSize
-        )
+            Text(
+                text = "Total songs: ${state.mostPopularSongs.size}",
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary.copy(.7f),
+                fontSize = MaterialTheme.typography.titleSmall.fontSize
+            )
+        }
 
         Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
@@ -82,9 +88,7 @@ internal fun ViewControllerCard(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
-                        .padding(MaterialTheme.dimens.small3)
-                        .padding(horizontal = MaterialTheme.dimens.small3)
-                        .padding(vertical = MaterialTheme.dimens.small1)
+                        .padding(MaterialTheme.dimens.medium1)
                         .align(Alignment.CenterHorizontally),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
