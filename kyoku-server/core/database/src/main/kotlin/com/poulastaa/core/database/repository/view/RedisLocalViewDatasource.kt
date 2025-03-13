@@ -15,7 +15,12 @@ internal class RedisLocalViewDatasource(
     private val redisPool: JedisPool,
     private val core: LocalCoreCacheDatasource,
 ) : LocalViewCacheDatasource {
-    override fun cacheArtistById(artistId: ArtistId): DtoPrevArtist? = core.cacheArtistById(artistId)?.toDtoPrevArtist()
-    override fun cacheDetailedPrevSongById(list: List<SongId>): List<DtoDetailedPrevSong> = core.cacheDetailedPrevSongById(list)
+    override fun cacheArtistById(artistId: ArtistId): DtoPrevArtist? =
+        core.cacheArtistById(artistId)?.toDtoPrevArtist() ?: core.cachePrevArtistById(artistId)
+
+    override fun setArtistById(artist: DtoPrevArtist) = core.setPrevArtistById(artist)
+    override fun cacheDetailedPrevSongById(list: List<SongId>): List<DtoDetailedPrevSong> =
+        core.cacheDetailedPrevSongById(list)
+
     override fun setDetailedPrevSongById(songs: List<DtoDetailedPrevSong>) = core.setDetailedPrevSongById(songs)
 }

@@ -137,14 +137,9 @@ class RedisSetupDatasource(
         val fromDtoArtist = core.cacheArtistById(list).map { it.toDtoPrevArtist() }
 
         if (fromDtoArtist.size == list.size) return fromDtoArtist
-
         val notFoundIdList = list.filterNot { artistId -> fromDtoArtist.any { it.id == artistId } }
 
-        val cache = redisPool.resource.use { jedis ->
-            jedis.mget(*notFoundIdList.map { "${Group.PREV_ARTIST}:${it}" }.toTypedArray())
-                .mapNotNull { it }
-                .map { gson.fromJson(it, DtoPrevArtist::class.java) }
-        }
+        val cache = core.cachePrevArtistById(notFoundIdList)
 
         return fromDtoArtist + cache
     }
@@ -161,23 +156,7 @@ class RedisSetupDatasource(
         }
     }
 
-    override fun setPrevArtistById(list: List<DtoPrevArtist>) {
-        if (list.isEmpty()) return
-
-        redisPool.resource.use { jedis ->
-            val pipe = jedis.pipelined()
-
-            list.forEach { artist ->
-                pipe.setex(
-                    "${Group.PREV_ARTIST}:${artist.id}",
-                    Group.PREV_ARTIST.expTime,
-                    gson.toJson(artist)
-                )
-            }
-
-            pipe.sync()
-        }
-    }
+    override fun setPrevArtistById(list: List<DtoPrevArtist>) = core.setPrevArtistById(list)
 
     override fun setPrevArtistIdByName(list: Map<String, ArtistId>) {
         if (list.isEmpty()) return

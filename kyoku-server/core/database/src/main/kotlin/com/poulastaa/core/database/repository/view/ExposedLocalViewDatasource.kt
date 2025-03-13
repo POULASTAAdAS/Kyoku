@@ -30,7 +30,9 @@ internal class ExposedLocalViewDatasource(
             DaoArtist.find {
                 EntityArtist.id eq artistId
             }.map { it.toDtoPrevArtist() }
-        }.first()
+        }.first().also {
+            cache.setArtistById(it)
+        }
 
     override suspend fun getArtistMostPopularSongs(artistId: ArtistId): List<DtoDetailedPrevSong> {
         val songIdList = shardPopularDbQuery {

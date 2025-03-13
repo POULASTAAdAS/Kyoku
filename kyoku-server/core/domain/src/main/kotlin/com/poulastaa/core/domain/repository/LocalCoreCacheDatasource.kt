@@ -39,6 +39,11 @@ interface LocalCoreCacheDatasource {
     fun setArtistById(artist: DtoArtist)
     fun setArtistById(list: List<DtoArtist>)
 
+    fun cachePrevArtistById(artistId: ArtistId): DtoPrevArtist?
+    fun cachePrevArtistById(list: List<ArtistId>): List<DtoPrevArtist>
+    fun setPrevArtistById(artist: DtoPrevArtist)
+    fun setPrevArtistById(list: List<DtoPrevArtist>)
+
     fun cacheCountryById(countryId: CountryId): DtoCountry?
     fun cacheCountryById(list: List<CountryId>): List<DtoCountry>
     fun setCountryById(country: DtoCountry)

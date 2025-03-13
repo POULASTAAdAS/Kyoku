@@ -10,5 +10,8 @@ data class DtoPrevArtist(
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 
-    val cover: String? = rawCover?.let { "$baseUrl${EndPoints.Poster.ArtistPoster.route}?$POSTER_PARAM=$rawCover" }
+    val cover: String? = rawCover?.let {
+        if (it.startsWith("http")) it
+        else "$baseUrl${EndPoints.Poster.ArtistPoster.route}?$POSTER_PARAM=$rawCover"
+    }
 }

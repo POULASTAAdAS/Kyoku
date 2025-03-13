@@ -84,6 +84,19 @@ class RedisLocalCoreDatasource(
     override fun setArtistById(list: List<DtoArtist>) =
         setMultipleValueWithExp(Group.ARTIST, list.associateBy { it.id })
 
+    // prev artist
+    override fun cachePrevArtistById(artistId: ArtistId): DtoPrevArtist? =
+        cacheSingleValue<ArtistId, DtoPrevArtist>(Group.PREV_ARTIST, artistId)
+
+    override fun cachePrevArtistById(list: List<ArtistId>): List<DtoPrevArtist> =
+        cacheMultipleValue<ArtistId, DtoPrevArtist>(Group.PREV_ARTIST, list)
+
+    override fun setPrevArtistById(artist: DtoPrevArtist) =
+        setSingleValueWithExp(Group.PREV_ARTIST, artist.id, artist)
+
+    override fun setPrevArtistById(list: List<DtoPrevArtist>) =
+        setMultipleValueWithExp(Group.PREV_ARTIST, list.associateBy { it.id })
+
 
     // country
     override fun cacheCountryById(countryId: CountryId): DtoCountry? =
