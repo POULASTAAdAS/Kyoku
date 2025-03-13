@@ -16,8 +16,8 @@ import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
+import com.poulastaa.view.presentation.model.UiViewPrevSong
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
@@ -35,6 +35,8 @@ fun ViewArtistRootScreen(
     val windowSizeClass = calculateWindowSizeClass(context)
     val state by viewmodel.state.collectAsStateWithLifecycle()
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+
     ObserveAsEvent(viewmodel.uiEvent) { event ->
         when (event) {
             is ViewArtistUiEvent.EmitToast -> Toast.makeText(
@@ -83,7 +85,7 @@ internal val PREV_DATA = ViewArtistUiState(
         isFollowing = Random.nextBoolean()
     ),
     mostPopularSongs = (1..10).map {
-        UiDetailedPrevSong(
+        UiViewPrevSong(
             id = it.toLong(),
             title = "That Cool Song $it",
             artists = "Those Cool Artists",

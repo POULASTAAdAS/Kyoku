@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.main.domain.repository.HomeRepository
+import com.poulastaa.main.presentation.components.UiMainViewMoreItemType
 import com.poulastaa.main.presentation.home.mapper.toNavigateToView
 import com.poulastaa.main.presentation.home.mapper.toNavigateToViewHome
 import com.poulastaa.main.presentation.home.mapper.toUiHomeState
@@ -65,9 +66,18 @@ internal class HomeViewmodel @Inject constructor(
                 }
             }
 
-            is HomeUiAction.OnViewMore -> {}
-            is HomeUiAction.OnSuggestedAlbumLongClick -> {}
+            is HomeUiAction.OnViewMore -> viewModelScope.launch {
+                when (action.type) {
+                    UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL,
+                    UiMainViewMoreItemType.SUGGESTED_ALBUM_IN_DETAIL,
+                        -> TODO("Implement view more for ${action.type} on home screen i.e. Explore Artist")
+
+                    else -> _uiEvent.send(action.type.toNavigateToView(action.id))
+                }
+            }
+
             is HomeUiAction.OnSuggestedArtistLongClick -> {}
+            is HomeUiAction.OnSuggestedAlbumLongClick -> {}
             is HomeUiAction.OnSuggestArtistSongClick -> {}
         }
     }

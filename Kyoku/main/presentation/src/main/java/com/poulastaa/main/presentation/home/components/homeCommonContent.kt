@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,7 +111,7 @@ internal fun LazyGridScope.homeCommonContent(
                     contentAlignment = Alignment.Center
                 ) {
                     HomeMoreButton {
-                        onAction(HomeUiAction.OnViewMore(UiMainViewMoreItemType.EXPLORE_ARTIST))
+                        onAction(HomeUiAction.OnViewMore(UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL))
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     }
                 }
@@ -176,7 +175,7 @@ internal fun LazyGridScope.homeCommonContent(
                     contentAlignment = Alignment.Center
                 ) {
                     HomeMoreButton {
-                        onAction(HomeUiAction.OnViewMore(UiMainViewMoreItemType.EXPLORE_ALBUM))
+                        onAction(HomeUiAction.OnViewMore(UiMainViewMoreItemType.SUGGESTED_ALBUM_IN_DETAIL))
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     }
                 }

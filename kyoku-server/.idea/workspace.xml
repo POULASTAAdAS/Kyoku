@@ -6,19 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/mapper/DatabaseMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/mapper/DatabaseMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/ExposedLocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/ExposedLocalViewDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/RedisLocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/RedisLocalViewDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/RedisKeys.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/RedisKeys.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewCacheDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/model/ViewArtistPayload.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/model/ViewArtistPayload.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/model/ViewArtistResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/model/ViewArtistResponse.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,6 +131,7 @@
       <workItem from="1741276742702" duration="1670000" />
       <workItem from="1741381461110" duration="7101000" />
       <workItem from="1741412622040" duration="6449000" />
+      <workItem from="1741847133265" duration="4848000" />
     </task>
     <servers />
   </component>

@@ -8,6 +8,7 @@ import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.domain.model.PayloadHomeData
 import com.poulastaa.main.domain.model.PayloadSaveItemType
 import com.poulastaa.main.domain.model.PayloadSavedItem
+import com.poulastaa.main.presentation.components.UiMainViewMoreItemType
 import com.poulastaa.main.presentation.components.UiSaveItemType
 import com.poulastaa.main.presentation.components.UiSavedItem
 import com.poulastaa.main.presentation.home.HomeUiEvent
@@ -114,4 +115,13 @@ internal fun UiHomeExploreType.toNavigateToView() = HomeUiEvent.NavigateToView(
         UiHomeExploreType.DAY_TYPE_MIX -> ViewType.DAY_TYPE_MIX
     },
     otherId = -1
+)
+
+internal fun UiMainViewMoreItemType.toNavigateToView(id: Long) = HomeUiEvent.NavigateToView(
+    type = when (this) {
+        UiMainViewMoreItemType.EXPLORE_ALBUM -> ViewType.ALBUM
+        UiMainViewMoreItemType.EXPLORE_ARTIST -> ViewType.ARTIST
+        else -> throw IllegalArgumentException("Invalid view type $this")
+    },
+    otherId = id
 )

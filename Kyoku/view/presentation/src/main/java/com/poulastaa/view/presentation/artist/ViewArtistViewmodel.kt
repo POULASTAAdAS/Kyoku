@@ -7,8 +7,8 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.toUiDetailedPrevSong
 import com.poulastaa.view.domain.repository.ViewArtistRepository
+import com.poulastaa.view.presentation.mapper.toUiViewPrevSong
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +39,15 @@ internal class ViewArtistViewmodel @Inject constructor(
 
 
     fun onAction(action: ViewArtistUiAction) {
+        when (action) {
+            is ViewArtistUiAction.OnPlayAll -> TODO()
+            is ViewArtistUiAction.OnSongClick -> TODO()
 
+            is ViewArtistUiAction.OnSongOptionsToggle -> TODO()
+
+            ViewArtistUiAction.OnExploreArtist -> TODO()
+            ViewArtistUiAction.OnFollowToggle -> TODO()
+        }
     }
 
     fun init(artistId: ArtistId) {
@@ -83,7 +91,7 @@ internal class ViewArtistViewmodel @Inject constructor(
                     _state.update { state ->
                         state.copy(
                             artist = result.data.artist.toUiViewArtist(),
-                            mostPopularSongs = result.data.mostPopularSongs.map { it.toUiDetailedPrevSong() },
+                            mostPopularSongs = result.data.mostPopularSongs.map { it.toUiViewPrevSong() },
                             loadingType = LoadingType.Content
                         )
                     }
