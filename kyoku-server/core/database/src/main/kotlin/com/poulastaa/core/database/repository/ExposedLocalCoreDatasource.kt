@@ -59,7 +59,7 @@ class ExposedLocalCoreDatasource(
             }
         }
         val playlist = dbPlaylist.toDtoPlaylist()
-        cache.setPlaylistById(playlist)
+        cache.setPlaylistOnId(playlist)
 
         return playlist
     }
@@ -213,9 +213,13 @@ class ExposedLocalCoreDatasource(
     }
 
     override suspend fun getSongOnId(list: List<SongId>): List<DtoSong> = coroutineScope {
+        val cache = cache.cacheSongById(list)
+        val ids = cache.map { it.id }
+        val notFoundSongs = list.filterNot { ids.contains(it) }
+
         val daoSongs = kyokuDbQuery {
             DaoSong.find {
-                EntitySong.id inList list
+                EntitySong.id inList notFoundSongs
             }.toList()
         }
 
@@ -238,7 +242,7 @@ class ExposedLocalCoreDatasource(
                 info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
                 genre = genre.firstOrNull { it.first == song.id.value }?.second,
             )
-        }
+        }.also { this@ExposedLocalCoreDatasource.cache.setSongById(it) }
     }
 
     override suspend fun getDetailedPrevSongOnId(songId: SongId): DtoDetailedPrevSong? {

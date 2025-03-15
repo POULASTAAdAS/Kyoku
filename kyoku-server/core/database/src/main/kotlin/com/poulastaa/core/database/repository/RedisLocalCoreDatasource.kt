@@ -17,10 +17,6 @@ class RedisLocalCoreDatasource(
     override fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser) =
         setSingleValueWithExp(Group.USER, "${type.name}:$key", value)
 
-    // playlist
-    override fun setPlaylistById(playlistDto: DtoPlaylist) =
-        setSingleValueWithExp(Group.PLAYLIST, playlistDto.id, playlistDto)
-
     // song
     override fun setSongById(song: DtoSong) = setSingleValueWithExp(Group.SONG, song.id, song)
     override fun setSongById(list: List<DtoSong>) = setMultipleValueWithExp(Group.SONG, list.associateBy { it.id })
@@ -228,6 +224,24 @@ class RedisLocalCoreDatasource(
     override fun setCountryIdByArtistId(map: Map<GenreId, CountryId>) =
         setMultipleValueWithExp(Group.RELATION_ARTIST_COUNTRY, map.mapValues { it.value.toString() })
 
+    override fun cacheSongIdByPlaylistId(playlistId: PlaylistId): String? =
+        cacheSingleValue<SongId>(Group.RELATION_PLAYLIST_SONG, playlistId)
+
+    override fun setSongIdByPlaylistId(playlistId: PlaylistId, list: List<SongId>) =
+        setSingleValueWithExp(Group.RELATION_PLAYLIST_SONG, playlistId, list.joinToString(","))
+
+    override fun cacheSongIdByAlbumId(albumId: AlbumId): String? =
+        cacheSingleValue<SongId>(Group.RELATION_ALBUM_SONG, albumId)
+
+    override fun setSongIdByAlbumId(albumId: AlbumId, list: List<SongId>) =
+        setSingleValueWithExp(Group.RELATION_ALBUM_SONG, albumId, list.joinToString(","))
+
+    override fun cacheUserFevSongId(userId: Long): String? =
+        cacheSingleValue<Long>(Group.RELATION_FEV_SONG, userId)
+
+    override fun setUserFevSongId(userId: Long, list: List<SongId>) =
+        setSingleValueWithExp(Group.RELATION_FEV_SONG, userId, list.joinToString(","))
+
 
     // set
     private fun <K, V> setSingleValueWithExp(group: Group, key: K, value: V) {
@@ -294,6 +308,10 @@ class RedisLocalCoreDatasource(
         jedis.get("${group.name}:$key")
     }?.let {
         gson.fromJson(it, V::class.java)
+    }
+
+    private fun <T> cacheSingleValue(group: Group, key: T) = redisPool.resource.use { jedis ->
+        jedis.get("${group.name}:$key")
     }
 
     private fun cacheSingleValue(group: Group, key: Any) = redisPool.resource.use { jedis ->

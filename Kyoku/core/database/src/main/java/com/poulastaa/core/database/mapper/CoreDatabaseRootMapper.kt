@@ -23,6 +23,7 @@ import com.poulastaa.core.domain.model.DtoCountry
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
 import com.poulastaa.core.domain.model.DtoExploreType
 import com.poulastaa.core.domain.model.DtoGenre
+import com.poulastaa.core.domain.model.DtoHeading
 import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
@@ -34,6 +35,7 @@ import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
 import com.poulastaa.core.domain.model.SongId
+import com.poulastaa.core.domain.model.ViewType
 
 internal fun DtoSong.toEntitySong() = EntitySong(
     id = this.id,
@@ -133,10 +135,9 @@ internal fun DtoExploreType.toEntityExploreType(list: List<SongId>) = list.map {
 
 @JvmName("singleExploreType")
 internal fun DtoExploreType.toEntityExploreType(songId: SongId) = EntityExplore(
-    typeId = this,
+    typeId = this.id,
     dataId = songId
 )
-
 
 @JvmName("listPrevExploreType")
 internal fun DtoExploreType.toEntityPrevExploreType(list: List<SongId>) = list.map { songId ->
@@ -145,7 +146,7 @@ internal fun DtoExploreType.toEntityPrevExploreType(list: List<SongId>) = list.m
 
 @JvmName("singlePrevExploreType")
 internal fun DtoExploreType.toEntityPrevExploreType(songId: SongId) = EntityPrevExplore(
-    typeId = this,
+    typeId = this.id,
     dataId = songId
 )
 
@@ -199,4 +200,16 @@ internal fun EntityPrevSong.toDtoPrevSong() = DtoPrevSong(
     id = this.id,
     title = this.title,
     poster = this.poster
+)
+
+internal fun EntityPlaylist.toDtoHeading() = DtoHeading(
+    type = ViewType.PLAYLIST,
+    id = this.id,
+    name = this.name,
+)
+
+internal fun EntityAlbum.toDtoHeading() = DtoHeading(
+    type = ViewType.ALBUM,
+    id = this.id,
+    name = this.name,
 )

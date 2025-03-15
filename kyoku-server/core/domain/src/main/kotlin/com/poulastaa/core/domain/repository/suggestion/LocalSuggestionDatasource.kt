@@ -23,7 +23,6 @@ interface LocalSuggestionDatasource {
     suspend fun getPrevPopularYearSongs(
         userId: Long,
         birthYear: Int,
-        countryId: CountryId,
         oldList: List<SongId> = emptyList(),
     ): List<DtoPrevSong>
 

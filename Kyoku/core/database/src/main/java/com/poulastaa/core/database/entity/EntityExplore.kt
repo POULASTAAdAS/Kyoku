@@ -3,7 +3,6 @@ package com.poulastaa.core.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.poulastaa.core.domain.model.DtoExploreType
 import com.poulastaa.core.domain.model.SongId
 
 @Entity(
@@ -18,7 +17,7 @@ import com.poulastaa.core.domain.model.SongId
 )
 data class EntityExplore(
     @ColumnInfo(index = true)
-    val typeId: DtoExploreType,
+    val typeId: Int,
     @ColumnInfo(index = true)
     val dataId: SongId,
 )

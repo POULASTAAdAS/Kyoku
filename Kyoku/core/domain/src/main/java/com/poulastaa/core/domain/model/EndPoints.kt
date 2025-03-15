@@ -29,4 +29,5 @@ sealed class EndPoints(val route: String) {
     data object UpdateUsername : EndPoints(route = "/api/v1/user/updateUsername")
 
     data object ViewArtist : EndPoints(route = "/api/v1/view/viewArtist")
+    data object ViewOther : EndPoints(route = "/api/v1/view/viewOther")
 }

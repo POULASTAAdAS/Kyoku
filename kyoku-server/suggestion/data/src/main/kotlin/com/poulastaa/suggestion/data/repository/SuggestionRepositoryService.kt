@@ -18,7 +18,7 @@ class SuggestionRepositoryService(
         return coroutineScope {
             val prevPopularSongMixDef = async { db.getPrevPopularCountrySong(user.id, user.countryId) }
             val prevPopularArtistMixDef = async { db.getPrevPopularArtistMix(user.id) }
-            val prevOldGemDef = async { db.getPrevPopularYearSongs(user.id, user.bDate!!.year, user.countryId) }
+            val prevOldGemDef = async { db.getPrevPopularYearSongs(user.id, user.bDate!!.year) }
 
             val suggestedArtisteDef = async { db.getSuggestedArtist(user.id, user.countryId) }
             val suggestedAlbumDef = async { db.getSuggestedAlbum(user.id) }

@@ -18,6 +18,5 @@ data class PlaylistWithSong(
             parentColumn = "playlistId",
             entityColumn = "songId"
         )
-    )
-    val list: List<EntitySong>,
+    ) val list: List<EntitySong>,
 )

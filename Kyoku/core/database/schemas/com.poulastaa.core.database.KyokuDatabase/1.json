@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d178251eda139f7aa22496c0b58b4a3b",
+    "identityHash": "178ad51bef6cab6baf3aa58a8b3ca4e8",
     "entities": [
       {
         "tableName": "EntitySong",
@@ -938,12 +938,12 @@
       },
       {
         "tableName": "EntityPrevExplore",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` TEXT NOT NULL, `dataId` INTEGER NOT NULL, PRIMARY KEY(`typeId`, `dataId`), FOREIGN KEY(`dataId`) REFERENCES `EntityPrevSong`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typeId` INTEGER NOT NULL, `dataId` INTEGER NOT NULL, PRIMARY KEY(`typeId`, `dataId`), FOREIGN KEY(`dataId`) REFERENCES `EntityPrevSong`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "typeId",
             "columnName": "typeId",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -1067,7 +1067,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd178251eda139f7aa22496c0b58b4a3b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '178ad51bef6cab6baf3aa58a8b3ca4e8')"
     ]
   }
 }

@@ -94,18 +94,17 @@ class ExposedSetupDatasource(
                         info = info.firstOrNull { it.first == song.id.value }?.second ?: DtoSongInfo(),
                         genre = genre.firstOrNull { it.first == song.id.value }?.second,
                     )
+                }.also {
+                    cache.setSongById(it)
+                    cache.setSongIdByTitle(it)
                 }
 
                 dbResult + cacheResult
             } else cacheResult
 
-            cache.setSongById(songs)
-            cache.setSongIdByTitle(songs)
-
-            val playlist = coreDB.createPlaylist(user.id, songs.map { it.id })
 
             DtoFullPlaylist(
-                playlist = playlist,
+                playlist = coreDB.createPlaylist(user.id, songs.map { it.id }),
                 listOfSong = songs
             )
         }

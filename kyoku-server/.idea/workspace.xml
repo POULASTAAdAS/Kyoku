@@ -5,30 +5,99 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/gradle.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/material_theme_project_new.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/appInsightsSettings.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/model/HeadingResponse.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/statistic.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/auth/presentation/src/main/java/com/poulastaa/auth/presentation/email/login/EmailLogInViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/auth/presentation/src/main/java/com/poulastaa/auth/presentation/email/login/EmailLogInViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/schemas/com.poulastaa.core.database.KyokuDatabase/1.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/schemas/com.poulastaa.core.database.KyokuDatabase/1.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/dao/ViewDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/dao/ViewDao.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/di/CoreDatabaseViewmodelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/di/CoreDatabaseViewmodelModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/entity/EntityPrevExplore.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/entity/EntityPrevExplore.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/consumer-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/consumer-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/androidTest/java/com/poulastaa/view/data/ExampleInstrumentedTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/androidTest/java/com/poulastaa/view/data/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/main/java/com/poulastaa/view/data/di/ViewViewmodelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/di/ViewViewmodelModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/main/java/com/poulastaa/view/data/repository/OnlineFirstViewArtistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/repository/OnlineFirstViewArtistRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/data/src/test/java/com/poulastaa/view/data/ExampleUnitTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/test/java/com/poulastaa/view/data/ExampleUnitTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/src/main/java/com/poulastaa/view/domain/model/DtoViewArtisPayload.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/DtoViewArtisPayload.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/src/main/java/com/poulastaa/view/domain/model/DtoViewArtist.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/DtoViewArtist.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/src/main/java/com/poulastaa/view/domain/model/ViewArtistAllowedNavigationScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/ViewArtistAllowedNavigationScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/src/main/java/com/poulastaa/view/domain/repository/RemoteViewArtistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/repository/RemoteViewArtistDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/domain/src/main/java/com/poulastaa/view/domain/repository/ViewArtistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/repository/ViewArtistRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/consumer-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/consumer-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/androidTest/java/com/poulastaa/view/network/ExampleInstrumentedTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/androidTest/java/com/poulastaa/view/network/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/java/com/poulastaa/view/network/di/ViewNetworkViewmodelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/di/ViewNetworkViewmodelModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/java/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/java/com/poulastaa/view/network/model/ResponseDetailPrevSong.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/model/ResponseDetailPrevSong.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/java/com/poulastaa/view/network/model/ViewArtistResponse.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/model/ViewArtistResponse.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/main/java/com/poulastaa/view/network/repository/OkHttpViewArtistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/main/java/com/poulastaa/view/network/repository/OkHttpViewArtistDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/network/src/test/java/com/poulastaa/view/network/ExampleUnitTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/network/src/test/java/com/poulastaa/view/network/ExampleUnitTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/consumer-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/consumer-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/proguard-rules.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/androidTest/java/com/poulastaa/view/presentation/ExampleInstrumentedTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/androidTest/java/com/poulastaa/view/presentation/ExampleInstrumentedTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistExtendedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistMediumScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistMediumScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiEvent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/mapper/ViewArtistUiMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ControlLoadingContent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ControlLoadingContent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/LoadingSongs.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/LoadingSongs.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistCompactLoadingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewCompactLoadingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistErrorScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewErrorScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistExtendedLoadingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewExtendedLoadingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistLoadingTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistLoadingTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistMediumLoadingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewMediumLoadingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/components/ViewArtistTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewControllerCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewControllerCard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewSongCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewSongCard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/mapper/ViewPresentationMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/mapper/ViewPresentationMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/main/java/com/poulastaa/view/presentation/model/UiViewPrevSong.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/model/UiViewPrevSong.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view/presentation/src/test/java/com/poulastaa/view/presentation/ExampleUnitTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/test/java/com/poulastaa/view/presentation/ExampleUnitTest.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/mapper/DatabaseMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/mapper/DatabaseMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/RedisSetupDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/RedisSetupDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/ExposedSetupDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/setup/ExposedSetupDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/ExposedLocalSuggestionDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/ExposedLocalSuggestionDatasource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/ExposedLocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/ExposedLocalViewDatasource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/RedisLocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/view/RedisLocalViewDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/DtoPrevArtist.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/DtoPrevArtist.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreCacheDatasource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/RedisKeys.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/RedisKeys.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/suggestion/LocalSuggestionDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/suggestion/LocalSuggestionDatasource.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewCacheDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/view/LocalViewDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notification/data/src/main/kotlin/com/poulastaa/notification/data/repository/GoogleMailService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/notification/data/src/main/kotlin/com/poulastaa/notification/data/repository/GoogleMailService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/data/src/main/kotlin/com/poulastaa/suggestion/data/repository/SuggestionRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/suggestion/data/src/main/kotlin/com/poulastaa/suggestion/data/repository/SuggestionRepositoryService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/data/src/main/kotlin/com/poulastaa/view/data/repository/ViewRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/data/src/main/kotlin/com/poulastaa/view/data/repository/ViewRepositoryService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/model/ViewArtistPayload.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/model/DtoViewArtistPayload.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/repository/ViewRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/domain/src/main/kotlin/com/poulastaa/view/domain/repository/ViewRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/view/network/src/main/kotlin/com/poulastaa/view/network/mapper/ViewNetworkMapper.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,8 +114,9 @@
       <list>
         <option value="Kotlin Interface" />
         <option value="Kotlin Class" />
-        <option value="Kotlin File" />
         <option value="Kotlin Data Class" />
+        <option value="Kotlin File" />
+        <option value="Kotlin Enum" />
       </list>
     </option>
   </component>
@@ -76,21 +146,27 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;ShowUsagesActions.previewPropertyKey&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Kyoku/kyoku-server/view/network/src/main/kotlin/com/poulastaa/view/network/model&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;copyright.filetypes.JAVA&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Kyoku\kyoku-server\view\network\src\main\kotlin\com\poulastaa\view\network\model" />
+    </key>
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="com.poulastaa.view.domain.model" />
       <recent name="com.poulastaa.core.domain.repository.view" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
       <recent name="com.poulastaa.core.domain.model" />
+      <recent name="com.poulastaa.view.network.model" />
       <recent name="com.poulastaa.core.network.model" />
       <recent name="com.poulastaa.view.network.mapper" />
       <recent name="com.poulastaa.core.database.repository.view" />
@@ -117,7 +193,7 @@
         <env name="DEV_EMAIL" value="poulastaadas2@gmail.com" />
         <env name="ISSUER" value="https://accounts.google.com" />
         <env name="SENDER_EMAIL" value="kyoku.official.no.replay@gmail.com" />
-        <env name="SENDER_PASSWORD" value="ivop bmon crrl krcr" />
+        <env name="SENDER_PASSWORD" value="soxf tveu aqfy fbiw" />
       </envs>
       <option name="MAIN_CLASS_NAME" value="com.poulastaa.app.AppKt" />
       <module name="kyoku-server.app.main" />
@@ -156,7 +232,9 @@
       <workItem from="1741412622040" duration="6449000" />
       <workItem from="1741847133265" duration="4848000" />
       <workItem from="1741874307810" duration="1897000" />
-      <workItem from="1741879144463" duration="1838000" />
+      <workItem from="1741879144463" duration="5853000" />
+      <workItem from="1741934537712" duration="4912000" />
+      <workItem from="1741965800724" duration="28922000" />
     </task>
     <servers />
   </component>

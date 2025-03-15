@@ -105,3 +105,24 @@ fun DtoPrevSong.toDetailedPrevSong(artist: String?, releaseYear: Int) = DtoDetai
     artists = artist,
     releaseYear = releaseYear,
 )
+
+fun DtoSong.toDtoDetailedPrevSong() = DtoDetailedPrevSong(
+    id = this.id,
+    title = this.title,
+    poster = this.poster,
+    artists = this.artist.joinToString(",") { it.name },
+    releaseYear = -1
+)
+
+internal fun DtoPlaylist.toDtoHeading() = DtoHeading(
+    type = DtoViewType.PLAYLIST,
+    id = this.id,
+    name = this.name,
+)
+
+internal fun DtoAlbum.toDtoHeading() = DtoHeading(
+    type = DtoViewType.ALBUM,
+    id = this.id,
+    name = this.name,
+    poster = this.poster ?: ""
+)

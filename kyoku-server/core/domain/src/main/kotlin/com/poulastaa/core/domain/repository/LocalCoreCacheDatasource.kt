@@ -7,8 +7,6 @@ interface LocalCoreCacheDatasource {
     fun cacheUsersByEmail(email: String, type: UserType): DtoDBUser?
     fun setUserByEmail(key: Email, type: UserType, value: DtoDBUser)
 
-    fun setPlaylistById(playlistDto: DtoPlaylist)
-
     fun setSongById(song: DtoSong)
     fun setSongById(list: List<DtoSong>)
     fun cacheSongById(songId: SongId): DtoSong?
@@ -83,4 +81,13 @@ interface LocalCoreCacheDatasource {
     fun cacheCountryIdByArtistId(list: List<ArtistId>): Map<ArtistId, CountryId>
     fun setCountryIdByArtistId(artistId: ArtistId, countryId: CountryId)
     fun setCountryIdByArtistId(map: Map<GenreId, CountryId>)
+
+    fun cacheSongIdByPlaylistId(playlistId: PlaylistId): String?
+    fun setSongIdByPlaylistId(playlistId: PlaylistId, list: List<SongId>)
+
+    fun cacheSongIdByAlbumId(albumId: AlbumId): String?
+    fun setSongIdByAlbumId(albumId: AlbumId, list: List<SongId>)
+
+    fun cacheUserFevSongId(userId: Long): String?
+    fun setUserFevSongId(userId: Long, list: List<SongId>)
 }

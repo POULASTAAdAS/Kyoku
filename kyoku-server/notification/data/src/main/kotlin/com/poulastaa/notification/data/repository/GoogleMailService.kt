@@ -393,7 +393,8 @@ internal class GoogleMailService(
             message.setContent(content, "text/html")
             Transport.send(message)
             true
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            println(e.printStackTrace())
             false
         }
     }

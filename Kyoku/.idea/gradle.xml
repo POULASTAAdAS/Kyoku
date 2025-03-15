@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -57,11 +58,11 @@
             <option value="$PROJECT_DIR$/setup/domain" />
             <option value="$PROJECT_DIR$/setup/network" />
             <option value="$PROJECT_DIR$/setup/presentation" />
-            <option value="$PROJECT_DIR$/view" />
-            <option value="$PROJECT_DIR$/view/data" />
-            <option value="$PROJECT_DIR$/view/domain" />
-            <option value="$PROJECT_DIR$/view/network" />
-            <option value="$PROJECT_DIR$/view/presentation" />
+            <option value="$PROJECT_DIR$/view_all" />
+            <option value="$PROJECT_DIR$/view_all/data" />
+            <option value="$PROJECT_DIR$/view_all/domain" />
+            <option value="$PROJECT_DIR$/view_all/network" />
+            <option value="$PROJECT_DIR$/view_all/presentation" />
           </set>
         </option>
       </GradleProjectSettings>

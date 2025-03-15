@@ -89,7 +89,6 @@ class ExposedLocalSuggestionDatasource(
     override suspend fun getPrevPopularYearSongs(
         userId: Long,
         birthYear: Int,
-        countryId: CountryId,
         oldList: List<SongId>,
     ): List<DtoPrevSong> {
         val thisYear = LocalDate.now().year

@@ -94,7 +94,7 @@ class EmailLogInViewModel @Inject constructor(
 
                 _state.update {
                     it.copy(
-                        isMakingApiCall = false,
+                        isMakingApiCall = true,
                     )
                 }
 
@@ -396,7 +396,7 @@ class EmailLogInViewModel @Inject constructor(
 
     private fun startVerificationMailJob(email: String, authState: AuthStatus) =
         viewModelScope.launch {
-            for (i in 1..15) { // 45 seconds
+            for (i in 1..40) { // 120 seconds
                 delay(3000)
 
                 val result = repo.checkEmailVerificationState(email, authState)

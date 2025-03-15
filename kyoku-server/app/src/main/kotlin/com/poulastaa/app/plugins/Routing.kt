@@ -11,6 +11,7 @@ import com.poulastaa.user.network.routes.getSongPoster
 import com.poulastaa.user.network.routes.setup.*
 import com.poulastaa.view.domain.repository.ViewRepository
 import com.poulastaa.view.network.routes.getArtist
+import com.poulastaa.view.network.routes.getViewTypeData
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
@@ -83,4 +84,5 @@ private fun Routing.suggestion(repo: SuggestionRepository) {
 
 private fun Routing.view(repo: ViewRepository) {
     getArtist(repo)
+    getViewTypeData(repo)
 }

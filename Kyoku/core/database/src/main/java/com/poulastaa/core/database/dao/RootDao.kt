@@ -3,6 +3,7 @@ package com.poulastaa.core.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
@@ -203,4 +204,12 @@ internal interface RootDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPrevExploreType(list: List<EntityPrevExplore>)
+
+
+    @Query("""
+        SELECT * FROM EntityArtist
+        JOIN EntityRelationSongArtist on EntityRelationSongArtist.artistId  = EntityArtist.id
+        WHERE EntityRelationSongArtist.songId = :songId
+    """)
+    suspend fun getSongArtists(songId: SongId): List<EntityArtist>
 }

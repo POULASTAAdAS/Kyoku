@@ -114,7 +114,7 @@ internal fun UiHomeExploreType.toNavigateToView() = HomeUiEvent.NavigateToView(
         UiHomeExploreType.SAVED_ARTIST_SONG_MIX -> ViewType.SAVED_ARTIST_SONG_MIX
         UiHomeExploreType.DAY_TYPE_MIX -> ViewType.DAY_TYPE_MIX
     },
-    otherId = -1
+    otherId = 0
 )
 
 internal fun UiMainViewMoreItemType.toNavigateToView(id: Long) = HomeUiEvent.NavigateToView(

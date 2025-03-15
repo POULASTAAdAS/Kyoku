@@ -34,7 +34,9 @@ import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
 import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
+import com.poulastaa.view.domain.model.ViewOtherAllowedNavigationScreen
 import com.poulastaa.view.presentation.artist.ViewArtistRootScreen
+import com.poulastaa.view.presentation.others.ViewOtherRootScreen
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -308,7 +310,7 @@ private fun NavGraphBuilder.coreGraph(
                     ProfileAllowedNavigationScreen.ARTIST -> TODO("Add all saved view artist screen")
                     ProfileAllowedNavigationScreen.FAVOURITE -> nav.navigate(
                         Screens.View.Other(
-                            otherId = -1,
+                            otherId = 0,
                             type = ViewType.FAVOURITE
                         )
                     )
@@ -377,6 +379,23 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
     }
 
     composable<Screens.View.Other> {
+        val payload = it.toRoute<Screens.View.Other>()
 
+        ViewOtherRootScreen(
+            otherId = payload.otherId,
+            viewType = payload.type,
+            navigate = { screen ->
+                when (screen) {
+                    is ViewOtherAllowedNavigationScreen.Artist -> nav.navigate(
+                        Screens.View.Artist(
+                            screen.artistId
+                        )
+                    )
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
     }
 }

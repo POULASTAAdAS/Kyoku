@@ -16,6 +16,7 @@ import com.poulastaa.core.database.repository.RoomLocalSetArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
+import com.poulastaa.core.database.repository.RoomLocalViewOtherDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
@@ -26,6 +27,7 @@ import com.poulastaa.core.domain.repository.LocalSetArtistDatasource
 import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.LocalSettingsDatasource
 import com.poulastaa.core.domain.repository.LocalViewArtistDatasource
+import com.poulastaa.core.domain.repository.LocalViewOtherDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -119,7 +121,13 @@ internal object CoreDatabaseViewmodelModule {
 
     @Provides
     @ViewModelScoped
-    fun provideLocalViewDatasource(
+    fun provideLocalViewArtistDatasource(
         viewDao: ViewDao,
     ): LocalViewArtistDatasource = RoomLocalViewArtistDatasource(viewDao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalViewOtherDatasource(
+        viewDao: ViewDao,
+    ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao)
 }
