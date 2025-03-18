@@ -8,11 +8,12 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.mapper.toDtoPrevPlaylist
-import com.poulastaa.core.database.mapper.toEntityAlbum
+import com.poulastaa.core.database.mapper.toEntitySavedAlbum
 import com.poulastaa.core.database.mapper.toEntityArtist
 import com.poulastaa.core.database.mapper.toEntityCountry
 import com.poulastaa.core.database.mapper.toEntityGenre
 import com.poulastaa.core.database.mapper.toEntityPlaylist
+import com.poulastaa.core.database.mapper.toEntityRelationAlbum
 import com.poulastaa.core.database.mapper.toEntitySong
 import com.poulastaa.core.database.mapper.toSongInfo
 import com.poulastaa.core.domain.model.DtoFullPlaylist
@@ -67,7 +68,7 @@ internal class RoomLocalImportPlaylistDatasource @Inject constructor(
             val songDef = async { root.insertSong(songs.map { it.toEntitySong() }) }
             val artistDef = async { root.insertArtist(artist.map { it.toEntityArtist() }) }
             val genreDef = async { root.insertGenre((artistGenre).map { it.second }) }
-            val albumDef = async { root.insertAlbum(songAlbum.map { it.second.toEntityAlbum() }) }
+            val albumDef = async { root.insertRelationAlbum(songAlbum.map { it.second.toEntityRelationAlbum() }) }
             val countryDef = async { root.insertCountry(artistCountry.map { it.second }) }
 
             // Relation entry

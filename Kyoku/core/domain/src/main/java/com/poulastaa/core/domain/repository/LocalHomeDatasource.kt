@@ -32,8 +32,11 @@ interface LocalHomeDatasource {
     suspend fun storePlaylist(playlist: DtoPlaylist): PlaylistId
     suspend fun storePlaylist(list: List<DtoPlaylist>): List<PlaylistId>
 
-    suspend fun storeAlbum(album: DtoAlbum): AlbumId
-    suspend fun storeAlbum(list: List<DtoAlbum>): List<AlbumId>
+    suspend fun storeSavedAlbum(album: DtoAlbum): AlbumId
+    suspend fun storeSavedAlbum(list: List<DtoAlbum>): List<AlbumId>
+
+    suspend fun storeRelationAlbum(album: DtoAlbum): AlbumId
+    suspend fun storeRelationAlbum(list: List<DtoAlbum>): List<AlbumId>
 
     suspend fun storePrevAlbum(album: DtoPrevAlbum): AlbumId
     suspend fun storePrevAlbum(list: List<DtoPrevAlbum>): List<AlbumId>

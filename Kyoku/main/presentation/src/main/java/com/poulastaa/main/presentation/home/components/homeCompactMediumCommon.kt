@@ -16,11 +16,15 @@ import com.poulastaa.main.presentation.home.HomeUiState
 import com.poulastaa.main.presentation.home.UiHomeExploreType
 
 internal fun LazyGridScope.homeCompactMediumCommon(
-    haptic:HapticFeedback,
+    haptic: HapticFeedback,
     state: HomeUiState,
     onAction: (HomeUiAction) -> Unit,
 ) {
-    item(
+    if (state.staticData.popularSongMix.isNotEmpty() ||
+        state.staticData.favouriteArtistMix.isNotEmpty() ||
+        state.staticData.popularSongFromYourTime.isNotEmpty() ||
+        state.staticData.dayTypeSong.isNotEmpty()
+    ) item(
         span = { GridItemSpan(maxLineSpan) }
     ) {
         HomeHeadline(R.string.explore)

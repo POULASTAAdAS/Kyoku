@@ -1,6 +1,5 @@
 package com.poulastaa.core.database.mapper
 
-import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
 import com.poulastaa.core.database.entity.EntityExplore
@@ -10,9 +9,11 @@ import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
 import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
+import com.poulastaa.core.database.entity.EntityRelationAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
+import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 import com.poulastaa.core.database.relation.PlaylistWithSong
@@ -71,7 +72,14 @@ internal fun DtoGenre.toEntityGenre() = EntityGenre(
     cover = this.cover
 )
 
-internal fun DtoAlbum.toEntityAlbum() = EntityAlbum(
+internal fun DtoAlbum.toEntitySavedAlbum() = EntitySavedAlbum(
+    id = this.id,
+    name = this.name,
+    poster = this.poster,
+    popularity = this.popularity
+)
+
+internal fun DtoAlbum.toEntityRelationAlbum() = EntityRelationAlbum(
     id = this.id,
     name = this.name,
     poster = this.poster,
@@ -172,7 +180,7 @@ internal fun DtoRelationSongAlbum.toEntityRelationSongAlbum() = this.list.map { 
     )
 }
 
-internal fun EntityAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
+internal fun EntitySavedAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
     id = this.id,
     name = this.name,
     poster = this.poster
@@ -208,7 +216,7 @@ internal fun EntityPlaylist.toDtoHeading() = DtoHeading(
     name = this.name,
 )
 
-internal fun EntityAlbum.toDtoHeading() = DtoHeading(
+internal fun EntitySavedAlbum.toDtoHeading() = DtoHeading(
     type = ViewType.ALBUM,
     id = this.id,
     name = this.name,

@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
 import com.poulastaa.core.database.entity.EntityExplore
@@ -15,6 +14,7 @@ import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
 import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
+import com.poulastaa.core.database.entity.EntityRelationAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
@@ -23,6 +23,7 @@ import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
+import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 import com.poulastaa.core.domain.model.AlbumId
@@ -50,10 +51,16 @@ internal interface RootDao {
 
     // Album
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAlbum(album: EntityAlbum): AlbumId
+    suspend fun insertSavedAlbum(album: EntitySavedAlbum): AlbumId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAlbum(list: List<EntityAlbum>): List<AlbumId>
+    suspend fun insertSavedAlbum(list: List<EntitySavedAlbum>): List<AlbumId>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertRelationAlbum(album: EntityRelationAlbum): AlbumId
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertRelationAlbum(list: List<EntityRelationAlbum>): List<AlbumId>
 
 
     // Country
@@ -206,10 +213,12 @@ internal interface RootDao {
     suspend fun insertPrevExploreType(list: List<EntityPrevExplore>)
 
 
-    @Query("""
+    @Query(
+        """
         SELECT EntityArtist.id,EntityArtist.name,EntityArtist.popularity,EntityArtist.coverImage FROM EntityArtist
         JOIN EntityRelationSongArtist on EntityRelationSongArtist.artistId  = EntityArtist.id
         WHERE EntityRelationSongArtist.songId = :songId
-    """)
+    """
+    )
     suspend fun getSongArtists(songId: SongId): List<EntityArtist>
 }

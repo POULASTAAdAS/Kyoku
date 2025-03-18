@@ -8,7 +8,6 @@ import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
-import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
 import com.poulastaa.core.database.entity.EntityExplore
@@ -19,6 +18,7 @@ import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
 import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
+import com.poulastaa.core.database.entity.EntityRelationAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
@@ -27,13 +27,15 @@ import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
+import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 
 @Database(
     entities = [
         EntitySong::class,
-        EntityAlbum::class,
+        EntitySavedAlbum::class,
+        EntityRelationAlbum::class,
         EntityGenre::class,
         EntityArtist::class,
         EntityCountry::class,
@@ -60,7 +62,7 @@ import com.poulastaa.core.database.entity.EntitySongInfo
         EntityPrevExplore::class,
         EntityRelationSuggestedSongByArtist::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 internal abstract class KyokuDatabase : RoomDatabase() {

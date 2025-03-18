@@ -3,7 +3,7 @@ package com.poulastaa.core.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.poulastaa.core.database.entity.EntityAlbum
+import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
@@ -14,8 +14,8 @@ import com.poulastaa.core.domain.model.SongId
 
 @Dao
 internal interface HomeDao {
-    @Query("Select * from EntityAlbum order by RANDOM() limit :limit")
-    suspend fun getRandomSavedPrevAlbum(limit: Int): List<EntityAlbum>
+    @Query("Select * from EntitySavedAlbum order by RANDOM() limit :limit")
+    suspend fun getRandomSavedPrevAlbum(limit: Int): List<EntitySavedAlbum>
 
     @Query("Select * from EntityArtist order by RANDOM() limit :limit")
     suspend fun getRandomSavedPrevArtist(limit: Int): List<EntityArtist>
@@ -31,7 +31,7 @@ internal interface HomeDao {
     suspend fun getRandomSavedPrevPlaylist(limit: Int): List<PayloadPrevPlaylist>
 
     @Query("Select EntityPrevExplore.dataId from EntityPrevExplore where typeId = :type order by RANDOM()")
-    suspend fun getPrevExploreType(type: String): List<SongId>
+    suspend fun getPrevExploreType(type: Int): List<SongId>
 
     @Query("Select * from EntityPrevSong where id in (:list)")
     suspend fun getPrevSong(list: List<SongId>): List<DtoPrevSong>
