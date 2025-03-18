@@ -60,7 +60,7 @@ import com.poulastaa.core.database.entity.EntitySongInfo
         EntityPrevExplore::class,
         EntityRelationSuggestedSongByArtist::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 internal abstract class KyokuDatabase : RoomDatabase() {

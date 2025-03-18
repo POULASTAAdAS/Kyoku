@@ -15,8 +15,8 @@ interface ViewRepository {
 
     suspend fun getViewTypeData(
         type: DtoViewType,
-        otherId: Long,
+        otherId: Long?,
         songIds: List<SongId>? = null,
         payload: ReqUserPayload,
-    ): DtoViewOtherPayload?
+    ): DtoViewOtherPayload<Any>?
 }

@@ -31,15 +31,15 @@ internal class ViewRepositoryService(
 
     override suspend fun getViewTypeData(
         type: DtoViewType,
-        otherId: Long,
+        otherId: Long?,
         songIds: List<SongId>?,
         payload: ReqUserPayload,
-    ): DtoViewOtherPayload? {
+    ): DtoViewOtherPayload<Any>? {
         val user = db.getUserByEmail(payload.email, payload.userType) ?: return null
 
         return when (type) {
-            DtoViewType.PLAYLIST -> db.getPrevFullPlaylist(otherId)
-            DtoViewType.ALBUM -> db.getPrevFullAlbum(otherId)
+            DtoViewType.PLAYLIST -> otherId?.let { db.getPrevFullPlaylist(otherId) }
+            DtoViewType.ALBUM -> otherId?.let { db.getPrevFullAlbum(otherId) }
             DtoViewType.FAVOURITE -> db.getPrevFev(user.id)
             DtoViewType.POPULAR_SONG_MIX -> songIds?.let { db.getPopularSongMix(user.id, it) }
             DtoViewType.POPULAR_YEAR_MIX -> songIds?.let {
@@ -53,6 +53,6 @@ internal class ViewRepositoryService(
 
             DtoViewType.SAVED_ARTIST_SONG_MIX -> songIds?.let { db.getPopularArtistSongMix(user.id, it) }
             DtoViewType.DAY_TYPE_MIX -> songIds?.let { db.getPopularDayTimeMix(user.id, it) }
-        }
+        } as DtoViewOtherPayload<Any>
     }
 }

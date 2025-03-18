@@ -213,3 +213,11 @@ internal fun EntityAlbum.toDtoHeading() = DtoHeading(
     id = this.id,
     name = this.name,
 )
+
+internal fun ViewType.toDtoExploreType() = when (this) {
+    ViewType.POPULAR_SONG_MIX -> DtoExploreType.POPULAR_SONG_MIX
+    ViewType.POPULAR_YEAR_MIX -> DtoExploreType.POPULAR_YEAR_MIX
+    ViewType.SAVED_ARTIST_SONG_MIX -> DtoExploreType.POPULAR_ARTIST_SONG_MIX
+    ViewType.DAY_TYPE_MIX -> DtoExploreType.DAY_TYPE_MIX
+    else -> null
+}

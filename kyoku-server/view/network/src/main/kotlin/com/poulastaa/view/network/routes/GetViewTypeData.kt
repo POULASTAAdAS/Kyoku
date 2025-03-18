@@ -1,6 +1,6 @@
 package com.poulastaa.view.network.routes
 
-import com.poulastaa.core.domain.model.EndPoints
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.view.domain.repository.ViewRepository
@@ -26,24 +26,43 @@ fun Route.getViewTypeData(repo: ViewRepository) {
                 }
 
                 val otherId = call.parameters["otherId"]?.toLongOrNull()
-                    ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
                 val savedSongIdList =
                     call.parameters["savedSongIdList"]?.split(",")?.map { it.toLongOrNull() }?.mapNotNull { it }
 
                 val payload = call.getReqUserPayload() ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                val result = repo.getViewTypeData(
-                    type = type.toDtoViewType(),
-                    otherId = otherId,
-                    payload = payload,
-                    songIds = savedSongIdList
-                ) ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
+                when (type) {
+                    ViewTypeReq.ALBUM -> (repo.getViewTypeData(
+                        type = DtoViewType.ALBUM,
+                        otherId = otherId,
+                        payload = payload,
+                        songIds = savedSongIdList
+                    ) as DtoViewOtherPayload<DtoDetailedPrevSong>?)?.toViewResponse()?.let {
+                        call.respond(
+                            message = it,
+                            status = HttpStatusCode.OK
+                        )
+                    }
 
-                call.respond(
-                    message = result.toViewResponse(),
-                    status = HttpStatusCode.OK
-                )
+                    ViewTypeReq.PLAYLIST,
+                    ViewTypeReq.FAVOURITE,
+                    ViewTypeReq.POPULAR_SONG_MIX,
+                    ViewTypeReq.POPULAR_YEAR_MIX,
+                    ViewTypeReq.SAVED_ARTIST_SONG_MIX,
+                    ViewTypeReq.DAY_TYPE_MIX,
+                        -> (repo.getViewTypeData(
+                        type = type.toDtoViewType(),
+                        otherId = otherId,
+                        payload = payload,
+                        songIds = savedSongIdList
+                    ) as DtoViewOtherPayload<DtoSong>?)?.toViewResponse()?.let {
+                        call.respond(
+                            message = it,
+                            status = HttpStatusCode.OK
+                        )
+                    }
+                } ?: return@get call.respondRedirect(EndPoints.UnAuthorized.route)
             }
         }
     }

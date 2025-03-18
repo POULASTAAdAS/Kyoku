@@ -1,6 +1,6 @@
 package com.poulastaa.core.domain.model
 
-data class DtoViewOtherPayload(
+data class DtoViewOtherPayload<T>(
     val heading: DtoHeading,
-    val songs: List<DtoDetailedPrevSong>,
+    val songs: List<T>,
 )

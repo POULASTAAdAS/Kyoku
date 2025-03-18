@@ -25,12 +25,12 @@ internal class RedisLocalViewDatasource(
     override fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist? = core.cachePlaylistOnId(playlistId)
     override fun setPlaylistOnId(playlist: DtoPlaylist) = core.setPlaylistOnId(playlist)
 
-    override fun cachePrevDetailedSongByPlaylistId(playlistId: PlaylistId): Pair<List<DtoDetailedPrevSong>, List<SongId>>? {
+    override fun cacheSongByPlaylistId(playlistId: PlaylistId): Pair<List<DtoSong>, List<SongId>>? {
         val listOfSongId = core.cacheSongIdByPlaylistId(playlistId)?.let {
             it.split(",").map { it.toLong() as SongId }
         } ?: return null
 
-        return getDtoDetailedPrevSongOnSongIds(listOfSongId)
+        return getSongOnSongIdList(listOfSongId)
     }
 
     override fun setSongIdByPlaylistId(playlistId: PlaylistId, list: List<SongId>) =
@@ -49,12 +49,12 @@ internal class RedisLocalViewDatasource(
     override fun cacheAlbumById(albumId: AlbumId): DtoAlbum? = core.cacheAlbumById(albumId)
     override fun setAlbumById(album: DtoAlbum) = core.setAlbumById(album)
 
-    override fun cacheUserFevPrevSong(userId: Long): Pair<List<DtoDetailedPrevSong>, List<SongId>>? {
+    override fun cacheUserFevPrevSong(userId: Long): Pair<List<DtoSong>, List<SongId>>? {
         val listOfSongId = core.cacheUserFevSongId(userId)?.let {
             it.split(",").map { it.toLong() as SongId }
         } ?: return null
 
-        return getDtoDetailedPrevSongOnSongIds(listOfSongId)
+        return getSongOnSongIdList(listOfSongId)
     }
 
     override fun setUserFevPrevSong(userId: Long, list: List<SongId>) = core.setUserFevSongId(userId, list)
@@ -72,5 +72,13 @@ internal class RedisLocalViewDatasource(
         val notFoundIds = listOfSongId.filterNot { it in allIds }
 
         return Pair(songs + prevSongs, notFoundIds)
+    }
+
+    private fun getSongOnSongIdList(listOfSongId: List<SongId>): Pair<List<DtoSong>, List<SongId>> {
+        val songs = core.cacheSongById(listOfSongId)
+        val ids = songs.map { it.id }
+        val notFoundIds = listOfSongId.filterNot { ids.contains(it) }
+
+        return Pair(songs, notFoundIds)
     }
 }

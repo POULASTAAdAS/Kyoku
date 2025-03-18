@@ -25,22 +25,20 @@ class OnlineFirstViewOtherRepository @Inject constructor(
         otherId: Long,
     ): Result<DtoViewPayload<DtoDetailedPrevSong>, DataError.Network> {
         val savedData = local.getViewTypeData(type, otherId)
-
-        // todo check if songs are empty
-
-        return if (savedData == null) when (type) {
+        return if (savedData == null || savedData.listOfSongs.isEmpty()) when (type) {
             ViewType.PLAYLIST,
             ViewType.FAVOURITE,
                 -> {
-                val remoteData = if (type == ViewType.PLAYLIST) remote.getViewData(otherId)
-                else remote.getViewData()
+                val remoteData = if (type == ViewType.PLAYLIST) remote.getFavouriteOrPlaylistViewData(otherId)
+                else remote.getFavouriteOrPlaylistViewData()
 
                 if (remoteData is Result.Success) scope.launch {
                     local.saveViewTypeData(
-                        type.toDtoExploreType(),
-                        remoteData.data.listOfSongs
+                        list = remoteData.data.listOfSongs,
+                        playlistId = if (type == ViewType.PLAYLIST) otherId else null
                     )
                 }
+
                 remoteData.map { data ->
                     DtoViewPayload(
                         heading = data.heading,
@@ -57,7 +55,7 @@ class OnlineFirstViewOtherRepository @Inject constructor(
             ViewType.DAY_TYPE_MIX,
                 -> {
                 val savedIdList = local.getSavedPrevViewSongIds(type)
-                val remoteData = remote.getViewData(type, savedIdList)
+                val remoteData = remote.getExploreViewData(type, savedIdList)
 
                 if (remoteData is Result.Success) scope.launch {
                     local.saveViewTypeData(

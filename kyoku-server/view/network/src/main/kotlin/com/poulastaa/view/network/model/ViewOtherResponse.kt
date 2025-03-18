@@ -3,7 +3,7 @@ package com.poulastaa.view.network.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ViewOtherResponse(
+data class ViewOtherResponse<T>(
     val heading: HeadingResponse,
-    val songs: List<ResponseDetailPrevSong>,
+    val songs: List<T>,
 )

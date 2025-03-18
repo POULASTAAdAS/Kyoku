@@ -129,5 +129,6 @@ internal object CoreDatabaseViewmodelModule {
     @ViewModelScoped
     fun provideLocalViewOtherDatasource(
         viewDao: ViewDao,
-    ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao)
+        root: RootDao,
+    ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao, root)
 }

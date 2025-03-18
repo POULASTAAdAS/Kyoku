@@ -9,14 +9,14 @@ import com.poulastaa.core.domain.model.SongId
 import com.poulastaa.core.domain.model.ViewType
 
 interface RemoteViewOtherDatasource {
-    suspend fun getViewData(otherId: Long? = null): Result<DtoViewPayload<DtoSong>, DataError.Network>
+    suspend fun getFavouriteOrPlaylistViewData(otherId: Long? = null): Result<DtoViewPayload<DtoSong>, DataError.Network>
 
     suspend fun getViewAlbum(
         type: ViewType,
         albumId: Long,
     ): Result<DtoViewPayload<DtoDetailedPrevSong>, DataError.Network>
 
-    suspend fun getViewData(
+    suspend fun getExploreViewData(
         type: ViewType,
         savedSongIdList: List<SongId>,
     ): Result<DtoViewPayload<DtoSong>, DataError.Network>

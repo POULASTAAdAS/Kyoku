@@ -1,11 +1,9 @@
 package com.poulastaa.view.network.mapper
 
-import com.poulastaa.core.domain.model.DtoDetailedPrevSong
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.network.mapper.toPrevArtistRes
-import com.poulastaa.core.domain.model.DtoHeading
+import com.poulastaa.core.network.mapper.toResponseSong
 import com.poulastaa.view.domain.model.DtoViewArtistPayload
-import com.poulastaa.core.domain.model.DtoViewOtherPayload
-import com.poulastaa.core.domain.model.DtoViewType
 import com.poulastaa.view.network.model.*
 
 private fun DtoDetailedPrevSong.toResponseDetailPrevSong() = ResponseDetailPrevSong(
@@ -46,7 +44,15 @@ private fun DtoHeading.toHeadingResponse() = HeadingResponse(
     poster = this.poster,
 )
 
-internal fun DtoViewOtherPayload.toViewResponse() = ViewOtherResponse(
+@JvmName("toDtoViewDetailedSong")
+internal fun DtoViewOtherPayload<DtoDetailedPrevSong>.toViewResponse() = ViewOtherResponse(
     heading = this.heading.toHeadingResponse(),
     songs = this.songs.map { it.toResponseDetailPrevSong() }
+)
+
+
+@JvmName("toDtoViewSong")
+internal fun DtoViewOtherPayload<DtoSong>.toViewResponse() = ViewOtherResponse(
+    heading = this.heading.toHeadingResponse(),
+    songs = this.songs.map { it.toResponseSong() }
 )

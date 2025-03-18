@@ -207,7 +207,7 @@ internal interface RootDao {
 
 
     @Query("""
-        SELECT * FROM EntityArtist
+        SELECT EntityArtist.id,EntityArtist.name,EntityArtist.popularity,EntityArtist.coverImage FROM EntityArtist
         JOIN EntityRelationSongArtist on EntityRelationSongArtist.artistId  = EntityArtist.id
         WHERE EntityRelationSongArtist.songId = :songId
     """)

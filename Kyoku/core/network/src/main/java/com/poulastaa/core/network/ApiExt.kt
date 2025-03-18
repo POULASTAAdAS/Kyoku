@@ -1,6 +1,7 @@
 package com.poulastaa.core.network
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +82,8 @@ suspend inline fun <reified T> responseToResult(
         in 200..299 -> {
             val body = response.body?.string()
                 ?: return@withContext Result.Error(DataError.Network.SERVER_ERROR)
-            val obj = gson.fromJson(body, T::class.java)
+            val type = object : TypeToken<T>() {}.type
+            val obj = gson.fromJson<T>(body, type)
 
             Result.Success(obj)
         }

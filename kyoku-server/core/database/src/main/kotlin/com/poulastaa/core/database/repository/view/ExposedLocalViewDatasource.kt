@@ -11,7 +11,10 @@ import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityArtistPopu
 import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityYearPopularSong
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserFavouriteSong
-import com.poulastaa.core.database.mapper.*
+import com.poulastaa.core.database.mapper.toDtoAlbum
+import com.poulastaa.core.database.mapper.toDtoHeading
+import com.poulastaa.core.database.mapper.toDtoPlaylist
+import com.poulastaa.core.database.mapper.toDtoPrevArtist
 import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.*
 import com.poulastaa.core.domain.repository.view.LocalViewCacheDatasource
@@ -55,7 +58,7 @@ internal class ExposedLocalViewDatasource(
         return songs + core.getDetailedPrevSongOnId(notFound).also { cache.setDetailedPrevSongById(it) }
     }
 
-    override suspend fun getPrevFullPlaylist(playlistId: PlaylistId): DtoViewOtherPayload? {
+    override suspend fun getPrevFullPlaylist(playlistId: PlaylistId): DtoViewOtherPayload<DtoSong>? {
         val playlist = cache.cachePlaylistOnId(playlistId) ?: kyokuDbQuery {
             DaoPlaylist.find {
                 EntityPlaylist.id eq playlistId
@@ -64,16 +67,16 @@ internal class ExposedLocalViewDatasource(
                 ?.also { cache.setPlaylistOnId(it) }
         } ?: return null
 
-        val cache = cache.cachePrevDetailedSongByPlaylistId(playlistId)
+        val cache = cache.cacheSongByPlaylistId(playlistId)
 
         return if (cache == null) {
             val songs = kyokuDbQuery {
                 RelationSongPlaylist.select(RelationSongPlaylist.songId).where {
                     RelationSongPlaylist.playlistId eq playlistId
                 }.map { it[RelationSongPlaylist.songId] as SongId }
-            }.let { core.getDetailedPrevSongOnId(it) }
+            }.let { core.getSongOnId(it) }
                 .also {
-                    this.cache.setDetailedPrevSongById(it)
+                    this.cache.setSongById(it)
                     this.cache.setSongIdByPlaylistId(playlistId, it.map { it.id })
                 }
 
@@ -82,8 +85,8 @@ internal class ExposedLocalViewDatasource(
                 songs = songs
             )
         } else {
-            val dbSongs = core.getDetailedPrevSongOnId(cache.second)
-                .also { this.cache.setDetailedPrevSongById(it) }
+            val dbSongs = core.getSongOnId(cache.second)
+                .also { this.cache.setSongById(it) }
 
             DtoViewOtherPayload(
                 heading = playlist.toDtoHeading(),
@@ -92,7 +95,7 @@ internal class ExposedLocalViewDatasource(
         }
     }
 
-    override suspend fun getPrevFullAlbum(albumId: AlbumId): DtoViewOtherPayload? {
+    override suspend fun getPrevFullAlbum(albumId: AlbumId): DtoViewOtherPayload<DtoDetailedPrevSong>? {
         val album = cache.cacheAlbumById(albumId) ?: kyokuDbQuery {
             DaoAlbum.find {
                 EntityAlbum.id eq albumId
@@ -127,7 +130,7 @@ internal class ExposedLocalViewDatasource(
         }
     }
 
-    override suspend fun getPrevFev(userId: Long): DtoViewOtherPayload? {
+    override suspend fun getPrevFev(userId: Long): DtoViewOtherPayload<DtoSong>? {
         val cache = cache.cacheUserFevPrevSong(userId)
 
         return if (cache == null) {
@@ -135,9 +138,9 @@ internal class ExposedLocalViewDatasource(
                 RelationEntityUserFavouriteSong.select(RelationEntityUserFavouriteSong.songId).where {
                     RelationEntityUserFavouriteSong.userId eq userId
                 }.map { it[RelationEntityUserFavouriteSong.songId] as SongId }
-            }.let { core.getDetailedPrevSongOnId(it) }
+            }.let { core.getSongOnId(it) }
                 .also {
-                    this.cache.setDetailedPrevSongById(it)
+                    this.cache.setSongById(it)
                     this.cache.setUserFevPrevSong(userId, it.map { it.id })
                 }
 
@@ -149,8 +152,8 @@ internal class ExposedLocalViewDatasource(
                 songs = songs
             )
         } else {
-            val dbSongs = core.getDetailedPrevSongOnId(cache.second)
-                .also { this.cache.setDetailedPrevSongById(it) }
+            val dbSongs = core.getSongOnId(cache.second)
+                .also { this.cache.setSongById(it) }
 
             DtoViewOtherPayload(
                 heading = DtoHeading(
@@ -165,18 +168,13 @@ internal class ExposedLocalViewDatasource(
     override suspend fun getPopularSongMix(
         userId: Long,
         songIds: List<SongId>,
-    ): DtoViewOtherPayload? = coroutineScope {
+    ): DtoViewOtherPayload<DtoSong>? = coroutineScope {
         val reqSongs = async {
-            val songs = cache.cacheSongById(songIds).map { it.toDtoDetailedPrevSong() }.ifEmpty {
-                cache.cacheDetailedPrevSongById(songIds)
-            }.ifEmpty {
-                core.getDetailedPrevSongOnId(songIds)
-                    .also { cache.setDetailedPrevSongById(it) }
-            }
+            val songs = cache.cacheSongById(songIds)
 
             val notFoundSongIds = songIds.filterNot { songs.map { it.id }.contains(it) }
-            val dbSongs = core.getDetailedPrevSongOnId(notFoundSongIds)
-                .also { cache.setDetailedPrevSongById(it) }
+            val dbSongs = core.getSongOnId(notFoundSongIds)
+                .also { cache.setSongById(it) }
 
             dbSongs + songs
         }
@@ -188,7 +186,7 @@ internal class ExposedLocalViewDatasource(
                     .map { it[EntitySongInfo.songId].value as SongId }
             }.shuffled(Random).take(20)
 
-            getDetailedPrevSongs(songIds, songIdList)
+            getSongs(songIds, songIdList)
         }
         val fevArtistSongs = getSavedArtistBestSongs(
             userId = userId,
@@ -216,7 +214,7 @@ internal class ExposedLocalViewDatasource(
         birthYear: Int,
         countryId: CountryId,
         songIds: List<SongId>,
-    ): DtoViewOtherPayload? {
+    ): DtoViewOtherPayload<DtoSong>? {
         val thisYear = LocalDate.now().year
         val startYear = minOf(thisYear, birthYear + 6)
         val endYear = minOf(thisYear, startYear + 10)
@@ -236,14 +234,14 @@ internal class ExposedLocalViewDatasource(
                 type = DtoViewType.POPULAR_YEAR_MIX,
                 name = DtoViewType.POPULAR_YEAR_MIX.name
             ),
-            songs = getDetailedPrevSongs(songIds, songIdList)
+            songs = getSongs(songIds, songIdList)
         )
     }
 
     override suspend fun getPopularArtistSongMix(
         userId: Long,
         songIds: List<SongId>,
-    ): DtoViewOtherPayload? = coroutineScope {
+    ): DtoViewOtherPayload<DtoSong>? = coroutineScope {
         val songs = getSavedArtistBestSongs(
             userId = userId,
             songIds = songIds,
@@ -264,22 +262,8 @@ internal class ExposedLocalViewDatasource(
     override suspend fun getPopularDayTimeMix(
         userId: Long,
         songIds: List<SongId>,
-    ): DtoViewOtherPayload? {
+    ): DtoViewOtherPayload<DtoSong>? {
         TODO("Not yet implemented")
-    }
-
-    private suspend fun getDetailedPrevSongs(
-        songIds: List<SongId>,
-        songIdList: List<SongId>,
-    ): List<DtoDetailedPrevSong> {
-        val cache = cache.cacheDetailedPrevSongById(songIds)
-
-        val ids = cache.map { it.id }
-        val notFoundIds = songIds.filterNot { ids.contains(it) }
-        val dbSongs = core.getDetailedPrevSongOnId(notFoundIds + songIdList)
-            .also { this@ExposedLocalViewDatasource.cache.setDetailedPrevSongById(it) }
-
-        return dbSongs + cache
     }
 
     private fun CoroutineScope.getSavedArtistBestSongs(
@@ -288,7 +272,7 @@ internal class ExposedLocalViewDatasource(
         takeLimit: Int,
         isArtistLimit: Boolean,
         isTotalLimit: Boolean,
-    ): Deferred<List<DtoDetailedPrevSong>> = async {
+    ): Deferred<List<DtoSong>> = async {
         val artistIdList = userDbQuery {
             RelationEntityUserArtist.select(RelationEntityUserArtist.artistId).where {
                 RelationEntityUserArtist.userId eq userId
@@ -303,6 +287,20 @@ internal class ExposedLocalViewDatasource(
             }.map { it[ShardEntityArtistPopularSong.id].value as SongId }
         }.take(takeLimit)
 
-        getDetailedPrevSongs(songIds, songIdList)
+        getSongs(songIds, songIdList)
+    }
+
+    private suspend fun getSongs(
+        songIds: List<SongId>,
+        songIdList: List<SongId>,
+    ): List<DtoSong> {
+        val cache = cache.cacheSongById(songIds)
+
+        val ids = cache.map { it.id }
+        val notFoundIds = songIds.filterNot { ids.contains(it) }
+        val dbSongs = core.getSongOnId(notFoundIds + songIdList)
+            .also { this@ExposedLocalViewDatasource.cache.setSongById(it) }
+
+        return dbSongs + cache
     }
 }

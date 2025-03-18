@@ -27,7 +27,7 @@ class OkHttpViewOtherDatasource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
 ) : RemoteViewOtherDatasource {
-    override suspend fun getViewData(otherId: Long?): Result<DtoViewPayload<DtoSong>, DataError.Network> {
+    override suspend fun getFavouriteOrPlaylistViewData(otherId: Long?): Result<DtoViewPayload<DtoSong>, DataError.Network> {
         val params = mutableListOf<ReqParam>()
         if (otherId != null) params.add(
             ReqParam(
@@ -72,7 +72,7 @@ class OkHttpViewOtherDatasource @Inject constructor(
             gson = gson
         ).map { it.toDtoViewOtherResponse() }
 
-    override suspend fun getViewData(
+    override suspend fun getExploreViewData(
         type: ViewType,
         savedSongIdList: List<SongId>,
     ): Result<DtoViewPayload<DtoSong>, DataError.Network> =

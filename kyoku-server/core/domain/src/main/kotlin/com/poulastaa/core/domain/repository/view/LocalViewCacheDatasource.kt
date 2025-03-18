@@ -16,7 +16,7 @@ interface LocalViewCacheDatasource {
     fun cachePlaylistOnId(playlistId: PlaylistId): DtoPlaylist?
     fun setPlaylistOnId(playlist: DtoPlaylist)
 
-    fun cachePrevDetailedSongByPlaylistId(playlistId: PlaylistId): Pair<List<DtoDetailedPrevSong>, List<SongId>>?
+    fun cacheSongByPlaylistId(playlistId: PlaylistId): Pair<List<DtoSong>, List<SongId>>?
     fun setSongIdByPlaylistId(playlistId: PlaylistId, list: List<SongId>)
 
     fun cachePrevDetailedSongByAlbumId(albumId: AlbumId): Pair<List<DtoDetailedPrevSong>, List<SongId>>?
@@ -25,7 +25,7 @@ interface LocalViewCacheDatasource {
     fun cacheAlbumById(albumId: AlbumId): DtoAlbum?
     fun setAlbumById(album: DtoAlbum)
 
-    fun cacheUserFevPrevSong(userId: Long): Pair<List<DtoDetailedPrevSong>, List<SongId>>?
+    fun cacheUserFevPrevSong(userId: Long): Pair<List<DtoSong>, List<SongId>>?
     fun setUserFevPrevSong(userId: Long, list: List<SongId>)
 
     fun cacheSongById(list: List<SongId>): List<DtoSong>
