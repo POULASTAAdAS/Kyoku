@@ -3,7 +3,6 @@ package com.poulastaa.view.presentation.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,26 +19,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.core.domain.model.SongId
-import com.poulastaa.core.presentation.designsystem.CacheImageReq
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.PlayType
-import com.poulastaa.core.presentation.designsystem.ui.UserIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.view.presentation.model.UiViewPrevSong
 
@@ -48,9 +40,11 @@ internal fun ViewScreenWrapperExtended(
     data: List<UiViewPrevSong>,
     name: String,
     cover: String,
+    covers: List<String>? = null,
     totalSongs: Int,
     loadingType: LoadingType,
     isTypeArtist: Boolean,
+    isNotAlbum: Boolean,
     songCardHeight: Dp = 90.dp,
     onExplore: () -> Unit = {},
     play: (type: PlayType) -> Unit,
@@ -119,40 +113,7 @@ internal fun ViewScreenWrapperExtended(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer
                                 )
                             ) {
-                                SubcomposeAsyncImage(
-                                    model = CacheImageReq.imageReq(
-                                        cover,
-                                        LocalContext.current
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.FillBounds,
-                                    loading = {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.fillMaxSize(.15f),
-                                                strokeWidth = 2.dp,
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    },
-                                    error = {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = UserIcon,
-                                                contentDescription = null,
-                                                modifier = Modifier.fillMaxSize(.7f),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                )
+                                ViewCoverCard(isNotAlbum, isTypeArtist, covers, cover)
                             }
 
                             ViewControllerCard(

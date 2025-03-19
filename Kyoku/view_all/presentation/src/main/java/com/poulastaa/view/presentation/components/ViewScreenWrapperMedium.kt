@@ -59,9 +59,11 @@ internal fun ViewScreenWrapperMedium(
     data: List<UiViewPrevSong>,
     name: String,
     cover: String,
+    covers: List<String>? = null,
     totalSongs: Int,
     loadingType: LoadingType,
     isTypeArtist: Boolean,
+    isNotAlbum: Boolean,
     songCardHeight: Dp = 75.dp,
     onExplore: () -> Unit = {},
     play: (type: PlayType) -> Unit,
@@ -159,40 +161,7 @@ internal fun ViewScreenWrapperMedium(
                                             containerColor = MaterialTheme.colorScheme.primaryContainer
                                         )
                                     ) {
-                                        SubcomposeAsyncImage(
-                                            model = CacheImageReq.imageReq(
-                                                cover,
-                                                LocalContext.current
-                                            ),
-                                            contentDescription = null,
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.FillBounds,
-                                            loading = {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    CircularProgressIndicator(
-                                                        modifier = Modifier.fillMaxSize(.15f),
-                                                        strokeWidth = 3.dp,
-                                                        color = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            },
-                                            error = {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Icon(
-                                                        imageVector = UserIcon,
-                                                        contentDescription = null,
-                                                        modifier = Modifier.fillMaxSize(.7f),
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            }
-                                        )
+                                        ViewCoverCard(isNotAlbum, isTypeArtist, covers, cover)
                                     }
                                 }
                             }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.view.presentation.components.ViewScreenWrapperExtended
+import com.poulastaa.view.presentation.model.UiViewType
 import com.poulastaa.view.presentation.others.compoenets.ViewOtherTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,9 +24,11 @@ internal fun ViewOtherExpandedScreen(
         data = state.listOfSongs,
         name = state.root.title,
         cover = state.root.poster,
+        covers = state.listOfSongs.take(4).map { it.poster },
         totalSongs = state.listOfSongs.size,
         loadingType = state.loadingType,
         isTypeArtist = false,
+        isNotAlbum = UiViewType.ALBUM != state.type,
         play = {
             onAction(ViewOtherUiAction.OnPlayAll(it))
         },

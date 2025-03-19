@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.view.presentation.components.ViewScreenWrapperCompact
+import com.poulastaa.view.presentation.model.UiViewType
 import com.poulastaa.view.presentation.others.compoenets.ViewOtherTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,6 +27,8 @@ internal fun ViewOtherCompactScreen(
         totalSongs = state.listOfSongs.size,
         loadingType = state.loadingType,
         isTypeArtist = false,
+        isNotAlbum = UiViewType.ALBUM != state.type,
+        covers = state.listOfSongs.take(4).map { it.poster },
         play = {
             onAction(ViewOtherUiAction.OnPlayAll(it))
         },

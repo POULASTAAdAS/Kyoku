@@ -3,8 +3,11 @@ package com.poulastaa.view.presentation.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -57,9 +60,11 @@ internal fun ViewScreenWrapperCompact(
     data: List<UiViewPrevSong>,
     name: String,
     cover: String,
+    covers: List<String>? = null,
     totalSongs: Int,
     loadingType: LoadingType,
     isTypeArtist: Boolean,
+    isNotAlbum: Boolean,
     songCardHeight: Dp = 75.dp,
     onExplore: () -> Unit = {},
     play: (type: PlayType) -> Unit,
@@ -118,40 +123,7 @@ internal fun ViewScreenWrapperCompact(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer
                                 )
                             ) {
-                                SubcomposeAsyncImage(
-                                    model = CacheImageReq.imageReq(
-                                        cover,
-                                        LocalContext.current
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.FillBounds,
-                                    loading = {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.fillMaxSize(.15f),
-                                                strokeWidth = 3.dp,
-                                                color = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    },
-                                    error = {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = UserIcon,
-                                                contentDescription = null,
-                                                modifier = Modifier.fillMaxSize(.7f),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                )
+                                ViewCoverCard(isNotAlbum, isTypeArtist, covers, cover)
                             }
 
                             topBar()
@@ -205,4 +177,203 @@ internal fun ViewScreenWrapperCompact(
             }
         }
     }
+}
+
+@Composable
+internal fun ViewCoverCard(
+    isNotAlbum: Boolean,
+    isTypeArtist: Boolean,
+    covers: List<String>?,
+    cover: String,
+) {
+    if (isNotAlbum && isTypeArtist.not() && covers != null && covers.size >= 4) Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(.5f)
+        ) {
+            SubcomposeAsyncImage(
+                model = CacheImageReq.imageReq(
+                    covers.first(),
+                    LocalContext.current
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth(.5f)
+                    .fillMaxHeight(),
+                contentScale = ContentScale.FillBounds,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(.15f),
+                            strokeWidth = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = UserIcon,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(.7f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+
+            SubcomposeAsyncImage(
+                model = CacheImageReq.imageReq(
+                    covers[1],
+                    LocalContext.current
+                ),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(.15f),
+                            strokeWidth = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = UserIcon,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(.7f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            SubcomposeAsyncImage(
+                model = CacheImageReq.imageReq(
+                    covers[2],
+                    LocalContext.current
+                ),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth(.5f)
+                    .fillMaxHeight(),
+                contentScale = ContentScale.FillBounds,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(.15f),
+                            strokeWidth = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = UserIcon,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(.7f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+
+            SubcomposeAsyncImage(
+                model = CacheImageReq.imageReq(
+                    covers[3],
+                    LocalContext.current
+                ),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(.15f),
+                            strokeWidth = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                error = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = UserIcon,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(.7f),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+        }
+    } else SubcomposeAsyncImage(
+        model = CacheImageReq.imageReq(
+            cover,
+            LocalContext.current
+        ),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.FillBounds,
+        loading = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.fillMaxSize(.15f),
+                    strokeWidth = 3.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        error = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = UserIcon,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(.7f),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    )
 }

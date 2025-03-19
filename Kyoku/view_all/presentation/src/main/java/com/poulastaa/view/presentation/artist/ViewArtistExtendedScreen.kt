@@ -33,6 +33,7 @@ internal fun ViewArtistExtendedScreen(
         totalSongs = state.mostPopularSongs.size,
         loadingType = state.loadingType,
         isTypeArtist = true,
+        isNotAlbum = true,
         onExplore = { onAction(ViewArtistUiAction.OnExploreArtist) },
         play = { onAction(ViewArtistUiAction.OnPlayAll(it)) },
         onSongClick = { type, songId ->

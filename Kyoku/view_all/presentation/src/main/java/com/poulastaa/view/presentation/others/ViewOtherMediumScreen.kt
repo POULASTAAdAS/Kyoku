@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.view.presentation.components.ViewScreenWrapperMedium
+import com.poulastaa.view.presentation.model.UiViewType
 import com.poulastaa.view.presentation.others.compoenets.ViewOtherTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,6 +28,7 @@ internal fun ViewOtherMediumScreen(
         totalSongs = state.listOfSongs.size,
         loadingType = state.loadingType,
         isTypeArtist = false,
+        isNotAlbum = UiViewType.ALBUM != state.type,
         play = {
             onAction(ViewOtherUiAction.OnPlayAll(it))
         },

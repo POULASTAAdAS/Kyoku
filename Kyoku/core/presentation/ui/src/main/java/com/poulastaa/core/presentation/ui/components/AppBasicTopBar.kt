@@ -19,13 +19,14 @@ import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBasicTopBar(
-    @StringRes title: Int,
+    @StringRes titleId: Int? = null,
+    title: String? = null,
     navigateBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = stringResource(title),
+                text = titleId?.let { stringResource(it) } ?: title ?: "",
                 fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize
             )

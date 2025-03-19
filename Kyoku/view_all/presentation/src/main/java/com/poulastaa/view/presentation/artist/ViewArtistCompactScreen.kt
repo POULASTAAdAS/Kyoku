@@ -18,6 +18,7 @@ import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.view.presentation.artist.components.ViewArtistTopBar
 import com.poulastaa.view.presentation.components.ViewScreenWrapperCompact
+import com.poulastaa.view.presentation.model.UiViewType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,6 +36,7 @@ internal fun ViewArtistCompactScreen(
         totalSongs = state.mostPopularSongs.size,
         loadingType = state.loadingType,
         isTypeArtist = true,
+        isNotAlbum = true,
         onExplore = { onAction(ViewArtistUiAction.OnExploreArtist) },
         play = { onAction(ViewArtistUiAction.OnPlayAll(it)) },
         onSongClick = { type, songId ->

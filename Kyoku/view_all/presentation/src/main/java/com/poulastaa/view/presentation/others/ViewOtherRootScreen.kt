@@ -2,6 +2,8 @@ package com.poulastaa.view.presentation.others
 
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -9,6 +11,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,6 +20,7 @@ import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.view.domain.model.ViewOtherAllowedNavigationScreen
+import com.poulastaa.view.presentation.components.ViewPlaylistFavouriteEmptyScreen
 import com.poulastaa.view.presentation.model.UiViewPrevSong
 import com.poulastaa.view.presentation.model.UiViewType
 
@@ -53,7 +57,16 @@ fun ViewOtherRootScreen(
     KyokuWindowSize(
         windowSizeClass = windowSizeClass,
         compactContent = {
-            ViewOtherCompactScreen(
+            if (state.listOfSongs.isEmpty() && state.loadingType is LoadingType.Content) ViewPlaylistFavouriteEmptyScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = state.root.title,
+                isPlaylist = state.type == UiViewType.PLAYLIST,
+                onCheckOutClick = {
+
+                },
+                navigateBack = navigateBack
+            )
+            else ViewOtherCompactScreen(
                 scroll = scroll,
                 state = state,
                 onAction = viewmodel::onAction,
@@ -61,7 +74,16 @@ fun ViewOtherRootScreen(
             )
         },
         mediumContent = {
-            ViewOtherMediumScreen(
+            if (state.listOfSongs.isEmpty() && state.loadingType is LoadingType.Content) ViewPlaylistFavouriteEmptyScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = state.root.title,
+                isPlaylist = state.type == UiViewType.PLAYLIST,
+                onCheckOutClick = {
+
+                },
+                navigateBack = navigateBack
+            )
+            else ViewOtherMediumScreen(
                 scroll = scroll,
                 state = state,
                 onAction = viewmodel::onAction,
@@ -69,7 +91,17 @@ fun ViewOtherRootScreen(
             )
         },
         expandedContent = {
-            ViewOtherExpandedScreen(
+            if (state.listOfSongs.isEmpty() && state.loadingType is LoadingType.Content) ViewPlaylistFavouriteEmptyScreen(
+                modifier = Modifier.fillMaxSize(),
+                title = state.root.title,
+                isPlaylist = state.type == UiViewType.PLAYLIST,
+                verticalArrangement = Arrangement.Center,
+                onCheckOutClick = {
+
+                },
+                navigateBack = navigateBack
+            )
+            else ViewOtherExpandedScreen(
                 scroll = scroll,
                 state = state,
                 onAction = viewmodel::onAction,
@@ -77,13 +109,14 @@ fun ViewOtherRootScreen(
             )
         }
     )
+
 }
 
 internal val PREV_VIEW_DATA = ViewOtherUiState(
     loadingType = LoadingType.Content,
-    type = UiViewType.ALBUM,
+    type = UiViewType.PLAYLIST,
     root = UiRoot(
-        title = "That Cool Album",
+        title = "That Cool Playlist",
     ),
     listOfSongs = (1..10).map {
         UiViewPrevSong(
