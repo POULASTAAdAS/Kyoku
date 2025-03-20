@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.RootDao
+import com.poulastaa.core.database.dao.WorkDao
+import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,10 +15,10 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CoreDatabaseAppModule {
+internal object CoreDatabaseAppModule {
     @Provides
     @Singleton
-    internal fun provideDatabase(
+    fun provideDatabase(
         @ApplicationContext context: Context,
     ): KyokuDatabase = Room.databaseBuilder(
         context = context,
@@ -27,7 +29,23 @@ object CoreDatabaseAppModule {
 
     @Provides
     @Singleton
-    internal fun provideRootDao(
+    fun provideRootDao(
         database: KyokuDatabase,
     ): RootDao = database.rootDao
+
+    @Provides
+    @Singleton
+    fun provideWorkDao(
+        database: KyokuDatabase,
+    ) = database.workDao
+
+    @Provides
+    @Singleton
+    fun provideLocalWorkSource(
+        work: WorkDao,
+        root: RootDao,
+    ) = RoomLocalWorkDatasource(
+        work = work,
+        root = root,
+    )
 }

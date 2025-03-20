@@ -30,4 +30,6 @@ sealed class EndPoints(val route: String) {
 
     data object ViewArtist : EndPoints(route = "/api/v1/view/viewArtist")
     data object ViewOther : EndPoints(route = "/api/v1/view/viewOther")
+
+    data object SyncLibrary : EndPoints(route = "/api/v1/sync/syncLibrary")
 }

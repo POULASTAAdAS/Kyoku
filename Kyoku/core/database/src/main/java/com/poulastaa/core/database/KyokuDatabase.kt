@@ -8,6 +8,7 @@ import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
+import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
@@ -74,4 +75,5 @@ internal abstract class KyokuDatabase : RoomDatabase() {
     abstract val libraryDao: LibraryDao
     abstract val profileDao: ProfileDao
     abstract val viewDao: ViewDao
+    abstract val workDao: WorkDao
 }

@@ -1,5 +1,7 @@
 package com.poulastaa.main.data.mapper
 
+import androidx.work.ListenableWorker
+import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
@@ -58,3 +60,19 @@ internal fun List<Pair<ArtistId, List<SongId>>>.toDtoSuggestedArtistSong() =
             list = list
         )
     }
+
+internal fun DataError.Network.toWorkResult() = when (this) {
+    DataError.Network.UNAUTHORISED,
+    DataError.Network.EMAIL_NOT_VERIFIED,
+    DataError.Network.PASSWORD_DOES_NOT_MATCH,
+    DataError.Network.SERIALISATION,
+    DataError.Network.UNKNOWN,
+    DataError.Network.CONFLICT,
+    DataError.Network.INVALID_EMAIL
+        -> ListenableWorker.Result.failure()
+
+    DataError.Network.NOT_FOUND,
+    DataError.Network.NO_INTERNET,
+    DataError.Network.SERVER_ERROR,
+        -> ListenableWorker.Result.retry()
+}

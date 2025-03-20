@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kyoku.android.dagger)
 }
 
-
 android {
     namespace = "com.poulastaa.main.data"
 }
@@ -18,4 +17,6 @@ dependencies {
     implementation(projects.main.domain)
 
     implementation(libs.pagingCommon)
+    implementation(libs.androidx.work)
+    implementation(libs.hilt.work)
 }

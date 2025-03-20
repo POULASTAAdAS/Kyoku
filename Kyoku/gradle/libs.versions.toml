@@ -132,6 +132,8 @@ lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = 
 
 androidx-palette = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }
 
+androidx-work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
