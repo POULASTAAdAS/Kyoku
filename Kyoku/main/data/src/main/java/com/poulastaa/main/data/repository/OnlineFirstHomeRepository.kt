@@ -45,7 +45,11 @@ internal class OnlineFirstHomeRepository @Inject constructor(
             }
             val albumDef = scope.async {
                 home.album.map { dto ->
-                    val albumIdDef = async { local.storeSavedAlbum(dto.album) }
+                    val albumIdDef = async {
+                        local.storeAlbum(dto.album).also {
+                            local.storeSavedAlbum(it)
+                        }
+                    }
                     val songIdsDef = async { local.storeSong(dto.songs) }
 
                     albumIdDef.await() to songIdsDef.await()
@@ -55,7 +59,9 @@ internal class OnlineFirstHomeRepository @Inject constructor(
                 }
             }
             val artistDef = scope.async {
-                local.storeArtist(home.artist)
+                local.storeArtist(home.artist).also {
+                    local.storeSavedArtist(home.artist.map { it.id })
+                }
             }
 
             // refresh

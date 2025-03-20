@@ -17,7 +17,7 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = EntitySavedAlbum::class,
+            entity = EntityAlbum::class,
             parentColumns = ["id"],
             childColumns = ["albumId"],
             onDelete = ForeignKey.CASCADE

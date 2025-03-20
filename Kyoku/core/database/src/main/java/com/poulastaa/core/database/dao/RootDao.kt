@@ -14,7 +14,7 @@ import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
 import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
-import com.poulastaa.core.database.entity.EntityRelationAlbum
+import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistAlbum
 import com.poulastaa.core.database.entity.EntityRelationArtistCountry
 import com.poulastaa.core.database.entity.EntityRelationArtistGenre
@@ -23,7 +23,8 @@ import com.poulastaa.core.database.entity.EntityRelationSongArtist
 import com.poulastaa.core.database.entity.EntityRelationSongCountry
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
-import com.poulastaa.core.database.entity.EntitySavedAlbum
+import com.poulastaa.core.database.entity.EntityAlbum
+import com.poulastaa.core.database.entity.EntitySavedArtist
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 import com.poulastaa.core.domain.model.AlbumId
@@ -40,7 +41,6 @@ internal interface RootDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSong(list: List<EntitySong>): List<SongId>
 
-
     // Artist
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArtist(artist: EntityArtist): ArtistId
@@ -48,19 +48,21 @@ internal interface RootDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArtist(list: List<EntityArtist>): List<ArtistId>
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSavedArtist(list: List<EntitySavedArtist>): List<ArtistId>
 
     // Album
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlbum(album: EntityAlbum): AlbumId
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlbum(list: List<EntityAlbum>): List<AlbumId>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSavedAlbum(album: EntitySavedAlbum): AlbumId
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSavedAlbum(list: List<EntitySavedAlbum>): List<AlbumId>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationAlbum(album: EntityRelationAlbum): AlbumId
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRelationAlbum(list: List<EntityRelationAlbum>): List<AlbumId>
 
 
     // Country

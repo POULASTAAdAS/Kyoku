@@ -69,51 +69,69 @@ internal fun LibraryCompactScreen(
                 ) {
                     libraryFilterRow(state, onAction, haptic)
 
-                    libraryHeading(R.string.playlist) {
-                        onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.PLAYLIST))
-                    }
-
                     if (state.filterType == UiLibraryFilterType.PLAYLIST ||
                         state.filterType == UiLibraryFilterType.ALL
-                    ) libraryLazyGridItem(
-                        span = 4,
-                        items = state.playlist,
-                        viewType = state.viewType,
-                        onAction = onAction
-                    )
+                    ) {
+                        libraryHeading(R.string.playlist) {
+                            onAction(
+                                LibraryUiAction.OnEditSavedItemTypeClick(
+                                    UiLibraryEditSavedItemType.PLAYLIST
+                                )
+                            )
+                        }
 
-                    libraryHeading(R.string.album) {
-                        onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.ALBUM))
+                        libraryLazyGridItem(
+                            span = 4,
+                            items = state.playlist,
+                            viewType = state.viewType,
+                            onAction = onAction
+                        )
                     }
+
 
                     if (state.filterType == UiLibraryFilterType.ALBUM ||
                         state.filterType == UiLibraryFilterType.ALL
-                    ) libraryLazyGridItem(
-                        span = 4,
-                        items = state.album,
-                        viewType = state.viewType,
-                        onAction = onAction
-                    )
-
-                    libraryHeading(R.string.artist) {
-                        onAction(LibraryUiAction.OnEditSavedItemTypeClick(UiLibraryEditSavedItemType.ARTIST))
+                    ) {
+                        libraryHeading(R.string.album) {
+                            onAction(
+                                LibraryUiAction.OnEditSavedItemTypeClick(
+                                    UiLibraryEditSavedItemType.ALBUM
+                                )
+                            )
+                        }
+                        libraryLazyGridItem(
+                            span = 4,
+                            items = state.album,
+                            viewType = state.viewType,
+                            onAction = onAction
+                        )
                     }
 
                     if (state.filterType == UiLibraryFilterType.ARTIST ||
                         state.filterType == UiLibraryFilterType.ALL
-                    ) libraryLazyGridItem(
-                        span = 4,
-                        items = state.artist,
-                        viewType = state.viewType,
-                        onAction = onAction
-                    )
+                    ) {
+                        libraryHeading(R.string.artist) {
+                            onAction(
+                                LibraryUiAction.OnEditSavedItemTypeClick(
+                                    UiLibraryEditSavedItemType.ARTIST
+                                )
+                            )
+                        }
+
+                        libraryLazyGridItem(
+                            span = 4,
+                            items = state.artist,
+                            viewType = state.viewType,
+                            onAction = onAction
+                        )
+                    }
 
                     item {
                         Spacer(Modifier.height(BOTTOM_BAR_HEIGHT))
                     }
                 }
 
-                false -> LibraryLoadingScreen(paddingValues,topAppBarScroll,4)
+                false -> LibraryLoadingScreen(paddingValues, topAppBarScroll, 4)
             }
         }
     }

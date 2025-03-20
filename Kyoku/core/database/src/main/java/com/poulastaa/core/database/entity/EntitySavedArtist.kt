@@ -7,14 +7,14 @@ import androidx.room.PrimaryKey
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = EntityAlbum::class,
+            entity = EntityArtist::class,
             parentColumns = ["id"],
             childColumns = ["id"],
-            onDelete = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class EntitySavedAlbum(
+data class EntitySavedArtist(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
 )

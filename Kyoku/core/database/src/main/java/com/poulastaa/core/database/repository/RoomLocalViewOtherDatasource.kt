@@ -10,11 +10,10 @@ import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.mapper.toDtoExploreType
 import com.poulastaa.core.database.mapper.toDtoHeading
-import com.poulastaa.core.database.mapper.toEntitySavedAlbum
+import com.poulastaa.core.database.mapper.toEntityAlbum
 import com.poulastaa.core.database.mapper.toEntityArtist
 import com.poulastaa.core.database.mapper.toEntityCountry
 import com.poulastaa.core.database.mapper.toEntityGenre
-import com.poulastaa.core.database.mapper.toEntityRelationAlbum
 import com.poulastaa.core.database.mapper.toEntitySong
 import com.poulastaa.core.database.mapper.toSongInfo
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
@@ -175,7 +174,7 @@ internal class RoomLocalViewOtherDatasource @Inject constructor(
                 async {
                     val infoDef = async { root.insertSongInfo(dto.info.toSongInfo()) }
                     val albumDef = async {
-                        dto.album?.toEntityRelationAlbum()?.let { root.insertRelationAlbum(it) }
+                        dto.album?.toEntityAlbum()?.let { root.insertAlbum(it) }
                     }
 
                     val genre = async {

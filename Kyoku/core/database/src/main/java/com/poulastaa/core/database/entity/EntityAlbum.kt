@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class EntityRelationAlbum(
+data class EntityAlbum(
     @PrimaryKey(autoGenerate = false)
     val id: Long,
     val name: String,

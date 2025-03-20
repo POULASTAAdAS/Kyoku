@@ -1,6 +1,7 @@
 package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.RootDao
+import com.poulastaa.core.database.entity.EntitySavedArtist
 import com.poulastaa.core.database.mapper.toEntityArtist
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.SavedScreen

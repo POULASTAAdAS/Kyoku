@@ -2,7 +2,7 @@ package com.poulastaa.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.poulastaa.core.database.entity.EntitySavedAlbum
+import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.model.PayloadPrevPlaylist
 import kotlinx.coroutines.flow.Flow
@@ -18,9 +18,9 @@ internal interface LibraryDao {
     )
     fun loadSavedPrevPlaylist(): Flow<List<PayloadPrevPlaylist>>
 
-    @Query("Select * from EntityArtist")
+    @Query("Select * from EntityArtist where id in (Select * from EntitySavedArtist)")
     fun loadSavedPrevArtist(): Flow<List<EntityArtist>>
 
-    @Query("Select * from EntitySavedAlbum")
-    fun loadSavedPrevAlbum(): Flow<List<EntitySavedAlbum>>
+    @Query("Select * from EntityAlbum where EntityAlbum.id in (Select * from EntitySavedAlbum)")
+    fun loadSavedPrevAlbum(): Flow<List<EntityAlbum>>
 }

@@ -286,10 +286,9 @@ class ExposedSetupDatasource(
                             table.select(
                                 table.artistId,
                                 table.popularity
-                            )
-                                .where {
-                                    table.genreId eq dto.id
-                                }.orderBy(table.popularity to SortOrder.DESC)
+                            ).where {
+                                table.genreId eq dto.id
+                            }.orderBy(table.popularity to SortOrder.DESC)
                                 .limit(limit)
                                 .offset(page.offset(limit))
                                 .map {

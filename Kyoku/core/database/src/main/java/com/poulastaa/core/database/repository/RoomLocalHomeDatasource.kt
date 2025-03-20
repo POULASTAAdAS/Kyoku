@@ -2,9 +2,12 @@ package com.poulastaa.core.database.repository
 
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.RootDao
+import com.poulastaa.core.database.entity.EntitySavedAlbum
+import com.poulastaa.core.database.entity.EntitySavedArtist
 import com.poulastaa.core.database.mapper.toDtoPrevAlbum
 import com.poulastaa.core.database.mapper.toDtoPrevArtist
 import com.poulastaa.core.database.mapper.toDtoPrevSong
+import com.poulastaa.core.database.mapper.toEntityAlbum
 import com.poulastaa.core.database.mapper.toEntityArtist
 import com.poulastaa.core.database.mapper.toEntityExploreType
 import com.poulastaa.core.database.mapper.toEntityPlaylist
@@ -12,11 +15,9 @@ import com.poulastaa.core.database.mapper.toEntityPrevAlbum
 import com.poulastaa.core.database.mapper.toEntityPrevArtist
 import com.poulastaa.core.database.mapper.toEntityPrevExploreType
 import com.poulastaa.core.database.mapper.toEntityPrevSong
-import com.poulastaa.core.database.mapper.toEntityRelationAlbum
 import com.poulastaa.core.database.mapper.toEntityRelationSongAlbum
 import com.poulastaa.core.database.mapper.toEntityRelationSongPlaylist
 import com.poulastaa.core.database.mapper.toEntityRelationSuggestedSongByArtist
-import com.poulastaa.core.database.mapper.toEntitySavedAlbum
 import com.poulastaa.core.database.mapper.toEntitySong
 import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.ArtistId
@@ -42,20 +43,17 @@ internal class RoomLocalHomeDatasource @Inject constructor(
     private val root: RootDao,
     private val home: HomeDao,
 ) : LocalHomeDatasource {
-    override suspend fun storeSong(song: DtoSong): SongId =
-        root.insertSong(song.toEntitySong())
-
     override suspend fun storeSong(list: List<DtoSong>): List<SongId> =
         root.insertSong(list.map { it.toEntitySong() })
 
     override suspend fun storePrevSong(list: List<DtoPrevSong>): List<SongId> =
         root.insertPrevSong(list.map { it.toEntityPrevSong() })
 
-    override suspend fun storeArtist(artist: DtoArtist): ArtistId =
-        root.insertArtist(artist.toEntityArtist())
-
     override suspend fun storeArtist(list: List<DtoArtist>): List<ArtistId> =
         root.insertArtist(list.map { it.toEntityArtist() })
+
+    override suspend fun storeSavedArtist(list: List<ArtistId>): List<ArtistId> =
+        root.insertSavedArtist(list.map { EntitySavedArtist(it) })
 
     override suspend fun storePrevArtist(artist: DtoPrevArtist): ArtistId =
         root.insertPrevArtist(artist.toEntityPrevArtist())
@@ -66,23 +64,11 @@ internal class RoomLocalHomeDatasource @Inject constructor(
     override suspend fun storePlaylist(playlist: DtoPlaylist): PlaylistId =
         root.insertPlaylist(playlist.toEntityPlaylist())
 
-    override suspend fun storePlaylist(list: List<DtoPlaylist>): List<PlaylistId> =
-        root.insertPlaylist(list.map { it.toEntityPlaylist() })
+    override suspend fun storeAlbum(album: DtoAlbum): AlbumId =
+        root.insertAlbum(album.toEntityAlbum())
 
-    override suspend fun storeSavedAlbum(album: DtoAlbum): AlbumId =
-        root.insertSavedAlbum(album.toEntitySavedAlbum())
-
-    override suspend fun storeSavedAlbum(list: List<DtoAlbum>): List<AlbumId> =
-        root.insertSavedAlbum(list.map { it.toEntitySavedAlbum() })
-
-    override suspend fun storeRelationAlbum(album: DtoAlbum): AlbumId =
-        root.insertRelationAlbum(album.toEntityRelationAlbum())
-
-    override suspend fun storeRelationAlbum(list: List<DtoAlbum>): List<AlbumId> =
-        root.insertRelationAlbum(list.map { it.toEntityRelationAlbum() })
-
-    override suspend fun storePrevAlbum(album: DtoPrevAlbum): AlbumId =
-        root.insertPrevAlbum(album.toEntityPrevAlbum())
+    override suspend fun storeSavedAlbum(albumId: AlbumId): AlbumId =
+        root.insertSavedAlbum(EntitySavedAlbum(albumId))
 
     override suspend fun storePrevAlbum(list: List<DtoPrevAlbum>): List<AlbumId> =
         root.insertPrevAlbum(list.map { it.toEntityPrevAlbum() })
@@ -93,18 +79,12 @@ internal class RoomLocalHomeDatasource @Inject constructor(
     override suspend fun storePrevExploreType(type: DtoExploreType, data: List<SongId>) =
         root.insertPrevExploreType(type.toEntityPrevExploreType(data))
 
-    override suspend fun storeRelationSongPlaylist(relation: DtoRelationSongPlaylist) =
-        root.insertRelationSongPlaylist(relation.toEntityRelationSongPlaylist())
-
     override suspend fun storeRelationSongPlaylist(list: List<DtoRelationSongPlaylist>) =
         root.insertRelationSongPlaylist(
             list.map {
                 it.toEntityRelationSongPlaylist()
             }.flatten()
         )
-
-    override suspend fun stoRelationSongAlbum(relation: DtoRelationSongAlbum) =
-        root.insertRelationSongAlbum(relation.toEntityRelationSongAlbum())
 
     override suspend fun stoRelationSongAlbum(list: List<DtoRelationSongAlbum>) =
         root.insertRelationSongAlbum(

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.poulastaa.core.database.entity.EntitySavedAlbum
+import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityExplore
 import com.poulastaa.core.database.entity.EntityPlaylist
 import com.poulastaa.core.domain.model.AlbumId
@@ -15,7 +15,7 @@ import com.poulastaa.core.domain.model.SongId
 
 @Dao
 internal interface ViewDao {
-    @Query("SELECT EXISTS(SELECT 1 FROM EntityArtist WHERE id = :artistId)")
+    @Query("SELECT EXISTS(SELECT 1 FROM EntitySavedArtist WHERE id = :artistId)")
     suspend fun isArtistFollowed(artistId: ArtistId): Boolean
 
     @Query("SELECT dataId FROM EntityExplore where typeId = :type")
@@ -34,8 +34,8 @@ internal interface ViewDao {
     )
     suspend fun getPlaylistPrevSongs(playlistId: PlaylistId): List<DtoDetailedPrevSong>
 
-    @Query("SELECT * FROM EntitySavedAlbum WHERE id = :albumId")
-    suspend fun getAlbumOnId(albumId: Long): EntitySavedAlbum?
+    @Query("SELECT * FROM EntityAlbum WHERE id = :albumId")
+    suspend fun getAlbumOnId(albumId: Long): EntityAlbum?
 
     @Query(
         """
