@@ -26,8 +26,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import javax.inject.Inject
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class MainViewmodel @Inject constructor(
@@ -203,7 +202,7 @@ class MainViewmodel @Inject constructor(
             }
         }
         // Delay for the animation to complete
-        delay((_state.value.themChangeAnimationTime / 1.3).toDuration(DurationUnit.MILLISECONDS))
+        delay((_state.value.themChangeAnimationTime / 1.3).milliseconds)
     }
 
     private fun AppNavigationBottomBarScreen.toAppNavigationRailScreen() = when (this) {

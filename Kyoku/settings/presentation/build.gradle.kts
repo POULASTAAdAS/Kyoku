@@ -13,5 +13,6 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(projects.core.domain)
+    implementation(projects.main.domain)
     implementation(projects.settings.domain)
 }

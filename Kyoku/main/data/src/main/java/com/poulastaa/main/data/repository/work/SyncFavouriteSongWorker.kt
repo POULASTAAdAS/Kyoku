@@ -10,15 +10,15 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class SyncArtistWorker @AssistedInject constructor(
+class SyncFavouriteSongWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val work: WorkRepository
+    private val work: WorkRepository,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         if (runAttemptCount >= 5) return Result.failure()
 
-        return when (val result = work.syncSavedArtist()) {
+        return when (val result = work.syncSavedFavourite()) {
             is com.poulastaa.core.domain.Result.Error -> result.error.toWorkResult()
             is com.poulastaa.core.domain.Result.Success -> Result.success()
         }

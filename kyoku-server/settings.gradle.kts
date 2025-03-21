@@ -74,3 +74,9 @@ include("view:data")
 findProject(":view:data")?.name = "view-data"
 include("view:network")
 findProject(":view:network")?.name = "view-network"
+include("sync:domain")
+findProject(":sync:domain")?.name = "sync-domain"
+include("sync:data")
+findProject(":sync:data")?.name = "sync-data"
+include("sync:network")
+findProject(":sync:network")?.name = "sync-network"

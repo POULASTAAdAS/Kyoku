@@ -9,6 +9,7 @@ import com.poulastaa.main.domain.repository.work.RemoteWorkDatasource
 import com.poulastaa.main.domain.repository.work.WorkRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import javax.inject.Inject
 
 internal class DaggerHiltWorkRepository @Inject constructor(
@@ -39,8 +40,23 @@ internal class DaggerHiltWorkRepository @Inject constructor(
             val remove = scope.async { local.removeSavedPlaylists(result.data.removeIdList) }
             val add = scope.async { local.savePlaylists(result.data.newData) }
 
-            remove.await()
-            add.await()
+            listOf(
+                remove,
+                add
+            ).awaitAll()
+
+            val savedPlaylistSongIds = local.getSavedPlaylistSongs()
+            val res = remote.syncSavedPlaylistSongs(savedPlaylistSongIds)
+
+            if (res is Result.Success) {
+                val rev = scope.async { local.removeSavedPlaylistSongs(res.data.removeList) }
+                val addd = scope.async { local.updateSavedPlaylistSongs(res.data.newData) }
+
+                listOf(
+                    rev,
+                    addd
+                ).awaitAll()
+            }
         }
 
         return result.asEmptyDataResult()

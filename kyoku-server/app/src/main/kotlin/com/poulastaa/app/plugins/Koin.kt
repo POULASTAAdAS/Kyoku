@@ -8,6 +8,7 @@ import com.poulastaa.core.database.di.provideCoreDatabaseService
 import com.poulastaa.core.database.di.provideJedisPoolService
 import com.poulastaa.notification.data.di.provideNotificationService
 import com.poulastaa.suggestion.data.di.provideSuggestionDataService
+import com.poulastaa.sync.di.provideSyncDataService
 import com.poulastaa.user.data.di.provideUserDataRepositoryService
 import com.poulastaa.view.data.di.provideViewDataService
 import io.ktor.server.application.*
@@ -40,7 +41,8 @@ fun Application.configureKoin(
             provideNotificationService(),
             provideUserDataRepositoryService(),
             provideSuggestionDataService(),
-            provideViewDataService()
+            provideViewDataService(),
+            provideSyncDataService()
         )
     }
 }

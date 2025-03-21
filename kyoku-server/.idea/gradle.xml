@@ -49,6 +49,10 @@
             <option value="$PROJECT_DIR$/suggestion/data" />
             <option value="$PROJECT_DIR$/suggestion/domain" />
             <option value="$PROJECT_DIR$/suggestion/network" />
+            <option value="$PROJECT_DIR$/sync" />
+            <option value="$PROJECT_DIR$/sync/data" />
+            <option value="$PROJECT_DIR$/sync/domain" />
+            <option value="$PROJECT_DIR$/sync/network" />
             <option value="$PROJECT_DIR$/user" />
             <option value="$PROJECT_DIR$/user/data" />
             <option value="$PROJECT_DIR$/user/domain" />

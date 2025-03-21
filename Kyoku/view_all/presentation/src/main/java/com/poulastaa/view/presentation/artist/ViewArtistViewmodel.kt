@@ -20,8 +20,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 internal class ViewArtistViewmodel @Inject constructor(
@@ -30,7 +29,7 @@ internal class ViewArtistViewmodel @Inject constructor(
     private val _state = MutableStateFlow(ViewArtistUiState())
     val state = _state.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5.toDuration(DurationUnit.SECONDS)),
+        started = SharingStarted.WhileSubscribed(5.seconds),
         initialValue = ViewArtistUiState()
     )
 

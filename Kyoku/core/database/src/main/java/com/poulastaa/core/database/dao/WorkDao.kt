@@ -3,6 +3,7 @@ package com.poulastaa.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntitySavedArtist
 import com.poulastaa.core.domain.model.AlbumId
@@ -35,4 +36,10 @@ internal interface WorkDao {
 
     @Query("Delete from EntityFavourite where songId in (:list)")
     suspend fun removeSavedFavouriteSongs(list: List<SongId>)
+
+    @Query("Select * from EntityRelationSongPlaylist")
+    suspend fun getAllSavedPlaylistSongs(): List<EntityRelationSongPlaylist>
+
+    @Delete
+    suspend fun removeSavedPlaylistSongs(list: List<EntityRelationSongPlaylist>)
 }

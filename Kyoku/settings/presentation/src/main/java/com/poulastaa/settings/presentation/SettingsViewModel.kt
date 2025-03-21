@@ -12,9 +12,12 @@ import com.poulastaa.core.presentation.designsystem.ThemChanger
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.toUiUser
+import com.poulastaa.main.domain.repository.work.SyncLibraryScheduler
 import com.poulastaa.settings.domain.model.SettingsAllowedNavigationScreens
 import com.poulastaa.settings.domain.repository.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +34,7 @@ import kotlin.time.toDuration
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val repo: SettingRepository,
+    private val work: SyncLibraryScheduler,
 ) : ViewModel() {
     private val _state = MutableStateFlow(SettingsUiState())
     val state = _state
@@ -84,7 +88,10 @@ class SettingsViewModel @Inject constructor(
                 }
 
                 viewModelScope.launch {
-                    repo.logOut()
+                    val db = async { repo.logOut() }
+                    val sync = async { work.cancelAllSyncs() }
+                    listOf(db, sync).awaitAll()
+
                     _uiEvent.send(SettingsUiEvent.OnLogOutSuccess)
                 }
             }

@@ -2,6 +2,7 @@ package com.poulastaa.main.network.mapper
 
 import com.poulastaa.core.domain.model.DtoFullAlbum
 import com.poulastaa.core.domain.model.DtoPrevAlbum
+import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.network.mapper.toDtoAlbum
 import com.poulastaa.core.network.mapper.toDtoArtist
 import com.poulastaa.core.network.mapper.toDtoFullPlaylist
@@ -17,9 +18,11 @@ import com.poulastaa.main.domain.model.DtoHome
 import com.poulastaa.main.domain.model.DtoRefresh
 import com.poulastaa.main.domain.model.DtoSuggestedArtistSong
 import com.poulastaa.main.domain.model.DtoSyncData
+import com.poulastaa.main.domain.model.DtoSyncPlaylistSongs
 import com.poulastaa.main.network.model.ResponseHome
 import com.poulastaa.main.network.model.ResponseRefresh
 import com.poulastaa.main.network.model.ResponseSuggestedArtistSong
+import com.poulastaa.main.network.model.SyncPlaylistSongResponse
 import com.poulastaa.main.network.model.SyncResponse
 
 internal fun ResponsePrevAlbum.toDtoPrevAlbum() = DtoPrevAlbum(
@@ -78,3 +81,12 @@ internal fun SyncResponse<ResponseArtist>.toDtoSyncData() = DtoSyncData(
     removeIdList = this.removeIdList,
     newData = newData.map { it.toDtoArtist() }
 )
+
+@JvmName("toDtoSyncDataPlaylistSong")
+internal fun SyncPlaylistSongResponse<Pair<PlaylistId, List<ResponseSong>>>.toDtoSyncData() =
+    DtoSyncPlaylistSongs(
+        removeList = this.removeIdList,
+        newData = newData.map { pair ->
+            pair.first to pair.second.map { it.toDtoSong() }
+        }
+    )

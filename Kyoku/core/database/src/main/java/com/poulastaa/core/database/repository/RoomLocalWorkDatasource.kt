@@ -129,6 +129,40 @@ internal class RoomLocalWorkDatasource @Inject constructor(
         }
     }
 
+    // playlist songs
+    override suspend fun getSavedPlaylistSongs(): List<Pair<PlaylistId, List<SongId>>> =
+        work.getAllSavedPlaylistSongs().groupBy { it.playlistId }.map { pair ->
+            pair.key to pair.value.map { it.songId }
+        }
+
+    override suspend fun removeSavedPlaylistSongs(list: List<Pair<PlaylistId, List<SongId>>>) {
+        list.forEach { pair ->
+            work.removeSavedPlaylistSongs(
+                pair.second.map {
+                    EntityRelationSongPlaylist(
+                        songId = it,
+                        playlistId = pair.first
+                    )
+                }
+            )
+        }
+    }
+
+    override suspend fun updateSavedPlaylistSongs(list: List<Pair<PlaylistId, List<DtoSong>>>) {
+        insertSongs(list.map { it.second }.flatten())
+
+        list.forEach { pair ->
+            root.insertRelationSongPlaylist(
+                pair.second.map { it.id }.map {
+                    EntityRelationSongPlaylist(
+                        songId = it,
+                        playlistId = pair.first
+                    )
+                }
+            )
+        }
+    }
+
     private suspend fun insertSongs(list: List<DtoSong>) {
         coroutineScope {
             val songDef = async { root.insertSong(list.map { it.toEntitySong() }) }

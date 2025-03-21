@@ -5,8 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/di/MainDataAppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/di/MainDataAppModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncArtistWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncArtistWorker.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncFavouriteSongWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncFavouriteSongWorker.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncLibraryWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncLibraryWorker.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncPlaylistWorker.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/repository/work/SyncLibraryScheduler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/repository/work/SyncLibraryScheduler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/main/MainViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/main/MainViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/settings/presentation/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings/presentation/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/settings/presentation/src/main/java/com/poulastaa/settings/presentation/SettingsViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings/presentation/src/main/java/com/poulastaa/settings/presentation/SettingsViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/logback.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,11 +38,11 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin Interface" />
-        <option value="Kotlin Class" />
-        <option value="Kotlin Data Class" />
-        <option value="Kotlin File" />
         <option value="Kotlin Enum" />
+        <option value="Kotlin Data Class" />
+        <option value="Kotlin Interface" />
+        <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -70,6 +87,7 @@
       <recent name="D:\Kyoku\kyoku-server\view\network\src\main\kotlin\com\poulastaa\view\network\model" />
     </key>
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="com.poulastaa.core.domain.model" />
       <recent name="com.poulastaa.view.domain.model" />
       <recent name="com.poulastaa.core.domain.repository.view" />
     </key>
@@ -149,6 +167,7 @@
       <workItem from="1742462540050" duration="666000" />
       <workItem from="1742478415300" duration="9000" />
       <workItem from="1742480528387" duration="6814000" />
+      <workItem from="1742573173558" duration="8719000" />
     </task>
     <servers />
   </component>

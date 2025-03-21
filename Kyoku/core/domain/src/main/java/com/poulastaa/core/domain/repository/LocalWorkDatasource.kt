@@ -25,4 +25,8 @@ interface LocalWorkDatasource {
     suspend fun getSavedFavouriteIds(): List<SongId>
     suspend fun removeSavedFavourites(list: List<SongId>)
     suspend fun saveFavourites(list: List<DtoSong>)
+
+    suspend fun getSavedPlaylistSongs(): List<Pair<PlaylistId, List<SongId>>>
+    suspend fun removeSavedPlaylistSongs(list: List<Pair<PlaylistId, List<SongId>>>)
+    suspend fun updateSavedPlaylistSongs(list: List<Pair<PlaylistId, List<DtoSong>>>)
 }
