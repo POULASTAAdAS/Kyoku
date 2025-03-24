@@ -2,6 +2,7 @@ package com.poulastaa.sync.netowrk.route
 
 import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
+import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.sync.domain.repository.SynRepository
 import com.poulastaa.sync.netowrk.mapper.toDtoSyncData
 import com.poulastaa.sync.netowrk.mapper.toDtoSyncType
@@ -27,6 +28,8 @@ fun Route.syncLibrary(repo: SynRepository) {
                     return@post call.respondRedirect(EndPoints.UnAuthorized.route)
                 }
 
+                val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
+
                 when (type) {
                     SyncType.SYNC_PLAYLIST_SONGS -> {
                         val req = call.receiveNullable<SyncReq<SyncPlaylistPayload>>()
@@ -37,8 +40,10 @@ fun Route.syncLibrary(repo: SynRepository) {
                                     first = it.playlistId,
                                     second = it.listOfSongId
                                 )
-                            }
-                        ).toResponseSyncPlaylistSong()
+                            },
+                            payload = payload
+                        )?.toResponseSyncPlaylistSong()
+                            ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                         call.respond(status = HttpStatusCode.OK, message = result)
                     }
@@ -50,23 +55,27 @@ fun Route.syncLibrary(repo: SynRepository) {
                         val result = when (type) {
                             SyncType.SYNC_ALBUM -> repo.syncData<DtoFullAlbum>(
                                 type = type.toDtoSyncType(),
-                                savedIdList = req.idList
-                            ).toDtoSyncData()
+                                savedIdList = req.idList,
+                                payload = payload
+                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_PLAYLIST -> repo.syncData<DtoFullPlaylist>(
                                 type = type.toDtoSyncType(),
-                                savedIdList = req.idList
-                            ).toDtoSyncData()
+                                savedIdList = req.idList,
+                                payload = payload
+                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_ARTIST -> repo.syncData<DtoArtist>(
                                 type = type.toDtoSyncType(),
-                                savedIdList = req.idList
-                            ).toDtoSyncData()
+                                savedIdList = req.idList,
+                                payload = payload
+                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_FAVOURITE -> repo.syncData<DtoSong>(
                                 type = type.toDtoSyncType(),
-                                savedIdList = req.idList
-                            ).toDtoSyncData()
+                                savedIdList = req.idList,
+                                payload = payload
+                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             else -> return@post call.respondRedirect(EndPoints.UnAuthorized.route)
                         }

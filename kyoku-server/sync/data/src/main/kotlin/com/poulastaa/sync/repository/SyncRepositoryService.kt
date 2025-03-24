@@ -29,7 +29,7 @@ internal class SyncRepositoryService(
 
                 DtoSyncPayload(
                     removeIdList = removeList,
-                    newData = db.getFullAlbumOnIdList(new, user.id) as List<T>
+                    newData = db.getFullAlbumOnIdList(new) as List<T>
                 )
             }
 
@@ -42,7 +42,7 @@ internal class SyncRepositoryService(
 
                 DtoSyncPayload(
                     removeIdList = removeList,
-                    newData = db.getFullPlaylistOnfIdList(new, user.id) as List<T>
+                    newData = db.getFullPlaylistOnIdList(new) as List<T>
                 )
             }
 
@@ -55,7 +55,7 @@ internal class SyncRepositoryService(
 
                 DtoSyncPayload(
                     removeIdList = removeList,
-                    newData = db.getArtistOnIdList(new, user.id) as List<T>
+                    newData = db.getArtistOnIdList(new) as List<T>
                 )
             }
 
@@ -68,7 +68,7 @@ internal class SyncRepositoryService(
 
                 DtoSyncPayload(
                     removeIdList = removeList,
-                    newData = db.getFavoriteSongs(new, user.id) as List<T>
+                    newData = db.getFavoriteSongs(new) as List<T>
                 )
             }
         }

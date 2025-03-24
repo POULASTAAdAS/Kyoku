@@ -5,25 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/di/MainDataAppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/di/MainDataAppModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncArtistWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncArtistWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncFavouriteSongWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncFavouriteSongWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncLibraryWorker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncLibraryWorker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/data/src/main/java/com/poulastaa/main/data/repository/work/SyncPlaylistWorker.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/repository/work/SyncLibraryScheduler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/repository/work/SyncLibraryScheduler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/main/MainViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/main/MainViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/settings/presentation/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings/presentation/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/settings/presentation/src/main/java/com/poulastaa/settings/presentation/SettingsViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings/presentation/src/main/java/com/poulastaa/settings/presentation/SettingsViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Koin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/com/poulastaa/app/plugins/Routing.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/resources/logback.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/resources/logback.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/settings.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/di/DatabaseModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/di/DatabaseModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/ExposedLocalCoreDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/sync/ExposedLocalSyncDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/sync/ExposedLocalSyncDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/sync/RedisLocalSyncDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/sync/RedisLocalSyncDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/LocalCoreDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/sync/LocalSyncCacheDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/sync/LocalSyncCacheDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/sync/LocalSyncDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/repository/sync/LocalSyncDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sync/data/src/main/kotlin/com/poulastaa/sync/repository/SyncRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/sync/data/src/main/kotlin/com/poulastaa/sync/repository/SyncRepositoryService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,6 +158,7 @@
       <workItem from="1742478415300" duration="9000" />
       <workItem from="1742480528387" duration="6814000" />
       <workItem from="1742573173558" duration="8719000" />
+      <workItem from="1742826288248" duration="7591000" />
     </task>
     <servers />
   </component>

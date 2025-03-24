@@ -8,10 +8,7 @@ import com.poulastaa.core.database.entity.user.EntityUser
 import com.poulastaa.core.database.entity.user.RelationEntityUserPlaylist
 import com.poulastaa.core.database.mapper.*
 import com.poulastaa.core.domain.model.*
-import com.poulastaa.core.domain.repository.ArtistId
-import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
-import com.poulastaa.core.domain.repository.LocalCoreDatasource
-import com.poulastaa.core.domain.repository.SongId
+import com.poulastaa.core.domain.repository.*
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 
@@ -270,13 +267,7 @@ class ExposedLocalCoreDatasource(
     override suspend fun getArtistFromDbArtist(list: List<DtoDBArtist>): List<DtoArtist> = coroutineScope {
         list.map { artist ->
             async {
-                val genre = getGenreOnArtistId(artist.id)
-                val country = getCountryOnArtistId(artist.id)
-
-                artist.toArtistDto(
-                    genre = genre,
-                    country = country
-                )
+                getArtist(artist)
             }
         }.awaitAll().also { cache.setArtistById(it) }
     }
@@ -336,6 +327,49 @@ class ExposedLocalCoreDatasource(
                 cache.setCountryIdByArtistId(artistId, it.id)
             }
         }
+
+    override suspend fun getAlbumOnId(list: List<AlbumId>): List<DtoAlbum> {
+        val cache = cache.cacheAlbumById(list)
+        val notFound = list.filter { it !in cache.map { it.id } }
+
+        return cache + kyokuDbQuery {
+            DaoAlbum.find {
+                EntityAlbum.id inList notFound
+            }.map { it.toDtoAlbum() }.also {
+                this.cache.setAlbumById(it)
+            }
+        }
+    }
+
+    override suspend fun getPlaylistOnId(list: List<PlaylistId>): List<DtoPlaylist> {
+        val cache = cache.cachePlaylistOnId(list)
+        val notFound = list.filter { it !in cache.map { it.id } }
+
+        return cache + kyokuDbQuery {
+            DaoPlaylist.find {
+                EntityPlaylist.id inList notFound
+            }.map { it.toDtoPlaylist() }.also {
+                this.cache.setPlaylistOnId(it)
+            }
+        }
+    }
+
+    override suspend fun getArtistOnId(list: List<ArtistId>): List<DtoArtist> {
+        val cache = cache.cacheArtistById(list)
+        val notFoundArtistIdList = list.filter { it !in cache.map { it.id } }
+
+        return cache + coroutineScope {
+            kyokuDbQuery {
+                DaoArtist.find { EntityArtist.id inList notFoundArtistIdList }.map { it.toDbArtistDto() }
+            }.map {
+                async {
+                    getArtist(it).also {
+                        this@ExposedLocalCoreDatasource.cache.setArtistById(it)
+                    }
+                }
+            }.awaitAll()
+        }
+    }
 
     private suspend fun getArtistsOnSongId(songId: SongId): Pair<SongId, List<DtoArtist>> {
         val pair = songId to kyokuDbQuery {
@@ -406,13 +440,7 @@ class ExposedLocalCoreDatasource(
             async {
                 songId to dbArtistList.map { dbArtist ->
                     async {
-                        val genre = getGenreOnArtistId(dbArtist.id)
-                        val country = getCountryOnArtistId(dbArtist.id)
-
-                        dbArtist.toArtistDto(
-                            genre = genre,
-                            country = country
-                        )
+                        getArtist(dbArtist)
                     }
                 }.awaitAll()
             }
@@ -422,5 +450,15 @@ class ExposedLocalCoreDatasource(
                 cache.setArtistIdBySongId(pair.first, pair.second.map { it.id })
             }
         }
+    }
+
+    private suspend fun getArtist(dbArtist: DtoDBArtist): DtoArtist {
+        val genre = getGenreOnArtistId(dbArtist.id)
+        val country = getCountryOnArtistId(dbArtist.id)
+
+        return dbArtist.toArtistDto(
+            genre = genre,
+            country = country
+        )
     }
 }

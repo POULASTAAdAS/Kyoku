@@ -10,6 +10,8 @@ import com.poulastaa.core.database.repository.setup.ExposedSetupDatasource
 import com.poulastaa.core.database.repository.setup.RedisSetupDatasource
 import com.poulastaa.core.database.repository.suggestion.ExposedLocalSuggestionDatasource
 import com.poulastaa.core.database.repository.suggestion.RedisLocalSuggestionDatasource
+import com.poulastaa.core.database.repository.sync.ExposedLocalSyncDatasource
+import com.poulastaa.core.database.repository.sync.RedisLocalSyncDatasource
 import com.poulastaa.core.database.repository.view.ExposedLocalViewDatasource
 import com.poulastaa.core.database.repository.view.RedisLocalViewDatasource
 import com.poulastaa.core.domain.repository.LocalCoreCacheDatasource
@@ -21,6 +23,8 @@ import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
+import com.poulastaa.core.domain.repository.sync.LocalSyncCacheDatasource
+import com.poulastaa.core.domain.repository.sync.LocalSyncDatasource
 import com.poulastaa.core.domain.repository.view.LocalViewCacheDatasource
 import com.poulastaa.core.domain.repository.view.LocalViewDatasource
 import org.koin.dsl.module
@@ -114,5 +118,13 @@ fun provideCoreDatabaseService() = module {
             core = get(),
             cache = get()
         )
+    }
+
+    single<LocalSyncCacheDatasource> {
+        RedisLocalSyncDatasource(get())
+    }
+
+    single<LocalSyncDatasource> {
+        ExposedLocalSyncDatasource(get(), get())
     }
 }

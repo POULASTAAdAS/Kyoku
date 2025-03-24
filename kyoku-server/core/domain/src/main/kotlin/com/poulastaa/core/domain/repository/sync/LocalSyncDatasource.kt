@@ -10,19 +10,19 @@ interface LocalSyncDatasource {
     suspend fun getUsersByEmail(email: String, type: UserType): DtoDBUser?
 
     suspend fun getSavedAlbumIdList(userId: Long): List<AlbumId>
-    suspend fun getFullAlbumOnIdList(idList: List<AlbumId>, userId: Long): List<DtoFullAlbum>
+    suspend fun getFullAlbumOnIdList(idList: List<AlbumId>): List<DtoFullAlbum>
     fun removeAlbum(idList: List<AlbumId>, userId: Long)
 
     suspend fun getSavedPlaylistIdList(userId: Long): List<PlaylistId>
-    suspend fun getFullPlaylistOnfIdList(idList: List<PlaylistId>, userId: Long): List<DtoFullPlaylist>
+    suspend fun getFullPlaylistOnIdList(idList: List<PlaylistId>): List<DtoFullPlaylist>
     fun removePlaylist(idList: List<PlaylistId>, userId: Long)
 
     suspend fun getSavedArtistIdList(userId: Long): List<ArtistId>
-    suspend fun getArtistOnIdList(idList: List<ArtistId>, userId: Long): List<DtoArtist>
+    suspend fun getArtistOnIdList(idList: List<ArtistId>): List<DtoArtist>
     fun removeArtist(idList: List<ArtistId>, userId: Long)
 
     suspend fun getSavedFavouriteSongsIdList(userId: Long): List<SongId>
-    suspend fun getFavoriteSongs(idList: List<SongId>, userId: Long): List<DtoSong>
+    suspend fun getFavoriteSongs(idList: List<SongId>): List<DtoSong>
     fun removeFavouriteSongs(idList: List<SongId>, userId: Long)
 
     suspend fun getPlaylistSongIdList(playlistId: PlaylistId): List<SongId>
