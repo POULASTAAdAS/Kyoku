@@ -6,6 +6,6 @@ import org.koin.dsl.module
 
 fun provideSyncDataService() = module {
     single<SynRepository> {
-        SyncRepositoryService(get(), get())
+        SyncRepositoryService(get())
     }
 }

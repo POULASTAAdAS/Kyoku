@@ -50,22 +50,22 @@ fun Route.syncLibrary(repo: SynRepository) {
                         val result = when (type) {
                             SyncType.SYNC_ALBUM -> repo.syncData<DtoFullAlbum>(
                                 type = type.toDtoSyncType(),
-                                idList = req.idList
+                                savedIdList = req.idList
                             ).toDtoSyncData()
 
                             SyncType.SYNC_PLAYLIST -> repo.syncData<DtoFullPlaylist>(
                                 type = type.toDtoSyncType(),
-                                idList = req.idList
+                                savedIdList = req.idList
                             ).toDtoSyncData()
 
                             SyncType.SYNC_ARTIST -> repo.syncData<DtoArtist>(
                                 type = type.toDtoSyncType(),
-                                idList = req.idList
+                                savedIdList = req.idList
                             ).toDtoSyncData()
 
                             SyncType.SYNC_FAVOURITE -> repo.syncData<DtoSong>(
                                 type = type.toDtoSyncType(),
-                                idList = req.idList
+                                savedIdList = req.idList
                             ).toDtoSyncData()
 
                             else -> return@post call.respondRedirect(EndPoints.UnAuthorized.route)
