@@ -42,9 +42,9 @@ legacySupport = "1.0.0"
 glide = "4.15.1"
 secretsPlugin = "2.0.1"
 palette = "1.0.0"
-work = "2.10.0"
+work = "2.9.0"
 
-lottie = "6.6.2"
+lottie = "6.6.4"
 
 composeCompiler = "1.5.15"
 

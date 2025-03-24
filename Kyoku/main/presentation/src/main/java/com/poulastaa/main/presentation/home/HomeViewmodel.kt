@@ -48,7 +48,7 @@ internal class HomeViewmodel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            work.scheduleSync(30.minutes)
+            work.scheduleSync(1.minutes)
         }
     }
 

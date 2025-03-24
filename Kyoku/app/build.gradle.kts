@@ -59,6 +59,10 @@ dependencies {
     // navigation
     implementation(libs.navigation.compose)
 
+    // work
+    implementation(libs.androidx.work)
+    implementation(libs.hilt.work)
+
     // project
     implementation(projects.core.domain)
     implementation(projects.core.data)
