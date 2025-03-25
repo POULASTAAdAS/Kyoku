@@ -93,14 +93,13 @@ internal class SyncLibraryWorker @Inject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
         ).setBackoffCriteria(
-            backoffPolicy = BackoffPolicy.LINEAR,
-            backoffDelay = 1,
+            backoffPolicy = BackoffPolicy.EXPONENTIAL,
+            backoffDelay = 10,
             timeUnit = TimeUnit.MINUTES
         ).setInitialDelay(
-            duration = 1,
+            duration = 15,
             timeUnit = TimeUnit.MINUTES
-        ).addTag(workType.name)
-            .build()
+        ).addTag(workType.name).build()
 
         workManager.enqueue(req).await()
     }

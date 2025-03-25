@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/Kyoku.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/Kyoku.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/di/CoreDatabaseAppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/di/CoreDatabaseAppModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sync/network/src/main/kotlin/com/poulastaa/sync/netowrk/route/SyncLibrary.kt" beforeDir="false" afterPath="$PROJECT_DIR$/sync/network/src/main/kotlin/com/poulastaa/sync/netowrk/route/SyncLibrary.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +53,7 @@
     "Kotlin.AppKt.executor": "Run",
     "Ktor.EngineMain.executor": "Run",
     "Ktor.Unnamed.executor": "Run",
-    "Ktor.app.executor": "Debug",
+    "Ktor.app.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "ShowUsagesActions.previewPropertyKey": "true",
@@ -151,6 +155,7 @@
       <workItem from="1742480528387" duration="6814000" />
       <workItem from="1742573173558" duration="8719000" />
       <workItem from="1742826288248" duration="15133000" />
+      <workItem from="1742915325959" duration="403000" />
     </task>
     <servers />
   </component>

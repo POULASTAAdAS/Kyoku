@@ -52,35 +52,41 @@ fun Route.syncLibrary(repo: SynRepository) {
                         val req = call.receiveNullable<SyncReq<Long>>()
                             ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                        val result = when (type) {
+                        when (type) {
                             SyncType.SYNC_ALBUM -> repo.syncData<DtoFullAlbum>(
                                 type = type.toDtoSyncType(),
                                 savedIdList = req.idList,
                                 payload = payload
-                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
+                            )?.toDtoSyncData()?.let {
+                                call.respond(status = HttpStatusCode.OK, message = it)
+                            } ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_PLAYLIST -> repo.syncData<DtoFullPlaylist>(
                                 type = type.toDtoSyncType(),
                                 savedIdList = req.idList,
                                 payload = payload
-                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
+                            )?.toDtoSyncData()?.let {
+                                call.respond(status = HttpStatusCode.OK, message = it)
+                            } ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_ARTIST -> repo.syncData<DtoArtist>(
                                 type = type.toDtoSyncType(),
                                 savedIdList = req.idList,
                                 payload = payload
-                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
+                            )?.toDtoSyncData()?.let {
+                                call.respond(status = HttpStatusCode.OK, message = it)
+                            } ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             SyncType.SYNC_FAVOURITE -> repo.syncData<DtoSong>(
                                 type = type.toDtoSyncType(),
                                 savedIdList = req.idList,
                                 payload = payload
-                            )?.toDtoSyncData() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
+                            )?.toDtoSyncData()?.let {
+                                call.respond(status = HttpStatusCode.OK, message = it)
+                            } ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
                             else -> return@post call.respondRedirect(EndPoints.UnAuthorized.route)
                         }
-
-                        call.respond(status = HttpStatusCode.OK, message = result)
                     }
                 }
             }

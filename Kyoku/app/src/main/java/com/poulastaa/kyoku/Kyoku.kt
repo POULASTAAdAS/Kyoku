@@ -15,6 +15,11 @@ class Kyoku : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
+
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     fun applicationScope() = applicationScope
 
@@ -22,8 +27,4 @@ class Kyoku : Application(), Configuration.Provider {
         super.onTerminate()
         applicationScope.cancel()
     }
-
-    override val workManagerConfiguration: Configuration = Configuration.Builder()
-        .setWorkerFactory(workerFactory)
-        .build()
 }

@@ -6,6 +6,7 @@ import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.WorkDao
 import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
+import com.poulastaa.core.domain.repository.LocalWorkDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,10 +42,10 @@ internal object CoreDatabaseAppModule {
 
     @Provides
     @Singleton
-    fun provideLocalWorkSource(
+    fun provideLocalWorkDataSource(
         work: WorkDao,
         root: RootDao,
-    ) = RoomLocalWorkDatasource(
+    ): LocalWorkDatasource = RoomLocalWorkDatasource(
         work = work,
         root = root,
     )
