@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.main.domain.repository.HomeRepository
+import com.poulastaa.main.domain.repository.work.RefreshScheduler
 import com.poulastaa.main.domain.repository.work.SyncLibraryScheduler
 import com.poulastaa.main.presentation.components.UiMainViewMoreItemType
 import com.poulastaa.main.presentation.home.mapper.toNavigateToView
@@ -25,6 +26,7 @@ import kotlin.time.Duration.Companion.minutes
 internal class HomeViewmodel @Inject constructor(
     private val repo: HomeRepository,
     private val work: SyncLibraryScheduler,
+    private val refresh: RefreshScheduler,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.stateIn(
@@ -47,9 +49,8 @@ internal class HomeViewmodel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch {
-            work.scheduleSync(15.minutes)
-        }
+        work.scheduleSync(15.minutes)
+        refresh.scheduleRefresh()
     }
 
     fun onAction(action: HomeUiAction) {

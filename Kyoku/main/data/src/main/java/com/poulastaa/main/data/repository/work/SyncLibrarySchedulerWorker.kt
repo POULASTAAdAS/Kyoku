@@ -21,7 +21,7 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-internal class SyncLibraryWorker @Inject constructor(
+internal class SyncLibrarySchedulerWorker @Inject constructor(
     context: Context,
     private val scope: CoroutineScope,
 ) : SyncLibraryScheduler {
@@ -34,7 +34,7 @@ internal class SyncLibraryWorker @Inject constructor(
 
     private val workManager = WorkManager.getInstance(context)
 
-    override suspend fun scheduleSync(interval: Duration) {
+    override fun scheduleSync(interval: Duration) {
         scope.launch {
             val album = async { syncWorker<SyncAlbumWorker>(interval, WorkType.ALBUM_SYNC) }
             val playlist = async {
@@ -54,7 +54,7 @@ internal class SyncLibraryWorker @Inject constructor(
         }
     }
 
-    override suspend fun cancelAllSyncs() {
+    override fun cancelAllSyncs() {
         scope.launch {
             val remove = async {
                 workManager.cancelAllWork().await()
