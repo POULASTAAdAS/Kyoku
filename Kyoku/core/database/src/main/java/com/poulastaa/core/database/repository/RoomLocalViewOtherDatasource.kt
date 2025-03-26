@@ -1,5 +1,6 @@
 package com.poulastaa.core.database.repository
 
+import android.util.Log
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.entity.EntityExplore
@@ -55,9 +56,12 @@ internal class RoomLocalViewOtherDatasource @Inject constructor(
                 val songsDef = async { viewDao.getPlaylistPrevSongs(it) }
 
                 val playlist = playlistDef.await() ?: return@coroutineScope null
-                val songs = songsDef.await()
+                val dbSongs = songsDef.await()
 
-                songs.map {
+                Log.d("otherId", otherId.toString())
+                Log.d("dbSongs", dbSongs.toString())
+
+                val songs = dbSongs.map {
                     async {
                         val artist = root.getSongArtists(it.id).joinToString { it.name }
 
@@ -70,6 +74,8 @@ internal class RoomLocalViewOtherDatasource @Inject constructor(
                         )
                     }
                 }.awaitAll()
+
+                Log.d("songs", songs.toString())
 
                 DtoViewPayload(
                     heading = playlist.toDtoHeading(),
@@ -84,9 +90,9 @@ internal class RoomLocalViewOtherDatasource @Inject constructor(
                 val songsDef = async { viewDao.getAlbumPrevSongs(it) }
 
                 val album = albumDef.await() ?: return@coroutineScope null
-                val songs = songsDef.await()
+                val dbSongs = songsDef.await()
 
-                songs.map {
+                val songs = dbSongs.map {
                     async {
                         val artist = root.getSongArtists(it.id).joinToString { it.name }
 

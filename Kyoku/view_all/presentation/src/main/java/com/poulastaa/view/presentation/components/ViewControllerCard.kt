@@ -81,6 +81,7 @@ internal fun ViewControllerCard(
                     textAlign = TextAlign.Center
                 )
             } else Details(
+                modifier = Modifier.fillMaxWidth(.65f),
                 name = name,
                 totalSongs = totalSongs,
                 textAlignment = textAlignment,

@@ -1,5 +1,6 @@
 package com.poulastaa.core.database.mapper
 
+import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityCountry
 import com.poulastaa.core.database.entity.EntityExplore
@@ -9,15 +10,14 @@ import com.poulastaa.core.database.entity.EntityPrevAlbum
 import com.poulastaa.core.database.entity.EntityPrevArtist
 import com.poulastaa.core.database.entity.EntityPrevExplore
 import com.poulastaa.core.database.entity.EntityPrevSong
-import com.poulastaa.core.database.entity.EntitySavedAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongAlbum
 import com.poulastaa.core.database.entity.EntityRelationSongPlaylist
 import com.poulastaa.core.database.entity.EntityRelationSuggestedSongByArtist
-import com.poulastaa.core.database.entity.EntityAlbum
 import com.poulastaa.core.database.entity.EntitySong
 import com.poulastaa.core.database.entity.EntitySongInfo
 import com.poulastaa.core.database.relation.PlaylistWithSong
 import com.poulastaa.core.database.relation.SongIdWithArtistName
+import com.poulastaa.core.database.relation.SuggestedArtistWithSong
 import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoCountry
@@ -35,6 +35,7 @@ import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.DtoSongInfo
+import com.poulastaa.core.domain.model.DtoSuggestedArtistSongRelation
 import com.poulastaa.core.domain.model.SongId
 import com.poulastaa.core.domain.model.ViewType
 
@@ -222,3 +223,9 @@ internal fun ViewType.toDtoExploreType() = when (this) {
     ViewType.DAY_TYPE_MIX -> DtoExploreType.DAY_TYPE_MIX
     else -> null
 }
+
+internal fun SuggestedArtistWithSong.toDtoSuggestedArtistSongRelation() =
+    DtoSuggestedArtistSongRelation(
+        artistId = this.artist.id,
+        prevSongs = this.list.map { it.id }
+    )

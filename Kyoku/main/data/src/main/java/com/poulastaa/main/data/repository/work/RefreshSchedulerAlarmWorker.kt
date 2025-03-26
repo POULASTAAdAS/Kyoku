@@ -24,11 +24,11 @@ internal class RefreshSchedulerAlarmWorker @Inject constructor(
         val triggerTime = calculateNextMidnightMillis()
         val pendingIntent = createAlarmIntent()
 
-        alarm.setExactAndAllowWhileIdle(
+        if (hasExactAlarmPermission()) alarm.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             triggerTime,
             pendingIntent
-        )
+        ) else handleMissingPermission()
     }
 
     override fun cancelRefresh() = alarm.cancel(createAlarmIntent())

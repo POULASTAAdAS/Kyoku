@@ -18,7 +18,6 @@ import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.view.presentation.artist.components.ViewArtistTopBar
 import com.poulastaa.view.presentation.components.ViewScreenWrapperCompact
-import com.poulastaa.view.presentation.model.UiViewType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

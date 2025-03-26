@@ -30,6 +30,10 @@ fun Route.syncLibrary(repo: SynRepository) {
 
                 val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
+                repeat(10) {
+                    println("called sync")
+                }
+
                 when (type) {
                     SyncType.SYNC_PLAYLIST_SONGS -> {
                         val req = call.receiveNullable<SyncReq<SyncPlaylistPayload>>()

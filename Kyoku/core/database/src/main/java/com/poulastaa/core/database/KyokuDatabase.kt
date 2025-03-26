@@ -6,6 +6,7 @@ import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.LibraryDao
 import com.poulastaa.core.database.dao.ProfileDao
+import com.poulastaa.core.database.dao.RefreshDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.dao.WorkDao
@@ -76,4 +77,5 @@ internal abstract class KyokuDatabase : RoomDatabase() {
     abstract val profileDao: ProfileDao
     abstract val viewDao: ViewDao
     abstract val workDao: WorkDao
+    abstract val refreshDao: RefreshDao
 }

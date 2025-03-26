@@ -9,8 +9,10 @@ import com.poulastaa.core.domain.model.DtoPrevPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSongAlbum
 import com.poulastaa.core.domain.model.DtoRelationSongPlaylist
 import com.poulastaa.core.domain.model.DtoRelationSuggestedArtistSong
+import com.poulastaa.core.domain.model.DtoSuggestedArtistSongRelation
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
+import com.poulastaa.main.domain.model.OldSuggestedArtistSongRelation
 import com.poulastaa.main.domain.model.PayloadSaveItemType
 import com.poulastaa.main.domain.model.PayloadSavedItem
 
@@ -68,7 +70,7 @@ internal fun DataError.Network.toWorkResult() = when (this) {
     DataError.Network.SERIALISATION,
     DataError.Network.UNKNOWN,
     DataError.Network.CONFLICT,
-    DataError.Network.INVALID_EMAIL
+    DataError.Network.INVALID_EMAIL,
         -> ListenableWorker.Result.failure()
 
     DataError.Network.NOT_FOUND,
@@ -76,3 +78,9 @@ internal fun DataError.Network.toWorkResult() = when (this) {
     DataError.Network.SERVER_ERROR,
         -> ListenableWorker.Result.retry()
 }
+
+fun DtoSuggestedArtistSongRelation.toOldSuggestedArtistSongRelation() =
+    OldSuggestedArtistSongRelation(
+        artistId = this.artistId,
+        prevSongs = this.prevSongs
+    )

@@ -19,6 +19,9 @@ import com.poulastaa.main.domain.model.DtoRefresh
 import com.poulastaa.main.domain.model.DtoSuggestedArtistSong
 import com.poulastaa.main.domain.model.DtoSyncData
 import com.poulastaa.main.domain.model.DtoSyncPlaylistSongs
+import com.poulastaa.main.domain.model.OldRefresh
+import com.poulastaa.main.network.model.RequestRefresh
+import com.poulastaa.main.network.model.RequestSuggestedArtistSongRelation
 import com.poulastaa.main.network.model.ResponseHome
 import com.poulastaa.main.network.model.ResponseRefresh
 import com.poulastaa.main.network.model.ResponseSuggestedArtistSong
@@ -90,3 +93,17 @@ internal fun SyncPlaylistSongResponse<Pair<PlaylistId, List<ResponseSong>>>.toDt
             pair.first to pair.second.map { it.toDtoSong() }
         }
     )
+
+internal fun OldRefresh.toRequestRefresh() = RequestRefresh(
+    oldMostPopularSong = this.oldMostPopularSong,
+    oldPopularArtistSongs = this.oldPopularArtistSongs,
+    oldPopularYearSongs = this.oldPopularYearSongs,
+    oldSuggestedArtist = this.oldSuggestedArtist,
+    oldSuggestedAlbums = this.oldSuggestedAlbums,
+    oldSuggestedArtistSongs = this.oldSuggestedArtistSongs.map {
+        RequestSuggestedArtistSongRelation(
+            artistId = it.artistId,
+            prevSongs = it.prevSongs
+        )
+    }
+)
