@@ -4,6 +4,7 @@ import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
 import com.poulastaa.suggestion.network.routes.home
+import com.poulastaa.suggestion.network.routes.refresh
 import com.poulastaa.sync.domain.repository.SynRepository
 import com.poulastaa.sync.netowrk.route.syncLibrary
 import com.poulastaa.user.domain.repository.SetupRepository
@@ -84,6 +85,7 @@ private fun Routing.setup(repo: SetupRepository) {
 
 private fun Routing.suggestion(repo: SuggestionRepository) {
     home(repo)
+    refresh(repo)
 }
 
 private fun Routing.view(repo: ViewRepository) {

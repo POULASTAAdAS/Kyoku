@@ -5,7 +5,9 @@ import androidx.room.Room
 import com.poulastaa.core.database.KyokuDatabase
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.WorkDao
+import com.poulastaa.core.database.repository.RoomLocalRefreshDatasource
 import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
+import com.poulastaa.core.domain.repository.LocalRefreshDatasource
 import com.poulastaa.core.domain.repository.LocalWorkDatasource
 import dagger.Module
 import dagger.Provides
@@ -49,4 +51,8 @@ internal object CoreDatabaseAppModule {
         work = work,
         root = root,
     )
+
+    @Provides
+    @Singleton
+    fun provideLocalRefreshDatasource(): LocalRefreshDatasource = RoomLocalRefreshDatasource()
 }

@@ -1,6 +1,7 @@
 package com.poulastaa.main.data.di
 
 import android.content.Context
+import com.poulastaa.core.domain.repository.LocalRefreshDatasource
 import com.poulastaa.core.domain.repository.LocalWorkDatasource
 import com.poulastaa.main.data.repository.work.DaggerHiltRefreshRepository
 import com.poulastaa.main.data.repository.work.DaggerHiltWorkRepository
@@ -8,6 +9,7 @@ import com.poulastaa.main.data.repository.work.RefreshSchedulerAlarmWorker
 import com.poulastaa.main.data.repository.work.SyncLibrarySchedulerWorker
 import com.poulastaa.main.domain.repository.work.RefreshRepository
 import com.poulastaa.main.domain.repository.work.RefreshScheduler
+import com.poulastaa.main.domain.repository.work.RemoteRefreshDatasource
 import com.poulastaa.main.domain.repository.work.RemoteWorkDatasource
 import com.poulastaa.main.domain.repository.work.SyncLibraryScheduler
 import com.poulastaa.main.domain.repository.work.WorkRepository
@@ -47,8 +49,10 @@ internal object MainDataAppModule {
     @Provides
     @Singleton
     fun provideRefreshRepository(
+        local: LocalRefreshDatasource,
+        remote: RemoteRefreshDatasource,
         scope: CoroutineScope,
-    ): RefreshRepository = DaggerHiltRefreshRepository(scope)
+    ): RefreshRepository = DaggerHiltRefreshRepository(local, remote, scope)
 
     @Provides
     @Singleton

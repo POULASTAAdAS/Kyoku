@@ -4,6 +4,7 @@ import com.poulastaa.core.domain.model.ReqUserPayload
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
 import com.poulastaa.suggestion.domain.model.DtoHome
 import com.poulastaa.suggestion.domain.model.DtoRefresh
+import com.poulastaa.suggestion.domain.model.OldRefresh
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -48,6 +49,45 @@ class SuggestionRepositoryService(
                 playlist = playlistDef.await(),
                 album = albumDef.await(),
                 artist = artistDef.await()
+            )
+        }
+    }
+
+    override suspend fun getRefreshData(payload: ReqUserPayload, oldData: OldRefresh): DtoRefresh? {
+        val user = db.getUserByEmail(payload.email, payload.userType) ?: return null
+        if (user.bDate == null) return null
+
+
+        return coroutineScope {
+            val prevPopularSongMixDef = async {
+                db.getPrevPopularCountrySong(user.id, user.countryId, oldData.oldMostPopularSong)
+            }
+            val prevPopularArtistMixDef = async {
+                db.getPrevPopularArtistMix(user.id, oldData.oldPopularArtistSongs)
+            }
+            val prevOldGemDef = async {
+                db.getPrevPopularYearSongs(user.id, user.bDate!!.year, oldData.oldPopularYearSongs)
+            }
+
+            val suggestedArtisteDef = async { db.getSuggestedArtist(user.id, user.countryId) }
+            val suggestedAlbumDef = async { db.getSuggestedAlbum(user.id) }
+
+            val suggestedArtist = suggestedArtisteDef.await()
+            val suggestedArtistSongDef = async {
+                db.getSuggestedArtistSong(
+                    userId = user.id,
+                    suggestedArtistIdList = suggestedArtist.map { it.id }
+                )
+            }
+
+            DtoRefresh(
+                prevPopularSongMix = prevPopularSongMixDef.await(),
+                prevPopularArtistMix = prevPopularArtistMixDef.await(),
+                prevOldGem = prevOldGemDef.await(),
+
+                suggestedArtist = suggestedArtist,
+                suggestedAlbum = suggestedAlbumDef.await(),
+                suggestedArtistSong = suggestedArtistSongDef.await()
             )
         }
     }
