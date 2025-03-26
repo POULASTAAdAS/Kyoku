@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.navigation
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -304,6 +305,8 @@ private fun NavGraphBuilder.coreGraph(
     composable<Screens.Core.Profile> {
         ProfileRootScreen(
             navigate = {
+                Log.d("screen ", it.toString())
+
                 when (it) {
                     ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add all saved view playlist screen")
                     ProfileAllowedNavigationScreen.ALBUM -> TODO("Add all saved view album screen")

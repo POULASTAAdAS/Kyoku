@@ -12,8 +12,8 @@ internal interface LibraryDao {
     @Query(
         """
         Select EntityPlaylist.id , EntityPlaylist.name as title , EntitySong.poster from EntityPlaylist
-        join EntityRelationSongPlaylist on EntityPlaylist.id = EntityRelationSongPlaylist.playlistId
-        join EntitySong on EntityRelationSongPlaylist.songId = EntitySong.id
+        left join EntityRelationSongPlaylist on EntityPlaylist.id = EntityRelationSongPlaylist.playlistId
+        left join EntitySong on EntityRelationSongPlaylist.songId = EntitySong.id
     """
     )
     fun loadSavedPrevPlaylist(): Flow<List<PayloadPrevPlaylist>>

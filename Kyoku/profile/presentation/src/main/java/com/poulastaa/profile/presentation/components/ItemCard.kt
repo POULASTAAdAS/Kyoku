@@ -27,6 +27,7 @@ import com.poulastaa.profile.presentation.UiSavedItems
 internal fun ItemCard(
     modifier: Modifier,
     item: UiSavedItems,
+    onClick: () -> Unit
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(
@@ -49,9 +50,7 @@ internal fun ItemCard(
             defaultElevation = 5.dp,
             pressedElevation = 0.dp
         ),
-        onClick = {
-
-        }
+        onClick = onClick
     ) {
         Box(
             Modifier.fillMaxSize(),

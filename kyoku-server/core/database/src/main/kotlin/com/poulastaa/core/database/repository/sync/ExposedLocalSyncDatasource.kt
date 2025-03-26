@@ -124,7 +124,7 @@ internal class ExposedLocalSyncDatasource(
 
     override suspend fun getSavedArtistIdList(userId: Long): List<ArtistId> = userDbQuery {
         RelationEntityUserArtist.select(RelationEntityUserArtist.artistId).where {
-            RelationEntityUserArtist.artistId eq userId
+            RelationEntityUserArtist.userId eq userId
         }.map { it[RelationEntityUserArtist.artistId] }
     }
 

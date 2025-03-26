@@ -124,7 +124,10 @@ internal fun ProfileExpandedScreen(
                                     Modifier
                                         .weight(1f)
                                         .fillMaxHeight(),
-                                    item
+                                    item,
+                                    onClick = {
+                                        onAction(ProfileUiAction.OnNavigateSavedItem(item.itemType))
+                                    }
                                 )
                             }
                         }
@@ -138,7 +141,10 @@ internal fun ProfileExpandedScreen(
                                     Modifier
                                         .weight(1f)
                                         .fillMaxHeight(),
-                                    item
+                                    item,
+                                    onClick = {
+                                        onAction(ProfileUiAction.OnNavigateSavedItem(item.itemType))
+                                    }
                                 )
                             }
                         }

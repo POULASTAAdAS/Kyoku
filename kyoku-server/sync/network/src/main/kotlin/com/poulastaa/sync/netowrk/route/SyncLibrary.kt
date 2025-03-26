@@ -30,7 +30,7 @@ fun Route.syncLibrary(repo: SynRepository) {
 
                 val payload = call.getReqUserPayload() ?: return@post call.respondRedirect(EndPoints.UnAuthorized.route)
 
-                repeat(10) {
+                repeat(15) {
                     println("called sync")
                 }
 

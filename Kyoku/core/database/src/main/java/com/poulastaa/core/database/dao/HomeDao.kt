@@ -23,8 +23,8 @@ internal interface HomeDao {
     @Query(
         """
         Select EntityPlaylist.id , EntityPlaylist.name as title , EntitySong.poster from EntityPlaylist
-        join EntityRelationSongPlaylist on EntityPlaylist.id = EntityRelationSongPlaylist.playlistId
-        join EntitySong on EntityRelationSongPlaylist.songId = EntitySong.id
+        left join EntityRelationSongPlaylist on EntityPlaylist.id = EntityRelationSongPlaylist.playlistId
+        left join EntitySong on EntityRelationSongPlaylist.songId = EntitySong.id
         where EntityPlaylist.id in (Select playlistId from EntityPlaylist order by RANDOM() limit :limit)
     """
     )
