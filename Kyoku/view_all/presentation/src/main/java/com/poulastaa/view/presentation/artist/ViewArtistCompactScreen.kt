@@ -63,7 +63,8 @@ internal fun ViewArtistCompactScreen(
                 onAction = onAction,
                 navigateBack = navigateBack
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 

@@ -38,6 +38,11 @@
             <option value="$PROJECT_DIR$/core/presentation" />
             <option value="$PROJECT_DIR$/core/presentation/designsystem" />
             <option value="$PROJECT_DIR$/core/presentation/ui" />
+            <option value="$PROJECT_DIR$/explore" />
+            <option value="$PROJECT_DIR$/explore/data" />
+            <option value="$PROJECT_DIR$/explore/domain" />
+            <option value="$PROJECT_DIR$/explore/network" />
+            <option value="$PROJECT_DIR$/explore/presentation" />
             <option value="$PROJECT_DIR$/main" />
             <option value="$PROJECT_DIR$/main/data" />
             <option value="$PROJECT_DIR$/main/domain" />

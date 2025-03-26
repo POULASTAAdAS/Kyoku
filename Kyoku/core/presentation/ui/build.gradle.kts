@@ -19,4 +19,5 @@ dependencies {
 
     implementation(projects.core.domain)
     implementation(projects.core.presentation.designsystem)
+    implementation(libs.lottie)
 }

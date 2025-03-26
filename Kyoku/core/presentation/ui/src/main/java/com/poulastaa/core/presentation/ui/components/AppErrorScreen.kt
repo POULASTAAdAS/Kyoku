@@ -1,13 +1,16 @@
-package com.poulastaa.view.presentation.components
+package com.poulastaa.core.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,12 +32,14 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-fun ViewErrorScreen(
+fun AppErrorScreen(
     modifier: Modifier = Modifier,
     error: LoadingType.Error,
+    navigateBack: () -> Unit
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(error.lottieId)
@@ -45,6 +50,18 @@ fun ViewErrorScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Row {
+            IconButton(
+                onClick = navigateBack
+            ) {
+                Icon(
+                    imageVector = CloseIcon,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(.8f)
+                )
+            }
+        }
+
         LottieAnimation(
             modifier = Modifier.fillMaxSize(.4f),
             composition = composition,
@@ -74,7 +91,7 @@ fun ViewErrorScreen(
 private fun Preview() {
     AppThem {
         Surface {
-            ViewErrorScreen(
+            AppErrorScreen(
                 Modifier
                     .fillMaxSize()
                     .background(brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground()))
@@ -86,7 +103,7 @@ private fun Preview() {
                     LoadingType.ERROR_TYPE.UNKNOWN,
                     R.raw.lottie_error_4
                 )
-            )
+            ){}
         }
     }
 }

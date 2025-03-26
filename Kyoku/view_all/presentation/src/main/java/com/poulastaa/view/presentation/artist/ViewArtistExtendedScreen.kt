@@ -60,7 +60,8 @@ internal fun ViewArtistExtendedScreen(
                 onAction = onAction,
                 navigateBack = navigateBack
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 

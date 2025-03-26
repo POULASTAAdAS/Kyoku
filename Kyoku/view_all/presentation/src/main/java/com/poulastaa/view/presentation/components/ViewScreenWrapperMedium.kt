@@ -48,6 +48,7 @@ import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.PlayType
 import com.poulastaa.core.presentation.designsystem.ui.UserIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.view.presentation.model.UiViewPrevSong
 import kotlin.math.roundToInt
 
@@ -69,6 +70,7 @@ internal fun ViewScreenWrapperMedium(
     onSongClick: (clickType: ItemClickType, songId: SongId) -> Unit,
     onSongThreeDotClick: (songId: SongId) -> Unit,
     topBar: @Composable () -> Unit,
+    navigateBack: () -> Unit
 ) {
     var controllerHeight by remember { mutableIntStateOf(0) }
 
@@ -89,7 +91,7 @@ internal fun ViewScreenWrapperMedium(
                     isArtist = isTypeArtist
                 )
 
-                is LoadingType.Error -> ViewErrorScreen(
+                is LoadingType.Error -> AppErrorScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -97,7 +99,8 @@ internal fun ViewScreenWrapperMedium(
                         .fillMaxSize()
                         .padding(paddingValues)
                         .padding(MaterialTheme.dimens.medium1),
-                    error = loadingState
+                    error = loadingState,
+                    navigateBack = navigateBack
                 )
 
                 LoadingType.Content -> LazyColumn(

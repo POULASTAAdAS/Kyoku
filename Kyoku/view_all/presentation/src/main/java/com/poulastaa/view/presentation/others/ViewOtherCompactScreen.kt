@@ -48,7 +48,8 @@ internal fun ViewOtherCompactScreen(
                     onAction(ViewOtherUiAction.OnMenuClick)
                 }
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 

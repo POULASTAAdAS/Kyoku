@@ -33,6 +33,7 @@ import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.PlayType
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.view.presentation.model.UiViewPrevSong
 
 @Composable
@@ -51,6 +52,7 @@ internal fun ViewScreenWrapperExtended(
     onSongClick: (clickType: ItemClickType, songId: SongId) -> Unit,
     onSongThreeDotClick: (songId: SongId) -> Unit,
     topBar: @Composable () -> Unit,
+    navigateBack: () -> Unit
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -66,7 +68,7 @@ internal fun ViewScreenWrapperExtended(
                     isArtist = isTypeArtist
                 )
 
-                is LoadingType.Error -> ViewErrorScreen(
+                is LoadingType.Error -> AppErrorScreen(
                     modifier = Modifier
                         .background(
                             brush = Brush.verticalGradient(colors = ThemModeChanger.getGradiantBackground())
@@ -74,7 +76,8 @@ internal fun ViewScreenWrapperExtended(
                         .fillMaxSize()
                         .padding(paddingValues)
                         .padding(MaterialTheme.dimens.medium1),
-                    error = loadingState
+                    error = loadingState,
+                    navigateBack = navigateBack
                 )
 
                 LoadingType.Content -> Row(

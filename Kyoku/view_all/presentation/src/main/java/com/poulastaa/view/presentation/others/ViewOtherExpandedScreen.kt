@@ -48,7 +48,8 @@ internal fun ViewOtherExpandedScreen(
                     onAction(ViewOtherUiAction.OnMenuClick)
                 }
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 

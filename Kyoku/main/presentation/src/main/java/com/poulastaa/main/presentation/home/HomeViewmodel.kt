@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 internal class HomeViewmodel @Inject constructor(
@@ -31,7 +32,7 @@ internal class HomeViewmodel @Inject constructor(
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000), // 5 seconds
+        started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds), // 5 seconds
         initialValue = HomeUiState()
     )
 

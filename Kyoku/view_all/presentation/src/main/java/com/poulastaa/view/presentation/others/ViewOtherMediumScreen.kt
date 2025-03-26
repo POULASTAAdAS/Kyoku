@@ -48,7 +48,8 @@ internal fun ViewOtherMediumScreen(
                     onAction(ViewOtherUiAction.OnMenuClick)
                 }
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 

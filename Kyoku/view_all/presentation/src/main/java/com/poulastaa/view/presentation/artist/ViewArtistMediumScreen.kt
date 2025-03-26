@@ -64,7 +64,8 @@ internal fun ViewArtistMediumScreen(
                 onAction = onAction,
                 navigateBack = navigateBack
             )
-        }
+        },
+        navigateBack = navigateBack
     )
 }
 
