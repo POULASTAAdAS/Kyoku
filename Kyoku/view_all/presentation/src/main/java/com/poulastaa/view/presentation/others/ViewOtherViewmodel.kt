@@ -1,6 +1,5 @@
 package com.poulastaa.view.presentation.others
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.domain.DataError
@@ -46,8 +45,6 @@ internal class ViewOtherViewmodel @Inject constructor(
     }
 
     fun init(otherId: Long, type: ViewType) {
-        Log.d("ViewType", "$type , $otherId")
-
         viewModelScope.launch {
             when (val result = repo.getViewData(type, otherId)) {
                 is Result.Error -> when (result.error) {

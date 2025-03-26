@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
@@ -61,8 +60,6 @@ class IntroViewmodel @Inject constructor(
             }
 
             is IntroUiAction.OnTokenReceive -> {
-                Log.d("token", action.token)
-
                 viewModelScope.launch {
                     val response = repo.googleAuth(
                         token = action.token,

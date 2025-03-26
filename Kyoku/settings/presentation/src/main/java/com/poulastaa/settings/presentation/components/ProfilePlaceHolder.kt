@@ -1,6 +1,5 @@
 package com.poulastaa.settings.presentation.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon

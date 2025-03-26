@@ -5,11 +5,12 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.poulastaa.main.data.mapper.toWorkResult
 import com.poulastaa.main.domain.repository.work.RefreshRepository
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-internal class MidNightRefreshWorker @Inject constructor(
-    context: Context,
-    params: WorkerParameters,
+internal class MidNightRefreshWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
     private val repo: RefreshRepository,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {

@@ -64,7 +64,8 @@ internal fun LazyGridScope.libraryLazyGridItem(
                 )
 
                 UiLibraryViewType.LIST -> LibraryListItem(
-                    modifier = Modifier.height(80.dp)
+                    modifier = Modifier
+                        .height(80.dp)
                         .noRippleCombineClickable(
                             onClick = {
                                 onAction(

@@ -1,7 +1,7 @@
 package com.poulastaa.view.presentation.others.mapper
 
-import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.core.domain.model.DtoHeading
+import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.view.presentation.model.UiViewType
 import com.poulastaa.view.presentation.others.UiRoot
 

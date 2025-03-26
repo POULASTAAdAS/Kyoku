@@ -5,15 +5,31 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.poulastaa.main.domain.repository.work.RefreshScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
 
 internal class RefreshSchedulerAlarmWorker @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val scope: CoroutineScope,
 ) : RefreshScheduler {
+    private val workManager = WorkManager.getInstance(context)
     private val alarm = context.getSystemService(AlarmManager::class.java)
 
     private enum class ALARM_TYPE(val value: Int) {
@@ -60,9 +76,38 @@ internal class RefreshSchedulerAlarmWorker @Inject constructor(
     }
 
     private fun handleMissingPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            context.startActivity(Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
+        scope.launch {
+            val isSyncScheduled = withContext(Dispatchers.IO) {
+                workManager.getWorkInfosByTag(ALARM_TYPE.MIDNIGHT_REFRESH.name)
+                    .get().any {
+                        it.state == WorkInfo.State.ENQUEUED ||
+                                it.state == WorkInfo.State.RUNNING ||
+                                it.state == WorkInfo.State.SUCCEEDED
+                    }
+            }
+
+            if (isSyncScheduled) return@launch
+
+            val req = PeriodicWorkRequestBuilder<MidNightRefreshWorker>(
+                repeatInterval = 1.0.toDuration(DurationUnit.DAYS).toJavaDuration()
+            ).setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            ).setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 15,
+                timeUnit = TimeUnit.MINUTES
+            ).setInitialDelay(
+                duration = 15,
+                timeUnit = TimeUnit.HOURS
+            ).addTag(ALARM_TYPE.MIDNIGHT_REFRESH.name).build()
+
+            workManager.enqueueUniquePeriodicWork(
+                ALARM_TYPE.MIDNIGHT_REFRESH.name,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                req
+            )
         }
-        // Consider fallback to WorkManager's periodic worker
     }
 }

@@ -158,11 +158,11 @@ fun MovingCirclesWithMetaballEffect(circleCount: Int = 15) {
     ) {
         Canvas(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    this.renderEffect = renderEffect
-                }
+                Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        this.renderEffect = renderEffect
+                    }
         ) {
             circles.forEach { circle ->
                 val radiusPx = with(density) { circle.size.toPx() / 2 }

@@ -58,5 +58,6 @@ internal object MainDataAppModule {
     @Singleton
     fun provideRefreshScheduler(
         @ApplicationContext context: Context,
-    ): RefreshScheduler = RefreshSchedulerAlarmWorker(context)
+        scope: CoroutineScope,
+    ): RefreshScheduler = RefreshSchedulerAlarmWorker(context, scope)
 }

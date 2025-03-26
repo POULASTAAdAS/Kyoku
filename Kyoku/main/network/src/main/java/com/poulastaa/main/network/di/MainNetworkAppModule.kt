@@ -29,6 +29,6 @@ internal object MainNetworkAppModule {
     @Singleton
     fun provideRemoteRefreshDatasource(
         client: OkHttpClient,
-        gson: Gson
+        gson: Gson,
     ): RemoteRefreshDatasource = OkHttpRefreshDatasource(client, gson)
 }

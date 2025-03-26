@@ -1,6 +1,5 @@
 package com.poulastaa.view.data.repository
 
-import android.util.Log
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
@@ -26,8 +25,6 @@ class OnlineFirstViewOtherRepository @Inject constructor(
         otherId: Long,
     ): Result<DtoViewPayload<DtoDetailedPrevSong>, DataError.Network> {
         val savedData = local.getViewTypeData(type, otherId)
-
-        Log.d("savedData", savedData.toString())
 
         return if (savedData == null || savedData.listOfSongs.isEmpty()) when (type) {
             ViewType.PLAYLIST,
