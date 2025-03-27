@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/HomeViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/settings.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistCompactScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistExtendedScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistMediumScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistMediumScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewErrorScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppErrorScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperCompact.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperCompact.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperExtended.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperExtended.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperMedium.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/components/ViewScreenWrapperMedium.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/domain/src/main/java/com/poulastaa/explore/domain/MyClass.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/components/AllFromArtistCompactLoadingScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/components/AllFromArtistCompactLoadingScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/artist/ViewArtistViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,6 +162,9 @@
       <workItem from="1742826288248" duration="15133000" />
       <workItem from="1742915325959" duration="2654000" />
       <workItem from="1743001102731" duration="13290000" />
+      <workItem from="1743054139165" duration="2000" />
+      <workItem from="1743056095777" duration="1196000" />
+      <workItem from="1743088675470" duration="943000" />
     </task>
     <servers />
   </component>

@@ -23,6 +23,8 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.model.ViewType
+import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
+import com.poulastaa.explore.presentation.search.all_from_artist.AllFromArtistRootScreen
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
@@ -55,6 +57,7 @@ fun RootNavigation(
         setupGraph(nav)
         coreGraph(nav, toggleThem)
         viewGraph(nav)
+        exploreGraph(nav)
     }
 }
 
@@ -366,7 +369,12 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
             artistId = payload.artistId,
             navigate = { screen ->
                 when (screen) {
-                    is ViewArtistAllowedNavigationScreen.Explore -> TODO("Add explore artist screen")
+                    is ViewArtistAllowedNavigationScreen.Explore -> nav.navigate(
+                        Screens.Explore.AllFromArtist(
+                            screen.artistId
+                        )
+                    )
+
                     is ViewArtistAllowedNavigationScreen.ViewAlbum -> nav.navigate(
                         Screens.View.Other(
                             otherId = screen.albumId,
@@ -392,6 +400,29 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
                     is ViewOtherAllowedNavigationScreen.Artist -> nav.navigate(
                         Screens.View.Artist(
                             screen.artistId
+                        )
+                    )
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.exploreGraph(nav: NavHostController) {
+    composable<Screens.Explore.AllFromArtist> {
+        val payload = it.toRoute<Screens.Explore.AllFromArtist>()
+
+        AllFromArtistRootScreen(
+            artistId = payload.artistId,
+            navigate = { screen ->
+                when (screen) {
+                    is ExploreAllowedNavigationScreen.Album -> nav.navigate(
+                        Screens.View.Other(
+                            screen.albumId,
+                            ViewType.ALBUM
                         )
                     )
                 }

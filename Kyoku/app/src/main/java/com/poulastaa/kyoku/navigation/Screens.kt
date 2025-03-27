@@ -60,4 +60,9 @@ sealed interface Screens {
             val type: ViewType,
         ) : Screens
     }
+
+    sealed interface Explore : Screens {
+        @Serializable
+        data class AllFromArtist(val artistId: ArtistId) : Screens
+    }
 }

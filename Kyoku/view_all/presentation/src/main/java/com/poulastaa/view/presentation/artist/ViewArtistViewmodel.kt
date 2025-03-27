@@ -7,6 +7,7 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
+import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
 import com.poulastaa.view.domain.repository.ViewArtistRepository
 import com.poulastaa.view.presentation.artist.mapper.toUiViewArtist
 import com.poulastaa.view.presentation.mapper.toUiViewPrevSong
@@ -44,7 +45,18 @@ internal class ViewArtistViewmodel @Inject constructor(
 
             is ViewArtistUiAction.OnSongOptionsToggle -> {}
 
-            ViewArtistUiAction.OnExploreArtist -> {}
+            ViewArtistUiAction.OnExploreArtist -> {
+                viewModelScope.launch {
+                    _uiEvent.send(
+                        ViewArtistUiEvent.Navigate(
+                            ViewArtistAllowedNavigationScreen.Explore(
+                                state.value.artist.id
+                            )
+                        )
+                    )
+                }
+            }
+
             ViewArtistUiAction.OnFollowToggle -> {}
         }
     }

@@ -166,6 +166,6 @@ fun Modifier.isElementVisible(onVisibilityChanged: (Boolean) -> Unit) = composed
             val parentBounds = it.boundsInWindow()
             val childBounds = layoutCoordinates.boundsInWindow()
             parentBounds.overlaps(childBounds)
-        } ?: false
+        } == true
     }
 }

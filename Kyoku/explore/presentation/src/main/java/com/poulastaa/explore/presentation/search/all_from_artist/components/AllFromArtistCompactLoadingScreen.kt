@@ -41,7 +41,7 @@ import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-fun AllFromArtistCompactLoadingScreen(
+internal fun AllFromArtistCompactLoadingScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
 ) {
@@ -49,6 +49,9 @@ fun AllFromArtistCompactLoadingScreen(
         modifier = modifier
             .verticalScroll(rememberScrollState())
     ) {
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
         AllFromArtistLoadingTopBar(navigateBack)
 
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
@@ -78,7 +81,7 @@ fun AllFromArtistCompactLoadingScreen(
             }
         }
 
-        repeat(2){
+        repeat(2) {
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
             Card(
@@ -102,7 +105,7 @@ fun AllFromArtistCompactLoadingScreen(
 
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-            repeat(6){
+            repeat(6) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -174,6 +177,8 @@ fun AllFromArtistCompactLoadingScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.small2))
             }
         }
+
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
     }
 }
 

@@ -100,4 +100,9 @@ dependencies {
     implementation(projects.viewAll.data)
     implementation(projects.viewAll.network)
     implementation(projects.viewAll.presentation)
+
+    implementation(projects.explore.domain)
+    implementation(projects.explore.data)
+    implementation(projects.explore.network)
+    implementation(projects.explore.presentation)
 }
