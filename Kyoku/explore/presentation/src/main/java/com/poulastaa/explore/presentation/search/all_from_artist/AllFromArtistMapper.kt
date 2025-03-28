@@ -5,6 +5,6 @@ import com.poulastaa.explore.domain.model.DtoAllFromArtistItem
 internal fun DtoAllFromArtistItem.toAllFromArtistUiItem() = AllFromArtistUiItem(
     id = this.id,
     title = this.title,
-    poster = this.poster,
-    artist = this.artist
+    poster = this.poster ?: "",
+    releaseYear = this.releaseYear
 )

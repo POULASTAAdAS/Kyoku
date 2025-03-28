@@ -204,7 +204,7 @@ internal fun AllFromArtistExpandedScreen(
                                     )
 
                                     Text(
-                                        text = album.artist,
+                                        text = "Year: ${album.releaseYear}",
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         fontSize = MaterialTheme.typography.bodySmall.fontSize
@@ -320,7 +320,7 @@ internal fun AllFromArtistExpandedScreen(
                                     )
 
                                     Text(
-                                        text = song.artist,
+                                        text = "Year: ${song.releaseYear}",
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         fontSize = MaterialTheme.typography.bodySmall.fontSize
@@ -365,14 +365,12 @@ private fun Preview() {
                     AllFromArtistUiItem(
                         id = it.toLong(),
                         title = "That Cool Song",
-                        artist = (1..3).joinToString(",") { "Artist $it" }
                     )
                 })).collectAsLazyPagingItems(),
                 album = flowOf(PagingData.from((1..5).map {
                     AllFromArtistUiItem(
                         id = it.toLong(),
                         title = "That Cool Album",
-                        artist = (1..3).joinToString(",") { "Artist $it" }
                     )
                 })).collectAsLazyPagingItems(),
                 onAction = {

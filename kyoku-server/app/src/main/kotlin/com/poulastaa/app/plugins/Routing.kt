@@ -2,6 +2,9 @@ package com.poulastaa.app.plugins
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
+import com.poulastaa.search.repository.ArtistPagingRepository
+import com.poulastaa.search.route.artistAlbumPaging
+import com.poulastaa.search.route.artistSongPaging
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
 import com.poulastaa.suggestion.network.routes.home
 import com.poulastaa.suggestion.network.routes.refresh
@@ -27,6 +30,7 @@ fun Application.configureRouting() {
     val suggestionRepository: SuggestionRepository by inject()
     val viewRepository: ViewRepository by inject()
     val syncRepository: SynRepository by inject()
+    val artistPagingRepository: ArtistPagingRepository by inject()
 
     routing {
         authen(authRepository)
@@ -34,6 +38,7 @@ fun Application.configureRouting() {
         suggestion(suggestionRepository)
         view(viewRepository)
         sync(syncRepository)
+        search(artistPagingRepository)
 
         staticFiles(
             remotePath = ".well-known",
@@ -95,4 +100,9 @@ private fun Routing.view(repo: ViewRepository) {
 
 private fun Routing.sync(repo: SynRepository) {
     syncLibrary(repo)
+}
+
+private fun Routing.search(repo: ArtistPagingRepository) {
+    artistSongPaging(repo)
+    artistAlbumPaging(repo)
 }

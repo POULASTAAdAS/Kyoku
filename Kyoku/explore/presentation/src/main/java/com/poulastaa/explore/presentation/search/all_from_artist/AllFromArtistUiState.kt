@@ -23,5 +23,5 @@ internal data class AllFromArtistUiItem(
     val id: Long = -1,
     val title: String = "",
     val poster: String = "",
-    val artist: String = "",
+    val releaseYear: Int = 0,
 )

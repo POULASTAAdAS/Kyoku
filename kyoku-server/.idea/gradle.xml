@@ -45,6 +45,7 @@
             <option value="$PROJECT_DIR$/search" />
             <option value="$PROJECT_DIR$/search/data" />
             <option value="$PROJECT_DIR$/search/domain" />
+            <option value="$PROJECT_DIR$/search/network" />
             <option value="$PROJECT_DIR$/suggestion" />
             <option value="$PROJECT_DIR$/suggestion/data" />
             <option value="$PROJECT_DIR$/suggestion/domain" />

@@ -35,6 +35,8 @@ include("search:domain")
 project(":search:domain").name = "search-domain"
 include("search:data")
 project(":search:data").name = "search-data"
+include("search:network")
+findProject(":search:network")?.name = "search-network"
 
 include("auth:domain")
 project(":auth:domain").name = "auth-domain"
@@ -74,6 +76,7 @@ include("view:data")
 findProject(":view:data")?.name = "view-data"
 include("view:network")
 findProject(":view:network")?.name = "view-network"
+
 include("sync:domain")
 findProject(":sync:domain")?.name = "sync-domain"
 include("sync:data")

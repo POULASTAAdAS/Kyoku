@@ -15,5 +15,5 @@ internal fun ResponseAllFromArtistItem.toDtoAllFromArtistItem() = DtoAllFromArti
     id = this.id,
     title = this.title,
     poster = this.poster,
-    artist = this.artist
+    releaseYear = this.releaseYear
 )

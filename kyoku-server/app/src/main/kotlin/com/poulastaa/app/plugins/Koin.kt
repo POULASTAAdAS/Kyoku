@@ -7,6 +7,7 @@ import com.poulastaa.core.data.di.provideSessionService
 import com.poulastaa.core.database.di.provideCoreDatabaseService
 import com.poulastaa.core.database.di.provideJedisPoolService
 import com.poulastaa.notification.data.di.provideNotificationService
+import com.poulastaa.search.data.di.provideArtistPagerDataService
 import com.poulastaa.suggestion.data.di.provideSuggestionDataService
 import com.poulastaa.sync.di.provideSyncDataService
 import com.poulastaa.user.data.di.provideUserDataRepositoryService
@@ -42,7 +43,8 @@ fun Application.configureKoin(
             provideUserDataRepositoryService(),
             provideSuggestionDataService(),
             provideViewDataService(),
-            provideSyncDataService()
+            provideSyncDataService(),
+            provideArtistPagerDataService()
         )
     }
 }

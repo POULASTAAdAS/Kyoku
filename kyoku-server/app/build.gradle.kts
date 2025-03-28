@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.core.coreNetwork)
     implementation(projects.user.userNetwork)
     implementation(projects.view.viewNetwork)
+    implementation(projects.search.searchNetwork)
     implementation(projects.suggestion.suggestionNetwork)
     implementation(projects.sync.syncNetwork)
 
@@ -33,6 +34,7 @@ dependencies {
     implementation(projects.core.coreData)
     implementation(projects.user.userData)
     implementation(projects.view.viewData)
+    implementation(projects.search.searchData)
     implementation(projects.suggestion.suggestionData)
     implementation(projects.sync.syncData)
 
