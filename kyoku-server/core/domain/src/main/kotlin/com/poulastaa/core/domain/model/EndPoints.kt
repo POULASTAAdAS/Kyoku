@@ -41,5 +41,14 @@ sealed class EndPoints(val route: String) {
 
     data object SyncLibrary : EndPoints(route = "/api/v1/sync/syncLibrary")
 
+    sealed class Item {
+        data object GetArtist : EndPoints(route = "/api/v1/item/artist")
+    }
+
+    sealed class Paging {
+        data object GetArtistPagingSongs : EndPoints(route = "/api/v1/paging/getArtistPagingSongs")
+        data object GetArtistPagingAlbums : EndPoints(route = "/api/v1/paging/getArtistPagingAlbums")
+    }
+
     data object UnAuthorized : EndPoints(route = "/api/v1/unauthorized")
 }

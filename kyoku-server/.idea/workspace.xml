@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/all_from_artist/AllFromArtistRootScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/EndPoints.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,6 +159,7 @@
       <workItem from="1743054139165" duration="2000" />
       <workItem from="1743056095777" duration="1196000" />
       <workItem from="1743088675470" duration="2172000" />
+      <workItem from="1743172570230" duration="2950000" />
     </task>
     <servers />
   </component>

@@ -138,46 +138,13 @@ internal fun AllFromArtistCompactScreen(
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
             ) {
                 item {
-                    AnimatedVisibility(
-                        state.isSearchOpen.not(),
-                        enter = fadeIn(tween(400)) + slideInVertically(tween(400)),
-                        exit = fadeOut(tween(400)) + slideOutVertically(tween(400))
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(38.dp),
-                            colors = CardDefaults.cardColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 5.dp
-                            ),
-                            onClick = {
-                                onAction(AllFromArtistUiAction.OnToggleSearch)
-                            },
-                            shape = CircleShape
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(start = MaterialTheme.dimens.small1),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = SearchIcon,
-                                    contentDescription = null
-                                )
-
-                                Spacer(Modifier.width(MaterialTheme.dimens.small1))
-
-                                Text(
-                                    text = stringResource(R.string.search),
-                                )
-                            }
-                        }
-                    }
+                    DummySearch(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(38.dp),
+                        state.isSearchOpen,
+                        onAction
+                    )
                 }
 
                 item {
@@ -453,6 +420,52 @@ internal fun AllFromArtistCompactScreen(
                 error = state.loadingType,
                 navigateBack = navigateBack
             )
+        }
+    }
+}
+
+@Composable
+internal fun DummySearch(
+    modifier: Modifier = Modifier,
+    isSearchOpen: Boolean,
+    onAction: (AllFromArtistUiAction.OnToggleSearch) -> Unit,
+) {
+    AnimatedVisibility(
+        isSearchOpen.not(),
+        enter = fadeIn(tween(400)) + slideInVertically(tween(400)),
+        exit = fadeOut(tween(400)) + slideOutVertically(tween(400))
+    ) {
+        Card(
+            modifier = modifier,
+            colors = CardDefaults.cardColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp
+            ),
+            onClick = {
+                onAction(AllFromArtistUiAction.OnToggleSearch)
+            },
+            shape = CircleShape
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = MaterialTheme.dimens.small1),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = SearchIcon,
+                    contentDescription = null
+                )
+
+                Spacer(Modifier.width(MaterialTheme.dimens.small1))
+
+                Text(
+                    text = stringResource(R.string.search),
+                )
+            }
         }
     }
 }

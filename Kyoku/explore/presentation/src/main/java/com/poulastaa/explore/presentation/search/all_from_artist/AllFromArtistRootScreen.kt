@@ -76,7 +76,15 @@ fun AllFromArtistRootScreen(
             )
         },
         expandedContent = {
-
+            AllFromArtistExpandedScreen(
+                modifier = Modifier.fillMaxWidth(.7f),
+                scroll = scroll,
+                state = state,
+                song = viewmodel.song.collectAsLazyPagingItems(),
+                album = viewmodel.album.collectAsLazyPagingItems(),
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

@@ -1,10 +1,12 @@
 package com.poulastaa.core.presentation.designsystem
 
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
+import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoPrevSong
 import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.presentation.designsystem.model.UiDetailedPrevSong
 import com.poulastaa.core.presentation.designsystem.model.UiPreSong
+import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.model.UiUser
 
 fun DtoUser.toUiUser() = UiUser(
@@ -24,4 +26,10 @@ fun DtoDetailedPrevSong.toUiDetailedPrevSong() = UiDetailedPrevSong(
     title = this.title,
     artists = this.artists,
     poster = this.poster
+)
+
+fun DtoPrevArtist.toUiPrevArtist() = UiPrevArtist(
+    id = this.id,
+    name = this.name,
+    cover = this.cover
 )

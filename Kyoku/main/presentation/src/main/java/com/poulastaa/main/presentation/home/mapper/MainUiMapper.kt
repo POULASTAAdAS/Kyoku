@@ -1,8 +1,7 @@
 package com.poulastaa.main.presentation.home.mapper
 
-import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.ViewType
-import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
+import com.poulastaa.core.presentation.designsystem.toUiPrevArtist
 import com.poulastaa.core.presentation.designsystem.toUiPrevSong
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.domain.model.PayloadHomeData
@@ -18,12 +17,6 @@ import com.poulastaa.main.presentation.home.UiHomeData
 import com.poulastaa.main.presentation.home.UiHomeExploreType
 import com.poulastaa.main.presentation.home.UiPrevAlbum
 import com.poulastaa.main.presentation.library.LibraryUiEvent
-
-internal fun DtoPrevArtist.toUiPrevArtist() = UiPrevArtist(
-    id = this.id,
-    name = this.name,
-    cover = this.cover
-)
 
 internal fun PayloadSavedItem.toUiSavedItem() = UiSavedItem(
     id = this.id,

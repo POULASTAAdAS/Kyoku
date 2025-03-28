@@ -3,14 +3,25 @@ package com.poulastaa.explore.presentation.search.all_from_artist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.poulastaa.core.domain.model.AlbumId
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.core.presentation.designsystem.toUiPrevArtist
+import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
+import com.poulastaa.explore.domain.repository.AllFromArtistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -19,7 +30,9 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-internal class AllFromArtistViewModel @Inject constructor() : ViewModel() {
+internal class AllFromArtistViewModel @Inject constructor(
+    private val repo: AllFromArtistRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(AllFromArtistUiState())
     val state = _state.stateIn(
         scope = viewModelScope,
@@ -40,10 +53,16 @@ internal class AllFromArtistViewModel @Inject constructor() : ViewModel() {
     private val _uiEvent = Channel<AllFromArtistUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun init(albumId: AlbumId) {
-        viewModelScope.launch {
+    private var getSongJob: Job? = null
+    private var getAlbumJob: Job? = null
 
-        }
+    fun init(artistId: ArtistId) {
+        getArtist(artistId)
+
+        getSongJob?.cancel()
+        getAlbumJob?.cancel()
+        getSongJob = getPagingSong(artistId)
+        getAlbumJob = getPagingAlbum(artistId)
     }
 
     fun onAction(action: AllFromArtistUiAction) {
@@ -77,7 +96,10 @@ internal class AllFromArtistViewModel @Inject constructor() : ViewModel() {
                     )
                 }
 
-                // perform search
+                getSongJob?.cancel()
+                getAlbumJob?.cancel()
+                getSongJob = getPagingSong(_state.value.artist.id)
+                getAlbumJob = getPagingAlbum(_state.value.artist.id)
             }
 
             AllFromArtistUiAction.OnSearchQueryClear -> {
@@ -88,6 +110,11 @@ internal class AllFromArtistViewModel @Inject constructor() : ViewModel() {
                         )
                     )
                 }
+
+                getSongJob?.cancel()
+                getAlbumJob?.cancel()
+                getSongJob = getPagingSong(_state.value.artist.id)
+                getAlbumJob = getPagingAlbum(_state.value.artist.id)
             }
 
             is AllFromArtistUiAction.OnSongClick -> {
@@ -102,5 +129,75 @@ internal class AllFromArtistViewModel @Inject constructor() : ViewModel() {
                 }
             }
         }
+    }
+
+    private fun getArtist(artistId: ArtistId) {
+        viewModelScope.launch {
+            val result = repo.getArtist(artistId)
+
+            when (result) {
+                is Result.Error -> when (result.error) {
+                    DataError.Network.NO_INTERNET -> _uiEvent.send(
+                        AllFromArtistUiEvent.EmitToast(
+                            UiText.StringResource(R.string.error_no_internet)
+                        )
+                    ).also {
+                        _state.update {
+                            it.copy(
+                                loadingType = LoadingType.Error(
+                                    type = LoadingType.ERROR_TYPE.NO_INTERNET,
+                                    lottieId = ERROR_LOTTIE_ID
+                                )
+                            )
+                        }
+                    }
+
+                    else -> _uiEvent.send(
+                        AllFromArtistUiEvent.EmitToast(
+                            UiText.StringResource(R.string.error_something_went_wrong)
+                        )
+                    ).also {
+                        _state.update {
+                            it.copy(
+                                loadingType = LoadingType.Error(
+                                    type = LoadingType.ERROR_TYPE.UNKNOWN,
+                                    lottieId = ERROR_LOTTIE_ID
+                                )
+                            )
+                        }
+                    }
+                }
+
+                is Result.Success -> _state.update {
+                    it.copy(
+                        artist = result.data.toUiPrevArtist()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getPagingAlbum(artistId: ArtistId) = viewModelScope.launch {
+        _album.update { PagingData.empty() }
+
+        repo.getAlbums(artistId, _state.value.query.value.trim())
+            .cachedIn(viewModelScope)
+            .collectLatest { result ->
+                _album.update {
+                    result.map { item -> item.toAllFromArtistUiItem() }
+                }
+            }
+    }
+
+    private fun getPagingSong(artistId: ArtistId) = viewModelScope.launch {
+        _song.update { PagingData.empty() }
+
+        repo.getSongs(artistId, _state.value.query.value.trim())
+            .cachedIn(viewModelScope)
+            .collectLatest { result ->
+                _song.update {
+                    result.map { item -> item.toAllFromArtistUiItem() }
+                }
+            }
     }
 }
