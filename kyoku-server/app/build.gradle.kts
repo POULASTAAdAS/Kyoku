@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.suggestion.suggestionDomain)
     implementation(projects.notification.notificationDomain)
     implementation(projects.sync.syncDomain)
+    implementation(projects.item.itemDomain)
 
     // network
     implementation(projects.auth.authNetwork)
@@ -28,6 +29,7 @@ dependencies {
     implementation(projects.search.searchNetwork)
     implementation(projects.suggestion.suggestionNetwork)
     implementation(projects.sync.syncNetwork)
+    implementation(projects.item.itemNetwork)
 
     // data
     implementation(projects.auth.authData)
@@ -37,6 +39,7 @@ dependencies {
     implementation(projects.search.searchData)
     implementation(projects.suggestion.suggestionData)
     implementation(projects.sync.syncData)
+    implementation(projects.item.itemData)
 
     // notification
     implementation(projects.notification.notificationData)

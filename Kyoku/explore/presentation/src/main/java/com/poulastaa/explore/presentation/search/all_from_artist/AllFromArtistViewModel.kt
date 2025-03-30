@@ -15,6 +15,7 @@ import com.poulastaa.core.presentation.designsystem.toUiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
 import com.poulastaa.explore.domain.repository.AllFromArtistRepository
+import com.poulastaa.explore.presentation.model.ExploreUiItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -40,12 +41,12 @@ internal class AllFromArtistViewModel @Inject constructor(
         initialValue = AllFromArtistUiState()
     )
 
-    private val _song: MutableStateFlow<PagingData<AllFromArtistUiItem>> =
+    private val _song: MutableStateFlow<PagingData<ExploreUiItem>> =
         MutableStateFlow(PagingData.empty())
     var song = _song.asStateFlow()
         private set
 
-    var _album: MutableStateFlow<PagingData<AllFromArtistUiItem>> =
+    var _album: MutableStateFlow<PagingData<ExploreUiItem>> =
         MutableStateFlow(PagingData.empty())
     var album = _album.asStateFlow()
         private set

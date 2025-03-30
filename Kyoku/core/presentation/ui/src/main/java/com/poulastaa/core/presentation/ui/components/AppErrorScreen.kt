@@ -2,7 +2,6 @@ package com.poulastaa.core.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +38,7 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 fun AppErrorScreen(
     modifier: Modifier = Modifier,
     error: LoadingType.Error,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(error.lottieId)
@@ -48,9 +47,10 @@ fun AppErrorScreen(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
-        Row {
+        Row(
+            modifier = Modifier.align(Alignment.Start)
+        ) {
             IconButton(
                 onClick = navigateBack
             ) {
@@ -61,6 +61,8 @@ fun AppErrorScreen(
                 )
             }
         }
+
+        Spacer(Modifier.weight(1f))
 
         LottieAnimation(
             modifier = Modifier.fillMaxSize(.4f),
@@ -83,6 +85,8 @@ fun AppErrorScreen(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.error
         )
+
+        Spacer(Modifier.weight(2f))
     }
 }
 
@@ -103,7 +107,7 @@ private fun Preview() {
                     LoadingType.ERROR_TYPE.UNKNOWN,
                     R.raw.lottie_error_4
                 )
-            ){}
+            ) {}
         }
     }
 }

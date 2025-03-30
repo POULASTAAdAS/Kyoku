@@ -6,6 +6,8 @@ import com.poulastaa.core.database.repository.RedisLocalCoreDatasource
 import com.poulastaa.core.database.repository.RedisLocalSessionCacheDatasource
 import com.poulastaa.core.database.repository.auth.ExposedLocalAuthDatasource
 import com.poulastaa.core.database.repository.auth.RedisLocalAuthDataSource
+import com.poulastaa.core.database.repository.item.ExposedLocalItemDatasource
+import com.poulastaa.core.database.repository.item.RedisLocalItemDatasource
 import com.poulastaa.core.database.repository.search.ExposedLocalArtistPagingDatasource
 import com.poulastaa.core.database.repository.setup.ExposedSetupDatasource
 import com.poulastaa.core.database.repository.setup.RedisSetupDatasource
@@ -20,6 +22,8 @@ import com.poulastaa.core.domain.repository.LocalCoreDatasource
 import com.poulastaa.core.domain.repository.auth.LocalAuthCacheDatasource
 import com.poulastaa.core.domain.repository.auth.LocalAuthDatasource
 import com.poulastaa.core.domain.repository.auth.LocalSessionCacheDatasource
+import com.poulastaa.core.domain.repository.item.LocalItemCacheDatasource
+import com.poulastaa.core.domain.repository.item.LocalItemDatasource
 import com.poulastaa.core.domain.repository.search.LocalArtistPagingDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupCacheDatasource
 import com.poulastaa.core.domain.repository.setup.LocalSetupDatasource
@@ -132,5 +136,13 @@ fun provideCoreDatabaseService() = module {
 
     single<LocalArtistPagingDatasource> {
         ExposedLocalArtistPagingDatasource()
+    }
+
+    single<LocalItemCacheDatasource> {
+        RedisLocalItemDatasource(get())
+    }
+
+    single<LocalItemDatasource> {
+        ExposedLocalItemDatasource(get(), get())
     }
 }

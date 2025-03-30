@@ -1,4 +1,4 @@
-package com.poulastaa.explore.presentation.search.all_from_artist.components
+package com.poulastaa.explore.presentation.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -41,10 +41,10 @@ import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AllFromArtistTopBar(
+fun ExploreTopBar(
     modifier: Modifier = Modifier,
     scroll: TopAppBarScrollBehavior,
-    artist: String,
+    title: String,
     isSearchOpen: Boolean,
     query: String,
     onQueryChange: (String) -> Unit,
@@ -71,7 +71,7 @@ fun AllFromArtistTopBar(
                             shape = CircleShape,
                             label = {
                                 Text(
-                                    text = "search ${artist.lowercase()}",
+                                    text = "search ${title.lowercase()}",
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -110,7 +110,7 @@ fun AllFromArtistTopBar(
                     }
 
                     false -> Text(
-                        text = "Explore $artist",
+                        text = "Explore $title",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.SemiBold,
@@ -147,11 +147,11 @@ fun AllFromArtistTopBar(
 private fun Preview() {
     AppThem {
         Surface {
-            AllFromArtistTopBar(
+            ExploreTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 isSearchOpen = isSystemInDarkTheme(),
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
-                artist = "That Cool Artist",
+                title = "That Cool Artist",
                 query = "",
                 onQueryChange = {},
                 navigateBack = {},

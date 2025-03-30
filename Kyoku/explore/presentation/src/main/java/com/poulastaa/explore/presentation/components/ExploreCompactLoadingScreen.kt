@@ -1,4 +1,4 @@
-package com.poulastaa.explore.presentation.search.all_from_artist.components
+package com.poulastaa.explore.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,8 +39,9 @@ import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun AllFromArtistCompactLoadingScreen(
+internal fun ExploreCompactLoadingScreen(
     modifier: Modifier = Modifier,
+    title: String,
     navigateBack: () -> Unit,
 ) {
     Column(
@@ -52,7 +51,13 @@ internal fun AllFromArtistCompactLoadingScreen(
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-        AllFromArtistLoadingTopBar(navigateBack)
+        ExploreLoadingTopBar(
+            Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            title,
+            navigateBack
+        )
 
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
@@ -106,73 +111,7 @@ internal fun AllFromArtistCompactLoadingScreen(
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
             repeat(6) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) {
-                    Card(
-                        modifier = Modifier.aspectRatio(1f),
-                        shape = MaterialTheme.shapes.extraSmall,
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 3.dp
-                        ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    ) {
-                        Box(
-                            Modifier
-                                .fillMaxSize()
-                                .shimmerEffect(MaterialTheme.colorScheme.primary)
-                        )
-                    }
-
-                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
-
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(.5f)
-                                .fillMaxHeight(.4f),
-                            shape = MaterialTheme.shapes.extraSmall,
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 3.dp
-                            ),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            )
-                        ) {
-                            Box(
-                                Modifier
-                                    .fillMaxSize()
-                                    .shimmerEffect(MaterialTheme.colorScheme.primary)
-                            )
-                        }
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(.3f)
-                                .fillMaxHeight(.4f),
-                            shape = MaterialTheme.shapes.extraSmall,
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 3.dp
-                            ),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            )
-                        ) {
-                            Box(
-                                Modifier
-                                    .fillMaxSize()
-                                    .shimmerEffect(MaterialTheme.colorScheme.primary)
-                            )
-                        }
-                    }
-                }
+                LoadingSongCard()
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small2))
             }
@@ -183,13 +122,13 @@ internal fun AllFromArtistCompactLoadingScreen(
 }
 
 @Composable
-internal fun AllFromArtistLoadingTopBar(
+internal fun ExploreLoadingTopBar(
+    modifier: Modifier,
+    title: String,
     navigateBack: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
@@ -223,7 +162,7 @@ internal fun AllFromArtistLoadingTopBar(
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(.8f),
-                    text = "${stringResource(R.string.search)} that cool artist",
+                    text = "${stringResource(R.string.search)} ${title.lowercase()}",
                     color = MaterialTheme.colorScheme.primary.copy(.8f),
                 )
 
@@ -248,7 +187,7 @@ internal fun AllFromArtistLoadingTopBar(
 private fun Preview() {
     AppThem {
         Surface {
-            AllFromArtistCompactLoadingScreen(
+            ExploreCompactLoadingScreen(
                 Modifier
                     .fillMaxSize()
                     .background(
@@ -257,6 +196,7 @@ private fun Preview() {
                         )
                     )
                     .padding(MaterialTheme.dimens.medium1),
+                title = "that cool artist"
             ) {}
         }
     }

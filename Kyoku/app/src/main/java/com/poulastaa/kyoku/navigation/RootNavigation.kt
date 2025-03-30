@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.navigation
 
-import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,9 +20,11 @@ import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
 import com.poulastaa.auth.presentation.email.signup.EmailSignUpRootScreen
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.domain.model.DtoCoreScreens
+import com.poulastaa.core.domain.model.ExploreScreenType
 import com.poulastaa.core.domain.model.SavedScreen
 import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
+import com.poulastaa.explore.presentation.search.album.ExploreAlbumRootScreen
 import com.poulastaa.explore.presentation.search.all_from_artist.AllFromArtistRootScreen
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.main.MainRootScreen
@@ -300,6 +301,11 @@ private fun NavGraphBuilder.coreGraph(
                             )
                         )
                     }
+
+                    is MainAllowedNavigationScreens.NavigateToExplore -> when (screens.type) {
+                        ExploreScreenType.ARTIST -> TODO("Add explore artist screen")
+                        ExploreScreenType.ALBUM -> nav.navigate(Screens.Explore.ExploreAlbum)
+                    }
                 }
             }
         )
@@ -308,8 +314,6 @@ private fun NavGraphBuilder.coreGraph(
     composable<Screens.Core.Profile> {
         ProfileRootScreen(
             navigate = {
-                Log.d("screen ", it.toString())
-
                 when (it) {
                     ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add all saved view playlist screen")
                     ProfileAllowedNavigationScreen.ALBUM -> TODO("Add all saved view album screen")
@@ -417,6 +421,24 @@ private fun NavGraphBuilder.exploreGraph(nav: NavHostController) {
 
         AllFromArtistRootScreen(
             artistId = payload.artistId,
+            navigate = { screen ->
+                when (screen) {
+                    is ExploreAllowedNavigationScreen.Album -> nav.navigate(
+                        Screens.View.Other(
+                            screen.albumId,
+                            ViewType.ALBUM
+                        )
+                    )
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
+    }
+
+    composable<Screens.Explore.ExploreAlbum> {
+        ExploreAlbumRootScreen(
             navigate = { screen ->
                 when (screen) {
                     is ExploreAllowedNavigationScreen.Album -> nav.navigate(

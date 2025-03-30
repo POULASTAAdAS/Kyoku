@@ -2,6 +2,8 @@ package com.poulastaa.app.plugins
 
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
+import com.poulastaa.item.domain.repository.ItemRepository
+import com.poulastaa.item.network.route.getArtist
 import com.poulastaa.search.repository.ArtistPagingRepository
 import com.poulastaa.search.route.artistAlbumPaging
 import com.poulastaa.search.route.artistSongPaging
@@ -16,7 +18,7 @@ import com.poulastaa.user.network.routes.getGenrePoster
 import com.poulastaa.user.network.routes.getSongPoster
 import com.poulastaa.user.network.routes.setup.*
 import com.poulastaa.view.domain.repository.ViewRepository
-import com.poulastaa.view.network.routes.getArtist
+import com.poulastaa.view.network.routes.getViewArtist
 import com.poulastaa.view.network.routes.getViewTypeData
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -31,6 +33,7 @@ fun Application.configureRouting() {
     val viewRepository: ViewRepository by inject()
     val syncRepository: SynRepository by inject()
     val artistPagingRepository: ArtistPagingRepository by inject()
+    val itemRepository: ItemRepository by inject()
 
     routing {
         authen(authRepository)
@@ -39,6 +42,7 @@ fun Application.configureRouting() {
         view(viewRepository)
         sync(syncRepository)
         search(artistPagingRepository)
+        item(itemRepository)
 
         staticFiles(
             remotePath = ".well-known",
@@ -94,7 +98,7 @@ private fun Routing.suggestion(repo: SuggestionRepository) {
 }
 
 private fun Routing.view(repo: ViewRepository) {
-    getArtist(repo)
+    getViewArtist(repo)
     getViewTypeData(repo)
 }
 
@@ -105,4 +109,8 @@ private fun Routing.sync(repo: SynRepository) {
 private fun Routing.search(repo: ArtistPagingRepository) {
     artistSongPaging(repo)
     artistAlbumPaging(repo)
+}
+
+private fun Routing.item(repo: ItemRepository) {
+    getArtist(repo)
 }

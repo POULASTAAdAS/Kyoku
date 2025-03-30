@@ -64,5 +64,8 @@ sealed interface Screens {
     sealed interface Explore : Screens {
         @Serializable
         data class AllFromArtist(val artistId: ArtistId) : Screens
+
+        @Serializable
+        data object ExploreAlbum : Screens
     }
 }

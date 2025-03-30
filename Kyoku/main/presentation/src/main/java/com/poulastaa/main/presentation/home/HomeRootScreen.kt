@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.model.UiPreSong
+import com.poulastaa.core.presentation.designsystem.model.UiPrevAlbum
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.components.UiSaveItemType
@@ -39,7 +40,7 @@ internal fun HomeRootScreen(
                 Toast.LENGTH_LONG
             ).show()
 
-            is HomeUiEvent.NavigateToView -> navigate(event.toMainAllowedNavigationScreensHome())
+            else -> navigate(event.toMainAllowedNavigationScreensHome())
         }
     }
 

@@ -354,6 +354,15 @@ class ExposedLocalCoreDatasource(
         }
     }
 
+    override suspend fun getArtistOnId(artistId: ArtistId): DtoArtist? =
+        cache.cacheArtistById(artistId) ?: kyokuDbQuery {
+            DaoArtist.find { EntityArtist.id eq artistId }.firstOrNull()?.toDbArtistDto()
+        }?.let {
+            getArtist(it).also {
+                this@ExposedLocalCoreDatasource.cache.setArtistById(it)
+            }
+        }
+
     override suspend fun getArtistOnId(list: List<ArtistId>): List<DtoArtist> {
         val cache = cache.cacheArtistById(list)
         val notFoundArtistIdList = list.filter { it !in cache.map { it.id } }

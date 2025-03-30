@@ -211,7 +211,7 @@ internal fun LazyGridScope.homeCommonContent(
                 onClick = {
                     onAction(
                         HomeUiAction.OnViewMore(
-                            type = UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL,
+                            type = UiMainViewMoreItemType.EXPLORE_ARTIST,
                             id = artist.id
                         )
                     )
@@ -233,7 +233,7 @@ internal fun LazyGridScope.homeCommonContent(
                         onClick = {
                             onAction(
                                 HomeUiAction.OnViewMore(
-                                    type = UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL,
+                                    type = UiMainViewMoreItemType.EXPLORE_ARTIST,
                                     id = artist.id
                                 )
                             )
@@ -343,8 +343,8 @@ internal fun LazyGridScope.homeCommonContent(
                         HomeMoreButton {
                             onAction(
                                 HomeUiAction.OnViewMore(
-                                    type = UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL,
-                                    id = artist.id
+                                    UiMainViewMoreItemType.EXPLORE_ARTIST,
+                                    artist.id
                                 )
                             )
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)

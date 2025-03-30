@@ -1,0 +1,204 @@
+package com.poulastaa.explore.presentation.search.album
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppErrorScreen
+import com.poulastaa.core.presentation.ui.components.AppFilterChip
+import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
+import com.poulastaa.explore.presentation.components.ExploreScreenWrapper
+import com.poulastaa.explore.presentation.model.ExploreUiItem
+import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
+import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumCard
+import kotlinx.coroutines.flow.flowOf
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ExploreAlbumCompactScreen(
+    modifier: Modifier = Modifier,
+    scroll: TopAppBarScrollBehavior,
+    state: ExploreAlbumUiState,
+    album: LazyPagingItems<ExploreUiItem>,
+    onAction: (ExploreAlbumUiAction) -> Unit,
+    navigateBack: () -> Unit,
+) {
+    ExploreScreenWrapper(
+        modifier = modifier,
+        scroll = scroll,
+        loadingType = state.loadingType,
+        isSearchOpen = state.isSearchOpen,
+        title = state.album.name,
+        query = state.query.value,
+        onQueryChange = {
+            onAction(ExploreAlbumUiAction.OnSearchQueryChange(it))
+        },
+        onToggleSearch = {
+            onAction(ExploreAlbumUiAction.OnSearchToggle)
+        },
+        loadingContent = {
+            ExploreCompactLoadingScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.linearGradient(
+                            ThemModeChanger.getGradiantBackground()
+                        )
+                    )
+                    .padding(it)
+                    .padding(horizontal = MaterialTheme.dimens.medium1),
+                title = stringResource(R.string.that_cool_album),
+                navigateBack = navigateBack
+            )
+        },
+        errorContent = { paddingValues, error ->
+            AppErrorScreen(
+                modifier = Modifier
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(MaterialTheme.dimens.medium1),
+                error = error,
+                navigateBack = navigateBack
+            )
+        },
+        content = {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+                ) {
+                    AppFilterChip(
+                        title = SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.value,
+                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.icon),
+                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR,
+                        onClick = {
+                            onAction(
+                                ExploreAlbumUiAction.OnFilterTypeChange(
+                                    SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR
+                                )
+                            )
+                        }
+                    )
+
+                    AppFilterChip(
+                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.ARTIST.icon),
+                        title = SEARCH_ALBUM_FILTER_TYPE.ARTIST.value,
+                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.ARTIST,
+                        onClick = {
+                            onAction(
+                                ExploreAlbumUiAction.OnFilterTypeChange(
+                                    SEARCH_ALBUM_FILTER_TYPE.ARTIST
+                                )
+                            )
+                        }
+                    )
+
+                    AppFilterChip(
+                        title = SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.value,
+                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.icon),
+                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR,
+                        onClick = {
+                            onAction(
+                                ExploreAlbumUiAction.OnFilterTypeChange(
+                                    SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+
+            item {
+                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+            }
+
+            items(album.itemCount) { index ->
+                album[index]?.let { album ->
+                    Spacer(Modifier.height(MaterialTheme.dimens.small1))
+
+                    ExploreAlbumCard(
+                        album = album,
+                        filterType = state.filterType,
+                        onAction = onAction,
+                    )
+                }
+            }
+        },
+        navigateBack = {
+            when {
+                state.isSearchOpen && state.query.value.isNotEmpty() ->
+                    onAction(ExploreAlbumUiAction.OnSearchQueryChange(""))
+
+                state.isSearchOpen -> onAction(ExploreAlbumUiAction.OnSearchToggle)
+                else -> navigateBack()
+            }
+        }
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@PreviewLightDark
+@Composable
+private fun Preview() {
+    var search by remember { mutableStateOf(false) }
+    var filterType by remember { mutableStateOf(SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR) }
+
+    AppThem {
+        Surface {
+            ExploreAlbumCompactScreen(
+                modifier = Modifier.fillMaxWidth(),
+                state = ExploreAlbumUiState(
+                    loadingType = LoadingType.Content,
+                    filterType = filterType,
+                    isSearchOpen = search
+                ),
+                scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                album = flowOf(PagingData.from((1..10).map {
+                    ExploreUiItem(
+                        id = it.toLong(),
+                        title = "That Cool Album",
+                        artist = "That Cool Artist",
+                        releaseYear = 2025
+                    )
+                })).collectAsLazyPagingItems(),
+                onAction = {
+                    if (it is ExploreAlbumUiAction.OnFilterTypeChange) filterType = it.type
+                    if (it is ExploreAlbumUiAction.OnSearchToggle) search = !search
+                },
+                navigateBack = {}
+            )
+        }
+    }
+}

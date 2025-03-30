@@ -2,6 +2,7 @@ package com.poulastaa.main.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.core.domain.model.ExploreScreenType
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.main.domain.repository.HomeRepository
 import com.poulastaa.main.domain.repository.work.RefreshScheduler
@@ -26,8 +27,8 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 internal class HomeViewmodel @Inject constructor(
     private val repo: HomeRepository,
-    private val work: SyncLibraryScheduler,
-    private val refresh: RefreshScheduler,
+    work: SyncLibraryScheduler,
+    refresh: RefreshScheduler,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state = _state.stateIn(
@@ -79,9 +80,13 @@ internal class HomeViewmodel @Inject constructor(
 
             is HomeUiAction.OnViewMore -> viewModelScope.launch {
                 when (action.type) {
-                    UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL,
-                    UiMainViewMoreItemType.SUGGESTED_ALBUM_IN_DETAIL,
-                        -> TODO("Implement view more for ${action.type} on home screen i.e. Explore Artist")
+                    UiMainViewMoreItemType.SUGGESTED_ARTIST_IN_DETAIL -> _uiEvent.send(
+                        HomeUiEvent.NavigateToExplore(ExploreScreenType.ARTIST)
+                    )
+
+                    UiMainViewMoreItemType.SUGGESTED_ALBUM_IN_DETAIL -> _uiEvent.send(
+                        HomeUiEvent.NavigateToExplore(ExploreScreenType.ALBUM)
+                    )
 
                     else -> _uiEvent.send(action.type.toNavigateToView(action.id))
                 }

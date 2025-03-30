@@ -10,7 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getArtist(repo: ViewRepository) {
+fun Route.getViewArtist(repo: ViewRepository) {
     authenticate(configurations = SECURITY_LIST) {
         route(EndPoints.ViewArtist.route) {
             get {

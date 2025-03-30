@@ -83,3 +83,10 @@ include("sync:data")
 findProject(":sync:data")?.name = "sync-data"
 include("sync:network")
 findProject(":sync:network")?.name = "sync-network"
+
+include("item:domain")
+findProject(":item:domain")?.name = "item-domain"
+include("item:data")
+findProject(":item:data")?.name = "item-data"
+include("item:network")
+findProject(":item:network")?.name = "item-network"

@@ -18,10 +18,3 @@ internal enum class FilterType {
     ALBUM,
     SONG
 }
-
-internal data class AllFromArtistUiItem(
-    val id: Long = -1,
-    val title: String = "",
-    val poster: String = "",
-    val releaseYear: Int = 0,
-)

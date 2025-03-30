@@ -1,6 +1,7 @@
 package com.poulastaa.main.presentation.home.mapper
 
 import com.poulastaa.core.domain.model.ViewType
+import com.poulastaa.core.presentation.designsystem.model.UiPrevAlbum
 import com.poulastaa.core.presentation.designsystem.toUiPrevArtist
 import com.poulastaa.core.presentation.designsystem.toUiPrevSong
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
@@ -15,7 +16,6 @@ import com.poulastaa.main.presentation.home.HomeUiState
 import com.poulastaa.main.presentation.home.UiArtistWithSong
 import com.poulastaa.main.presentation.home.UiHomeData
 import com.poulastaa.main.presentation.home.UiHomeExploreType
-import com.poulastaa.main.presentation.home.UiPrevAlbum
 import com.poulastaa.main.presentation.library.LibraryUiEvent
 
 internal fun PayloadSavedItem.toUiSavedItem() = UiSavedItem(
@@ -54,11 +54,15 @@ internal fun PayloadHomeData.toUiHomeState(spotlightItem: PayloadSavedItem) = Ho
     )
 )
 
-internal fun HomeUiEvent.NavigateToView.toMainAllowedNavigationScreensHome() =
-    MainAllowedNavigationScreens.NavigateToView(
+internal fun HomeUiEvent.toMainAllowedNavigationScreensHome() = when (this) {
+    is HomeUiEvent.EmitToast -> throw IllegalArgumentException("Invalid event $this")
+    is HomeUiEvent.NavigateToExplore -> MainAllowedNavigationScreens.NavigateToExplore(this.type)
+
+    is HomeUiEvent.NavigateToView -> MainAllowedNavigationScreens.NavigateToView(
         type = this.type,
         otherId = this.otherId
     )
+}
 
 internal fun LibraryUiEvent.NavigateToView.toMainAllowedNavigationScreensLibrary() =
     MainAllowedNavigationScreens.NavigateToView(

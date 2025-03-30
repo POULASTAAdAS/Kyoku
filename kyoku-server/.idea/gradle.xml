@@ -36,6 +36,10 @@
             <option value="$PROJECT_DIR$/details" />
             <option value="$PROJECT_DIR$/details/data" />
             <option value="$PROJECT_DIR$/details/domain" />
+            <option value="$PROJECT_DIR$/item" />
+            <option value="$PROJECT_DIR$/item/data" />
+            <option value="$PROJECT_DIR$/item/domain" />
+            <option value="$PROJECT_DIR$/item/network" />
             <option value="$PROJECT_DIR$/notification" />
             <option value="$PROJECT_DIR$/notification/data" />
             <option value="$PROJECT_DIR$/notification/domain" />

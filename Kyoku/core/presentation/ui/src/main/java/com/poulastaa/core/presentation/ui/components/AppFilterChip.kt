@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
@@ -46,7 +48,6 @@ fun AppFilterChip(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primaryContainer
                 )
             }
         } else null,
@@ -65,6 +66,8 @@ fun AppFilterChip(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             selectedLabelColor = MaterialTheme.colorScheme.primary,
             selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.primary,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.background
         ),
     )
 }
@@ -79,7 +82,8 @@ private fun Preview() {
             Box(Modifier.padding(MaterialTheme.dimens.medium1)) {
                 AppFilterChip(
                     title = "Test",
-                    isSelected = toggle,
+                    isSelected = true,
+                    icon = ImageVector.vectorResource(R.drawable.ic_user),
                     onClick = {
                         toggle = !toggle
                     }

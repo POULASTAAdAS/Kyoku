@@ -1,8 +1,8 @@
 package com.poulastaa.main.presentation.home
 
 import androidx.compose.runtime.Stable
-import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.presentation.designsystem.model.UiPreSong
+import com.poulastaa.core.presentation.designsystem.model.UiPrevAlbum
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.main.presentation.components.UiSavedItem
 
@@ -29,11 +29,6 @@ internal data class UiHomeData(
     val popularArtistSong: List<UiArtistWithSong> = emptyList(),
 )
 
-internal data class UiPrevAlbum(
-    val id: AlbumId = -1,
-    val name: String = "",
-    val poster: String? = null,
-)
 
 internal data class UiArtistWithSong(
     val artist: UiPrevArtist = UiPrevArtist(),
