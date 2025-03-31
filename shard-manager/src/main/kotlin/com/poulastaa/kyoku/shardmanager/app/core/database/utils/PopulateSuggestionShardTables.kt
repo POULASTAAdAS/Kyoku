@@ -7,7 +7,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
-fun createSuggestionShardTables(db: LocalShardUpdateDatasource) = runBlocking {
+fun populateSuggestionShardTables(db: LocalShardUpdateDatasource) = runBlocking {
     if (db.isSuggestionShardDatabasePopulated()) return@runBlocking println("Suggestion shard tables already populated")
 
     coroutineScope {

@@ -14,8 +14,8 @@ import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.ReqParam
 import com.poulastaa.core.network.model.ResponseArtist
 import com.poulastaa.core.network.req
-import com.poulastaa.explore.domain.model.DtoAllFromArtistItem
-import com.poulastaa.explore.domain.repository.RemoteAllFromArtistDatasource
+import com.poulastaa.explore.domain.model.DtoExploreItem
+import com.poulastaa.explore.domain.repository.all_from_artist.RemoteAllFromArtistDatasource
 import com.poulastaa.explore.network.mapper.toDtoPrevArtist
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
@@ -43,7 +43,7 @@ internal class OkHttpAllFromArtistDatasource @Inject constructor(
     override fun getSongs(
         artistId: ArtistId,
         query: String,
-    ): Flow<PagingData<DtoAllFromArtistItem>> {
+    ): Flow<PagingData<DtoExploreItem>> {
         song.init(artistId, query)
 
         return Pager(
@@ -56,7 +56,7 @@ internal class OkHttpAllFromArtistDatasource @Inject constructor(
     override fun getAlbums(
         artistId: ArtistId,
         query: String,
-    ): Flow<PagingData<DtoAllFromArtistItem>> {
+    ): Flow<PagingData<DtoExploreItem>> {
         album.init(artistId, query)
 
         return Pager(

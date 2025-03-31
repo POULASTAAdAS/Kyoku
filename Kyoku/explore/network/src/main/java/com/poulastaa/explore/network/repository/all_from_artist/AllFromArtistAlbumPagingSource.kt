@@ -5,7 +5,6 @@ import androidx.paging.PagingState
 import com.google.gson.Gson
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.NoInternetException
-import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.UnknownRemoteException
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.ArtistId
@@ -13,16 +12,16 @@ import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.ReqParam
 import com.poulastaa.core.network.req
-import com.poulastaa.explore.domain.model.DtoAllFromArtistItem
+import com.poulastaa.explore.domain.model.DtoExploreItem
 import com.poulastaa.explore.network.mapper.toDtoAllFromArtistItem
 import com.poulastaa.explore.network.model.ResponseAllFromArtistItem
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-internal class AllFromArtistSongPagingSource @Inject constructor(
+internal class AllFromArtistAlbumPagingSource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
-) : PagingSource<Int, DtoAllFromArtistItem>() {
+) : PagingSource<Int, DtoExploreItem>() {
     private var artistId: ArtistId? = null
     private var query: String = ""
 
@@ -31,16 +30,16 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
         this.query = query
     }
 
-    override fun getRefreshKey(state: PagingState<Int, DtoAllFromArtistItem>): Int? =
+    override fun getRefreshKey(state: PagingState<Int, DtoExploreItem>): Int? =
         state.anchorPosition
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DtoAllFromArtistItem> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DtoExploreItem> {
         if (artistId == null) return LoadResult.Error(UnknownRemoteException)
 
         val page = params.key ?: 1
 
         val result = client.req<Unit, List<ResponseAllFromArtistItem>>(
-            route = EndPoints.Artist.GetArtistPagingSongs.route,
+            route = EndPoints.Artist.GetArtistPagingAlbums.route,
             method = ApiMethodType.GET,
             params = listOf(
                 ReqParam(
@@ -61,10 +60,10 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
                 )
             ),
             gson = gson
-        ).map { list -> list.map { it.toDtoAllFromArtistItem() } }
+        ).map { it -> it.map { it.toDtoAllFromArtistItem() } }
 
         return when (result) {
-            is Result.Error -> {
+            is com.poulastaa.core.domain.Result.Error -> {
                 when (result.error) {
                     DataError.Network.NO_INTERNET -> LoadResult.Error(NoInternetException)
 
@@ -72,7 +71,7 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
                 }
             }
 
-            is Result.Success -> {
+            is com.poulastaa.core.domain.Result.Success -> {
                 LoadResult.Page(
                     data = result.data,
                     prevKey = if (page == 1) null else page.minus(1),

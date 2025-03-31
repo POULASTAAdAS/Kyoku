@@ -6,7 +6,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
-fun createGenreArtistShardTables(db: LocalShardUpdateDatasource) = runBlocking {
+fun populateGenreArtistShardTables(db: LocalShardUpdateDatasource) = runBlocking {
     if (db.isGenreArtistShardDatabasePopulated()) return@runBlocking println("$CURRENT_TIME Artist Shard Tables are populated")
 
     coroutineScope {
