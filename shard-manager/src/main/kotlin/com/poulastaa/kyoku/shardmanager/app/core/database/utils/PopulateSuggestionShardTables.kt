@@ -8,11 +8,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
 fun populateSuggestionShardTables(db: LocalShardUpdateDatasource) = runBlocking {
-    if (db.isSuggestionShardDatabasePopulated()) return@runBlocking println("Suggestion shard tables already populated")
+    if (db.isSuggestionShardDatabasePopulated()) return@runBlocking println("$CURRENT_TIME Suggestion shard tables already populated")
 
     coroutineScope {
         // insert song
-        db.getSongs().chunked(10000).map {
+        db.getSongIdWithPopularity().chunked(10000).map {
             println("$CURRENT_TIME Inserting ${it.size} songs")
             db.insertShardSongs(it)
         }

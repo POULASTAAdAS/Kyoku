@@ -10,12 +10,14 @@ fun Application.configureDatabases() {
     val kyokuJdbcUrl = environment.config.property("storage.kyokuJdbcURL").getString()
     val genreArtistShardDbUrl = environment.config.property("storage.genreArtistShard").getString()
     val popularShardDbUrl = environment.config.property("storage.popularShard").getString()
+    val pagingSearchDbUrl = environment.config.property("storage.pagingShard").getString()
 
     SQLDbManager.initializeDatabases(
         driverClass = driverClass,
         userDbUrl = userJdbcUrl,
         kyokuDbUrl = kyokuJdbcUrl,
         genreArtistShardDbUrl = genreArtistShardDbUrl,
-        popularShardDbUrl = popularShardDbUrl
+        popularShardDbUrl = popularShardDbUrl,
+        pagingSearchDbUrl = pagingSearchDbUrl
     )
 }

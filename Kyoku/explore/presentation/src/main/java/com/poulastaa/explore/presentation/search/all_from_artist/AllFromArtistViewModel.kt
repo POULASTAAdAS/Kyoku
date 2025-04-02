@@ -14,7 +14,7 @@ import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.toUiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
-import com.poulastaa.explore.domain.repository.AllFromArtistRepository
+import com.poulastaa.explore.domain.repository.all_from_artist.AllFromArtistRepository
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -185,7 +185,7 @@ internal class AllFromArtistViewModel @Inject constructor(
             .cachedIn(viewModelScope)
             .collectLatest { result ->
                 _album.update {
-                    result.map { item -> item.toAllFromArtistUiItem() }
+                    result.map { item -> item.toExploreUiItem() }
                 }
             }
     }
@@ -197,7 +197,7 @@ internal class AllFromArtistViewModel @Inject constructor(
             .cachedIn(viewModelScope)
             .collectLatest { result ->
                 _song.update {
-                    result.map { item -> item.toAllFromArtistUiItem() }
+                    result.map { item -> item.toExploreUiItem() }
                 }
             }
     }

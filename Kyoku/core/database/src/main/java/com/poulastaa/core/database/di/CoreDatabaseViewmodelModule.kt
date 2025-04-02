@@ -1,6 +1,7 @@
 package com.poulastaa.core.database.di
 
 import com.poulastaa.core.database.KyokuDatabase
+import com.poulastaa.core.database.dao.ExploreDao
 import com.poulastaa.core.database.dao.HomeDao
 import com.poulastaa.core.database.dao.ImportPlaylistDao
 import com.poulastaa.core.database.dao.LibraryDao
@@ -8,6 +9,8 @@ import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
+import com.poulastaa.core.database.repository.RoomLocalAllFromArtistDatasource
+import com.poulastaa.core.database.repository.RoomLocalExploreAlbumDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalLibraryDatasource
@@ -18,7 +21,9 @@ import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewOtherDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
+import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
+import com.poulastaa.core.domain.repository.LocalExploreAlbumDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalLibraryDatasource
@@ -131,4 +136,16 @@ internal object CoreDatabaseViewmodelModule {
         viewDao: ViewDao,
         root: RootDao,
     ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao, root)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalAllFromArtistDatasource(
+        exploreDao: ExploreDao,
+    ): LocalAllFromArtistDatasource = RoomLocalAllFromArtistDatasource(exploreDao)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalExploreAlbumDatasource(
+        root: RootDao,
+    ): LocalExploreAlbumDatasource = RoomLocalExploreAlbumDatasource(root)
 }

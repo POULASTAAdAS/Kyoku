@@ -6,4 +6,5 @@ data class DatabasePayload(
     val kyokuUserUrl: String,
     val shardGenreArtistUrl: String,
     val shardPopularSongUrl: String,
+    val pagingSearchUrl: String,
 )

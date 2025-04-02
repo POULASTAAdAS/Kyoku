@@ -23,6 +23,7 @@ storage {
   kyokuJdbcURL = your jdbc url"
   genreArtistShard = "your jdbc url"
   popularShard = "your jdbc url"
+  pagingShard = "your jdbc url"
 }
 
 cache {

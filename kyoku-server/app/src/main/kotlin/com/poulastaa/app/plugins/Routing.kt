@@ -4,7 +4,8 @@ import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
 import com.poulastaa.item.domain.repository.ItemRepository
 import com.poulastaa.item.network.route.getArtist
-import com.poulastaa.search.repository.ArtistPagingRepository
+import com.poulastaa.search.repository.PagingRepository
+import com.poulastaa.search.route.albumPaging
 import com.poulastaa.search.route.artistAlbumPaging
 import com.poulastaa.search.route.artistSongPaging
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
@@ -32,7 +33,7 @@ fun Application.configureRouting() {
     val suggestionRepository: SuggestionRepository by inject()
     val viewRepository: ViewRepository by inject()
     val syncRepository: SynRepository by inject()
-    val artistPagingRepository: ArtistPagingRepository by inject()
+    val pagingRepository: PagingRepository by inject()
     val itemRepository: ItemRepository by inject()
 
     routing {
@@ -41,7 +42,7 @@ fun Application.configureRouting() {
         suggestion(suggestionRepository)
         view(viewRepository)
         sync(syncRepository)
-        search(artistPagingRepository)
+        search(pagingRepository)
         item(itemRepository)
 
         staticFiles(
@@ -106,9 +107,10 @@ private fun Routing.sync(repo: SynRepository) {
     syncLibrary(repo)
 }
 
-private fun Routing.search(repo: ArtistPagingRepository) {
+private fun Routing.search(repo: PagingRepository) {
     artistSongPaging(repo)
     artistAlbumPaging(repo)
+    albumPaging(repo)
 }
 
 private fun Routing.item(repo: ItemRepository) {

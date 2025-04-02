@@ -1,20 +1,20 @@
 package com.poulastaa.kyoku.shardmanager.app.core.database.repository
 
+import com.poulastaa.kyoku.shardmanager.app.core.database.dao.kyoku.DaoAlbum
 import com.poulastaa.kyoku.shardmanager.app.core.database.dao.kyoku.DaoArtist
 import com.poulastaa.kyoku.shardmanager.app.core.database.dao.shard.genre_artist.ShardDaoArtist
 import com.poulastaa.kyoku.shardmanager.app.core.database.dao.shard.suggestion.ShardDaoSong
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.kyoku.*
-import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.genre_artist.ShardEntityArtist
+import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.genre_artist.ShardGenreArtistEntityArtist
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.genre_artist.ShardRelationEntityGenreTypeArtist
+import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.paging.*
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.suggestion.ShardEntityArtistPopularSong
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.suggestion.ShardEntityCountryPopularSong
-import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.suggestion.ShardEntitySong
 import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.suggestion.ShardEntityYearPopularSong
-import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoArtistPopularSong
-import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoCountryPopularSong
-import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoGenreArtistRelation
-import com.poulastaa.kyoku.shardmanager.app.core.database.model.DtoYearPopularSong
+import com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.suggestion.ShardSuggestionEntitySong
+import com.poulastaa.kyoku.shardmanager.app.core.database.model.*
 import com.poulastaa.kyoku.shardmanager.app.core.database.toDbArtistDto
+import com.poulastaa.kyoku.shardmanager.app.core.database.toDtoAlbum
 import com.poulastaa.kyoku.shardmanager.app.core.domain.model.DtoDBArtist
 import com.poulastaa.kyoku.shardmanager.app.core.domain.model.DtoDbSong
 import com.poulastaa.kyoku.shardmanager.app.core.domain.repository.Genre
@@ -23,6 +23,7 @@ import com.poulastaa.kyoku.shardmanager.app.core.domain.utils.CURRENT_TIME
 import com.poulastaa.kyoku.shardmanager.app.plugins.kyokuDbQuery
 import com.poulastaa.kyoku.shardmanager.app.plugins.shardGenreArtistDbQuery
 import com.poulastaa.kyoku.shardmanager.app.plugins.shardPopularDbQuery
+import com.poulastaa.kyoku.shardmanager.app.plugins.shardSearchDbQuery
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -36,15 +37,21 @@ private const val ARTIST_MOST_POPULAR_SONGS_LIMIT = 15L
 
 class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdateDatasource {
     override suspend fun isGenreArtistShardDatabasePopulated(): Boolean = shardGenreArtistDbQuery {
-        ShardEntityArtist.exists() || try {
-            ShardEntityArtist.selectAll().count() > 0
+        ShardGenreArtistEntityArtist.exists() || try {
+            ShardGenreArtistEntityArtist.selectAll().count() > 0
         } catch (_: Exception) {
             false
         }
     }
 
     override suspend fun isSuggestionShardDatabasePopulated(): Boolean =
-        shardPopularDbQuery { ShardEntitySong.selectAll().count() > 0 }
+        shardPopularDbQuery { ShardSuggestionEntitySong.selectAll().count() > 0 }
+
+    override suspend fun isPagingShardDatabasePopulated(): Boolean = shardSearchDbQuery {
+        ShardPagingEntityAlbum.selectAll().count() > 0 && ShardPagingEntityArtist.selectAll().count() > 0
+                && ShardPagingRelationEntityArtistSong.selectAll().count() > 0
+                && ShardPagingRelationEntityArtistAlbum.selectAll().count() > 0
+    }
 
     // database genre artist shard
     override suspend fun getAllArtist(): List<DtoDBArtist> = kyokuDbQuery { DaoArtist.all().map { it.toDbArtistDto() } }
@@ -77,7 +84,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
     override suspend fun createShardArtistTable() {
         shardGenreArtistDbQuery {
             try {
-                SchemaUtils.create(ShardEntityArtist)
+                SchemaUtils.create(ShardGenreArtistEntityArtist)
             } catch (e: Exception) {
                 if (!e.message?.contains("Duplicate key name")!!) throw e
             }
@@ -88,11 +95,11 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
         shardGenreArtistDbQuery {
             println("$CURRENT_TIME Inserting ${data.size} artists")
 
-            ShardEntityArtist.batchInsert(data, ignore = true, shouldReturnGeneratedValues = false) {
-                this[ShardEntityArtist.id] = it.id
-                this[ShardEntityArtist.name] = it.name
-                this[ShardEntityArtist.coverImage] = it.coverImage
-                this[ShardEntityArtist.popularity] = it.popularity
+            ShardGenreArtistEntityArtist.batchInsert(data, ignore = true, shouldReturnGeneratedValues = false) {
+                this[ShardGenreArtistEntityArtist.id] = it.id
+                this[ShardGenreArtistEntityArtist.name] = it.name
+                this[ShardGenreArtistEntityArtist.coverImage] = it.coverImage
+                this[ShardGenreArtistEntityArtist.popularity] = it.popularity
             }
         }
     }
@@ -130,7 +137,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                         if (dao != null) if (dao.popularity != dto.popularity) shardPopularDbQuery {
                             dao.popularity = dto.popularity
                         } else shardPopularDbQuery {
-                            ShardEntitySong.insertIgnore {
+                            ShardSuggestionEntitySong.insertIgnore {
                                 it[this.id] = dto.id
                                 it[this.popularity] = dto.popularity
                             }
@@ -155,7 +162,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
                                 dao.popularity = dto.popularity
                             }
                         } else shardGenreArtistDbQuery {
-                            ShardEntityArtist.insertIgnore {
+                            ShardGenreArtistEntityArtist.insertIgnore {
                                 it[this.id] = dto.id
                                 it[this.name] = dto.name
                                 it[this.coverImage] = dto.coverImage
@@ -202,7 +209,7 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
     }
 
     // database suggestion shard
-    override suspend fun getSongs(): List<Pair<Long, Long>> = kyokuDbQuery {
+    override suspend fun getSongIdWithPopularity(): List<Pair<Long, Long>> = kyokuDbQuery {
         EntitySong
             .join(
                 otherTable = EntitySongInfo,
@@ -223,13 +230,13 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
 
     override suspend fun insertShardSongs(data: List<Pair<Long, Long>>) {
         shardPopularDbQuery {
-            ShardEntitySong.batchInsert(
+            ShardSuggestionEntitySong.batchInsert(
                 data = data,
                 ignore = true,
                 shouldReturnGeneratedValues = false
             ) {
-                this[ShardEntitySong.id] = it.first
-                this[ShardEntitySong.popularity] = it.second
+                this[ShardSuggestionEntitySong.id] = it.first
+                this[ShardSuggestionEntitySong.popularity] = it.second
             }
         }
     }
@@ -538,6 +545,215 @@ class ExposedLocalShardUpdateDatasource private constructor() : LocalShardUpdate
             }
         }
     }
+
+    override suspend fun getAllSongs(): List<DtoShardPagingSong> = kyokuDbQuery {
+        EntitySong.join(
+            otherTable = EntitySongInfo,
+            joinType = JoinType.INNER,
+            onColumn = EntitySong.id,
+            otherColumn = EntitySongInfo.songId,
+            additionalConstraint = {
+                EntitySong.id eq EntitySongInfo.songId
+            }
+        ).select(
+            EntitySong.id,
+            EntitySong.title,
+            EntitySong.poster,
+            EntitySongInfo.releaseYear
+        ).map {
+            DtoShardPagingSong(
+                id = it[EntitySong.id].value,
+                title = it[EntitySong.title],
+                poster = it[EntitySong.poster],
+                releaseYear = it[EntitySongInfo.releaseYear]
+            )
+        }
+    }
+
+    override suspend fun getAllAlbums(): List<DtoAlbum> = coroutineScope {
+        kyokuDbQuery {
+            DaoAlbum.all().chunked(4000).map { list ->
+                async {
+                    val idList = list.map { it.id.value }
+
+                    kyokuDbQuery {
+                        EntityAlbum.join(
+                            otherTable = RelationEntitySongAlbum,
+                            joinType = JoinType.INNER,
+                            onColumn = EntityAlbum.id,
+                            otherColumn = RelationEntitySongAlbum.albumId,
+                            additionalConstraint = {
+                                EntityAlbum.id eq RelationEntitySongAlbum.albumId
+                            }
+                        ).join(
+                            otherTable = EntitySongInfo,
+                            joinType = JoinType.INNER,
+                            onColumn = RelationEntitySongAlbum.songId,
+                            otherColumn = EntitySongInfo.songId,
+                            additionalConstraint = {
+                                RelationEntitySongAlbum.songId eq EntitySongInfo.songId
+                            }
+                        ).join(
+                            otherTable = EntitySong,
+                            joinType = JoinType.INNER,
+                            onColumn = RelationEntitySongAlbum.songId,
+                            otherColumn = EntitySong.id,
+                            additionalConstraint = {
+                                RelationEntitySongAlbum.songId eq EntitySong.id
+                            }
+                        ).select(
+                            EntitySongInfo.releaseYear,
+                            EntitySong.poster,
+                            EntityAlbum.id
+                        ).where {
+                            EntityAlbum.id inList idList
+                        }.associate {
+                            it[EntityAlbum.id].value to Pair(it[EntitySongInfo.releaseYear], it[EntitySong.poster])
+                        }
+                    }.let {
+                        list.map { dto ->
+                            if (it.keys.contains(dto.id.value)) dto.toDtoAlbum(
+                                releaseYear = it[dto.id.value]!!.first,
+                                poster = it[dto.id.value]?.second
+                            ) else null
+                        }.mapNotNull { it }
+                    }
+                }
+            }.awaitAll().flatten()
+        }
+    }
+
+    override suspend fun getArtistAlbumRelation(): List<DtoShardPagingArtistAlbumRelation> = kyokuDbQuery {
+        EntitySong
+            .join(
+                otherTable = RelationEntitySongAlbum,
+                joinType = JoinType.INNER,
+                onColumn = RelationEntitySongAlbum.songId,
+                otherColumn = EntitySong.id,
+                additionalConstraint = {
+                    EntitySong.id eq RelationEntitySongAlbum.songId
+                }
+            ).join(
+                otherTable = RelationEntitySongArtist,
+                joinType = JoinType.INNER,
+                onColumn = RelationEntitySongArtist.songId,
+                otherColumn = EntitySong.id,
+                additionalConstraint = {
+                    EntitySong.id eq RelationEntitySongArtist.songId
+                }
+            ).join(
+                otherTable = EntityArtist,
+                joinType = JoinType.INNER,
+                onColumn = RelationEntitySongArtist.artistId,
+                otherColumn = EntityArtist.id,
+                additionalConstraint = {
+                    RelationEntitySongArtist.artistId eq EntityArtist.id
+                }
+            ).join(
+                otherTable = EntityAlbum,
+                joinType = JoinType.INNER,
+                onColumn = EntityAlbum.id,
+                otherColumn = RelationEntitySongAlbum.albumId,
+                additionalConstraint = {
+                    EntityAlbum.id eq RelationEntitySongAlbum.albumId
+                }
+            ).select(
+                EntityAlbum.id,
+                EntityArtist.id
+            ).map {
+                DtoShardPagingArtistAlbumRelation(
+                    artistId = it[EntityArtist.id].value,
+                    albumId = it[EntityAlbum.id].value,
+                )
+            }
+    }
+
+    override suspend fun getArtistSongRelation(): List<DtoShardPagingArtistSongRelation> = kyokuDbQuery {
+        RelationEntitySongArtist.selectAll().map {
+            DtoShardPagingArtistSongRelation(
+                artistId = it[RelationEntitySongArtist.artistId],
+                songId = it[RelationEntitySongArtist.songId],
+            )
+        }
+    }
+
+    override suspend fun insertShardPagingEntityAlbum(list: List<DtoAlbum>) {
+        shardSearchDbQuery {
+            ShardPagingEntityAlbum.batchInsert(
+                data = list,
+                ignore = true,
+                shouldReturnGeneratedValues = false,
+                body = {
+                    this[ShardPagingEntityAlbum.id] = it.id
+                    this[ShardPagingEntityAlbum.title] = it.name
+                    this[ShardPagingEntityAlbum.poster] = it.poster
+                    this[ShardPagingEntityAlbum.popularity] = it.popularity
+                    this[ShardPagingEntityAlbum.releaseYear] = it.releaseYear
+                }
+            )
+        }
+    }
+
+    override suspend fun insertShardPagingEntityArtist(list: List<DtoDBArtist>) {
+        shardSearchDbQuery {
+            ShardPagingEntityArtist.batchInsert(
+                data = list,
+                ignore = true,
+                shouldReturnGeneratedValues = false,
+                body = {
+                    this[ShardPagingEntityArtist.id] = it.id
+                    this[ShardPagingEntityArtist.name] = it.name
+                    this[ShardPagingEntityArtist.cover] = it.coverImage
+                    this[ShardPagingEntityArtist.popularity] = it.popularity
+                }
+            )
+        }
+    }
+
+    override suspend fun insertShardPagingEntitySong(list: List<DtoShardPagingSong>) {
+        shardSearchDbQuery {
+            ShardPagingEntitySong.batchInsert(
+                data = list,
+                ignore = true,
+                shouldReturnGeneratedValues = false,
+                body = {
+                    this[ShardPagingEntitySong.id] = it.id
+                    this[ShardPagingEntitySong.title] = it.title
+                    this[ShardPagingEntitySong.poster] = it.poster
+                    this[ShardPagingEntitySong.releaseYear] = it.releaseYear
+                }
+            )
+        }
+    }
+
+    override suspend fun insertArtistAlbumRelation(list: List<DtoShardPagingArtistAlbumRelation>) {
+        shardSearchDbQuery {
+            ShardPagingRelationEntityArtistAlbum.batchInsert(
+                data = list,
+                ignore = true,
+                shouldReturnGeneratedValues = false,
+                body = {
+                    this[ShardPagingRelationEntityArtistAlbum.albumId] = it.albumId
+                    this[ShardPagingRelationEntityArtistAlbum.artistId] = it.artistId
+                }
+            )
+        }
+    }
+
+    override suspend fun insertArtistSongRelation(list: List<DtoShardPagingArtistSongRelation>) {
+        shardSearchDbQuery {
+            ShardPagingRelationEntityArtistSong.batchInsert(
+                data = list,
+                ignore = true,
+                shouldReturnGeneratedValues = false,
+                body = {
+                    this[ShardPagingRelationEntityArtistSong.songId] = it.songId
+                    this[ShardPagingRelationEntityArtistSong.artistId] = it.artistId
+                }
+            )
+        }
+    }
+
 
     private suspend fun getCountrysMostPopularSongs(): List<DtoCountryPopularSong> {
         val songId = EntitySong.id.alias("songId")

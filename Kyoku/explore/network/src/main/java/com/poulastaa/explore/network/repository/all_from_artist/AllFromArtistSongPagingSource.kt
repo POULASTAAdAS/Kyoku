@@ -1,4 +1,4 @@
-package com.poulastaa.explore.network.repository
+package com.poulastaa.explore.network.repository.all_from_artist
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
@@ -15,7 +15,7 @@ import com.poulastaa.core.network.ReqParam
 import com.poulastaa.core.network.req
 import com.poulastaa.explore.domain.model.DtoExploreItem
 import com.poulastaa.explore.network.mapper.toDtoAllFromArtistItem
-import com.poulastaa.explore.network.model.ResponseAllFromArtistItem
+import com.poulastaa.explore.network.model.ResponseExploreItem
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -31,15 +31,14 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
         this.query = query
     }
 
-    override fun getRefreshKey(state: PagingState<Int, DtoExploreItem>): Int? =
-        state.anchorPosition
+    override fun getRefreshKey(state: PagingState<Int, DtoExploreItem>) = state.anchorPosition
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DtoExploreItem> {
         if (artistId == null) return LoadResult.Error(UnknownRemoteException)
 
         val page = params.key ?: 1
 
-        val result = client.req<Unit, List<ResponseAllFromArtistItem>>(
+        val result = client.req<Unit, List<ResponseExploreItem>>(
             route = EndPoints.Artist.GetArtistPagingSongs.route,
             method = ApiMethodType.GET,
             params = listOf(
@@ -49,7 +48,7 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
                 ),
                 ReqParam(
                     key = "size",
-                    value = 10.toString()
+                    value = params.loadSize.toString()
                 ),
                 ReqParam(
                     key = "artistId",
@@ -57,28 +56,23 @@ internal class AllFromArtistSongPagingSource @Inject constructor(
                 ),
                 ReqParam(
                     key = "query",
-                    value = query
+                    value = query.trim()
                 )
             ),
             gson = gson
         ).map { list -> list.map { it.toDtoAllFromArtistItem() } }
 
         return when (result) {
-            is Result.Error -> {
-                when (result.error) {
-                    DataError.Network.NO_INTERNET -> LoadResult.Error(NoInternetException)
-
-                    else -> LoadResult.Error(UnknownRemoteException)
-                }
+            is Result.Error -> when (result.error) {
+                DataError.Network.NO_INTERNET -> LoadResult.Error(NoInternetException)
+                else -> LoadResult.Error(UnknownRemoteException)
             }
 
-            is Result.Success -> {
-                LoadResult.Page(
-                    data = result.data,
-                    prevKey = if (page == 1) null else page.minus(1),
-                    nextKey = if (result.data.isEmpty()) null else page.plus(1)
-                )
-            }
+            is Result.Success -> LoadResult.Page(
+                data = result.data,
+                prevKey = if (page == 1) null else page.minus(1),
+                nextKey = if (result.data.isEmpty()) null else page.plus(1)
+            )
         }
     }
 }

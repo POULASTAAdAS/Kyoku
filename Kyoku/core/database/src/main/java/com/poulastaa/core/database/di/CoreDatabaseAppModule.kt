@@ -80,10 +80,4 @@ internal object CoreDatabaseAppModule {
     fun provideExploreDao(
         database: KyokuDatabase,
     ): ExploreDao = database.exploreDao
-
-    @Provides
-    @Singleton
-    fun provideLocalAllFromArtistDatasource(
-        exploreDao: ExploreDao,
-    ): LocalAllFromArtistDatasource = RoomLocalAllFromArtistDatasource(exploreDao)
 }

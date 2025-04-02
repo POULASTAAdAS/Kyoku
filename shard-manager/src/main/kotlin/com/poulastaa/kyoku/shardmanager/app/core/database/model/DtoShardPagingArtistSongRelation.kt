@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.shardmanager.app.core.database.model
 
-data class DtoShardPagingArtistAlbumRelation(
+data class DtoShardPagingArtistSongRelation(
     val artistId: Long,
-    val albumId: Long,
+    val songId: Long,
 )

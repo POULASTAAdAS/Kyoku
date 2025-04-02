@@ -58,6 +58,17 @@ services:
       - ./mysql/init_shard_suggestion.sql:/docker-entrypoint-initdb.d/init_shard_suggestion.sql
       - ./mysql-kyoku-shard-suggestion-data/data:/var/lib/mysql
 
+  mysql-paging-shard:
+    image: mysql:8.4.0
+    container_name: mysql-paging-shard
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./mysql/init_shard_paging.sql:/docker-entrypoint-initdb.d/init_shard_paging.sql
+      - ./mysql-kyoku-shard-paging-data/data:/var/lib/mysql
+
   redis-kyoku:
     image: redis/redis-stack:latest
     container_name: redis-kyoku

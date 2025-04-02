@@ -4,3 +4,4 @@ docker/mysql-kyoku-user-data/
 docker/redis-data/
 docker/mysql-kyoku-shard-genre-artist-data/
 docker/mysql-kyoku-shard-suggestion-data/
+docker/mysql-kyoku-shard-paging-data/

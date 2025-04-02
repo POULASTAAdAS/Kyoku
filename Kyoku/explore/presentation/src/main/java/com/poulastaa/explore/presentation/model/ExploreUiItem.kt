@@ -6,4 +6,5 @@ internal data class ExploreUiItem(
     val poster: String = "",
     val releaseYear: Int = 0,
     val artist: String? = null,
+    val isOptionsOpen: Boolean = false,
 )

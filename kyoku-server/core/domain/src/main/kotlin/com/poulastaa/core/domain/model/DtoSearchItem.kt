@@ -2,11 +2,12 @@ package com.poulastaa.core.domain.model
 
 import com.poulastaa.core.domain.utils.Constants
 
-data class DtoArtistPagingItem(
+data class DtoSearchItem(
     val id: Long,
     val title: String,
     private val rawPoster: String?,
     val releaseYear: Int?,
+    val artist: String? = null,
 ) {
     private val baseUrl = System.getenv("BASE_URL").dropLast(1)
 

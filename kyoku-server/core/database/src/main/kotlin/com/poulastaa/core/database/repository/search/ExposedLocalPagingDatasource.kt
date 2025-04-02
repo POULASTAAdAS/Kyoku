@@ -1,119 +1,175 @@
 package com.poulastaa.core.database.repository.search
 
-import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
-import com.poulastaa.core.database.entity.app.*
-import com.poulastaa.core.domain.model.DtoArtistPagingItem
+import com.poulastaa.core.database.SQLDbManager.shardSearchDbQuery
+import com.poulastaa.core.database.entity.shard.paging.*
+import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
+import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
-import com.poulastaa.core.domain.repository.search.LocalArtistPagingDatasource
+import com.poulastaa.core.domain.repository.search.LocalPagingDatasource
+import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
 
-internal class ExposedLocalArtistPagingDatasource : LocalArtistPagingDatasource {
-    override suspend fun getPagingSong(
+internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
+    override suspend fun getArtistPagingSong(
         page: Int,
         size: Int,
         query: String?,
         artistId: ArtistId,
-    ): List<DtoArtistPagingItem> = kyokuDbQuery {
-        RelationEntitySongArtist
-            .join(
-                otherTable = EntitySong,
-                joinType = JoinType.INNER,
-                onColumn = RelationEntitySongArtist.songId,
-                otherColumn = EntitySong.id,
-                additionalConstraint = {
-                    EntitySong.id eq RelationEntitySongArtist.songId
-                }
-            ).join(
-                otherTable = EntitySongInfo,
-                joinType = JoinType.INNER,
-                onColumn = EntitySongInfo.songId,
-                otherColumn = EntitySong.id,
-                additionalConstraint = {
-                    EntitySong.id eq EntitySongInfo.songId
-                }
-            ).select(
-                EntitySong.id,
-                EntitySong.title,
-                EntitySong.poster,
-                EntitySongInfo.releaseYear
-            ).where {
-                if (query.isNullOrBlank()) RelationEntitySongArtist.artistId eq artistId
-                else RelationEntitySongArtist.artistId eq artistId and (EntitySong.title like "%$query%")
-            }.orderBy(EntitySongInfo.releaseYear to SortOrder.DESC)
+    ): List<DtoSearchItem> = shardSearchDbQuery {
+        ShardPagingEntitySong.join(
+            otherTable = ShardPagingRelationEntityArtistSong,
+            joinType = JoinType.INNER,
+            onColumn = ShardPagingEntitySong.id,
+            otherColumn = ShardPagingRelationEntityArtistSong.songId,
+            additionalConstraint = {
+                ShardPagingEntitySong.id eq ShardPagingRelationEntityArtistSong.songId
+            }
+        ).select(
+            ShardPagingEntitySong.id,
+            ShardPagingEntitySong.title,
+            ShardPagingEntitySong.poster,
+            ShardPagingEntitySong.releaseYear
+        ).where {
+            if (query.isNullOrBlank()) ShardPagingRelationEntityArtistSong.artistId eq artistId
+            else ShardPagingRelationEntityArtistSong.artistId eq artistId and (ShardPagingEntitySong.title like "$query%")
+        }.orderBy(ShardPagingEntitySong.releaseYear to SortOrder.DESC)
             .offset(if (page == 1) 0L else (page * size).toLong())
             .limit(size)
             .map {
-                DtoArtistPagingItem(
-                    id = it[EntitySong.id].value,
-                    title = it[EntitySong.title],
-                    rawPoster = it[EntitySong.poster],
-                    releaseYear = it[EntitySongInfo.releaseYear]
+                DtoSearchItem(
+                    id = it[ShardPagingEntitySong.id].value,
+                    title = it[ShardPagingEntitySong.title],
+                    rawPoster = it[ShardPagingEntitySong.poster],
+                    releaseYear = it[ShardPagingEntitySong.releaseYear]
                 )
             }
     }
 
-
-    override suspend fun getPagingAlbum(
+    override suspend fun getArtistPagingAlbum(
         page: Int,
         size: Int,
         query: String?,
         artistId: ArtistId,
-    ): List<DtoArtistPagingItem> = kyokuDbQuery {
-        RelationEntitySongArtist
-            .join(
-                otherTable = EntitySong,
-                joinType = JoinType.INNER,
-                onColumn = RelationEntitySongArtist.songId,
-                otherColumn = EntitySong.id,
-                additionalConstraint = {
-                    EntitySong.id eq RelationEntitySongArtist.songId
-                }
-            ).join(
-                otherTable = EntitySongInfo,
-                joinType = JoinType.INNER,
-                onColumn = EntitySongInfo.songId,
-                otherColumn = EntitySong.id,
-                additionalConstraint = {
-                    EntitySong.id eq EntitySongInfo.songId
-                }
-            ).join(
-                otherTable = RelationEntitySongAlbum,
-                joinType = JoinType.INNER,
-                onColumn = RelationEntitySongAlbum.songId,
-                otherColumn = EntitySong.id,
-                additionalConstraint = {
-                    RelationEntitySongAlbum.songId eq EntitySong.id
-                }
-            ).join(
-                otherTable = EntityAlbum,
-                joinType = JoinType.INNER,
-                onColumn = EntityAlbum.id,
-                otherColumn = RelationEntitySongAlbum.albumId,
-                additionalConstraint = {
-                    EntityAlbum.id eq RelationEntitySongAlbum.albumId
-                }
-            ).select(
-                EntitySong.poster,
-                EntitySongInfo.releaseYear,
-                EntityAlbum.id,
-                EntityAlbum.name
-            ).where {
-                if (query.isNullOrBlank()) RelationEntitySongArtist.artistId eq artistId
-                else RelationEntitySongArtist.artistId eq artistId and (EntitySong.title like "%$query%")
+    ): List<DtoSearchItem> = shardSearchDbQuery {
+        ShardPagingEntityAlbum.join(
+            otherTable = ShardPagingRelationEntityArtistAlbum,
+            joinType = JoinType.INNER,
+            onColumn = ShardPagingEntityAlbum.id,
+            otherColumn = ShardPagingRelationEntityArtistAlbum.albumId,
+            additionalConstraint = {
+                ShardPagingEntityAlbum.id eq ShardPagingRelationEntityArtistAlbum.albumId
             }
-            .groupBy(EntityAlbum.id, EntitySong.poster, EntitySongInfo.releaseYear, EntityAlbum.name)
-            .orderBy(EntitySongInfo.releaseYear to SortOrder.DESC)
+        ).select(
+            ShardPagingEntityAlbum.id,
+            ShardPagingEntityAlbum.title,
+            ShardPagingEntityAlbum.poster,
+            ShardPagingEntityAlbum.releaseYear
+        ).where {
+            if (query.isNullOrBlank()) ShardPagingRelationEntityArtistAlbum.artistId eq artistId
+            else ShardPagingRelationEntityArtistAlbum.artistId eq artistId and (ShardPagingEntityAlbum.title like "$query%")
+        }.orderBy(ShardPagingEntityAlbum.releaseYear to SortOrder.DESC)
             .offset(if (page == 1) 0L else (page * size).toLong())
             .limit(size)
             .map {
-                DtoArtistPagingItem(
-                    id = it[EntityAlbum.id].value,
-                    title = it[EntityAlbum.name],
-                    rawPoster = it[EntitySong.poster],
-                    releaseYear = it[EntitySongInfo.releaseYear]
+                DtoSearchItem(
+                    id = it[ShardPagingEntityAlbum.id].value,
+                    title = it[ShardPagingEntityAlbum.title],
+                    rawPoster = it[ShardPagingEntityAlbum.poster],
+                    releaseYear = it[ShardPagingEntityAlbum.releaseYear]
                 )
             }
+    }
+
+    override suspend fun getPagingAlbum(
+        query: String?,
+        page: Int,
+        size: Int,
+        filterType: DtoExploreAlbumFilterType,
+    ): List<DtoSearchItem> = coroutineScope {
+        val q = shardSearchDbQuery {
+            ShardPagingEntityAlbum.select(
+                ShardPagingEntityAlbum.id,
+                ShardPagingEntityAlbum.title,
+                ShardPagingEntityAlbum.poster,
+                ShardPagingEntityAlbum.releaseYear,
+                ShardPagingEntityAlbum.popularity
+            )
+        }
+
+        when (filterType) {
+            DtoExploreAlbumFilterType.MOST_POPULAR -> shardSearchDbQuery {
+                q.let {
+                    if (query != null && query.trim() != "" && query.isNotEmpty()) it.where {
+                        ShardPagingEntityAlbum.title like "${query}%"
+                    } else it
+                }.orderBy(ShardPagingEntityAlbum.popularity to SortOrder.DESC)
+                    .offset(if (page == 1) 0L else (page * size).toLong())
+                    .limit(size)
+                    .map {
+                        DtoSearchItem(
+                            id = it[ShardPagingEntityAlbum.id].value,
+                            title = it[ShardPagingEntityAlbum.title],
+                            rawPoster = it[ShardPagingEntityAlbum.poster],
+                            releaseYear = it[ShardPagingEntityAlbum.releaseYear]
+                        )
+                    }
+            }
+
+            DtoExploreAlbumFilterType.ARTIST -> shardSearchDbQuery {
+                ShardPagingRelationEntityArtistAlbum.join(
+                    otherTable = ShardPagingEntityArtist,
+                    joinType = JoinType.INNER,
+                    onColumn = ShardPagingRelationEntityArtistAlbum.artistId,
+                    otherColumn = ShardPagingEntityArtist.id,
+                    additionalConstraint = {
+                        ShardPagingRelationEntityArtistAlbum.artistId eq ShardPagingEntityArtist.id
+                    }
+                ).join(
+                    otherTable = ShardPagingEntityAlbum,
+                    joinType = JoinType.INNER,
+                    onColumn = ShardPagingRelationEntityArtistAlbum.albumId,
+                    otherColumn = ShardPagingEntityAlbum.id,
+                    additionalConstraint = {
+                        ShardPagingRelationEntityArtistAlbum.albumId eq ShardPagingEntityAlbum.id
+                    }
+                ).select(
+                    ShardPagingEntityAlbum.id,
+                    ShardPagingEntityAlbum.title,
+                    ShardPagingEntityAlbum.poster,
+                    ShardPagingEntityAlbum.releaseYear,
+                    ShardPagingEntityArtist.name,
+                ).orderBy(ShardPagingEntityArtist.name)
+                    .offset(if (page == 1) 0L else (page * size).toLong())
+                    .limit(size)
+                    .map {
+                        DtoSearchItem(
+                            id = it[ShardPagingEntityAlbum.id].value,
+                            title = it[ShardPagingEntityAlbum.title],
+                            rawPoster = it[ShardPagingEntityAlbum.poster],
+                            releaseYear = it[ShardPagingEntityAlbum.releaseYear]
+                        )
+                    }
+            }
+
+            DtoExploreAlbumFilterType.RELEASE_YEAR -> shardSearchDbQuery {
+                q.let {
+                    if (query != null && query.trim() != "" && query.isNotEmpty()) it.where {
+                        ShardPagingEntityAlbum.title like "${query}%"
+                    } else it
+                }.orderBy(ShardPagingEntityAlbum.releaseYear to SortOrder.DESC)
+                    .offset(if (page == 1) 0L else (page * size).toLong())
+                    .limit(size)
+                    .map {
+                        DtoSearchItem(
+                            id = it[ShardPagingEntityAlbum.id].value,
+                            title = it[ShardPagingEntityAlbum.title],
+                            rawPoster = it[ShardPagingEntityAlbum.poster],
+                            releaseYear = it[ShardPagingEntityAlbum.releaseYear]
+                        )
+                    }
+            }
+        }
     }
 }

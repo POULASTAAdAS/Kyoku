@@ -1,9 +1,11 @@
 package com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.paging
 
-import org.jetbrains.exposed.dao.id.LongIdTable
+import org.jetbrains.exposed.sql.ReferenceOption
+import org.jetbrains.exposed.sql.Table
 
-object ShardPagingEntitySong : LongIdTable(name = "Song") {
-    val title = varchar("title", 150)
-    val poster = varchar("poster", 200).nullable().default(null)
-    val releaseYear = integer("releaseYear")
+object ShardPagingRelationEntityArtistSong : Table(name = "ArtistSong") {
+    val songId = long("songId").references(ShardPagingEntitySong.id, onDelete = ReferenceOption.CASCADE)
+    val artistId = long("artistId").references(ShardPagingEntityArtist.id, onDelete = ReferenceOption.CASCADE)
+
+    override val primaryKey = PrimaryKey(songId, artistId)
 }

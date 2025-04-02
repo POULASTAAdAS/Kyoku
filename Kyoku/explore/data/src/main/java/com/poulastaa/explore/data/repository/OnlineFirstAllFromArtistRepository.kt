@@ -6,9 +6,9 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
-import com.poulastaa.explore.domain.model.DtoAllFromArtistItem
-import com.poulastaa.explore.domain.repository.AllFromArtistRepository
-import com.poulastaa.explore.domain.repository.RemoteAllFromArtistDatasource
+import com.poulastaa.explore.domain.model.DtoExploreItem
+import com.poulastaa.explore.domain.repository.all_from_artist.AllFromArtistRepository
+import com.poulastaa.explore.domain.repository.all_from_artist.RemoteAllFromArtistDatasource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -26,10 +26,10 @@ internal class OnlineFirstAllFromArtistRepository @Inject constructor(
     override fun getSongs(
         artistId: ArtistId,
         query: String,
-    ): Flow<PagingData<DtoAllFromArtistItem>> = remote.getSongs(artistId, query)
+    ): Flow<PagingData<DtoExploreItem>> = remote.getSongs(artistId, query)
 
     override fun getAlbums(
         artistId: ArtistId,
         query: String,
-    ): Flow<PagingData<DtoAllFromArtistItem>> = remote.getAlbums(artistId, query)
+    ): Flow<PagingData<DtoExploreItem>> = remote.getAlbums(artistId, query)
 }

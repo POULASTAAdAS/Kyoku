@@ -7,7 +7,7 @@ import com.poulastaa.core.presentation.designsystem.model.TextHolder
 import com.poulastaa.core.presentation.designsystem.model.UiPrevAlbum
 
 internal data class ExploreAlbumUiState(
-    val loadingType: LoadingType = LoadingType.Content,
+    val loadingType: LoadingType = LoadingType.Loading,
     val album: UiPrevAlbum = UiPrevAlbum(),
     val filterType: SEARCH_ALBUM_FILTER_TYPE = SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR,
     val isSearchOpen: Boolean = false,

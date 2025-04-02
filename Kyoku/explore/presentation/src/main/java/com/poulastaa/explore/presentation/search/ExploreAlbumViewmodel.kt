@@ -3,14 +3,21 @@ package com.poulastaa.explore.presentation.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
+import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.explore.domain.repository.album.ExploreAlbumRepository
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.album.ExploreAlbumUiState
+import com.poulastaa.explore.presentation.search.album.toDtoExploreAlbumFilterType
+import com.poulastaa.explore.presentation.search.all_from_artist.toExploreUiItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -19,7 +26,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ExploreAlbumViewmodel @Inject constructor() : ViewModel() {
+internal class ExploreAlbumViewmodel @Inject constructor(
+    private val repo: ExploreAlbumRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(ExploreAlbumUiState())
     val state = _state.onStart {
         albumJob?.cancel()
@@ -43,7 +52,9 @@ internal class ExploreAlbumViewmodel @Inject constructor() : ViewModel() {
     fun onAction(action: ExploreAlbumUiAction) {
         when (action) {
             is ExploreAlbumUiAction.OnAlbumClick -> {
-
+                viewModelScope.launch {
+                    _uiEvent.send(ExploreAlbumUiEvent.NavigateToAlbum(action.albumId))
+                }
             }
 
             is ExploreAlbumUiAction.OnAlbumThreeDtoClick -> {
@@ -58,6 +69,9 @@ internal class ExploreAlbumViewmodel @Inject constructor() : ViewModel() {
                         filterType = action.type
                     )
                 }
+
+                albumJob?.cancel()
+                albumJob = getAlbum()
             }
 
             is ExploreAlbumUiAction.OnSearchQueryChange -> {
@@ -86,6 +100,19 @@ internal class ExploreAlbumViewmodel @Inject constructor() : ViewModel() {
             PagingData.empty()
         }
 
+        if (_state.value.query.value.isNotBlank()) repo.getAlbum(
+            _state.value.query.value.trim(),
+            _state.value.filterType.toDtoExploreAlbumFilterType()
+        ).cachedIn(viewModelScope).collectLatest { list ->
+            _state.update {
+                it.copy(
+                    loadingType = LoadingType.Content
+                )
+            }
 
+            _album.update {
+                list.map { it.toExploreUiItem() }
+            }
+        }
     }
 }

@@ -1,20 +1,28 @@
 package com.poulastaa.search.repository
 
-import com.poulastaa.core.domain.model.DtoArtistPagingItem
+import com.poulastaa.core.domain.model.DtoSearchItem
+import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
 import com.poulastaa.core.domain.repository.ArtistId
 
-interface ArtistPagingRepository {
-    suspend fun getPagingSong(
+interface PagingRepository {
+    suspend fun getArtistPagingSong(
         page: Int,
         size: Int,
         query: String?,
         artistId: ArtistId,
-    ): List<DtoArtistPagingItem>
+    ): List<DtoSearchItem>
+
+    suspend fun getArtistPagingAlbum(
+        page: Int,
+        size: Int,
+        query: String?,
+        artistId: ArtistId,
+    ): List<DtoSearchItem>
 
     suspend fun getPagingAlbum(
+        query: String?,
         page: Int,
         size: Int,
-        query: String?,
-        artistId: ArtistId,
-    ): List<DtoArtistPagingItem>
+        filterType: DtoExploreAlbumFilterType,
+    ): List<DtoSearchItem>
 }

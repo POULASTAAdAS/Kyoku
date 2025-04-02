@@ -3,8 +3,9 @@ package com.poulastaa.kyoku.shardmanager.app.plugins
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.poulastaa.kyoku.shardmanager.app.core.database.model.DatabasePayload
-import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createGenreArtistShardTables
-import com.poulastaa.kyoku.shardmanager.app.core.database.utils.createSuggestionShardTables
+import com.poulastaa.kyoku.shardmanager.app.core.database.utils.populateGenreArtistShardTables
+import com.poulastaa.kyoku.shardmanager.app.core.database.utils.populatePagingShardTables
+import com.poulastaa.kyoku.shardmanager.app.core.database.utils.populateSuggestionShardTables
 import com.poulastaa.kyoku.shardmanager.app.core.domain.repository.LocalShardUpdateDatasource
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -18,6 +19,7 @@ private var IS_INITIALIZED = false
 private lateinit var KYOKU_DB: Database
 private lateinit var GENRE_ARTIST_SHARD_DB: Database
 private lateinit var POPULAR_SONG_SHARD_DB: Database
+private lateinit var PAGING_SHARD_DB: Database
 
 suspend fun <T> kyokuDbQuery(block: suspend () -> T): T =
     newSuspendedTransaction(context = Dispatchers.IO, db = KYOKU_DB) {
@@ -31,6 +33,12 @@ suspend fun <T> shardGenreArtistDbQuery(block: suspend () -> T): T =
 
 suspend fun <T> shardPopularDbQuery(block: suspend () -> T): T =
     newSuspendedTransaction(context = Dispatchers.IO, db = POPULAR_SONG_SHARD_DB) {
+        block()
+    }
+
+
+suspend fun <T> shardSearchDbQuery(block: suspend () -> T): T =
+    newSuspendedTransaction(context = Dispatchers.IO, db = PAGING_SHARD_DB) {
         block()
     }
 
@@ -62,8 +70,17 @@ fun configureDatabase(db: LocalShardUpdateDatasource) {
         )
     )
 
-    createGenreArtistShardTables(db)
-    createSuggestionShardTables(db)
+    PAGING_SHARD_DB = Database.Companion.connect(
+        provideDatasource(
+            jdbcUrl = payload.pagingSearchUrl,
+            driverClass = payload.driverClassName,
+            maximumPoolSize = 30
+        )
+    )
+
+    populateGenreArtistShardTables(db)
+    populateSuggestionShardTables(db)
+    populatePagingShardTables(db)
 }
 
 private fun provideDatasource(
@@ -94,5 +111,6 @@ private fun getDatabasePayload(): DatabasePayload {
         kyokuUrl = storage.get("kyokuJdbcURL").asString,
         shardGenreArtistUrl = storage.get("genreArtistShard").asString,
         shardPopularSongUrl = storage.get("shardPopularSongUrl").asString,
+        pagingSearchUrl = storage.get("pagingSearchUrl").asString,
     )
 }

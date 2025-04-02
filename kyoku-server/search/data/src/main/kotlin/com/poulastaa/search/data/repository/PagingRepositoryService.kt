@@ -1,24 +1,32 @@
 package com.poulastaa.search.data.repository
 
-import com.poulastaa.core.domain.model.DtoArtistPagingItem
+import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
+import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
-import com.poulastaa.core.domain.repository.search.LocalArtistPagingDatasource
-import com.poulastaa.search.repository.ArtistPagingRepository
+import com.poulastaa.core.domain.repository.search.LocalPagingDatasource
+import com.poulastaa.search.repository.PagingRepository
 
-internal class ArtistPagingRepositoryService(
-    private val db: LocalArtistPagingDatasource,
-) : ArtistPagingRepository {
-    override suspend fun getPagingSong(
+internal class PagingRepositoryService(
+    private val db: LocalPagingDatasource,
+) : PagingRepository {
+    override suspend fun getArtistPagingSong(
         page: Int,
         size: Int,
         query: String?,
         artistId: ArtistId,
-    ): List<DtoArtistPagingItem> = db.getPagingSong(page, size, query, artistId)
+    ): List<DtoSearchItem> = db.getArtistPagingSong(page, size, query, artistId)
+
+    override suspend fun getArtistPagingAlbum(
+        page: Int,
+        size: Int,
+        query: String?,
+        artistId: ArtistId,
+    ): List<DtoSearchItem> = db.getArtistPagingAlbum(page, size, query, artistId)
 
     override suspend fun getPagingAlbum(
+        query: String?,
         page: Int,
         size: Int,
-        query: String?,
-        artistId: ArtistId,
-    ): List<DtoArtistPagingItem> = db.getPagingAlbum(page, size, query, artistId)
+        filterType: DtoExploreAlbumFilterType,
+    ): List<DtoSearchItem> = db.getPagingAlbum(query, page, size, filterType)
 }

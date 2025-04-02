@@ -14,6 +14,7 @@ object SQLDbManager {
     private lateinit var KYOKU_DB: Database
     private lateinit var GENRE_ARTIST_SHARD_DB: Database
     private lateinit var POPULAR_SONG_SHARD_DB: Database
+    private lateinit var PAGING_SHARD_DB: Database
 
     private var IS_INITIALIZED = false
 
@@ -41,6 +42,12 @@ object SQLDbManager {
         block()
     }
 
+    suspend fun <T> shardSearchDbQuery(
+        block: suspend () -> T,
+    ): T = newSuspendedTransaction(context = Dispatchers.IO, db = PAGING_SHARD_DB) {
+        block()
+    }
+
     @Synchronized
     fun initializeDatabases(
         driverClass: String,
@@ -48,6 +55,7 @@ object SQLDbManager {
         kyokuDbUrl: String,
         genreArtistShardDbUrl: String,
         popularShardDbUrl: String,
+        pagingSearchDbUrl: String,
     ) {
         require(driverClass.isNotBlank()) { "Driver class cannot be blank" }
 
@@ -55,6 +63,7 @@ object SQLDbManager {
         require(kyokuDbUrl.isNotBlank()) { "KYOKU JDBC URL cannot be blank" }
         require(genreArtistShardDbUrl.isNotBlank()) { "ARTIST SHARD JDBC URL cannot be blank" }
         require(popularShardDbUrl.isNotBlank()) { "POPULAR SHARD JDBC URL cannot be blank" }
+        require(pagingSearchDbUrl.isNotBlank()) { "PAGING SHARD JDBC URL cannot be blank" }
 
         if (IS_INITIALIZED) throw IllegalStateException("Databases are already initialized!")
 
@@ -90,6 +99,14 @@ object SQLDbManager {
             )
         )
 
+        PAGING_SHARD_DB = Database.Companion.connect(
+            provideDatasource(
+                jdbcUrl = pagingSearchDbUrl,
+                driverClass = driverClass,
+                maximumPoolSize = 10
+            )
+        )
+
         transaction(USER_DB) {
             addLogger(StdOutSqlLogger)
         }
@@ -100,6 +117,9 @@ object SQLDbManager {
             addLogger(StdOutSqlLogger)
         }
         transaction(POPULAR_SONG_SHARD_DB) {
+            addLogger(StdOutSqlLogger)
+        }
+        transaction(PAGING_SHARD_DB) {
             addLogger(StdOutSqlLogger)
         }
 

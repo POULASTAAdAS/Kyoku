@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.shardmanager.app.core.database.entity.shard.paging
+package com.poulastaa.core.database.entity.shard.paging
 
 import org.jetbrains.exposed.dao.id.LongIdTable
 

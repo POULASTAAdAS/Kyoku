@@ -1,4 +1,4 @@
-package com.poulastaa.explore.network.repository
+package com.poulastaa.explore.network.repository.all_from_artist
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

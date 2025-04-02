@@ -1,10 +1,13 @@
 package com.poulastaa.explore.network.di
 
 import com.google.gson.Gson
-import com.poulastaa.explore.domain.repository.RemoteAllFromArtistDatasource
-import com.poulastaa.explore.network.repository.AllFromArtistAlbumPagingSource
-import com.poulastaa.explore.network.repository.AllFromArtistSongPagingSource
-import com.poulastaa.explore.network.repository.OkHttpAllFromArtistDatasource
+import com.poulastaa.explore.domain.repository.album.RemoteExploreAlbumDatasource
+import com.poulastaa.explore.domain.repository.all_from_artist.RemoteAllFromArtistDatasource
+import com.poulastaa.explore.network.repository.all_from_artist.AllFromArtistAlbumPagingSource
+import com.poulastaa.explore.network.repository.all_from_artist.AllFromArtistSongPagingSource
+import com.poulastaa.explore.network.repository.all_from_artist.OkHttpAllFromArtistDatasource
+import com.poulastaa.explore.network.repository.search.ExploreAlbumPagingSource
+import com.poulastaa.explore.network.repository.search.OkHttpExploreAlbumDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,4 +40,19 @@ internal object ExploreViewmodelModule {
         song: AllFromArtistSongPagingSource,
         album: AllFromArtistAlbumPagingSource,
     ): RemoteAllFromArtistDatasource = OkHttpAllFromArtistDatasource(client, gson, song, album)
+
+    @Provides
+    @ViewModelScoped
+    fun provideExploreAlbumPagingSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): ExploreAlbumPagingSource = ExploreAlbumPagingSource(client, gson)
+
+    @Provides
+    @ViewModelScoped
+    fun provideRemoteExploreAlbumDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        album: ExploreAlbumPagingSource,
+    ): RemoteExploreAlbumDatasource = OkHttpExploreAlbumDatasource(client, gson, album)
 }
