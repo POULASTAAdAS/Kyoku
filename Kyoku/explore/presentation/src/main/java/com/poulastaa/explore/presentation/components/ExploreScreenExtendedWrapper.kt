@@ -41,7 +41,7 @@ fun ExploreScreenExtendedWrapper(
     onToggleSearch: () -> Unit,
     loadingContent: @Composable (PaddingValues) -> Unit,
     errorContent: @Composable (PaddingValues, LoadingType.Error) -> Unit,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -65,7 +65,7 @@ fun ExploreScreenExtendedWrapper(
         when (loadingType) {
             LoadingType.Loading -> loadingContent(it)
             is LoadingType.Error -> errorContent(it, loadingType)
-            LoadingType.Content -> Column(
+            LoadingType.Content ->  content(it)/* Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
@@ -81,8 +81,8 @@ fun ExploreScreenExtendedWrapper(
 
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                content()
             }
+*/
         }
     }
 }

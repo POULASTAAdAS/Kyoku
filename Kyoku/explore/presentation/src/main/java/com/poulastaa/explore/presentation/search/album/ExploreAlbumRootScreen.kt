@@ -74,7 +74,14 @@ fun ExploreAlbumRootScreen(
             )
         },
         expandedContent = {
-
+            ExploreAlbumExpandedScreen(
+                modifier = Modifier.fillMaxWidth(.7f),
+                scroll = scroll,
+                state = state,
+                album = album,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

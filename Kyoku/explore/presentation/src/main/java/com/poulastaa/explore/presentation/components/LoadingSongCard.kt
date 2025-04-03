@@ -21,12 +21,10 @@ import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun LoadingSongCard() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-    ) {
+internal fun LoadingSongCard(
+    modifier: Modifier,
+) {
+    Row(modifier = modifier) {
         Card(
             modifier = Modifier.aspectRatio(1f),
             shape = MaterialTheme.shapes.extraSmall,

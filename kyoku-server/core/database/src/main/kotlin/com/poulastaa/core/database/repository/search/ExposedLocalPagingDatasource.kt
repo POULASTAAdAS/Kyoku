@@ -118,7 +118,7 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
             }
 
             DtoExploreAlbumFilterType.ARTIST -> shardSearchDbQuery {
-                ShardPagingRelationEntityArtistAlbum.join(
+                val qu = ShardPagingRelationEntityArtistAlbum.join(
                     otherTable = ShardPagingEntityArtist,
                     joinType = JoinType.INNER,
                     onColumn = ShardPagingRelationEntityArtistAlbum.artistId,
@@ -140,7 +140,13 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                     ShardPagingEntityAlbum.poster,
                     ShardPagingEntityAlbum.releaseYear,
                     ShardPagingEntityArtist.name,
-                ).orderBy(ShardPagingEntityArtist.name)
+                )
+
+                qu.let {
+                    if (query != null && query.trim() != "" && query.isNotEmpty()) it.where {
+                        ShardPagingEntityAlbum.title like "${query}%"
+                    } else it
+                }.orderBy(ShardPagingEntityArtist.name)
                     .offset(if (page == 1) 0L else (page * size).toLong())
                     .limit(size)
                     .map {
@@ -148,7 +154,8 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                             id = it[ShardPagingEntityAlbum.id].value,
                             title = it[ShardPagingEntityAlbum.title],
                             rawPoster = it[ShardPagingEntityAlbum.poster],
-                            releaseYear = it[ShardPagingEntityAlbum.releaseYear]
+                            releaseYear = it[ShardPagingEntityAlbum.releaseYear],
+                            artist = it[ShardPagingEntityArtist.name]
                         )
                     }
             }

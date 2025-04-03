@@ -4,11 +4,9 @@ import androidx.annotation.DrawableRes
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.TextHolder
-import com.poulastaa.core.presentation.designsystem.model.UiPrevAlbum
 
 internal data class ExploreAlbumUiState(
     val loadingType: LoadingType = LoadingType.Loading,
-    val album: UiPrevAlbum = UiPrevAlbum(),
     val filterType: SEARCH_ALBUM_FILTER_TYPE = SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR,
     val isSearchOpen: Boolean = false,
     val query: TextHolder = TextHolder(),

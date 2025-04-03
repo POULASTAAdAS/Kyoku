@@ -100,8 +100,8 @@ internal class ExploreAlbumViewmodel @Inject constructor(
             PagingData.empty()
         }
 
-        if (_state.value.query.value.isNotBlank()) repo.getAlbum(
-            _state.value.query.value.trim(),
+        repo.getAlbum(
+            _state.value.query.value,
             _state.value.filterType.toDtoExploreAlbumFilterType()
         ).cachedIn(viewModelScope).collectLatest { list ->
             _state.update {

@@ -1,8 +1,6 @@
 package com.poulastaa.explore.presentation.search.album
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,9 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -33,12 +29,12 @@ import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
-import com.poulastaa.core.presentation.ui.components.AppFilterChip
 import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
 import com.poulastaa.explore.presentation.components.ExploreScreenWrapper
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumCard
+import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumFilterTypes
 import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +52,7 @@ internal fun ExploreAlbumCompactScreen(
         scroll = scroll,
         loadingType = state.loadingType,
         isSearchOpen = state.isSearchOpen,
-        title = state.album.name,
+        title = stringResource(R.string.album),
         query = state.query.value,
         onQueryChange = {
             onAction(ExploreAlbumUiAction.OnSearchQueryChange(it))
@@ -94,49 +90,7 @@ internal fun ExploreAlbumCompactScreen(
         },
         content = {
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
-                ) {
-                    AppFilterChip(
-                        title = SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.value,
-                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.icon),
-                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR,
-                        onClick = {
-                            onAction(
-                                ExploreAlbumUiAction.OnFilterTypeChange(
-                                    SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR
-                                )
-                            )
-                        }
-                    )
-
-                    AppFilterChip(
-                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.ARTIST.icon),
-                        title = SEARCH_ALBUM_FILTER_TYPE.ARTIST.value,
-                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.ARTIST,
-                        onClick = {
-                            onAction(
-                                ExploreAlbumUiAction.OnFilterTypeChange(
-                                    SEARCH_ALBUM_FILTER_TYPE.ARTIST
-                                )
-                            )
-                        }
-                    )
-
-                    AppFilterChip(
-                        title = SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.value,
-                        icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.icon),
-                        isSelected = state.filterType == SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR,
-                        onClick = {
-                            onAction(
-                                ExploreAlbumUiAction.OnFilterTypeChange(
-                                    SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR
-                                )
-                            )
-                        }
-                    )
-                }
+                ExploreAlbumFilterTypes(state.filterType, onAction)
             }
 
             item {

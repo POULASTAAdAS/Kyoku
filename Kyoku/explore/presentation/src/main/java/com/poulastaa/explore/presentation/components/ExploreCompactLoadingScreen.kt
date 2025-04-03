@@ -111,7 +111,11 @@ internal fun ExploreCompactLoadingScreen(
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
             repeat(6) {
-                LoadingSongCard()
+                LoadingSongCard(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small2))
             }

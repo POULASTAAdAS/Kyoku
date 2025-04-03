@@ -2,7 +2,6 @@ package com.poulastaa.explore.presentation.search.all_from_artist
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,9 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -45,12 +46,13 @@ import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorExpandedScreen
+import com.poulastaa.explore.presentation.components.DummySearch
 import com.poulastaa.explore.presentation.components.ExploreExpandedLoadingScreen
 import com.poulastaa.explore.presentation.components.ExploreScreenExtendedWrapper
 import com.poulastaa.explore.presentation.components.LoadingSongCard
+import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.all_from_artist.components.AllFromArtistAlbumCard
 import com.poulastaa.explore.presentation.search.all_from_artist.components.AllFromArtistSongCard
-import com.poulastaa.explore.presentation.model.ExploreUiItem
 import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +70,7 @@ internal fun AllFromArtistExpandedScreen(
         modifier = modifier,
         scroll = scroll,
         loadingType = state.loadingType,
-        isSearchOpen = isSystemInDarkTheme(),
+        isSearchOpen = state.isSearchOpen,
         title = state.artist.name,
         query = state.query.value,
         onQueryChange = {
@@ -79,7 +81,6 @@ internal fun AllFromArtistExpandedScreen(
         },
         loadingContent = {
             ExploreExpandedLoadingScreen(it, navigateBack) {
-
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
                 ) {
@@ -92,7 +93,11 @@ internal fun AllFromArtistExpandedScreen(
                         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
                         repeat(10) {
-                            LoadingSongCard()
+                            LoadingSongCard(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                            )
 
                             Spacer(Modifier.height(MaterialTheme.dimens.small2))
                         }
@@ -118,7 +123,11 @@ internal fun AllFromArtistExpandedScreen(
                         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
                         repeat(10) {
-                            LoadingSongCard()
+                            LoadingSongCard(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                            )
 
                             Spacer(Modifier.height(MaterialTheme.dimens.small2))
                         }
@@ -137,71 +146,90 @@ internal fun AllFromArtistExpandedScreen(
             )
         },
         content = {
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .padding(it)
                     .padding(horizontal = MaterialTheme.dimens.medium1),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LazyColumn(
+                DummySearch(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(.5f)
+                        .fillMaxWidth(.7f)
+                        .height(38.dp),
+                    isSearchOpen = state.isSearchOpen,
+                    onToggleSearch = { onAction(AllFromArtistUiAction.OnToggleSearch) },
+                )
+
+                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.album),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(.5f)
+                            .nestedScroll(scroll.nestedScrollConnection)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.album),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
 
-                    items(album.itemCount) { index ->
-                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                        items(album.itemCount) { index ->
+                            Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
-                        album[index]?.let { album ->
-                            Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                            album[index]?.let { album ->
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
 
-                            AllFromArtistAlbumCard(album) {
-                                onAction(AllFromArtistUiAction.OnAlbumClick(it))
+                                AllFromArtistAlbumCard(album) {
+                                    onAction(AllFromArtistUiAction.OnAlbumClick(it))
+                                }
                             }
                         }
                     }
-                }
 
-                Spacer(Modifier.width(MaterialTheme.dimens.small1))
-                Spacer(
-                    Modifier
-                        .fillMaxHeight()
-                        .width(MaterialTheme.dimens.small1)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .padding(bottom = MaterialTheme.dimens.medium1)
-                )
-                Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+                    Spacer(Modifier.width(MaterialTheme.dimens.small1))
+                    Spacer(
+                        Modifier
+                            .fillMaxHeight()
+                            .width(MaterialTheme.dimens.small1)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(bottom = MaterialTheme.dimens.medium1)
+                    )
+                    Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    item {
-                        Text(
-                            text = stringResource(R.string.songs),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .nestedScroll(scroll.nestedScrollConnection)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.songs),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
 
-                    items(song.itemCount) { index ->
-                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                        items(song.itemCount) { index ->
+                            Spacer(Modifier.height(MaterialTheme.dimens.small3))
 
-                        song[index]?.let { song ->
-                            Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                            song[index]?.let { song ->
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
 
-                            AllFromArtistSongCard(song) {
-                                onAction(AllFromArtistUiAction.OnSongClick(it))
+                                AllFromArtistSongCard(song) {
+                                    onAction(AllFromArtistUiAction.OnSongClick(it))
+                                }
                             }
                         }
                     }
