@@ -35,7 +35,7 @@ import com.poulastaa.core.presentation.designsystem.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.designsystem.ui.FilterAlbumIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.explore.presentation.model.ExploreUiItem
-import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
+import com.poulastaa.explore.presentation.search.album.ExploreAlbumUiAction
 import com.poulastaa.explore.presentation.search.album.SEARCH_ALBUM_FILTER_TYPE
 
 @Composable

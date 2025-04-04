@@ -1,7 +1,6 @@
-package com.poulastaa.explore.presentation.search
+package com.poulastaa.explore.presentation.search.album
 
 import com.poulastaa.core.domain.model.AlbumId
-import com.poulastaa.explore.presentation.search.album.SEARCH_ALBUM_FILTER_TYPE
 
 internal sealed interface ExploreAlbumUiAction {
     data object OnSearchToggle : ExploreAlbumUiAction

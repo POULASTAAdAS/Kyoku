@@ -17,8 +17,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
-import com.poulastaa.explore.presentation.search.ExploreAlbumUiEvent
-import com.poulastaa.explore.presentation.search.ExploreAlbumViewmodel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable

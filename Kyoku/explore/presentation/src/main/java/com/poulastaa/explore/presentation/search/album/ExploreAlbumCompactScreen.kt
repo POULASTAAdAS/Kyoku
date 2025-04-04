@@ -32,7 +32,6 @@ import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
 import com.poulastaa.explore.presentation.components.ExploreScreenWrapper
 import com.poulastaa.explore.presentation.model.ExploreUiItem
-import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumCard
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumFilterTypes
 import kotlinx.coroutines.flow.flowOf

@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppFilterChip
-import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
+import com.poulastaa.explore.presentation.search.album.ExploreAlbumUiAction
 import com.poulastaa.explore.presentation.search.album.SEARCH_ALBUM_FILTER_TYPE
 
 @Composable

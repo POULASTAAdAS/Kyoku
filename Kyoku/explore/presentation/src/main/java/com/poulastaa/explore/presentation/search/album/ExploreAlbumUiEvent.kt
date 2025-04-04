@@ -1,4 +1,4 @@
-package com.poulastaa.explore.presentation.search
+package com.poulastaa.explore.presentation.search.album
 
 import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.presentation.designsystem.UiText

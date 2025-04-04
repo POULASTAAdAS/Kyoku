@@ -51,7 +51,6 @@ import com.poulastaa.explore.presentation.components.ExploreLoadingTopBar
 import com.poulastaa.explore.presentation.components.ExploreScreenExtendedWrapper
 import com.poulastaa.explore.presentation.components.LoadingSongCard
 import com.poulastaa.explore.presentation.model.ExploreUiItem
-import com.poulastaa.explore.presentation.search.ExploreAlbumUiAction
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumCard
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumFilterTypes
 import kotlinx.coroutines.flow.flowOf
