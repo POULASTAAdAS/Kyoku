@@ -29,7 +29,7 @@ internal class ExploreArtistViewmodel @Inject constructor() : ViewModel() {
     )
 
     private val _uiEvent = Channel<ExploreArtistUiEvent>()
-    private val uiEvent = _uiEvent.receiveAsFlow()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     private val _artist: MutableStateFlow<PagingData<ExploreUiItem>> =
         MutableStateFlow(PagingData.Companion.empty())
@@ -70,6 +70,10 @@ internal class ExploreArtistViewmodel @Inject constructor() : ViewModel() {
 
                 getArtistJob?.cancel()
                 getArtistJob = getArtist()
+            }
+
+            is ExploreArtistUiAction.OnArtistClick -> viewModelScope.launch {
+                _uiEvent.send(ExploreArtistUiEvent.NavigateToArtist(action.artistId))
             }
         }
     }

@@ -67,5 +67,8 @@ sealed interface Screens {
 
         @Serializable
         data object ExploreAlbum : Screens
+
+        @Serializable
+        data object ExploreArtist : Screens
     }
 }

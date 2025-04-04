@@ -97,6 +97,10 @@ internal fun ExploreAlbumExpandedScreen(
         content = {
             LazyVerticalGrid(
                 modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
                     .animateContentSize(tween(400))
                     .padding(it)
                     .nestedScroll(scroll.nestedScrollConnection),

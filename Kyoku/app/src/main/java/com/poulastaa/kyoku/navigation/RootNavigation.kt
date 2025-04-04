@@ -26,6 +26,7 @@ import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
 import com.poulastaa.explore.presentation.search.album.ExploreAlbumRootScreen
 import com.poulastaa.explore.presentation.search.all_from_artist.AllFromArtistRootScreen
+import com.poulastaa.explore.presentation.search.artist.ExploreArtistRootScreen
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
@@ -448,6 +449,17 @@ private fun NavGraphBuilder.exploreGraph(nav: NavHostController) {
                         )
                     )
                 }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
+    }
+
+    composable<Screens.Explore.ExploreArtist> {
+        ExploreArtistRootScreen(
+            navigateToArtist = { artistId ->
+                nav.navigate(Screens.View.Artist(artistId))
             },
             navigateBack = {
                 nav.popBackStack()
