@@ -3,6 +3,7 @@ package com.poulastaa.core.database.repository.search
 import com.poulastaa.core.database.SQLDbManager.shardSearchDbQuery
 import com.poulastaa.core.database.entity.shard.paging.*
 import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
+import com.poulastaa.core.domain.model.DtoExploreArtistFilterType
 import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.search.LocalPagingDatasource
@@ -10,6 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.selectAll
 
 internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
     override suspend fun getArtistPagingSong(
@@ -177,6 +179,32 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                         )
                     }
             }
+        }
+    }
+
+    override suspend fun getPagingArtist(
+        query: String?,
+        page: Int,
+        size: Int,
+        filterType: DtoExploreArtistFilterType,
+    ): List<DtoSearchItem> = shardSearchDbQuery {
+        when (filterType) {
+            DtoExploreArtistFilterType.ALL -> ShardPagingEntityArtist.selectAll().orderBy(
+                ShardPagingEntityArtist.name to SortOrder.ASC,
+                ShardPagingEntityArtist.popularity to SortOrder.DESC
+            )
+
+            DtoExploreArtistFilterType.POPULARITY -> ShardPagingEntityArtist.selectAll()
+                .orderBy(ShardPagingEntityArtist.popularity to SortOrder.DESC)
+        }.offset(if (page == 1) 0L else (page * size).toLong())
+            .limit(size)
+    }.map {
+        shardSearchDbQuery {
+            DtoSearchItem(
+                id = it[ShardPagingEntityArtist.id].value,
+                title = it[ShardPagingEntityArtist.name],
+                rawPoster = it[ShardPagingEntityArtist.cover]
+            )
         }
     }
 }

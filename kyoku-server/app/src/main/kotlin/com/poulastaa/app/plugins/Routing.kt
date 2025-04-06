@@ -7,6 +7,7 @@ import com.poulastaa.item.network.route.getArtist
 import com.poulastaa.search.repository.PagingRepository
 import com.poulastaa.search.route.albumPaging
 import com.poulastaa.search.route.artistAlbumPaging
+import com.poulastaa.search.route.artistPaging
 import com.poulastaa.search.route.artistSongPaging
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
 import com.poulastaa.suggestion.network.routes.home
@@ -111,6 +112,7 @@ private fun Routing.search(repo: PagingRepository) {
     artistSongPaging(repo)
     artistAlbumPaging(repo)
     albumPaging(repo)
+    artistPaging(repo)
 }
 
 private fun Routing.item(repo: ItemRepository) {

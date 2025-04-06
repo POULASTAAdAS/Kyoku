@@ -1,6 +1,7 @@
 package com.poulastaa.search.data.repository
 
 import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
+import com.poulastaa.core.domain.model.DtoExploreArtistFilterType
 import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.search.LocalPagingDatasource
@@ -29,4 +30,11 @@ internal class PagingRepositoryService(
         size: Int,
         filterType: DtoExploreAlbumFilterType,
     ): List<DtoSearchItem> = db.getPagingAlbum(query, page, size, filterType)
+
+    override suspend fun getPagingArtist(
+        query: String?,
+        page: Int,
+        size: Int,
+        filterType: DtoExploreArtistFilterType,
+    ): List<DtoSearchItem> = db.getPagingArtist(query, page, size, filterType)
 }

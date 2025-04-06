@@ -95,7 +95,7 @@ internal class ExploreAlbumViewmodel @Inject constructor(
 
     private fun getAlbum() = viewModelScope.launch {
         _album.update {
-            PagingData.Companion.empty()
+            PagingData.empty()
         }
 
         repo.getAlbum(

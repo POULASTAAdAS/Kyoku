@@ -36,13 +36,13 @@ internal fun ExploreArtistFilterType(
         )
 
         AppFilterChip(
-            title = SEARCH_ARTIST_FILTER_TYPE.INTERNATIONAL.value,
-            icon = ImageVector.vectorResource(SEARCH_ARTIST_FILTER_TYPE.INTERNATIONAL.icon),
-            isSelected = filterType == SEARCH_ARTIST_FILTER_TYPE.INTERNATIONAL,
+            title = SEARCH_ARTIST_FILTER_TYPE.POPULARITY.value,
+            icon = ImageVector.vectorResource(SEARCH_ARTIST_FILTER_TYPE.POPULARITY.icon),
+            isSelected = filterType == SEARCH_ARTIST_FILTER_TYPE.POPULARITY,
             onClick = {
                 onAction(
                     ExploreArtistUiAction.OnFilterTypeChange(
-                        SEARCH_ARTIST_FILTER_TYPE.INTERNATIONAL
+                        SEARCH_ARTIST_FILTER_TYPE.POPULARITY
                     )
                 )
             }

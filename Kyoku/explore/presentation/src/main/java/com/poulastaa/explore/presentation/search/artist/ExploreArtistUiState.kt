@@ -13,6 +13,6 @@ internal data class ExploreArtistUiState(
 )
 
 internal enum class SEARCH_ARTIST_FILTER_TYPE(val value: String, @DrawableRes val icon: Int) {
-    ALL("all", R.drawable.ic_popular),
-    INTERNATIONAL("international", R.drawable.ic_international),
+    ALL("all", R.drawable.ic_filter_all),
+    POPULARITY("popularity", R.drawable.ic_popular),
 }

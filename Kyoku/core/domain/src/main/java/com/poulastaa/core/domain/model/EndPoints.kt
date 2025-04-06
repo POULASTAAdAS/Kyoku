@@ -37,6 +37,7 @@ sealed class EndPoints(val route: String) {
         data object GetArtist : EndPoints(route = "/api/v1/item/artist")
         data object GetArtistPagingSongs : EndPoints(route = "/api/v1/paging/getArtistPagingSongs")
         data object GetArtistPagingAlbums : EndPoints("/api/v1/paging/getArtistPagingAlbums")
+        data object GetPagingArtist : EndPoints(route = "/api/v1/paging/getPagingArtist")
     }
 
     sealed class Album {
