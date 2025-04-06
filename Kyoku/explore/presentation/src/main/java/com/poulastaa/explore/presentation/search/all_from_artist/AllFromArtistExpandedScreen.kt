@@ -76,9 +76,6 @@ internal fun AllFromArtistExpandedScreen(
         onQueryChange = {
             onAction(AllFromArtistUiAction.OnSearchQueryChange(it))
         },
-        onToggleSearch = {
-            onAction(AllFromArtistUiAction.OnToggleSearch)
-        },
         loadingContent = {
             ExploreExpandedLoadingScreen(it, navigateBack) {
                 Row(

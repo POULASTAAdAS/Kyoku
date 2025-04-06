@@ -5,16 +5,26 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,6 +42,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -39,11 +50,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.explore.presentation.components.DummySearch
-import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
+import com.poulastaa.explore.presentation.components.ExploreLoadingTopBar
 import com.poulastaa.explore.presentation.components.ExploreScreenExtendedWrapper
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.artist.components.ExploreArtistCard
@@ -56,6 +68,7 @@ internal fun ExploreArtistScreen(
     modifier: Modifier = Modifier,
     searchBarWidth: Float = 1f,
     itemCount: Int,
+    dummySearchbarHeight: Dp = 38.dp,
     scroll: TopAppBarScrollBehavior,
     state: ExploreArtistUiState,
     artist: LazyPagingItems<ExploreUiItem>,
@@ -72,23 +85,82 @@ internal fun ExploreArtistScreen(
         onQueryChange = {
             onAction(ExploreArtistUiAction.OnSearchQueryChange(it))
         },
-        onToggleSearch = {
-            onAction(ExploreArtistUiAction.OnSearchToggle)
-        },
         loadingContent = {
-            ExploreCompactLoadingScreen(
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            ThemModeChanger.getGradiantBackground()
-                        )
-                    )
                     .padding(it)
-                    .padding(horizontal = MaterialTheme.dimens.medium1),
-                title = stringResource(R.string.that_cool_album),
-                navigateBack = navigateBack
-            )
+                    .padding(MaterialTheme.dimens.medium1)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                ExploreLoadingTopBar(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    stringResource(R.string.artist),
+                    navigateBack
+                )
+
+                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+                ) {
+                    repeat(3) {
+                        Card(
+                            modifier = Modifier
+                                .height(35.dp)
+                                .width(80.dp),
+                            shape = CircleShape,
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 4.dp
+                            ),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            )
+                        ) {
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .shimmerEffect(MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+                repeat(12) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
+                    ) {
+                        repeat(itemCount) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f)
+                                    .weight(1f),
+                                shape = CircleShape,
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 5.dp
+                                ),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
+                            ) {
+                                Box(
+                                    Modifier
+                                        .fillMaxSize()
+                                        .shimmerEffect(MaterialTheme.colorScheme.primary)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                }
+            }
         },
         errorContent = { paddingValues, error ->
             AppErrorScreen(
@@ -122,7 +194,7 @@ internal fun ExploreArtistScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(38.dp),
+                            .height(dummySearchbarHeight),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         DummySearch(
@@ -179,7 +251,7 @@ private fun Preview() {
                 modifier = Modifier.fillMaxWidth(),
                 itemCount = 3,
                 state = ExploreArtistUiState(
-                    loadingType = LoadingType.Content,
+                    loadingType = LoadingType.Loading,
                     filterType = filterType,
                     isSearchOpen = search
                 ),
@@ -223,7 +295,7 @@ private fun PreviewExtended() {
                 searchBarWidth = .7f,
                 itemCount = 6,
                 state = ExploreArtistUiState(
-                    loadingType = LoadingType.Content,
+                    loadingType = LoadingType.Loading,
                     filterType = filterType,
                     isSearchOpen = search
                 ),

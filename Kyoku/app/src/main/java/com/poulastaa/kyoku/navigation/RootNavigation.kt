@@ -304,7 +304,7 @@ private fun NavGraphBuilder.coreGraph(
                     }
 
                     is MainAllowedNavigationScreens.NavigateToExplore -> when (screens.type) {
-                        ExploreScreenType.ARTIST -> TODO("Add explore artist screen")
+                        ExploreScreenType.ARTIST -> nav.navigate(Screens.Explore.ExploreArtist)
                         ExploreScreenType.ALBUM -> nav.navigate(Screens.Explore.ExploreAlbum)
                     }
                 }

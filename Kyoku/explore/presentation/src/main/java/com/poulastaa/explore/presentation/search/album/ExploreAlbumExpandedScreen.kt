@@ -75,9 +75,6 @@ internal fun ExploreAlbumExpandedScreen(
         onQueryChange = {
             onAction(ExploreAlbumUiAction.OnSearchQueryChange(it))
         },
-        onToggleSearch = {
-            onAction(ExploreAlbumUiAction.OnSearchToggle)
-        },
         loadingContent = { paddingValues ->
             ExtendedLoadingContent(paddingValues, navigateBack)
         },

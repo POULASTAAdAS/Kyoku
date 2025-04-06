@@ -29,7 +29,8 @@ internal class ExploreArtistViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(ExploreArtistUiState())
     val state = _state.onStart {
-
+        getArtistJob?.cancel()
+        getArtistJob = getArtist()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

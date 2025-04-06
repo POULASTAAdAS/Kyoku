@@ -188,23 +188,28 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
         size: Int,
         filterType: DtoExploreArtistFilterType,
     ): List<DtoSearchItem> = shardSearchDbQuery {
+        val all = ShardPagingEntityArtist.selectAll().let {
+            if (query.isNullOrBlank().not()) it.where {
+                ShardPagingEntityArtist.name like "$query%"
+            } else it
+        }
+
         when (filterType) {
-            DtoExploreArtistFilterType.ALL -> ShardPagingEntityArtist.selectAll().orderBy(
+            DtoExploreArtistFilterType.ALL -> all.orderBy(
                 ShardPagingEntityArtist.name to SortOrder.ASC,
                 ShardPagingEntityArtist.popularity to SortOrder.DESC
             )
 
-            DtoExploreArtistFilterType.POPULARITY -> ShardPagingEntityArtist.selectAll()
-                .orderBy(ShardPagingEntityArtist.popularity to SortOrder.DESC)
+            DtoExploreArtistFilterType.POPULARITY -> all.orderBy(ShardPagingEntityArtist.popularity to SortOrder.DESC)
         }.offset(if (page == 1) 0L else (page * size).toLong())
             .limit(size)
-    }.map {
-        shardSearchDbQuery {
-            DtoSearchItem(
-                id = it[ShardPagingEntityArtist.id].value,
-                title = it[ShardPagingEntityArtist.name],
-                rawPoster = it[ShardPagingEntityArtist.cover]
-            )
-        }
+            .map {
+                DtoSearchItem(
+                    id = it[ShardPagingEntityArtist.id].value,
+                    title = it[ShardPagingEntityArtist.name],
+                    rawPoster = it[ShardPagingEntityArtist.cover],
+                    isTypeSong = false,
+                )
+            }
     }
 }

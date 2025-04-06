@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -62,6 +63,7 @@ fun ExploreArtistRootScreen(
                 modifier = Modifier.fillMaxWidth(.7f),
                 scroll = scroll,
                 itemCount = 4,
+                dummySearchbarHeight = 48.dp,
                 state = state,
                 artist = artist,
                 onAction = viewmodel::onAction,
@@ -73,6 +75,7 @@ fun ExploreArtistRootScreen(
                 modifier = Modifier.fillMaxWidth(.7f),
                 searchBarWidth = .7f,
                 scroll = scroll,
+                dummySearchbarHeight = 48.dp,
                 itemCount = 6,
                 state = state,
                 artist = artist,
