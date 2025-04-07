@@ -5,12 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppBasicTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppBasicTopBar.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/ExploreAlbumUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/ExploreAlbumUiState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/components/ExploreAlbumFilterTypes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/components/ExploreAlbumFilterTypes.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/ExploreArtistUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/ExploreArtistUiState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/components/ExploreArtistFilterType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/components/ExploreArtistFilterType.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -179,7 +173,8 @@
       <workItem from="1743915793854" duration="6071000" />
       <workItem from="1743951313664" duration="3409000" />
       <workItem from="1743956165973" duration="1818000" />
-      <workItem from="1743997023205" duration="5049000" />
+      <workItem from="1743997023205" duration="5117000" />
+      <workItem from="1744034831278" duration="2003000" />
     </task>
     <servers />
   </component>

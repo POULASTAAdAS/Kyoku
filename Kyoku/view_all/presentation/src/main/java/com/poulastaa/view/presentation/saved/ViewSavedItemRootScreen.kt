@@ -61,7 +61,11 @@ fun ViewSavedItemRootScreen(
             )
         },
         expandedContent = {
-
+            ViewSavedItemExtendedScreen(
+                state = state,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

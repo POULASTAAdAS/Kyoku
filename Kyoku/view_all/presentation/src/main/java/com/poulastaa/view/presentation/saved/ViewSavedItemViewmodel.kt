@@ -56,6 +56,10 @@ internal class ViewSavedItemViewmodel @Inject constructor(
                 }
             }
 
+            ViewSavedUiAction.OnDeleteAllClick -> {
+                
+            }
+
             is ViewSavedUiAction.OnItemClick -> when (action.clickType) {
                 ItemClickType.CLICK -> viewModelScope.launch {
                     _uiEvent.send(
