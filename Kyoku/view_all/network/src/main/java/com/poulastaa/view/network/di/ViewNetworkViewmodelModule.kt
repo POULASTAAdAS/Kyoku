@@ -3,8 +3,10 @@ package com.poulastaa.view.network.di
 import com.google.gson.Gson
 import com.poulastaa.view.domain.repository.RemoteViewArtistDatasource
 import com.poulastaa.view.domain.repository.RemoteViewOtherDatasource
+import com.poulastaa.view.domain.repository.RemoteViewSavedItemDatasource
 import com.poulastaa.view.network.repository.OkHttpViewArtistDatasource
 import com.poulastaa.view.network.repository.OkHttpViewOtherDatasource
+import com.poulastaa.view.network.repository.OkHttpViewSavedItemDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +30,11 @@ internal object ViewNetworkViewmodelModule {
         client: OkHttpClient,
         gson: Gson,
     ): RemoteViewOtherDatasource = OkHttpViewOtherDatasource(client, gson)
+
+    @Provides
+    @ViewModelScoped
+    fun provideRemoteViewSavedItemDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): RemoteViewSavedItemDatasource = OkHttpViewSavedItemDatasource(client, gson)
 }

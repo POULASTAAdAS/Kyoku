@@ -2,6 +2,7 @@ package com.poulastaa.kyoku.navigation
 
 import com.poulastaa.core.domain.model.ArtistId
 import com.poulastaa.core.domain.model.ViewType
+import com.poulastaa.view.presentation.saved.ViewSavedUiItemType
 import kotlinx.serialization.Serializable
 
 sealed interface Screens {
@@ -59,6 +60,9 @@ sealed interface Screens {
             val otherId: Long,
             val type: ViewType,
         ) : Screens
+
+        @Serializable
+        data class Saved(val type: ViewSavedUiItemType) : Screens
     }
 
     sealed interface Explore : Screens {

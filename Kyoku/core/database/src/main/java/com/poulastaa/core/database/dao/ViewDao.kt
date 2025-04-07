@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.poulastaa.core.database.entity.EntityAlbum
+import com.poulastaa.core.database.entity.EntityArtist
 import com.poulastaa.core.database.entity.EntityExplore
 import com.poulastaa.core.database.entity.EntityPlaylist
 import com.poulastaa.core.domain.model.AlbumId
@@ -68,4 +69,41 @@ internal interface ViewDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertExploreTypeSong(entrys: List<EntityExplore>)
+
+    @Query("Select * from EntityArtist where id in (Select * from EntitySavedArtist)")
+    suspend fun getSavedArtist(): List<EntityArtist>
+
+    @Query("Select * from EntityAlbum where id in (Select * from EntitySavedAlbum)")
+    suspend fun getSavedAlbums(): List<EntityAlbum>
+
+    @Query(
+        """
+        select EntityArtist.coverImage from EntityArtist
+        join EntityRelationArtistAlbum on EntityRelationArtistAlbum.artistId = EntityArtist.id
+        join EntityAlbum on EntityAlbum.id = EntityRelationArtistAlbum.albumId
+        where EntityAlbum.id = :albumId
+    """
+    )
+    suspend fun getArtistOnAlbumId(albumId: AlbumId): List<String>
+
+    @Query("Select * from EntityPlaylist")
+    suspend fun getSavedPlaylist(): List<EntityPlaylist>
+
+    @Query(
+        """
+        select EntitySong.poster  from EntitySong
+        join EntityRelationSongPlaylist on EntityRelationSongPlaylist.songId = EntitySong.id
+        where EntityRelationSongPlaylist.playlistId = :playlistId
+    """
+    )
+    suspend fun getSavedPlaylistCover(playlistId: PlaylistId): List<String>
+
+    @Query(
+        """
+        select count(*)  from EntitySong
+        join EntityRelationSongPlaylist on EntityRelationSongPlaylist.songId = EntitySong.id
+        where EntityRelationSongPlaylist.playlistId = :playlistId
+    """
+    )
+    suspend fun countPlaylistSongs(playlistId: PlaylistId): Int
 }

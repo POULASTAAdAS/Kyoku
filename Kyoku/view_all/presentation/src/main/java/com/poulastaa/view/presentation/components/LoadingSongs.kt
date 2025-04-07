@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -18,13 +19,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.ThreeDotIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun LoadingSongs(itemCount: Int) {
+internal fun LoadingSongs(
+    itemCount: Int,
+    isCircularItem: Boolean = false,
+    icon: ImageVector? = null,
+) {
     repeat(itemCount) {
         Row(
             modifier = Modifier
@@ -34,7 +40,7 @@ internal fun LoadingSongs(itemCount: Int) {
         ) {
             Card(
                 modifier = Modifier.aspectRatio(1f),
-                shape = MaterialTheme.shapes.extraSmall,
+                shape = if (isCircularItem) CircleShape else MaterialTheme.shapes.extraSmall,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
@@ -97,7 +103,7 @@ internal fun LoadingSongs(itemCount: Int) {
             Spacer(Modifier.weight(1f))
 
             Icon(
-                imageVector = ThreeDotIcon,
+                imageVector = icon ?: ThreeDotIcon,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary.copy(.5f)
             )

@@ -229,3 +229,17 @@ internal fun SuggestedArtistWithSong.toDtoSuggestedArtistSongRelation() =
         artistId = this.artist.id,
         prevSongs = this.list.map { it.id }
     )
+
+internal fun EntityArtist.toDtoArtist() = DtoArtist(
+    id = this.id,
+    name = this.name,
+    coverImage = this.coverImage,
+    popularity = this.popularity
+)
+
+internal fun EntityAlbum.toDtoAlbum() = DtoAlbum(
+    id = this.id,
+    name = this.name,
+    poster = this.poster,
+    popularity = this.popularity
+)

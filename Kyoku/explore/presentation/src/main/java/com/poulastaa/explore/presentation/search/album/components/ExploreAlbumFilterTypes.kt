@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppFilterChip
@@ -23,7 +24,7 @@ internal fun ExploreAlbumFilterTypes(
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
     ) {
         AppFilterChip(
-            title = SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.value,
+            title = stringResource(SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.value),
             icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR.icon),
             isSelected = filterType == SEARCH_ALBUM_FILTER_TYPE.MOST_POPULAR,
             onClick = {
@@ -37,7 +38,7 @@ internal fun ExploreAlbumFilterTypes(
 
         AppFilterChip(
             icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.ARTIST.icon),
-            title = SEARCH_ALBUM_FILTER_TYPE.ARTIST.value,
+            title = stringResource(SEARCH_ALBUM_FILTER_TYPE.ARTIST.value),
             isSelected = filterType == SEARCH_ALBUM_FILTER_TYPE.ARTIST,
             onClick = {
                 onAction(
@@ -49,7 +50,7 @@ internal fun ExploreAlbumFilterTypes(
         )
 
         AppFilterChip(
-            title = SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.value,
+            title = stringResource(SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.value),
             icon = ImageVector.vectorResource(SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR.icon),
             isSelected = filterType == SEARCH_ALBUM_FILTER_TYPE.RELEASE_YEAR,
             onClick = {

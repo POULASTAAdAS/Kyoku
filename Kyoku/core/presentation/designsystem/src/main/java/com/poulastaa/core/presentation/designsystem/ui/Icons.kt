@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -274,3 +275,7 @@ val SongIcon: ImageVector
 val RetryIcon: ImageVector
     @Composable
     get() = Icons.Rounded.Refresh
+
+val DeleteIcon: ImageVector
+    @Composable
+    get() = Icons.Rounded.Delete

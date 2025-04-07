@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppBasicTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppBasicTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/ExploreAlbumUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/ExploreAlbumUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/components/ExploreAlbumFilterTypes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/album/components/ExploreAlbumFilterTypes.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/ExploreArtistUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/ExploreArtistUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/components/ExploreArtistFilterType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/explore/presentation/src/main/java/com/poulastaa/explore/presentation/search/artist/components/ExploreArtistFilterType.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/search/ExposedLocalPagingDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/search/ExposedLocalPagingDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/DtoSearchItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/domain/src/main/kotlin/com/poulastaa/core/domain/model/DtoSearchItem.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +67,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -173,7 +177,9 @@
       <workItem from="1743700466726" duration="1785000" />
       <workItem from="1743786613763" duration="1434000" />
       <workItem from="1743915793854" duration="6071000" />
-      <workItem from="1743951313664" duration="3345000" />
+      <workItem from="1743951313664" duration="3409000" />
+      <workItem from="1743956165973" duration="1818000" />
+      <workItem from="1743997023205" duration="5049000" />
     </task>
     <servers />
   </component>

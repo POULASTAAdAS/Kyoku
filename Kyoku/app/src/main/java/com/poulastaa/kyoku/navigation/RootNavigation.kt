@@ -38,10 +38,14 @@ import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
+import com.poulastaa.view.domain.model.DtoViewSavedItemNavigationType
 import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
 import com.poulastaa.view.domain.model.ViewOtherAllowedNavigationScreen
+import com.poulastaa.view.domain.model.ViewSavedAllowedNavigationScreen
 import com.poulastaa.view.presentation.artist.ViewArtistRootScreen
 import com.poulastaa.view.presentation.others.ViewOtherRootScreen
+import com.poulastaa.view.presentation.saved.ViewSavedItemRootScreen
+import com.poulastaa.view.presentation.saved.ViewSavedUiItemType
 
 private const val DEFAULT_ANIMATION_TIME = 600
 
@@ -316,9 +320,24 @@ private fun NavGraphBuilder.coreGraph(
         ProfileRootScreen(
             navigate = {
                 when (it) {
-                    ProfileAllowedNavigationScreen.PLAYLIST -> TODO("Add all saved view playlist screen")
-                    ProfileAllowedNavigationScreen.ALBUM -> TODO("Add all saved view album screen")
-                    ProfileAllowedNavigationScreen.ARTIST -> TODO("Add all saved view artist screen")
+                    ProfileAllowedNavigationScreen.PLAYLIST -> nav.navigate(
+                        Screens.View.Saved(
+                            ViewSavedUiItemType.PLAYLIST
+                        )
+                    )
+
+                    ProfileAllowedNavigationScreen.ALBUM -> nav.navigate(
+                        Screens.View.Saved(
+                            ViewSavedUiItemType.ALBUM
+                        )
+                    )
+
+                    ProfileAllowedNavigationScreen.ARTIST -> nav.navigate(
+                        Screens.View.Saved(
+                            ViewSavedUiItemType.ARTIST
+                        )
+                    )
+
                     ProfileAllowedNavigationScreen.FAVOURITE -> nav.navigate(
                         Screens.View.Other(
                             otherId = 0,
@@ -405,6 +424,36 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
                     is ViewOtherAllowedNavigationScreen.Artist -> nav.navigate(
                         Screens.View.Artist(
                             screen.artistId
+                        )
+                    )
+                }
+            },
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
+    }
+
+    composable<Screens.View.Saved> {
+        val payload = it.toRoute<Screens.View.Saved>()
+
+        ViewSavedItemRootScreen(
+            type = payload.type,
+            navigate = { screen ->
+                when (screen) {
+                    is ViewSavedAllowedNavigationScreen.ExploreArtist -> nav.navigate(
+                        Screens.View.Artist(
+                            screen.artistId
+                        )
+                    )
+
+                    is ViewSavedAllowedNavigationScreen.Other -> nav.navigate(
+                        Screens.View.Other(
+                            otherId = screen.otherId,
+                            type = when (screen.type) {
+                                DtoViewSavedItemNavigationType.PLAYLIST -> ViewType.PLAYLIST
+                                DtoViewSavedItemNavigationType.ALBUM -> ViewType.ALBUM
+                            }
                         )
                     )
                 }

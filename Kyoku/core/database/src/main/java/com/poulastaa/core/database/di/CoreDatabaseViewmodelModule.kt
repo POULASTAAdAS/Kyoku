@@ -20,6 +20,7 @@ import com.poulastaa.core.database.repository.RoomLocalSetGenreDatasource
 import com.poulastaa.core.database.repository.RoomLocalSettingsDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewOtherDatasource
+import com.poulastaa.core.database.repository.RoomLocalViewSavedItemDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
@@ -33,11 +34,13 @@ import com.poulastaa.core.domain.repository.LocalSetGenreDatasource
 import com.poulastaa.core.domain.repository.LocalSettingsDatasource
 import com.poulastaa.core.domain.repository.LocalViewArtistDatasource
 import com.poulastaa.core.domain.repository.LocalViewOtherDatasource
+import com.poulastaa.core.domain.repository.LocalViewSavedItemDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -148,4 +151,11 @@ internal object CoreDatabaseViewmodelModule {
     fun provideLocalExploreAlbumDatasource(
         root: RootDao,
     ): LocalExploreAlbumDatasource = RoomLocalExploreAlbumDatasource(root)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalViewSavedItemDatasource(
+        viewDao: ViewDao,
+        scope: CoroutineScope,
+    ): LocalViewSavedItemDatasource = RoomLocalViewSavedItemDatasource(viewDao, scope)
 }

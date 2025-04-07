@@ -150,7 +150,7 @@
     <string name="song_info">Song Info</string>
     <string name="song">Song</string>
     <string name="nothing_to_show">Nothing to show</string>
-    <string name="release_year">"Release year: "</string>
+    <string name="release_year">"release year"</string>
     <string name="profile">Profile</string>
     <string name="saved_playlist">saved playlist</string>
     <string name="saved_albums">saved albums</string>
@@ -182,5 +182,11 @@
     <string name="check_out">check out</string>
     <string name="that_cool_artist">That Cool Artist</string>
     <string name="that_cool_album">That Cool Album</string>
+    <string name="most_popular">most popular</string>
+    <string name="add_new_artist">Add new artist</string>
+    <string name="add_new_playlist">Add new playlist</string>
+    <string name="add_new_album">Add new album</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.poulastaa.explore.presentation.search.album
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.TextHolder
@@ -12,8 +13,8 @@ internal data class ExploreAlbumUiState(
     val query: TextHolder = TextHolder(),
 )
 
-internal enum class SEARCH_ALBUM_FILTER_TYPE(val value: String, @DrawableRes val icon: Int) {
-    MOST_POPULAR("most popular", R.drawable.ic_popular),
-    ARTIST("artist", R.drawable.ic_user),
-    RELEASE_YEAR("release year", R.drawable.ic_b_date),
+internal enum class SEARCH_ALBUM_FILTER_TYPE(@StringRes val value: Int, @DrawableRes val icon: Int) {
+    MOST_POPULAR(R.string.most_popular, R.drawable.ic_popular),
+    ARTIST(R.string.artist, R.drawable.ic_user),
+    RELEASE_YEAR(R.string.release_year, R.drawable.ic_b_date),
 }

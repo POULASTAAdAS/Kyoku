@@ -1,6 +1,7 @@
 package com.poulastaa.core.presentation.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +22,7 @@ import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 fun AppBasicTopBar(
     @StringRes titleId: Int? = null,
     title: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     navigateBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
@@ -30,7 +32,8 @@ fun AppBasicTopBar(
                 fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize
             )
-        }, navigationIcon = {
+        },
+        navigationIcon = {
             IconButton(
                 onClick = navigateBack
             ) {
@@ -40,10 +43,12 @@ fun AppBasicTopBar(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent,
             titleContentColor = MaterialTheme.colorScheme.primary,
             navigationIconContentColor = MaterialTheme.colorScheme.primary
-        )
+        ),
+        actions = actions
     )
 }

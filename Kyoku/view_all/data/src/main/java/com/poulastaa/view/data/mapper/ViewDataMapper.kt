@@ -1,11 +1,15 @@
 package com.poulastaa.view.data.mapper
 
+import com.poulastaa.core.domain.model.DtoAlbum
+import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
 import com.poulastaa.core.domain.model.DtoExploreType
+import com.poulastaa.core.domain.model.DtoPlaylist
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.view.domain.model.DtoViewArtist
+import com.poulastaa.view.domain.model.DtoViewSavedItem
 
 internal fun DtoPrevArtist.toDtoViewArtist(isFollowing: Boolean) = DtoViewArtist(
     id = this.id,
@@ -28,4 +32,30 @@ internal fun DtoSong.toDtoDetailedPrevSong() = DtoDetailedPrevSong(
     poster = this.poster,
     artists = this.artist.joinToString(","),
     releaseYear = this.info.releaseYear
+)
+
+@JvmName("DtoArtistToDtoViewSavedItem")
+internal fun DtoArtist.toDtoViewSavedItem() = DtoViewSavedItem(
+    id = this.id,
+    title = this.name,
+    poster = listOf(this.coverImage ?: ""),
+    numbers = this.popularity
+)
+
+@JvmName("DtoPlaylistToDtoViewSavedItem")
+internal fun Map.Entry<Pair<List<String>, Int>, DtoPlaylist>.toDtoViewSavedItem() =
+    DtoViewSavedItem(
+        id = this.value.id,
+        title = this.value.name,
+        poster = this.key.first,
+        numbers = this.key.second.toLong()
+    )
+
+@JvmName("DtoAlbumToDtoViewSavedItem")
+internal fun Map.Entry<String?, DtoAlbum>.toDtoViewSavedItem() = DtoViewSavedItem(
+    id = this.value.id,
+    title = this.value.name,
+    poster = listOf(this.value.poster ?: ""),
+    numbers = this.value.popularity,
+    artist = this.key
 )
