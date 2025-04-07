@@ -22,6 +22,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/add" />
+            <option value="$PROJECT_DIR$/add/data" />
+            <option value="$PROJECT_DIR$/add/domain" />
+            <option value="$PROJECT_DIR$/add/network" />
+            <option value="$PROJECT_DIR$/add/presentation" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/auth" />
             <option value="$PROJECT_DIR$/auth/data" />
