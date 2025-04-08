@@ -188,5 +188,8 @@
     <string name="add_new_album">Add new album</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="your_favourite">Your favourite</string>
+    <string name="suggested_for_you">Suggested for you</string>
+    <string name="you_may_also_like">You may also like</string>
 
 </resources>

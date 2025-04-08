@@ -16,4 +16,7 @@ dependencies {
     implementation(projects.add.domain)
 
     implementation(libs.lottie)
+
+    implementation(libs.pagingRuntimeKtx)
+    implementation(libs.pagingCompose)
 }
