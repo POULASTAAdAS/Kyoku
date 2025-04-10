@@ -1,0 +1,15 @@
+package com.poulastaa.add.network.model
+
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
+
+@Serializable
+@InternalSerializationApi
+internal data class AddSongToPlaylistItemResponse(
+    val id: Long = -1,
+    val title: String = "",
+    val poster: List<String> = emptyList(),
+    val artist: String? = null,
+    val numbers: Long = 0,
+    val type: AddSongToPlaylistItemTypeResponse,
+)

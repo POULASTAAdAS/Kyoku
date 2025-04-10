@@ -21,12 +21,15 @@ import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun AddSongToPlaylistLoadingTopBar(navigateBack: () -> Unit) {
+internal fun AddSongToPlaylistLoadingTopBar(
+    titleWidth: Float = .6f,
+    navigateBack: () -> Unit,
+) {
     CenterAlignedTopAppBar(
         title = {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth(.6f)
+                    .fillMaxWidth(titleWidth)
                     .fillMaxHeight(.7f),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer

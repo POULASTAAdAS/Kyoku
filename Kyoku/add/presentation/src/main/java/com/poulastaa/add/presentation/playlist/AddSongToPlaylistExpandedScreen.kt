@@ -1,27 +1,18 @@
 package com.poulastaa.add.presentation.playlist
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,9 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -48,27 +37,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
-import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
-import com.poulastaa.add.presentation.playlist.components.PagerIndicator
 import com.poulastaa.core.presentation.designsystem.R
-import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.ui.components.AppErrorScreen
+import com.poulastaa.core.presentation.ui.components.AppErrorExpandedScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun AddSongToPlaylistCompactScreen(
+internal fun AddSongToPlaylistExpandedScreen(
     state: AddSongToPlaylistUiState,
     searchData: LazyPagingItems<AddToPlaylistUiItem>,
     onAction: (AddSongToPlaylistUiAction) -> Unit,
@@ -81,9 +67,7 @@ internal fun AddSongToPlaylistCompactScreen(
     Scaffold(
         topBar = {
             when (state.loadingType) {
-                is LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
-
-                is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) TopAppBar(
+                LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) TopAppBar(
                     title = {
                         OutlinedTextField(
                             value = state.query,
@@ -178,90 +162,61 @@ internal fun AddSongToPlaylistCompactScreen(
                     )
                 )
 
-                else -> Unit
-            }
-        }
-    ) {
-        when (state.loadingType) {
-            LoadingType.Loading -> AddSongToPlaylistLoadingContent(it) {
-                LoadingSongCard(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(horizontal = MaterialTheme.dimens.medium1)
+                LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(
+                    titleWidth = .3f,
+                    navigateBack
                 )
+
+                is LoadingType.Error -> Unit
             }
-
-            is LoadingType.Error -> AppErrorScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .padding(MaterialTheme.dimens.medium1),
-                error = state.loadingType,
-                navigateBack = navigateBack
-            )
-
-            LoadingType.Content -> Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
-                    )
-            ) {
-                HorizontalPager(
-                    state = horizontalPager,
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxWidth()
-                        .fillMaxHeight(.95f)
-                ) { pageIndex ->
-                    Card(
-                        modifier = Modifier
-                            .padding(MaterialTheme.dimens.medium1)
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 5.dp
-                        )
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
-                        ) {
-                            if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
-                                CreatePlaylistItemCard(item, onAction, haptic)
-                            } else items(searchData.itemCount) { index ->
-                                searchData[index]?.let {
-                                    CreatePlaylistItemCard(it, onAction, haptic)
-                                }
-                            }
+        },
+        content = {
+            when (state.loadingType) {
+                LoadingType.Loading -> AddSongToPlaylistLoadingContent(it) {
+                    Row {
+                        repeat(2) {
+                            LoadingSongCard(
+                                Modifier
+                                    .weight(1f)
+                                    .height(80.dp)
+                                    .padding(horizontal = MaterialTheme.dimens.medium1)
+                            )
                         }
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    PagerIndicator(horizontalPager)
-                }
+                is LoadingType.Error -> AppErrorExpandedScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                        .padding(MaterialTheme.dimens.medium1),
+                    error = state.loadingType,
+                    navigateBack = navigateBack
+                )
+
+                LoadingType.Content -> TODO()
             }
         }
-    }
+    )
 }
 
 
-@PreviewLightDark
+@Preview(
+    widthDp = 1024,
+    heightDp = 540
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 1280,
+    heightDp = 740
+)
 @Composable
 private fun Preview() {
     AppThem {
         Surface {
-            AddSongToPlaylistCompactScreen(
+            AddSongToPlaylistExpandedScreen(
                 state = AddSongToPlaylistUiState(
-                    loadingType = LoadingType.Content,
+                    loadingType = LoadingType.Loading,
                     staticData = listOf(
                         AddSongToPlaylistPageUiItem(
                             type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,

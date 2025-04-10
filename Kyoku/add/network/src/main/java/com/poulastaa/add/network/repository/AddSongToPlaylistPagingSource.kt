@@ -1,8 +1,12 @@
-package com.poulastaa.explore.network.repository.search
+package com.poulastaa.add.network.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.gson.Gson
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistSearchUiFilterType
+import com.poulastaa.add.network.mapper.toDtoAddSongToPlaylistItem
+import com.poulastaa.add.network.model.AddSongToPlaylistItemResponse
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.NoInternetException
 import com.poulastaa.core.domain.Result
@@ -12,33 +16,31 @@ import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.ReqParam
 import com.poulastaa.core.network.req
-import com.poulastaa.explore.domain.model.DtoExploreAlbumFilterType
-import com.poulastaa.explore.domain.model.DtoExploreItem
-import com.poulastaa.explore.network.mapper.toDtoAllFromArtistItem
-import com.poulastaa.explore.network.model.ResponseExploreItem
+import kotlinx.serialization.InternalSerializationApi
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-internal class ExploreAlbumPagingSource @Inject constructor(
+@OptIn(InternalSerializationApi::class)
+internal class AddSongToPlaylistPagingSource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,
-) : PagingSource<Int, DtoExploreItem>() {
-    private var query: String = ""
-    private var filterType: DtoExploreAlbumFilterType = DtoExploreAlbumFilterType.MOST_POPULAR
+) : PagingSource<Int, DtoAddSongToPlaylistItem>() {
+    private var query = ""
+    private var filterType = DtoAddSongToPlaylistSearchUiFilterType.ALL
 
-    fun init(query: String, filterType: DtoExploreAlbumFilterType) {
+    override fun getRefreshKey(state: PagingState<Int, DtoAddSongToPlaylistItem>) =
+        state.anchorPosition
+
+    fun init(query: String, filterType: DtoAddSongToPlaylistSearchUiFilterType) {
         this.query = query
         this.filterType = filterType
     }
 
-    override fun getRefreshKey(state: PagingState<Int, DtoExploreItem>): Int? =
-        state.anchorPosition
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DtoExploreItem> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DtoAddSongToPlaylistItem> {
         val page = params.key ?: 1
 
-        val result = client.req<Unit, List<ResponseExploreItem>>(
-            route = EndPoints.Album.GetPagingAlbum.route,
+        val result = client.req<Unit, List<AddSongToPlaylistItemResponse>>(
+            route = EndPoints.Add.AddPaging.route,
             method = ApiMethodType.GET,
             params = listOf(
                 ReqParam(
@@ -59,7 +61,7 @@ internal class ExploreAlbumPagingSource @Inject constructor(
                 )
             ),
             gson = gson
-        ).map { it -> it.map { it.toDtoAllFromArtistItem() } }
+        ).map { list -> list.map { it.toDtoAddSongToPlaylistItem() } }
 
         return when (result) {
             is Result.Error -> when (result.error) {

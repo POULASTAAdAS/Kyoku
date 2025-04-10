@@ -2,7 +2,7 @@ package com.poulastaa.add.presentation.playlist
 
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageType
-import com.poulastaa.add.domain.model.DtoAddToPlaylistItem
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
 
 internal fun DtoAddSongToPlaylistPageItem.toAddSongToPlaylistPageUiItem() =
     AddSongToPlaylistPageUiItem(
@@ -14,7 +14,7 @@ internal fun DtoAddSongToPlaylistPageItem.toAddSongToPlaylistPageUiItem() =
         data = this.data.map { it.toAddSongToPlaylistPageUiItem() }
     )
 
-private fun DtoAddToPlaylistItem.toAddSongToPlaylistPageUiItem() = AddToPlaylistUiItem(
+private fun DtoAddSongToPlaylistItem.toAddSongToPlaylistPageUiItem() = AddToPlaylistUiItem(
     id = this.id,
     title = this.title,
     poster = this.poster,

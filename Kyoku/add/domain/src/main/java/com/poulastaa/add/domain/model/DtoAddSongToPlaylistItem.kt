@@ -1,6 +1,6 @@
 package com.poulastaa.add.domain.model
 
-data class DtoAddToPlaylistItem(
+data class DtoAddSongToPlaylistItem(
     val id: Long = -1,
     val title: String = "",
     val poster: List<String> = emptyList(),

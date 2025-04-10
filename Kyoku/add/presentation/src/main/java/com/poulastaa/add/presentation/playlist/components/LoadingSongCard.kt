@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -28,12 +27,9 @@ import com.poulastaa.core.presentation.designsystem.ui.AddIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun LoadingSongCard() {
+internal fun LoadingSongCard(modifier: Modifier) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .padding(horizontal = MaterialTheme.dimens.medium1),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(

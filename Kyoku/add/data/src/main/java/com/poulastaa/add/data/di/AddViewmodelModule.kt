@@ -2,6 +2,7 @@ package com.poulastaa.add.data.di
 
 import com.poulastaa.add.data.repository.OnlineFirstAddSongToPlaylistRepository
 import com.poulastaa.add.domain.repository.AddSongToPlaylistRepository
+import com.poulastaa.add.domain.repository.RemoteAddSongToPlaylistDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +15,6 @@ object AddViewmodelModule {
     @Provides
     @ViewModelScoped
     fun provideAddSongToPlaylistRepository(
-
-    ): AddSongToPlaylistRepository = OnlineFirstAddSongToPlaylistRepository()
+        remote: RemoteAddSongToPlaylistDatasource,
+    ): AddSongToPlaylistRepository = OnlineFirstAddSongToPlaylistRepository(remote)
 }
