@@ -45,7 +45,7 @@ internal data class AddSongToPlaylistUiState(
 internal data class AddToPlaylistUiItem(
     val id: Long = -1,
     val title: String = "",
-    val poster: String? = null,
+    val poster: List<String> = emptyList(),
     val artist: String? = null,
     val numbers: Long = 0,
     val type: AddToPlaylistItemUiType,

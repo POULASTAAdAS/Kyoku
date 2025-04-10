@@ -105,4 +105,9 @@ dependencies {
     implementation(projects.explore.data)
     implementation(projects.explore.network)
     implementation(projects.explore.presentation)
+
+    implementation(projects.add.domain)
+    implementation(projects.add.data)
+    implementation(projects.add.network)
+    implementation(projects.add.presentation)
 }

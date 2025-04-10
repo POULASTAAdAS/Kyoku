@@ -12,11 +12,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 
-
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddSongToPlaylistRootScreen(
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val viewmodel = hiltViewModel<AddSongToPlaylistViewmodel>()
 
