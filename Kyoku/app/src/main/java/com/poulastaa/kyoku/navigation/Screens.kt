@@ -75,4 +75,9 @@ sealed interface Screens {
         @Serializable
         data object ExploreArtist : Screens
     }
+
+    sealed interface Add : Screens {
+        @Serializable
+        data object CreatePlaylist : Screens
+    }
 }

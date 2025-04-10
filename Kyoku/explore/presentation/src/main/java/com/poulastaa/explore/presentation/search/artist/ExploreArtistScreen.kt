@@ -251,7 +251,7 @@ private fun Preview() {
                 modifier = Modifier.fillMaxWidth(),
                 itemCount = 3,
                 state = ExploreArtistUiState(
-                    loadingType = LoadingType.Loading,
+                    loadingType = LoadingType.Content,
                     filterType = filterType,
                     isSearchOpen = search
                 ),
@@ -295,7 +295,7 @@ private fun PreviewExtended() {
                 searchBarWidth = .7f,
                 itemCount = 6,
                 state = ExploreArtistUiState(
-                    loadingType = LoadingType.Loading,
+                    loadingType = LoadingType.Content,
                     filterType = filterType,
                     isSearchOpen = search
                 ),

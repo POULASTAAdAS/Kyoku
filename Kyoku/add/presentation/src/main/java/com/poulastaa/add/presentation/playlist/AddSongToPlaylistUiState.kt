@@ -6,17 +6,48 @@ import com.poulastaa.core.presentation.designsystem.model.LoadingType
 
 internal data class AddSongToPlaylistUiState(
     val loadingType: LoadingType = LoadingType.Loading,
-    val favourite: List<AddToPlaylistUiItem> = emptyList(),
     val query: String = "",
-    val isSearchEnabled: Boolean = false,
     val searchScreenFilterType: AddSongToPlaylistSearchUiFilterType = AddSongToPlaylistSearchUiFilterType.ALL,
-    val staticData: List<AddSongToPlaylistPageUiItem> = emptyList(),
+    val staticData: List<AddSongToPlaylistPageUiItem> = listOf(
+        AddSongToPlaylistPageUiItem(
+            type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
+            data = (1..10).map {
+                AddToPlaylistUiItem(
+                    title = "That Cool Song",
+                    artist = "That Cool Artist",
+                    type = AddToPlaylistItemUiType.SONG
+                )
+            }
+        ),
+        AddSongToPlaylistPageUiItem(
+            type = AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU,
+            data = (1..10).map {
+                AddToPlaylistUiItem(
+                    title = "That Cool Song",
+                    artist = "That Cool Artist",
+                    type = AddToPlaylistItemUiType.SONG
+                )
+            }
+        ),
+        AddSongToPlaylistPageUiItem(
+            type = AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE,
+            data = (1..10).map {
+                AddToPlaylistUiItem(
+                    title = "That Cool Song",
+                    artist = "That Cool Artist",
+                    type = AddToPlaylistItemUiType.SONG
+                )
+            }
+        )
+    ),
 )
 
 internal data class AddToPlaylistUiItem(
     val id: Long = -1,
     val title: String = "",
     val poster: String? = null,
+    val artist: String? = null,
+    val numbers: Long = 0,
     val type: AddToPlaylistItemUiType,
 )
 

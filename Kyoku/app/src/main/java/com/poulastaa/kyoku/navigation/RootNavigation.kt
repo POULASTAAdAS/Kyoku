@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.poulastaa.add.presentation.playlist.AddSongToPlaylistRootScreen
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewModel
 import com.poulastaa.auth.presentation.email.login.EmailLogInRootScreen
@@ -64,6 +65,15 @@ fun RootNavigation(
         coreGraph(nav, toggleThem)
         viewGraph(nav)
         exploreGraph(nav)
+        addGraph(nav)
+    }
+}
+
+private fun NavGraphBuilder.addGraph(nav: NavHostController) {
+    composable<Screens.Add.CreatePlaylist> {
+        AddSongToPlaylistRootScreen {
+            nav.popBackStack()
+        }
     }
 }
 
