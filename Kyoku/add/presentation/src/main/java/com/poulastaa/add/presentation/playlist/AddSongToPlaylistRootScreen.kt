@@ -58,7 +58,12 @@ fun AddSongToPlaylistRootScreen(
             )
         },
         expandedContent = {
-
+            AddSongToPlaylistExpandedScreen(
+                state = state,
+                searchData = searchData,
+                onAction = viewmodel::onAction,
+                navigateBack = navigateBack
+            )
         }
     )
 }

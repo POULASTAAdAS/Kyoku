@@ -9,4 +9,5 @@ internal sealed interface AddSongToPlaylistUiAction {
     ) : AddSongToPlaylistUiAction
 
     data class OnSearchQueryChange(val value: String) : AddSongToPlaylistUiAction
+    data class OnSearchFilterTypeChange(val type: AddSongToPlaylistSearchUiFilterType): AddSongToPlaylistUiAction
 }

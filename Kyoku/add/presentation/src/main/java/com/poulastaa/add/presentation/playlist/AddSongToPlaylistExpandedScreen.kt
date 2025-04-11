@@ -1,54 +1,37 @@
 package com.poulastaa.add.presentation.playlist
 
 import android.content.res.Configuration
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStaticDataTopBar
+import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
-import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
-import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorExpandedScreen
 
@@ -67,99 +50,17 @@ internal fun AddSongToPlaylistExpandedScreen(
     Scaffold(
         topBar = {
             when (state.loadingType) {
-                LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) TopAppBar(
-                    title = {
-                        OutlinedTextField(
-                            value = state.query,
-                            onValueChange = {
-                                onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(it))
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = CircleShape,
-                            label = {
-                                Text(
-                                    text = stringResource(R.string.search_anything),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            },
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = SearchIcon,
-                                    contentDescription = null,
-                                    modifier = Modifier.clickable {
-                                        focusManager.clearFocus()
-                                    }
-                                )
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = MaterialTheme.colorScheme.primary,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.primaryContainer,
-                                focusedLabelColor = MaterialTheme.colorScheme.primary,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
-                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                unfocusedTrailingIconColor = MaterialTheme.colorScheme.primaryContainer,
-                                focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onSearch = {
-                                    focusManager.clearFocus()
-                                }
-                            ),
-                            keyboardOptions = KeyboardOptions(
-                                capitalization = KeyboardCapitalization.None,
-                                autoCorrectEnabled = false,
-                                keyboardType = KeyboardType.Text,
-                                imeAction = ImeAction.Search,
-                                showKeyboardOnFocus = true,
-                            )
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                if (state.query.isNotEmpty()) {
-                                    onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(""))
-                                } else navigateBack()
-                            }
-                        ) {
-                            Icon(
-                                imageVector = CloseIcon,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        scrolledContainerColor = Color.Transparent,
-                        navigationIconContentColor = MaterialTheme.colorScheme.primary
-                    ),
-                ) else CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(state.staticData[horizontalPager.currentPage].type.value),
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.animateContentSize(tween(400))
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = navigateBack,
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.primary
-                            )
-                        ) {
-                            Icon(
-                                imageVector = CloseIcon,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        navigationIconContentColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.primary
-                    )
+                LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                    query = state.query,
+                    filterType = state.searchScreenFilterType,
+                    onAction = onAction,
+                    isExtended = true,
+                    focusManager = focusManager,
+                    navigateBack = navigateBack
+                ) else AddSongToPlaylistStaticDataTopBar(
+                    staticData = state.staticData,
+                    currentPage = horizontalPager.currentPage,
+                    navigateBack = navigateBack
                 )
 
                 LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(
@@ -194,12 +95,33 @@ internal fun AddSongToPlaylistExpandedScreen(
                     navigateBack = navigateBack
                 )
 
-                LoadingType.Content -> TODO()
+                LoadingType.Content -> AddSongToPlaylistCommonContent(
+                    isExpanded = true,
+                    horizontalPager = horizontalPager,
+                    values = it,
+                    filterType = state.searchScreenFilterType,
+                    onAction = onAction
+                ) { pageIndex ->
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+                    ) {
+                        if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
+                            CreatePlaylistItemCard(item, onAction, haptic)
+                        } else items(searchData.itemCount) { index ->
+                            searchData[index]?.let {
+                                CreatePlaylistItemCard(it, onAction, haptic)
+                            }
+                        }
+                    }
+                }
             }
         }
     )
 }
-
 
 @Preview(
     widthDp = 1024,
@@ -216,7 +138,7 @@ private fun Preview() {
         Surface {
             AddSongToPlaylistExpandedScreen(
                 state = AddSongToPlaylistUiState(
-                    loadingType = LoadingType.Loading,
+                    loadingType = LoadingType.Content,
                     staticData = listOf(
                         AddSongToPlaylistPageUiItem(
                             type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,

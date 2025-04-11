@@ -4,12 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.poulastaa.add.domain.repository.AddSongToPlaylistRepository
-import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +26,8 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddSongToPlaylistUiState())
     val state = _state.onStart {
-        loadStaticData()
+        loadStaticDataJob?.cancel()
+        loadStaticDataJob = loadStaticData()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.0.seconds.inWholeMilliseconds),
@@ -71,6 +71,8 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     var searchData = _searchData.asStateFlow()
         private set
 
+    private var loadStaticDataJob: Job? = null
+
     fun onAction(action: AddSongToPlaylistUiAction) {
         when (action) {
             is AddSongToPlaylistUiAction.OnItemClick -> {
@@ -83,37 +85,60 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                         query = action.value
                     )
                 }
+
+                loadStaticDataJob?.cancel()
+                loadStaticDataJob = loadStaticData()
+            }
+
+            is AddSongToPlaylistUiAction.OnSearchFilterTypeChange -> {
+                if (_state.value.searchScreenFilterType == action.type) return
+
+                _state.update {
+                    it.copy(
+                        searchScreenFilterType = action.type
+                    )
+                }
+
+                loadStaticDataJob?.cancel()
+                loadStaticDataJob = loadStaticData()
             }
         }
     }
 
     private fun loadStaticData() = viewModelScope.launch {
-        when (val result = repo.loadStaticData()) {
-            is Result.Error -> when (result.error) {
-                DataError.Network.NO_INTERNET -> _state.update {
-                    it.copy(
-                        loadingType = LoadingType.Error(
-                            type = LoadingType.ERROR_TYPE.NO_INTERNET,
-                            lottieId = ERROR_LOTTIE_ID
-                        )
-                    )
-                }
-
-                else -> _state.update {
-                    it.copy(
-                        loadingType = LoadingType.Error(
-                            type = LoadingType.ERROR_TYPE.UNKNOWN,
-                            lottieId = ERROR_LOTTIE_ID
-                        )
-                    )
-                }
-            }
-
-            is Result.Success -> _state.update {
-                it.copy(
-                    staticData = result.data.map { it.toAddSongToPlaylistPageUiItem() }
-                )
-            }
+        delay(2_000)
+        _state.update {
+            it.copy(
+                loadingType = LoadingType.Content
+            )
         }
+
+//        when (val result = repo.loadStaticData()) {
+//            is Result.Error -> when (result.error) {
+//                DataError.Network.NO_INTERNET -> _state.update {
+//                    it.copy(
+//                        loadingType = LoadingType.Error(
+//                            type = LoadingType.ERROR_TYPE.NO_INTERNET,
+//                            lottieId = ERROR_LOTTIE_ID
+//                        )
+//                    )
+//                }
+//
+//                else -> _state.update {
+//                    it.copy(
+//                        loadingType = LoadingType.Error(
+//                            type = LoadingType.ERROR_TYPE.UNKNOWN,
+//                            lottieId = ERROR_LOTTIE_ID
+//                        )
+//                    )
+//                }
+//            }
+//
+//            is Result.Success -> _state.update {
+//                it.copy(
+//                    staticData = result.data.map { it.toAddSongToPlaylistPageUiItem() }
+//                )
+//            }
+//        }
     }
 }
