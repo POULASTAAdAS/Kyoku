@@ -71,9 +71,9 @@ internal class ExposedLocalViewDatasource(
 
         return if (cache == null) {
             val songs = kyokuDbQuery {
-                RelationSongPlaylist.select(RelationSongPlaylist.songId).where {
-                    RelationSongPlaylist.playlistId eq playlistId
-                }.map { it[RelationSongPlaylist.songId] as SongId }
+                RelationEntitySongPlaylist.select(RelationEntitySongPlaylist.songId).where {
+                    RelationEntitySongPlaylist.playlistId eq playlistId
+                }.map { it[RelationEntitySongPlaylist.songId] as SongId }
             }.let { core.getSongOnId(it) }
                 .also {
                     this.cache.setSongById(it)

@@ -3,7 +3,7 @@ package com.poulastaa.search.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseExploreItem(
+internal data class ResponseExploreItem(
     val id: Long,
     val title: String,
     val poster: String?,

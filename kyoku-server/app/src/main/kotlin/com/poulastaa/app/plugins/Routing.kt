@@ -5,11 +5,9 @@ import com.poulastaa.auth.network.routes.*
 import com.poulastaa.item.domain.repository.ItemRepository
 import com.poulastaa.item.network.route.getArtist
 import com.poulastaa.search.repository.PagingRepository
-import com.poulastaa.search.route.albumPaging
-import com.poulastaa.search.route.artistAlbumPaging
-import com.poulastaa.search.route.artistPaging
-import com.poulastaa.search.route.artistSongPaging
+import com.poulastaa.search.route.*
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
+import com.poulastaa.suggestion.network.routes.getPlaylistGeneratedData
 import com.poulastaa.suggestion.network.routes.home
 import com.poulastaa.suggestion.network.routes.refresh
 import com.poulastaa.sync.domain.repository.SynRepository
@@ -97,6 +95,7 @@ private fun Routing.setup(repo: SetupRepository) {
 private fun Routing.suggestion(repo: SuggestionRepository) {
     home(repo)
     refresh(repo)
+    getPlaylistGeneratedData(repo)
 }
 
 private fun Routing.view(repo: ViewRepository) {
@@ -113,6 +112,7 @@ private fun Routing.search(repo: PagingRepository) {
     artistAlbumPaging(repo)
     albumPaging(repo)
     artistPaging(repo)
+    createPlaylistPaging(repo)
 }
 
 private fun Routing.item(repo: ItemRepository) {

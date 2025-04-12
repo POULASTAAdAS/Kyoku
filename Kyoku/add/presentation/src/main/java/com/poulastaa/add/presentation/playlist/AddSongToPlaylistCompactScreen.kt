@@ -95,10 +95,20 @@ internal fun AddSongToPlaylistCompactScreen(
                     contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
                 ) {
                     if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
-                        CreatePlaylistItemCard(item, onAction, haptic)
+                        CreatePlaylistItemCard(
+                            item = item,
+                            pageType = state.staticData[pageIndex].type,
+                            onAction = onAction,
+                            haptic = haptic
+                        )
                     } else items(searchData.itemCount) { index ->
-                        searchData[index]?.let {
-                            CreatePlaylistItemCard(it, onAction, haptic)
+                        searchData[index]?.let { item ->
+                            CreatePlaylistItemCard(
+                                item = item,
+                                pageType = state.staticData[pageIndex].type,
+                                onAction = onAction,
+                                haptic = haptic
+                            )
                         }
                     }
                 }

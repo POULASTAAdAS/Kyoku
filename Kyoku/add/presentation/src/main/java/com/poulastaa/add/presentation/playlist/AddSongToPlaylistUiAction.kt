@@ -6,8 +6,11 @@ internal sealed interface AddSongToPlaylistUiAction {
     data class OnItemClick(
         val itemId: SongId,
         val type: AddToPlaylistItemUiType,
+        val pageType: AddSongToPlaylistPageUiType,
     ) : AddSongToPlaylistUiAction
 
     data class OnSearchQueryChange(val value: String) : AddSongToPlaylistUiAction
-    data class OnSearchFilterTypeChange(val type: AddSongToPlaylistSearchUiFilterType): AddSongToPlaylistUiAction
+    data class OnSearchFilterTypeChange(
+        val type: AddSongToPlaylistSearchUiFilterType,
+    ) : AddSongToPlaylistUiAction
 }

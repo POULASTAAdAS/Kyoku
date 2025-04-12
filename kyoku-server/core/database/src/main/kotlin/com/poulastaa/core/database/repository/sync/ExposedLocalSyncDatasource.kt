@@ -3,7 +3,7 @@ package com.poulastaa.core.database.repository.sync
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
 import com.poulastaa.core.database.entity.app.RelationEntitySongAlbum
-import com.poulastaa.core.database.entity.app.RelationSongPlaylist
+import com.poulastaa.core.database.entity.app.RelationEntitySongPlaylist
 import com.poulastaa.core.database.entity.user.RelationEntityUserAlbum
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
 import com.poulastaa.core.database.entity.user.RelationEntityUserFavouriteSong
@@ -91,10 +91,10 @@ internal class ExposedLocalSyncDatasource(
         }
 
         kyokuDbQuery {
-            RelationSongPlaylist.selectAll().where {
-                RelationSongPlaylist.playlistId inList allPlaylist.map { it.id }
+            RelationEntitySongPlaylist.selectAll().where {
+                RelationEntitySongPlaylist.playlistId inList allPlaylist.map { it.id }
             }.map {
-                it[RelationSongPlaylist.playlistId] to it[RelationSongPlaylist.songId]
+                it[RelationEntitySongPlaylist.playlistId] to it[RelationEntitySongPlaylist.songId]
             }
         }.groupBy { it.first }.map { it.key to it.value.map { it.second } }.map { (playlistId, songIdList) ->
             async {
@@ -115,7 +115,7 @@ internal class ExposedLocalSyncDatasource(
             }
 
             kyokuDbQuery {
-                RelationSongPlaylist.deleteWhere {
+                RelationEntitySongPlaylist.deleteWhere {
                     this.playlistId eq playlistId
                 }
             }
@@ -172,9 +172,9 @@ internal class ExposedLocalSyncDatasource(
 
     override suspend fun getPlaylistSongIdList(playlistId: PlaylistId): List<SongId> {
         suspend fun getPlaylistSongs() = kyokuDbQuery {
-            RelationSongPlaylist.select(RelationSongPlaylist.songId).where {
-                RelationSongPlaylist.playlistId eq playlistId
-            }.map { it[RelationSongPlaylist.songId] as SongId }
+            RelationEntitySongPlaylist.select(RelationEntitySongPlaylist.songId).where {
+                RelationEntitySongPlaylist.playlistId eq playlistId
+            }.map { it[RelationEntitySongPlaylist.songId] as SongId }
         }.also {
             cache.setSongIdByPlaylistId(playlistId, it)
         }
@@ -189,7 +189,7 @@ internal class ExposedLocalSyncDatasource(
     override fun removePlaylistSongs(playlistId: PlaylistId, songIds: List<SongId>) {
         CoroutineScope(Dispatchers.IO).launch {
             userDbQuery {
-                RelationSongPlaylist.deleteWhere {
+                RelationEntitySongPlaylist.deleteWhere {
                     this.playlistId eq playlistId and (this.songId inList songIds)
                 }
             }

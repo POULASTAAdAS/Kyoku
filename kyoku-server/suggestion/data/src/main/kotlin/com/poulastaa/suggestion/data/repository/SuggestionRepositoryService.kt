@@ -2,12 +2,12 @@ package com.poulastaa.suggestion.data.repository
 
 import com.poulastaa.core.domain.model.ReqUserPayload
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionDatasource
-import com.poulastaa.suggestion.domain.model.DtoHome
-import com.poulastaa.suggestion.domain.model.DtoRefresh
-import com.poulastaa.suggestion.domain.model.OldRefresh
+import com.poulastaa.suggestion.data.mapper.toDtoAddSongToPlaylistPageItem
+import com.poulastaa.suggestion.domain.model.*
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlin.random.Random
 
 class SuggestionRepositoryService(
     private val db: LocalSuggestionDatasource,
@@ -90,5 +90,44 @@ class SuggestionRepositoryService(
                 suggestedArtistSong = suggestedArtistSongDef.await()
             )
         }
+    }
+
+    override suspend fun getAddSongToPlaylistData(
+        payload: ReqUserPayload,
+    ): List<DtoAddSongToPlaylistPageItem>? = coroutineScope {
+        val user = db.getUserByEmail(payload.email, payload.userType) ?: return@coroutineScope null
+
+        val favouriteDef = async {
+            db.getYourFavouriteSongToAddToPlaylist(user.id).toDtoAddSongToPlaylistPageItem(
+                type = DtoAddSongToPlaylistPageType.YOUR_FAVOURITES
+            )
+        }
+        val suggestedDef = async {
+            db.getSuggestedSongToAddToPlaylist().toDtoAddSongToPlaylistPageItem(
+                type = DtoAddSongToPlaylistPageType.SUGGESTED_FOR_YOU
+            )
+        }
+        val youMayAlsoLikeDef = async {
+            db.getYouMayAlsoLikeSongToAddToPlaylist(user.countryId).toDtoAddSongToPlaylistPageItem(
+                type = DtoAddSongToPlaylistPageType.YOU_MAY_ALSO_LIKE
+            )
+        }
+
+        val fev = favouriteDef.await()
+        val suggest = suggestedDef.await()
+        val youMayLike = youMayAlsoLikeDef.await()
+
+        val finalFev = if (fev.data.size < 20) DtoAddSongToPlaylistPageItem(
+            type = fev.type,
+            data = (suggest.data.shuffled(Random)
+                    + youMayLike.data.shuffled(Random))
+                .shuffled(Random)
+                .take(
+                    Random.nextInt(15, 20)
+                ) + fev.data
+        )
+        else fev
+
+        listOf(finalFev, suggest, youMayLike)
     }
 }

@@ -33,4 +33,16 @@ interface LocalPagingDatasource {
         size: Int,
         filterType: DtoExploreArtistFilterType,
     ): List<DtoSearchItem>
+
+    suspend fun getPagingSong(
+        query: String?,
+        page: Int,
+        size: Int,
+    ): List<DtoSearchItem>
+
+    suspend fun getPagingPlaylist(
+        query: String?,
+        page: Int,
+        size: Int,
+    ): List<DtoSearchItem>
 }

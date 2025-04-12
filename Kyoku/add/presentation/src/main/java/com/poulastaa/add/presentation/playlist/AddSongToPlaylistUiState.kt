@@ -5,6 +5,7 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 
 internal data class AddSongToPlaylistUiState(
+    val isSavingSong: Boolean = false,
     val loadingType: LoadingType = LoadingType.Loading,
     val query: String = "",
     val searchScreenFilterType: AddSongToPlaylistSearchUiFilterType = AddSongToPlaylistSearchUiFilterType.ALL,

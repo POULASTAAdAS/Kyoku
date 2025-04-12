@@ -1,17 +1,22 @@
 package com.poulastaa.core.database.repository.search
 
+import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.shardSearchDbQuery
+import com.poulastaa.core.database.dao.DaoPlaylist
+import com.poulastaa.core.database.dao.DaoSong
+import com.poulastaa.core.database.entity.app.EntityPlaylist
+import com.poulastaa.core.database.entity.app.EntitySong
+import com.poulastaa.core.database.entity.app.RelationEntitySongPlaylist
 import com.poulastaa.core.database.entity.shard.paging.*
 import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
 import com.poulastaa.core.domain.model.DtoExploreArtistFilterType
 import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.search.LocalPagingDatasource
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 
 internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
     override suspend fun getArtistPagingSong(
@@ -106,8 +111,10 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                     if (query != null && query.trim() != "" && query.isNotEmpty()) it.where {
                         ShardPagingEntityAlbum.title like "${query}%"
                     } else it
-                }.orderBy(ShardPagingEntityAlbum.popularity to SortOrder.DESC)
-                    .offset(if (page == 1) 0L else (page * size).toLong())
+                }.orderBy(
+                    ShardPagingEntityAlbum.title to SortOrder.ASC,
+                    ShardPagingEntityAlbum.popularity to SortOrder.DESC
+                ).offset(if (page == 1) 0L else (page * size).toLong())
                     .limit(size)
                     .map {
                         DtoSearchItem(
@@ -211,5 +218,93 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                     isTypeSong = false,
                 )
             }
+    }
+
+    override suspend fun getPagingSong(
+        query: String?,
+        page: Int,
+        size: Int,
+    ): List<DtoSearchItem> = shardSearchDbQuery {
+        val aggregatedArtists = GroupConcat(
+            expr = ShardPagingEntityArtist.name,
+            separator = ", ",
+            distinct = true
+        ).alias("artists")
+
+        ShardPagingEntitySong
+            .join(
+                otherTable = ShardPagingRelationEntityArtistSong,
+                joinType = JoinType.INNER,
+                onColumn = ShardPagingEntitySong.id,
+                otherColumn = ShardPagingRelationEntityArtistSong.songId,
+                additionalConstraint = {
+                    ShardPagingEntitySong.id eq ShardPagingRelationEntityArtistSong.songId
+                }
+            ).join(
+                otherTable = ShardPagingEntityArtist,
+                joinType = JoinType.INNER,
+                onColumn = ShardPagingRelationEntityArtistSong.artistId,
+                otherColumn = ShardPagingEntityArtist.id,
+                additionalConstraint = {
+                    ShardPagingEntityArtist.id eq ShardPagingRelationEntityArtistSong.artistId
+                }
+            ).select(
+                ShardPagingEntitySong.id,
+                ShardPagingEntitySong.title,
+                ShardPagingEntitySong.poster,
+                ShardPagingEntityArtist.name,
+                aggregatedArtists
+            ).apply {
+                if (!query.isNullOrBlank()) andWhere { ShardPagingEntitySong.title like "${query}%" }
+            }.groupBy(
+                ShardPagingEntitySong.id,
+                ShardPagingEntitySong.title,
+                ShardPagingEntitySong.poster
+            )
+            .orderBy(ShardPagingEntitySong.title to SortOrder.ASC)
+            .offset(if (page == 1) 0L else (page * size).toLong())
+            .limit(size)
+            .map {
+                DtoSearchItem(
+                    id = it[ShardPagingEntitySong.id].value,
+                    title = it[ShardPagingEntitySong.title],
+                    rawPoster = it[ShardPagingEntitySong.poster],
+                    artist = it[aggregatedArtists],
+                    isTypeSong = false
+                )
+            }
+    }
+
+    override suspend fun getPagingPlaylist(
+        query: String?,
+        page: Int,
+        size: Int,
+    ): List<DtoSearchItem> = coroutineScope {
+        val playlist = kyokuDbQuery {
+            DaoPlaylist.find {
+                EntityPlaylist.isPublic eq true
+            }.orderBy(EntityPlaylist.name to SortOrder.ASC)
+                .offset(if (page == 1) 0L else (page * size).toLong())
+                .limit(size).toList()
+        }
+
+        kyokuDbQuery {
+            playlist.map {
+                async {
+                    DtoSearchItem(
+                        id = it.id.value,
+                        rawPosters = kyokuDbQuery {
+                            RelationEntitySongPlaylist.select(RelationEntitySongPlaylist.songId).where {
+                                RelationEntitySongPlaylist.playlistId eq it.id.value
+                            }.limit(4).map { it[RelationEntitySongPlaylist.songId] }
+                        }.let {
+                            kyokuDbQuery { DaoSong.find { EntitySong.id inList it }.map { it.poster } }
+                        },
+                        title = it.name,
+                        numbers = it.popularity
+                    )
+                }
+            }.awaitAll()
+        }
     }
 }

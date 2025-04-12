@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.gson.Gson
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
-import com.poulastaa.add.domain.model.DtoAddSongToPlaylistSearchUiFilterType
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistSearchFilterType
 import com.poulastaa.add.network.mapper.toDtoAddSongToPlaylistItem
 import com.poulastaa.add.network.model.AddSongToPlaylistItemResponse
 import com.poulastaa.core.domain.DataError
@@ -26,12 +26,12 @@ internal class AddSongToPlaylistPagingSource @Inject constructor(
     private val gson: Gson,
 ) : PagingSource<Int, DtoAddSongToPlaylistItem>() {
     private var query = ""
-    private var filterType = DtoAddSongToPlaylistSearchUiFilterType.ALL
+    private var filterType = DtoAddSongToPlaylistSearchFilterType.ALL
 
     override fun getRefreshKey(state: PagingState<Int, DtoAddSongToPlaylistItem>) =
         state.anchorPosition
 
-    fun init(query: String, filterType: DtoAddSongToPlaylistSearchUiFilterType) {
+    fun init(query: String, filterType: DtoAddSongToPlaylistSearchFilterType) {
         this.query = query
         this.filterType = filterType
     }
@@ -40,7 +40,7 @@ internal class AddSongToPlaylistPagingSource @Inject constructor(
         val page = params.key ?: 1
 
         val result = client.req<Unit, List<AddSongToPlaylistItemResponse>>(
-            route = EndPoints.Add.AddPaging.route,
+            route = EndPoints.Add.GetCreatePlaylist.route,
             method = ApiMethodType.GET,
             params = listOf(
                 ReqParam(

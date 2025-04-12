@@ -1,10 +1,7 @@
 package com.poulastaa.core.database.repository.suggestion
 
 import com.google.gson.Gson
-import com.poulastaa.core.domain.model.DtoAlbum
-import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoPlaylist
-import com.poulastaa.core.domain.model.DtoPrevSong
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.*
 import com.poulastaa.core.domain.repository.suggestion.LocalSuggestionCacheDatasource
 import redis.clients.jedis.JedisPool
@@ -33,4 +30,12 @@ class RedisLocalSuggestionDatasource(
     override fun cacheArtistById(list: List<ArtistId>): List<DtoArtist> = core.cacheArtistById(list)
     override fun setArtistById(artist: DtoArtist) = core.setArtistById(artist)
     override fun setArtistById(list: List<DtoArtist>) = core.setArtistById(list)
+
+    override fun cacheDetailedPrevSongById(
+        songId: SongId,
+    ): DtoDetailedPrevSong? = core.cacheDetailedPrevSongById(songId)
+
+    override fun cacheDetailedPrevSongById(
+        list: List<SongId>,
+    ): List<DtoDetailedPrevSong> = core.cacheDetailedPrevSongById(list)
 }

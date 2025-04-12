@@ -71,7 +71,9 @@ fun RootNavigation(
 
 private fun NavGraphBuilder.addGraph(nav: NavHostController) {
     composable<Screens.Add.CreatePlaylist> {
-        AddSongToPlaylistRootScreen {
+        val payload = it.toRoute<Screens.Add.CreatePlaylist>()
+
+        AddSongToPlaylistRootScreen(payload.playlistId) {
             nav.popBackStack()
         }
     }

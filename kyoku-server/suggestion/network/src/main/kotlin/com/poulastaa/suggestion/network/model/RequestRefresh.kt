@@ -1,4 +1,4 @@
-package com.poulastaa.suggestion.network.domain
+package com.poulastaa.suggestion.network.model
 
 import com.poulastaa.core.domain.repository.AlbumId
 import com.poulastaa.core.domain.repository.ArtistId

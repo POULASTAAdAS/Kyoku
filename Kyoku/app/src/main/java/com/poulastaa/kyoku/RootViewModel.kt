@@ -49,9 +49,7 @@ class RootViewModel @Inject constructor(
         }
 
         _state.update {
-            it.copy(
-                screen = Screens.Add.CreatePlaylist
-            )
+            it.copy(screen)
         }
 
         _keepSplashOn.value = false

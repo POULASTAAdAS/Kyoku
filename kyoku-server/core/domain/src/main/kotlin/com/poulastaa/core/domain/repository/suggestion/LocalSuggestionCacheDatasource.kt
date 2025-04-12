@@ -1,9 +1,6 @@
 package com.poulastaa.core.domain.repository.suggestion
 
-import com.poulastaa.core.domain.model.DtoAlbum
-import com.poulastaa.core.domain.model.DtoArtist
-import com.poulastaa.core.domain.model.DtoPlaylist
-import com.poulastaa.core.domain.model.DtoPrevSong
+import com.poulastaa.core.domain.model.*
 import com.poulastaa.core.domain.repository.AlbumId
 import com.poulastaa.core.domain.repository.ArtistId
 import com.poulastaa.core.domain.repository.PlaylistId
@@ -29,4 +26,10 @@ interface LocalSuggestionCacheDatasource {
     fun cacheArtistById(list: List<ArtistId>): List<DtoArtist>
     fun setArtistById(artist: DtoArtist)
     fun setArtistById(list: List<DtoArtist>)
+
+    fun cacheDetailedPrevSongById(songId: SongId): DtoDetailedPrevSong?
+    fun cacheDetailedPrevSongById(list: List<SongId>): List<DtoDetailedPrevSong>
+
+    fun cacheArtistIdOnSongId(songId: SongId): List<ArtistId>
+    fun setArtistIdOnSongId(songId: SongId, artistIdList: List<ArtistId>)
 }

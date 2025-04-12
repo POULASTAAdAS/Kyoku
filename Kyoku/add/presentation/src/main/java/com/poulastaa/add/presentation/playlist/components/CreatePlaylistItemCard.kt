@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.poulastaa.add.presentation.playlist.AddSongToPlaylistPageUiType
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiAction
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
 import com.poulastaa.add.presentation.playlist.AddToPlaylistUiItem
@@ -51,6 +52,7 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 @Composable
 internal fun CreatePlaylistItemCard(
     item: AddToPlaylistUiItem,
+    pageType: AddSongToPlaylistPageUiType,
     onAction: (AddSongToPlaylistUiAction.OnItemClick) -> Unit,
     haptic: HapticFeedback,
 ) {
@@ -147,7 +149,8 @@ internal fun CreatePlaylistItemCard(
                 onAction(
                     AddSongToPlaylistUiAction.OnItemClick(
                         itemId = item.id,
-                        type = item.type
+                        type = item.type,
+                        pageType = pageType
                     )
                 )
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -170,7 +173,8 @@ internal fun CreatePlaylistItemCard(
                 onAction(
                     AddSongToPlaylistUiAction.OnItemClick(
                         itemId = item.id,
-                        type = item.type
+                        type = item.type,
+                        pageType = pageType
                     )
                 )
             }
@@ -245,6 +249,7 @@ private fun Preview() {
                         title = "That Cool Playlist",
                         type = AddToPlaylistItemUiType.PLAYLIST
                     ),
+                    pageType = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
                     onAction = {},
                     haptic = LocalHapticFeedback.current
                 )

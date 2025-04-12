@@ -14,6 +14,7 @@ import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityCountryPop
 import com.poulastaa.core.database.entity.shard.suggestion.ShardEntityYearPopularSong
 import com.poulastaa.core.database.entity.user.RelationEntityUserAlbum
 import com.poulastaa.core.database.entity.user.RelationEntityUserArtist
+import com.poulastaa.core.database.entity.user.RelationEntityUserFavouriteSong
 import com.poulastaa.core.database.entity.user.RelationEntityUserPlaylist
 import com.poulastaa.core.database.mapper.*
 import com.poulastaa.core.domain.model.*
@@ -271,12 +272,12 @@ class ExposedLocalSuggestionDatasource(
 
         return coroutineScope {
             kyokuDbQuery {
-                RelationSongPlaylist.selectAll().where {
-                    RelationSongPlaylist.playlistId inList playlistIdList
+                RelationEntitySongPlaylist.selectAll().where {
+                    RelationEntitySongPlaylist.playlistId inList playlistIdList
                 }.map {
                     Pair(
-                        first = it[RelationSongPlaylist.playlistId] as PlaylistId,
-                        second = it[RelationSongPlaylist.songId] as SongId
+                        first = it[RelationEntitySongPlaylist.playlistId] as PlaylistId,
+                        second = it[RelationEntitySongPlaylist.songId] as SongId
                     )
                 }
             }.groupBy { it.first as PlaylistId }
@@ -356,6 +357,77 @@ class ExposedLocalSuggestionDatasource(
                 country = country
             )
         }.also { cache.setArtistById(it) } + cacheArtist
+    }
+
+    override suspend fun getYourFavouriteSongToAddToPlaylist(
+        userId: UserId,
+    ): List<DtoDetailedPrevSong> = userDbQuery {
+        RelationEntityUserFavouriteSong.select(RelationEntityUserFavouriteSong.songId).where {
+            RelationEntityUserFavouriteSong.userId eq userId
+        }.map { it[RelationEntityUserFavouriteSong.songId] }
+    }.let {
+        val cache = cache.cacheDetailedPrevSongById(it)
+        val idList = cache.map { it.id }
+        val notFound = it.filterNot { it in idList }
+        cache + core.getDetailedPrevSongOnId(notFound)
+    }
+
+    override suspend fun getSuggestedSongToAddToPlaylist(): List<DtoDetailedPrevSong> = kyokuDbQuery {
+        DaoSong.all().orderBy(EntitySongInfo.popularity to SortOrder.DESC)
+            .limit(Random.nextInt(30, 40)).map { it.toDtoPrevSong() }
+    }.let { list ->
+        coroutineScope {
+            list.map { song ->
+                async {
+                    val artist = cache.cacheArtistIdOnSongId(song.id).ifEmpty {
+                        kyokuDbQuery {
+                            RelationEntitySongArtist.select(RelationEntitySongArtist.artistId).where {
+                                RelationEntitySongArtist.songId eq song.id
+                            }.map { it[RelationEntitySongArtist.artistId] }
+                        }.also { cache.setArtistIdOnSongId(song.id, it) }
+                    }.let {
+                        core.getArtistOnId(it).joinToString(",") {
+                            it.name
+                        }
+                    }
+
+                    DtoDetailedPrevSong(
+                        id = song.id,
+                        title = song.title,
+                        poster = song.poster,
+                        artists = artist
+                    )
+                }
+            }.awaitAll()
+        }
+    }
+
+    override suspend fun getYouMayAlsoLikeSongToAddToPlaylist(countryId: CountryId): List<DtoDetailedPrevSong> {
+        kyokuDbQuery {
+            val aggregatedArtists = GroupConcat(
+                expr = EntityArtist.name,
+                separator = ", ",
+                distinct = true
+            ).alias("artists")
+
+            EntitySong.join(
+                otherTable = RelationEntitySongArtist,
+                joinType = JoinType.LEFT,
+                onColumn = EntitySong.id,
+                otherColumn = RelationEntitySongArtist.songId,
+                additionalConstraint = {
+                    EntitySong.id eq RelationEntitySongArtist.songId
+                }
+            ).join(
+                otherTable = RelationEntityArtistCountry,
+                joinType = JoinType.INNER,
+                onColumn = EntityArtist.id,
+                otherColumn = RelationEntityArtistCountry.artistId,
+                additionalConstraint = {
+                    RelationEntityArtistCountry.artistId eq EntityArtist.id
+                }
+            )
+        }
     }
 
     private suspend fun getSavedArtistIdOnUserId(userId: Long): List<ArtistId> = userDbQuery {

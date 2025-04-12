@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku.navigation
 
 import com.poulastaa.core.domain.model.ArtistId
+import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.ViewType
 import com.poulastaa.view.presentation.saved.ViewSavedUiItemType
 import kotlinx.serialization.Serializable
@@ -78,6 +79,6 @@ sealed interface Screens {
 
     sealed interface Add : Screens {
         @Serializable
-        data object CreatePlaylist : Screens
+        data class CreatePlaylist(val playlistId: PlaylistId) : Screens
     }
 }

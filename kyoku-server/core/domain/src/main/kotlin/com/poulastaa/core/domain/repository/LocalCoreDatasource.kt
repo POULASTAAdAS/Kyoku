@@ -8,6 +8,7 @@ typealias AlbumId = Long
 typealias GenreId = Int
 typealias CountryId = Int
 typealias PlaylistId = Long
+typealias UserId = Long
 
 interface LocalCoreDatasource {
     suspend fun getUserByEmail(email: String, userType: UserType): DtoDBUser?

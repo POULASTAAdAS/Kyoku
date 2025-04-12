@@ -9,6 +9,7 @@ import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
+import com.poulastaa.core.database.repository.RoomLocalAddSongToPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAllFromArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalExploreAlbumDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
@@ -22,6 +23,7 @@ import com.poulastaa.core.database.repository.RoomLocalViewArtistDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewOtherDatasource
 import com.poulastaa.core.database.repository.RoomLocalViewSavedItemDatasource
 import com.poulastaa.core.domain.repository.DatastoreRepository
+import com.poulastaa.core.domain.repository.LocalAddSongToPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
 import com.poulastaa.core.domain.repository.LocalExploreAlbumDatasource
@@ -158,4 +160,10 @@ internal object CoreDatabaseViewmodelModule {
         viewDao: ViewDao,
         scope: CoroutineScope,
     ): LocalViewSavedItemDatasource = RoomLocalViewSavedItemDatasource(viewDao, scope)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalAddSongToPlaylistDatasource(
+        root: RootDao,
+    ): LocalAddSongToPlaylistDatasource = RoomLocalAddSongToPlaylistDatasource(root)
 }

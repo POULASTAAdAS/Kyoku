@@ -42,9 +42,9 @@ class ExposedLocalCoreDatasource(
 
         CoroutineScope(Dispatchers.IO).launch {
             kyokuDbQuery {
-                RelationSongPlaylist.batchInsert(data = list, ignore = true, shouldReturnGeneratedValues = false) {
-                    this[RelationSongPlaylist.playlistId] = dbPlaylist.id.value
-                    this[RelationSongPlaylist.songId] = it
+                RelationEntitySongPlaylist.batchInsert(data = list, ignore = true, shouldReturnGeneratedValues = false) {
+                    this[RelationEntitySongPlaylist.playlistId] = dbPlaylist.id.value
+                    this[RelationEntitySongPlaylist.songId] = it
                 }
             }
 

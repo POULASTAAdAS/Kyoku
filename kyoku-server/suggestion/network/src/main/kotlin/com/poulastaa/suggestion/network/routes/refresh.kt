@@ -4,7 +4,7 @@ import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.domain.utils.Constants.SECURITY_LIST
 import com.poulastaa.core.network.getReqUserPayload
 import com.poulastaa.suggestion.domain.repository.SuggestionRepository
-import com.poulastaa.suggestion.network.domain.RequestRefresh
+import com.poulastaa.suggestion.network.model.RequestRefresh
 import com.poulastaa.suggestion.network.mapper.toOldRefresh
 import com.poulastaa.suggestion.network.mapper.toResponseRefresh
 import io.ktor.http.*

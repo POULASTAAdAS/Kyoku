@@ -1,6 +1,6 @@
 package com.poulastaa.add.domain.model
 
-enum class DtoAddSongToPlaylistSearchUiFilterType {
+enum class DtoAddSongToPlaylistSearchFilterType {
     ALL,
     ALBUM,
     SONG,

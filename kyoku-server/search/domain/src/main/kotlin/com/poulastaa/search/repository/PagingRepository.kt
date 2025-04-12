@@ -4,6 +4,8 @@ import com.poulastaa.core.domain.model.DtoExploreAlbumFilterType
 import com.poulastaa.core.domain.model.DtoExploreArtistFilterType
 import com.poulastaa.core.domain.model.DtoSearchItem
 import com.poulastaa.core.domain.repository.ArtistId
+import com.poulastaa.search.model.DtoAddSongToPlaylistItem
+import com.poulastaa.search.model.DtoAddSongToPlaylistSearchFilterType
 
 interface PagingRepository {
     suspend fun getArtistPagingSong(
@@ -33,4 +35,11 @@ interface PagingRepository {
         size: Int,
         filterType: DtoExploreArtistFilterType,
     ): List<DtoSearchItem>
+
+    suspend fun getPagingCreatePlaylist(
+        page: Int,
+        size: Int,
+        query: String?,
+        filterType: DtoAddSongToPlaylistSearchFilterType,
+    ): List<DtoAddSongToPlaylistItem>
 }

@@ -1,10 +1,7 @@
 package com.poulastaa.core.domain.repository.suggestion
 
 import com.poulastaa.core.domain.model.*
-import com.poulastaa.core.domain.repository.AlbumId
-import com.poulastaa.core.domain.repository.ArtistId
-import com.poulastaa.core.domain.repository.CountryId
-import com.poulastaa.core.domain.repository.SongId
+import com.poulastaa.core.domain.repository.*
 
 interface LocalSuggestionDatasource {
     suspend fun getUserByEmail(email: String, userType: UserType): DtoDBUser?
@@ -46,4 +43,8 @@ interface LocalSuggestionDatasource {
     suspend fun getSavedPlaylist(userId: Long): List<DtoFullPlaylist>
     suspend fun getSavedAlbum(userId: Long): List<DtoFullAlbum>
     suspend fun getSavedArtist(userId: Long): List<DtoArtist>
+
+    suspend fun getYourFavouriteSongToAddToPlaylist(userId: UserId): List<DtoDetailedPrevSong>
+    suspend fun getSuggestedSongToAddToPlaylist(): List<DtoDetailedPrevSong>
+    suspend fun getYouMayAlsoLikeSongToAddToPlaylist(countryId: CountryId): List<DtoDetailedPrevSong>
 }
