@@ -13,7 +13,7 @@ internal data class AddSongToPlaylistUiState(
         AddSongToPlaylistPageUiItem(
             type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
             data = (1..10).map {
-                AddToPlaylistUiItem(
+                AddSongToPlaylistUiItem(
                     title = "That Cool Song",
                     artist = "That Cool Artist",
                     type = AddToPlaylistItemUiType.SONG
@@ -23,7 +23,7 @@ internal data class AddSongToPlaylistUiState(
         AddSongToPlaylistPageUiItem(
             type = AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU,
             data = (1..10).map {
-                AddToPlaylistUiItem(
+                AddSongToPlaylistUiItem(
                     title = "That Cool Song",
                     artist = "That Cool Artist",
                     type = AddToPlaylistItemUiType.SONG
@@ -33,7 +33,7 @@ internal data class AddSongToPlaylistUiState(
         AddSongToPlaylistPageUiItem(
             type = AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE,
             data = (1..10).map {
-                AddToPlaylistUiItem(
+                AddSongToPlaylistUiItem(
                     title = "That Cool Song",
                     artist = "That Cool Artist",
                     type = AddToPlaylistItemUiType.SONG
@@ -43,7 +43,7 @@ internal data class AddSongToPlaylistUiState(
     ),
 )
 
-internal data class AddToPlaylistUiItem(
+internal data class AddSongToPlaylistUiItem(
     val id: Long = -1,
     val title: String = "",
     val poster: List<String> = emptyList(),
@@ -69,7 +69,7 @@ internal enum class AddSongToPlaylistSearchUiFilterType(@StringRes val value: In
 
 internal data class AddSongToPlaylistPageUiItem(
     val type: AddSongToPlaylistPageUiType = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
-    val data: List<AddToPlaylistUiItem> = emptyList(),
+    val data: List<AddSongToPlaylistUiItem> = emptyList(),
 )
 
 internal enum class AddSongToPlaylistPageUiType(@StringRes val value: Int) {

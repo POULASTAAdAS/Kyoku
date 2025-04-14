@@ -39,9 +39,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistPageUiType
-import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiAction
+import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
-import com.poulastaa.add.presentation.playlist.AddToPlaylistUiItem
 import com.poulastaa.core.presentation.designsystem.CacheImageReq
 import com.poulastaa.core.presentation.designsystem.ui.AddIcon
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -51,9 +50,8 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
 internal fun CreatePlaylistItemCard(
-    item: AddToPlaylistUiItem,
-    pageType: AddSongToPlaylistPageUiType,
-    onAction: (AddSongToPlaylistUiAction.OnItemClick) -> Unit,
+    item: AddSongToPlaylistUiItem,
+    onAction: () -> Unit,
     haptic: HapticFeedback,
 ) {
     Row(
@@ -146,13 +144,7 @@ internal fun CreatePlaylistItemCard(
         if (item.type == AddToPlaylistItemUiType.SONG) OutlinedCard(
             shape = CircleShape,
             onClick = {
-                onAction(
-                    AddSongToPlaylistUiAction.OnItemClick(
-                        itemId = item.id,
-                        type = item.type,
-                        pageType = pageType
-                    )
-                )
+                onAction()
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             },
             border = BorderStroke(
@@ -169,15 +161,7 @@ internal fun CreatePlaylistItemCard(
                 contentDescription = null
             )
         } else IconButton(
-            onClick = {
-                onAction(
-                    AddSongToPlaylistUiAction.OnItemClick(
-                        itemId = item.id,
-                        type = item.type,
-                        pageType = pageType
-                    )
-                )
-            }
+            onClick = onAction
         ) {
             Icon(
                 imageVector = ArrowBackIcon,
@@ -245,11 +229,10 @@ private fun Preview() {
                 contentAlignment = Alignment.Center
             ) {
                 CreatePlaylistItemCard(
-                    item = AddToPlaylistUiItem(
+                    item = AddSongToPlaylistUiItem(
                         title = "That Cool Playlist",
                         type = AddToPlaylistItemUiType.PLAYLIST
                     ),
-                    pageType = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
                     onAction = {},
                     haptic = LocalHapticFeedback.current
                 )

@@ -39,7 +39,7 @@ import com.poulastaa.core.presentation.ui.components.AppErrorExpandedScreen
 @Composable
 internal fun AddSongToPlaylistExpandedScreen(
     state: AddSongToPlaylistUiState,
-    searchData: LazyPagingItems<AddToPlaylistUiItem>,
+    searchData: LazyPagingItems<AddSongToPlaylistUiItem>,
     onAction: (AddSongToPlaylistUiAction) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -112,16 +112,30 @@ internal fun AddSongToPlaylistExpandedScreen(
                         if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
                             CreatePlaylistItemCard(
                                 item = item,
-                                pageType = state.staticData[pageIndex].type,
-                                onAction = onAction,
+                                onAction = {
+                                    onAction(
+                                        AddSongToPlaylistUiAction.OnItemClick(
+                                            itemId = item.id,
+                                            type = item.type,
+                                            pageType = state.staticData[pageIndex].type
+                                        )
+                                    )
+                                },
                                 haptic = haptic
                             )
                         } else items(searchData.itemCount) { index ->
                             searchData[index]?.let { item ->
                                 CreatePlaylistItemCard(
                                     item = item,
-                                    pageType = state.staticData[pageIndex].type,
-                                    onAction = onAction,
+                                    onAction = {
+                                        onAction(
+                                            AddSongToPlaylistUiAction.OnItemClick(
+                                                itemId = item.id,
+                                                type = item.type,
+                                                pageType = state.staticData[pageIndex].type
+                                            )
+                                        )
+                                    },
                                     haptic = haptic
                                 )
                             }
@@ -153,7 +167,7 @@ private fun Preview() {
                         AddSongToPlaylistPageUiItem(
                             type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
                             data = (1..10).map {
-                                AddToPlaylistUiItem(
+                                AddSongToPlaylistUiItem(
                                     title = "That Cool Song",
                                     artist = "That Cool Artist",
                                     type = AddToPlaylistItemUiType.SONG
@@ -163,7 +177,7 @@ private fun Preview() {
                         AddSongToPlaylistPageUiItem(
                             type = AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU,
                             data = (1..10).map {
-                                AddToPlaylistUiItem(
+                                AddSongToPlaylistUiItem(
                                     title = "That Cool Song",
                                     artist = "That Cool Artist",
                                     type = AddToPlaylistItemUiType.SONG
@@ -173,7 +187,7 @@ private fun Preview() {
                         AddSongToPlaylistPageUiItem(
                             type = AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE,
                             data = (1..10).map {
-                                AddToPlaylistUiItem(
+                                AddSongToPlaylistUiItem(
                                     title = "That Cool Song",
                                     artist = "That Cool Artist",
                                     type = AddToPlaylistItemUiType.SONG

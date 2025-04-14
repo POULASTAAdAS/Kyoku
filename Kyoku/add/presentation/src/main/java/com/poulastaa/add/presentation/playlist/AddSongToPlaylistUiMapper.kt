@@ -14,7 +14,7 @@ internal fun DtoAddSongToPlaylistPageItem.toAddSongToPlaylistPageUiItem() =
         data = this.data.map { it.toAddSongToPlaylistPageUiItem() }
     )
 
-private fun DtoAddSongToPlaylistItem.toAddSongToPlaylistPageUiItem() = AddToPlaylistUiItem(
+private fun DtoAddSongToPlaylistItem.toAddSongToPlaylistPageUiItem() = AddSongToPlaylistUiItem(
     id = this.id,
     title = this.title,
     poster = this.poster,

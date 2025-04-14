@@ -119,14 +119,12 @@ class SuggestionRepositoryService(
 
         val finalFev = if (fev.data.size < 20) DtoAddSongToPlaylistPageItem(
             type = fev.type,
-            data = (suggest.data.shuffled(Random)
-                    + youMayLike.data.shuffled(Random))
+            data = (suggest.data.shuffled(Random) + youMayLike.data.shuffled(Random))
                 .shuffled(Random)
                 .take(
                     Random.nextInt(15, 20)
                 ) + fev.data
-        )
-        else fev
+        ) else fev
 
         listOf(finalFev, suggest, youMayLike)
     }

@@ -38,4 +38,11 @@ class RedisLocalSuggestionDatasource(
     override fun cacheDetailedPrevSongById(
         list: List<SongId>,
     ): List<DtoDetailedPrevSong> = core.cacheDetailedPrevSongById(list)
+
+    override fun cacheArtistIdOnSongId(songId: SongId): List<ArtistId> = core.cacheArtistIdBySongId(songId)
+
+    override fun setArtistIdOnSongId(
+        songId: SongId,
+        artistIdList: List<ArtistId>,
+    ) = core.setArtistIdBySongId(songId, artistIdList)
 }

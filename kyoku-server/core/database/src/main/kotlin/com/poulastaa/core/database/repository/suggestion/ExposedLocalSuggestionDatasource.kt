@@ -25,6 +25,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -385,10 +386,8 @@ class ExposedLocalSuggestionDatasource(
                                 RelationEntitySongArtist.songId eq song.id
                             }.map { it[RelationEntitySongArtist.artistId] }
                         }.also { cache.setArtistIdOnSongId(song.id, it) }
-                    }.let {
-                        core.getArtistOnId(it).joinToString(",") {
-                            it.name
-                        }
+                    }.let { list ->
+                        core.getArtistOnId(list).joinToString(",") { it.name }
                     }
 
                     DtoDetailedPrevSong(
@@ -402,32 +401,64 @@ class ExposedLocalSuggestionDatasource(
         }
     }
 
-    override suspend fun getYouMayAlsoLikeSongToAddToPlaylist(countryId: CountryId): List<DtoDetailedPrevSong> {
-        kyokuDbQuery {
-            val aggregatedArtists = GroupConcat(
-                expr = EntityArtist.name,
-                separator = ", ",
-                distinct = true
-            ).alias("artists")
+    override suspend fun getYouMayAlsoLikeSongToAddToPlaylist(
+        countryId: CountryId,
+    ): List<DtoDetailedPrevSong> = kyokuDbQuery {
+        val aggregatedArtists = GroupConcat(
+            expr = EntityArtist.name,
+            separator = ", ",
+            distinct = true
+        ).alias("artists")
 
-            EntitySong.join(
-                otherTable = RelationEntitySongArtist,
-                joinType = JoinType.LEFT,
-                onColumn = EntitySong.id,
-                otherColumn = RelationEntitySongArtist.songId,
-                additionalConstraint = {
-                    EntitySong.id eq RelationEntitySongArtist.songId
-                }
-            ).join(
-                otherTable = RelationEntityArtistCountry,
-                joinType = JoinType.INNER,
-                onColumn = EntityArtist.id,
-                otherColumn = RelationEntityArtistCountry.artistId,
-                additionalConstraint = {
-                    RelationEntityArtistCountry.artistId eq EntityArtist.id
-                }
-            )
-        }
+        EntitySong.join(
+            otherTable = RelationEntitySongArtist,
+            joinType = JoinType.LEFT,
+            onColumn = EntitySong.id,
+            otherColumn = RelationEntitySongArtist.songId,
+            additionalConstraint = {
+                EntitySong.id eq RelationEntitySongArtist.songId
+            }
+        ).join(
+            otherTable = RelationEntityArtistCountry,
+            joinType = JoinType.INNER,
+            onColumn = EntityArtist.id,
+            otherColumn = RelationEntityArtistCountry.artistId,
+            additionalConstraint = {
+                RelationEntityArtistCountry.artistId eq EntityArtist.id
+            }
+        ).join(
+            otherTable = EntitySongInfo,
+            joinType = JoinType.INNER,
+            onColumn = EntitySong.id,
+            otherColumn = EntitySongInfo.songId,
+            additionalConstraint = {
+                EntitySongInfo.songId eq EntitySong.id
+            }
+        ).join(
+            otherTable = EntityArtist,
+            joinType = JoinType.INNER,
+            onColumn = EntityArtist.id,
+            otherColumn = RelationEntitySongArtist.artistId,
+            additionalConstraint = {
+                RelationEntitySongArtist.artistId eq EntityArtist.id
+            }
+        ).select(
+            EntitySong.id,
+            EntitySong.title,
+            EntitySong.poster,
+            EntitySongInfo.popularity,
+            aggregatedArtists
+        ).where {
+            RelationEntityArtistCountry.countryId neq countryId
+        }.orderBy(EntitySongInfo.popularity to SortOrder.DESC)
+            .limit(Random.nextInt(30, 40)).map {
+                DtoDetailedPrevSong(
+                    id = it[EntitySong.id].value,
+                    title = it[EntitySong.title],
+                    poster = it[EntitySong.poster],
+                    artists = it[aggregatedArtists],
+                )
+            }
     }
 
     private suspend fun getSavedArtistIdOnUserId(userId: Long): List<ArtistId> = userDbQuery {

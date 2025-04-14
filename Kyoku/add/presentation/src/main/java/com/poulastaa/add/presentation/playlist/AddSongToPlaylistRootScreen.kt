@@ -79,25 +79,25 @@ fun AddSongToPlaylistRootScreen(
 internal val PREV_DATA = flowOf(
     PagingData.from(
         ((1..5).map {
-            AddToPlaylistUiItem(
+            AddSongToPlaylistUiItem(
                 id = it.toLong(),
                 title = "That Cool Song",
                 type = AddToPlaylistItemUiType.SONG
             )
         } + (1..5).map {
-            AddToPlaylistUiItem(
+            AddSongToPlaylistUiItem(
                 id = it.toLong(),
                 title = "That Cool Artist",
                 type = AddToPlaylistItemUiType.ARTIST
             )
         } + (1..5).map {
-            AddToPlaylistUiItem(
+            AddSongToPlaylistUiItem(
                 id = it.toLong(),
                 title = "That Cool Playlist",
                 type = AddToPlaylistItemUiType.PLAYLIST
             )
         } + (1..5).map {
-            AddToPlaylistUiItem(
+            AddSongToPlaylistUiItem(
                 id = it.toLong(),
                 title = "That Cool Artist",
                 type = AddToPlaylistItemUiType.ALBUM
