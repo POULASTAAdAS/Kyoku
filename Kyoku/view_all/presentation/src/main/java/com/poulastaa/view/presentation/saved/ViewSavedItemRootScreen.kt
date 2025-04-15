@@ -3,6 +3,7 @@ package com.poulastaa.view.presentation.saved
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.ui.components.crate_playlist.CratePlaylistBottomBar
 import com.poulastaa.view.domain.model.ViewSavedAllowedNavigationScreen
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
@@ -32,6 +34,8 @@ fun ViewSavedItemRootScreen(
     val windowSizeClass = calculateWindowSizeClass(context)
     val state by viewmodel.state.collectAsStateWithLifecycle()
 
+    val bottomSheet = rememberModalBottomSheetState(confirmValueChange = { false })
+
     ObserveAsEvent(viewmodel.uiEvent) { event ->
         when (event) {
             is ViewSavedUiEvent.EmitToast -> Toast.makeText(
@@ -42,6 +46,11 @@ fun ViewSavedItemRootScreen(
 
             is ViewSavedUiEvent.Navigate -> navigate(event.screen)
         }
+    }
+
+    LaunchedEffect(state.isNewPlaylistDialogOpen) {
+        if (state.isNewPlaylistDialogOpen) bottomSheet.show()
+        else bottomSheet.hide()
     }
 
     KyokuWindowSize(
@@ -66,6 +75,15 @@ fun ViewSavedItemRootScreen(
                 onAction = viewmodel::onAction,
                 navigateBack = navigateBack
             )
+        }
+    )
+
+    if (bottomSheet.isVisible) CratePlaylistBottomBar(
+        created = { playlistId ->
+            viewmodel.onAction(ViewSavedUiAction.OnNewPlaylistCreated(playlistId))
+        },
+        canceled = {
+            viewmodel.onAction(ViewSavedUiAction.OnAddNewItemClick)
         }
     )
 }

@@ -45,7 +45,29 @@ internal class ViewSavedItemViewmodel @Inject constructor(
     fun onAction(action: ViewSavedUiAction) {
         when (action) {
             ViewSavedUiAction.OnAddNewItemClick -> {
+                when (_state.value.type) {
+                    ViewSavedUiItemType.ARTIST -> TODO()
 
+                    ViewSavedUiItemType.PLAYLIST -> _state.update {
+                        it.copy(
+                            isNewPlaylistDialogOpen = it.isNewPlaylistDialogOpen.not()
+                        )
+                    }
+
+                    ViewSavedUiItemType.ALBUM -> TODO()
+                    else -> return
+                }
+            }
+
+            is ViewSavedUiAction.OnNewPlaylistCreated -> viewModelScope.launch {
+                _uiEvent.send(
+                    ViewSavedUiEvent.Navigate(
+                        ViewSavedAllowedNavigationScreen.Other(
+                            otherId = action.playlistId,
+                            type = DtoViewSavedItemNavigationType.PLAYLIST
+                        )
+                    )
+                )
             }
 
             ViewSavedUiAction.OnEditToggle -> {
@@ -57,7 +79,7 @@ internal class ViewSavedItemViewmodel @Inject constructor(
             }
 
             ViewSavedUiAction.OnDeleteAllClick -> {
-                
+
             }
 
             is ViewSavedUiAction.OnItemClick -> when (action.clickType) {

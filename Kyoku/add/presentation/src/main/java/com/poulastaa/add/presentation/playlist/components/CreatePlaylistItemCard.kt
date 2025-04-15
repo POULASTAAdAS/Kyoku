@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.poulastaa.add.presentation.playlist.AddSongToPlaylistPageUiType
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
 import com.poulastaa.core.presentation.designsystem.CacheImageReq
@@ -117,6 +116,7 @@ internal fun CreatePlaylistItemCard(
 
         Column(
             modifier = Modifier
+                .fillMaxWidth(.85f)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.Center
         ) {
@@ -125,7 +125,7 @@ internal fun CreatePlaylistItemCard(
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             item.artist?.let {

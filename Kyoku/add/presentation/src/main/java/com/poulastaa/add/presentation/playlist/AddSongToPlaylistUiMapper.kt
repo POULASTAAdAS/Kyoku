@@ -1,8 +1,10 @@
 package com.poulastaa.add.presentation.playlist
 
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageType
-import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
+import com.poulastaa.add.domain.model.DtoAddSongToPlaylistSearchFilterType
+import com.poulastaa.add.domain.model.DtoAddToPlaylistItemType
 
 internal fun DtoAddSongToPlaylistPageItem.toAddSongToPlaylistPageUiItem() =
     AddSongToPlaylistPageUiItem(
@@ -21,4 +23,29 @@ private fun DtoAddSongToPlaylistItem.toAddSongToPlaylistPageUiItem() = AddSongTo
     artist = this.artist,
     numbers = this.numbers,
     type = AddToPlaylistItemUiType.SONG
+)
+
+internal fun AddSongToPlaylistSearchUiFilterType.toDtoDtoAddSongToPlaylistSearchFilterType() =
+    when (this) {
+        AddSongToPlaylistSearchUiFilterType.ALL -> DtoAddSongToPlaylistSearchFilterType.ALL
+        AddSongToPlaylistSearchUiFilterType.ALBUM -> DtoAddSongToPlaylistSearchFilterType.ALBUM
+        AddSongToPlaylistSearchUiFilterType.SONG -> DtoAddSongToPlaylistSearchFilterType.SONG
+        AddSongToPlaylistSearchUiFilterType.ARTIST -> DtoAddSongToPlaylistSearchFilterType.ARTIST
+        AddSongToPlaylistSearchUiFilterType.PLAYLIST -> DtoAddSongToPlaylistSearchFilterType.PLAYLIST
+    }
+
+private fun DtoAddToPlaylistItemType.toAddToPlaylistItemUiType() = when (this) {
+    DtoAddToPlaylistItemType.PLAYLIST -> AddToPlaylistItemUiType.PLAYLIST
+    DtoAddToPlaylistItemType.ALBUM -> AddToPlaylistItemUiType.ALBUM
+    DtoAddToPlaylistItemType.ARTIST -> AddToPlaylistItemUiType.ARTIST
+    DtoAddToPlaylistItemType.SONG -> AddToPlaylistItemUiType.SONG
+}
+
+internal fun DtoAddSongToPlaylistItem.toAddSongToPlaylistUiItem() = AddSongToPlaylistUiItem(
+    id = this.id,
+    title = this.title,
+    poster = this.poster,
+    artist = this.artist,
+    numbers = this.numbers,
+    type = this.type.toAddToPlaylistItemUiType()
 )

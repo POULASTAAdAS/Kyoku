@@ -101,7 +101,7 @@ fun DaoSong.toDtoPrevSong() = DtoPrevSong(
 fun DtoPrevSong.toDetailedPrevSong(artist: String?, releaseYear: Int) = DtoDetailedPrevSong(
     id = this.id,
     title = this.title,
-    poster = this.poster,
+    rawPoster = this.poster,
     artists = artist,
     releaseYear = releaseYear,
 )
@@ -109,7 +109,7 @@ fun DtoPrevSong.toDetailedPrevSong(artist: String?, releaseYear: Int) = DtoDetai
 fun DtoSong.toDtoDetailedPrevSong() = DtoDetailedPrevSong(
     id = this.id,
     title = this.title,
-    poster = this.poster,
+    rawPoster = this.poster,
     artists = this.artist.joinToString(",") { it.name },
     releaseYear = -1
 )

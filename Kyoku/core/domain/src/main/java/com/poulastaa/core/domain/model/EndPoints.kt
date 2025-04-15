@@ -1,56 +1,78 @@
 package com.poulastaa.core.domain.model
 
 sealed class EndPoints(val route: String) {
-    data object Auth : EndPoints(route = "/api/v1/auth")
+    private object VERSIONS {
+        const val ONE = "v1"
+    }
 
-    data object GetPasskey : EndPoints(route = "/api/v1/auth/getPasskeyRequest")
-    data object CreatePasskeyUser : EndPoints(route = "/api/v1/auth/createPasskeyUser")
-    data object GetPasskeyUser : EndPoints(route = "/api/v1/auth/getPasskeyUser")
+    object Auth : EndPoints(route = "/api/${VERSIONS.ONE}/auth")
 
-    data object GetJWTToken : EndPoints(route = "/api/v1/auth/getJWTToken")
-    data object RefreshToken : EndPoints(route = "/api/v1/auth/refreshToken")
+    data object GetPasskey : EndPoints(route = "/api/${VERSIONS.ONE}/auth/getPasskeyRequest")
+    data object CreatePasskeyUser : EndPoints(route = "/api/${VERSIONS.ONE}/auth/createPasskeyUser")
+    data object GetPasskeyUser : EndPoints(route = "/api/${VERSIONS.ONE}/auth/getPasskeyUser")
 
-    data object ForgotPassword : EndPoints(route = "/api/v1/auth/forgotPassword")
+    data object GetJWTToken : EndPoints(route = "/api/${VERSIONS.ONE}/auth/getJWTToken")
+    data object RefreshToken : EndPoints(route = "/api/${VERSIONS.ONE}/auth/refreshToken")
 
-    data object ImportSpotifyPlaylist : EndPoints(route = "/api/v1/user/importSpotifyPlaylist")
+    data object ForgotPassword : EndPoints(route = "/api/${VERSIONS.ONE}/auth/forgotPassword")
 
-    data object SetBDate : EndPoints(route = "/api/v1/user/setBDate")
+    data object ImportSpotifyPlaylist : EndPoints(
+        route = "/api/${VERSIONS.ONE}/user/importSpotifyPlaylist"
+    )
 
-    data object SuggestGenre : EndPoints(route = "/api/v1/user/suggestGenre")
-    data object UPSERTGenre : EndPoints(route = "/api/v1/user/upsertGenre")
+    data object SetBDate : EndPoints(route = "/api/${VERSIONS.ONE}/user/setBDate")
 
-    data object SuggestArtist : EndPoints(route = "/api/v1/user/suggestArtist")
-    data object UPSERTArtist : EndPoints(route = "/api/v1/user/upsertArtist")
+    data object SuggestGenre : EndPoints(route = "/api/${VERSIONS.ONE}/user/suggestGenre")
+    data object UPSERTGenre : EndPoints(route = "/api/${VERSIONS.ONE}/user/upsertGenre")
 
-    data object Home : EndPoints(route = "/api/v1/suggestion/home")
-    data object RefreshHome : EndPoints(route = "/api/v1/suggestion/refreshHome")
+    data object SuggestArtist : EndPoints(route = "/api/${VERSIONS.ONE}/user/suggestArtist")
+    data object UPSERTArtist : EndPoints(route = "/api/${VERSIONS.ONE}/user/upsertArtist")
 
-    data object GetBDate : EndPoints(route = "/api/v1/user/getBDate")
-    data object UpdateUsername : EndPoints(route = "/api/v1/user/updateUsername")
+    data object Home : EndPoints(route = "/api/${VERSIONS.ONE}/suggestion/home")
+    data object RefreshHome : EndPoints(route = "/api/${VERSIONS.ONE}/suggestion/refreshHome")
 
-    data object ViewArtist : EndPoints(route = "/api/v1/view/viewArtist")
-    data object ViewOther : EndPoints(route = "/api/v1/view/viewOther")
+    data object GetBDate : EndPoints(route = "/api/${VERSIONS.ONE}/user/getBDate")
+    data object UpdateUsername : EndPoints(route = "/api/${VERSIONS.ONE}/user/updateUsername")
 
-    data object SyncLibrary : EndPoints(route = "/api/v1/sync/syncLibrary")
+    data object ViewArtist : EndPoints(route = "/api/${VERSIONS.ONE}/view/viewArtist")
+    data object ViewOther : EndPoints(route = "/api/${VERSIONS.ONE}/view/viewOther")
+
+    data object SyncLibrary : EndPoints(route = "/api/${VERSIONS.ONE}/sync/syncLibrary")
 
     sealed class Artist {
-        data object GetArtist : EndPoints(route = "/api/v1/item/artist")
-        data object GetArtistPagingSongs : EndPoints(route = "/api/v1/paging/getArtistPagingSongs")
-        data object GetArtistPagingAlbums : EndPoints("/api/v1/paging/getArtistPagingAlbums")
-        data object GetPagingArtist : EndPoints(route = "/api/v1/paging/getPagingArtist")
+        data object GetArtist : EndPoints(route = "/api/${VERSIONS.ONE}/item/artist")
+        data object GetArtistPagingSongs : EndPoints(
+            route = "/api/${VERSIONS.ONE}/paging/getArtistPagingSongs"
+        )
+
+        data object GetArtistPagingAlbums : EndPoints(
+            "/api/${VERSIONS.ONE}/paging/getArtistPagingAlbums"
+        )
+
+        data object GetPagingArtist : EndPoints(
+            route = "/api/${VERSIONS.ONE}/paging/getPagingArtist"
+        )
+    }
+
+    sealed class Playlist {
+        data object CreatePlaylist : EndPoints(
+            route = "/api/${VERSIONS.ONE}/item/playlist/createPlaylist"
+        )
     }
 
     sealed class Album {
-        data object GetPagingAlbum : EndPoints(route = "/api/v1/paging/getPagingAlbum")
+        data object GetPagingAlbum : EndPoints(route = "/api/${VERSIONS.ONE}/paging/getPagingAlbum")
     }
 
     sealed class Add {
-        data object AddSong : EndPoints(route = "/api/v1/item/playlist/addSong")
-        data object GetCreatePlaylist : EndPoints(route = "/api/v1/paging/getCreatePlaylist")
+        data object AddSong : EndPoints(route = "/api/${VERSIONS.ONE}/item/playlist/addSong")
+        data object GetCreatePlaylist : EndPoints(
+            route = "/api/${VERSIONS.ONE}/paging/getCreatePlaylist"
+        )
 
         sealed class Playlist {
             data object CreatePlaylistStaticData : EndPoints(
-                route = "/api/v1/suggestion/createPlaylistStaticData"
+                route = "/api/${VERSIONS.ONE}/suggestion/createPlaylistStaticData"
             )
         }
     }

@@ -36,6 +36,18 @@ internal fun AddSongToPlaylistSearchFilterChips(
         )
 
         AppFilterChip(
+            title = stringResource(AddSongToPlaylistSearchUiFilterType.SONG.value),
+            isSelected = filterType == AddSongToPlaylistSearchUiFilterType.SONG,
+            onClick = {
+                onAction(
+                    AddSongToPlaylistUiAction.OnSearchFilterTypeChange(
+                        AddSongToPlaylistSearchUiFilterType.SONG
+                    )
+                )
+            }
+        )
+
+        AppFilterChip(
             title = stringResource(AddSongToPlaylistSearchUiFilterType.ALBUM.value),
             isSelected = filterType == AddSongToPlaylistSearchUiFilterType.ALBUM,
             onClick = {

@@ -25,7 +25,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -374,8 +373,20 @@ class ExposedLocalSuggestionDatasource(
     }
 
     override suspend fun getSuggestedSongToAddToPlaylist(): List<DtoDetailedPrevSong> = kyokuDbQuery {
-        DaoSong.all().orderBy(EntitySongInfo.popularity to SortOrder.DESC)
-            .limit(Random.nextInt(30, 40)).map { it.toDtoPrevSong() }
+        EntitySong.join(
+            otherTable = EntitySongInfo,
+            joinType = JoinType.INNER,
+            onColumn = EntitySong.id,
+            otherColumn = EntitySongInfo.songId
+        ).select(EntitySong.id, EntitySong.title, EntitySong.poster, EntitySongInfo.popularity)
+            .orderBy(EntitySongInfo.popularity to SortOrder.DESC)
+            .limit(Random.nextInt(30, 40)).map {
+                DtoPrevSong(
+                    id = it[EntitySong.id].value,
+                    title = it[EntitySong.title],
+                    rawPoster = it[EntitySong.poster]
+                )
+            }
     }.let { list ->
         coroutineScope {
             list.map { song ->
@@ -393,7 +404,7 @@ class ExposedLocalSuggestionDatasource(
                     DtoDetailedPrevSong(
                         id = song.id,
                         title = song.title,
-                        poster = song.poster,
+                        rawPoster = song.poster,
                         artists = artist
                     )
                 }
@@ -419,6 +430,14 @@ class ExposedLocalSuggestionDatasource(
                 EntitySong.id eq RelationEntitySongArtist.songId
             }
         ).join(
+            otherTable = EntityArtist,
+            joinType = JoinType.INNER,
+            onColumn = EntityArtist.id,
+            otherColumn = RelationEntitySongArtist.artistId,
+            additionalConstraint = {
+                RelationEntitySongArtist.artistId eq EntityArtist.id
+            }
+        ).join(
             otherTable = RelationEntityArtistCountry,
             joinType = JoinType.INNER,
             onColumn = EntityArtist.id,
@@ -434,14 +453,6 @@ class ExposedLocalSuggestionDatasource(
             additionalConstraint = {
                 EntitySongInfo.songId eq EntitySong.id
             }
-        ).join(
-            otherTable = EntityArtist,
-            joinType = JoinType.INNER,
-            onColumn = EntityArtist.id,
-            otherColumn = RelationEntitySongArtist.artistId,
-            additionalConstraint = {
-                RelationEntitySongArtist.artistId eq EntityArtist.id
-            }
         ).select(
             EntitySong.id,
             EntitySong.title,
@@ -450,12 +461,13 @@ class ExposedLocalSuggestionDatasource(
             aggregatedArtists
         ).where {
             RelationEntityArtistCountry.countryId neq countryId
-        }.orderBy(EntitySongInfo.popularity to SortOrder.DESC)
+        }.groupBy(EntitySong.id, EntitySong.title, EntitySong.poster, EntitySongInfo.popularity)
+            .orderBy(EntitySongInfo.popularity to SortOrder.DESC)
             .limit(Random.nextInt(30, 40)).map {
                 DtoDetailedPrevSong(
                     id = it[EntitySong.id].value,
                     title = it[EntitySong.title],
-                    poster = it[EntitySong.poster],
+                    rawPoster = it[EntitySong.poster],
                     artists = it[aggregatedArtists],
                 )
             }

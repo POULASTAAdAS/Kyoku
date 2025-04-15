@@ -72,17 +72,20 @@ internal fun ViewSavedItemExtendedScreen(
                     .fillMaxSize()
                     .padding(it),
                 columns = GridCells.Fixed(6),
-                contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
+                contentPadding = PaddingValues(
+                    start = MaterialTheme.dimens.medium1,
+                    end = MaterialTheme.dimens.medium1,
+                    bottom = MaterialTheme.dimens.medium1
+                )
             ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(MaterialTheme.dimens.medium3))
-                }
-
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     ViewSavedItemTopBar(
                         isEditEnabled = state.isEditEnabled,
                         type = state.type,
-                        navigateBack = navigateBack,
+                        navigateBack = {
+                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnEditToggle)
+                            else navigateBack()
+                        },
                         onAction = onAction
                     )
                 }
@@ -146,6 +149,8 @@ internal fun ViewSavedItemExtendedScreen(
                                 pressedElevation = 0.dp
                             ),
                             onClick = {
+                                if (state.isEditEnabled) TODO("Implement checkbox")
+
                                 onAction(
                                     ViewSavedUiAction.OnItemClick(
                                         item.id,

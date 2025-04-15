@@ -28,6 +28,7 @@ import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
 import com.poulastaa.explore.presentation.search.album.ExploreAlbumRootScreen
 import com.poulastaa.explore.presentation.search.all_from_artist.AllFromArtistRootScreen
 import com.poulastaa.explore.presentation.search.artist.ExploreArtistRootScreen
+import com.poulastaa.kyoku.navigation.Screens.View.Artist
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
@@ -434,8 +435,14 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
             navigate = { screen ->
                 when (screen) {
                     is ViewOtherAllowedNavigationScreen.Artist -> nav.navigate(
-                        Screens.View.Artist(
+                        Artist(
                             screen.artistId
+                        )
+                    )
+
+                    is ViewOtherAllowedNavigationScreen.CreatePlaylist -> nav.navigate(
+                        Screens.Add.CreatePlaylist(
+                            screen.playlistId
                         )
                     )
                 }
@@ -459,15 +466,24 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
                         )
                     )
 
-                    is ViewSavedAllowedNavigationScreen.Other -> nav.navigate(
-                        Screens.View.Other(
-                            otherId = screen.otherId,
-                            type = when (screen.type) {
-                                DtoViewSavedItemNavigationType.PLAYLIST -> ViewType.PLAYLIST
-                                DtoViewSavedItemNavigationType.ALBUM -> ViewType.ALBUM
-                            }
+                    is ViewSavedAllowedNavigationScreen.Other -> when (screen.type) {
+                        DtoViewSavedItemNavigationType.CREATE_PLAYLIST -> nav.navigate(
+                            Screens.Add.CreatePlaylist(
+                                screen.otherId
+                            )
                         )
-                    )
+
+                        else -> nav.navigate(
+                            Screens.View.Other(
+                                otherId = screen.otherId,
+                                type = when (screen.type) {
+                                    DtoViewSavedItemNavigationType.PLAYLIST -> ViewType.PLAYLIST
+                                    DtoViewSavedItemNavigationType.ALBUM -> ViewType.ALBUM
+                                    else -> return@ViewSavedItemRootScreen
+                                }
+                            )
+                        )
+                    }
                 }
             },
             navigateBack = {

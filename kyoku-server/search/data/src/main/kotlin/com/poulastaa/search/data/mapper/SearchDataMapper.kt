@@ -7,7 +7,7 @@ import com.poulastaa.search.model.DtoAddSongToPlaylistItemType
 internal fun DtoSearchItem.toDtoAddSongToPlaylistItem(type: DtoAddSongToPlaylistItemType) = DtoAddSongToPlaylistItem(
     id = this.id,
     title = this.title,
-    poster = listOf(this.poster ?: ""),
+    poster = if (this.poster == null) this.posters else listOf(this.poster ?: ""),
     artist = this.artist,
     numbers = this.numbers,
     type = type

@@ -9,8 +9,10 @@ import com.poulastaa.core.database.dao.ProfileDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.ViewDao
 import com.poulastaa.core.database.repository.DatastoreLocalBDateDatasource
+import com.poulastaa.core.database.repository.RoomCommonInsertDatasource
 import com.poulastaa.core.database.repository.RoomLocalAddSongToPlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalAllFromArtistDatasource
+import com.poulastaa.core.database.repository.RoomLocalCreatePlaylistDatasource
 import com.poulastaa.core.database.repository.RoomLocalExploreAlbumDatasource
 import com.poulastaa.core.database.repository.RoomLocalHomeDatasource
 import com.poulastaa.core.database.repository.RoomLocalImportPlaylistDatasource
@@ -26,6 +28,7 @@ import com.poulastaa.core.domain.repository.DatastoreRepository
 import com.poulastaa.core.domain.repository.LocalAddSongToPlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
 import com.poulastaa.core.domain.repository.LocalBDateDatasource
+import com.poulastaa.core.domain.repository.LocalCreatePlaylistDatasource
 import com.poulastaa.core.domain.repository.LocalExploreAlbumDatasource
 import com.poulastaa.core.domain.repository.LocalHomeDatasource
 import com.poulastaa.core.domain.repository.LocalImportPlaylistDatasource
@@ -140,7 +143,8 @@ internal object CoreDatabaseViewmodelModule {
     fun provideLocalViewOtherDatasource(
         viewDao: ViewDao,
         root: RootDao,
-    ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao, root)
+        common: RoomCommonInsertDatasource,
+    ): LocalViewOtherDatasource = RoomLocalViewOtherDatasource(viewDao, root, common)
 
     @Provides
     @ViewModelScoped
@@ -166,4 +170,10 @@ internal object CoreDatabaseViewmodelModule {
     fun provideLocalAddSongToPlaylistDatasource(
         root: RootDao,
     ): LocalAddSongToPlaylistDatasource = RoomLocalAddSongToPlaylistDatasource(root)
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalCreatePlaylistDatasource(
+        root: RootDao,
+    ): LocalCreatePlaylistDatasource = RoomLocalCreatePlaylistDatasource(root)
 }

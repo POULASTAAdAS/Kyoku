@@ -62,7 +62,7 @@ fun ViewOtherRootScreen(
                 title = state.root.title,
                 isPlaylist = state.type == UiViewType.PLAYLIST,
                 onCheckOutClick = {
-
+                    viewmodel.onAction(ViewOtherUiAction.OnCheckOutClick)
                 },
                 navigateBack = navigateBack
             )
@@ -79,7 +79,7 @@ fun ViewOtherRootScreen(
                 title = state.root.title,
                 isPlaylist = state.type == UiViewType.PLAYLIST,
                 onCheckOutClick = {
-
+                    viewmodel.onAction(ViewOtherUiAction.OnCheckOutClick)
                 },
                 navigateBack = navigateBack
             )
@@ -97,7 +97,7 @@ fun ViewOtherRootScreen(
                 isPlaylist = state.type == UiViewType.PLAYLIST,
                 verticalArrangement = Arrangement.Center,
                 onCheckOutClick = {
-
+                    viewmodel.onAction(ViewOtherUiAction.OnCheckOutClick)
                 },
                 navigateBack = navigateBack
             )

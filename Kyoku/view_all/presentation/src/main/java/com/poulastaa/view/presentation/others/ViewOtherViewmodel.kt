@@ -9,8 +9,10 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
+import com.poulastaa.view.domain.model.ViewOtherAllowedNavigationScreen
 import com.poulastaa.view.domain.repository.ViewOtherRepository
 import com.poulastaa.view.presentation.mapper.toUiViewPrevSong
+import com.poulastaa.view.presentation.model.UiViewType
 import com.poulastaa.view.presentation.others.mapper.toUiRoot
 import com.poulastaa.view.presentation.others.mapper.toUiViewType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,10 +41,6 @@ internal class ViewOtherViewmodel @Inject constructor(
 
     private val _uiState = Channel<ViewOtherUiEvent>()
     val uiState = _uiState.receiveAsFlow()
-
-    fun onAction(action: ViewOtherUiAction) {
-
-    }
 
     fun init(otherId: Long, type: ViewType) {
         viewModelScope.launch {
@@ -99,6 +97,43 @@ internal class ViewOtherViewmodel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    fun onAction(action: ViewOtherUiAction) {
+        when (action) {
+            ViewOtherUiAction.OnCheckOutClick -> {
+                viewModelScope.launch {
+                    when (_state.value.type) {
+                        UiViewType.PLAYLIST -> _uiState.send(
+                            ViewOtherUiEvent.Navigate(
+                                ViewOtherAllowedNavigationScreen.CreatePlaylist(
+                                    _state.value.root.id
+                                )
+                            )
+                        )
+
+                        UiViewType.FAVOURITE -> TODO()
+                        else -> return@launch
+                    }
+                }
+            }
+
+            ViewOtherUiAction.OnMenuClick -> {
+
+            }
+
+            is ViewOtherUiAction.OnPlayAll -> {
+
+            }
+
+            is ViewOtherUiAction.OnSongClick -> {
+
+            }
+
+            is ViewOtherUiAction.OnSongMenuToggle -> {
+
             }
         }
     }

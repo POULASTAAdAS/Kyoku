@@ -192,5 +192,9 @@
     <string name="suggested_for_you">Suggested for you</string>
     <string name="you_may_also_like">You may also like</string>
     <string name="search_anything">search anything</string>
+    <string name="error_playlist_name_to_short">Playlist name must be at-least 5 character</string>
+    <string name="error_Playlist_name_to_long">Playlist name must not exceed 20 character</string>
+    <string name="error_playlist_name_cant_start_with_underscore">Playlist name can\'t start with underscore</string>
+    <string name="error_playlist_name_cant_contain_special_characters">Can\'t contain special corrector</string>
 
 </resources>

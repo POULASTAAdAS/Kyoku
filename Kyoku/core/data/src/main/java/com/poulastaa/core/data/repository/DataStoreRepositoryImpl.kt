@@ -43,7 +43,7 @@ class DataStoreRepositoryImpl @Inject constructor(
     override fun readThemMode(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
-        it[PreferencesKeys.APP_THEME_MODE] ?: true // first dark theme
+        it[PreferencesKeys.APP_THEME_MODE] != false // first dark theme
     }
 
     override suspend fun storeSignInState(state: SavedScreen) {
@@ -140,7 +140,7 @@ class DataStoreRepositoryImpl @Inject constructor(
     override fun readLibraryViewType(): Flow<Boolean> = dataStore.data.catch {
         emit(emptyPreferences())
     }.map {
-        it[PreferencesKeys.LIBRARY_VIEW_TYPE] ?: true // first grid view
+        it[PreferencesKeys.LIBRARY_VIEW_TYPE] != false // first grid view
     }
 
     override suspend fun storeThemeColor(color: ThemColor) {

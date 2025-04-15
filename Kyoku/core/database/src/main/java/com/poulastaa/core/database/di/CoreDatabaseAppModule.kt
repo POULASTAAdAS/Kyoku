@@ -7,10 +7,9 @@ import com.poulastaa.core.database.dao.ExploreDao
 import com.poulastaa.core.database.dao.RefreshDao
 import com.poulastaa.core.database.dao.RootDao
 import com.poulastaa.core.database.dao.WorkDao
-import com.poulastaa.core.database.repository.RoomLocalAllFromArtistDatasource
+import com.poulastaa.core.database.repository.RoomCommonInsertDatasource
 import com.poulastaa.core.database.repository.RoomLocalRefreshDatasource
 import com.poulastaa.core.database.repository.RoomLocalWorkDatasource
-import com.poulastaa.core.domain.repository.LocalAllFromArtistDatasource
 import com.poulastaa.core.domain.repository.LocalRefreshDatasource
 import com.poulastaa.core.domain.repository.LocalWorkDatasource
 import dagger.Module
@@ -40,6 +39,12 @@ internal object CoreDatabaseAppModule {
     fun provideRootDao(
         database: KyokuDatabase,
     ): RootDao = database.rootDao
+
+    @Provides
+    @Singleton
+    fun provideLocalCommonInsertDatasource(
+        rootDao: RootDao,
+    ): RoomCommonInsertDatasource = RoomCommonInsertDatasource(rootDao)
 
     @Provides
     @Singleton

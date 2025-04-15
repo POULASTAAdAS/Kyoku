@@ -10,8 +10,10 @@ android {
 dependencies {
     implementation(libs.material3WindowSizeClass)
 
+
     implementation(projects.core.domain)
     implementation(projects.viewAll.domain)
+    implementation(projects.core.presentation.ui)
 
     implementation(libs.coil.compose)
     implementation(libs.pagingCompose)

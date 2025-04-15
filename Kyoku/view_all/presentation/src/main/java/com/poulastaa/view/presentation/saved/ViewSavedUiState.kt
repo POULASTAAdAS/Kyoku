@@ -9,7 +9,8 @@ internal data class ViewSavedUiState(
     val type: ViewSavedUiItemType = ViewSavedUiItemType.NONE,
     val items: List<ViewSavedUiItem> = emptyList(),
     val isEditEnabled: Boolean = false,
-    val isDelteDialogOpen: Boolean = false,
+    val isDeleteDialogOpen: Boolean = false,
+    val isNewPlaylistDialogOpen: Boolean = false,
 )
 
 enum class ViewSavedUiItemType(@StringRes val value: Int) {

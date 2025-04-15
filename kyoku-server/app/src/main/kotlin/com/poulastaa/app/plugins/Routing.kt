@@ -3,6 +3,7 @@ package com.poulastaa.app.plugins
 import com.poulastaa.auth.domain.repository.AuthRepository
 import com.poulastaa.auth.network.routes.*
 import com.poulastaa.item.domain.repository.ItemRepository
+import com.poulastaa.item.network.route.createPlaylist
 import com.poulastaa.item.network.route.getArtist
 import com.poulastaa.search.repository.PagingRepository
 import com.poulastaa.search.route.*
@@ -117,4 +118,5 @@ private fun Routing.search(repo: PagingRepository) {
 
 private fun Routing.item(repo: ItemRepository) {
     getArtist(repo)
+    createPlaylist(repo)
 }

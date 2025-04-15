@@ -5,7 +5,7 @@ import androidx.annotation.RawRes
 sealed class LoadingType {
     enum class ERROR_TYPE {
         NO_INTERNET,
-        UNKNOWN
+        UNKNOWN,
     }
 
     data object Loading : LoadingType()

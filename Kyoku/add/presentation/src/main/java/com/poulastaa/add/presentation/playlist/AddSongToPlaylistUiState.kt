@@ -9,38 +9,7 @@ internal data class AddSongToPlaylistUiState(
     val loadingType: LoadingType = LoadingType.Loading,
     val query: String = "",
     val searchScreenFilterType: AddSongToPlaylistSearchUiFilterType = AddSongToPlaylistSearchUiFilterType.ALL,
-    val staticData: List<AddSongToPlaylistPageUiItem> = listOf(
-        AddSongToPlaylistPageUiItem(
-            type = AddSongToPlaylistPageUiType.YOUR_FAVOURITES,
-            data = (1..10).map {
-                AddSongToPlaylistUiItem(
-                    title = "That Cool Song",
-                    artist = "That Cool Artist",
-                    type = AddToPlaylistItemUiType.SONG
-                )
-            }
-        ),
-        AddSongToPlaylistPageUiItem(
-            type = AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU,
-            data = (1..10).map {
-                AddSongToPlaylistUiItem(
-                    title = "That Cool Song",
-                    artist = "That Cool Artist",
-                    type = AddToPlaylistItemUiType.SONG
-                )
-            }
-        ),
-        AddSongToPlaylistPageUiItem(
-            type = AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE,
-            data = (1..10).map {
-                AddSongToPlaylistUiItem(
-                    title = "That Cool Song",
-                    artist = "That Cool Artist",
-                    type = AddToPlaylistItemUiType.SONG
-                )
-            }
-        )
-    ),
+    val staticData: List<AddSongToPlaylistPageUiItem> = emptyList(),
 )
 
 internal data class AddSongToPlaylistUiItem(

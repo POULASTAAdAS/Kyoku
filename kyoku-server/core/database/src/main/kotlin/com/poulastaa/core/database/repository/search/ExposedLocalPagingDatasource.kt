@@ -259,7 +259,8 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
             }.groupBy(
                 ShardPagingEntitySong.id,
                 ShardPagingEntitySong.title,
-                ShardPagingEntitySong.poster
+                ShardPagingEntitySong.poster,
+                ShardPagingEntityArtist.name
             )
             .orderBy(ShardPagingEntitySong.title to SortOrder.ASC)
             .offset(if (page == 1) 0L else (page * size).toLong())
@@ -270,7 +271,7 @@ internal class ExposedLocalPagingDatasource : LocalPagingDatasource {
                     title = it[ShardPagingEntitySong.title],
                     rawPoster = it[ShardPagingEntitySong.poster],
                     artist = it[aggregatedArtists],
-                    isTypeSong = false
+                    isTypeSong = true
                 )
             }
     }

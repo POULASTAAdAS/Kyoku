@@ -3,6 +3,8 @@ package com.poulastaa.add.presentation.playlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.poulastaa.add.domain.repository.AddSongToPlaylistRepository
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
@@ -17,6 +19,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -33,6 +36,8 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     val state = _state.onStart {
         loadStaticDataJob?.cancel()
         loadStaticDataJob = loadStaticData()
+        loadSearchJob?.cancel()
+        loadSearchJob = loadSearchData()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.0.seconds.inWholeMilliseconds),
@@ -43,35 +48,7 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     val uiEvent = _uiState.receiveAsFlow()
 
     private val _searchData: MutableStateFlow<PagingData<AddSongToPlaylistUiItem>> =
-        MutableStateFlow(
-            PagingData.from(
-                ((1..5).map {
-                    AddSongToPlaylistUiItem(
-                        id = it.toLong(),
-                        title = "That Cool Song",
-                        type = AddToPlaylistItemUiType.SONG
-                    )
-                } + (1..5).map {
-                    AddSongToPlaylistUiItem(
-                        id = it.toLong(),
-                        title = "That Cool Artist",
-                        type = AddToPlaylistItemUiType.ARTIST
-                    )
-                } + (1..5).map {
-                    AddSongToPlaylistUiItem(
-                        id = it.toLong(),
-                        title = "That Cool Playlist",
-                        type = AddToPlaylistItemUiType.PLAYLIST
-                    )
-                } + (1..5).map {
-                    AddSongToPlaylistUiItem(
-                        id = it.toLong(),
-                        title = "That Cool Artist",
-                        type = AddToPlaylistItemUiType.ALBUM
-                    )
-                }).shuffled()
-            )
-        )
+        MutableStateFlow(PagingData.empty())
     var searchData = _searchData.asStateFlow()
         private set
 
@@ -81,6 +58,7 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     }
 
     private var loadStaticDataJob: Job? = null
+    private var loadSearchJob: Job? = null
 
     fun onAction(action: AddSongToPlaylistUiAction) {
         when (action) {
@@ -135,8 +113,8 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                     )
                 }
 
-                loadStaticDataJob?.cancel()
-                loadStaticDataJob = loadStaticData()
+                loadSearchJob?.cancel()
+                loadSearchJob = loadSearchData()
             }
 
             is AddSongToPlaylistUiAction.OnSearchFilterTypeChange -> {
@@ -148,8 +126,8 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                     )
                 }
 
-                loadStaticDataJob?.cancel()
-                loadStaticDataJob = loadStaticData()
+                loadSearchJob?.cancel()
+                loadSearchJob = loadSearchData()
             }
         }
     }
@@ -178,8 +156,27 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
 
             is Result.Success -> _state.update {
                 it.copy(
-                    staticData = result.data.map { it.toAddSongToPlaylistPageUiItem() }
+                    staticData = result.data.map { it.toAddSongToPlaylistPageUiItem() },
+                    loadingType = if (result.data.isNotEmpty()) LoadingType.Content else LoadingType.Error(
+                        type = LoadingType.ERROR_TYPE.UNKNOWN,
+                        lottieId = ERROR_LOTTIE_ID
+                    )
                 )
+            }
+        }
+    }
+
+    private fun loadSearchData() = viewModelScope.launch {
+        _searchData.update { PagingData.empty() }
+
+        repo.search(
+            query = _state.value.query.trim(),
+            filterType = _state.value.searchScreenFilterType.toDtoDtoAddSongToPlaylistSearchFilterType()
+        ).cachedIn(viewModelScope).collectLatest { list ->
+            _searchData.update {
+                list.map {
+                    it.toAddSongToPlaylistUiItem()
+                }
             }
         }
     }

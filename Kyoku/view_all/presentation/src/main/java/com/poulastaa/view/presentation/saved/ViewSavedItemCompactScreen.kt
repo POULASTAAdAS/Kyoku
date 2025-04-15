@@ -74,14 +74,13 @@ internal fun ViewSavedItemCompactScreen(
                     .padding(it),
             ) {
                 item {
-                    Spacer(Modifier.height(MaterialTheme.dimens.medium3))
-                }
-
-                item {
                     ViewSavedItemTopBar(
                         isEditEnabled = state.isEditEnabled,
                         type = state.type,
-                        navigateBack = navigateBack,
+                        navigateBack = {
+                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnEditToggle)
+                            else navigateBack()
+                        },
                         onAction = onAction
                     )
                 }
@@ -174,6 +173,8 @@ internal fun ViewSavedItemCompactScreen(
                             modifier = Modifier
                                 .rotate(-90f)
                                 .noRippleClickable {
+                                    if (state.isEditEnabled) TODO("Implement checkbox")
+
                                     onAction(
                                         ViewSavedUiAction.OnItemClick(
                                             item.id,
