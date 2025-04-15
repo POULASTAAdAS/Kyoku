@@ -10,6 +10,10 @@ internal data class AddSongToPlaylistUiState(
     val query: String = "",
     val searchScreenFilterType: AddSongToPlaylistSearchUiFilterType = AddSongToPlaylistSearchUiFilterType.ALL,
     val staticData: List<AddSongToPlaylistPageUiItem> = emptyList(),
+
+    val playlistScreenState: OtherScreenUiState = OtherScreenUiState(),
+    val albumScreenState: OtherScreenUiState = OtherScreenUiState(),
+    val artistScreenState: OtherScreenUiState = OtherScreenUiState(),
 )
 
 internal data class AddSongToPlaylistUiItem(
@@ -46,3 +50,8 @@ internal enum class AddSongToPlaylistPageUiType(@StringRes val value: Int) {
     SUGGESTED_FOR_YOU(R.string.suggested_for_you),
     YOU_MAY_ALSO_LIKE(R.string.you_may_also_like),
 }
+
+internal data class OtherScreenUiState(
+    val isVisible: Boolean = false,
+    val otherId: Long = -1,
+)

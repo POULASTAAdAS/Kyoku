@@ -65,45 +65,74 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
             is AddSongToPlaylistUiAction.OnItemClick -> {
                 if (_state.value.isSavingSong || playlistId == null) return
 
-                if (action.type == AddToPlaylistItemUiType.SONG) viewModelScope.launch {
-                    _state.update {
-                        it.copy(
-                            isSavingSong = true
-                        )
-                    }
-
-                    when (val result = repo.saveSong(playlistId ?: return@launch, action.itemId)) {
-                        is Result.Error -> when (result.error) {
-                            DataError.Network.NO_INTERNET -> _uiState.send(
-                                AddSongToPlaylistUiEvent.EmitToast(
-                                    UiText.StringResource(R.string.error_no_internet)
-                                )
-                            )
-
-                            else -> _uiState.send(
-                                AddSongToPlaylistUiEvent.EmitToast(
-                                    UiText.StringResource(R.string.error_something_went_wrong)
-                                )
-                            )
-                        }
-
-                        is Result.Success -> _state.update {
+                when (action.pageType) {
+                    AddSongToPlaylistUiAction.PageType.SEARCH -> when (action.type) {
+                        AddToPlaylistItemUiType.PLAYLIST -> _state.update {
                             it.copy(
-                                staticData = it.staticData.map { item ->
-                                    if (item.type == action.pageType) item.copy(
-                                        data = item.data.filterNot { it.id == action.itemId }
-                                    ) else item
-                                }
+                                playlistScreenState = OtherScreenUiState(
+                                    isVisible = true,
+                                    otherId = action.itemId
+                                )
                             )
                         }
+
+                        AddToPlaylistItemUiType.ALBUM -> _state.update {
+                            it.copy(
+                                albumScreenState = OtherScreenUiState(
+                                    isVisible = true,
+                                    otherId = action.itemId
+                                )
+                            )
+                        }
+
+                        AddToPlaylistItemUiType.ARTIST -> _state.update {
+                            it.copy(
+                                artistScreenState = OtherScreenUiState(
+                                    isVisible = true,
+                                    otherId = action.itemId
+                                )
+                            )
+                        }
+
+                        AddToPlaylistItemUiType.SONG -> playlistId?.let { saveSong(it, action) }
                     }
 
-                    _state.update {
-                        it.copy(
-                            isSavingSong = false
-                        )
-                    }
+                    else -> if (action.type == AddToPlaylistItemUiType.SONG && playlistId != null) saveSong(
+                        playlistId!!,
+                        action
+                    )
                 }
+            }
+
+            is AddSongToPlaylistUiAction.OnOtherScreenClose -> when (action.type) {
+                AddToPlaylistItemUiType.PLAYLIST -> _state.update {
+                    it.copy(
+                        playlistScreenState = OtherScreenUiState(
+                            isVisible = false,
+                            otherId = -1
+                        )
+                    )
+                }
+
+                AddToPlaylistItemUiType.ALBUM -> _state.update {
+                    it.copy(
+                        albumScreenState = OtherScreenUiState(
+                            isVisible = false,
+                            otherId = -1
+                        )
+                    )
+                }
+
+                AddToPlaylistItemUiType.ARTIST -> _state.update {
+                    it.copy(
+                        artistScreenState = OtherScreenUiState(
+                            isVisible = false,
+                            otherId = -1
+                        )
+                    )
+                }
+
+                AddToPlaylistItemUiType.SONG -> return
             }
 
             is AddSongToPlaylistUiAction.OnSearchQueryChange -> {
@@ -178,6 +207,49 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                     it.toAddSongToPlaylistUiItem()
                 }
             }
+        }
+    }
+
+    private fun saveSong(
+        playlistId: PlaylistId,
+        action: AddSongToPlaylistUiAction.OnItemClick,
+    ) = viewModelScope.launch {
+        _state.update {
+            it.copy(
+                isSavingSong = true
+            )
+        }
+
+        when (val result = repo.saveSong(playlistId, action.itemId)) {
+            is Result.Error -> when (result.error) {
+                DataError.Network.NO_INTERNET -> _uiState.send(
+                    AddSongToPlaylistUiEvent.EmitToast(
+                        UiText.StringResource(R.string.error_no_internet)
+                    )
+                )
+
+                else -> _uiState.send(
+                    AddSongToPlaylistUiEvent.EmitToast(
+                        UiText.StringResource(R.string.error_something_went_wrong)
+                    )
+                )
+            }
+
+            is Result.Success -> _state.update {
+                it.copy(
+                    staticData = it.staticData.map { item ->
+                        if (item.type.toPageType() == action.pageType) item.copy(
+                            data = item.data.filterNot { it.id == action.itemId }
+                        ) else item
+                    }
+                )
+            }
+        }
+
+        _state.update {
+            it.copy(
+                isSavingSong = false
+            )
         }
     }
 }

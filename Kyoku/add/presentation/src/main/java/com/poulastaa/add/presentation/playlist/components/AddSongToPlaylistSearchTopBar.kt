@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -120,7 +121,8 @@ internal fun AddSongToPlaylistSearchTopBar(
             ) {
                 Icon(
                     imageVector = CloseIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(.8f)
                 )
             }
         },

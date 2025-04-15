@@ -49,3 +49,16 @@ internal fun DtoAddSongToPlaylistItem.toAddSongToPlaylistUiItem() = AddSongToPla
     numbers = this.numbers,
     type = this.type.toAddToPlaylistItemUiType()
 )
+
+internal fun AddSongToPlaylistPageUiType.toPageType() = when (this) {
+    AddSongToPlaylistPageUiType.YOUR_FAVOURITES -> AddSongToPlaylistUiAction.PageType.YOUR_FAVOURITE
+    AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU -> AddSongToPlaylistUiAction.PageType.SUGGESTED_FOR_YOU
+    AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE -> AddSongToPlaylistUiAction.PageType.YOU_MAY_ALSO_LIKE
+}
+
+internal fun AddSongToPlaylistUiAction.PageType.toAddSongToPlaylistPageUiType() = when (this) {
+    AddSongToPlaylistUiAction.PageType.YOUR_FAVOURITE -> AddSongToPlaylistPageUiType.YOUR_FAVOURITES
+    AddSongToPlaylistUiAction.PageType.SUGGESTED_FOR_YOU -> AddSongToPlaylistPageUiType.SUGGESTED_FOR_YOU
+    AddSongToPlaylistUiAction.PageType.YOU_MAY_ALSO_LIKE -> AddSongToPlaylistPageUiType.YOU_MAY_ALSO_LIKE
+    AddSongToPlaylistUiAction.PageType.SEARCH -> throw IllegalArgumentException("Cannot convert to page type")
+}

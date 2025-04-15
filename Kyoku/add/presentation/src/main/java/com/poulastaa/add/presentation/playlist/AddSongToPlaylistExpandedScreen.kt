@@ -117,7 +117,7 @@ internal fun AddSongToPlaylistExpandedScreen(
                                         AddSongToPlaylistUiAction.OnItemClick(
                                             itemId = item.id,
                                             type = item.type,
-                                            pageType = state.staticData[pageIndex].type
+                                            pageType = state.staticData[pageIndex].type.toPageType()
                                         )
                                     )
                                 },
@@ -132,7 +132,7 @@ internal fun AddSongToPlaylistExpandedScreen(
                                             AddSongToPlaylistUiAction.OnItemClick(
                                                 itemId = item.id,
                                                 type = item.type,
-                                                pageType = state.staticData[pageIndex].type
+                                                pageType = AddSongToPlaylistUiAction.PageType.SEARCH
                                             )
                                         )
                                     },

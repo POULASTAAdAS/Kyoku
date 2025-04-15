@@ -20,13 +20,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -47,7 +50,7 @@ import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 internal fun AddSongToPlaylistAlbumScreen(
     state: AddSongToPlaylistAlbumUiState,
     onAction: (AddSongToPlaylistAlbumUiAction) -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
 
@@ -58,9 +61,22 @@ internal fun AddSongToPlaylistAlbumScreen(
                     title = {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            IconButton(
+                                onClick = navigateBack,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = CloseIcon,
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(.8f)
+                                )
+                            }
+
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth(.45f)
@@ -79,18 +95,22 @@ internal fun AddSongToPlaylistAlbumScreen(
                                         .shimmerEffect(MaterialTheme.colorScheme.background)
                                 )
                             }
+
+
+                            IconButton(
+                                enabled = false,
+                                onClick = {},
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {}
                         }
                     },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = navigateBack
-                        ) {
-                            Icon(
-                                imageVector = CloseIcon,
-                                contentDescription = null,
-                            )
-                        }
-                    }
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.primary
+                    )
                 )
             } else if (state.loadingSate is LoadingType.Content) {
                 AppBasicTopBar(
@@ -156,7 +176,7 @@ private fun Preview() {
         Surface {
             AddSongToPlaylistAlbumScreen(
                 state = AddSongToPlaylistAlbumUiState(
-                    loadingSate = LoadingType.Content,
+                    loadingSate = LoadingType.Loading,
                     album = "That Cool Album",
                     data = (1..10).map {
                         AddSongToPlaylistUiItem(

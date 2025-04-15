@@ -1,5 +1,13 @@
 package com.poulastaa.add.presentation.playlist
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +28,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.playlist.album.AddSongToAlbumRootScreen
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
@@ -44,72 +53,58 @@ internal fun AddSongToPlaylistCompactScreen(
     val horizontalPager = rememberPagerState { state.staticData.size + 1 }
     val focusManager = LocalFocusManager.current
 
-    Scaffold(
-        topBar = {
+    Box(Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                when (state.loadingType) {
+                    is LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
+
+                    is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                        query = state.query,
+                        filterType = state.searchScreenFilterType,
+                        onAction = onAction,
+                        focusManager = focusManager,
+                        navigateBack = navigateBack
+                    ) else AddSongToPlaylistStaticDataTopBar(
+                        staticData = state.staticData,
+                        currentPage = horizontalPager.currentPage,
+                        navigateBack = navigateBack
+                    )
+
+                    else -> Unit
+                }
+            }
+        ) {
             when (state.loadingType) {
-                is LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
+                LoadingType.Loading -> AddSongToPlaylistLoadingContent(it) {
+                    LoadingSongCard(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .padding(horizontal = MaterialTheme.dimens.medium1)
+                    )
+                }
 
-                is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
-                    query = state.query,
+                is LoadingType.Error -> AppErrorScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)
+                        .padding(MaterialTheme.dimens.medium1),
+                    error = state.loadingType,
+                    navigateBack = navigateBack
+                )
+
+                LoadingType.Content -> AddSongToPlaylistCommonContent(
+                    horizontalPager = horizontalPager,
+                    values = it,
                     filterType = state.searchScreenFilterType,
-                    onAction = onAction,
-                    focusManager = focusManager,
-                    navigateBack = navigateBack
-                ) else AddSongToPlaylistStaticDataTopBar(
-                    staticData = state.staticData,
-                    currentPage = horizontalPager.currentPage,
-                    navigateBack = navigateBack
-                )
-
-                else -> Unit
-            }
-        }
-    ) {
-        when (state.loadingType) {
-            LoadingType.Loading -> AddSongToPlaylistLoadingContent(it) {
-                LoadingSongCard(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(horizontal = MaterialTheme.dimens.medium1)
-                )
-            }
-
-            is LoadingType.Error -> AppErrorScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it)
-                    .padding(MaterialTheme.dimens.medium1),
-                error = state.loadingType,
-                navigateBack = navigateBack
-            )
-
-            LoadingType.Content -> AddSongToPlaylistCommonContent(
-                horizontalPager = horizontalPager,
-                values = it,
-                filterType = state.searchScreenFilterType,
-                onAction = onAction
-            ) { pageIndex ->
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
-                ) {
-                    if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
-                        CreatePlaylistItemCard(
-                            item = item,
-                            onAction = {
-                                onAction(
-                                    AddSongToPlaylistUiAction.OnItemClick(
-                                        itemId = item.id,
-                                        type = item.type,
-                                        pageType = state.staticData[pageIndex].type
-                                    )
-                                )
-                            },
-                            haptic = haptic
-                        )
-                    } else items(searchData.itemCount) { index ->
-                        searchData[index]?.let { item ->
+                    onAction = onAction
+                ) { pageIndex ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
+                    ) {
+                        if (pageIndex < state.staticData.size) items(state.staticData[pageIndex].data) { item ->
                             CreatePlaylistItemCard(
                                 item = item,
                                 onAction = {
@@ -117,17 +112,82 @@ internal fun AddSongToPlaylistCompactScreen(
                                         AddSongToPlaylistUiAction.OnItemClick(
                                             itemId = item.id,
                                             type = item.type,
-                                            pageType = state.staticData[pageIndex].type
+                                            pageType = state.staticData[pageIndex].type.toPageType()
                                         )
                                     )
                                 },
                                 haptic = haptic
                             )
+                        } else items(searchData.itemCount) { index ->
+                            searchData[index]?.let { item ->
+                                CreatePlaylistItemCard(
+                                    item = item,
+                                    onAction = {
+                                        onAction(
+                                            AddSongToPlaylistUiAction.OnItemClick(
+                                                itemId = item.id,
+                                                type = item.type,
+                                                pageType = AddSongToPlaylistUiAction.PageType.SEARCH
+                                            )
+                                        )
+                                    },
+                                    haptic = haptic
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.playlistScreenState.isVisible,
+            enter = fadeIn(tween(600)) + slideInVertically(tween(600), initialOffsetY = { it }),
+            exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
+        ) {
+
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.albumScreenState.isVisible,
+            enter = fadeIn(tween(600)) + slideInVertically(tween(600), initialOffsetY = { it }),
+            exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
+        ) {
+            AddSongToAlbumRootScreen(
+                albumId = state.albumScreenState.otherId,
+                navigateBack = {
+                    onAction(AddSongToPlaylistUiAction.OnOtherScreenClose(AddToPlaylistItemUiType.ALBUM))
+                }
+            )
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.artistScreenState.isVisible,
+            enter = fadeIn(tween(600)) + slideInVertically(tween(600), initialOffsetY = { it }),
+            exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
+        ) {
+
+        }
+    }
+
+    BackHandler {
+        if (state.albumScreenState.isVisible) onAction(
+            AddSongToPlaylistUiAction.OnOtherScreenClose(
+                AddToPlaylistItemUiType.ALBUM
+            )
+        ) else if (state.artistScreenState.isVisible) onAction(
+            AddSongToPlaylistUiAction.OnOtherScreenClose(
+                AddToPlaylistItemUiType.ALBUM
+            )
+        ) else if (state.playlistScreenState.isVisible) onAction(
+            AddSongToPlaylistUiAction.OnOtherScreenClose(
+                AddToPlaylistItemUiType.PLAYLIST
+            )
+        ) else navigateBack()
     }
 }
 

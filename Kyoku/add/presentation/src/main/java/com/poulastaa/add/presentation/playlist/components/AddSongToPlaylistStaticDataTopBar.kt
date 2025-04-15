@@ -2,6 +2,7 @@ package com.poulastaa.add.presentation.playlist.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,7 +43,8 @@ internal fun AddSongToPlaylistStaticDataTopBar(
             ) {
                 Icon(
                     imageVector = CloseIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(.7f)
                 )
             }
         },
