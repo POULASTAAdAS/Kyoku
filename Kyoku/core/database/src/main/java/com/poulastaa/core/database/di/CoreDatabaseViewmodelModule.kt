@@ -169,7 +169,13 @@ internal object CoreDatabaseViewmodelModule {
     @ViewModelScoped
     fun provideLocalAddSongToPlaylistDatasource(
         root: RootDao,
-    ): LocalAddSongToPlaylistDatasource = RoomLocalAddSongToPlaylistDatasource(root)
+        view: ViewDao,
+        common: RoomCommonInsertDatasource,
+    ): LocalAddSongToPlaylistDatasource = RoomLocalAddSongToPlaylistDatasource(
+        rootDao = root,
+        viewDao = view,
+        common = common
+    )
 
     @Provides
     @ViewModelScoped

@@ -1,6 +1,7 @@
 package com.poulastaa.add.presentation.playlist
 
 import androidx.annotation.StringRes
+import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 
@@ -14,6 +15,8 @@ internal data class AddSongToPlaylistUiState(
     val playlistScreenState: OtherScreenUiState = OtherScreenUiState(),
     val albumScreenState: OtherScreenUiState = OtherScreenUiState(),
     val artistScreenState: OtherScreenUiState = OtherScreenUiState(),
+
+    val playlistId: PlaylistId = -1,
 )
 
 internal data class AddSongToPlaylistUiItem(

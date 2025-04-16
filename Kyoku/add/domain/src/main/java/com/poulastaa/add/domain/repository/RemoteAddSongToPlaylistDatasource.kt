@@ -6,6 +6,7 @@ import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistSearchFilterType
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.domain.model.SongId
@@ -18,5 +19,10 @@ interface RemoteAddSongToPlaylistDatasource {
         filterType: DtoAddSongToPlaylistSearchFilterType,
     ): Flow<PagingData<DtoAddSongToPlaylistItem>>
 
-    suspend fun saveSong(playlistId: PlaylistId, songId: SongId): Result<DtoSong, DataError.Network>
+    suspend fun saveSong(
+        playlistId: PlaylistId,
+        songId: SongId,
+    ): Result<DtoSong, DataError.Network>
+
+    suspend fun loadAlbum(albumId: AlbumId): Result<List<DtoAddSongToPlaylistItem>, DataError.Network>
 }

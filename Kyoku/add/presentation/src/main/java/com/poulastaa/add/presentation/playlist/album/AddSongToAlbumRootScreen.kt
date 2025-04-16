@@ -9,16 +9,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.domain.model.AlbumId
+import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 
 @Composable
 internal fun AddSongToAlbumRootScreen(
     viewmodel: AddSongToPlaylistAlbumViewmodel = hiltViewModel(),
     albumId: AlbumId,
-    navigateBack: () -> Unit
+    playlistId: PlaylistId,
+    navigateBack: () -> Unit,
 ) {
     LaunchedEffect(albumId) {
-        viewmodel.init(albumId)
+        viewmodel.init(albumId, playlistId)
     }
 
     val context = LocalContext.current as Activity

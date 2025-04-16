@@ -158,8 +158,13 @@ internal fun AddSongToPlaylistCompactScreen(
         ) {
             AddSongToAlbumRootScreen(
                 albumId = state.albumScreenState.otherId,
+                playlistId = state.playlistId,
                 navigateBack = {
-                    onAction(AddSongToPlaylistUiAction.OnOtherScreenClose(AddToPlaylistItemUiType.ALBUM))
+                    onAction(
+                        AddSongToPlaylistUiAction.OnOtherScreenClose(
+                            AddToPlaylistItemUiType.ALBUM
+                        )
+                    )
                 }
             )
         }

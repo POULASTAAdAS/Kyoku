@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.poulastaa.add.domain.repository.RemoteAddSongToPlaylistDatasource
 import com.poulastaa.add.network.repository.AddSongToPlaylistPagingSource
 import com.poulastaa.add.network.repository.OkHttpAddSongToPlaylistDatasource
+import com.poulastaa.view.domain.repository.RemoteViewOtherDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +28,11 @@ internal object AddNetworkViewmodelModel {
         client: OkHttpClient,
         gson: Gson,
         pager: AddSongToPlaylistPagingSource,
-    ): RemoteAddSongToPlaylistDatasource = OkHttpAddSongToPlaylistDatasource(client, gson, pager)
+        view: RemoteViewOtherDatasource,
+    ): RemoteAddSongToPlaylistDatasource = OkHttpAddSongToPlaylistDatasource(
+        client = client,
+        gson = gson,
+        pager = pager,
+        view = view
+    )
 }

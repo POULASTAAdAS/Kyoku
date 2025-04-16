@@ -18,5 +18,7 @@ dependencies {
     implementation(projects.add.domain)
     implementation(projects.core.network)
 
+    implementation(projects.viewAll.domain)
+
     implementation(libs.pagingCommon)
 }

@@ -96,7 +96,6 @@ internal fun AddSongToPlaylistAlbumScreen(
                                 )
                             }
 
-
                             IconButton(
                                 enabled = false,
                                 onClick = {},

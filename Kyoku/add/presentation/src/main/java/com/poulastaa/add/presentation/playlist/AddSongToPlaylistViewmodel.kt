@@ -52,9 +52,12 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     var searchData = _searchData.asStateFlow()
         private set
 
-    private var playlistId: PlaylistId? = null
     fun init(playlistId: PlaylistId) {
-        this.playlistId = playlistId
+        _state.update {
+            it.copy(
+                playlistId = playlistId
+            )
+        }
     }
 
     private var loadStaticDataJob: Job? = null
@@ -63,7 +66,7 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     fun onAction(action: AddSongToPlaylistUiAction) {
         when (action) {
             is AddSongToPlaylistUiAction.OnItemClick -> {
-                if (_state.value.isSavingSong || playlistId == null) return
+                if (_state.value.isSavingSong || _state.value.playlistId != -1L) return
 
                 when (action.pageType) {
                     AddSongToPlaylistUiAction.PageType.SEARCH -> when (action.type) {
@@ -94,11 +97,11 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                             )
                         }
 
-                        AddToPlaylistItemUiType.SONG -> playlistId?.let { saveSong(it, action) }
+                        AddToPlaylistItemUiType.SONG -> saveSong(_state.value.playlistId, action)
                     }
 
-                    else -> if (action.type == AddToPlaylistItemUiType.SONG && playlistId != null) saveSong(
-                        playlistId!!,
+                    else -> if (action.type == AddToPlaylistItemUiType.SONG && _state.value.playlistId != -1L) saveSong(
+                        _state.value.playlistId,
                         action
                     )
                 }
@@ -199,6 +202,7 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
         _searchData.update { PagingData.empty() }
 
         repo.search(
+            playlistId = _state.value.playlistId,
             query = _state.value.query.trim(),
             filterType = _state.value.searchScreenFilterType.toDtoDtoAddSongToPlaylistSearchFilterType()
         ).cachedIn(viewModelScope).collectLatest { list ->
