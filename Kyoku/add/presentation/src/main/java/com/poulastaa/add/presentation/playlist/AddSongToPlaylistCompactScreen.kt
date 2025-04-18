@@ -24,18 +24,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
+import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiAction.PageType
 import com.poulastaa.add.presentation.playlist.album.AddSongToAlbumRootScreen
+import com.poulastaa.add.presentation.playlist.artist.AddSongToPlaylistArtistRootScreen
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStaticDataTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -60,10 +64,13 @@ internal fun AddSongToPlaylistCompactScreen(
                     is LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
 
                     is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                        label = stringResource(R.string.search_anything),
                         query = state.query,
-                        filterType = state.searchScreenFilterType,
-                        onAction = onAction,
+                        isExtended = false,
                         focusManager = focusManager,
+                        onValueChange = {
+                            onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(it))
+                        },
                         navigateBack = navigateBack
                     ) else AddSongToPlaylistStaticDataTopBar(
                         staticData = state.staticData,
@@ -123,6 +130,7 @@ internal fun AddSongToPlaylistCompactScreen(
                                 CreatePlaylistItemCard(
                                     item = item,
                                     onAction = {
+                                        focusManager.clearFocus()
                                         onAction(
                                             AddSongToPlaylistUiAction.OnItemClick(
                                                 itemId = item.id,
@@ -140,7 +148,6 @@ internal fun AddSongToPlaylistCompactScreen(
             }
         }
 
-
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = state.playlistScreenState.isVisible,
@@ -148,6 +155,34 @@ internal fun AddSongToPlaylistCompactScreen(
             exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
         ) {
 
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.artistScreenState.isVisible,
+            enter = fadeIn(tween(600)) + slideInVertically(tween(600), initialOffsetY = { it }),
+            exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
+        ) {
+            AddSongToPlaylistArtistRootScreen(
+                artistId = state.artistScreenState.otherId,
+                playlistId = state.playlistId,
+                navigate = {
+                    onAction(
+                        AddSongToPlaylistUiAction.OnItemClick(
+                            itemId = it,
+                            type = AddToPlaylistItemUiType.ALBUM,
+                            pageType = PageType.SEARCH
+                        )
+                    )
+                },
+                navigateBack = {
+                    onAction(
+                        AddSongToPlaylistUiAction.OnOtherScreenClose(
+                            AddToPlaylistItemUiType.ARTIST
+                        )
+                    )
+                }
+            )
         }
 
         AnimatedVisibility(
@@ -168,15 +203,6 @@ internal fun AddSongToPlaylistCompactScreen(
                 }
             )
         }
-
-        AnimatedVisibility(
-            modifier = Modifier.fillMaxSize(),
-            visible = state.artistScreenState.isVisible,
-            enter = fadeIn(tween(600)) + slideInVertically(tween(600), initialOffsetY = { it }),
-            exit = fadeOut(tween(600)) + slideOutVertically(tween(600), targetOffsetY = { it })
-        ) {
-
-        }
     }
 
     BackHandler {
@@ -186,7 +212,7 @@ internal fun AddSongToPlaylistCompactScreen(
             )
         ) else if (state.artistScreenState.isVisible) onAction(
             AddSongToPlaylistUiAction.OnOtherScreenClose(
-                AddToPlaylistItemUiType.ALBUM
+                AddToPlaylistItemUiType.ARTIST
             )
         ) else if (state.playlistScreenState.isVisible) onAction(
             AddSongToPlaylistUiAction.OnOtherScreenClose(

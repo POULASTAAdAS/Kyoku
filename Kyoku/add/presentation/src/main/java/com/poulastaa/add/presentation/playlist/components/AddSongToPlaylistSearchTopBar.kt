@@ -20,21 +20,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.poulastaa.add.presentation.playlist.AddSongToPlaylistSearchUiFilterType
-import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiAction
-import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
@@ -43,11 +40,13 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun AddSongToPlaylistSearchTopBar(
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    label: String,
     query: String,
-    filterType: AddSongToPlaylistSearchUiFilterType,
     isExtended: Boolean = false,
-    onAction: (AddSongToPlaylistUiAction) -> Unit,
     focusManager: FocusManager,
+    filterTypeContent: @Composable () -> Unit = {},
+    onValueChange: (value: String) -> Unit,
     navigateBack: () -> Unit,
 ) {
     TopAppBar(
@@ -57,23 +56,18 @@ internal fun AddSongToPlaylistSearchTopBar(
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium1),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isExtended) AddSongToPlaylistSearchFilterChips(
-                    filterType = filterType,
-                    onAction = onAction
-                )
+                if (isExtended) filterTypeContent()
 
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .animateContentSize(tween(400)),
                     value = query,
-                    onValueChange = {
-                        onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(it))
-                    },
+                    onValueChange = onValueChange,
                     shape = CircleShape,
                     label = {
                         Text(
-                            text = stringResource(R.string.search_anything),
+                            text = label,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -114,9 +108,8 @@ internal fun AddSongToPlaylistSearchTopBar(
         navigationIcon = {
             IconButton(
                 onClick = {
-                    if (query.isNotEmpty()) {
-                        onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(""))
-                    } else navigateBack()
+                    if (query.isNotEmpty()) onValueChange("")
+                    else navigateBack()
                 }
             ) {
                 Icon(
@@ -131,21 +124,25 @@ internal fun AddSongToPlaylistSearchTopBar(
             scrolledContainerColor = Color.Transparent,
             navigationIconContentColor = MaterialTheme.colorScheme.primary
         ),
+        scrollBehavior = scrollBehavior
     )
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 private fun Preview() {
     AppThem {
         Surface {
             AddSongToPlaylistSearchTopBar(
+                label = "search anything",
                 query = "",
-                onAction = {},
-                filterType = AddSongToPlaylistSearchUiFilterType.ALL,
+                isExtended = false,
                 focusManager = LocalFocusManager.current,
-            ) { }
+                onValueChange = {},
+                navigateBack = {}
+            )
         }
     }
 }

@@ -223,4 +223,10 @@ internal interface RootDao {
     """
     )
     suspend fun getSongArtists(songId: SongId): List<EntityArtist>
+
+    @Query("Select * from EntityPrevArtist where id = :id")
+    suspend fun getPrevArtist(id: ArtistId): EntityPrevArtist?
+
+    @Query("select * from EntityArtist where id = :id")
+    suspend fun getArtist(id: ArtistId): EntityArtist?
 }

@@ -10,6 +10,8 @@ import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.core.presentation.designsystem.ui.ERROR_LOTTIE_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +38,17 @@ internal class AddSongToPlaylistAlbumViewmodel @Inject constructor(
 
     private var playlistId: PlaylistId? = null
 
-    fun init(albumId: AlbumId, playlistId: PlaylistId) = {
-        loadAlbum(albumId)
+    fun init(albumId: AlbumId, playlistId: PlaylistId) {
+        if (albumId == -1L) return
+
+        _state.update {
+            it.copy(
+                loadingSate = LoadingType.Loading
+            )
+        }
+
         this.playlistId = playlistId
+        loadAlbum(albumId, playlistId)
     }
 
     fun onAction(action: AddSongToPlaylistAlbumUiAction) {
@@ -75,33 +85,58 @@ internal class AddSongToPlaylistAlbumViewmodel @Inject constructor(
         }
     }
 
-    private fun loadAlbum(albumId: AlbumId) {
-        playlistId?.let { playlistId ->
-            viewModelScope.launch {
-                val result = repo.loadAlbum(playlistId,albumId)
+    private fun loadAlbum(albumId: AlbumId, playlistId: PlaylistId) {
+        viewModelScope.launch {
+            val result = repo.loadAlbum(playlistId, albumId)
 
-                when (result) {
-                    is Result.Error -> when (result.error) {
-                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+            when (result) {
+                is Result.Error -> when (result.error) {
+                    DataError.Network.NO_INTERNET -> {
+                        _uiEvent.send(
                             AddSongToPlaylistAlbumUiEvent.EmitToast(
                                 UiText.StringResource(R.string.error_no_internet)
                             )
                         )
 
-                        else -> _uiEvent.send(
+                        _state.update {
+                            it.copy(
+                                loadingSate = LoadingType.Error(
+                                    type = LoadingType.ERROR_TYPE.NO_INTERNET,
+                                    lottieId = ERROR_LOTTIE_ID
+                                )
+                            )
+                        }
+                    }
+
+                    else -> {
+                        _uiEvent.send(
                             AddSongToPlaylistAlbumUiEvent.EmitToast(
                                 UiText.StringResource(R.string.error_something_went_wrong)
                             )
                         )
-                    }
 
-                    is Result.Success -> _state.update {
-                        it.copy(
-                            data = result.data.map {
-                                it.toAddSongToPlaylistUiItem()
-                            }
-                        )
+                        _state.update {
+                            it.copy(
+                                loadingSate = LoadingType.Error(
+                                    type = LoadingType.ERROR_TYPE.UNKNOWN,
+                                    lottieId = ERROR_LOTTIE_ID
+                                )
+                            )
+                        }
                     }
+                }
+
+                is Result.Success -> _state.update {
+                    it.copy(
+                        album = result.data.first ?: "",
+                        data = result.data.second.map {
+                            it.toAddSongToPlaylistUiItem()
+                        },
+                        loadingSate = if (result.data.first == null) LoadingType.Error(
+                            type = LoadingType.ERROR_TYPE.UNKNOWN,
+                            lottieId = ERROR_LOTTIE_ID
+                        ) else LoadingType.Content
+                    )
                 }
             }
         }

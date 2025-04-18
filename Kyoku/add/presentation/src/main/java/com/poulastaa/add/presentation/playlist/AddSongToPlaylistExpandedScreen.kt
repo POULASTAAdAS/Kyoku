@@ -19,17 +19,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchFilterChips
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStaticDataTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
+import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -51,11 +54,19 @@ internal fun AddSongToPlaylistExpandedScreen(
         topBar = {
             when (state.loadingType) {
                 LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                    label = stringResource(R.string.search_anything),
                     query = state.query,
-                    filterType = state.searchScreenFilterType,
-                    onAction = onAction,
                     isExtended = true,
                     focusManager = focusManager,
+                    onValueChange = {
+                        onAction(AddSongToPlaylistUiAction.OnSearchQueryChange(it))
+                    },
+                    filterTypeContent = {
+                        AddSongToPlaylistSearchFilterChips(
+                            filterType = state.searchScreenFilterType,
+                            onAction = onAction
+                        )
+                    },
                     navigateBack = navigateBack
                 ) else AddSongToPlaylistStaticDataTopBar(
                     staticData = state.staticData,

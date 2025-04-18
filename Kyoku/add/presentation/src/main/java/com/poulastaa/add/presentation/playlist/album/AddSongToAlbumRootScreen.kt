@@ -19,7 +19,7 @@ internal fun AddSongToAlbumRootScreen(
     playlistId: PlaylistId,
     navigateBack: () -> Unit,
 ) {
-    LaunchedEffect(albumId) {
+    LaunchedEffect(albumId != -1L) {
         viewmodel.init(albumId, playlistId)
     }
 

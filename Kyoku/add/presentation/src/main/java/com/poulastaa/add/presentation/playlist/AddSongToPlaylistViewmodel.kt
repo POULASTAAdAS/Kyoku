@@ -34,10 +34,10 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(AddSongToPlaylistUiState())
     val state = _state.onStart {
-        loadStaticDataJob?.cancel()
-        loadStaticDataJob = loadStaticData()
         loadSearchJob?.cancel()
+        loadStaticDataJob?.cancel()
         loadSearchJob = loadSearchData()
+        loadStaticDataJob = loadStaticData()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.0.seconds.inWholeMilliseconds),
@@ -66,7 +66,7 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
     fun onAction(action: AddSongToPlaylistUiAction) {
         when (action) {
             is AddSongToPlaylistUiAction.OnItemClick -> {
-                if (_state.value.isSavingSong || _state.value.playlistId != -1L) return
+                if (_state.value.isSavingSong || _state.value.playlistId == -1L) return
 
                 when (action.pageType) {
                     AddSongToPlaylistUiAction.PageType.SEARCH -> when (action.type) {
@@ -93,6 +93,14 @@ internal class AddSongToPlaylistViewmodel @Inject constructor(
                                 artistScreenState = OtherScreenUiState(
                                     isVisible = true,
                                     otherId = action.itemId
+                                ),
+                                playlistScreenState = OtherScreenUiState(
+                                    isVisible = false,
+                                    otherId = -1
+                                ),
+                                albumScreenState = OtherScreenUiState(
+                                    isVisible = false,
+                                    otherId = -1
                                 )
                             )
                         }

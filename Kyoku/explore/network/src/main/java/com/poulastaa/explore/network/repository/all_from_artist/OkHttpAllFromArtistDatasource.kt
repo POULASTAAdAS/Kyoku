@@ -12,11 +12,11 @@ import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.EndPoints
 import com.poulastaa.core.network.ApiMethodType
 import com.poulastaa.core.network.ReqParam
+import com.poulastaa.core.network.mapper.toDtoPrevArtist
 import com.poulastaa.core.network.model.ResponseArtist
 import com.poulastaa.core.network.req
 import com.poulastaa.explore.domain.model.DtoExploreItem
 import com.poulastaa.explore.domain.repository.all_from_artist.RemoteAllFromArtistDatasource
-import com.poulastaa.explore.network.mapper.toDtoPrevArtist
 import kotlinx.coroutines.flow.Flow
 import okhttp3.OkHttpClient
 import javax.inject.Inject

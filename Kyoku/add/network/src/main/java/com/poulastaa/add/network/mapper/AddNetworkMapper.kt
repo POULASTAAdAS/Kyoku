@@ -8,6 +8,7 @@ import com.poulastaa.add.network.model.AddSongToPlaylistItemResponse
 import com.poulastaa.add.network.model.AddSongToPlaylistItemTypeResponse
 import com.poulastaa.add.network.model.AddSongToPlaylistPageItemResponse
 import com.poulastaa.add.network.model.AddSongToPlaylistPageTypeResponse
+import com.poulastaa.add.network.model.ResponseExploreItem
 import kotlinx.serialization.InternalSerializationApi
 
 @OptIn(InternalSerializationApi::class)
@@ -35,4 +36,15 @@ internal fun AddSongToPlaylistItemResponse.toDtoAddSongToPlaylistItem(): DtoAddS
             AddSongToPlaylistItemTypeResponse.ARTIST -> DtoAddToPlaylistItemType.ARTIST
             AddSongToPlaylistItemTypeResponse.SONG -> DtoAddToPlaylistItemType.SONG
         }
+    )
+
+@OptIn(InternalSerializationApi::class)
+internal fun ResponseExploreItem.toDtoAddSongToPlaylistItem(type: DtoAddToPlaylistItemType) =
+    DtoAddSongToPlaylistItem(
+        id = this.id,
+        title = this.title,
+        poster = listOf(this.poster),
+        artist = this.artist,
+        numbers = this.releaseYear.toLong(),
+        type = type
     )

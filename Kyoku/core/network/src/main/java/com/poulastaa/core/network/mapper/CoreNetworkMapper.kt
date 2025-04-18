@@ -88,3 +88,9 @@ fun ResponsePrevSong.toDtoPrevSong() = DtoPrevSong(
     title = this.title,
     poster = this.poster
 )
+
+fun ResponseArtist.toDtoPrevArtist() = DtoPrevArtist(
+    id = this.id,
+    name = this.name,
+    cover = this.coverImage
+)

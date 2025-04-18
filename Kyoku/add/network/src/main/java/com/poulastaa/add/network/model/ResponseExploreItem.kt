@@ -1,4 +1,4 @@
-package com.poulastaa.explore.network.model
+package com.poulastaa.add.network.model
 
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable

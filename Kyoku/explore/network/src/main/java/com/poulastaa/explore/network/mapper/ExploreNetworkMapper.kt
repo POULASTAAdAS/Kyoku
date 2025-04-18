@@ -1,16 +1,10 @@
 package com.poulastaa.explore.network.mapper
 
-import com.poulastaa.core.domain.model.DtoPrevArtist
-import com.poulastaa.core.network.model.ResponseArtist
 import com.poulastaa.explore.domain.model.DtoExploreItem
 import com.poulastaa.explore.network.model.ResponseExploreItem
+import kotlinx.serialization.InternalSerializationApi
 
-internal fun ResponseArtist.toDtoPrevArtist() = DtoPrevArtist(
-    id = this.id,
-    name = this.name,
-    cover = this.coverImage
-)
-
+@OptIn(InternalSerializationApi::class)
 internal fun ResponseExploreItem.toDtoAllFromArtistItem() = DtoExploreItem(
     id = this.id,
     title = this.title,

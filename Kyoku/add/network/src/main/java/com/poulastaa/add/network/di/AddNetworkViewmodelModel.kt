@@ -2,6 +2,7 @@ package com.poulastaa.add.network.di
 
 import com.google.gson.Gson
 import com.poulastaa.add.domain.repository.RemoteAddSongToPlaylistDatasource
+import com.poulastaa.add.network.repository.AddSongToPlaylistArtistPagingSource
 import com.poulastaa.add.network.repository.AddSongToPlaylistPagingSource
 import com.poulastaa.add.network.repository.OkHttpAddSongToPlaylistDatasource
 import com.poulastaa.view.domain.repository.RemoteViewOtherDatasource
@@ -27,12 +28,14 @@ internal object AddNetworkViewmodelModel {
     fun provideAddSongToPlaylistRemoteDatasource(
         client: OkHttpClient,
         gson: Gson,
-        pager: AddSongToPlaylistPagingSource,
+        playlistPager: AddSongToPlaylistPagingSource,
+        artistPager: AddSongToPlaylistArtistPagingSource,
         view: RemoteViewOtherDatasource,
     ): RemoteAddSongToPlaylistDatasource = OkHttpAddSongToPlaylistDatasource(
         client = client,
         gson = gson,
-        pager = pager,
+        playlistPager = playlistPager,
+        artistPager = artistPager,
         view = view
     )
 }

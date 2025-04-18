@@ -1,4 +1,4 @@
-package com.poulastaa.add.presentation.playlist.components
+package com.poulastaa.add.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight

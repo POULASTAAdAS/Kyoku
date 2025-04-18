@@ -16,9 +16,11 @@ import com.poulastaa.core.network.req
 import com.poulastaa.explore.domain.model.DtoExploreItem
 import com.poulastaa.explore.network.mapper.toDtoAllFromArtistItem
 import com.poulastaa.explore.network.model.ResponseExploreItem
+import kotlinx.serialization.InternalSerializationApi
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
+@OptIn(InternalSerializationApi::class)
 internal class AllFromArtistAlbumPagingSource @Inject constructor(
     private val client: OkHttpClient,
     private val gson: Gson,

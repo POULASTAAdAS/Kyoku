@@ -5,6 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddSongToPlaylistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddSongToPlaylistRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/AddSongToPlaylistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/AddSongToPlaylistRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddSongToPlaylistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddSongToPlaylistDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddSongToPlaylistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddSongToPlaylistDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToAlbumRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToAlbumRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistLoadingTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/components/AddSongToPlaylistLoadingTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/model/LoadingType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/model/LoadingType.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,7 +117,7 @@
       <option name="ALTERNATIVE_JRE_PATH" value="23" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <envs>
-        <env name="BASE_URL" value="http://kyoku.poulastaa.online:9292/" />
+        <env name="BASE_URL" value="http://kyoku.poulastaa.shop:9292/" />
         <env name="CLIENT_ID" value="791240515987-vsvo9cimabfr81gicfp8bogfho8pkh90.apps.googleusercontent.com" />
         <env name="DEV_EMAIL" value="poulastaadas2@gmail.com" />
         <env name="ISSUER" value="https://accounts.google.com" />
@@ -184,6 +197,8 @@
       <workItem from="1744643358301" duration="11172000" />
       <workItem from="1744725295979" duration="3065000" />
       <workItem from="1744817945377" duration="5152000" />
+      <workItem from="1744905759162" duration="4330000" />
+      <workItem from="1744993585546" duration="2600000" />
     </task>
     <servers />
   </component>
