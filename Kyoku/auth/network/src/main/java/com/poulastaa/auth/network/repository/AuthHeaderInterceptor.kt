@@ -148,7 +148,7 @@ class AuthHeaderInterceptor @Inject constructor(
 
                 result
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

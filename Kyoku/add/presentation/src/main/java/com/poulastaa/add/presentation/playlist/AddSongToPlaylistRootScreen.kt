@@ -8,6 +8,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +31,7 @@ fun AddSongToPlaylistRootScreen(
         viewmodel.init(playlistId)
     }
 
+    val config = LocalConfiguration.current
     val context = LocalContext.current as Activity
     val windowSizeClass = calculateWindowSizeClass(context)
 
@@ -66,6 +68,7 @@ fun AddSongToPlaylistRootScreen(
         },
         expandedContent = {
             AddSongToPlaylistExpandedScreen(
+                isExtendedSearch = config.screenWidthDp > 980,
                 state = state,
                 searchData = searchData,
                 onAction = viewmodel::onAction,

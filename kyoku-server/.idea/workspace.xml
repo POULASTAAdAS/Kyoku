@@ -5,20 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddSongToPlaylistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddSongToPlaylistRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/AddSongToPlaylistRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/AddSongToPlaylistRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddSongToPlaylistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddSongToPlaylistDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddSongToPlaylistDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddSongToPlaylistDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToAlbumRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToAlbumRootScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistLoadingTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/components/AddSongToPlaylistLoadingTopBar.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/model/LoadingType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/model/LoadingType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/auth/network/src/main/java/com/poulastaa/auth/network/repository/AuthHeaderInterceptor.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/auth/network/src/main/java/com/poulastaa/auth/network/repository/AuthHeaderInterceptor.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/auth/presentation/src/main/java/com/poulastaa/auth/presentation/intro/IntroViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/auth/presentation/src/main/java/com/poulastaa/auth/presentation/intro/IntroViewmodel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/ExposedLocalSuggestionDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/suggestion/ExposedLocalSuggestionDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/suggestion/data/src/main/kotlin/com/poulastaa/suggestion/data/repository/SuggestionRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/suggestion/data/src/main/kotlin/com/poulastaa/suggestion/data/repository/SuggestionRepositoryService.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,6 +193,8 @@
       <workItem from="1744817945377" duration="5152000" />
       <workItem from="1744905759162" duration="4330000" />
       <workItem from="1744993585546" duration="2600000" />
+      <workItem from="1745041998109" duration="2059000" />
+      <workItem from="1745045390057" duration="2354000" />
     </task>
     <servers />
   </component>

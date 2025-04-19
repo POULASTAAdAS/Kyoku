@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
-import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiAction.PageType
 import com.poulastaa.add.presentation.playlist.album.AddSongToAlbumRootScreen
 import com.poulastaa.add.presentation.playlist.artist.AddSongToPlaylistArtistRootScreen
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
@@ -171,7 +170,7 @@ internal fun AddSongToPlaylistCompactScreen(
                         AddSongToPlaylistUiAction.OnItemClick(
                             itemId = it,
                             type = AddToPlaylistItemUiType.ALBUM,
-                            pageType = PageType.SEARCH
+                            pageType = AddSongToPlaylistUiAction.PageType.SEARCH
                         )
                     )
                 },

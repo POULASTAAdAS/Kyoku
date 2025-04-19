@@ -272,36 +272,50 @@ class ExposedLocalSuggestionDatasource(
 
         return coroutineScope {
             kyokuDbQuery {
-                RelationEntitySongPlaylist.selectAll().where {
-                    RelationEntitySongPlaylist.playlistId inList playlistIdList
-                }.map {
-                    Pair(
-                        first = it[RelationEntitySongPlaylist.playlistId] as PlaylistId,
-                        second = it[RelationEntitySongPlaylist.songId] as SongId
-                    )
-                }
-            }.groupBy { it.first as PlaylistId }
-                .map { it.key to it.value.map { it.second } }
-                .map { (playlistId, songIdList) ->
-                    async {
-                        val playlist = async {
-                            cache.cachePlaylistOnId(playlistId) ?: kyokuDbQuery {
-                                DaoPlaylist.find {
-                                    EntityPlaylist.id eq playlistId
-                                }.first().toDtoPlaylist().also { cache.setPlaylistOnId(it) }
-                            }
-                        }
-
-                        val songs = async {
-                            core.getSongOnId(songIdList)
-                        }
-
-                        DtoFullPlaylist(
-                            playlist = playlist.await(),
-                            listOfSong = songs.await()
+                EntityPlaylist
+                    .join(
+                        otherTable = RelationEntitySongPlaylist,
+                        joinType = JoinType.LEFT,
+                        onColumn = EntityPlaylist.id,
+                        otherColumn = RelationEntitySongPlaylist.playlistId
+                    ).join(
+                        otherTable = EntitySong,
+                        joinType = JoinType.LEFT,
+                        onColumn = EntitySong.id,
+                        otherColumn = RelationEntitySongPlaylist.songId
+                    ).select(
+                        EntityPlaylist.id,
+                        EntitySong.id
+                    ).where {
+                        EntityPlaylist.id inList playlistIdList
+                    }.map {
+                        Pair<PlaylistId, SongId?>(
+                            first = it[EntityPlaylist.id].value,
+                            second = it.getOrNull(EntitySong.id)?.value
                         )
-                    }
-                }.awaitAll()
+                    }.groupBy { it.first }.map {
+                        it.key to it.value.mapNotNull { map -> map.second }
+                    }.map { (playlistId, songIdList) ->
+                        async {
+                            val playlist = async {
+                                cache.cachePlaylistOnId(playlistId) ?: kyokuDbQuery {
+                                    DaoPlaylist.find {
+                                        EntityPlaylist.id eq playlistId
+                                    }.first().toDtoPlaylist().also { cache.setPlaylistOnId(it) }
+                                }
+                            }
+
+                            val songs = async {
+                                core.getSongOnId(songIdList)
+                            }
+
+                            DtoFullPlaylist(
+                                playlist = playlist.await(),
+                                listOfSong = songs.await()
+                            )
+                        }
+                    }.awaitAll()
+            }
         }
     }
 
@@ -367,8 +381,8 @@ class ExposedLocalSuggestionDatasource(
         }.map { it[RelationEntityUserFavouriteSong.songId] }
     }.let {
         val cache = cache.cacheDetailedPrevSongById(it)
-        val idList = cache.map { it.id }
-        val notFound = it.filterNot { it in idList }
+        val idList = cache.map { item -> item.id }
+        val notFound = it.filterNot { item -> item in idList }
         cache + core.getDetailedPrevSongOnId(notFound)
     }
 

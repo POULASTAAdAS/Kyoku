@@ -50,6 +50,7 @@ internal fun AddSongToPlaylistSearchTopBar(
     navigateBack: () -> Unit,
 ) {
     TopAppBar(
+        modifier = Modifier.animateContentSize(tween(600)),
         title = {
             Row(
                 Modifier.fillMaxWidth(),

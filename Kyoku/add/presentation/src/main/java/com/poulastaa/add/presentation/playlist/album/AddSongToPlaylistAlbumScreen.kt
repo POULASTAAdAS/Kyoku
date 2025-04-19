@@ -1,5 +1,6 @@
 package com.poulastaa.add.presentation.playlist.album
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +19,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
-import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -58,6 +61,9 @@ internal fun AddSongToPlaylistAlbumScreen(
             LoadingType.Loading -> Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
                     .verticalScroll(rememberScrollState())
                     .padding(it)
                     .padding(MaterialTheme.dimens.medium1),
@@ -77,6 +83,9 @@ internal fun AddSongToPlaylistAlbumScreen(
             LoadingType.Content -> LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
                     .padding(it),
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
             ) {

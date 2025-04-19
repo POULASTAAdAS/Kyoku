@@ -1,5 +1,6 @@
 package com.poulastaa.add.presentation.playlist.artist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -37,6 +39,7 @@ import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearc
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -80,6 +83,9 @@ internal fun AddSongToPlaylistArtistScreen(
             LoadingType.Loading -> Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
                     .verticalScroll(rememberScrollState())
                     .padding(it)
                     .padding(MaterialTheme.dimens.medium1),
@@ -108,6 +114,9 @@ internal fun AddSongToPlaylistArtistScreen(
             LoadingType.Content -> LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(ThemModeChanger.getGradiantBackground())
+                    )
                     .padding(it)
                     .nestedScroll(scroll.nestedScrollConnection),
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
