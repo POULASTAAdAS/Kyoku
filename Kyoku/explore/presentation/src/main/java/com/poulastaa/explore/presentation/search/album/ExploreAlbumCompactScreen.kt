@@ -1,6 +1,7 @@
 package com.poulastaa.explore.presentation.search.album
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,17 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
 import com.poulastaa.explore.presentation.components.ExploreScreenWrapper
+import com.poulastaa.explore.presentation.components.LoadingSongCard
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumCard
 import com.poulastaa.explore.presentation.search.album.components.ExploreAlbumFilterTypes
@@ -105,6 +109,33 @@ internal fun ExploreAlbumCompactScreen(
                         filterType = state.filterType,
                         onAction = onAction,
                     )
+                }
+            }
+
+            columnPagingLoadingLoadState(
+                data = album.loadState,
+                retry = {
+                    album.retry()
+                }
+            ) {
+                item {
+                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                }
+
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        repeat(3) {
+                            LoadingSongCard(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                            )
+
+                            Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                        }
+                    }
                 }
             }
         },

@@ -41,6 +41,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.AppThem

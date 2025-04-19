@@ -2,6 +2,7 @@ package com.poulastaa.explore.presentation.search.all_from_artist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,16 +34,18 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.core.presentation.ui.components.AppFilterChip
+import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
 import com.poulastaa.explore.presentation.components.ExploreScreenWrapper
+import com.poulastaa.explore.presentation.components.LoadingSongCard
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.all_from_artist.components.AllFromArtistAlbumCard
-import com.poulastaa.explore.presentation.components.ExploreCompactLoadingScreen
 import com.poulastaa.explore.presentation.search.all_from_artist.components.AllFromArtistSongCard
 import kotlinx.coroutines.flow.flowOf
 
@@ -204,6 +207,33 @@ internal fun AllFromArtistCompactScreen(
 
                         AllFromArtistSongCard(song) {
                             onAction(AllFromArtistUiAction.OnSongClick(it))
+                        }
+                    }
+                }
+            }
+
+            columnPagingLoadingLoadState(
+                data = song.loadState,
+                retry = {
+                    song.retry()
+                }
+            ) {
+                item {
+                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                }
+
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        repeat(3) {
+                            LoadingSongCard(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(80.dp)
+                            )
+
+                            Spacer(Modifier.height(MaterialTheme.dimens.small2))
                         }
                     }
                 }

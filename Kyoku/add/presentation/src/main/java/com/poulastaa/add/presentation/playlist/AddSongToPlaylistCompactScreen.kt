@@ -8,7 +8,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +41,7 @@ import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStati
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
 import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -124,22 +127,51 @@ internal fun AddSongToPlaylistCompactScreen(
                                 },
                                 haptic = haptic
                             )
-                        } else items(searchData.itemCount) { index ->
-                            searchData[index]?.let { item ->
-                                CreatePlaylistItemCard(
-                                    item = item,
-                                    onAction = {
-                                        focusManager.clearFocus()
-                                        onAction(
-                                            AddSongToPlaylistUiAction.OnItemClick(
-                                                itemId = item.id,
-                                                type = item.type,
-                                                pageType = AddSongToPlaylistUiAction.PageType.SEARCH
+                        } else {
+                            items(searchData.itemCount) { index ->
+                                searchData[index]?.let { item ->
+                                    CreatePlaylistItemCard(
+                                        item = item,
+                                        onAction = {
+                                            focusManager.clearFocus()
+                                            onAction(
+                                                AddSongToPlaylistUiAction.OnItemClick(
+                                                    itemId = item.id,
+                                                    type = item.type,
+                                                    pageType = AddSongToPlaylistUiAction.PageType.SEARCH
+                                                )
                                             )
-                                        )
-                                    },
-                                    haptic = haptic
-                                )
+                                        },
+                                        haptic = haptic
+                                    )
+                                }
+                            }
+
+                            columnPagingLoadingLoadState(
+                                data = searchData.loadState,
+                                retry = {
+                                    searchData.retry()
+                                }
+                            ) {
+                                item {
+                                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                                }
+
+                                item {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        repeat(3) {
+                                            LoadingSongCard(
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .height(80.dp)
+                                            )
+
+                                            Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

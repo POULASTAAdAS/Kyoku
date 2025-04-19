@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -49,6 +50,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.gridPagingLoadingContent
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -130,33 +132,7 @@ internal fun ExploreArtistScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
                 repeat(12) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-                    ) {
-                        repeat(itemCount) {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(1f)
-                                    .weight(1f),
-                                shape = CircleShape,
-                                elevation = CardDefaults.cardElevation(
-                                    defaultElevation = 5.dp
-                                ),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                                )
-                            ) {
-                                Box(
-                                    Modifier
-                                        .fillMaxSize()
-                                        .shimmerEffect(MaterialTheme.colorScheme.primary)
-                                )
-                            }
-                        }
-                    }
+                    LoadingArtistCard(itemCount)
 
                     Spacer(Modifier.height(MaterialTheme.dimens.small3))
                 }
@@ -223,6 +199,18 @@ internal fun ExploreArtistScreen(
                         )
                     }
                 }
+
+                gridPagingLoadingContent(
+                    gridSize = itemCount,
+                    data = artist.loadState,
+                    retry = {
+                        artist.retry()
+                    }
+                ) {
+                    LoadingArtistCard(itemCount)
+
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                }
             }
         },
         navigateBack = {
@@ -235,6 +223,37 @@ internal fun ExploreArtistScreen(
             }
         }
     )
+}
+
+@Composable
+private fun LoadingArtistCard(itemCount: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
+    ) {
+        repeat(itemCount) {
+            Card(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
+                    .weight(1f),
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 5.dp
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .shimmerEffect(MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+    }
 }
 
 

@@ -40,6 +40,7 @@ import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.model.UiPrevArtist
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
@@ -143,6 +144,33 @@ internal fun AddSongToPlaylistArtistScreen(
                             },
                             haptic = haptic
                         )
+                    }
+                }
+
+                columnPagingLoadingLoadState(
+                    data = searchData.loadState,
+                    retry = {
+                        searchData.retry()
+                    }
+                ) {
+                    item {
+                        Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                    }
+
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            repeat(3) {
+                                LoadingSongCard(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(80.dp)
+                                )
+
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
+                            }
+                        }
                     }
                 }
             }

@@ -2,6 +2,8 @@ package com.poulastaa.core.database.repository.sync
 
 import com.poulastaa.core.database.SQLDbManager.kyokuDbQuery
 import com.poulastaa.core.database.SQLDbManager.userDbQuery
+import com.poulastaa.core.database.entity.app.EntityPlaylist
+import com.poulastaa.core.database.entity.app.EntitySong
 import com.poulastaa.core.database.entity.app.RelationEntitySongAlbum
 import com.poulastaa.core.database.entity.app.RelationEntitySongPlaylist
 import com.poulastaa.core.database.entity.user.RelationEntityUserAlbum
@@ -13,6 +15,7 @@ import com.poulastaa.core.domain.repository.*
 import com.poulastaa.core.domain.repository.sync.LocalSyncCacheDatasource
 import com.poulastaa.core.domain.repository.sync.LocalSyncDatasource
 import kotlinx.coroutines.*
+import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
@@ -39,7 +42,7 @@ internal class ExposedLocalSyncDatasource(
             }
         }
 
-        val fullList = all + idList.filter { it !in all.map { it.id } }.let {
+        val fullList = all + idList.filter { it !in all.map { item -> item.id } }.let {
             core.getAlbumOnId(idList).also {
                 cache.setAlbumById(it)
             }
@@ -51,7 +54,7 @@ internal class ExposedLocalSyncDatasource(
             }.map {
                 it[RelationEntitySongAlbum.albumId] to it[RelationEntitySongAlbum.songId]
             }
-        }.groupBy { it.first }.map { it.key to it.value.map { it.second } }.map { (albumId, songIdList) ->
+        }.groupBy { it.first }.map { it.key to it.value.map { item -> item.second } }.map { (albumId, songIdList) ->
             async {
                 DtoFullAlbum(
                     album = fullList.first { it.id == albumId },
@@ -84,19 +87,38 @@ internal class ExposedLocalSyncDatasource(
             }
         }
 
-        val allPlaylist = playlist + idList.filter { it !in playlist.map { it.id } }.let {
+        val allPlaylist = playlist + idList.filter { it !in playlist.map { item -> item.id } }.let {
             core.getPlaylistOnId(idList).also {
                 cache.setPlaylistById(it)
             }
         }
 
         kyokuDbQuery {
-            RelationEntitySongPlaylist.selectAll().where {
-                RelationEntitySongPlaylist.playlistId inList allPlaylist.map { it.id }
-            }.map {
-                it[RelationEntitySongPlaylist.playlistId] to it[RelationEntitySongPlaylist.songId]
-            }
-        }.groupBy { it.first }.map { it.key to it.value.map { it.second } }.map { (playlistId, songIdList) ->
+            EntityPlaylist
+                .join(
+                    otherTable = RelationEntitySongPlaylist,
+                    joinType = JoinType.LEFT,
+                    onColumn = EntityPlaylist.id,
+                    otherColumn = RelationEntitySongPlaylist.playlistId
+                ).join(
+                    otherTable = EntitySong,
+                    joinType = JoinType.LEFT,
+                    onColumn = EntitySong.id,
+                    otherColumn = RelationEntitySongPlaylist.songId
+                ).select(
+                    EntityPlaylist.id,
+                    EntitySong.id
+                ).where {
+                    EntityPlaylist.id inList allPlaylist.map { it.id }
+                }.map {
+                    Pair<PlaylistId, SongId?>(
+                        first = it[EntityPlaylist.id].value,
+                        second = it.getOrNull(EntitySong.id)?.value
+                    )
+                }
+        }.groupBy { it.first }.map {
+            it.key to it.value.mapNotNull { map -> map.second }
+        }.map { (playlistId, songIdList) ->
             async {
                 DtoFullPlaylist(
                     playlist = allPlaylist.first { it.id == playlistId },
@@ -135,7 +157,7 @@ internal class ExposedLocalSyncDatasource(
             }
         }
 
-        return cache + idList.filter { it !in cache.map { it.id } }.let {
+        return cache + idList.filter { it !in cache.map { item -> item.id } }.let {
             core.getArtistOnId(idList).also {
                 this.cache.setArtistById(it)
             }
@@ -204,9 +226,9 @@ internal class ExposedLocalSyncDatasource(
             }
         }
 
-        return songs + songIdList.filter { it !in songs.map { it.id } }.let {
-            core.getSongOnId(it).also {
-                cache.setSongById(it)
+        return songs + songIdList.filter { it !in songs.map { item -> item.id } }.let {
+            core.getSongOnId(it).also { list ->
+                cache.setSongById(list)
             }
         }
     }

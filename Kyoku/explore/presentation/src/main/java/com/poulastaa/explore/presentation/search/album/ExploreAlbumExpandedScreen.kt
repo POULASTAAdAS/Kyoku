@@ -42,6 +42,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
+import com.poulastaa.core.presentation.designsystem.gridPagingLoadingContent
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -136,12 +137,37 @@ internal fun ExploreAlbumExpandedScreen(
                         )
                     }
                 }
+
+                gridPagingLoadingContent(
+                    gridSize = 3,
+                    data = album.loadState,
+                    retry = {
+                        album.retry()
+                    }
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        repeat(3) {
+                            LoadingSongCard(
+                                Modifier
+                                    .weight(1f)
+                                    .height(80.dp)
+                            )
+
+                            Spacer(Modifier.width(MaterialTheme.dimens.small2))
+                        }
+                    }
+                }
             }
         },
         navigateBack = {
             when {
-                state.isSearchOpen && state.query.value.isNotEmpty() ->
-                    onAction(ExploreAlbumUiAction.OnSearchQueryChange(""))
+                state.isSearchOpen && state.query.value.isNotEmpty() -> onAction(
+                    ExploreAlbumUiAction.OnSearchQueryChange(
+                        query = ""
+                    )
+                )
 
                 state.isSearchOpen -> onAction(ExploreAlbumUiAction.OnSearchToggle)
                 else -> navigateBack()
