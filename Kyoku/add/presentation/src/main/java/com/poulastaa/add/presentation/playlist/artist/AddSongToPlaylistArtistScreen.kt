@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
 import com.poulastaa.add.presentation.playlist.artist.components.AddSongToPlaylistArtistFilterTypes

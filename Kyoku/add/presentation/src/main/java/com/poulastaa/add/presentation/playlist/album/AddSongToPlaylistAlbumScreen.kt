@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.poulastaa.add.presentation.components.AddSongToPlaylistLoadingTopBar
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard

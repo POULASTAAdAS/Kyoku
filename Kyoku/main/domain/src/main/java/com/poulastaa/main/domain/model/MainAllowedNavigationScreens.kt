@@ -10,4 +10,8 @@ sealed interface MainAllowedNavigationScreens {
     ) : MainAllowedNavigationScreens
 
     data class NavigateToExplore(val type: ExploreScreenType) : MainAllowedNavigationScreens
+
+    data class NavigateToEditSavedItemScreen(
+        val type: PayloadSaveItemType,
+    ) : MainAllowedNavigationScreens
 }

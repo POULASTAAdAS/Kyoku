@@ -1,6 +1,7 @@
 package com.poulastaa.add.presentation.playlist
 
 import androidx.annotation.StringRes
+import com.poulastaa.add.presentation.components.OtherScreenUiState
 import com.poulastaa.core.domain.model.PlaylistId
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
@@ -54,7 +55,3 @@ internal enum class AddSongToPlaylistPageUiType(@StringRes val value: Int) {
     YOU_MAY_ALSO_LIKE(R.string.you_may_also_like),
 }
 
-internal data class OtherScreenUiState(
-    val isVisible: Boolean = false,
-    val otherId: Long = -1,
-)

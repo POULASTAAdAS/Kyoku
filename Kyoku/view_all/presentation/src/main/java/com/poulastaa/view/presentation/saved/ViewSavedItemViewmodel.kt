@@ -55,6 +55,7 @@ internal class ViewSavedItemViewmodel @Inject constructor(
                     }
 
                     ViewSavedUiItemType.ALBUM -> TODO()
+
                     else -> return
                 }
             }

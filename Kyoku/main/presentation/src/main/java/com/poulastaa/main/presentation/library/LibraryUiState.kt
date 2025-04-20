@@ -34,7 +34,7 @@ internal enum class UiLibraryViewType {
     LIST
 }
 
-internal enum class UiLibraryEditSavedItemType {
+enum class UiLibraryEditSavedItemType {
     ALBUM,
     PLAYLIST,
     ARTIST

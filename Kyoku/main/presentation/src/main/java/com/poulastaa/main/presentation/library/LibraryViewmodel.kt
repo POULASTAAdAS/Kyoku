@@ -66,7 +66,12 @@ internal class LibraryViewmodel @Inject constructor(
                 }
             }
 
-            is LibraryUiAction.OnEditSavedItemTypeClick -> {}
+            is LibraryUiAction.OnEditSavedItemTypeClick -> viewModelScope.launch {
+                _uiEvent.send(
+                    LibraryUiEvent.NavigateToSavedScreen(action.type)
+                )
+            }
+
             is LibraryUiAction.OnItemClick -> viewModelScope.launch {
                 when (action.clickType) {
                     ItemClickType.CLICK -> when (action.type) {

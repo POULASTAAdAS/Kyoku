@@ -15,6 +15,7 @@ import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
 import com.poulastaa.main.presentation.home.mapper.toMainAllowedNavigationScreensLibrary
+import com.poulastaa.main.presentation.home.mapper.toNavigateToEditSavedItemScreen
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +38,7 @@ internal fun LibraryRootScreen(
             ).show()
 
             is LibraryUiEvent.NavigateToView -> navigate(event.toMainAllowedNavigationScreensLibrary())
+            is LibraryUiEvent.NavigateToSavedScreen -> navigate(event.toNavigateToEditSavedItemScreen())
         }
     }
 

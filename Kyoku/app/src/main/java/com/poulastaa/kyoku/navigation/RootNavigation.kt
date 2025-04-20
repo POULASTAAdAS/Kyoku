@@ -28,8 +28,8 @@ import com.poulastaa.explore.domain.model.ExploreAllowedNavigationScreen
 import com.poulastaa.explore.presentation.search.album.ExploreAlbumRootScreen
 import com.poulastaa.explore.presentation.search.all_from_artist.AllFromArtistRootScreen
 import com.poulastaa.explore.presentation.search.artist.ExploreArtistRootScreen
-import com.poulastaa.kyoku.navigation.Screens.View.Artist
 import com.poulastaa.main.domain.model.MainAllowedNavigationScreens
+import com.poulastaa.main.domain.model.PayloadSaveItemType
 import com.poulastaa.main.presentation.main.MainRootScreen
 import com.poulastaa.main.presentation.main.ScreensCore
 import com.poulastaa.profile.domain.model.ProfileAllowedNavigationScreen
@@ -328,6 +328,26 @@ private fun NavGraphBuilder.coreGraph(
                         ExploreScreenType.ARTIST -> nav.navigate(Screens.Explore.ExploreArtist)
                         ExploreScreenType.ALBUM -> nav.navigate(Screens.Explore.ExploreAlbum)
                     }
+
+                    is MainAllowedNavigationScreens.NavigateToEditSavedItemScreen -> when (screens.type) {
+                        PayloadSaveItemType.PLAYLIST -> nav.navigate(
+                            Screens.View.Saved(
+                                ViewSavedUiItemType.PLAYLIST
+                            )
+                        )
+
+                        PayloadSaveItemType.ALBUM -> nav.navigate(
+                            Screens.View.Saved(
+                                ViewSavedUiItemType.ALBUM
+                            )
+                        )
+
+                        PayloadSaveItemType.ARTIST -> nav.navigate(
+                            Screens.View.Saved(
+                                ViewSavedUiItemType.ARTIST
+                            )
+                        )
+                    }
                 }
             }
         )
@@ -439,7 +459,7 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
             navigate = { screen ->
                 when (screen) {
                     is ViewOtherAllowedNavigationScreen.Artist -> nav.navigate(
-                        Artist(
+                        Screens.View.Artist(
                             screen.artistId
                         )
                     )

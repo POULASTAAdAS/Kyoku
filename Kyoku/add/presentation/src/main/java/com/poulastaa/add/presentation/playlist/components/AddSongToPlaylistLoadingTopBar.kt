@@ -1,4 +1,4 @@
-package com.poulastaa.add.presentation.components
+package com.poulastaa.add.presentation.playlist.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,12 +11,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.shimmerEffect
+import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 
 @Composable
@@ -63,4 +66,14 @@ internal fun AddSongToPlaylistLoadingTopBar(
             navigationIconContentColor = MaterialTheme.colorScheme.primary
         )
     )
+}
+
+@PreviewLightDark
+@Composable
+private fun Preview() {
+    AppThem {
+        Surface {
+            AddSongToPlaylistLoadingTopBar { }
+        }
+    }
 }

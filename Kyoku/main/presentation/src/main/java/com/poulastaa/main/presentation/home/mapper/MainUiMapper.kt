@@ -17,6 +17,7 @@ import com.poulastaa.main.presentation.home.UiArtistWithSong
 import com.poulastaa.main.presentation.home.UiHomeData
 import com.poulastaa.main.presentation.home.UiHomeExploreType
 import com.poulastaa.main.presentation.library.LibraryUiEvent
+import com.poulastaa.main.presentation.library.UiLibraryEditSavedItemType
 
 internal fun PayloadSavedItem.toUiSavedItem() = UiSavedItem(
     id = this.id,
@@ -122,3 +123,12 @@ internal fun UiMainViewMoreItemType.toNavigateToView(id: Long) = HomeUiEvent.Nav
     },
     otherId = id
 )
+
+internal fun LibraryUiEvent.NavigateToSavedScreen.toNavigateToEditSavedItemScreen() =
+    MainAllowedNavigationScreens.NavigateToEditSavedItemScreen(
+        type = when (this.type) {
+            UiLibraryEditSavedItemType.PLAYLIST -> PayloadSaveItemType.PLAYLIST
+            UiLibraryEditSavedItemType.ALBUM -> PayloadSaveItemType.ALBUM
+            UiLibraryEditSavedItemType.ARTIST -> PayloadSaveItemType.ARTIST
+        }
+    )
