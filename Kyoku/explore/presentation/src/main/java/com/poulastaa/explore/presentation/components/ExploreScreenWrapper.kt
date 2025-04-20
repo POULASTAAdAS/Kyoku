@@ -30,6 +30,7 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppSearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +53,7 @@ fun ExploreScreenWrapper(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            if (loadingType is LoadingType.Content) ExploreTopBar(
+            if (loadingType is LoadingType.Content) AppSearchBar(
                 modifier = modifier,
                 scroll = scroll,
                 title = title,
@@ -68,7 +69,7 @@ fun ExploreScreenWrapper(
     ) { paddingValues ->
         when (loadingType) {
             LoadingType.Loading -> loadingContent(paddingValues)
-            is LoadingType.Error -> errorContent(paddingValues,loadingType)
+            is LoadingType.Error -> errorContent(paddingValues, loadingType)
             LoadingType.Content -> LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -116,7 +117,7 @@ private fun Preview() {
                 onQueryChange = {},
                 onToggleSearch = {},
                 loadingContent = { },
-                errorContent = {_,_ -> },
+                errorContent = { _, _ -> },
                 content = { },
                 navigateBack = { },
             )

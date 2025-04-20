@@ -47,8 +47,8 @@ import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
+import com.poulastaa.core.presentation.ui.components.AppLoadingSearchTopBar
 import com.poulastaa.explore.presentation.components.DummySearch
-import com.poulastaa.explore.presentation.components.ExploreLoadingTopBar
 import com.poulastaa.explore.presentation.components.ExploreScreenExtendedWrapper
 import com.poulastaa.explore.presentation.components.LoadingSongCard
 import com.poulastaa.explore.presentation.model.ExploreUiItem
@@ -197,7 +197,7 @@ private fun ExtendedLoadingContent(
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
         Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-        ExploreLoadingTopBar(
+        AppLoadingSearchTopBar(
             Modifier
                 .fillMaxWidth(.7f)
                 .height(56.dp),

@@ -97,6 +97,15 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
             }
 
             AddAlbumUiAction.OnSaveClick -> TODO()
+            is AddAlbumUiAction.OnSearchFilterTypeChange -> {
+                if (action.filterType == _state.value.searchFilterType) return
+
+                _state.update {
+                    it.copy(
+                        searchFilterType = action.filterType
+                    )
+                }
+            }
         }
     }
 

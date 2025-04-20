@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ui.dimens
+import com.poulastaa.core.presentation.ui.components.AppLoadingSearchTopBar
 
 @Composable
 internal fun ExploreExpandedLoadingScreen(
@@ -30,7 +31,7 @@ internal fun ExploreExpandedLoadingScreen(
             .padding(MaterialTheme.dimens.medium1),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExploreLoadingTopBar(
+        AppLoadingSearchTopBar(
             modifier = Modifier
                 .fillMaxWidth(.7f)
                 .height(56.dp),

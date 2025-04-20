@@ -1,4 +1,4 @@
-package com.poulastaa.explore.presentation.components
+package com.poulastaa.core.presentation.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -20,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -33,23 +31,21 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.poulastaa.core.presentation.designsystem.noRippleClickable
-import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExploreTopBar(
+fun AppSearchBar(
     modifier: Modifier = Modifier,
     scroll: TopAppBarScrollBehavior,
     title: String,
     isSearchOpen: Boolean,
     query: String,
     onQueryChange: (String) -> Unit,
-    navigateBack: () -> Unit,
     onSearch: () -> Unit,
+    navigateBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         scrollBehavior = scroll,
@@ -71,7 +67,7 @@ fun ExploreTopBar(
                             shape = CircleShape,
                             label = {
                                 Text(
-                                    text = "search ${title.lowercase()}",
+                                    text = title,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -139,24 +135,4 @@ fun ExploreTopBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary
         )
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    AppThem {
-        Surface {
-            ExploreTopBar(
-                modifier = Modifier.fillMaxWidth(),
-                isSearchOpen = isSystemInDarkTheme(),
-                scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
-                title = "That Cool Artist",
-                query = "",
-                onQueryChange = {},
-                navigateBack = {},
-                onSearch = {}
-            )
-        }
-    }
 }

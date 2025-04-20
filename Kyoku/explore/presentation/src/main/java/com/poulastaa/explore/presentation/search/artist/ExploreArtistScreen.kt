@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -56,8 +55,8 @@ import com.poulastaa.core.presentation.designsystem.shimmerEffect
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
+import com.poulastaa.core.presentation.ui.components.AppLoadingSearchTopBar
 import com.poulastaa.explore.presentation.components.DummySearch
-import com.poulastaa.explore.presentation.components.ExploreLoadingTopBar
 import com.poulastaa.explore.presentation.components.ExploreScreenExtendedWrapper
 import com.poulastaa.explore.presentation.model.ExploreUiItem
 import com.poulastaa.explore.presentation.search.artist.components.ExploreArtistCard
@@ -94,7 +93,7 @@ internal fun ExploreArtistScreen(
                     .padding(MaterialTheme.dimens.medium1)
                     .verticalScroll(rememberScrollState())
             ) {
-                ExploreLoadingTopBar(
+                AppLoadingSearchTopBar(
                     Modifier
                         .fillMaxWidth()
                         .height(56.dp),

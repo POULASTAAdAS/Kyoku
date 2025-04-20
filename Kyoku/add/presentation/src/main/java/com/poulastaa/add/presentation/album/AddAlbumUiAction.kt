@@ -13,5 +13,9 @@ internal sealed interface AddAlbumUiAction {
 
     data class OnSearchQueryChange(val query: String) : AddAlbumUiAction
 
+    data class OnSearchFilterTypeChange(
+        val filterType: AddAlbumSearchUiFilterType,
+    ) : AddAlbumUiAction
+
     data object OnSaveClick : AddAlbumUiAction
 }

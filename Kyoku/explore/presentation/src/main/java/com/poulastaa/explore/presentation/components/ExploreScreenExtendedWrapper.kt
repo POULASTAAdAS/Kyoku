@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.ui.components.AppSearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +38,7 @@ fun ExploreScreenExtendedWrapper(
 
     Scaffold(
         topBar = {
-            if (loadingType is LoadingType.Content) ExploreTopBar(
+            if (loadingType is LoadingType.Content) AppSearchBar(
                 modifier = modifier,
                 scroll = scroll,
                 title = title,
