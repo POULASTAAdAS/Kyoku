@@ -36,7 +36,7 @@ import com.poulastaa.add.presentation.playlist.album.AddSongToAlbumRootScreen
 import com.poulastaa.add.presentation.playlist.artist.AddSongToPlaylistArtistRootScreen
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommonContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
+import com.poulastaa.add.presentation.components.AddSearchTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStaticDataTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
@@ -65,7 +65,7 @@ internal fun AddSongToPlaylistCompactScreen(
                 when (state.loadingType) {
                     is LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
 
-                    is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                    is LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSearchTopBar(
                         label = stringResource(R.string.search_anything),
                         query = state.query,
                         isExtended = false,

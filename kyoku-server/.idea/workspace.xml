@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/components/AddSongToPlaylistLoadingTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistLoadingTopBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/artist/AddSongToPlaylistArtistScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/artist/AddSongToPlaylistArtistScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/components/AddSearchTopBar.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/model/MainAllowedNavigationScreens.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/domain/src/main/java/com/poulastaa/main/domain/model/MainAllowedNavigationScreens.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/mapper/MainUiMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/home/mapper/MainUiMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryRootScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryUiEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryUiEvent.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/ViewSavedAllowedNavigationScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/ViewSavedAllowedNavigationScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/saved/ViewSavedItemViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/saved/ViewSavedItemViewmodel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
@@ -25,6 +25,23 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="kyoku-server" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -56,6 +73,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Gradle.Build kyoku-server.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.kyoku-server:app [:app:com.poulastaa.app.AppKt.main()].executor&quot;: &quot;Run&quot;,
     &quot;Kotlin.AppKt.executor&quot;: &quot;Run&quot;,
     &quot;Ktor.EngineMain.executor&quot;: &quot;Run&quot;,
     &quot;Ktor.Unnamed.executor&quot;: &quot;Run&quot;,
@@ -97,7 +115,22 @@
       <recent name="com.poulastaa.core.database.repository.view" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Ktor.app">
+    <configuration name="app" type="Application" factoryName="Application">
+      <envs>
+        <env name="BASE_URL" value="http://kyoku.poulastaa.shop:9292/" />
+        <env name="CLIENT_ID" value="791240515987-vsvo9cimabfr81gicfp8bogfho8pkh90.apps.googleusercontent.com" />
+        <env name="DEV_EMAIL" value="poulastaadas2@gmail.com" />
+        <env name="ISSUER" value="https://accounts.google.com" />
+        <env name="SENDER_EMAIL" value="kyoku.official.no.replay@gmail.com" />
+        <env name="SENDER_PASSWORD" value="ivop bmon crrl krcr" />
+      </envs>
+      <option name="MAIN_CLASS_NAME" value="com.poulastaa.app.AppKt" />
+      <module name="kyoku-server.app.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Kotlin Scripts.KotlinBuildScript.auth\data\build.gradle.kts" />
       <method v="2">
@@ -135,6 +168,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.app" />
+      <item itemvalue="Ktor.app" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -199,6 +236,9 @@
       <workItem from="1745045390057" duration="2354000" />
       <workItem from="1745072525761" duration="5925000" />
       <workItem from="1745128447367" duration="2220000" />
+      <workItem from="1745334096409" duration="1193000" />
+      <workItem from="1745421433187" duration="901000" />
+      <workItem from="1745507564908" duration="1659000" />
     </task>
     <servers />
   </component>

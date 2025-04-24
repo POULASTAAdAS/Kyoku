@@ -36,7 +36,7 @@ internal class LibraryViewmodel @Inject constructor(
         loadAlbum()
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(5_000),
         initialValue = LibraryUiState()
     )
 

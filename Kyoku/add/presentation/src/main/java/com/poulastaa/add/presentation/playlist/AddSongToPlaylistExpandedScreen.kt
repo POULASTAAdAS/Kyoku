@@ -52,7 +52,7 @@ import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistCommo
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingContent
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchFilterChips
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
+import com.poulastaa.add.presentation.components.AddSearchTopBar
 import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistStaticDataTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
@@ -93,7 +93,7 @@ internal fun AddSongToPlaylistExpandedScreen(
                 ),
             topBar = {
                 when (state.loadingType) {
-                    LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSongToPlaylistSearchTopBar(
+                    LoadingType.Content -> if (horizontalPager.currentPage > state.staticData.size - 1) AddSearchTopBar(
                         label = stringResource(R.string.search_anything),
                         query = state.query,
                         isExtended = isExtendedSearch || (state.albumScreenState.isVisible.not() &&

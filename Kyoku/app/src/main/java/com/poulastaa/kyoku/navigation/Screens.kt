@@ -80,5 +80,11 @@ sealed interface Screens {
     sealed interface Add : Screens {
         @Serializable
         data class CreatePlaylist(val playlistId: PlaylistId) : Screens
+
+        @Serializable
+        data object AddAlbum : Screens
+
+        @Serializable
+        data object AddArtist : Screens
     }
 }

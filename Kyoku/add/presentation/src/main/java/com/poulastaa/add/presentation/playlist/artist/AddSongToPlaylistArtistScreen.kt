@@ -35,7 +35,7 @@ import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadi
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
 import com.poulastaa.add.presentation.playlist.artist.components.AddSongToPlaylistArtistFilterTypes
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchTopBar
+import com.poulastaa.add.presentation.components.AddSearchTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
 import com.poulastaa.core.presentation.designsystem.R
@@ -64,7 +64,7 @@ internal fun AddSongToPlaylistArtistScreen(
         topBar = {
             when (state.loadingType) {
                 LoadingType.Loading -> AddSongToPlaylistLoadingTopBar(navigateBack = navigateBack)
-                LoadingType.Content -> AddSongToPlaylistSearchTopBar(
+                LoadingType.Content -> AddSearchTopBar(
                     scrollBehavior = scroll,
                     label = "${stringResource(R.string.search)} ${state.artist.name.lowercase()}",
                     query = state.query.value,

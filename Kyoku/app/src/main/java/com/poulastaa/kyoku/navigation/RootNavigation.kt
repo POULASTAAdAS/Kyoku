@@ -14,6 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.poulastaa.add.presentation.album.AddAlbumRootScreen
+import com.poulastaa.add.presentation.artist.AddArtistRootScreen
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistRootScreen
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.email.forgot_password.ForgotPasswordViewModel
@@ -40,6 +42,7 @@ import com.poulastaa.setup.presentation.pic_artist.PicArtistRootScreen
 import com.poulastaa.setup.presentation.pic_genre.PicGenreRootScreen
 import com.poulastaa.setup.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.setup.presentation.spotify_playlist.ImportPlaylistRootScreen
+import com.poulastaa.view.domain.model.DtoAddSavedItemType
 import com.poulastaa.view.domain.model.DtoViewSavedItemNavigationType
 import com.poulastaa.view.domain.model.ViewArtistAllowedNavigationScreen
 import com.poulastaa.view.domain.model.ViewOtherAllowedNavigationScreen
@@ -78,9 +81,20 @@ private fun NavGraphBuilder.addGraph(nav: NavHostController) {
             playlistId = payload.playlistId,
             navigateBack = {
                 nav.popBackStack()
-
             }
         )
+    }
+
+    composable<Screens.Add.AddAlbum> {
+        AddAlbumRootScreen {
+            nav.popBackStack()
+        }
+    }
+
+    composable<Screens.Add.AddArtist> {
+        AddArtistRootScreen {
+            nav.popBackStack()
+        }
     }
 }
 
@@ -421,7 +435,6 @@ private fun NavGraphBuilder.coreGraph(
     }
 }
 
-
 private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
     composable<Screens.View.Artist> {
         val payload = it.toRoute<Screens.View.Artist>()
@@ -507,6 +520,11 @@ private fun NavGraphBuilder.viewGraph(nav: NavHostController) {
                                 }
                             )
                         )
+                    }
+
+                    is ViewSavedAllowedNavigationScreen.Add -> when (screen.type) {
+                        DtoAddSavedItemType.ALBUM -> nav.navigate(Screens.Add.AddAlbum)
+                        DtoAddSavedItemType.ARTIST -> nav.navigate(Screens.Add.AddArtist)
                     }
                 }
             },

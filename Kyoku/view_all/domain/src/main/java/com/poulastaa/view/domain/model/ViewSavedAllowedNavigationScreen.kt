@@ -8,4 +8,6 @@ sealed interface ViewSavedAllowedNavigationScreen {
         val otherId: Long,
         val type: DtoViewSavedItemNavigationType,
     ) : ViewSavedAllowedNavigationScreen
+
+    data class Add(val type: DtoAddSavedItemType) : ViewSavedAllowedNavigationScreen
 }

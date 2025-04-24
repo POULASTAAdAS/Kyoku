@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
+import com.poulastaa.view.domain.model.DtoAddSavedItemType
 import com.poulastaa.view.domain.model.DtoViewSavedItemNavigationType
 import com.poulastaa.view.domain.model.ViewSavedAllowedNavigationScreen
 import com.poulastaa.view.domain.repository.ViewSavedItemRepository
@@ -46,7 +47,15 @@ internal class ViewSavedItemViewmodel @Inject constructor(
         when (action) {
             ViewSavedUiAction.OnAddNewItemClick -> {
                 when (_state.value.type) {
-                    ViewSavedUiItemType.ARTIST -> TODO()
+                    ViewSavedUiItemType.ARTIST -> viewModelScope.launch {
+                        _uiEvent.send(
+                            ViewSavedUiEvent.Navigate(
+                                ViewSavedAllowedNavigationScreen.Add(
+                                    type = DtoAddSavedItemType.ARTIST
+                                )
+                            )
+                        )
+                    }
 
                     ViewSavedUiItemType.PLAYLIST -> _state.update {
                         it.copy(
@@ -54,7 +63,15 @@ internal class ViewSavedItemViewmodel @Inject constructor(
                         )
                     }
 
-                    ViewSavedUiItemType.ALBUM -> TODO()
+                    ViewSavedUiItemType.ALBUM -> viewModelScope.launch {
+                        _uiEvent.send(
+                            ViewSavedUiEvent.Navigate(
+                                ViewSavedAllowedNavigationScreen.Add(
+                                    type = DtoAddSavedItemType.ALBUM
+                                )
+                            )
+                        )
+                    }
 
                     else -> return
                 }

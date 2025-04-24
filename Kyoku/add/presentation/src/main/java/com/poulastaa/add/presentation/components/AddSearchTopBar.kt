@@ -1,10 +1,13 @@
-package com.poulastaa.add.presentation.playlist.components
+package com.poulastaa.add.presentation.components
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -31,7 +34,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import com.poulastaa.add.presentation.playlist.AddSongToPlaylistSearchUiFilterType
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistSearchFilterChips
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
@@ -39,7 +45,7 @@ import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun AddSongToPlaylistSearchTopBar(
+internal fun AddSearchTopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     label: String,
     query: String,
@@ -47,6 +53,7 @@ internal fun AddSongToPlaylistSearchTopBar(
     focusManager: FocusManager,
     filterTypeContent: @Composable () -> Unit = {},
     onValueChange: (value: String) -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
     navigateBack: () -> Unit,
 ) {
     TopAppBar(
@@ -125,7 +132,8 @@ internal fun AddSongToPlaylistSearchTopBar(
             scrolledContainerColor = Color.Transparent,
             navigationIconContentColor = MaterialTheme.colorScheme.primary
         ),
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        actions = actions
     )
 }
 
@@ -136,11 +144,42 @@ internal fun AddSongToPlaylistSearchTopBar(
 private fun Preview() {
     AppThem {
         Surface {
-            AddSongToPlaylistSearchTopBar(
+            AddSearchTopBar(
                 label = "search anything",
                 query = "",
                 isExtended = false,
                 focusManager = LocalFocusManager.current,
+                filterTypeContent = {},
+                onValueChange = {},
+                navigateBack = {}
+            )
+        }
+    }
+}
+
+@Preview(
+    widthDp = 1024,
+)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    widthDp = 1280,
+)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PreviewExpanded() {
+    AppThem {
+        Surface {
+            AddSearchTopBar(
+                label = "search anything",
+                query = "",
+                isExtended = isSystemInDarkTheme(),
+                focusManager = LocalFocusManager.current,
+                filterTypeContent = {
+                    AddSongToPlaylistSearchFilterChips(
+                        filterType = AddSongToPlaylistSearchUiFilterType.ALL,
+                        onAction = { }
+                    )
+                },
                 onValueChange = {},
                 navigateBack = {}
             )
