@@ -146,7 +146,10 @@ internal fun AddAlbumCompactScreen(
                 contentPadding = PaddingValues(MaterialTheme.dimens.medium1)
             ) {
                 item {
-                    AddAlbumSearchFilterRow(state.searchFilterType, onAction)
+                    AddAlbumSearchFilterRow(
+                        searchFilterType = state.searchFilterType,
+                        onAction = onAction
+                    )
                 }
 
                 item {

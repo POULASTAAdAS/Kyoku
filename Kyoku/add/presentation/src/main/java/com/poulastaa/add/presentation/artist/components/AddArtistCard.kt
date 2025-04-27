@@ -93,7 +93,6 @@ internal fun AddArtistCard(
                     }
                 }
             )
-
         }
 
         Box(

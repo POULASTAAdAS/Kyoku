@@ -123,76 +123,11 @@ internal fun AddArtistExtendedScreen(
                         .padding(it)
                         .padding(MaterialTheme.dimens.medium1)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = navigateBack
-                        ) {
-                            Icon(
-                                imageVector = CloseIcon,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(.8f)
-                            )
-                        }
-
-                        Spacer(Modifier.width(MaterialTheme.dimens.small3))
-
-                        if (isExtendedSearch) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
-                            ) {
-                                repeat(2) {
-                                    AddArtistLoadingFilterCard()
-                                }
-                            }
-
-                            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
-                        }
-
-                        Spacer(Modifier.weight(1f))
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(if (isExtendedSearch) 1f else .7f),
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.Transparent,
-                            ),
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary
-                            ),
-                            shape = CircleShape
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(start = MaterialTheme.dimens.medium1),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(.8f),
-                                    text = "${stringResource(R.string.search)} ${stringResource(R.string.artist).lowercase()}",
-                                    color = MaterialTheme.colorScheme.primary.copy(.8f),
-                                )
-
-                                Spacer(Modifier.weight(1f))
-
-                                IconButton(
-                                    onClick = navigateBack
-                                ) {
-                                    Icon(
-                                        imageVector = SearchIcon,
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize(.8f)
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(Modifier.weight(1f))
-                    }
+                    AddFilterLoadingSearchTopBar(
+                        filterItemCount = 2,
+                        isExtendedSearch = isExtendedSearch,
+                        navigateBack = navigateBack
+                    )
 
                     Spacer(Modifier.width(MaterialTheme.dimens.medium1))
 
@@ -276,6 +211,84 @@ internal fun AddArtistExtendedScreen(
             }
         }
     )
+}
+
+@Composable
+internal fun AddFilterLoadingSearchTopBar(
+    filterItemCount: Int,
+    isExtendedSearch: Boolean,
+    navigateBack: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = navigateBack
+        ) {
+            Icon(
+                imageVector = CloseIcon,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(.8f)
+            )
+        }
+
+        Spacer(Modifier.width(MaterialTheme.dimens.small3))
+
+        if (isExtendedSearch) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3)
+            ) {
+                repeat(filterItemCount) {
+                    AddArtistLoadingFilterCard()
+                }
+            }
+
+            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        Card(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(if (isExtendedSearch) 1f else .7f),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent,
+            ),
+            border = BorderStroke(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary
+            ),
+            shape = CircleShape
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = MaterialTheme.dimens.medium1),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(.8f),
+                    text = "${stringResource(R.string.search)} ${stringResource(R.string.artist).lowercase()}",
+                    color = MaterialTheme.colorScheme.primary.copy(.8f),
+                )
+
+                Spacer(Modifier.weight(1f))
+
+                IconButton(
+                    onClick = navigateBack
+                ) {
+                    Icon(
+                        imageVector = SearchIcon,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(.8f)
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.weight(1f))
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -17,11 +17,12 @@ import com.poulastaa.core.presentation.ui.components.AppFilterChip
 
 @Composable
 internal fun AddAlbumSearchFilterRow(
+    modifier: Modifier = Modifier,
     searchFilterType: AddAlbumSearchUiFilterType,
     onAction: (AddAlbumUiAction.OnSearchFilterTypeChange) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
     ) {
         AppFilterChip(
