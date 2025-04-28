@@ -1,9 +1,12 @@
 package com.poulastaa.add.network.mapper
 
+import com.poulastaa.add.domain.model.DtoAddAlbum
+import com.poulastaa.add.domain.model.DtoAddAlbumSearchFilterType
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageItem
 import com.poulastaa.add.domain.model.DtoAddSongToPlaylistPageType
 import com.poulastaa.add.domain.model.DtoAddToPlaylistItemType
+import com.poulastaa.add.network.model.AddAlbumFilterTypeRequest
 import com.poulastaa.add.network.model.AddSongToPlaylistItemResponse
 import com.poulastaa.add.network.model.AddSongToPlaylistItemTypeResponse
 import com.poulastaa.add.network.model.AddSongToPlaylistPageItemResponse
@@ -48,3 +51,17 @@ internal fun ResponseExploreItem.toDtoAddSongToPlaylistItem(type: DtoAddToPlayli
         numbers = this.releaseYear.toLong(),
         type = type
     )
+
+@OptIn(InternalSerializationApi::class)
+internal fun ResponseExploreItem.toDtoAddAlbum() = DtoAddAlbum(
+    id = this.id,
+    title = this.title,
+    poster = this.poster,
+    releaseYear = this.releaseYear,
+    artist = this.artist,
+)
+
+internal fun DtoAddAlbumSearchFilterType.toAddAlbumFilterTypeRequest() = when (this) {
+    DtoAddAlbumSearchFilterType.POPULARITY -> AddAlbumFilterTypeRequest.MOST_POPULAR
+    DtoAddAlbumSearchFilterType.RELEASE_YEAR -> AddAlbumFilterTypeRequest.RELEASE_YEAR
+}

@@ -10,12 +10,16 @@ import com.poulastaa.core.presentation.designsystem.model.TextHolder
 
 internal data class AddAlbumUiState(
     val loadingType: LoadingType = LoadingType.Loading,
+    val isSavingAlbums: Boolean = false,
     val query: TextHolder = TextHolder(),
     val searchFilterType: AddAlbumSearchUiFilterType = AddAlbumSearchUiFilterType.MOST_POPULAR,
+    val isClearAllDialogOpen: Boolean = false,
     val selectedAlbums: List<UiAlbum> = emptyList(),
     val viewAlbumScreenState: OtherScreenUiState = OtherScreenUiState(),
-    val savedAlbumsScreenState: OtherScreenUiState = OtherScreenUiState(),
-)
+    val selectedAlbumsScreenState: OtherScreenUiState = OtherScreenUiState(),
+) {
+    val isEditEnabled = selectedAlbums.isNotEmpty()
+}
 
 data class UiAlbum(
     val id: AlbumId = -1,

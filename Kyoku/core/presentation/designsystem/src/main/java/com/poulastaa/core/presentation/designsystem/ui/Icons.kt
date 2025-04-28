@@ -92,7 +92,6 @@ val SettingsIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_settings)
 
-
 val LogoutIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ExitToApp
@@ -232,7 +231,6 @@ val MoveIcon: ImageVector
 val SadIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.ic_sad)
-
 
 val PopularIcon: ImageVector
     @Composable

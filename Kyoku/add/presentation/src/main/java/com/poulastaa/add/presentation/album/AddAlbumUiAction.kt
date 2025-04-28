@@ -18,4 +18,6 @@ internal sealed interface AddAlbumUiAction {
     ) : AddAlbumUiAction
 
     data object OnSaveClick : AddAlbumUiAction
+    data object OnClearAllDialogToggle : AddAlbumUiAction
+    data object OnSaveCancelClick : AddAlbumUiAction
 }

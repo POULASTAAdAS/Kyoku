@@ -229,4 +229,7 @@ internal interface RootDao {
 
     @Query("select * from EntityArtist where id = :id")
     suspend fun getArtist(id: ArtistId): EntityArtist?
+
+    @Query("select * from EntitySavedAlbum")
+    suspend fun getSavedAlbumIdList(): List<AlbumId>
 }

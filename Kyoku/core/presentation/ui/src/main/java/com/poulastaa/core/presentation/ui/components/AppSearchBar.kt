@@ -1,12 +1,14 @@
 package com.poulastaa.core.presentation.ui.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -45,9 +47,11 @@ fun AppSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
     navigateBack: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
+        modifier = Modifier.animateContentSize(tween(600)),
         scrollBehavior = scroll,
         title = {
             AnimatedContent(
@@ -133,6 +137,7 @@ fun AppSearchBar(
             navigationIconContentColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.primary,
             actionIconContentColor = MaterialTheme.colorScheme.primary
-        )
+        ),
+        actions = actions
     )
 }

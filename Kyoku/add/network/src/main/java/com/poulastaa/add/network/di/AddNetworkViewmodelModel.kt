@@ -1,9 +1,12 @@
 package com.poulastaa.add.network.di
 
 import com.google.gson.Gson
+import com.poulastaa.add.domain.repository.RemoteAddAlbumDatasource
 import com.poulastaa.add.domain.repository.RemoteAddSongToPlaylistDatasource
+import com.poulastaa.add.network.repository.AddAlbumPagingSource
 import com.poulastaa.add.network.repository.AddSongToPlaylistArtistPagingSource
 import com.poulastaa.add.network.repository.AddSongToPlaylistPagingSource
+import com.poulastaa.add.network.repository.OkHttpAddAlbumDatasource
 import com.poulastaa.add.network.repository.OkHttpAddSongToPlaylistDatasource
 import com.poulastaa.view.domain.repository.RemoteViewOtherDatasource
 import dagger.Module
@@ -37,5 +40,24 @@ internal object AddNetworkViewmodelModel {
         playlistPager = playlistPager,
         artistPager = artistPager,
         view = view
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideAddAlbumPagingSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): AddAlbumPagingSource = AddAlbumPagingSource(client, gson)
+
+    @Provides
+    @ViewModelScoped
+    fun provideAddAlbumRemoteDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        album: AddAlbumPagingSource,
+    ): RemoteAddAlbumDatasource = OkHttpAddAlbumDatasource(
+        client = client,
+        gson = gson,
+        album = album
     )
 }

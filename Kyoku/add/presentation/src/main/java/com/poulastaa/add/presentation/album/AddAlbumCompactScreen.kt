@@ -1,5 +1,9 @@
 package com.poulastaa.add.presentation.album
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +18,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -38,6 +45,7 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
+import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.core.presentation.ui.components.AppLoadingSearchTopBar
@@ -70,10 +78,36 @@ internal fun AddAlbumCompactScreen(
                 onSearch = {
                     focusManager.clearFocus()
                 },
+                actions = {
+                    AnimatedVisibility(
+                        state.isEditEnabled,
+                        enter = fadeIn(tween(600)),
+                        exit = fadeOut(tween(600)),
+                    ) {
+                        IconButton(
+                            onClick = {
+                                onAction(AddAlbumUiAction.OnSaveClick)
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.background,
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
+                        ) {
+                            Icon(
+                                imageVector = CheckIcon,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                },
                 navigateBack = {
                     if (state.query.value.isNotEmpty()) onAction(
-                        AddAlbumUiAction.OnSearchQueryChange("")
-                    ) else navigateBack()
+                        AddAlbumUiAction.OnSearchQueryChange(
+                            ""
+                        )
+                    )
+                    else if (state.isEditEnabled) onAction(AddAlbumUiAction.OnClearAllDialogToggle)
+                    else navigateBack()
                 }
             )
         }
@@ -201,7 +235,15 @@ private fun Preview() {
             AddAlbumCompactScreen(
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 state = AddAlbumUiState(
-                    loadingType = LoadingType.Content
+                    loadingType = LoadingType.Content,
+                    selectedAlbums = (1..5).map {
+                        UiAlbum(
+                            name = "That Cool Album",
+                            artist = "That Cool Artist",
+                            releaseYear = 2025,
+                            isSelected = Random.nextBoolean()
+                        )
+                    }
                 ),
                 album = flowOf(
                     PagingData.from((1..10).map {

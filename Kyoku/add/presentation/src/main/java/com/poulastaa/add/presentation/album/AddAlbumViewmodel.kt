@@ -3,14 +3,20 @@ package com.poulastaa.add.presentation.album
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
+import com.poulastaa.add.domain.repository.AddAlbumRepository
 import com.poulastaa.add.presentation.components.OtherScreenUiState
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -19,7 +25,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
+internal class AddAlbumViewmodel @Inject constructor(
+    private val repo: AddAlbumRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(AddAlbumUiState())
     val state = _state.onStart {
         loadAlbumJob?.cancel()
@@ -39,18 +47,37 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
     private var loadAlbumJob: Job? = null
 
     fun onAction(action: AddAlbumUiAction) {
-        when (action) {
-            is AddAlbumUiAction.OnSearchQueryChange -> _state.update {
-                it.copy(
-                    query = it.query.copy(
-                        value = action.query
+        if (_state.value.isSavingAlbums && action !is AddAlbumUiAction.OnSearchQueryChange) {
+            viewModelScope.launch {
+                _uiEvent.send(
+                    AddAlbumUiEvent.EmitToast(
+                        UiText.StringResource(
+                            R.string.saving_album_wait
+                        )
                     )
                 )
             }
 
+            return
+        }
+
+        when (action) {
+            is AddAlbumUiAction.OnSearchQueryChange -> {
+                _state.update {
+                    it.copy(
+                        query = it.query.copy(
+                            value = action.query
+                        )
+                    )
+                }
+
+                loadAlbumJob?.cancel()
+                loadAlbumJob = loadAlbum()
+            }
+
             is AddAlbumUiAction.OnAlbumClick -> when (action.clickType) {
                 AddAlbumUiAction.ClickType.ADD -> {
-                    when (_state.value.selectedAlbums.contains(action.album)) {
+                    when (_state.value.selectedAlbums.any { it.id == action.album.id }) {
                         true -> {
                             _state.update {
                                 it.copy(
@@ -70,15 +97,15 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
                         false -> {
                             _state.update {
                                 it.copy(
-                                    selectedAlbums = it.selectedAlbums + action.album
+                                    selectedAlbums = _state.value.selectedAlbums + action.album
                                 )
-                            }
-
-                            _album.update {
-                                it.map {
-                                    if (it.id == action.album.id) it.copy(
-                                        isSelected = true
-                                    ) else it
+                            }.also {
+                                _album.update {
+                                    it.map {
+                                        if (it.id == action.album.id) it.copy(
+                                            isSelected = true
+                                        ) else it
+                                    }
                                 }
                             }
                         }
@@ -87,7 +114,6 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
 
                 AddAlbumUiAction.ClickType.VIEW -> _state.update {
                     it.copy(
-                        savedAlbumsScreenState = OtherScreenUiState(),
                         viewAlbumScreenState = OtherScreenUiState(
                             isVisible = true,
                             otherId = action.album.id
@@ -96,7 +122,6 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
                 }
             }
 
-            AddAlbumUiAction.OnSaveClick -> TODO()
             is AddAlbumUiAction.OnSearchFilterTypeChange -> {
                 if (action.filterType == _state.value.searchFilterType) return
 
@@ -105,11 +130,59 @@ internal class AddAlbumViewmodel @Inject constructor() : ViewModel() {
                         searchFilterType = action.filterType
                     )
                 }
+
+                loadAlbumJob?.cancel()
+                loadAlbumJob = loadAlbum()
+            }
+
+            AddAlbumUiAction.OnSaveClick -> {
+                _state.update {
+                    it.copy(
+                        isSavingAlbums = true
+                    )
+                }
+            }
+
+            AddAlbumUiAction.OnClearAllDialogToggle -> _state.update {
+                it.copy(
+                    isClearAllDialogOpen = it.isClearAllDialogOpen.not()
+                )
+            }
+
+            AddAlbumUiAction.OnSaveCancelClick -> _state.update {
+                it.copy(
+                    isClearAllDialogOpen = false,
+                    selectedAlbums = emptyList(),
+                )
             }
         }
     }
 
     private fun loadAlbum() = viewModelScope.launch {
+        _album.update {
+            PagingData.empty()
+        }
 
+        repo.loadAlbum(
+            query = _state.value.query.value.trim(),
+            filterType = _state.value.searchFilterType.toDtoAddAlbumFilterType()
+        ).cachedIn(viewModelScope).collectLatest { page ->
+            _state.update {
+                it.copy(
+                    loadingType = LoadingType.Content
+                )
+            }
+
+            _album.update {
+                page.map {
+                    val album = it.toUiAlbum()
+
+                    if (_state.value.selectedAlbums.isEmpty()
+                        || _state.value.selectedAlbums.firstOrNull { it.id == album.id } == null
+                    ) album
+                    else album.copy(isSelected = true)
+                }
+            }
+        }
     }
 }

@@ -5,15 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistCompactScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/AddSongToPlaylistExpandedScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/artist/AddSongToPlaylistArtistScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/artist/AddSongToPlaylistArtistScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/AddSongToPlaylistSearchTopBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/components/AddSearchTopBar.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/RootNavigation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/app/src/main/java/com/poulastaa/kyoku/navigation/Screens.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/main/presentation/src/main/java/com/poulastaa/main/presentation/library/LibraryViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/ViewSavedAllowedNavigationScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/domain/src/main/java/com/poulastaa/view/domain/model/ViewSavedAllowedNavigationScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/saved/ViewSavedItemViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/presentation/src/main/java/com/poulastaa/view/presentation/saved/ViewSavedItemViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumExtendedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/ui/Icons.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/java/com/poulastaa/core/presentation/designsystem/ui/Icons.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppSearchBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppSearchBar.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -239,6 +239,8 @@
       <workItem from="1745334096409" duration="1193000" />
       <workItem from="1745421433187" duration="901000" />
       <workItem from="1745507564908" duration="1659000" />
+      <workItem from="1745764438480" duration="1671000" />
+      <workItem from="1745819464489" duration="3610000" />
     </task>
     <servers />
   </component>
