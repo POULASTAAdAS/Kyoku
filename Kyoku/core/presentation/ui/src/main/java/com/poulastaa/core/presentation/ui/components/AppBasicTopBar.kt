@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
@@ -22,6 +23,7 @@ import com.poulastaa.core.presentation.designsystem.ui.CloseIcon
 fun AppBasicTopBar(
     @StringRes titleId: Int? = null,
     title: String? = null,
+    navigationIcon: ImageVector = CloseIcon,
     actions: @Composable RowScope.() -> Unit = {},
     navigateBack: () -> Unit,
 ) {
@@ -38,7 +40,7 @@ fun AppBasicTopBar(
                 onClick = navigateBack
             ) {
                 Icon(
-                    imageVector = CloseIcon,
+                    imageVector = navigationIcon,
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )

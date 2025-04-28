@@ -27,7 +27,10 @@ import com.poulastaa.core.presentation.designsystem.ui.AddIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 
 @Composable
-internal fun LoadingSongCard(modifier: Modifier) {
+internal fun LoadingSongCard(
+    modifier: Modifier,
+    isAddButtonVisible: Boolean = true,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -100,7 +103,7 @@ internal fun LoadingSongCard(modifier: Modifier) {
 
         Spacer(Modifier.weight(1f))
 
-        Icon(
+        if (isAddButtonVisible) Icon(
             imageVector = AddIcon,
             contentDescription = null,
             modifier = Modifier
