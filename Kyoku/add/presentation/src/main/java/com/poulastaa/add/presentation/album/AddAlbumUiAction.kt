@@ -2,7 +2,7 @@ package com.poulastaa.add.presentation.album
 
 internal sealed interface AddAlbumUiAction {
     enum class ClickType {
-        ADD,
+        EDIT,
         VIEW
     }
 
@@ -16,6 +16,9 @@ internal sealed interface AddAlbumUiAction {
     data class OnSearchFilterTypeChange(
         val filterType: AddAlbumSearchUiFilterType,
     ) : AddAlbumUiAction
+
+    data object OnViewCancel : AddAlbumUiAction
+    data object OnViewSelectedToggle : AddAlbumUiAction
 
     data object OnSaveClick : AddAlbumUiAction
     data object OnClearAllDialogToggle : AddAlbumUiAction

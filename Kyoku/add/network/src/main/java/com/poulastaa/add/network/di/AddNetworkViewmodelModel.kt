@@ -55,9 +55,11 @@ internal object AddNetworkViewmodelModel {
         client: OkHttpClient,
         gson: Gson,
         album: AddAlbumPagingSource,
+        repo: RemoteViewOtherDatasource,
     ): RemoteAddAlbumDatasource = OkHttpAddAlbumDatasource(
         client = client,
         gson = gson,
-        album = album
+        album = album,
+        repo = repo
     )
 }

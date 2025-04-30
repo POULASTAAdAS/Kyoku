@@ -39,7 +39,7 @@ import com.poulastaa.core.presentation.designsystem.ui.SearchIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppSearchBar(
+fun AppSearchBarWithDummySearch(
     modifier: Modifier = Modifier,
     scroll: TopAppBarScrollBehavior,
     title: String,

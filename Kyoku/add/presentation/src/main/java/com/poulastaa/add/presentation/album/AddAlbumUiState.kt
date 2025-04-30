@@ -2,7 +2,6 @@ package com.poulastaa.add.presentation.album
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.poulastaa.add.presentation.components.OtherScreenUiState
 import com.poulastaa.core.domain.model.AlbumId
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
@@ -15,13 +14,18 @@ internal data class AddAlbumUiState(
     val searchFilterType: AddAlbumSearchUiFilterType = AddAlbumSearchUiFilterType.MOST_POPULAR,
     val isClearAllDialogOpen: Boolean = false,
     val selectedAlbums: List<UiAlbum> = emptyList(),
-    val viewAlbumScreenState: OtherScreenUiState = OtherScreenUiState(),
-    val selectedAlbumsScreenState: OtherScreenUiState = OtherScreenUiState(),
+    val viewAlbumScreenState: ViewAlbumUiState = ViewAlbumUiState(),
+    val isSelectedAlbumOpen: Boolean = false,
 ) {
     val isEditEnabled = selectedAlbums.isNotEmpty()
 }
 
-data class UiAlbum(
+internal data class ViewAlbumUiState(
+    val album: UiAlbum = UiAlbum(),
+    val isVisible: Boolean = false,
+)
+
+internal data class UiAlbum(
     val id: AlbumId = -1,
     val name: String = "",
     val poster: String = "",

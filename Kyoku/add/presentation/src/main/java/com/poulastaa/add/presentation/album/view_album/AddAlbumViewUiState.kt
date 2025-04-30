@@ -1,4 +1,4 @@
-package com.poulastaa.add.presentation.album.view
+package com.poulastaa.add.presentation.album.view_album
 
 import com.poulastaa.add.presentation.album.UiAlbum
 import com.poulastaa.core.presentation.designsystem.model.LoadingType

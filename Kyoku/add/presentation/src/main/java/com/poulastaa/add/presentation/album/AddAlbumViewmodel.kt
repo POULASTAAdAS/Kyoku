@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.filter
 import androidx.paging.map
 import com.poulastaa.add.domain.repository.AddAlbumRepository
-import com.poulastaa.add.presentation.components.OtherScreenUiState
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
@@ -76,12 +78,13 @@ internal class AddAlbumViewmodel @Inject constructor(
             }
 
             is AddAlbumUiAction.OnAlbumClick -> when (action.clickType) {
-                AddAlbumUiAction.ClickType.ADD -> {
+                AddAlbumUiAction.ClickType.EDIT -> {
                     when (_state.value.selectedAlbums.any { it.id == action.album.id }) {
                         true -> {
                             _state.update {
                                 it.copy(
-                                    selectedAlbums = it.selectedAlbums.filterNot { it.id == action.album.id }
+                                    selectedAlbums = it.selectedAlbums.filterNot { it.id == action.album.id },
+                                    isSelectedAlbumOpen = if (it.selectedAlbums.size < 2) false else it.isSelectedAlbumOpen
                                 )
                             }
 
@@ -97,7 +100,7 @@ internal class AddAlbumViewmodel @Inject constructor(
                         false -> {
                             _state.update {
                                 it.copy(
-                                    selectedAlbums = _state.value.selectedAlbums + action.album
+                                    selectedAlbums = _state.value.selectedAlbums + action.album,
                                 )
                             }.also {
                                 _album.update {
@@ -114,12 +117,19 @@ internal class AddAlbumViewmodel @Inject constructor(
 
                 AddAlbumUiAction.ClickType.VIEW -> _state.update {
                     it.copy(
-                        viewAlbumScreenState = OtherScreenUiState(
+                        viewAlbumScreenState = ViewAlbumUiState(
                             isVisible = true,
-                            otherId = action.album.id
+                            album = action.album
                         ),
+                        isSelectedAlbumOpen = false
                     )
                 }
+            }
+
+            AddAlbumUiAction.OnViewCancel -> _state.update {
+                it.copy(
+                    viewAlbumScreenState = ViewAlbumUiState()
+                )
             }
 
             is AddAlbumUiAction.OnSearchFilterTypeChange -> {
@@ -135,10 +145,52 @@ internal class AddAlbumViewmodel @Inject constructor(
                 loadAlbumJob = loadAlbum()
             }
 
-            AddAlbumUiAction.OnSaveClick -> {
+            AddAlbumUiAction.OnSaveClick -> viewModelScope.launch {
+                when (val result = repo.saveAlbums(_state.value.selectedAlbums.map { it.id })) {
+                    is Result.Error -> when (result.error) {
+                        DataError.Network.NO_INTERNET -> _uiEvent.send(
+                            AddAlbumUiEvent.EmitToast(
+                                UiText.StringResource(
+                                    R.string.error_no_internet
+                                )
+                            )
+                        )
+
+                        else -> _uiEvent.send(
+                            AddAlbumUiEvent.EmitToast(
+                                UiText.StringResource(
+                                    R.string.error_something_went_wrong
+                                )
+                            )
+                        )
+                    }
+
+                    is Result.Success -> {
+                        _uiEvent.send(
+                            AddAlbumUiEvent.EmitToast(
+                                UiText.DynamicString("${_state.value.selectedAlbums.size} ${R.string.album_saved}")
+                            )
+                        )
+
+                        val selectedAlbums = _state.value.selectedAlbums
+
+                        _album.update {
+                            it.filter {
+                                it !in selectedAlbums
+                            }
+                        }
+
+                        _state.update {
+                            it.copy(
+                                selectedAlbums = emptyList(),
+                            )
+                        }
+                    }
+                }
+
                 _state.update {
                     it.copy(
-                        isSavingAlbums = true
+                        isSavingAlbums = false
                     )
                 }
             }
@@ -153,6 +205,12 @@ internal class AddAlbumViewmodel @Inject constructor(
                 it.copy(
                     isClearAllDialogOpen = false,
                     selectedAlbums = emptyList(),
+                )
+            }
+
+            AddAlbumUiAction.OnViewSelectedToggle -> _state.update {
+                it.copy(
+                    isSelectedAlbumOpen = it.isSelectedAlbumOpen.not(),
                 )
             }
         }

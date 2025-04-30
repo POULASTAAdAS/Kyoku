@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.album.view_saved.ViewSavedBottomBar
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.designsystem.R
@@ -68,6 +69,7 @@ fun AddAlbumRootScreen(
         expandedContent = {
             AddAlbumExtendedScreen(
                 isExtendedSearch = config.screenWidthDp > 980,
+                grids = if (state.viewAlbumScreenState.isVisible) 5 else 6,
                 scroll = scroll,
                 state = state,
                 album = album,
@@ -87,10 +89,16 @@ fun AddAlbumRootScreen(
         }
     )
 
+    if (state.isSelectedAlbumOpen) ViewSavedBottomBar(
+        list = state.selectedAlbums,
+        onAction = viewmodel::onAction
+    )
+
     BackHandler(
-        enabled = state.isSavingAlbums || state.isEditEnabled
+        enabled = state.isSavingAlbums || state.isEditEnabled || state.viewAlbumScreenState.isVisible
     ) {
-        if (state.isSavingAlbums) Toast.makeText(
+        if (state.viewAlbumScreenState.isVisible) viewmodel.onAction(AddAlbumUiAction.OnViewCancel)
+        else if (state.isSavingAlbums) Toast.makeText(
             context,
             context.getString(R.string.saving_album_wait),
             Toast.LENGTH_LONG

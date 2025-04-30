@@ -1,4 +1,4 @@
-package com.poulastaa.add.presentation.album.view
+package com.poulastaa.add.presentation.album.view_album
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,6 +35,8 @@ internal class AddAlbumViewViewmodel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun init(album: UiAlbum) {
+        if (album.id == -1L) return
+
         viewModelScope.launch {
             _state.update {
                 it.copy(

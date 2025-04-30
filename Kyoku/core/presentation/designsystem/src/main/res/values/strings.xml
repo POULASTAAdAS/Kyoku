@@ -198,5 +198,7 @@
     <string name="error_playlist_name_cant_contain_special_characters">Can\'t contain special corrector</string>
     <string name="cancel_saving_album">Do you want to clear all selected albums ?</string>
     <string name="saving_album_wait">Saving albums in progress. Please wait.</string>
+    <string name="selected">selected</string>
+    <string name="album_saved">album saved in library</string>
 
 </resources>

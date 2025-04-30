@@ -1,4 +1,4 @@
-package com.poulastaa.add.presentation.album.view
+package com.poulastaa.add.presentation.album.view_album
 
 import com.poulastaa.core.presentation.designsystem.UiText
 

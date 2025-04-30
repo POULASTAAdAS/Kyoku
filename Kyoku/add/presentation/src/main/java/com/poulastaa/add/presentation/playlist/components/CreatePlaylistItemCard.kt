@@ -71,8 +71,8 @@ internal fun CreatePlaylistItemCard(
             )
         ) {
             if (item.type != AddToPlaylistItemUiType.PLAYLIST) ImageCard(
-                Modifier.fillMaxSize(),
-                item.poster.firstOrNull()
+                modifier = Modifier.fillMaxSize(),
+                poster = item.poster.firstOrNull()
             ) else Column(
                 modifier = Modifier.fillMaxSize()
             ) {

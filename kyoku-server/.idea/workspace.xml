@@ -4,7 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="" />
+    <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view_album/AddAlbumViewRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/.idea/deploymentTargetSelector.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddAlbumRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/repository/OnlineFirstAddAlbumRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddAlbumDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/domain/src/main/java/com/poulastaa/add/domain/repository/RemoteAddAlbumDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddAlbumDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/repository/OkHttpAddAlbumDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumExtendedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiAction.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiAction.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/components/AddAlbumCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/components/AddAlbumCard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view/AddAlbumViewRootScreen.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view/AddAlbumViewUiEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view_album/AddAlbumViewUiEvent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view/AddAlbumViewUiState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view_album/AddAlbumViewUiState.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view/AddAlbumViewViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/view_album/AddAlbumViewViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/album/AddSongToPlaylistAlbumScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/CreatePlaylistItemCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/playlist/components/CreatePlaylistItemCard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/designsystem/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppSearchBar.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/presentation/ui/src/main/java/com/poulastaa/core/presentation/ui/components/AppSearchBarWithDummySearch.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -230,6 +253,9 @@
       <workItem from="1745507564908" duration="1659000" />
       <workItem from="1745764438480" duration="1671000" />
       <workItem from="1745819464489" duration="4216000" />
+      <workItem from="1745940744749" duration="226000" />
+      <workItem from="1745940985000" duration="4015000" />
+      <workItem from="1746028845539" duration="719000" />
     </task>
     <servers />
   </component>

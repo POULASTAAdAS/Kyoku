@@ -30,7 +30,7 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.dimens
-import com.poulastaa.core.presentation.ui.components.AppSearchBar
+import com.poulastaa.core.presentation.ui.components.AppSearchBarWithDummySearch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,7 +53,7 @@ fun ExploreScreenWrapper(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         topBar = {
-            if (loadingType is LoadingType.Content) AppSearchBar(
+            if (loadingType is LoadingType.Content) AppSearchBarWithDummySearch(
                 modifier = modifier,
                 scroll = scroll,
                 title = title,

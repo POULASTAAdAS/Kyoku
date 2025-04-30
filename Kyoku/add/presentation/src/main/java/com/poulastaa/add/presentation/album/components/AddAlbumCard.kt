@@ -55,7 +55,7 @@ internal fun AddAlbumCard(
                 onAction(
                     AddAlbumUiAction.OnAlbumClick(
                         album = album,
-                        clickType = AddAlbumUiAction.ClickType.ADD
+                        clickType = AddAlbumUiAction.ClickType.EDIT
                     )
                 )
             },
@@ -146,7 +146,7 @@ internal fun AddAlbumCard(
                 onAction(
                     AddAlbumUiAction.OnAlbumClick(
                         album = album,
-                        clickType = AddAlbumUiAction.ClickType.ADD
+                        clickType = AddAlbumUiAction.ClickType.EDIT
                     )
                 )
             },

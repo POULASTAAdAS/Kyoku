@@ -23,9 +23,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.AddSongToPlaylistUiItem
 import com.poulastaa.add.presentation.playlist.AddToPlaylistItemUiType
+import com.poulastaa.add.presentation.playlist.components.AddSongToPlaylistLoadingTopBar
 import com.poulastaa.add.presentation.playlist.components.CreatePlaylistItemCard
 import com.poulastaa.add.presentation.playlist.components.LoadingSongCard
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
@@ -48,8 +48,7 @@ internal fun AddSongToPlaylistAlbumScreen(
         topBar = {
             if (state.loadingSate is LoadingType.Loading) AddSongToPlaylistLoadingTopBar(
                 navigateBack = navigateBack
-            )
-            else if (state.loadingSate is LoadingType.Content) {
+            ) else if (state.loadingSate is LoadingType.Content) {
                 AppBasicTopBar(
                     title = state.album,
                     navigateBack = navigateBack

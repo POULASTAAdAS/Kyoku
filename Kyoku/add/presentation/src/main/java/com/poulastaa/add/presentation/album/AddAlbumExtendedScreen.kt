@@ -6,6 +6,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -60,7 +62,10 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
+import com.poulastaa.add.presentation.album.components.AddAlbumSavedButton
 import com.poulastaa.add.presentation.album.components.AddAlbumSearchFilterRow
+import com.poulastaa.add.presentation.album.view_album.AddAlbumFloatingActionButton
+import com.poulastaa.add.presentation.album.view_album.AddAlbumViewRootScreen
 import com.poulastaa.add.presentation.artist.AddFilterLoadingSearchTopBar
 import com.poulastaa.add.presentation.artist.components.AddArtistLoadingFilterCard
 import com.poulastaa.add.presentation.components.AddSearchTopBar
@@ -90,326 +95,336 @@ internal fun AddAlbumExtendedScreen(
     onAction: (AddAlbumUiAction) -> Unit,
     navigateBack: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            if (state.loadingType == LoadingType.Content) AddSearchTopBar(
-                scrollBehavior = scroll,
-                label = stringResource(R.string.search_album),
-                query = state.query.value,
-                isExtended = isExtendedSearch,
-                focusManager = LocalFocusManager.current,
-                filterTypeContent = {
-                    AddAlbumSearchFilterRow(
-                        searchFilterType = state.searchFilterType,
-                        onAction = onAction
-                    )
-                },
-                actions = {
-                    AnimatedVisibility(
-                        state.isEditEnabled,
-                        enter = fadeIn(tween(600)),
-                        exit = fadeOut(tween(600)),
-                    ) {
-                        IconButton(
-                            onClick = {
-                                onAction(AddAlbumUiAction.OnSaveClick)
-                            },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.background,
-                                containerColor = MaterialTheme.colorScheme.primary
-                            ),
-                        ) {
-                            Icon(
-                                imageVector = CheckIcon,
-                                contentDescription = null
-                            )
-                        }
+    Row {
+        Scaffold(
+            topBar = {
+                if (state.loadingType == LoadingType.Content) AddSearchTopBar(
+                    scrollBehavior = scroll,
+                    label = stringResource(R.string.search_album),
+                    query = state.query.value,
+                    isExtended = isExtendedSearch,
+                    focusManager = LocalFocusManager.current,
+                    filterTypeContent = {
+                        AddAlbumSearchFilterRow(
+                            searchFilterType = state.searchFilterType,
+                            onAction = onAction
+                        )
+                    },
+                    actions = {
+                        AddAlbumSavedButton(
+                            isEditEnabled = state.isEditEnabled,
+                            isSavingAlbums = state.isSavingAlbums,
+                            onAction = onAction
+                        )
+                    },
+                    onValueChange = { onAction(AddAlbumUiAction.OnSearchQueryChange(it)) },
+                    navigateBack = {
+                        if (state.query.value.isNotEmpty())
+                            onAction(AddAlbumUiAction.OnSearchQueryChange(""))
+                        else if (state.isEditEnabled) onAction(AddAlbumUiAction.OnClearAllDialogToggle)
+                        else navigateBack()
                     }
-                },
-                onValueChange = { onAction(AddAlbumUiAction.OnSearchQueryChange(it)) },
-                navigateBack = {
-                    if (state.query.value.isNotEmpty()) onAction(
-                        AddAlbumUiAction.OnSearchQueryChange(
-                            ""
-                        )
-                    )
-                    else if (state.isEditEnabled) onAction(AddAlbumUiAction.OnClearAllDialogToggle)
-                    else navigateBack()
-                }
-            )
-        }
-    ) {
-        when (state.loadingType) {
-            LoadingType.Loading -> Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = ThemModeChanger.getGradiantBackground()
-                        )
-                    )
-                    .verticalScroll(rememberScrollState())
-                    .padding(it)
-                    .padding(MaterialTheme.dimens.medium1),
-            ) {
-                AddFilterLoadingSearchTopBar(
-                    filterItemCount = 2,
-                    isExtendedSearch = isExtendedSearch,
-                    navigateBack = navigateBack
                 )
+            },
+            floatingActionButton = {
+                AddAlbumFloatingActionButton(
+                    size = state.selectedAlbums.size,
+                    isEditEnabled = state.isEditEnabled,
+                    onAction = onAction
+                )
+            },
+            modifier = Modifier
+                .animateContentSize(tween(600))
+                .fillMaxHeight()
+                .fillMaxWidth(if (state.viewAlbumScreenState.isVisible) .65f else 1f)
+        ) {
+            when (state.loadingType) {
+                LoadingType.Loading -> Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = ThemModeChanger.getGradiantBackground()
+                            )
+                        )
+                        .verticalScroll(rememberScrollState())
+                        .padding(it)
+                        .padding(MaterialTheme.dimens.medium1),
+                ) {
+                    AddFilterLoadingSearchTopBar(
+                        filterItemCount = 2,
+                        isExtendedSearch = isExtendedSearch,
+                        navigateBack = navigateBack
+                    )
 
-                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+                    Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                if (isExtendedSearch.not()) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
-                    ) {
-                        repeat(2) {
-                            AddArtistLoadingFilterCard()
+                    if (isExtendedSearch.not() && state.viewAlbumScreenState.isVisible) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
+                        ) {
+                            repeat(2) {
+                                AddArtistLoadingFilterCard()
+                            }
                         }
+
+                        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
                     }
 
-                    Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+                    repeat(8) {
+                        LoadingAlbumCardRow(grids)
+
+                        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+                    }
                 }
 
-                repeat(8) {
-                    LoadingAlbumCardRow(grids)
-
-                    Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-                }
-            }
-
-            LoadingType.Content -> LazyVerticalGrid(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = ThemModeChanger.getGradiantBackground()
+                LoadingType.Content -> LazyVerticalGrid(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = ThemModeChanger.getGradiantBackground()
+                            )
                         )
-                    )
-                    .nestedScroll(scroll.nestedScrollConnection)
-                    .padding(it),
-                columns = GridCells.Fixed(grids),
-                contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
-            ) {
-                if (isExtendedSearch.not()) item(
-                    span = { GridItemSpan(maxLineSpan) }
+                        .nestedScroll(scroll.nestedScrollConnection)
+                        .padding(it),
+                    columns = GridCells.Fixed(grids),
+                    contentPadding = PaddingValues(MaterialTheme.dimens.medium1),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)
                 ) {
-                    AddAlbumSearchFilterRow(
-                        searchFilterType = state.searchFilterType,
-                        onAction = onAction
-                    )
-                }
+                    if (isExtendedSearch.not()) item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
+                        AddAlbumSearchFilterRow(
+                            searchFilterType = state.searchFilterType,
+                            onAction = onAction
+                        )
+                    }
 
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
-                }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
+                    }
 
-                items(album.itemCount) { index ->
-                    album[index]?.let { item ->
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize(.85f)
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
-                                    .clip(MaterialTheme.shapes.extraSmall)
-                                    .clickable {
-                                        onAction(
-                                            AddAlbumUiAction.OnAlbumClick(
-                                                album = item,
-                                                clickType = AddAlbumUiAction.ClickType.ADD
-                                            )
-                                        )
-                                    },
-                                contentAlignment = Alignment.Center
+                    items(album.itemCount) { index ->
+                        album[index]?.let { item ->
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                Card(
+                                Box(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .aspectRatio(1f)
-                                        .blur(3.dp),
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                                    ),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 5.dp,
-                                        pressedElevation = 0.dp
-                                    )
-                                ) {
-                                    SubcomposeAsyncImage(
-                                        model = CacheImageReq.imageReq(
-                                            item.poster,
-                                            LocalContext.current
-                                        ),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.FillBounds,
-                                        error = {
-                                            Box(
-                                                modifier = Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = FilterAlbumIcon,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.fillMaxSize(.7f),
-                                                    tint = MaterialTheme.colorScheme.background
+                                        .fillMaxSize(.85f)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
+                                        .clip(MaterialTheme.shapes.extraSmall)
+                                        .clickable {
+                                            onAction(
+                                                AddAlbumUiAction.OnAlbumClick(
+                                                    album = item,
+                                                    clickType = AddAlbumUiAction.ClickType.EDIT
                                                 )
-                                            }
-                                        }
-                                    )
-                                }
-
-                                Card(
-                                    modifier = Modifier
-                                        .animateContentSize(tween(500))
-                                        .fillMaxSize(if (item.isSelected) .65f else 1f)
-                                        .aspectRatio(1f),
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 5.dp,
-                                        pressedElevation = 0.dp
-                                    )
-                                ) {
-                                    SubcomposeAsyncImage(
-                                        model = CacheImageReq.imageReq(
-                                            item.poster,
-                                            LocalContext.current
-                                        ),
-                                        contentDescription = null,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.FillBounds,
-                                        loading = {
-                                            Box(
-                                                modifier = Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                CircularProgressIndicator(
-                                                    modifier = Modifier.fillMaxSize(.4f),
-                                                    strokeWidth = 2.dp,
-                                                    color = MaterialTheme.colorScheme.background
-                                                )
-                                            }
+                                            )
                                         },
-                                        error = {
-                                            Box(
-                                                modifier = Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = FilterAlbumIcon,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.fillMaxSize(.7f),
-                                                    tint = MaterialTheme.colorScheme.background
-                                                )
-                                            }
-                                        }
-                                    )
-                                }
-
-                                this@Column.AnimatedVisibility(
-                                    visible = item.isSelected,
-                                    modifier = Modifier
-                                        .padding(MaterialTheme.dimens.small2)
-                                        .align(Alignment.TopStart),
-                                    enter = fadeIn(tween(600)),
-                                    exit = fadeOut(tween(600)),
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Card(
                                         modifier = Modifier
-                                            .size(20.dp),
+                                            .fillMaxSize()
+                                            .aspectRatio(1f)
+                                            .blur(3.dp),
+                                        shape = MaterialTheme.shapes.extraSmall,
                                         colors = CardDefaults.cardColors(
-                                            containerColor = MaterialTheme.colorScheme.secondary,
-                                            contentColor = MaterialTheme.colorScheme.primary
+                                            containerColor = MaterialTheme.colorScheme.primaryContainer
                                         ),
-                                        shape = CircleShape,
                                         elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 3.dp
+                                            defaultElevation = 5.dp,
+                                            pressedElevation = 0.dp
                                         )
                                     ) {
-                                        Icon(
-                                            imageVector = CheckIcon,
+                                        SubcomposeAsyncImage(
+                                            model = CacheImageReq.imageReq(
+                                                item.poster,
+                                                LocalContext.current
+                                            ),
                                             contentDescription = null,
-                                            modifier = Modifier.padding(1.dp)
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.FillBounds,
+                                            error = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(
+                                                        imageVector = FilterAlbumIcon,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.fillMaxSize(.7f),
+                                                        tint = MaterialTheme.colorScheme.background
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    }
+
+                                    Card(
+                                        modifier = Modifier
+                                            .animateContentSize(tween(600))
+                                            .align(Alignment.Center)
+                                            .fillMaxSize(if (item.isSelected) .65f else 1f)
+                                            .aspectRatio(1f),
+                                        shape = MaterialTheme.shapes.extraSmall,
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.primary
+                                        ),
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 5.dp,
+                                            pressedElevation = 0.dp
+                                        )
+                                    ) {
+                                        SubcomposeAsyncImage(
+                                            model = CacheImageReq.imageReq(
+                                                item.poster,
+                                                LocalContext.current
+                                            ),
+                                            contentDescription = null,
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.FillBounds,
+                                            loading = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    CircularProgressIndicator(
+                                                        modifier = Modifier.fillMaxSize(.4f),
+                                                        strokeWidth = 2.dp,
+                                                        color = MaterialTheme.colorScheme.background
+                                                    )
+                                                }
+                                            },
+                                            error = {
+                                                Box(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(
+                                                        imageVector = FilterAlbumIcon,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.fillMaxSize(.7f),
+                                                        tint = MaterialTheme.colorScheme.background
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    }
+
+                                    this@Column.AnimatedVisibility(
+                                        visible = item.isSelected,
+                                        modifier = Modifier
+                                            .padding(MaterialTheme.dimens.small2)
+                                            .align(Alignment.TopStart),
+                                        enter = fadeIn(tween(600)),
+                                        exit = fadeOut(tween(600)),
+                                    ) {
+                                        Card(
+                                            modifier = Modifier
+                                                .size(20.dp),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = MaterialTheme.colorScheme.secondary,
+                                                contentColor = MaterialTheme.colorScheme.primary
+                                            ),
+                                            shape = CircleShape,
+                                            elevation = CardDefaults.cardElevation(
+                                                defaultElevation = 3.dp
+                                            )
+                                        ) {
+                                            Icon(
+                                                imageVector = CheckIcon,
+                                                contentDescription = null,
+                                                modifier = Modifier.padding(1.dp)
+                                            )
+                                        }
+                                    }
+
+                                    IconButton(
+                                        modifier = Modifier
+                                            .padding(MaterialTheme.dimens.small2)
+                                            .align(Alignment.TopEnd),
+                                        onClick = {
+                                            onAction(
+                                                AddAlbumUiAction.OnAlbumClick(
+                                                    album = item,
+                                                    clickType = AddAlbumUiAction.ClickType.VIEW
+                                                )
+                                            )
+                                        },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.primary,
+                                            containerColor = MaterialTheme.colorScheme.background
+                                        ),
+                                    ) {
+                                        Icon(
+                                            imageVector = ArrowDownIcon,
+                                            contentDescription = null,
+                                            modifier = Modifier.rotate(-90f)
                                         )
                                     }
                                 }
 
-                                IconButton(
-                                    modifier = Modifier
-                                        .padding(MaterialTheme.dimens.small2)
-                                        .align(Alignment.TopEnd),
-                                    onClick = {
-                                        onAction(
-                                            AddAlbumUiAction.OnAlbumClick(
-                                                album = item,
-                                                clickType = AddAlbumUiAction.ClickType.VIEW
-                                            )
-                                        )
-                                    },
-                                    colors = IconButtonDefaults.iconButtonColors(
-                                        contentColor = MaterialTheme.colorScheme.primary,
-                                        containerColor = MaterialTheme.colorScheme.background
-                                    ),
-                                ) {
-                                    Icon(
-                                        imageVector = ArrowDownIcon,
-                                        contentDescription = null,
-                                        modifier = Modifier.rotate(-90f)
-                                    )
-                                }
+                                Spacer(Modifier.weight(1f))
+
+                                Text(
+                                    text = item.name,
+                                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
-
-                            Spacer(Modifier.weight(1f))
-
-                            Text(
-                                text = item.name,
-                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
                         }
                     }
-                }
 
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
-                }
-
-                gridPagingLoadingContent(
-                    gridSize = grids,
-                    data = album.loadState,
-                    retry = {
-                        album.retry()
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(Modifier.height(MaterialTheme.dimens.small2))
                     }
-                ) {
-                    LoadingAlbumCardRow(grids)
+
+                    gridPagingLoadingContent(
+                        gridSize = grids,
+                        data = album.loadState,
+                        retry = {
+                            album.retry()
+                        }
+                    ) {
+                        LoadingAlbumCardRow(grids)
+                    }
                 }
-            }
 
-            is LoadingType.Error -> AppErrorScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = ThemModeChanger.getGradiantBackground()
+                is LoadingType.Error -> AppErrorScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = ThemModeChanger.getGradiantBackground()
+                            )
                         )
-                    )
-                    .padding(it)
-                    .padding(MaterialTheme.dimens.medium1),
-                error = state.loadingType,
-                navigateBack = navigateBack
-            )
+                        .padding(it)
+                        .padding(MaterialTheme.dimens.medium1),
+                    error = state.loadingType,
+                    navigateBack = navigateBack
+                )
 
+            }
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = state.viewAlbumScreenState.isVisible,
+            enter = fadeIn(tween(600)) + slideInHorizontally(tween(600), initialOffsetX = { it }),
+            exit = fadeOut(tween(600)) + slideOutHorizontally(tween(600), targetOffsetX = { it }),
+        ) {
+            AddAlbumViewRootScreen(
+                album = state.viewAlbumScreenState.album,
+                navigateBack = {
+                    onAction(AddAlbumUiAction.OnViewCancel)
+                }
+            )
         }
     }
 }
