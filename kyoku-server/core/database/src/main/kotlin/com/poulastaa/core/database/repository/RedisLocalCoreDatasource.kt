@@ -276,7 +276,7 @@ class RedisLocalCoreDatasource(
             map.forEach { (k, v) ->
                 pipeline.setex(
                     "${group.name}:$k",
-                    Group.GENRE.expTime,
+                    group.expTime,
                     gson.toJson(v)
                 )
             }
@@ -294,7 +294,7 @@ class RedisLocalCoreDatasource(
             map.forEach { (k, v) ->
                 if (v.isNotBlank()) pipeline.setex(
                     "${group.name}:$k",
-                    Group.GENRE.expTime,
+                    group.expTime,
                     v
                 )
             }

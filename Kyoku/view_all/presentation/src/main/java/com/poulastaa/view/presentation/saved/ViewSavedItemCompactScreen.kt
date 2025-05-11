@@ -1,5 +1,6 @@
 package com.poulastaa.view.presentation.saved
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -19,7 +20,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -41,7 +45,6 @@ import com.poulastaa.core.presentation.designsystem.R
 import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.model.ItemClickType
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
-import com.poulastaa.core.presentation.designsystem.noRippleClickable
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
 import com.poulastaa.core.presentation.designsystem.ui.ArrowDownIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
@@ -78,7 +81,7 @@ internal fun ViewSavedItemCompactScreen(
                         isEditEnabled = state.isEditEnabled,
                         type = state.type,
                         navigateBack = {
-                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnEditToggle)
+                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnClearSelectedDialogToggle)
                             else navigateBack()
                         },
                         onAction = onAction
@@ -141,7 +144,8 @@ internal fun ViewSavedItemCompactScreen(
 
                         Column(
                             modifier = Modifier
-                                .fillMaxHeight(),
+                                .fillMaxHeight()
+                                .fillMaxWidth(.7f),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
@@ -167,24 +171,43 @@ internal fun ViewSavedItemCompactScreen(
 
                         Spacer(Modifier.weight(1f))
 
-                        Icon(
-                            imageVector = ArrowDownIcon,
-                            contentDescription = stringResource(R.string.all),
-                            modifier = Modifier
-                                .rotate(-90f)
-                                .noRippleClickable {
-                                    if (state.isEditEnabled) TODO("Implement checkbox")
-
-                                    onAction(
-                                        ViewSavedUiAction.OnItemClick(
-                                            item.id,
-                                            ItemClickType.CLICK
-                                        )
-                                    ).also {
-                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    }
+                        IconButton(
+                            onClick = {
+                                onAction(
+                                    ViewSavedUiAction.OnItemClick(
+                                        item.id,
+                                        ItemClickType.CLICK
+                                    )
+                                ).also {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 }
-                        )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ArrowDownIcon,
+                                contentDescription = stringResource(R.string.all),
+                                modifier = Modifier
+                                    .rotate(-90f)
+                            )
+                        }
+
+                        AnimatedVisibility(state.isEditEnabled) {
+                            Column {
+                                Spacer(Modifier.width(MaterialTheme.dimens.small2))
+
+                                Checkbox(
+                                    checked = state.selectedList.contains(item.id),
+                                    onCheckedChange = {
+                                        onAction(ViewSavedUiAction.OnSelectToggle(item.id))
+                                    },
+                                    colors = CheckboxDefaults.colors(
+                                        checkedColor = MaterialTheme.colorScheme.primary,
+                                        uncheckedColor = MaterialTheme.colorScheme.primary,
+                                        checkmarkColor = MaterialTheme.colorScheme.background
+                                    )
+                                )
+                            }
+                        }
                     }
 
                     Spacer(Modifier.height(MaterialTheme.dimens.small1))
@@ -205,9 +228,9 @@ internal fun ViewSavedItemCompactScreen(
             )
 
             LoadingType.Loading -> ViewStavedItemExtendedLoadingCommonContent(
-                it,
-                state.type,
-                navigateBack
+                padding = it,
+                type = state.type,
+                navigateBack = navigateBack
             ) {
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
@@ -242,7 +265,7 @@ private fun Preview() {
                             releaseYear = 2024,
                             numbers = 10
                         )
-                    }
+                    },
                 ),
                 onAction = {},
                 navigateBack = {}

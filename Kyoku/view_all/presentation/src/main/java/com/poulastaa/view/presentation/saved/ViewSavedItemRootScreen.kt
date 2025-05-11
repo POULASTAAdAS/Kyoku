@@ -10,10 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.designsystem.R
+import com.poulastaa.core.presentation.ui.components.AppBasicDialog
 import com.poulastaa.core.presentation.ui.components.crate_playlist.CratePlaylistBottomBar
 import com.poulastaa.view.domain.model.ViewSavedAllowedNavigationScreen
 
@@ -75,6 +78,27 @@ fun ViewSavedItemRootScreen(
                 onAction = viewmodel::onAction,
                 navigateBack = navigateBack
             )
+        }
+    )
+
+    if (state.isSelectedCancelDialogOpen) AppBasicDialog(
+        title = stringResource(R.string.clear_selected_items),
+        onConformClick = {
+            viewmodel.onAction(ViewSavedUiAction.OnClearAllSelectedClick)
+        },
+        onDismissRequest = {
+            viewmodel.onAction(ViewSavedUiAction.OnClearSelectedDialogToggle)
+        }
+    )
+
+    if (state.isDeleteDialogOpen) AppBasicDialog(
+        flipColor = true,
+        title = stringResource(R.string.delete_all_selected_items),
+        onConformClick = {
+            viewmodel.onAction(ViewSavedUiAction.OnDeleteAllConformClick)
+        },
+        onDismissRequest = {
+            viewmodel.onAction(ViewSavedUiAction.OnDeleteAllToggleClick)
         }
     )
 

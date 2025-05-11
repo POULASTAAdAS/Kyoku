@@ -200,5 +200,7 @@
     <string name="saving_album_wait">Saving albums in progress. Please wait.</string>
     <string name="selected">selected</string>
     <string name="album_saved">album saved in library</string>
+    <string name="clear_selected_items">Clear all selected Items ?</string>
+    <string name="delete_all_selected_items">Delete all selected items ?</string>
 
 </resources>

@@ -44,6 +44,18 @@ internal class ViewSavedItemViewmodel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     fun onAction(action: ViewSavedUiAction) {
+        fun updateSelectedList(id: Long) {
+            if (_state.value.selectedList.contains(id)) _state.update {
+                it.copy(
+                    selectedList = it.selectedList.filterNot { it == id }
+                )
+            } else _state.update {
+                it.copy(
+                    selectedList = it.selectedList + id
+                )
+            }
+        }
+
         when (action) {
             ViewSavedUiAction.OnAddNewItemClick -> {
                 when (_state.value.type) {
@@ -88,16 +100,27 @@ internal class ViewSavedItemViewmodel @Inject constructor(
                 )
             }
 
-            ViewSavedUiAction.OnEditToggle -> {
-                _state.update {
-                    it.copy(
-                        isEditEnabled = it.isEditEnabled.not()
-                    )
-                }
+            ViewSavedUiAction.OnClearSelectedDialogToggle -> _state.update {
+                it.copy(
+                    isSelectedCancelDialogOpen = it.isSelectedCancelDialogOpen.not()
+                )
             }
 
-            ViewSavedUiAction.OnDeleteAllClick -> {
+            ViewSavedUiAction.OnClearAllSelectedClick -> _state.update {
+                it.copy(
+                    isSelectedCancelDialogOpen = false,
+                    selectedList = emptyList()
+                )
+            }
 
+            ViewSavedUiAction.OnDeleteAllToggleClick -> _state.update {
+                it.copy(
+                    isDeleteDialogOpen = it.isDeleteDialogOpen.not()
+                )
+            }
+
+            ViewSavedUiAction.OnDeleteAllConformClick -> {
+                TODO("Implement Delete Selected Items")
             }
 
             is ViewSavedUiAction.OnItemClick -> when (action.clickType) {
@@ -125,8 +148,12 @@ internal class ViewSavedItemViewmodel @Inject constructor(
                     )
                 }
 
-                ItemClickType.LONG_CLICK -> TODO("implement long click")
+                ItemClickType.LONG_CLICK -> if (_state.value.isEditEnabled)
+                    updateSelectedList(action.id)
+                else updateSelectedList(action.id)
             }
+
+            is ViewSavedUiAction.OnSelectToggle -> updateSelectedList(action.id)
         }
     }
 

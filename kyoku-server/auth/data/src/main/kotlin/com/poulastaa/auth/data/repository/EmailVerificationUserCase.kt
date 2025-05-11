@@ -4,11 +4,10 @@ import java.net.InetAddress
 
 class EmailVerificationUserCase {
     suspend fun isValidEmail(email: String): Boolean {
-        if (!email.isValidEmail() || !email.isValidDomain()) return false
+        return !(!email.isValidEmail() || !email.isValidDomain())
 
 
         // todo make api call
-        return true
     }
 
     private fun String.isValidEmail(): Boolean =

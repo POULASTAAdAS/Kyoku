@@ -83,7 +83,7 @@ internal fun ViewSavedItemExtendedScreen(
                         isEditEnabled = state.isEditEnabled,
                         type = state.type,
                         navigateBack = {
-                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnEditToggle)
+                            if (state.isEditEnabled) onAction(ViewSavedUiAction.OnClearSelectedDialogToggle)
                             else navigateBack()
                         },
                         onAction = onAction
