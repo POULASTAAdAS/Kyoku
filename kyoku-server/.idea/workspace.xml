@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/EmailVerificationUserCase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/EmailVerificationUserCase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/database/src/main/kotlin/com/poulastaa/core/database/repository/RedisLocalCoreDatasource.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,7 +246,7 @@
       <workItem from="1746769456711" duration="3607000" />
       <workItem from="1746803283148" duration="3893000" />
       <workItem from="1746887289586" duration="10920000" />
-      <workItem from="1746979327244" duration="4565000" />
+      <workItem from="1746979327244" duration="6268000" />
     </task>
     <servers />
   </component>

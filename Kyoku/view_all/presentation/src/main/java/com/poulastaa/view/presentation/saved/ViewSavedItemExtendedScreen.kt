@@ -1,6 +1,7 @@
 package com.poulastaa.view.presentation.saved
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -23,6 +24,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -135,36 +138,69 @@ internal fun ViewSavedItemExtendedScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Card(
+                        Box(
                             modifier = Modifier
                                 .aspectRatio(1f)
-                                .weight(.8f),
-                            shape = if (state.type == ViewSavedUiItemType.ARTIST) CircleShape
-                            else MaterialTheme.shapes.extraSmall,
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 4.dp,
-                                pressedElevation = 0.dp
-                            ),
-                            onClick = {
-                                if (state.isEditEnabled) TODO("Implement checkbox")
+                                .weight(.8f)
+                        ) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .combinedClickable(
+                                        onClick = {
+                                            onAction(
+                                                ViewSavedUiAction.OnItemClick(
+                                                    item.id,
+                                                    ItemClickType.CLICK
+                                                )
+                                            )
+                                        },
+                                        onLongClick = {
+                                            onAction(
+                                                ViewSavedUiAction.OnItemClick(
+                                                    item.id,
+                                                    ItemClickType.LONG_CLICK
+                                                )
+                                            )
+                                        }
+                                    ),
+                                shape = if (state.type == ViewSavedUiItemType.ARTIST) CircleShape
+                                else MaterialTheme.shapes.extraSmall,
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 4.dp,
+                                    pressedElevation = 0.dp
+                                )
+                            ) {
+                                ViewSavedItemImageCard(
+                                    Modifier.fillMaxSize(),
+                                    state.type,
+                                    item.poster
+                                )
+                            }
 
-                                onAction(
-                                    ViewSavedUiAction.OnItemClick(
-                                        item.id,
-                                        ItemClickType.CLICK
+                            this@Column.AnimatedVisibility(
+                                state.isEditEnabled,
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                            ) {
+                                Checkbox(
+                                    checked = state.selectedList.contains(item.id),
+                                    onCheckedChange = {
+                                        onAction(ViewSavedUiAction.OnSelectToggle(item.id))
+                                    },
+                                    colors = CheckboxDefaults.colors(
+                                        checkedColor = MaterialTheme.colorScheme.primary,
+                                        uncheckedColor = MaterialTheme.colorScheme.primary,
+                                        checkmarkColor = MaterialTheme.colorScheme.background
                                     )
                                 )
-                            },
-                        ) {
-                            ViewSavedItemImageCard(
-                                Modifier.fillMaxSize(),
-                                state.type,
-                                item.poster
-                            )
+                            }
                         }
+
+
 
                         Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
@@ -280,7 +316,7 @@ private fun Preview() {
             ViewSavedItemExtendedScreen(
                 state = ViewSavedUiState(
                     loadingType = LoadingType.Content,
-                    type = ViewSavedUiItemType.ALBUM,
+                    type = ViewSavedUiItemType.ARTIST,
                     items = (1..10).map {
                         ViewSavedUiItem(
                             id = it.toLong(),
@@ -290,7 +326,8 @@ private fun Preview() {
                             releaseYear = 2024,
                             numbers = 10
                         )
-                    }
+                    },
+                    selectedList = listOf(1, 2)
                 ),
                 onAction = {},
                 navigateBack = {}
