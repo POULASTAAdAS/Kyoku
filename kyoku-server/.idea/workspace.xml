@@ -5,7 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/di/AddViewmodelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/di/AddViewmodelModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/mapper/AddNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/mapper/AddNetworkMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistCompactScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistExtendedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistRootScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistViewmodel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/components/AddArtistCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/components/AddArtistCard.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/repository/RoomLocalViewSavedItemDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/repository/RoomLocalViewSavedItemDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/repository/LocalViewSavedItemDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/repository/LocalViewSavedItemDatasource.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/AuthenticationService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/AuthenticationService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/JWTRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/JWTRepositoryService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build-logic/convention/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build-logic/convention/build.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -247,6 +264,18 @@
       <workItem from="1746803283148" duration="3893000" />
       <workItem from="1746887289586" duration="10920000" />
       <workItem from="1746979327244" duration="6268000" />
+      <workItem from="1747058501731" duration="5310000" />
+      <workItem from="1747090596455" duration="229000" />
+      <workItem from="1747410313382" duration="3002000" />
+      <workItem from="1747493324730" duration="7883000" />
+      <workItem from="1747546683118" duration="619000" />
+      <workItem from="1747549304059" duration="2193000" />
+      <workItem from="1747640292445" duration="2077000" />
+      <workItem from="1747666349422" duration="16635000" />
+      <workItem from="1747807780942" duration="829000" />
+      <workItem from="1747841422878" duration="6638000" />
+      <workItem from="1747926717498" duration="8721000" />
+      <workItem from="1747940642320" duration="1883000" />
     </task>
     <servers />
   </component>

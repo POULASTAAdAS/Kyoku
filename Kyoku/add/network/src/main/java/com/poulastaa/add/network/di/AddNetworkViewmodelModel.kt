@@ -2,11 +2,14 @@ package com.poulastaa.add.network.di
 
 import com.google.gson.Gson
 import com.poulastaa.add.domain.repository.RemoteAddAlbumDatasource
+import com.poulastaa.add.domain.repository.RemoteAddArtistDatasource
 import com.poulastaa.add.domain.repository.RemoteAddSongToPlaylistDatasource
 import com.poulastaa.add.network.repository.AddAlbumPagingSource
+import com.poulastaa.add.network.repository.AddArtistPagingSource
 import com.poulastaa.add.network.repository.AddSongToPlaylistArtistPagingSource
 import com.poulastaa.add.network.repository.AddSongToPlaylistPagingSource
 import com.poulastaa.add.network.repository.OkHttpAddAlbumDatasource
+import com.poulastaa.add.network.repository.OkHttpAddArtistDatasource
 import com.poulastaa.add.network.repository.OkHttpAddSongToPlaylistDatasource
 import com.poulastaa.view.domain.repository.RemoteViewOtherDatasource
 import dagger.Module
@@ -61,5 +64,24 @@ internal object AddNetworkViewmodelModel {
         gson = gson,
         album = album,
         repo = repo
+    )
+
+    @Provides
+    @ViewModelScoped
+    fun provideAddArtistPagingSource(
+        client: OkHttpClient,
+        gson: Gson,
+    ): AddArtistPagingSource = AddArtistPagingSource(client, gson)
+
+    @Provides
+    @ViewModelScoped
+    fun provideRemoteAddArtistDatasource(
+        client: OkHttpClient,
+        gson: Gson,
+        artist: AddArtistPagingSource,
+    ): RemoteAddArtistDatasource = OkHttpAddArtistDatasource(
+        client = client,
+        gson = gson,
+        paging = artist
     )
 }

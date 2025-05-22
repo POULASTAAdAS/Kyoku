@@ -25,7 +25,6 @@ gradlePlugin {
             implementationClass = "KtorConventionPlugin"
         }
 
-
         register("ktorExposed") {
             id = "kyoku.ktor.exposed"
             implementationClass = "ExposedConventionPlugin"

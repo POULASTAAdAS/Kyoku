@@ -26,6 +26,7 @@ import com.poulastaa.core.domain.model.DtoExploreType
 import com.poulastaa.core.domain.model.DtoGenre
 import com.poulastaa.core.domain.model.DtoHeading
 import com.poulastaa.core.domain.model.DtoPlaylist
+import com.poulastaa.core.domain.model.DtoPlaylistPayload
 import com.poulastaa.core.domain.model.DtoPrevAlbum
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoPrevFullPlaylist
@@ -242,4 +243,13 @@ internal fun EntityAlbum.toDtoAlbum() = DtoAlbum(
     name = this.name,
     poster = this.poster,
     popularity = this.popularity
+)
+
+internal fun DtoPlaylist.toDtoPlaylistPayload(
+    cover: List<String>,
+    count: Int,
+) = DtoPlaylistPayload(
+    playlist = this,
+    cover = cover,
+    count = count
 )

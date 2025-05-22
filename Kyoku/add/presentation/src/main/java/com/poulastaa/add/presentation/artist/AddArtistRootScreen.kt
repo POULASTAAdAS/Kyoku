@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.poulastaa.add.presentation.artist.components.ViewSavedArtistBottomBar
 import com.poulastaa.core.presentation.designsystem.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 
@@ -29,7 +30,6 @@ fun AddArtistRootScreen(
     val windowSizeClass = calculateWindowSizeClass(context)
 
     val scroll = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     val config = LocalConfiguration.current
 
     ObserveAsEvent(viewmodel.uiEvent) { event ->
@@ -47,7 +47,7 @@ fun AddArtistRootScreen(
         compactContent = {
             AddArtistCompactScreen(
                 scroll = scroll,
-                columns = 4,
+                columns = 3,
                 state = state,
                 artist = artist,
                 onAction = viewmodel::onAction,
@@ -75,5 +75,10 @@ fun AddArtistRootScreen(
                 navigateBack = navigateBack
             )
         }
+    )
+
+    if (state.isSelectedBottomSheetOpen) ViewSavedArtistBottomBar(
+        list = state.selectedArtist,
+        onAction = viewmodel::onAction
     )
 }

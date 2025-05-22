@@ -195,10 +195,20 @@ internal class AddAlbumViewmodel @Inject constructor(
                 }
             }
 
-            AddAlbumUiAction.OnClearAllDialogToggle -> _state.update {
-                it.copy(
-                    isClearAllDialogOpen = it.isClearAllDialogOpen.not()
-                )
+            AddAlbumUiAction.OnClearAllDialogToggle -> {
+                if (_state.value.isClearAllDialogOpen) _album.update {
+                    it.map {
+                        it.copy(
+                            isSelected = false
+                        )
+                    }
+                }
+
+                _state.update {
+                    it.copy(
+                        isClearAllDialogOpen = it.isClearAllDialogOpen.not()
+                    )
+                }
             }
 
             AddAlbumUiAction.OnSaveCancelClick -> _state.update {

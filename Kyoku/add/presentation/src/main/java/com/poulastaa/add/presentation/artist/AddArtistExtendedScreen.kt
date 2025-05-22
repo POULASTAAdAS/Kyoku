@@ -203,6 +203,7 @@ internal fun AddArtistExtendedScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 item = item,
                                 haptic = haptic,
+                                isEditEnabled = state.isEditEnabled,
                                 onAction = onAction
                             )
                         }

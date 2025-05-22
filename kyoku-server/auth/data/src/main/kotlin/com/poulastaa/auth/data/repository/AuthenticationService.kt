@@ -309,18 +309,7 @@ class AuthenticationService(
             ?: return UpdatePasswordStatusDto.TOKEN_USED
 
         val user = db.getUsersByEmail(email, UserType.EMAIL) ?: return UpdatePasswordStatusDto.USER_NOT_FOUND
-        if (verifyPassword(newPassword, user.passwordHash)) return UpdatePasswordStatusDto.SAME_PASSWORD
-
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
-        println("password: $newPassword")
+        if (verifyPassword(newPassword, user.passwordHash).not()) return UpdatePasswordStatusDto.SAME_PASSWORD
 
         db.storeUsedVerificationToken(token)
         db.updatePassword(email, newPassword.encryptPassword() ?: return UpdatePasswordStatusDto.SERVER_ERROR)

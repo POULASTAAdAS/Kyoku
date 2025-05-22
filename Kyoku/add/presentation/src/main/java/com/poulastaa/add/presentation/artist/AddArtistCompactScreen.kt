@@ -26,14 +26,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -105,7 +109,25 @@ internal fun AddArtistCompactScreen(
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
             )
-        }
+        },
+        floatingActionButton = {
+            AnimatedVisibility(visible = state.selectedArtist.isNotEmpty()) {
+                Button(
+                    onClick = {
+                        onAction(AddArtistUiAction.OnViewSelectedToggle)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.background
+                    )
+                ) {
+                    Text(
+                        text = "${state.selectedArtist.size} ${stringResource(R.string.selected)}"
+                    )
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center
     ) {
         when (state.loadingType) {
             LoadingType.Loading -> Column(
@@ -202,6 +224,7 @@ internal fun AddArtistCompactScreen(
                             modifier = Modifier.fillMaxWidth(),
                             item = item,
                             haptic = haptic,
+                            isEditEnabled = state.isEditEnabled,
                             onAction = onAction
                         )
                     }
@@ -223,42 +246,42 @@ internal fun AddArtistActions(
         enter = fadeIn(tween(600)) + expandHorizontally(tween(600)),
         exit = fadeOut(tween(600)) + shrinkHorizontally(tween(600)),
     ) {
-        AnimatedContent(
-            targetState = isEditEnabled && isSaving
-        ) { state ->
-            when (state) {
-                true -> CircularProgressIndicator(
-                    modifier = Modifier
-                        .padding(MaterialTheme.dimens.small1)
-                        .size(40.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeCap = StrokeCap.Round
-                )
+        Card(
+            modifier = Modifier
+                .padding(MaterialTheme.dimens.small1)
+                .size(40.dp),
+            shape = CircleShape,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp,
+                pressedElevation = 0.dp
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.background
+            ),
+            onClick = {
+                onAction(AddArtistUiAction.OnSaveClick)
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            }
+        ) {
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                AnimatedContent(
+                    targetState = isEditEnabled && isSaving
+                ) { state ->
+                    when (state) {
+                        true -> CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.small1)
+                                .size(40.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeCap = StrokeCap.Round
+                        )
 
-                false -> Card(
-                    modifier = Modifier
-                        .padding(MaterialTheme.dimens.small1)
-                        .size(40.dp),
-                    shape = CircleShape,
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 5.dp,
-                        pressedElevation = 0.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.background
-                    ),
-                    onClick = {
-                        onAction(AddArtistUiAction.OnSaveClick)
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    }
-                ) {
-                    Box(
-                        Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
+                        false -> Icon(
                             imageVector = CheckIcon,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(.8f)
@@ -266,10 +289,10 @@ internal fun AddArtistActions(
                     }
                 }
             }
+
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
@@ -281,10 +304,12 @@ private fun Preview() {
                 scroll = TopAppBarDefaults.enterAlwaysScrollBehavior(),
                 columns = 4,
                 state = AddArtistUiState(
-                    loadingType = LoadingType.Loading,
+                    loadingType = LoadingType.Content,
                     selectedArtist = (1..5).map {
                         UiArtist(name = "That Cool Artist")
                     },
+                    isSaving = true,
+                    isSelectedBottomSheetOpen = false
                 ),
                 artist = flowOf(
                     PagingData.from(

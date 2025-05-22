@@ -4,7 +4,7 @@ import com.poulastaa.core.domain.model.DtoAlbum
 import com.poulastaa.core.domain.model.DtoArtist
 import com.poulastaa.core.domain.model.DtoDetailedPrevSong
 import com.poulastaa.core.domain.model.DtoExploreType
-import com.poulastaa.core.domain.model.DtoPlaylist
+import com.poulastaa.core.domain.model.DtoPlaylistPayload
 import com.poulastaa.core.domain.model.DtoPrevArtist
 import com.poulastaa.core.domain.model.DtoSong
 import com.poulastaa.core.domain.model.ViewType
@@ -42,15 +42,6 @@ internal fun DtoArtist.toDtoViewSavedItem() = DtoViewSavedItem(
     numbers = this.popularity
 )
 
-@JvmName("DtoPlaylistToDtoViewSavedItem")
-internal fun Map.Entry<Pair<List<String>, Int>, DtoPlaylist>.toDtoViewSavedItem() =
-    DtoViewSavedItem(
-        id = this.value.id,
-        title = this.value.name,
-        poster = this.key.first,
-        numbers = this.key.second.toLong()
-    )
-
 @JvmName("DtoAlbumToDtoViewSavedItem")
 internal fun Map.Entry<String?, DtoAlbum>.toDtoViewSavedItem() = DtoViewSavedItem(
     id = this.value.id,
@@ -58,4 +49,12 @@ internal fun Map.Entry<String?, DtoAlbum>.toDtoViewSavedItem() = DtoViewSavedIte
     poster = listOf(this.value.poster ?: ""),
     numbers = this.value.popularity,
     artist = this.key
+)
+
+@JvmName("DtoPlaylistPayloadToDtoViewSavedItem")
+internal fun DtoPlaylistPayload.toDtoViewSavedItem() = DtoViewSavedItem(
+    id = this.playlist.id,
+    title = this.playlist.name,
+    poster = this.cover,
+    numbers = this.count.toLong()
 )

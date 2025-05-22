@@ -18,7 +18,7 @@ import java.util.*
 class JWTRepositoryService(
     private val issuer: String,
     private val audience: String,
-    val privateKeyPayload: String,
+    privateKeyPayload: String,
 ) : JWTRepository {
     private val privateKey: PrivateKey = KeyFactory
         .getInstance("RSA")

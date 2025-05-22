@@ -6,4 +6,5 @@ internal sealed interface AddArtistUiAction {
     data class OnSearchQueryChange(val query: String) : AddArtistUiAction
     data object OnSaveClick : AddArtistUiAction
     data object OnCancelSaveClick : AddArtistUiAction
+    data object OnViewSelectedToggle : AddArtistUiAction
 }

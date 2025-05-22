@@ -20,12 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -54,11 +50,9 @@ import com.poulastaa.core.presentation.designsystem.ThemModeChanger
 import com.poulastaa.core.presentation.designsystem.columnPagingLoadingLoadState
 import com.poulastaa.core.presentation.designsystem.model.LoadingType
 import com.poulastaa.core.presentation.designsystem.ui.AppThem
-import com.poulastaa.core.presentation.designsystem.ui.CheckIcon
 import com.poulastaa.core.presentation.designsystem.ui.dimens
 import com.poulastaa.core.presentation.ui.components.AppErrorScreen
 import com.poulastaa.core.presentation.ui.components.AppLoadingSearchTopBar
-import com.poulastaa.core.presentation.ui.components.AppSearchBarWithDummySearch
 import kotlinx.coroutines.flow.flowOf
 import kotlin.random.Random
 

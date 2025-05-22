@@ -12,6 +12,7 @@ internal data class AddArtistUiState(
     val query: String = "",
     val searchFilterType: AddArtistSearchUiFilterType = AddArtistSearchUiFilterType.ALL,
     val selectedArtist: List<UiArtist> = emptyList(),
+    val isSelectedBottomSheetOpen: Boolean = false,
 ) {
     val isEditEnabled = selectedArtist.isNotEmpty()
 }
