@@ -34,7 +34,7 @@ services:
       - ./mysql/insert/EntryRelationSongArtist.sql:/docker-entrypoint-initdb.d/EntryRelationSongArtist.sql
       - ./mysql/insert/EntryRelationSongGenre.sql:/docker-entrypoint-initdb.d/EntryRelationSongGenre.sql
 
-      - ./mysql-kyoku-data/data:/var/lib/mysql
+      - ./mysql-data/mysql-kyoku-data/data:/var/lib/mysql
 
   mysql-genre-artist-shard:
     image: mysql:8.4.0
@@ -45,7 +45,8 @@ services:
       - "3309:3306"
     volumes:
       - ./mysql/init_shard_genre_artist.sql:/docker-entrypoint-initdb.d/init_shard_genre_artist.sql
-      - ./mysql-kyoku-shard-genre-artist-data/data:/var/lib/mysql
+
+      - ./mysql-data/mysql-kyoku-shard-genre-artist-data/data:/var/lib/mysql
 
   mysql-suggestion-shard:
     image: mysql:8.4.0
@@ -56,7 +57,8 @@ services:
       - "3310:3306"
     volumes:
       - ./mysql/init_shard_suggestion.sql:/docker-entrypoint-initdb.d/init_shard_suggestion.sql
-      - ./mysql-kyoku-shard-suggestion-data/data:/var/lib/mysql
+
+      - ./mysql-data/mysql-kyoku-shard-suggestion-data/data:/var/lib/mysql
 
   mysql-paging-shard:
     image: mysql:8.4.0
@@ -67,7 +69,8 @@ services:
       - "3311:3306"
     volumes:
       - ./mysql/init_shard_paging.sql:/docker-entrypoint-initdb.d/init_shard_paging.sql
-      - ./mysql-kyoku-shard-paging-data/data:/var/lib/mysql
+      
+      - ./mysql-data/mysql-kyoku-shard-paging-data/data:/var/lib/mysql
 
   redis-kyoku:
     image: redis/redis-stack:latest
