@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5e37529d-3aa6-4b36-a6cc-df1b064357cc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/di/AddViewmodelModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/data/src/main/java/com/poulastaa/add/data/di/AddViewmodelModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/di/AddNetworkViewmodelModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/mapper/AddNetworkMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/network/src/main/java/com/poulastaa/add/network/mapper/AddNetworkMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/album/AddAlbumCompactScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistCompactScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistCompactScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistExtendedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistExtendedScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistRootScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistRootScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistViewmodel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/AddArtistViewmodel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/components/AddArtistCard.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/add/presentation/src/main/java/com/poulastaa/add/presentation/artist/components/AddArtistCard.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/mapper/CoreDatabaseRootMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/repository/RoomLocalViewSavedItemDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/database/src/main/java/com/poulastaa/core/database/repository/RoomLocalViewSavedItemDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/repository/LocalViewSavedItemDatasource.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/core/domain/src/main/java/com/poulastaa/core/domain/repository/LocalViewSavedItemDatasource.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Kyoku/view_all/data/src/main/java/com/poulastaa/view/data/mapper/ViewDataMapper.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/AuthenticationService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/AuthenticationService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/JWTRepositoryService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/data/src/main/kotlin/com/poulastaa/auth/data/repository/JWTRepositoryService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build-logic/convention/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build-logic/convention/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth/network/src/main/kotlin/com/poulastaa/auth/network/routes/ResetPassword.kt" beforeDir="false" afterPath="$PROJECT_DIR$/auth/network/src/main/kotlin/com/poulastaa/auth/network/routes/ResetPassword.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +108,7 @@
       <recent name="com.poulastaa.core.database.repository.view" />
     </key>
   </component>
-  <component name="RunManager" selected="Ktor.app">
+  <component name="RunManager" selected="Application.app">
     <configuration name="app" type="Application" factoryName="Application">
       <envs>
         <env name="BASE_URL" value="http://kyoku.poulastaa.shop:9292/" />
@@ -179,16 +163,7 @@
     </configuration>
     <list>
       <item itemvalue="Application.app" />
-      <item itemvalue="Ktor.app" />
     </list>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -276,6 +251,14 @@
       <workItem from="1747841422878" duration="6638000" />
       <workItem from="1747926717498" duration="8721000" />
       <workItem from="1747940642320" duration="1883000" />
+      <workItem from="1747976025462" duration="8000" />
+      <workItem from="1747982259970" duration="2325000" />
+      <workItem from="1748013224634" duration="5516000" />
+      <workItem from="1748027968476" duration="74000" />
+      <workItem from="1748062157797" duration="608000" />
+      <workItem from="1748063344782" duration="4015000" />
+      <workItem from="1748147625654" duration="5701000" />
+      <workItem from="1748634115938" duration="2208000" />
     </task>
     <servers />
   </component>

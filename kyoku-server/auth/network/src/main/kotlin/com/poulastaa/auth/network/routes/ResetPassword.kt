@@ -38,7 +38,7 @@ fun Route.resetPassword(
 
                 ResetPasswordStatusDto.SERVER_ERROR -> responseVerificationMailHtml(
                     headingColor = "#e65353",
-                    heading = "Error",
+                    heading = "Authentication Failed",
                     title = "Error Occurred",
                     content1 = "Opp's Something went wrong.",
                     content2 = "Please try again."
