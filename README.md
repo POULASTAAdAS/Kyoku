@@ -10,7 +10,11 @@
 
 ---
 
-**Design Link -** [Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=0-1&t=2KhBi5HUyz2zrDJk-1)
+<iframe
+  src="https://www.figma.com/embed?embed_host=github&url=https://www.figma.com/file/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=597-462"
+  style="width:100%;height:600px;border:0;"
+  allowfullscreen>
+</iframe>
 
 ---
 
