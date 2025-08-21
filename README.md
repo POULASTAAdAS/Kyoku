@@ -12,6 +12,8 @@
 
 ## **Design Link -** [Figma](https://www.figma.com/design/9P5gHYSzu2LtQocpmQ0dBF/Kyoku?node-id=597-462&p=f&t=hhXIQXoqwON4U8Fb-0)
 
+---
+
 ## <h2  align='center'>Description</h2>
 
 > Kyoku is a music streaming application like Spotify or apple music
@@ -82,7 +84,7 @@
 ### Clone Repo
 
 ```sh
-git  clone  https://github.com/POULASTAAdAS/Movie-Browsing-App.git
+git  clone  https://github.com/POULASTAAdAS/Kyoku.git
 ```
 
 ## <h2  align='center'>License</h2>
