@@ -2,9 +2,9 @@
 
 ## <h2  align='center'>Showcase</h2>
 
-<a  href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/kyoku%20showcase.svg">
+<a  href="./ss/kyoku showcase.svg">
 
-<img  src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/kyoku%20showcase.svg"  alt="ShowCase">
+<img  src="./ss/kyoku showcase.svg"  alt="ShowCase">
 
 </a>
 
@@ -24,32 +24,32 @@
 
 ### Compact
 
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/google%20auth.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/google%20auth.gif" width="200" height="400" alt="Auth Preview">
+<a href="./ss/dark/compat/google auth.gif">
+    <img src="./ss/dark/compat/google auth.gif" width="200" height="400" alt="Auth Preview">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/import%20playlist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/import%20playlist.gif" width="200" height="400" alt="Import Playlist">
+<a href="./ss/dark/compat/import playlist.gif">
+    <img src="./ss/dark/compat/import playlist.gif" width="200" height="400" alt="Import Playlist">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20genre.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20genre.gif" width="200" height="400" alt="Select Genre">
+<a href="./ss/dark/compat/select artist.gif">
+    <img src="./ss/dark/compat/select artist.gif" width="200" height="400" alt="Select Genre">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20artist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/dark/compat/select%20artist.gif" width="200" height="400" alt="Select Artist">
+<a href="./ss/dark/compat/select genre.gif">
+    <img src="./ss/dark/compat/select genre.gif" width="200" height="400" alt="Select Artist">
 </a>
 
 ### Expanded
 
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/email%20auth.gif" width="400" height="230" alt="Auth Preview">
+<a href="./ss/light/extended/email auth.gif">
+    <img src="./ss/light/extended/email auth.gif" width="400" height="230" alt="Auth Preview">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/import%20playlist.gif" width="400" height="230" alt="Import Playlist">
+<a href="./ss/light/extended/import playlist.gif">
+    <img src="./ss/light/extended/import playlist.gif" width="400" height="230" alt="Import Playlist">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20genre.gif" width="400" height="230" alt="Select Genre">
+<a href="./ss/light/extended/select artist.gif">
+    <img src="./ss/light/extended/select artist.gif" width="400" height="230" alt="Select Genre">
 </a>
-<a href="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif">
-    <img src="https://github.com/POULASTAAdAS/Kyoku/blob/dev/ss/light/extended/select%20artist.gif" width="400" height="230" alt="Select Artist">
+<a href="./ss/light/extended/select genre.gif">
+    <img src="./ss/light/extended/select genre.gif" width="400" height="230" alt="Select Artist">
 </a>
 
 <br>
@@ -84,7 +84,7 @@
 ### Clone Repo
 
 ```sh
-git  clone  https://github.com/POULASTAAdAS/Movie-Browsing-App.git
+git clone --branch attempt-3 --single-branch https://github.com/POULASTAAdAS/Kyoku.git
 ```
 
 ### Docker
