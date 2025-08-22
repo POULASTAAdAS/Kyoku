@@ -1,91 +1,43 @@
 services:
-  mysql-kyoku-user:
+  kyoku-user-mysql:
     image: mysql:8.4.0
-    container_name: mysql-kyoku-user
+    container_name: kyoku-user-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_USER_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
     ports:
-      - "3307:3306"
+      - "1050:3306"
     volumes:
-      - ./mysql/init_user.sql:/docker-entrypoint-initdb.d/init_user.sql
-      - ./mysql-kyoku-user-data/data:/var/lib/mysql
-
-  mysql-kyoku:
+      - ./mysql/user_db.sql:/docker-entrypoint-initdb.d/user_db.sql
+      - ./mysql-data/kyoku-user-data/data:/var/lib/mysql
+  kyoku-activity-mysql:
     image: mysql:8.4.0
-    container_name: mysql-kyoku
+    container_name: kyoku-activity-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
     ports:
-      - "3308:3306"
-    volumes: # nameing sequence of the files are important
-      - ./mysql/001_init_kyoku.sql:/docker-entrypoint-initdb.d/001_init_kyoku.sql
+      - "1051:3306"
+    volumes:
+      - ./mysql/activity_db.sql:/docker-entrypoint-initdb.d/activity_db.sql
+      - ./mysql-data/kyoku-activity-data/data:/var/lib/mysql
 
-      - ./mysql/insert/01_EntryAlbum.sql:/docker-entrypoint-initdb.d/01_EntryAlbum.sql
-      - ./mysql/insert/02_EntryArtist.sql:/docker-entrypoint-initdb.d/02_EntryArtist.sql
-      - ./mysql/insert/03_EntryCountry.sql:/docker-entrypoint-initdb.d/03_EntryCountry.sql
-      - ./mysql/insert/04_EntryGenre.sql:/docker-entrypoint-initdb.d/04_EntryGenre.sql
-      - ./mysql/insert/05_EntrySong.sql:/docker-entrypoint-initdb.d/05_EntrySong.sql
-      - ./mysql/insert/06_EntrySongInfo.sql:/docker-entrypoint-initdb.d/06_EntrySongInfo.sql
-
-      - ./mysql/insert/EntryRelationArtistAlbum.sql:/docker-entrypoint-initdb.d/EntryRelationArtistAlbum.sql
-      - ./mysql/insert/EntryRelationArtistCountry.sql:/docker-entrypoint-initdb.d/EntryRelationArtistCountry.sql
-      - ./mysql/insert/EntryRelationArtistGenre.sql:/docker-entrypoint-initdb.d/EntryRelationArtistGenre.sql
-      - ./mysql/insert/EntryRelationSongAlbum.sql:/docker-entrypoint-initdb.d/EntryRelationSongAlbum.sql
-      - ./mysql/insert/EntryRelationSongArtist.sql:/docker-entrypoint-initdb.d/EntryRelationSongArtist.sql
-      - ./mysql/insert/EntryRelationSongGenre.sql:/docker-entrypoint-initdb.d/EntryRelationSongGenre.sql
-
-      - ./mysql-data/mysql-kyoku-data/data:/var/lib/mysql
-
-  mysql-genre-artist-shard:
+  kyoku-playlist-mysql:
     image: mysql:8.4.0
-    container_name: mysql-genre-artist-shard
+    container_name: kyoku-playlist-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
     ports:
-      - "3309:3306"
+      - "1052:3306"
     volumes:
-      - ./mysql/init_shard_genre_artist.sql:/docker-entrypoint-initdb.d/init_shard_genre_artist.sql
+      - ./mysql/playlist_db.sql:/docker-entrypoint-initdb.d/playlist_db.sql
+      - ./mysql-data/kyoku-playlist-data/data:/var/lib/mysql
 
-      - ./mysql-data/mysql-kyoku-shard-genre-artist-data/data:/var/lib/mysql
-
-  mysql-suggestion-shard:
+  kyoku-content-mysql:
     image: mysql:8.4.0
-    container_name: mysql-suggestion-shard
+    container_name: kyoku-content-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
     ports:
-      - "3310:3306"
+      - "1053:3306"
     volumes:
-      - ./mysql/init_shard_suggestion.sql:/docker-entrypoint-initdb.d/init_shard_suggestion.sql
-
-      - ./mysql-data/mysql-kyoku-shard-suggestion-data/data:/var/lib/mysql
-
-  mysql-paging-shard:
-    image: mysql:8.4.0
-    container_name: mysql-paging-shard
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "3311:3306"
-    volumes:
-      - ./mysql/init_shard_paging.sql:/docker-entrypoint-initdb.d/init_shard_paging.sql
-      
-      - ./mysql-data/mysql-kyoku-shard-paging-data/data:/var/lib/mysql
-
-  redis-kyoku:
-    image: redis/redis-stack:latest
-    container_name: redis-kyoku
-    restart: always
-    ports:
-      - "6380:6379"
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-    command: [
-      "redis-server",
-      "--requirepass",
-      "${REDIS_PASSWORD}",
-      "--appendonly",
-      "yes"
-    ]
-    volumes:
-      - "./redis-data/data:/data"
+      - ./mysql/content_db.sql:/docker-entrypoint-initdb.d/content_db.sql
+      - ./mysql-data/kyoku-content-data/data:/var/lib/mysql
