@@ -1,2 +1,2 @@
 docker/.env
-docker/mysql-data/
+docker/data/

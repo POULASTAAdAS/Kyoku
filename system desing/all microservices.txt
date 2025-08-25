@@ -1,15 +1,18 @@
-api-gateway
+api-gateway(reverse-proxy)
 
+service-discovery
+
+notification-service (manage notifications)
 request-validation (validate each request)
 auth-service (singup/signin user, refreshtoken , forgotpassowrd)
 user-service (profile managemnet)
 playlist-service (manage playlist)
 activity-service (manage album , artist , favourite , pinned , history)
+content-service (serve data, metadata)
 recommendation-service(suggest new song , album , playlist, genre based on user data)
 search-service(any kind of searching reaturns id which data will be picked from content-service)
-content-service (serve data, metadata)
-player-service (manage user playing song)
-streaming-service (stream songs)
+streaming-service (stream songs, manage user playing song)
 file-service (serve static files)
-analytical-service (manage numbers - play count , popularity etc)
-notification-service (manage notifications)
+
+
+create if needed -> analytical-service (manage numbers - play count , popularity etc)
