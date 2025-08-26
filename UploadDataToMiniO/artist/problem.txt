@@ -1,3 +1,0 @@
-(7538 , 'Pradeep Pandey "Chintu"' , null),
-(8442 , 'Ratnesh Singh "Rudra"' , null),
-(8462 , 'Ravi "Rags"' , null),
