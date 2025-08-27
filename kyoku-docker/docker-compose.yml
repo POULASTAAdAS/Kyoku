@@ -112,6 +112,140 @@ services:
       - user-replica3
 
 
+  playlist-primary:
+    image: mysql:8.4.0
+    container_name: playlist-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_PLAYLIST_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_PLAYLIST_REPLICATION_PASSWORD}
+    ports:
+      - "1010:3306"
+    volumes:
+      - ./mysql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      
+      - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=PLAYLIST
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+
+  playlist-replica1:
+    image: mysql:8.4.0
+    container_name: playlist-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+    ports:
+      - "1011:3306"
+    volumes:
+      - ./data/mysql/data/playlist-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+  playlist-replica2:
+    image: mysql:8.4.0
+    container_name: playlist-replica2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+    ports:
+      - "1012:3306"
+    volumes:
+      - ./data/mysql/data/playlist-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  playlist-replica3:
+    image: mysql:8.4.0
+    container_name: playlist-replica3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+    ports:
+      - "1013:3306"
+    volumes:
+      - ./data/mysql/data/playlist-replica3/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+    command: >
+      --server-id=4
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  playlist-replica4:
+    image: mysql:8.4.0
+    container_name: playlist-replica4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+    ports:
+      - "1014:3306"
+    volumes:
+      - ./data/mysql/data/playlist-replica4/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+    command: >
+      --server-id=5
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  playlist-proxysql:
+    image: proxysql/proxysql:2.5.5
+    container_name: playlist-proxysql
+    ports:
+      - "1015:6033"
+      - "1016:6032"
+    volumes:
+      - ./mysql/playlist/proxy/proxysql.conf:etc/proxysql.conf:ro
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+      - playlist-replica1
+      - playlist-replica2
+      - playlist-replica3
+      - playlist-replica4
+
+
   # kyoku-activity-mysql:
   #   image: mysql:8.4.0
   #   container_name: kyoku-activity-mysql
@@ -125,17 +259,6 @@ services:
       
   #     - ./data/mysql-data/kyoku-activity-data/data:/var/lib/mysql
 
-  # kyoku-playlist-mysql:
-  #   image: mysql:8.4.0
-  #   container_name: kyoku-playlist-mysql
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-  #   ports:
-  #     - "1052:3306"
-  #   volumes:
-  #     - ./mysql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
-      
-  #     - ./data/mysql-data/kyoku-playlist-data/data:/var/lib/mysql
 
   # kyoku-content-mysql:
   #   image: mysql:8.4.0

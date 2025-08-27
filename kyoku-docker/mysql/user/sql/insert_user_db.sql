@@ -71,3 +71,8 @@ VALUES
     (70, "Serbia", "RS"),
     (71, "Ghana", "GH"),
     (72, "New Zealand", "NZ");
+
+INSERT IGNORE INTO UserType (id, `type`)
+VALUES
+    (1, 'GOOGLE'),
+    (2, 'EMAIL');
