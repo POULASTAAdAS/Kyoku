@@ -1,2 +1,4 @@
 data/
 .env
+mysql/user/proxy/proxysql.conf
+mysql/user/sql/setup-replication-master.sql

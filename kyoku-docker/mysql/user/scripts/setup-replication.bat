@@ -25,8 +25,8 @@ echo [INFO] Root password: %MYSQL_ROOT_USER_PASSWORD%
 echo [INFO] Replication user: %MYSQL_USER_REPLICATION_USER%
 
 REM Wait for services to be ready
-echo [INFO] Waiting 10 seconds for services to be ready...
-timeout /t 10 /nobreak >nul
+echo [INFO] Waiting 5 seconds for services to be ready...
+timeout /t 5 /nobreak >nul
 
 REM Test primary connection
 echo [INFO] Testing primary connection...
