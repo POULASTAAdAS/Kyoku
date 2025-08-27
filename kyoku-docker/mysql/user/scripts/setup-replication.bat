@@ -22,7 +22,7 @@ for /f "usebackq tokens=1,2 delims==" %%i in ( ".env") do (
 )
 
 echo [INFO] Root password: %MYSQL_ROOT_USER_PASSWORD%
-echo [INFO] Replication user: %MYSQL_USER_REPLICATION_USER_USER%
+echo [INFO] Replication user: %MYSQL_USER_REPLICATION_USER%
 
 REM Wait for services to be ready
 echo [INFO] Waiting 10 seconds for services to be ready...
@@ -33,7 +33,7 @@ echo [INFO] Testing primary connection...
 set "attempts=0"
 :test_primary
 set /a attempts+=1
-docker exec db-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SELECT 1;" >nul 2>&1
+docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SELECT 1;" >nul 2>&1
 if !errorlevel! equ 0 (
     echo [SUCCESS] Primary database is ready!
     goto :setup_replicas
@@ -50,20 +50,20 @@ goto :test_primary
 :setup_replicas
 REM Verify replication user exists on primary
 echo [INFO] Verifying replication user on primary...
-docker exec db-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SELECT User, Host FROM mysql.user WHERE User = '%MYSQL_USER_REPLICATION_USER_USER%';"
+docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SELECT User, Host FROM mysql.user WHERE User = '%MYSQL_USER_REPLICATION_USER%';"
 
 REM CHANGE: Fixed MySQL 8.x syntax - use "SHOW BINARY LOG STATUS" instead of "SHOW MASTER STATUS"
 echo [INFO] Getting binary log status...
-docker exec db-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW BINARY LOG STATUS;"
+docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW BINARY LOG STATUS;"
 
 REM CHANGE: Also show GTID status to verify GTID mode is working
 echo [INFO] Checking GTID mode on primary...
-docker exec db-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW VARIABLES LIKE 'gtid_mode';"
+docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW VARIABLES LIKE 'gtid_mode';"
 
 REM Setup each replica
-call :setup_replica db-replica1
-call :setup_replica db-replica2  
-call :setup_replica db-replica3
+call :setup_replica user-replica1
+call :setup_replica user-replica2  
+call :setup_replica user-replica3
 
 echo [SUCCESS] Replication setup complete!
 echo [INFO] Checking status in 5 seconds...
@@ -73,9 +73,9 @@ REM Check final status
 echo ================================================
 echo            Replication Status Check
 echo ================================================
-call :check_replica_status db-replica1
-call :check_replica_status db-replica2
-call :check_replica_status db-replica3
+call :check_replica_status user-replica1
+call :check_replica_status user-replica2
+call :check_replica_status user-replica3
 
 echo [INFO] Setup completed. Press any key to exit.
 pause
@@ -110,7 +110,7 @@ docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW VA
 
 REM CHANGE: Using MySQL 8.x syntax - CHANGE REPLICATION SOURCE instead of CHANGE MASTER
 echo [INFO] Setting up replication for %replica_name%...
-docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "STOP REPLICA; RESET REPLICA ALL; CHANGE REPLICATION SOURCE TO SOURCE_HOST='db-primary', SOURCE_USER='%MYSQL_USER_REPLICATION_USER_USER%', SOURCE_PASSWORD='%MYSQL_USER_REPLICATION_USER_PASSWORD%', SOURCE_AUTO_POSITION=1, GET_SOURCE_PUBLIC_KEY=1; START REPLICA;"
+docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "STOP REPLICA; RESET REPLICA ALL; CHANGE REPLICATION SOURCE TO SOURCE_HOST='user-primary', SOURCE_USER='%MYSQL_USER_REPLICATION_USER%', SOURCE_PASSWORD='%MYSQL_USER_REPLICATION_PASSWORD%', SOURCE_AUTO_POSITION=1, GET_SOURCE_PUBLIC_KEY=1; START REPLICA;"
 
 if !errorlevel! equ 0 (
     echo [SUCCESS] %replica_name% configured successfully!

@@ -63,11 +63,11 @@ echo   mysql\user\scripts\check-replication.bat  - Check replication status
 echo   mysql\user\scripts\test-replication.bat   - Test replication functionality
 echo.
 echo [INFO] Connection details:
-echo   Primary (Master): localhost:1050
-echo   Replica 1:        localhost:1051  
-echo   Replica 2:        localhost:1052
-echo   Replica 3:        localhost:1053
-echo   ProxySQL:         localhost:1054 (MySQL) / localhost:1055 (Admin)
+echo   Primary (Master): localhost:1000
+echo   Replica 1:        localhost:1001  
+echo   Replica 2:        localhost:1002
+echo   Replica 3:        localhost:1003
+echo   ProxySQL:         localhost:1004 (MySQL) / localhost:1005 (Admin)
 echo.
 echo [INFO] Press any key to exit.
 pause

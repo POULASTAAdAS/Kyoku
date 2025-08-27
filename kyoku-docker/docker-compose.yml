@@ -1,101 +1,206 @@
 services:
-  kyoku-user-mysql:
+  user-primary:
     image: mysql:8.4.0
-    container_name: kyoku-user-mysql
+    container_name: user-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_USER_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_USER_REPLICATION_PASSWORD}
+    ports:
+      - "1000:3306"
+    volumes:
+      - ./mysql/user/sql/01_user_db.sql:/docker-entrypoint-initdb.d/01_user_db.sql
+      - ./mysql/user/sql/insert_user_db.sql:/docker-entrypoint-initdb.d/insert_user_db.sql
+      - ./mysql/user/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+
+      - ./data/mysql/data/user-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=USER
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+
+  user-replica1:
+    image: mysql:8.4.0
+    container_name: user-replica1
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
     ports:
-      - "1050:3306"
+      - "1001:3306"
     volumes:
-      - ./mysql/1_user_db.sql:/docker-entrypoint-initdb.d/1_user_db.sql
-      - ./mysql/insert_user_db.sql:/docker-entrypoint-initdb.d/insert_user_db.sql
+      - ./data/mysql/data/user-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - user-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
 
-      - ./data/mysql-data/kyoku-user-data/data:/var/lib/mysql
-      
-  kyoku-activity-mysql:
+
+  user-replica2:
     image: mysql:8.4.0
-    container_name: kyoku-activity-mysql
+    container_name: user-replica2
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
     ports:
-      - "1051:3306"
+      - "1002:3306"
     volumes:
-      - ./mysql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
-      - ./mysql/insert_activity_db.sql:/docker-entrypoint-initdb.d/insert_activity_db.sql
-      
-      - ./data/mysql-data/kyoku-activity-data/data:/var/lib/mysql
+      - ./data/mysql/data/user-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - user-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
 
-  kyoku-playlist-mysql:
+
+  user-replica3:
     image: mysql:8.4.0
-    container_name: kyoku-playlist-mysql
+    container_name: user-replica3
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
     ports:
-      - "1052:3306"
+      - "1003:3306"
     volumes:
-      - ./mysql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      - ./data/mysql/data/user-replica3/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - user-primary
+    command: >
+      --server-id=4
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  user-proxysql:
+    image: proxysql/proxysql:2.5.5
+    container_name: user-proxysql
+    ports:
+      - "1004:6033"
+      - "1005:6032"
+    volumes:
+      - ./mysql/user/proxy/proxysql.conf:/etc/proxysql.conf:ro
+    networks:
+      - db-network
+    depends_on:
+      - user-primary
+      - user-replica1
+      - user-replica2
+      - user-replica3
+
+
+  # kyoku-activity-mysql:
+  #   image: mysql:8.4.0
+  #   container_name: kyoku-activity-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+  #   ports:
+  #     - "1051:3306"
+  #   volumes:
+  #     - ./mysql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
+  #     - ./mysql/insert_activity_db.sql:/docker-entrypoint-initdb.d/insert_activity_db.sql
       
-      - ./data/mysql-data/kyoku-playlist-data/data:/var/lib/mysql
+  #     - ./data/mysql-data/kyoku-activity-data/data:/var/lib/mysql
 
-  kyoku-content-mysql:
-    image: mysql:8.4.0
-    container_name: kyoku-content-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-    ports:
-      - "1053:3306"
-    volumes:
-      - ./mysql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
-      - ./mysql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
-      - ./mysql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
-      - ./mysql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
-      - ./mysql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
-      - ./mysql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
-      - ./mysql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
+  # kyoku-playlist-mysql:
+  #   image: mysql:8.4.0
+  #   container_name: kyoku-playlist-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+  #   ports:
+  #     - "1052:3306"
+  #   volumes:
+  #     - ./mysql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      
+  #     - ./data/mysql-data/kyoku-playlist-data/data:/var/lib/mysql
 
-      - ./mysql/20_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/20_insert_content_db_relation_artist_album.sql
-      - ./mysql/21_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/21_insert_content_db_relation_artist_country.sql
-      - ./mysql/22_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/22_insert_content_db_relation_artist_genre.sql
-      - ./mysql/23_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/23_insert_content_db_relation_song_album.sql
-      - ./mysql/24_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/24_insert_content_db_relation_song_artist.sql
-      - ./mysql/25_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/25_insert_content_db_relation_song_genre.sql
+  # kyoku-content-mysql:
+  #   image: mysql:8.4.0
+  #   container_name: kyoku-content-mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+  #   ports:
+  #     - "1053:3306"
+  #   volumes:
+  #     - ./mysql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
+  #     - ./mysql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
+  #     - ./mysql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
+  #     - ./mysql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
+  #     - ./mysql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
+  #     - ./mysql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
+  #     - ./mysql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
 
-      - ./data/mysql-data/kyoku-content-data/data:/var/lib/mysql
+  #     - ./mysql/20_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/20_insert_content_db_relation_artist_album.sql
+  #     - ./mysql/21_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/21_insert_content_db_relation_artist_country.sql
+  #     - ./mysql/22_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/22_insert_content_db_relation_artist_genre.sql
+  #     - ./mysql/23_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/23_insert_content_db_relation_song_album.sql
+  #     - ./mysql/24_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/24_insert_content_db_relation_song_artist.sql
+  #     - ./mysql/25_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/25_insert_content_db_relation_song_genre.sql
 
-  kyoku-file-minio:
-    image: minio/minio:latest
-    container_name: kyoku-file-minio
-    restart: always
-    ports:
-      - "1080:9000"   # API port
-      - "1081:9001"   # Console port
-    environment:
-      MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - G:/minio/file/upload-storage:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+  #     - ./data/mysql-data/kyoku-content-data/data:/var/lib/mysql
 
-  kyoku-song-minio:
-    image: minio/minio:latest
-    container_name: kyoku-song-minio
-    restart: always
-    ports:
-      - "1082:9000"   # API port
-      - "1083:9001"   # Console port
-    environment:
-      MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
-    command: server /data --console-address ":9001"
-    volumes:
-      - G:/minio/song/upload-storage:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+  # kyoku-file-minio:
+  #   image: minio/minio:latest
+  #   container_name: kyoku-file-minio
+  #   restart: always
+  #   ports:
+  #     - "1080:9000"   # API port
+  #     - "1081:9001"   # Console port
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - G:/minio/file/upload-storage:/data
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     interval: 30s
+  #     timeout: 20s
+  #     retries: 3
+
+  # kyoku-song-minio:
+  #   image: minio/minio:latest
+  #   container_name: kyoku-song-minio
+  #   restart: always
+  #   ports:
+  #     - "1082:9000"   # API port
+  #     - "1083:9001"   # Console port
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - G:/minio/song/upload-storage:/data
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     interval: 30s
+  #     timeout: 20s
+  #     retries: 3
+
+
+networks:
+  db-network:
+    driver: bridge
