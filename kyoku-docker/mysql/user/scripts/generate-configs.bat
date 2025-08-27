@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 echo ================================================
 echo       Generating Configuration Files
 echo ================================================
-
+pushd "%~dp0..\..\.."
 REM Check if .env file exists
 if not exist ".env" (
     echo [ERROR] .env file not found in root directory.
@@ -22,14 +22,14 @@ for /f "usebackq tokens=1,2 delims==" %%i in (".env") do (
 REM Check if template files exist
 if not exist "mysql\user\proxy\proxysql.conf.template" (
     echo [ERROR] proxysql.conf.template not found!
-    echo [INFO] Please create the template file first. At path mysql\user\proxy\ with name (proxysql.conf.template)
+    echo [INFO] Please create the template file first.
     pause
     exit /b 1
 )
 
 if not exist "mysql\user\sql\setup-replication-master.sql.template" (
     echo [ERROR] setup-replication-master.sql.template not found!
-    echo [INFO] Please create the template file first. At path mysql\user\sql\ with name (setup-replication-master.sql.template)
+    echo [INFO] Please create the template file first.
     pause
     exit /b 1
 )

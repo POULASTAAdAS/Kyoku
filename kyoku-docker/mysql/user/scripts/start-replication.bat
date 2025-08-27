@@ -18,9 +18,9 @@ echo [INFO] Docker is running!
 echo.
 
 REM Generate configuration files from templates
-echo ----------------------------------------
-echo   Step 0: Generate configuration files
-echo ----------------------------------------
+REM  ----------------------------------------
+REM    Step 0: Generate configuration files
+REM  ----------------------------------------
 call mysql\user\scripts\generate-configs.bat
 
 if !errorlevel! neq 0 (
