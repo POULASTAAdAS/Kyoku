@@ -1,0 +1,74 @@
+@echo off
+setlocal enabledelayedexpansion
+
+echo ================================================
+echo       MySQL Replication Complete Setup
+echo ================================================
+
+REM Check if Docker is running
+docker --version >nul 2>&1
+if !errorlevel! neq 0 (
+    echo [ERROR] Docker is not running or not installed!
+    echo [INFO] Please start Docker Desktop and try again.
+    pause
+    exit /b 1
+)
+
+echo [INFO] Docker is running!
+echo.
+
+REM Start Docker services
+echo ----------------------------------------
+echo   Step 1: Starting Docker services
+echo ----------------------------------------
+echo [INFO] Starting all services with docker-compose...
+docker-compose up -d
+
+if !errorlevel! neq 0 (
+    echo [ERROR] Failed to start Docker services!
+    echo [INFO] Check your docker-compose.yml file and try again.
+    pause
+    exit /b 1
+)
+
+echo [SUCCESS] Docker services started!
+echo.
+
+REM Wait for services to initialize
+echo [INFO] Waiting 30 seconds for all services to initialize...
+echo [INFO] This includes MySQL initialization and ProxySQL setup...
+timeout /t 30 /nobreak >nul
+
+REM Run replication setup
+echo ----------------------------------------
+echo   Step 2: Setting up replication (setup-replication.bat)
+echo ----------------------------------------
+call mysql\user\scripts\setup-replication.bat
+
+echo.
+echo ----------------------------------------
+echo   Step 3: Testing replication (test-replication.bat)
+echo ----------------------------------------
+echo [INFO] Running replication test...
+call mysql\user\scripts\test-replication.bat
+
+echo.
+echo ================================================
+echo              Setup Complete!
+echo ================================================
+echo [INFO] Your MySQL Master-Slave replication is now configured.
+echo [INFO] You can use the following scripts for monitoring:
+echo.
+echo   mysql\user\scripts\check-replication.bat  - Check replication status
+echo   mysql\user\scripts\test-replication.bat   - Test replication functionality
+echo.
+echo [INFO] Connection details:
+echo   Primary (Master): localhost:1050
+echo   Replica 1:        localhost:1051  
+echo   Replica 2:        localhost:1052
+echo   Replica 3:        localhost:1053
+echo   ProxySQL:         localhost:1054 (MySQL) / localhost:1055 (Admin)
+echo.
+echo [INFO] Press any key to exit.
+pause
+

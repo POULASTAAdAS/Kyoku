@@ -1,0 +1,112 @@
+services:
+  db-primary:
+    image: mysql:8.4.0
+    container_name: db-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_USER_REPLICATION_USER_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_USER_REPLICATION_USER_PASSWORD}
+    ports:
+      - "1050:3306"
+    volumes:
+      - ./mysql/user/sql/1_user_db.sql:/docker-entrypoint-initdb.d/1_user_db.sql
+      - ./mysql/user/sql/insert_user_db.sql:/docker-entrypoint-initdb.d/insert_user_db.sql
+      - ./mysql/user/user-setup-replication-master.sql:/docker-entrypoint-initdb.d/user-setup-replication-master.sql
+
+      - ./data/mysql/user/db-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=USER
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+  db-replica1:
+    image: mysql:8.4.0
+    container_name: db-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+    ports:
+      - "1051:3306"
+    volumes:
+      - ./data/mysql/user/db-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - db-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+    
+  db-replica2:
+    image: mysql:8.4.0
+    container_name: db-replica2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+    ports:
+      - "1052:3306"
+    volumes:
+      - ./data/mysql/user/db-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - db-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+  db-replica3:
+    image: mysql:8.4.0
+    container_name: db-replica3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+    ports:
+      - "1053:3306"
+    volumes:
+      - ./data/mysql/user/db-replica3/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - db-primary
+    command: >
+      --server-id=4
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+  user-proxysql:
+    image: proxysql/proxysql:2.5.5
+    container_name: user-proxysql
+    ports:
+      - "1054:6033"
+      - "1055:6032"
+    volumes:
+      - ./mysql/user/proxy/user-proxysql.cnf:/etc/proxysql.cnf:ro
+    networks:
+      - db-network
+    depends_on:
+      - db-primary
+      - db-replica1
+      - db-replica2
+      - db-replica3
+
+networks:
+  db-network:
+    driver: bridge
