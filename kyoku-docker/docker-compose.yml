@@ -122,7 +122,8 @@ services:
     ports:
       - "1010:3306"
     volumes:
-      - ./mysql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      - ./mysql/playlist/sql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      - ./mysql/playlist/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
       
       - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
     networks:
@@ -235,7 +236,7 @@ services:
       - "1015:6033"
       - "1016:6032"
     volumes:
-      - ./mysql/playlist/proxy/proxysql.conf:etc/proxysql.conf:ro
+      - ./mysql/playlist/proxy/proxysql.conf:/etc/proxysql.conf:ro
     networks:
       - db-network
     depends_on:

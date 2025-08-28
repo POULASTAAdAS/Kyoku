@@ -50,7 +50,7 @@ goto :test_primary
 :setup_replicas
 REM Verify replication user exists on primary
 echo [INFO] Verifying replication user on primary...
-docker exec playlist-primary mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SELECT User, Host FROM mysql.user WHERE User = '%MYSQL_USER_REPLICATION_USER%';"
+docker exec playlist-primary mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SELECT User, Host FROM mysql.user WHERE User = '%MYSQL_PLAYLIST_REPLICATION_USER%';"
 
 REM CHANGE: Fixed MySQL 8.x syntax - use "SHOW BINARY LOG STATUS" instead of "SHOW MASTER STATUS"
 echo [INFO] Getting binary log status...
@@ -112,7 +112,7 @@ docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHO
 
 REM CHANGE: Using MySQL 8.x syntax - CHANGE REPLICATION SOURCE instead of CHANGE MASTER
 echo [INFO] Setting up replication for %replica_name%...
-docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "STOP REPLICA; RESET REPLICA ALL; CHANGE REPLICATION SOURCE TO SOURCE_HOST='playlist-primary', SOURCE_USER='%MYSQL_USER_REPLICATION_USER%', SOURCE_PASSWORD='%MYSQL_USER_REPLICATION_PASSWORD%', SOURCE_AUTO_POSITION=1, GET_SOURCE_PUBLIC_KEY=1; START REPLICA;"
+docker exec %replica_name% mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "STOP REPLICA; RESET REPLICA ALL; CHANGE REPLICATION SOURCE TO SOURCE_HOST='playlist-primary', SOURCE_USER='%MYSQL_PLAYLIST_REPLICATION_USER%', SOURCE_PASSWORD='%MYSQL_PLAYLIST_REPLICATION_PASSWORD%', SOURCE_AUTO_POSITION=1, GET_SOURCE_PUBLIC_KEY=1; START REPLICA;"
 
 if !errorlevel! equ 0 (
     echo [SUCCESS] %replica_name% configured successfully!

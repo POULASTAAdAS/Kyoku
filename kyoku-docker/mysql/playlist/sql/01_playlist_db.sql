@@ -16,6 +16,9 @@ CREATE TABLE
         INDEX idx_playlist_name (`name`)
     );
 
+
+
+
 CREATE TABLE
     SongPlaylist (
         song_id BIGINT NOT NULL,
