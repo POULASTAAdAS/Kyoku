@@ -4,20 +4,6 @@ setlocal enabledelayedexpansion
 echo ================================================
 echo       MySQL PLAYLIST Database Setup
 echo ================================================
-REM Generate configuration files from templates
-echo  ----------------------------------------
-echo    Step 1: Generate configuration files
-echo  ----------------------------------------
-call mysql\playlist\scripts\generate-configs.bat
-
-if !errorlevel! neq 0 (
-    echo [ERROR] Failed to generate configuration files!
-    pause
-    exit /b 1
-)
-
-echo.
-
 REM Run replication setup
 echo ----------------------------------------
 echo   Step 2: Setting up replication

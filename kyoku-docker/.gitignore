@@ -2,3 +2,9 @@ data/
 .env
 mysql/user/proxy/proxysql.conf
 mysql/user/sql/setup-replication-master.sql
+mysql/playlist/proxy/proxysql.conf
+mysql/playlist/sql/setup-replication-master.sql
+mysql/activity/proxy/proxysql.conf
+mysql/activity/sql/setup-replication-master.sql
+mysql/content/proxy/proxysql.conf
+mysql/content/sql/setup-replication-master.sql

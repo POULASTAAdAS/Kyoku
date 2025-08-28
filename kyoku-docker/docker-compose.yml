@@ -247,18 +247,118 @@ services:
       - playlist-replica4
 
 
-  # kyoku-activity-mysql:
-  #   image: mysql:8.4.0
-  #   container_name: kyoku-activity-mysql
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
-  #   ports:
-  #     - "1051:3306"
-  #   volumes:
-  #     - ./mysql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
-  #     - ./mysql/insert_activity_db.sql:/docker-entrypoint-initdb.d/insert_activity_db.sql
-      
-  #     - ./data/mysql-data/kyoku-activity-data/data:/var/lib/mysql
+  activity-primary:
+    image: mysql:8.4.0
+    container_name: activity-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_ACTIVITY_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_ACTIVITY_REPLICATION_PASSWORD}
+    ports:
+      - "1020:3306"
+    volumes:
+      - ./mysql/activity/sql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
+      - ./mysql/activity/sql/1_insert_activity_db.sql:/docker-entrypoint-initdb.d/1_insert_activity_db.sql
+      - ./mysql/activity/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+
+      - ./data/mysql/data/activity-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=ACTIVITY
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+
+  activity-replica1:
+    image: mysql:8.4.0
+    container_name: activity-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+    ports:
+      - "1021:3306"
+    volumes:
+      - ./data/mysql/data/activity-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - activity-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  activity-replica2:
+    image: mysql:8.4.0
+    container_name: activity-replica2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+    ports:
+      - "1022:3306"
+    volumes:
+      - ./data/mysql/data/activity-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - activity-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  activity-replica3:
+    image: mysql:8.4.0
+    container_name: activity-replica3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+    ports:
+      - "1023:3306"
+    volumes:
+      - ./data/mysql/data/activity-replica3/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - activity-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  activity-proxysql:
+    image: proxysql/proxysql:2.5.5
+    container_name: activity-proxysql
+    ports:
+      - "1024:6033"
+      - "1025:6032"
+    volumes:
+      - ./mysql/activity/proxy/proxysql.conf:/etc/proxysql.conf:ro
+    networks:
+      - db-network
+    depends_on:
+      - activity-primary
+      - activity-replica1
+      - activity-replica2
+      - activity-replica3
+
 
 
   # kyoku-content-mysql:

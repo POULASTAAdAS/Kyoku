@@ -24,38 +24,31 @@ for /f "usebackq tokens=1,2 delims==" %%i in (".env") do (
 echo ----------------------------------------
 echo           Master Status
 echo ----------------------------------------
-docker exec playlist-primary mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHOW MASTER STATUS;"
+docker exec activity-primary mysql -uroot -p%MYSQL_ROOT_ACTIVITY_PASSWORD% -e "SHOW MASTER STATUS;"
 
 echo.
 echo ----------------------------------------
 echo         Replica 1 Status
 echo ----------------------------------------
-docker exec playlist-replica1 mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
+docker exec activity-replica1 mysql -uroot -p%MYSQL_ROOT_ACTIVITY_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
 
 echo.
 echo ----------------------------------------
 echo         Replica 2 Status  
 echo ----------------------------------------
-docker exec playlist-replica2 mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
+docker exec activity-replica2 mysql -uroot -p%MYSQL_ROOT_ACTIVITY_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
 
 echo.
 echo ----------------------------------------
 echo         Replica 3 Status
 echo ----------------------------------------
-docker exec playlist-replica3 mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
-
-echo.
-echo ----------------------------------------
-echo         Replica 4 Status
-echo ----------------------------------------
-docker exec playlist-replica4 mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
-
+docker exec activity-replica3 mysql -uroot -p%MYSQL_ROOT_ACTIVITY_PASSWORD% -e "SHOW REPLICA STATUS\G" | findstr /C:"Replica_IO_Running" /C:"Replica_SQL_Running" /C:"Seconds_Behind_Source" /C:"Last_Error"
 
 echo.
 echo ----------------------------------------
 echo         ProxySQL Stats
 echo ----------------------------------------
-docker exec playlist-proxysql mysql -h127.0.0.1 -P6032 -uadmin -padmin -e "SELECT hostgroup_id, hostname, port, status, weight FROM mysql_servers;" 2>nul
+docker exec activity-proxysql mysql -h127.0.0.1 -P6032 -uadmin -padmin -e "SELECT hostgroup_id, hostname, port, status, weight FROM mysql_servers;" 2>nul
 
 if !errorlevel! neq 0 (
     echo [WARNING] ProxySQL may not be ready yet or configuration issue detected.
