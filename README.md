@@ -84,8 +84,23 @@
 ### Clone Repo
 
 ```sh
-git  clone  https://github.com/POULASTAAdAS/Kyoku.git
+git clone https://github.com/POULASTAAdAS/Kyoku.git
 ```
+
+```sh
+cd kyoku-docker
+```
+
+Remove `.example` from `.env.example` and put your environment variables data in `.env`.
+
+```sh
+./run.bat
+```
+
+> This command will setup the working environment.
+> **Make sure to have Docker installed and running.**
+> for more information, see the [Setup Readme](./kyoku-docker/readme.md).
+> This has more detailed instructions. on how docker is set up and used.
 
 ## <h2  align='center'>License</h2>
 

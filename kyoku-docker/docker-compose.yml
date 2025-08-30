@@ -49,50 +49,50 @@ services:
       --skip-replica-start=1
 
 
-  user-replica2:
-    image: mysql:8.4.0
-    container_name: user-replica2
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
-    ports:
-      - "1002:3306"
-    volumes:
-      - ./data/mysql/data/user-replica2/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - user-primary
-    command: >
-      --server-id=3
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # user-replica2:
+  #   image: mysql:8.4.0
+  #   container_name: user-replica2
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+  #   ports:
+  #     - "1002:3306"
+  #   volumes:
+  #     - ./data/mysql/data/user-replica2/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - user-primary
+  #   command: >
+  #     --server-id=3
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
-  user-replica3:
-    image: mysql:8.4.0
-    container_name: user-replica3
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
-    ports:
-      - "1003:3306"
-    volumes:
-      - ./data/mysql/data/user-replica3/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - user-primary
-    command: >
-      --server-id=4
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # user-replica3:
+  #   image: mysql:8.4.0
+  #   container_name: user-replica3
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+  #   ports:
+  #     - "1003:3306"
+  #   volumes:
+  #     - ./data/mysql/data/user-replica3/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - user-primary
+  #   command: >
+  #     --server-id=4
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
   user-proxysql:
@@ -108,8 +108,8 @@ services:
     depends_on:
       - user-primary
       - user-replica1
-      - user-replica2
-      - user-replica3
+      # - user-replica2
+      # - user-replica3
 
 
   playlist-primary:
@@ -160,73 +160,73 @@ services:
       --log-replica-updates=ON
       --skip-replica-start=1
 
-  playlist-replica2:
-    image: mysql:8.4.0
-    container_name: playlist-replica2
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-    ports:
-      - "1012:3306"
-    volumes:
-      - ./data/mysql/data/playlist-replica2/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - playlist-primary
-    command: >
-      --server-id=3
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # playlist-replica2:
+  #   image: mysql:8.4.0
+  #   container_name: playlist-replica2
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+  #   ports:
+  #     - "1012:3306"
+  #   volumes:
+  #     - ./data/mysql/data/playlist-replica2/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - playlist-primary
+  #   command: >
+  #     --server-id=3
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
-  playlist-replica3:
-    image: mysql:8.4.0
-    container_name: playlist-replica3
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-    ports:
-      - "1013:3306"
-    volumes:
-      - ./data/mysql/data/playlist-replica3/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - playlist-primary
-    command: >
-      --server-id=4
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # playlist-replica3:
+  #   image: mysql:8.4.0
+  #   container_name: playlist-replica3
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+  #   ports:
+  #     - "1013:3306"
+  #   volumes:
+  #     - ./data/mysql/data/playlist-replica3/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - playlist-primary
+  #   command: >
+  #     --server-id=4
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
-  playlist-replica4:
-    image: mysql:8.4.0
-    container_name: playlist-replica4
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-    ports:
-      - "1014:3306"
-    volumes:
-      - ./data/mysql/data/playlist-replica4/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - playlist-primary
-    command: >
-      --server-id=5
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # playlist-replica4:
+  #   image: mysql:8.4.0
+  #   container_name: playlist-replica4
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+  #   ports:
+  #     - "1014:3306"
+  #   volumes:
+  #     - ./data/mysql/data/playlist-replica4/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - playlist-primary
+  #   command: >
+  #     --server-id=5
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
   playlist-proxysql:
@@ -242,9 +242,9 @@ services:
     depends_on:
       - playlist-primary
       - playlist-replica1
-      - playlist-replica2
-      - playlist-replica3
-      - playlist-replica4
+      # - playlist-replica2
+      # - playlist-replica3
+      # - playlist-replica4
 
 
   activity-primary:
@@ -297,50 +297,50 @@ services:
       --skip-replica-start=1
 
 
-  activity-replica2:
-    image: mysql:8.4.0
-    container_name: activity-replica2
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
-    ports:
-      - "1022:3306"
-    volumes:
-      - ./data/mysql/data/activity-replica2/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - activity-primary
-    command: >
-      --server-id=3
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # activity-replica2:
+  #   image: mysql:8.4.0
+  #   container_name: activity-replica2
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+  #   ports:
+  #     - "1022:3306"
+  #   volumes:
+  #     - ./data/mysql/data/activity-replica2/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - activity-primary
+  #   command: >
+  #     --server-id=3
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
-  activity-replica3:
-    image: mysql:8.4.0
-    container_name: activity-replica3
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
-    ports:
-      - "1023:3306"
-    volumes:
-      - ./data/mysql/data/activity-replica3/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - activity-primary
-    command: >
-      --server-id=3
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # activity-replica3:
+  #   image: mysql:8.4.0
+  #   container_name: activity-replica3
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+  #   ports:
+  #     - "1023:3306"
+  #   volumes:
+  #     - ./data/mysql/data/activity-replica3/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - activity-primary
+  #   command: >
+  #     --server-id=3
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
   activity-proxysql:
@@ -356,73 +356,219 @@ services:
     depends_on:
       - activity-primary
       - activity-replica1
-      - activity-replica2
-      - activity-replica3
+      # - activity-replica2
+      # - activity-replica3
 
 
+  content-primary:
+    image: mysql:8.4.0
+    container_name: content-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_CONTENT_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_CONTENT_REPLICATION_PASSWORD}
+    ports:
+      - "1030:3306"
+    volumes:
+      - ./mysql/content/sql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
+      - ./mysql/content/sql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
+      - ./mysql/content/sql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
+      - ./mysql/content/sql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
+      - ./mysql/content/sql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
+      - ./mysql/content/sql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
+      - ./mysql/content/sql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
+      - ./mysql/content/sql/8_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/8_insert_content_db_artistinfo.sql
+      - ./mysql/content/sql/100_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/100_insert_content_db_relation_artist_album.sql
+      - ./mysql/content/sql/101_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/101_insert_content_db_relation_artist_country.sql
+      - ./mysql/content/sql/102_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/102_insert_content_db_relation_artist_genre.sql
+      - ./mysql/content/sql/103_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/103_insert_content_db_relation_song_album.sql
+      - ./mysql/content/sql/104_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/104_insert_content_db_relation_song_artist.sql
+      - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
+      - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
+      - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
 
-  # kyoku-content-mysql:
+      - ./data/mysql/data/content-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=CONTENT
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+
+  content-replica1:
+    image: mysql:8.4.0
+    container_name: content-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+    ports:
+      - "1031:3306"
+    volumes:
+      - ./data/mysql/data/content-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+  content-replica2:
+    image: mysql:8.4.0
+    container_name: content-replica2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+    ports:
+      - "1032:3306"
+    volumes:
+      - ./data/mysql/data/content-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
+
+
+  # content-replica3:
   #   image: mysql:8.4.0
-  #   container_name: kyoku-content-mysql
+  #   container_name: content-replica3
   #   environment:
   #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
   #   ports:
-  #     - "1053:3306"
+  #     - "1033:3306"
   #   volumes:
-  #     - ./mysql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
-  #     - ./mysql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
-  #     - ./mysql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
-  #     - ./mysql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
-  #     - ./mysql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
-  #     - ./mysql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
-  #     - ./mysql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
+  #     - ./data/mysql/data/content-replica3/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #   command: >
+  #     --server-id=4
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
-  #     - ./mysql/20_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/20_insert_content_db_relation_artist_album.sql
-  #     - ./mysql/21_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/21_insert_content_db_relation_artist_country.sql
-  #     - ./mysql/22_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/22_insert_content_db_relation_artist_genre.sql
-  #     - ./mysql/23_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/23_insert_content_db_relation_song_album.sql
-  #     - ./mysql/24_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/24_insert_content_db_relation_song_artist.sql
-  #     - ./mysql/25_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/25_insert_content_db_relation_song_genre.sql
 
-  #     - ./data/mysql-data/kyoku-content-data/data:/var/lib/mysql
-
-  # kyoku-file-minio:
-  #   image: minio/minio:latest
-  #   container_name: kyoku-file-minio
-  #   restart: always
-  #   ports:
-  #     - "1080:9000"   # API port
-  #     - "1081:9001"   # Console port
+  # content-replica4:
+  #   image: mysql:8.4.0
+  #   container_name: content-replica4
   #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
-  #   command: server /data --console-address ":9001"
-  #   volumes:
-  #     - G:/minio/file/upload-storage:/data
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-  #     interval: 30s
-  #     timeout: 20s
-  #     retries: 3
-
-  # kyoku-song-minio:
-  #   image: minio/minio:latest
-  #   container_name: kyoku-song-minio
-  #   restart: always
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
   #   ports:
-  #     - "1082:9000"   # API port
-  #     - "1083:9001"   # Console port
-  #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
-  #   command: server /data --console-address ":9001"
+  #     - "1034:3306"
   #   volumes:
-  #     - G:/minio/song/upload-storage:/data
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-  #     interval: 30s
-  #     timeout: 20s
-  #     retries: 3
+  #     - ./data/mysql/data/content-replica4/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #   command: >
+  #     --server-id=5
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
+
+
+  # content-replica5:
+  #   image: mysql:8.4.0
+  #   container_name: content-replica5
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+  #   ports:
+  #     - "1035:3306"
+  #   volumes:
+  #     - ./data/mysql/data/content-replica5/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #   command: >
+  #     --server-id=6
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
+
+
+  content-proxysql:
+    image: proxysql/proxysql:2.5.5
+    container_name: content-proxysql
+    ports:
+      - "1036:6033"
+      - "1037:6032"
+    volumes:
+      - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.conf:ro
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+      - content-replica1
+      - content-replica2
+      # - content-replica3
+      # - content-replica4
+      # - content-replica5
+
+  kyoku-file-minio:
+    image: minio/minio:latest
+    container_name: kyoku-file-minio
+    restart: always
+    ports:
+      - "1080:9000"   # API port
+      - "1081:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - G:/minio/file/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  kyoku-song-minio:
+    image: minio/minio:latest
+    container_name: kyoku-song-minio
+    restart: always
+    ports:
+      - "1082:9000"   # API port
+      - "1083:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - G:/minio/song/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 
 networks:

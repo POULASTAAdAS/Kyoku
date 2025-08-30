@@ -43,6 +43,13 @@ if !errorlevel! neq 0 (
     exit /b 1
 )
 
+call mysql\content\scripts\generate-configs.bat
+if !errorlevel! neq 0 (
+    echo [ERROR] Failed to generate mysql\content\scripts\generate-configs.bat configuration files!
+    pause
+    exit /b 1
+)
+
 
 REM Start Docker services
 echo ================================================================================================
@@ -79,6 +86,8 @@ echo ===========================================================================
 echo                                            3
 echo ================================================================================================
 call mysql\activity\scripts\start-replication.bat
+echo ================================================================================================
+call mysql\content\scripts\start-replication.bat
 echo ================================================================================================
 echo ==============================================DONE==============================================
 echo ==============================================DONE==============================================
