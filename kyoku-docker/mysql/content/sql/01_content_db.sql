@@ -35,6 +35,32 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    IF NOT EXISTS SONG (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR(150) NOT NULL,
+        poster VARCHAR(300) DEFAULT NULL,
+        master_playlist VARCHAR(300) NOT NULL
+    );
+
+CREATE TABLE
+    IF NOT EXISTS SongInfo (
+        song_id BIGINT PRIMARY KEY,
+        release_year INT NOT NULL,
+        composer VARCHAR(200) DEFAULT NULL,
+        popularity BIGINT UNSIGNED NOT NULL DEFAULT 0,
+        CONSTRAINT fk_songinfo_song FOREIGN KEY (song_id) REFERENCES SONG (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
+    IF NOT EXISTS ArtistInfo (
+        artist_id BIGINT PRIMARY KEY,
+        biography TEXT DEFAULT NULL,
+        birth_date DATE DEFAULT NULL,
+        monthly_listeners BIGINT UNSIGNED DEFAULT 0,
+        CONSTRAINT fk_artistinfo_artist FOREIGN KEY (artist_id) REFERENCES Artist (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
     IF NOT EXISTS ArtistCountry (
         artist_id BIGINT,
         country_id INT,
@@ -62,23 +88,6 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS SONG (
-        id BIGINT PRIMARY KEY AUTO_INCREMENT,
-        title VARCHAR(150) NOT NULL,
-        poster VARCHAR(300) DEFAULT NULL,
-        master_playlist VARCHAR(300) NOT NULL
-    );
-
-CREATE TABLE
-    IF NOT EXISTS SongInfo (
-        song_id BIGINT PRIMARY KEY,
-        release_year INT NOT NULL,
-        composer VARCHAR(200) DEFAULT NULL,
-        popularity BIGINT UNSIGNED NOT NULL DEFAULT 0,
-        CONSTRAINT fk_songinfo_song FOREIGN KEY (song_id) REFERENCES SONG (id) ON DELETE CASCADE
-    );
-
-CREATE TABLE
     IF NOT EXISTS SongAlbum (
         song_id BIGINT,
         album_id BIGINT,
@@ -103,18 +112,6 @@ CREATE TABLE
         PRIMARY KEY (song_id, genre_id),
         CONSTRAINT fk_songgenre_song FOREIGN KEY (song_id) REFERENCES Song (id) ON DELETE CASCADE,
         CONSTRAINT fk_songgenre_genre FOREIGN KEY (genre_id) REFERENCES Genre (id) ON DELETE CASCADE
-    );
-
--- 
--- not done
--- 
-CREATE TABLE
-    IF NOT EXISTS ArtistInfo (
-        artist_id BIGINT PRIMARY KEY,
-        biography TEXT DEFAULT NULL,
-        birth_date DATE DEFAULT NULL,
-        monthly_listeners BIGINT UNSIGNED DEFAULT 0,
-        CONSTRAINT fk_artistinfo_artist FOREIGN KEY (artist_id) REFERENCES Artist (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
