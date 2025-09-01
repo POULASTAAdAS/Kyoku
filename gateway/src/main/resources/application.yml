@@ -1,0 +1,52 @@
+server:
+  port: 8080
+  error:
+    include-path: never
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: gateway
+    version: 1.0.0
+  mvc:
+    log-request-details: on
+  output:
+    ansi:
+      enabled: detect
+  devtools: # ---------------------- LIVERELOAD ----------------------
+    livereload:
+      enabled: on
+      port: 8081
+    add-properties: on
+  data: # ---------------------- REDIS ----------------------
+    redis:
+      host: localhost
+      port: 9000
+      password: passwordGateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes: # ---------------------- SERVICES ----------------------
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/v1/auth/**
+
+debug: on
+
+logging:
+  level:
+    root: debug
+
+jwt:
+  validation:
+    microservice:
+      secret: SldUIHNlY3JhdGUgdG8gdmFsaWRhdGUgcmVxdWVzdCBjb21pbmcgZnJvbSBzcHJpbmcgZ2F0ZXdheSB0byBhbGwgbWljcm9zZXJ2aWNl
+      subject: SUBJECT_GATEWAY_REQUEST_VALIDATION
+      issuer: gateway
+      audience: all-service
+      claim:
+        key: gateway-key
+        value: gateway-request

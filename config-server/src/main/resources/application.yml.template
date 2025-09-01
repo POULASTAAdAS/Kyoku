@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: config-server
+    version: 1.0.0
+
+  security:
+    user:
+      name: your_user
+      password: your_password
+
+
+
+server:
+  port: 1200

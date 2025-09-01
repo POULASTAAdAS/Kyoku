@@ -26,7 +26,7 @@ echo [INFO] You can use the following scripts for monitoring:
 echo.
 echo   mysql\user\scripts\check-replication.bat  - Check replication status
 echo   mysql\user\scripts\test-replication.bat   - Test replication functionality
-echo   generate-configs.bat                       - Regenerate config files
+echo   mysql\user\scripts\generate-configs.bat   - Regenerate config files
 echo.
 echo [INFO] Connection details:
 echo   Primary (Master): localhost:1000
