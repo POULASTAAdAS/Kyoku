@@ -1,0 +1,232 @@
+{
+  "domain": "http://kyoku.poulastaa.shop",
+  "debug": true,
+  "restart": true,
+  "livereload": {
+    "enabled": true,
+    "add-properties": true
+  },
+  "log": {
+    "level": "debug",
+    "ansi": "detect",
+    "error": {
+      "include-path": "never",
+      "include-message": "never",
+      "include-stacktrace": "never"
+    }
+  },
+  "eureka": {
+    "url": "http://kyoku.poulastaa.shop:8000/eureka/",
+    "fetch-registry": true,
+    "register-with-eureka": true
+  },
+  "zipkin": {
+    "enabled": true,
+    "sampling": 1.0,
+    "url": "http://kyoku.poulastaa.shop:8001/api/v2/spans"
+  },
+  "jwt": {
+    "access": {
+      "secret": "SldUIHNlY3JhdGUgdG8gdGhhdCBpcyBpc3N1ZWQgYnkgYXV0aC1zZXJ2aWNlIHZhbGlkIGZvciBzaG9ydCB0aW1lIGFuZCBzZW5kIHdpdGggZWFjaCByZXFldXN0IGFuZCBpcyB2YWxpZGF0ZWQgYnkgdmFsaWRhdGlvbi1zZXJ2aWNl",
+      "subject": "ACCESS_TOKEN",
+      "issuer": "auth-service",
+      "audience": "validation-service",
+      "claim-key": "access-token",
+      "time": 6,
+      "unit": "HOURS"
+    }
+  },
+  "kafka": {
+    "serializer": {
+      "key": "org.apache.kafka.common.serialization.StringSerializer",
+      "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+    },
+    "deserializer": {
+      "key": "org.apache.kafka.common.serialization.StringSerializer",
+      "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+    },
+    "acks": "all",
+    "retries": 3,
+    "auto-offset-reset": "latest",
+    "trusted-packages": "com.poulastaa.kyoku.*"
+  },
+  "sql": {
+    "user": "jdbc:mysql://localhost:1004/USER?user=root&password=userPassword",
+    "playlist": "jdbc:mysql://localhost:1015/PLAYLIST?user=root&password=playlistPassword",
+    "activity": "jdbc:mysql://localhost:1024/ACTIVITY?user=root&password=activityPassword",
+    "content": "jdbc:mysql://localhost:1036/CONTENT?user=root&password=contentPassword",
+    "show-sql": true,
+    "database": "mysql",
+    "ddl-auto": "none",
+    "physical-strategy": "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
+  },
+  "gateway": {
+    "name": "gateway",
+    "port": 8080,
+    "livereload-port": 8081,
+    "version": "1.0.0",
+    "jwt": {
+      "secret": "SldUIHNlY3JhdGUgdG8gdmFsaWRhdGUgcmVxdWVzdCBjb21pbmcgZnJvbSBzcHJpbmcgZ2F0ZXdheSB0byBhbGwgbWljcm9zZXJ2aWNl",
+      "subject": "GATEWAY_REQUEST_VALIDATION",
+      "issuer": "kyoku-gateway",
+      "audience": "all-service",
+      "claim": {
+        "key": "gateway-claim",
+        "value": "gateway-request"
+      }
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 1040,
+      "password": "passwordGateway"
+    }
+  },
+  "auth": {
+    "name": "auth",
+    "port": 8082,
+    "livereload-port": 8083,
+    "version": "1.0.0",
+    "jwt": {
+      "refresh": {
+        "secret": "SldUIHNlY3JhdGUgdG8gdGhhdCBpcyBpc3N1ZWQgYW5kIHZhbGlkYXRlZCBieSBhdXRoLXNlcnZpY2Ugd2hpY2ggaXMgdmFsaWQgZm9yIGxvbmcgdGltZSBhbmQgc2VuZCB0byBnZXQgbmV3IGFjY2Vzcy1yZWZyZXNoIHRva2VuIHdoZW4gYWNjZXNzIHRva2VuIGV4cGFpcmVzLg==",
+        "subject": "REFRESH_TOKEN",
+        "issuer": "auth-service",
+        "audience": "auth-service",
+        "claim-key": "refresh-token",
+        "time": 1,
+        "unit": "DAYS"
+      },
+      "verify-mail": {
+        "secret": "SldUIHNlY3JhdGUgdG8gdGhhdCBpcyBpc3N1ZWQgYW5kIHZhbGlkYXRlZCBieSBhdXRoLXNlcnZpY2Ugd2hpY2ggaXMgdmFsaWQgZm9yIHZlcnkgc2hvcnQgdGltZSBhbmQgY3JlYXRlZCBhbmQgc2VuZCB3aXRoIG1haWwgdG8gdmFsaWRhdGUgZW1haWwgc2VuZCB0byB1c2VyLg==",
+        "subject": "VERIFICATION_MAIL_TOKEN",
+        "issuer": "auth-service",
+        "audience": "auth-service",
+        "claim-key": "email-verification-token",
+        "time": 12,
+        "unit": "MINUTES"
+      },
+      "forgot-password-mail": {
+        "secret": "SldUIHNlY3JhdGUgdG8gdGhhdCBpcyBpc3N1ZWQgYW5kIHZhbGlkYXRlZCBieSBhdXRoLXNlcnZpY2Ugd2hpY2ggaXMgdmFsaWQgb2ZyIHZlcnkgc2hvcnQgdGltZSBhbmQgdXNlZCB0byB2YWxpZGF0ZWQgdGhlIGF1dGhlbnRpY2l0eSBvZiB1cGRhdGUgcGFzc3dvcmQgcmVxdWVzdCBzZW50IGJ5IHRoZSBhcHAgdG8gdGhlIGF1dGgtc2VydmljZS4=",
+        "subject": "FORGOT_PASSWORD_MAIL_TOKEN",
+        "issuer": "auth-service",
+        "audience": "auth-service",
+        "claim-key": "forgot-password-mail-token",
+        "time": 12,
+        "unit": "MINUTES"
+      },
+      "update-password": {
+        "secret": "SldUIHNlY3JhdGUgdGhhdCBpcyBpc3N1ZWQgYW5kIHZhbGlkYXRlZCBieSBhdXRoLXNlcnZpY2Ugd2hpY2ggaXMgdmFsaWQgZm9yIHZlcnkgc2hvcnQgdGltZSBhbmQgdXNlZCB0byB2YWxpZGF0ZWQgdGhlIGF1dGhlbnRpY2l0eSBvZiBzZXR0aW5nIHVwIG5ldyBwYXNzd29yZCByZXFldXN0IGZyb20gdGhlIGFwcC4=",
+        "subject": "UPDATE_PASSWORD_TOKEN",
+        "issuer": "auth-service",
+        "audience": "auth-service",
+        "claim-key": "update-password-token",
+        "time": 10,
+        "unit": "MINUTES"
+      }
+    },
+    "redis": {
+      "host": "localhost",
+      "port": 1041,
+      "password": "passwordAuth"
+    },
+    "kafka": {
+      "url": "localhost:1042",
+      "serializer": {
+        "key": "org.apache.kafka.common.serialization.StringSerializer",
+        "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+      },
+      "deserializer": {
+        "key": "org.apache.kafka.common.serialization.StringSerializer",
+        "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+      }
+    }
+  },
+  "validation": {
+    "name": "validation",
+    "port": 8084,
+    "livereload-port": 8085,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1042,
+      "password": "passwordValidation"
+    },
+    "kafka": {
+      "url": "localhost:1042",
+      "serializer": {
+        "key": "org.apache.kafka.common.serialization.StringSerializer",
+        "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+      },
+      "deserializer": {
+        "key": "org.apache.kafka.common.serialization.StringSerializer",
+        "value": "org.springframework.kafka.support.serializer.JsonSerializer"
+      }
+    }
+  },
+  "user": {
+    "name": "user",
+    "port": 8086,
+    "livereload-port": 8087,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1043,
+      "password": "passwordUser"
+    }
+  },
+  "playlist": {
+    "name": "playlist",
+    "port": 8088,
+    "livereload-port": 8089,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1044,
+      "password": "passwordPlaylist"
+    }
+  },
+  "activity": {
+    "name": "activity",
+    "port": 8090,
+    "livereload-port": 8091,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1045,
+      "password": "passwordActivity"
+    }
+  },
+  "content": {
+    "name": "content",
+    "port": 8094,
+    "livereload-port": 8095,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1046,
+      "password": "passwordContent"
+    }
+  },
+  "recommendation": {
+    "name": "recommendation",
+    "port": 8098,
+    "livereload-port": 8099,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1047,
+      "password": "passwordRecommendation"
+    }
+  },
+  "search": {
+    "name": "search",
+    "port": 8100,
+    "livereload-port": 8101,
+    "version": "1.0.0",
+    "redis": {
+      "host": "localhost",
+      "port": 1048,
+      "password": "passwordSearch"
+    }
+  }
+}
