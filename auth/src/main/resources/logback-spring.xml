@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Add the turbo filter -->
+    <turboFilter class="com.poulastaa.kyoku.auth.utils.LogFilter"/>
+
+    <!-- custom log pattern -->
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss} %clr(%5p){level-color}: - %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <root>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

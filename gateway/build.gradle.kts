@@ -26,11 +26,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webflux")
+    implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-config")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
