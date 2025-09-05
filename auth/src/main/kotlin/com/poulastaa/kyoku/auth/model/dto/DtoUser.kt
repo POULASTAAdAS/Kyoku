@@ -8,10 +8,11 @@ import java.time.LocalDateTime
 
 data class DtoUser(
     val id: UserId = -1,
-    val username: Username = "",
-    val email: Email = "",
-    val passwordHash: Password = "",
-    val type: UserType = UserType.EMAIL,
+    val username: Username,
+    val email: Email,
+    val passwordHash: Password,
+    val code: String,
+    val type: UserType,
     val profileUrl: String? = null,
     val lastUpdated: LocalDateTime = LocalDateTime.now(),
 )

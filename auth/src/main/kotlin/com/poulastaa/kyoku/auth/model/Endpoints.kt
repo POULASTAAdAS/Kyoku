@@ -16,5 +16,5 @@ object Endpoints {
 
     const val REFRESH_TOKEN = "$STATIC/email/refresh-token"
 
-    const val GOOGLE_SIGN_UP = "$STATIC/google/join"
+    const val GOOGLE_AUTH = "$STATIC/google/join"
 }

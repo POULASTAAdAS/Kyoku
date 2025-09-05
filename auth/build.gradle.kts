@@ -27,6 +27,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    // google one-tap
+    implementation("com.google.api-client:google-api-client:2.8.1")
+
     // service discovery
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
@@ -51,6 +54,9 @@ dependencies {
 
     // rabbitMQ
     implementation("org.springframework.boot:spring-boot-starter-amqp")
+
+    // redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
