@@ -1,11 +1,11 @@
 .idea/
 data/
 .env
-mysql/user/proxy/proxysql.conf
+mysql/user/proxy/proxysql.cnf
 mysql/user/sql/setup-replication-master.sql
-mysql/playlist/proxy/proxysql.conf
+mysql/playlist/proxy/proxysql.cnf
 mysql/playlist/sql/setup-replication-master.sql
-mysql/activity/proxy/proxysql.conf
+mysql/activity/proxy/proxysql.cnf
 mysql/activity/sql/setup-replication-master.sql
-mysql/content/proxy/proxysql.conf
+mysql/content/proxy/proxysql.cnf
 mysql/content/sql/setup-replication-master.sql
