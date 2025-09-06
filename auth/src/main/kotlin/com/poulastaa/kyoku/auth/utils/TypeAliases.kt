@@ -7,3 +7,5 @@ typealias PasswordHash = String
 typealias GoogleJWTToken = String
 typealias JWTToken = String
 typealias Username = String
+typealias UserTypeId = Int
+typealias CountryId = Int

@@ -1,7 +1,7 @@
-datadir="/var/lib/mysql"
+datadir="/var/lib/proxysql"
 
 admin_variables= {
-    admin_credentials="{{MYSQL_USER_PROXY_ADMIN}}:{{MYSQL_USER_PROXY_PASSWORD}}"
+    admin_credentials="{{MYSQL_USER_PROXY_ADMIN}}:{{MYSQL_USER_PROXY_PASSWORD}};r{{MYSQL_USER_PROXY_ADMIN}}:r{{MYSQL_USER_PROXY_PASSWORD}}"
     mysql_ifaces="0.0.0.0:6032"
 }
 
@@ -65,7 +65,7 @@ mysql_users =
 (
     {
         username = "{{MYSQL_USER_USER}}"
-        password = "{{MYSQL_USER_PASSWORD}}"
+        password = "{{MYSQL_ROOT_USER_PASSWORD}}"
         default_hostgroup = 0
         max_connections=1000
         default_schema="USER"

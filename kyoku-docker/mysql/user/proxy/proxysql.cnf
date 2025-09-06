@@ -1,7 +1,7 @@
-datadir="/var/lib/mysql"
+datadir="/var/lib/proxysql"
 
 admin_variables= {
-    admin_credentials="{{MYSQL_PLAYLIST_PROXY_ADMIN}}:{{MYSQL_PLAYLIST_PROXY_PASSWORD}}"
+    admin_credentials="admin:admin;radmin:radmin"
     mysql_ifaces="0.0.0.0:6032"
 }
 
@@ -17,8 +17,8 @@ mysql_variables= {
     stacksize=1048576
     server_version="8.0.33"
     connect_timeout_server=3000
-    monitor_username="{{MYSQL_PLAYLIST_MONITOR_USER}}"
-    monitor_password="{{MYSQL_PLAYLIST_MONITOR_PASSWORD}}"
+    monitor_username="monitor"
+    monitor_password="monitor"
     monitor_history=600000
     monitor_connect_interval=60000
     monitor_ping_interval=10000
@@ -32,50 +32,43 @@ mysql_variables= {
 mysql_servers =
 (
     {
-        address="playlist-primary"
+        address="user-primary"
         port=3306
         hostgroup=0
         weight=1000
         comment="Primary Server"
     },
     {
-        address="playlist-replica1"
+        address="user-replica1"
         port=3306
         hostgroup=1
         weight=900
         comment="Read Replica 1"
     },
     {
-        address="playlist-replica2"
+        address="user-replica2"
         port=3306
         hostgroup=1
         weight=900
         comment="Read Replica 2"
     },
     {
-        address="playlist-replica3"
+        address="user-replica3"
         port=3306
         hostgroup=1
         weight=900
         comment="Read Replica 3"
-    },
-    {
-        address="playlist-replica4"
-        port=3306
-        hostgroup=1
-        weight=900
-        comment="Read Replica 4"
     }
 )
 
 mysql_users =
 (
     {
-        username = "{{MYSQL_PLAYLIST_USER}}"
-        password = "{{MYSQL_PLAYLIST_PASSWORD}}"
+        username = "root"
+        password = "userPassword"
         default_hostgroup = 0
         max_connections=1000
-        default_schema="PLAYLIST"
+        default_schema="USER"
         active = 1
     }
 )
