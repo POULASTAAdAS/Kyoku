@@ -1,3 +1,10 @@
+server:
+  port: 1200
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} %clr(%5p){level-color}: - %msg%n"
+
 spring:
   application:
     name: config-server
@@ -5,10 +12,26 @@ spring:
 
   security:
     user:
-      name: your_user
-      password: your_password
+      name: <basic_username>
+      password: <basic_password>
 
+  cloud:
+    config:
+      server:
+        git:
+          uri: <your_url>
+          default-label: <branch_name>
+          username: <you_username>
+          password: <your_password>
 
+      uri: http://kyoku.poulastaa.shop:1200
 
-server:
-  port: 1200
+debug: true
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://kyoku.poulastaa.shop:8001/eureka/
+    register-with-eureka: true
+    fetch-registry: true
