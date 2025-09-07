@@ -4,15 +4,16 @@ import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.Password
 import com.poulastaa.kyoku.auth.utils.UserId
 import com.poulastaa.kyoku.auth.utils.Username
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 data class DtoUser(
     val id: UserId = -1,
     val username: Username,
+    val displayName: Username,
     val email: Email,
     val passwordHash: Password,
-    val code: String,
+    val countryCode: String,
     val type: UserType,
     val profileUrl: String? = null,
-    val lastUpdated: LocalDateTime = LocalDateTime.now(),
+    val birthDate: LocalDate? = null,
 )

@@ -74,9 +74,10 @@ class AuthService(
                     payload = cache.setUserByEmail(
                         DtoUser(
                             username = username,
+                            displayName = username,
                             email = email,
                             passwordHash = passwordHash,
-                            code = countryCode,
+                            countryCode = countryCode,
                             type = UserType.EMAIL,
                         )
                     ),
@@ -130,9 +131,10 @@ class AuthService(
         db.createUser(
             DtoUser(
                 username = payload.name,
+                displayName = payload.displayName,
                 email = payload.email,
                 passwordHash = passwordHash,
-                code = countryCode,
+                countryCode = countryCode,
                 type = UserType.GOOGLE,
             )
         ).let {
@@ -160,7 +162,7 @@ class AuthService(
     private fun getUser(
         email: Email,
         type: UserType,
-    ) = cache.cacheUserByEmail(email, type) ?: db.getUserByEmail(email, type)?.also {
+    ) = cache.cacheUserByEmail(email, type) ?: db.getUserByEmailAndType(email, type)?.also {
         cache.setUserByEmail(it)
     }
 

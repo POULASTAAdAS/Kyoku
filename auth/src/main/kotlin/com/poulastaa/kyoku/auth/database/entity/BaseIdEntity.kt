@@ -7,7 +7,7 @@ import org.hibernate.proxy.HibernateProxy
 class BaseIdEntity<T : Number>(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     val id: T = -1 as T,
 ) {
     final override fun equals(other: Any?): Boolean {

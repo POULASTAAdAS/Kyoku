@@ -8,6 +8,6 @@ import jakarta.persistence.Table
 @Entity
 @Table(name = "UserType")
 class EntityUserType(
-    @Column(name = "type", unique = true, length = 8)
+    @Column(name = "type", unique = true, length = 8, nullable = false)
     val type: String = "",
 ) : BaseIdEntity<UserTypeId>()

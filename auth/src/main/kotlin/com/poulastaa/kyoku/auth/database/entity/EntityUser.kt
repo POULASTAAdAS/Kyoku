@@ -22,7 +22,7 @@ import java.sql.Timestamp
     ]
 )
 class EntityUser : BaseIdEntity<UserId>() {
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "user_type_id",
         nullable = false,
@@ -45,14 +45,14 @@ class EntityUser : BaseIdEntity<UserId>() {
     @Column(name = "password_hash", nullable = false, length = 700)
     var passwordHash: String = ""
 
-    @Column(name = "profile_pic", nullable = false, length = 700)
+    @Column(name = "profile_pic", nullable = true, length = 700)
     var profilePicUrl: String? = null
 
-    @Column(name = "birth_date", unique = false, nullable = true)
+    @Column(name = "birth_date", nullable = true)
     @Temporal(TemporalType.DATE)
     var birthDate: Date? = null
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "country_id",
         nullable = false,
@@ -63,11 +63,11 @@ class EntityUser : BaseIdEntity<UserId>() {
     )
     lateinit var country: EntityCountry
 
-    @Column(name = "created_at", unique = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     var createdAt: Timestamp? = null
 
-    @Column(name = "last_updated", unique = false)
+    @Column(name = "last_updated")
     @UpdateTimestamp
-    var lastUpdated: Timestamp = Timestamp(System.currentTimeMillis())
+    var lastUpdated: Timestamp? = null
 }

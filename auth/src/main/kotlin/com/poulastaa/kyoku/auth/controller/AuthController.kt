@@ -77,6 +77,7 @@ class AuthController(
                 GoogleAuthPayload(
                     sub = it.payload.subject,
                     name = it.payload["name"] as? String ?: return@let null,
+                    displayName = it.payload["name"] as? String ?: return@let null,
                     email = it.payload.email,
                     picture = it.payload["picture"] as? String ?: return@let null,
                 )

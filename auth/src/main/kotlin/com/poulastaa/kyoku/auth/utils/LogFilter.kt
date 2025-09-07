@@ -14,5 +14,12 @@ class LogFilter : TurboFilter() {
         format: String?,
         params: Array<out Any?>?,
         t: Throwable?,
-    ) = FilterReply.NEUTRAL
+    ): FilterReply {
+        if (marker?.name?.contains("http-outgoing") == true) return FilterReply.DENY
+        else if (marker?.name?.contains("endpoint lease request") == true) return FilterReply.DENY
+        else if (marker?.name?.contains("kyoku.poulastaa.shop:8001") == true) return FilterReply.DENY
+        else if (marker?.name?.contains("ex-") == true) return FilterReply.DENY
+
+        return FilterReply.NEUTRAL
+    }
 }
