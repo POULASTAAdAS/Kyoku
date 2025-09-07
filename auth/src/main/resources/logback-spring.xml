@@ -14,7 +14,7 @@
         </encoder>
     </appender>
 
-    <root>
+    <root level="${logging.level.root:-DEBUG}">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

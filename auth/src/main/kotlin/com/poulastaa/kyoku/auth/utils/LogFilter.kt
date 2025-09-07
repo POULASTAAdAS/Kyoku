@@ -15,11 +15,10 @@ class LogFilter : TurboFilter() {
         params: Array<out Any?>?,
         t: Throwable?,
     ): FilterReply {
-        if (marker?.name?.contains("http-outgoing") == true) return FilterReply.DENY
-        else if (marker?.name?.contains("endpoint lease request") == true) return FilterReply.DENY
-        else if (marker?.name?.contains("kyoku.poulastaa.shop:8001") == true) return FilterReply.DENY
-        else if (marker?.name?.contains("ex-") == true) return FilterReply.DENY
-
-        return FilterReply.NEUTRAL
+        return if (format?.contains("eureka") == true) return FilterReply.DENY
+        else if (format?.contains("docker") == true) return FilterReply.DENY
+        else if (format == "Accept=[application/json, application/*+json]") return FilterReply.DENY
+        else if (format == "Response 200 OK") return FilterReply.DENY
+        else FilterReply.NEUTRAL
     }
 }

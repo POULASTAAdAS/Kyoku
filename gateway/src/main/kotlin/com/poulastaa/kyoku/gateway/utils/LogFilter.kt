@@ -14,5 +14,8 @@ class LogFilter : TurboFilter() {
         format: String?,
         params: Array<out Any?>?,
         t: Throwable?,
-    ) = FilterReply.NEUTRAL
+    ) = if (format?.contains("eureka") == true) FilterReply.DENY
+    else if (format?.contains("docker") == true) FilterReply.DENY
+    else if (format == "Accept=[application/json, application/*+json]") FilterReply.DENY
+    else FilterReply.NEUTRAL
 }

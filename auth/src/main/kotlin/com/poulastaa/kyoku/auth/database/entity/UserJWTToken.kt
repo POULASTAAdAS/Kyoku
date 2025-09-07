@@ -5,7 +5,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.sql.Timestamp
 
-
 @Entity
 @Table(name = "UserJWTToken")
 @AttributeOverride(
