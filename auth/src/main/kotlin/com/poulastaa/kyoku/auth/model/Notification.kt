@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.auth.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.beans.factory.annotation.Value
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -48,7 +47,6 @@ sealed class Notification(
         val email: String,
         val username: String,
         val data: Any = "",
-        @JsonIgnore
         val type: Type,
     ) : Notification(channel = Channel.EMAIL.name)
 }

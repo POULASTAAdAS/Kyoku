@@ -31,12 +31,14 @@ class NotificationService(
         username = this.username,
         email = this.email,
         data = this.data,
-        endPoint = endpoint
+        endPoint = endpoint,
+        type = this.type,
     )
 
     private fun Notification.Email.toNotificationPayload() = NotificationPayload(
         username = this.username,
         email = this.email,
-        data = this.data
+        data = this.data,
+        type = this.type,
     )
 }
