@@ -18,7 +18,7 @@ sealed class Notification(
             val exp: Int = 10,
             @param:Value("\${jwt.mail.verify.unit}")
             val unit: String = "MINUTES",
-            val endPoint: String = Endpoints.GET_VERIFY_EMAIL,
+            val endPoint: String = Endpoints.VERIFY_EMAIL,
         ) : Property(
             expTime = when (unit.uppercase()) {
                 "MINUTES" -> exp.minutes

@@ -9,7 +9,7 @@ object Endpoints {
 
     const val EMAIL_SING_IN = "$STATIC/email/login"
     const val EMAIL_SING_UP = "$STATIC/email/create-account"
-    const val GET_VERIFY_EMAIL = "$STATIC/email/get-verify-email"
+    const val VERIFY_EMAIL = "$STATIC/email/verify-email"
     const val CHECK_VERIFICATION_MAIL_STATE = "$STATIC/email/verify-email/state"
 
     // TODO --> think how to implement forgot password on device

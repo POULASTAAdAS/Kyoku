@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.kyoku.auth.model.Endpoints
+import com.poulastaa.kyoku.auth.model.dto.DtoEmailVerificationStatus
 import com.poulastaa.kyoku.auth.model.dto.DtoUser
 import com.poulastaa.kyoku.auth.model.dto.GoogleAuthPayload
 import com.poulastaa.kyoku.auth.model.request.EmailSignUp
@@ -12,11 +13,10 @@ import com.poulastaa.kyoku.auth.model.request.GoogleAuth
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
 import com.poulastaa.kyoku.auth.service.AuthService
+import com.poulastaa.kyoku.auth.utils.JWTToken
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.io.IOException
 import java.security.GeneralSecurityException
 
@@ -54,6 +54,17 @@ class AuthController(
         status = ResponseStatus.INTERNAL_SERVER_ERROR
     ).toSingInUpResponse()
 
+    @GetMapping(Endpoints.VERIFY_EMAIL)
+    fun validateAuthenticationMail(
+        @Valid @RequestParam token: JWTToken,
+    ) = when (service.validateAuthenticationMailPayload(token)) {
+        DtoEmailVerificationStatus.VALID -> TODO()
+        DtoEmailVerificationStatus.TOKEN_ALREADY_USED -> TODO()
+        DtoEmailVerificationStatus.TOKEN_EXPIRED -> TODO()
+        DtoEmailVerificationStatus.TOKEN_INVALID -> TODO()
+        DtoEmailVerificationStatus.USER_NOT_FOUND -> TODO()
+        DtoEmailVerificationStatus.SERVER_ERROR -> TODO()
+    }
 
     fun GoogleAuth.validateToken(
         @Value("\${jwt.google.secret}")

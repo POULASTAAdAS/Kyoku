@@ -1,15 +1,10 @@
 package com.poulastaa.kyoku.auth.service
 
 import com.poulastaa.kyoku.auth.model.Notification
-import com.poulastaa.kyoku.auth.model.dto.DtoUser
-import com.poulastaa.kyoku.auth.model.dto.GoogleAuthPayload
-import com.poulastaa.kyoku.auth.model.dto.UserType
+import com.poulastaa.kyoku.auth.model.dto.*
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
-import com.poulastaa.kyoku.auth.utils.Email
-import com.poulastaa.kyoku.auth.utils.Password
-import com.poulastaa.kyoku.auth.utils.PasswordHash
-import com.poulastaa.kyoku.auth.utils.Username
+import com.poulastaa.kyoku.auth.utils.*
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
 import java.net.InetAddress
@@ -158,6 +153,23 @@ class AuthService(
     } ?: ResponseWrapper( // encrypting password failed
         status = ResponseStatus.INTERNAL_SERVER_ERROR
     )
+
+    fun validateAuthenticationMailPayload(token: JWTToken): DtoEmailVerificationStatus {
+        if (cache.isVerificationTokenUsed(token)) return DtoEmailVerificationStatus.TOKEN_ALREADY_USED
+
+        val email = jwt.verifyAndExtractClaim<Email>(
+            token,
+            type = JWTTokenType.TOKEN_VERIFICATION_MAIL
+        ) ?: return DtoEmailVerificationStatus.TOKEN_EXPIRED
+
+        // the user must be in cache as user trying to authenticate
+        if (cache.cacheUserByEmail(email, UserType.EMAIL) == null) return DtoEmailVerificationStatus.USER_NOT_FOUND
+
+        return DtoEmailVerificationStatus.VALID.also {
+            cache.storeUsedVerificationToken(token)
+            cache.setEmailVerificationState(email, true)
+        }  // this status is important...when getting access and refresh token for the first time after authentication for email user....this status is checked first then jwt token is generated
+    }
 
     private fun getUser(
         email: Email,

@@ -7,6 +7,7 @@ import com.poulastaa.kyoku.auth.model.dto.DtoUser
 import com.poulastaa.kyoku.auth.model.dto.SerializedUser
 import com.poulastaa.kyoku.auth.model.dto.UserType
 import com.poulastaa.kyoku.auth.utils.Email
+import com.poulastaa.kyoku.auth.utils.JWTToken
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -21,6 +22,9 @@ class CacheService(
     fun setUserByEmail(
         user: DtoUser,
     ) = Group.USER.set<SerializedUser>("${user.type}:${user.email}", user.toSerializedUser()).let { user }
+
+    fun isVerificationTokenUsed(token: JWTToken) = Group.VERIFICATION_TOKEN.cache<Boolean>(token) ?: false
+    fun storeUsedVerificationToken(token: JWTToken) = Group.VERIFICATION_TOKEN.set(token, true)
 
     fun setEmailVerificationState(email: Email, status: Boolean) = Group.EMAIL_VERIFICATION_STATUS.set(email, status)
     fun cacheAndDeleteEmailVerificationState(

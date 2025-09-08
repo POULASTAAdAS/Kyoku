@@ -584,45 +584,43 @@ services:
       - "./data/rabbit/notification:/var/lib/rabbitmq"
 
 
-  # kyoku-file-minio:
-  #   image: minio/minio:latest
-  #   container_name: kyoku-file-minio
-  #   restart: always
-  #   ports:
-  #     - "1080:9000"   # API port
-  #     - "1081:9001"   # Console port
-  #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
-  #   command: server /data --console-address ":9001"
-  #   volumes:
-  #     - G:/minio/file/upload-storage:/data
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-  #     interval: 30s
-  #     timeout: 20s
-  #     retries: 3
+  kyoku-file-minio:
+    image: minio/minio:latest
+    container_name: kyoku-file-minio
+    restart: always
+    ports:
+      - "1080:9000"   # API port
+      - "1081:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - G:/minio/file/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
-  # kyoku-song-minio:
-  #   image: minio/minio:latest
-  #   container_name: kyoku-song-minio
-  #   restart: always
-  #   ports:
-  #     - "1082:9000"   # API port
-  #     - "1083:9001"   # Console port
-  #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
-  #   command: server /data --console-address ":9001"
-  #   volumes:
-  #     - G:/minio/song/upload-storage:/data
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-  #     interval: 30s
-  #     timeout: 20s
-  #     retries: 3
-
-
+  kyoku-song-minio:
+    image: minio/minio:latest
+    container_name: kyoku-song-minio
+    restart: always
+    ports:
+      - "1082:9000"   # API port
+      - "1083:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - G:/minio/song/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
 
 

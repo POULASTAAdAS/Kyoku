@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 class NotificationService(
     private val mail: JavaMailService,
+    private val jwt: JWTService,
 ) {
     @RabbitListener(
         queues = [Notification.QUEUE.EMAIL],
@@ -19,10 +20,10 @@ class NotificationService(
             Notification.Type.WELCOME_BACK -> mail.sendWelcomeBackMail(message.email, message.username)
             Notification.Type.AUTHENTICATE -> message.endPoint?.let { endPoint ->
                 mail.sendVerificationMail(
-                    message.email,
-                    message.username,
-                    endPoint,
-                    "token" // TODO add token
+                    email = message.email,
+                    username = message.username,
+                    endPoint = endPoint,
+                    token = jwt.generateVerificationMailToken(message.email)
                 )
             }
         }
