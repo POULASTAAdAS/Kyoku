@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="color-scheme" content="light"/>
+    <meta name="supported-color-schemes" content="light"/>
+    <title>Welcome Back to Kyoku</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        [data-ogsc] * {
+            color-scheme: light !important;
+        }
+
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        }
+
+        .header-section {
+            background-color: #F2C94C;
+            background-image: linear-gradient(135deg, #F2C94C 0%, #E6B82C 100%);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-box {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background-color: #2c3e50;
+            border-radius: 12px;
+            text-align: center;
+            line-height: 80px;
+            transform: rotate(45deg);
+        }
+
+        .logo-letter {
+            font-size: 48px;
+            font-weight: 800;
+            color: #F2C94C;
+            display: inline-block;
+            transform: rotate(-45deg);
+        }
+
+        .welcome-title {
+            color: #2c3e50;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+
+        .welcome-subtitle {
+            color: #2c3e50;
+            font-size: 16px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .content-section {
+            padding: 40px 20px;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        .greeting {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 20px 0;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #5a6c7d;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+            text-align: left;
+        }
+
+        .highlight-text {
+            color: #E6B82C;
+            font-weight: 600;
+        }
+
+        .stats-table {
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .stats-table td {
+            padding: 20px 10px;
+            text-align: center;
+            vertical-align: top;
+            width: 33.33%;
+        }
+
+        .stat-card {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            display: inline-block;
+            width: 100%;
+            max-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #F2C94C;
+            margin: 0 0 5px 0;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .cta-container {
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 32px;
+            background-color: #F2C94C;
+            background-image: linear-gradient(135deg, #F2C94C 0%, #E6B82C 100%);
+            color: #2c3e50 !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .footer-section {
+            background-color: #fafafa;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .social-links {
+            margin-bottom: 20px;
+        }
+
+        .social-link {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background-color: #2c3e50;
+            border-radius: 50%;
+            color: #F2C94C !important;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 36px;
+            text-align: center;
+            margin: 0 5px;
+        }
+
+        .footer-text {
+            color: #5a6c7d;
+            font-size: 14px;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .footer-email {
+            color: #E6B82C !important;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-copyright {
+            color: #8898aa;
+            font-size: 12px;
+            margin: 20px 0 0 0;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            line-height: 1.4;
+        }
+
+        @media screen and (max-width: 480px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .header-section {
+                padding: 30px 15px !important;
+            }
+
+            .welcome-title {
+                font-size: 24px !important;
+            }
+
+            .content-section {
+                padding: 30px 15px !important;
+            }
+
+            .stats-table td {
+                display: block !important;
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+
+            .message-text {
+                text-align: center !important;
+            }
+
+            .cta-button {
+                display: block !important;
+                width: calc(100% - 40px) !important;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .email-container,
+            .header-section,
+            .content-section,
+            .footer-section {
+                background-color: #ffffff !important;
+            }
+
+            .welcome-title,
+            .greeting,
+            .message-text,
+            .footer-text {
+                color: #2c3e50 !important;
+            }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 20px; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" class="email-container" style="margin: 0 auto;">
+    <tr>
+        <td class="header-section">
+            <div class="logo-container">
+                <div class="logo-box">
+                    <span class="logo-letter">K</span>
+                </div>
+            </div>
+            <h1 class="welcome-title">Welcome Back to Kyoku!</h1>
+            <p class="welcome-subtitle">Your musical journey continues 🎵</p>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="content-section">
+            <h2 class="greeting">Great to see you again! 👋</h2>
+
+            <p class="message-text">
+                We've missed you! While you were away, we've added
+                <span class="highlight-text">thousands of new tracks</span> and exciting features
+                just for you. Your playlists are right where you left them, and we've got some
+                fresh recommendations based on your listening history.
+            </p>
+
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="stats-table">
+                <tr>
+                    <td>
+                        <div class="stat-card">
+                            <div class="stat-number">247</div>
+                            <div class="stat-label">Songs in Library</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">Playlists</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="stat-card">
+                            <div class="stat-number">89</div>
+                            <div class="stat-label">Hours Listened</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- CTA Button -->
+            <div class="cta-container">
+                <a href="$appUrl" class="cta-button">Continue Listening</a>
+            </div>
+        </td>
+    </tr>
+
+    <!-- Footer Section -->
+    <tr>
+        <td class="footer-section">
+            <div class="social-links">
+                <a href="https://x.com/PoulastaaD22643" class="social-link">𝕏</a>
+                <a href="https://www.linkedin.com/in/poulastaa-das-7a5332235/" class="social-link">in</a>
+                <a href="https://poulastaa.medium.com/" class="social-link">Me</a>
+                <a href="https://github.com/POULASTAAdAS" class="social-link">Gh</a>
+            </div>
+
+            <p class="footer-text">Need help? Contact us at</p>
+            <p class="footer-text">
+                <a href="mailto:$devMail" class="footer-email">$devMail</a>
+            </p>
+            <p class="footer-text" style="font-weight: 600; color: #2c3e50;">Team Kyoku</p>
+
+            <div class="footer-copyright">
+                © 2025 Kyoku. All rights reserved.<br>
+                Made with ❤️ for music lovers
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

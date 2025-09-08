@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Verify Your Email Address - Kyoku</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        /* Reset styles */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0; mso-table-rspace: 0; }
+        img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #2c3e50;
+            line-height: 1.6;
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+
+        .email-wrapper {
+            width: 100%;
+            background-color: #f5f5f5;
+            padding: 40px 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #F2C94C 0%, #E6B82C 100%);
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        }
+
+        .logo-container {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: #2c3e50;
+            border-radius: 12px;
+            transform: rotate(45deg);
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.2);
+        }
+
+        .logo-diamond {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background: #2c3e50;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.2);
+            /* Use CSS to create diamond without transform */
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            position: relative;
+        }
+
+        .logo-diamond::after {
+            content: "K";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* This basic transform usually works */
+            font-size: 48px;
+            font-weight: 700;
+            color: #F2C94C;
+            line-height: 1;
+        }
+
+        .logo-text {
+            display: inline-block;
+            transform: rotate(-45deg) !important;
+            font-size: 48px;
+            font-weight: 700;
+            color: #F2C94C;
+            line-height: 80px;
+            letter-spacing: -2px;
+        }
+
+        .header-title {
+            color: #2c3e50 !important;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-subtitle {
+            color: #2c3e50 !important;
+            font-size: 16px;
+            font-weight: 400;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .greeting {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #5a6c7d;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        .highlight {
+            color: #E6B82C;
+            font-weight: 600;
+        }
+
+        .cta-container {
+            text-align: center;
+            margin: 45px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #F2C94C 0%, #E6B82C 100%);
+            color: #2c3e50 !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(242, 201, 76, 0.4);
+            text-transform: uppercase;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(242, 201, 76, 0.5);
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #F2C94C, #E6B82C);
+            margin: 35px auto;
+            border-radius: 2px;
+        }
+
+        .alternative-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border-radius: 12px;
+            border: 2px solid #F2C94C;
+        }
+
+        .alternative-section-title {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alternative-section p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+
+        .alternative-section a {
+            color: #E6B82C;
+            word-break: break-all;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .alternative-section a:hover {
+            text-decoration: underline;
+        }
+
+        .security-badge {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border: 2px solid #F2C94C;
+            border-radius: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .security-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: #F2C94C;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .security-badge p {
+            margin: 0;
+            font-size: 14px;
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            padding: 40px 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer-links {
+            margin-bottom: 25px;
+        }
+
+        .footer-links a {
+            color: #E6B82C;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #F2C94C;
+            text-decoration: underline;
+        }
+
+        .footer p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+
+        .footer .company-name {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .social-icons {
+            margin: 20px 0;
+        }
+
+        .social-icon {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: #2c3e50;
+            border-radius: 50%;
+            margin: 0 8px;
+            line-height: 36px;
+            text-align: center;
+            color: #F2C94C;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #F2C94C;
+            color: #2c3e50;
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            font-size: 12px;
+            color: #8898aa;
+        }
+
+        /* Mobile Responsive */
+        @media only screen and (max-width: 600px) {
+            .email-wrapper {
+                padding: 20px 10px;
+            }
+
+            .header {
+                padding: 40px 20px;
+            }
+
+            .header-title {
+                font-size: 26px;
+            }
+
+            .content {
+                padding: 35px 25px;
+            }
+
+            .greeting {
+                font-size: 18px;
+            }
+
+            .cta-button {
+                padding: 16px 32px;
+                font-size: 15px;
+                color: #2c3e50 !important;
+            }
+
+            .footer {
+                padding: 30px 20px;
+            }
+
+            .footer-links a {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a !important;
+            }
+            .email-wrapper {
+                background-color: #1a1a1a !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo-container">
+                <span class="logo-text">K</span>
+            </div>
+            <h1 class="header-title">Welcome to Kyoku</h1>
+            <p class="header-subtitle">Your journey begins here</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello ${username.uppercase()} 👋
+            </div>
+
+            <p class="message">
+                We're thrilled to welcome you to <span class="highlight">Kyoku</span>!
+                Your account is just one step away from being fully activated.
+                Please verify your email address to start your journey and listen to thousands of songs for free.
+            </p>
+
+            <div class="cta-container">
+                <a href="$endpoint?token=$token" class="cta-button">
+                    Verify My Email
+                </a>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="alternative-section">
+                <p class="alternative-section-title">Can't click the button?</p>
+                <p>No worries! Copy and paste this link into your browser:</p>
+                <a href="$endpoint?token=$token">
+                    $endpoint?token=$token
+                </a>
+            </div>
+
+            <div class="security-badge">
+                <p>
+                    <span class="security-icon">🔒</span>
+                    <strong>Security Notice:</strong> This verification link expires in <strong>10 minutes</strong> for your protection.
+                    If you didn't create an account with Kyoku, please disregard this email or contact our support team immediately.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <div class="social-icons">
+                <a href="#" class="social-icon" title="Twitter">𝕏</a>
+                <a href="#" class="social-icon" title="LinkedIn">in</a>
+                <a href="https://poulastaa.medium.com/" class="social-icon" title="Medium">Md</a>
+                <a href="https://github.com/POULASTAAdAS" class="social-icon" title="GitHub">Gh</a>
+            </div>
+
+            <p>Questions? We're here to help!</p>
+            <p>
+                <a href="mailto:$DEV_MAIL" style="color: #E6B82C; font-weight: 600; text-decoration: none;">
+                    $DEV_MAIL
+                </a>
+            </p>
+
+            <p style="margin-top: 25px;">
+                Best regards,<br>
+                <span class="company-name">Team Kyoku</span>
+            </p>
+
+            <div class="copyright">
+                © 2024 Kyoku. All rights reserved.<br>
+                Made with ❤️ by Team Kyoku
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
