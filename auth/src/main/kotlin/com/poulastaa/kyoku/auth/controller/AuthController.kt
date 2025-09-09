@@ -56,7 +56,7 @@ class AuthController(
 
     @GetMapping(Endpoints.VERIFY_EMAIL)
     fun validateAuthenticationMail(
-        @Valid @RequestParam token: JWTToken,
+        @Valid @RequestParam token: JWTToken,`
     ) = when (service.validateAuthenticationMailPayload(token)) {
         DtoEmailVerificationStatus.VALID -> TODO()
         DtoEmailVerificationStatus.TOKEN_ALREADY_USED -> TODO()

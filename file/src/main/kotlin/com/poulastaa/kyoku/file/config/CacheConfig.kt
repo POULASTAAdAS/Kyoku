@@ -1,0 +1,57 @@
+package com.poulastaa.kyoku.file.config
+
+import com.poulastaa.kyoku.file.model.dto.CacheHtml
+import com.poulastaa.kyoku.file.model.dto.CacheTypes
+import com.poulastaa.kyoku.file.model.dto.CachedImage
+import com.poulastaa.kyoku.file.model.dto.CachedImageSerializer
+import org.ehcache.config.builders.CacheConfigurationBuilder
+import org.ehcache.config.builders.CacheManagerBuilder
+import org.ehcache.config.builders.ExpiryPolicyBuilder
+import org.ehcache.config.builders.ResourcePoolsBuilder
+import org.ehcache.config.units.EntryUnit
+import org.ehcache.config.units.MemoryUnit
+import org.ehcache.core.config.DefaultConfiguration
+import org.ehcache.jsr107.EhcacheCachingProvider
+import org.springframework.cache.CacheManager
+import org.springframework.cache.jcache.JCacheCacheManager
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.toJavaDuration
+
+@Configuration
+class CacheConfig {
+    @Bean
+    fun provideCacheManager(): CacheManager = EhcacheCachingProvider().let {
+        JCacheCacheManager(
+            it.getCacheManager(
+                it.defaultURI,
+                DefaultConfiguration(
+                    CacheManagerBuilder.newCacheManagerBuilder()
+//                        .withSerializer(CachedImage::class.java, CachedImageSerializer::class.java)
+                        .withCache(
+                            CacheTypes.LOGO.name,
+                            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                String::class.java,
+                                CachedImage::class.java,
+                                ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                    .heap(4, EntryUnit.ENTRIES)
+                                    .offheap(10, MemoryUnit.MB)
+                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(30.minutes.toJavaDuration()))
+                        )
+                        .withCache(
+                            CacheTypes.STATIC_PAGE.name,
+                            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                String::class.java,
+                                CacheHtml::class.java,
+                                ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                    .heap(10, EntryUnit.ENTRIES)
+                                    .offheap(10, MemoryUnit.MB)
+                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(30.minutes.toJavaDuration()))
+                        ).build(true).runtimeConfiguration.cacheConfigurations,
+                    it.javaClass.classLoader
+                )
+            )
+        )
+    }
+}
