@@ -154,21 +154,23 @@ class AuthService(
         status = ResponseStatus.INTERNAL_SERVER_ERROR
     )
 
-    fun validateAuthenticationMailPayload(token: JWTToken): DtoEmailVerificationStatus {
-        if (cache.isVerificationTokenUsed(token)) return DtoEmailVerificationStatus.TOKEN_ALREADY_USED
+    fun validateAuthenticationMailPayload(token: JWTToken): EmailVerificationStatus {
+        if (cache.isVerificationTokenUsed(token)) return EmailVerificationStatus.TOKEN_ALREADY_USED
 
         val email = jwt.verifyAndExtractClaim<Email>(
             token,
             type = JWTTokenType.TOKEN_VERIFICATION_MAIL
-        ) ?: return DtoEmailVerificationStatus.TOKEN_EXPIRED
+        ) ?: return EmailVerificationStatus.TOKEN_EXPIRED
 
         // the user must be in cache as user trying to authenticate
-        if (cache.cacheUserByEmail(email, UserType.EMAIL) == null) return DtoEmailVerificationStatus.USER_NOT_FOUND
+        if (cache.cacheUserByEmail(email, UserType.EMAIL) == null) return EmailVerificationStatus.USER_NOT_FOUND
 
-        return DtoEmailVerificationStatus.VALID.also {
+        return EmailVerificationStatus.VALID.also {
             cache.storeUsedVerificationToken(token)
+            // this status is important...when getting access and refresh token for the first time
+            // after authentication for email user....this status is checked first then jwt token is generated
             cache.setEmailVerificationState(email, true)
-        }  // this status is important...when getting access and refresh token for the first time after authentication for email user....this status is checked first then jwt token is generated
+        }
     }
 
     private fun getUser(

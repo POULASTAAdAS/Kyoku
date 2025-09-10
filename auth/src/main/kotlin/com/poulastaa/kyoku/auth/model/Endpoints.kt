@@ -17,4 +17,13 @@ object Endpoints {
     const val REFRESH_TOKEN = "$STATIC/email/refresh-token"
 
     const val GOOGLE_AUTH = "$STATIC/google/join"
+
+    /**
+     * CHANGES WILL BREAK THE FLOW :)
+     *
+     *
+     *      - IMPORTANT this route is the file-service static file route!!!
+     *      - DON'T CHANGE OR MAKE SURE TO UPDATE IF FILE SERVER ROUTE CHANGES
+     */
+    const val STATIC_FILE = "$API/$VERSION/file/static"
 }

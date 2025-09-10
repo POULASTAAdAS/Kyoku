@@ -41,7 +41,7 @@ class CacheConfig {
                                 CachedContent::class.java,
                                 ResourcePoolsBuilder.newResourcePoolsBuilder()
                                     .heap(150, MemoryUnit.MB)
-                                    .offheap(1, MemoryUnit.GB)
+                                    .offheap(700, MemoryUnit.MB)
                             ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(45.minutes.toJavaDuration()))
                         )
                         .withCache(
