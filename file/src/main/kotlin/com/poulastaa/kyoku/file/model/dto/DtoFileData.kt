@@ -1,8 +1,10 @@
 package com.poulastaa.kyoku.file.model.dto
 
-data class DtoFileData<T>(
+import org.springframework.core.io.InputStreamResource
+
+data class DtoFileData(
     val size: Long,
     val fileName: String,
     val contentType: String,
-    val content: T,
+    val content: InputStreamResource,
 )

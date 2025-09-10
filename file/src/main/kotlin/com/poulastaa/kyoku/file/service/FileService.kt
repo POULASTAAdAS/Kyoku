@@ -1,14 +1,15 @@
 package com.poulastaa.kyoku.file.service
 
+import com.poulastaa.kyoku.file.model.dto.CacheTypes
+import com.poulastaa.kyoku.file.model.dto.CachedContent
 import com.poulastaa.kyoku.file.model.dto.DtoFileData
 import com.poulastaa.kyoku.file.model.dto.MiniOBuckets
-import com.poulastaa.kyoku.file.model.dto.StaticFileType
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.StatObjectArgs
 import org.springframework.core.io.InputStreamResource
 import org.springframework.stereotype.Service
-import java.io.InputStream
+import java.io.ByteArrayInputStream
 
 @Service
 class FileService(
@@ -18,66 +19,54 @@ class FileService(
 ) {
     fun getStaticFiles(
         fileName: String,
-        type: StaticFileType,
-    ) {
-        when (type) {
-            StaticFileType.LOGO -> cache.cacheLogo(fileName)?.let {
-                DtoFileData(
-                    size = it.size,
-                    fileName = it.fileName,
-                    contentType = it.contentType,
-                    content = it.toInputStream()
-                )
-            } ?: client.getObject(
-                GetObjectArgs.builder()
-                    .bucket(bucket.static)
-                    .`object`(fileName)
-                    .build()
-            ).let {
-                val info = client.statObject(
-                    StatObjectArgs.builder()
-                        .bucket(bucket.static)
-                        .`object`(fileName)
-                        .build()
-                )
+        type: CacheTypes,
+    ) = cache.cache(fileName, type)?.let {
+        DtoFileData(
+            size = it.size,
+            fileName = it.fileName,
+            contentType = it.contentType,
+            content = InputStreamResource(it.toInputStream()!!)
+        )
+    } ?: getBucket(type).let { bucket ->
+        val obj = client.getObject(
+            GetObjectArgs.builder()
+                .bucket(bucket)
+                .`object`(fileName)
+                .build()
+        )
 
-                DtoFileData(
-                    size = info.size(),
+        val info = client.statObject(
+            StatObjectArgs.builder()
+                .bucket(bucket)
+                .`object`(fileName)
+                .build()
+        )
+
+        val contentBytes = obj.use { it.readBytes() }
+
+        DtoFileData(
+            size = info.size(),
+            fileName = fileName,
+            contentType = info.contentType(),
+            content = InputStreamResource(ByteArrayInputStream(contentBytes))
+        ).also {
+            cache.set(
+                key = fileName,
+                types = type,
+                CachedContent(
                     fileName = fileName,
                     contentType = info.contentType(),
-                    content = InputStreamResource(it as InputStream)
-                )
-            }
-
-            StaticFileType.PAGE -> cache.cacheHtml(fileName)?.let {
-                DtoFileData(
-                    size = it.size,
-                    fileName = fileName,
-                    contentType = it.contentType,
-                    content = it.content
-                )
-            } ?: client.getObject(
-                GetObjectArgs.builder()
-                    .bucket(bucket.static)
-                    .`object`(fileName)
-                    .build()
-            ).let {
-                val info = client.statObject(
-                    StatObjectArgs.builder()
-                        .bucket(bucket.static)
-                        .`object`(fileName)
-                        .build()
-                )
-
-                DtoFileData(
+                    content = contentBytes,
                     size = info.size(),
-                    fileName = fileName,
-                    contentType = info.contentType(),
-                    content = InputStreamResource(it as InputStream)
                 )
-            }
-
-            else -> TODO("not yet implemented")
+            )
         }
+    }
+
+    private fun getBucket(type: CacheTypes): String = when (type) {
+        CacheTypes.STATIC -> bucket.static
+        CacheTypes.POSTER -> bucket.poster
+        CacheTypes.ARTIST_IMAGE -> bucket.artist
+        CacheTypes.GENRE_IMAGE -> bucket.genre
     }
 }

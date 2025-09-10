@@ -3,9 +3,8 @@ package com.poulastaa.kyoku.file.model.dto
 import java.io.ByteArrayInputStream
 import java.io.Serializable
 
-data class CachedImage(
+data class CachedContent(
     val fileName: String,
-    val url: String,
     val contentType: String,
     val size: Long,
     val content: ByteArray? = null,
@@ -14,11 +13,10 @@ data class CachedImage(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as CachedImage
+        other as CachedContent
 
         if (size != other.size) return false
         if (fileName != other.fileName) return false
-        if (url != other.url) return false
         if (contentType != other.contentType) return false
         if (!content.contentEquals(other.content)) return false
 
@@ -28,7 +26,6 @@ data class CachedImage(
     override fun hashCode(): Int {
         var result = size.hashCode()
         result = 31 * result + fileName.hashCode()
-        result = 31 * result + url.hashCode()
         result = 31 * result + contentType.hashCode()
         result = 31 * result + (content?.contentHashCode() ?: 0)
         return result

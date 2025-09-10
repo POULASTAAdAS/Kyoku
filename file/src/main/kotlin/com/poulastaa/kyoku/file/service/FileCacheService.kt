@@ -1,8 +1,7 @@
 package com.poulastaa.kyoku.file.service
 
-import com.poulastaa.kyoku.file.model.dto.CacheHtml
 import com.poulastaa.kyoku.file.model.dto.CacheTypes
-import com.poulastaa.kyoku.file.model.dto.CachedImage
+import com.poulastaa.kyoku.file.model.dto.CachedContent
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.CacheManager
 import org.springframework.cache.get
@@ -13,16 +12,17 @@ class FileCacheService(
     @param:Qualifier("provideCacheManager")
     private val cache: CacheManager,
 ) {
-    private val htmlCache by lazy {
-        cache.getCache(CacheTypes.STATIC_PAGE.name)
-    }
-    private val logoCache by lazy {
-        cache.getCache(CacheTypes.LOGO.name)
+    private val static by lazy {
+        cache.getCache(CacheTypes.STATIC.name)
     }
 
-    fun cacheHtml(key: String) = htmlCache?.get<CacheHtml>(key)
-    fun cacheLogo(key: String) = logoCache?.get<CachedImage>(key)
+    fun cache(key: String, types: CacheTypes) = when (types) {
+        CacheTypes.STATIC -> static?.get<CachedContent>(key)
+        else -> TODO("not yet implemented")
+    }
 
-    fun setHtml(key: String, html: CacheHtml) = htmlCache?.put(key, html)
-    fun setLogo(key: String, logo: CachedImage) = logoCache?.put(key, logo)
+    fun set(key: String, types: CacheTypes, data: CachedContent) = when (types) {
+        CacheTypes.STATIC -> static?.put(key, data)
+        else -> TODO("not yet implemented")
+    }
 }

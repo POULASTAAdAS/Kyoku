@@ -39,6 +39,9 @@ dependencies {
     implementation("org.ehcache:ehcache:3.11.1")
     implementation("org.springframework.boot:spring-boot-starter-cache")
 
+    // validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
     // devtools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 

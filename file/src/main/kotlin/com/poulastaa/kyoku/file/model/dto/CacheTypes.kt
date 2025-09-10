@@ -1,9 +1,8 @@
 package com.poulastaa.kyoku.file.model.dto
 
 enum class CacheTypes {
-    STATIC_PAGE,
-    LOGO,
-    SONG_IMAGE,
+    STATIC,
+    POSTER,
     ARTIST_IMAGE,
     GENRE_IMAGE,
 }

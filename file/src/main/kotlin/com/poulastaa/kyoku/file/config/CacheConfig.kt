@@ -1,14 +1,11 @@
 package com.poulastaa.kyoku.file.config
 
-import com.poulastaa.kyoku.file.model.dto.CacheHtml
 import com.poulastaa.kyoku.file.model.dto.CacheTypes
-import com.poulastaa.kyoku.file.model.dto.CachedImage
-import com.poulastaa.kyoku.file.model.dto.CachedImageSerializer
+import com.poulastaa.kyoku.file.model.dto.CachedContent
 import org.ehcache.config.builders.CacheConfigurationBuilder
 import org.ehcache.config.builders.CacheManagerBuilder
 import org.ehcache.config.builders.ExpiryPolicyBuilder
 import org.ehcache.config.builders.ResourcePoolsBuilder
-import org.ehcache.config.units.EntryUnit
 import org.ehcache.config.units.MemoryUnit
 import org.ehcache.core.config.DefaultConfiguration
 import org.ehcache.jsr107.EhcacheCachingProvider
@@ -28,26 +25,44 @@ class CacheConfig {
                 it.defaultURI,
                 DefaultConfiguration(
                     CacheManagerBuilder.newCacheManagerBuilder()
-//                        .withSerializer(CachedImage::class.java, CachedImageSerializer::class.java)
                         .withCache(
-                            CacheTypes.LOGO.name,
+                            CacheTypes.STATIC.name,
                             CacheConfigurationBuilder.newCacheConfigurationBuilder(
                                 String::class.java,
-                                CachedImage::class.java,
+                                CachedContent::class.java,
                                 ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                    .heap(4, EntryUnit.ENTRIES)
-                                    .offheap(10, MemoryUnit.MB)
+                                    .heap(500, MemoryUnit.KB) // update id needed ||| for current 9 files not needed
                             ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(30.minutes.toJavaDuration()))
                         )
                         .withCache(
-                            CacheTypes.STATIC_PAGE.name,
+                            CacheTypes.POSTER.name,
                             CacheConfigurationBuilder.newCacheConfigurationBuilder(
                                 String::class.java,
-                                CacheHtml::class.java,
+                                CachedContent::class.java,
                                 ResourcePoolsBuilder.newResourcePoolsBuilder()
-                                    .heap(10, EntryUnit.ENTRIES)
-                                    .offheap(10, MemoryUnit.MB)
-                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(30.minutes.toJavaDuration()))
+                                    .heap(150, MemoryUnit.MB)
+                                    .offheap(1, MemoryUnit.GB)
+                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(45.minutes.toJavaDuration()))
+                        )
+                        .withCache(
+                            CacheTypes.ARTIST_IMAGE.name,
+                            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                String::class.java,
+                                CachedContent::class.java,
+                                ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                    .heap(50, MemoryUnit.MB)
+                                    .offheap(200, MemoryUnit.MB)
+                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(45.minutes.toJavaDuration()))
+                        )
+                        .withCache(
+                            CacheTypes.GENRE_IMAGE.name,
+                            CacheConfigurationBuilder.newCacheConfigurationBuilder(
+                                String::class.java,
+                                CachedContent::class.java,
+                                ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                    .heap(8, MemoryUnit.MB)
+                                    .offheap(12, MemoryUnit.MB)
+                            ).withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(20.minutes.toJavaDuration()))
                         ).build(true).runtimeConfiguration.cacheConfigurations,
                     it.javaClass.classLoader
                 )
