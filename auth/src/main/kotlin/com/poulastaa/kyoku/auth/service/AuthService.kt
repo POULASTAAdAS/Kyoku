@@ -3,6 +3,7 @@ package com.poulastaa.kyoku.auth.service
 import com.poulastaa.kyoku.auth.model.Notification
 import com.poulastaa.kyoku.auth.model.dto.*
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
+import com.poulastaa.kyoku.auth.model.response.ResponseToken
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
 import com.poulastaa.kyoku.auth.utils.*
 import org.springframework.security.crypto.bcrypt.BCrypt
@@ -20,8 +21,13 @@ class AuthService(
     fun processEmailSingIn(
         email: Email,
         password: Password,
-    ) = email.takeIf { validateEmail(it) }?.let { EMAIL ->
-        getUser(EMAIL, UserType.EMAIL)?.let { user ->
+    ) = email.takeIf { validateEmail(it) }?.let { _ ->
+        getUser(email, UserType.EMAIL)?.let { user ->
+            // if user first tries to sing-up before validating email tries to log-in
+            if (user.id == -1L) return@let ResponseWrapper(
+                status = ResponseStatus.USER_NOT_FOUND
+            )
+
             user.takeIf { isSamePassword(password, user.passwordHash) }?.let { dtoUser ->
                 // TODO get and send type of login from user-service ---------> THOUGHT: use gRPC
                 //  Types:
@@ -62,8 +68,12 @@ class AuthService(
         email: Email,
         password: Password,
         countryCode: String,
-    ) = email.takeIf { validateEmail(it) }?.let { EMAIL ->
-        if (getUser(EMAIL, UserType.EMAIL) == null) {
+    ) = email.takeIf { validateEmail(it) }?.let { _ ->
+        val user = getUser(email, UserType.EMAIL)
+
+        // no user found in database or cache
+        // user found in cache but id == -1 ----> user may have tried to sign-up multiple time within 15 minute (within rate limit)
+        if (user == null || user.id == -1L) {
             password.encryptPassword()?.let { passwordHash ->
                 ResponseWrapper(
                     payload = cache.setUserByEmail(
@@ -112,7 +122,7 @@ class AuthService(
             payload = data,
             status = status
         ).also { _ ->
-            cache.setEmailVerificationState(user.email, true)
+            cache.setEmailVerificationState(user.email, UserType.EMAIL, true)
 
             notification.publishMail(
                 Notification.Email(
@@ -140,7 +150,7 @@ class AuthService(
                 status = ResponseStatus.USER_CREATED,
             )
         }.also {
-            cache.setEmailVerificationState(it.payload!!.email, true)
+            cache.setEmailVerificationState(it.payload!!.email, UserType.EMAIL, true)
 
             notification.publishMail(
                 Notification.Email(
@@ -169,9 +179,65 @@ class AuthService(
             cache.storeUsedVerificationToken(token)
             // this status is important...when getting access and refresh token for the first time
             // after authentication for email user....this status is checked first then jwt token is generated
-            cache.setEmailVerificationState(email, true)
+            cache.setEmailVerificationState(email, UserType.EMAIL, true)
         }
     }
+
+    fun generateAuthenticationTokens(
+        email: Email,
+        type: UserType,
+    ) = email.takeIf { email -> cache.cacheAndDeleteEmailVerificationState(email, UserType.EMAIL) }?.let { _ ->
+        var user = cache.cacheUserByEmail(email, type) ?: return ResponseToken()
+
+        val accessToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_ACCESS
+        )
+        val refreshToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_REFRESH
+        )
+
+        // is userId == -1 new user ---> first create entry
+        if (user.id == -1L) user = db.createUser(
+            DtoUser(
+                username = user.username,
+                displayName = user.displayName,
+                email = user.email,
+                passwordHash = user.passwordHash,
+                countryCode = user.countryCode,
+                type = type
+            )
+        ).also {
+            cache.setUserByEmail(it) // update -1 ID with new generated ID
+            notification.publishMail(
+                Notification.Email(
+                    email = user.email,
+                    username = user.username,
+                    type = Notification.Type.WELCOME
+                )
+            )
+        } else notification.publishMail(
+            Notification.Email(
+                email = user.email,
+                username = user.username,
+                type = Notification.Type.WELCOME_BACK
+            )
+        )
+
+        db.updateRefreshToken(user.id, refreshToken)
+
+        ResponseToken(
+            accessToken = accessToken,
+            refreshToken = refreshToken
+        )
+    } ?: ResponseToken() // invalid request
 
     private fun getUser(
         email: Email,

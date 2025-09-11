@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.auth.service
 
+import com.poulastaa.kyoku.auth.database.entity.EntityJWTToken
 import com.poulastaa.kyoku.auth.database.entity.EntityUser
 import com.poulastaa.kyoku.auth.database.repository.CountryDataSource
 import com.poulastaa.kyoku.auth.database.repository.UserDataSource
@@ -8,6 +9,8 @@ import com.poulastaa.kyoku.auth.database.repository.UserTypeDataSource
 import com.poulastaa.kyoku.auth.model.dto.DtoUser
 import com.poulastaa.kyoku.auth.model.dto.UserType
 import com.poulastaa.kyoku.auth.utils.Email
+import com.poulastaa.kyoku.auth.utils.JWTToken
+import com.poulastaa.kyoku.auth.utils.UserId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -30,6 +33,7 @@ class DatabaseService(
     fun createUser(newUser: DtoUser) = this.user.save(
         EntityUser().apply {
             this.username = newUser.username
+            this.displayName = newUser.displayName
             this.email = newUser.email
             this.passwordHash = newUser.passwordHash
             this.profilePicUrl = newUser.profileUrl
@@ -38,7 +42,20 @@ class DatabaseService(
         }
     ).toDtoUse()
 
-
+    fun updateRefreshToken(id: UserId, refreshToken: JWTToken) {
+        val entry = jwt.findById(id).orElse(null)
+        if (entry != null) {
+            entry.refreshToken = refreshToken
+            jwt.save(entry)
+        } else {
+            jwt.save(
+                EntityJWTToken().apply {
+                    this.id = id
+                    this.refreshToken = refreshToken
+                }
+            )
+        }
+    }
 
     private fun getUserTypeByType(type: UserType) = this.userType.findByTypeIgnoreCase(type.name)
     private fun getCountryByCode(code: String) = country.getEntityCountryByCodeIgnoreCase(code)

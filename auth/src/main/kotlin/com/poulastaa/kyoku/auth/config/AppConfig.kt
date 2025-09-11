@@ -86,4 +86,56 @@ class AppConfig {
         unit = unit,
         claimKey = claimKey,
     )
+
+    @Bean
+    fun provideAccessTokenConfigurationsClass(
+        @Value("\${jwt.access.secret}")
+        secret: String,
+        @Value("\${jwt.access.subject}")
+        subject: String,
+        @Value("\${jwt.access.issuer}")
+        issuer: String,
+        @Value("\${jwt.access.audience}")
+        audience: String,
+        @Value("\${jwt.access.time}")
+        expTime: Int,
+        @Value("\${jwt.access.unit}")
+        unit: String = "HOURS",
+        @Value("\${jwt.access.claim.key}")
+        claimKey: String,
+    ) = DtoJWTConfigInfo(
+        secret = secret,
+        subject = subject,
+        issuer = issuer,
+        audience = audience,
+        expiresIn = expTime,
+        unit = unit,
+        claimKey = claimKey,
+    )
+
+    @Bean
+    fun provideRefreshTokenConfigurationsClass(
+        @Value("\${jwt.refresh.secret}")
+        secret: String,
+        @Value("\${jwt.refresh.subject}")
+        subject: String,
+        @Value("\${jwt.refresh.issuer}")
+        issuer: String,
+        @Value("\${jwt.refresh.audience}")
+        audience: String,
+        @Value("\${jwt.refresh.time}")
+        expTime: Int,
+        @Value("\${jwt.refresh.unit}")
+        unit: String = "MINUTES",
+        @Value("\${jwt.refresh.claim.key}")
+        claimKey: String,
+    ) = DtoJWTConfigInfo(
+        secret = secret,
+        subject = subject,
+        issuer = issuer,
+        audience = audience,
+        expiresIn = expTime,
+        unit = unit,
+        claimKey = claimKey,
+    )
 }

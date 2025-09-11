@@ -1,20 +1,26 @@
 package com.poulastaa.kyoku.auth.service
 
+import com.poulastaa.kyoku.auth.model.dto.DtoAuthenticationTokenClaim
 import com.poulastaa.kyoku.auth.model.dto.DtoJWTConfigInfo
 import com.poulastaa.kyoku.auth.model.dto.JWTTokenType
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
-import jakarta.inject.Named
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class JWTService(
-    @param:Named("provideVerificationMailConfigurationsClass")
+    @param:Qualifier("provideVerificationMailConfigurationsClass")
     private val verification: DtoJWTConfigInfo,
-    @param:Named("provideForgotPasswordMailConfigurationsClass")
+    @param:Qualifier("provideForgotPasswordMailConfigurationsClass")
     private val forgotPassword: DtoJWTConfigInfo,
+    @param:Qualifier("provideAccessTokenConfigurationsClass")
+    private val access: DtoJWTConfigInfo,
+    @param:Qualifier("provideRefreshTokenConfigurationsClass")
+    private val refresh: DtoJWTConfigInfo,
 ) {
     fun <T> verifyAndExtractClaim(
         token: JWTToken,
@@ -27,6 +33,33 @@ class JWTService(
             else -> TODO("not yet implemented")
         }
     }
+
+    fun generateToken(
+        payload: DtoAuthenticationTokenClaim,
+        type: JWTTokenType,
+    ) = when (type) {
+        JWTTokenType.TOKEN_ACCESS -> access
+        JWTTokenType.TOKEN_REFRESH -> refresh
+
+        JWTTokenType.TOKEN_FORGOT_PASSWORD -> TODO()
+        JWTTokenType.TOKEN_SUBMIT_NEW_PASSWORD -> TODO()
+
+        else -> throw IllegalArgumentException("Invalid token generation type")
+    }.let { conf ->
+        Date(System.currentTimeMillis()).let { issueTime ->
+            Jwts.builder()
+                .subject(conf.subject)
+                .issuer(conf.issuer)
+                .audience()
+                .add(conf.audience)
+                .and()
+                .claim(conf.claimKey, payload)
+                .issuedAt(issueTime)
+                .expiration(Date(issueTime.time + conf.expTime.inWholeMilliseconds))
+                .signWith(conf.key, Jwts.SIG.HS256)
+                .compact()
+        }
+    } as JWTToken
 
     private fun extractClaim(
         token: JWTToken,

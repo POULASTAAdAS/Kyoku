@@ -42,6 +42,6 @@ CREATE TABLE
     IF NOT EXISTS UserJWTToken (
         user_id BIGINT PRIMARY KEY,
         refresh_token VARCHAR(1000) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_user_token FOREIGN KEY (user_id) REFERENCES `User` (id) ON DELETE CASCADE
     );

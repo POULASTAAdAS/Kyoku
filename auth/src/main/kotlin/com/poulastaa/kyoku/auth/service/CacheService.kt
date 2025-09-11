@@ -26,11 +26,20 @@ class CacheService(
     fun isVerificationTokenUsed(token: JWTToken) = Group.VERIFICATION_TOKEN.cache<Boolean>(token) ?: false
     fun storeUsedVerificationToken(token: JWTToken) = Group.VERIFICATION_TOKEN.set(token, true)
 
-    fun setEmailVerificationState(email: Email, status: Boolean) = Group.EMAIL_VERIFICATION_STATUS.set(email, status)
+    fun setEmailVerificationState(
+        email: Email,
+        type: UserType,
+        status: Boolean,
+    ) = Group.EMAIL_VERIFICATION_STATUS.set(
+        "$type:$email",
+        status
+    )
+
     fun cacheAndDeleteEmailVerificationState(
         email: Email,
-    ) = (Group.EMAIL_VERIFICATION_STATUS.cache<Boolean>(email) ?: false).also {
-        it.takeIf { it }?.let { Group.EMAIL_VERIFICATION_STATUS.delete(email) }
+        type: UserType,
+    ) = (Group.EMAIL_VERIFICATION_STATUS.cache<Boolean>("$type:$email") ?: false).also {
+        it.takeIf { it }?.let { Group.EMAIL_VERIFICATION_STATUS.delete("$type:$email") }
     }
 
     private inline fun <reified T> Group.cache(
