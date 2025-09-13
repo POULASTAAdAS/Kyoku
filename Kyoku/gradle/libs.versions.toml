@@ -49,11 +49,19 @@ work = "2.10.4"
 
 
 androidTools = "31.13.0"
-appcompat = "1.7.1"
-material = "1.13.0"
 
 
 composeCompiler = "1.5.15"
+
+# Project versions
+projectApplicationId = "com.poulastaa.kyoku"
+projectVersionName = "1.0"
+projectMinSdkVersion = "26"
+projectTargetSdkVersion = "36"
+projectCompileSdkVersion = "36"
+projectVersionCode = "1"
+appcompat = "1.7.1"
+material = "1.13.0"
 
 
 [libraries]
@@ -148,6 +156,16 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsPlugin" }
 
+kyoku-android-application = { id = "kyoku.android.application", version = "unspecified" }
+kyoku-android-application-compose = { id = "kyoku.android.application.compose", version = "unspecified" }
+kyoku-android-library = { id = "kyoku.android.library", version = "unspecified" }
+kyoku-android-library-compose = { id = "kyoku.android.library.compose", version = "unspecified" }
+kyoku-android-feature-ui = { id = "kyoku.android.feature.ui", version = "unspecified" }
+kyoku-android-room = { id = "kyoku.android.room", version = "unspecified" }
+kyoku-android-dagger = { id = "kyoku.android.dagger", version = "unspecified" }
+kyoku-jvm-library = { id = "kyoku.jvm.library", version = "unspecified" }
+kyoku-okhttp-library = { id = "kyoku.okhttp.library", version = "unspecified" }
+
 
 [bundles]
 compose = [
@@ -169,6 +187,7 @@ media3 = [
     "media3-exoplayer-hls",
     "media3-common",
     "media3-session",
+    "media3-ui",
     "media",
     "legacy-support-V4"
 ]
