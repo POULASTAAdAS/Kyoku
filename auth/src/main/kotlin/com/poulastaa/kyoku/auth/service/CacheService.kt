@@ -23,8 +23,16 @@ class CacheService(
         user: DtoUser,
     ) = Group.USER.set<SerializedUser>("${user.type}:${user.email}", user.toSerializedUser()).let { user }
 
-    fun isVerificationTokenUsed(token: JWTToken) = Group.VERIFICATION_TOKEN.cache<Boolean>(token) ?: false
-    fun storeUsedVerificationToken(token: JWTToken) = Group.VERIFICATION_TOKEN.set(token, true)
+    /**
+     * all tokens are taken under the same group with different validation time
+     */
+    fun isJWTTokenUsed(token: JWTToken) = Group.JWT_TOKEN.cache<Boolean>(token) ?: false
+
+    fun storeUsedJWTToken(
+        token: JWTToken,
+        expTime: Long? = null,
+        unit: TimeUnit? = null,
+    ) = Group.JWT_TOKEN.set(token, true, expTime, unit)
 
     fun setEmailVerificationState(
         email: Email,
@@ -53,14 +61,12 @@ class CacheService(
         data: T,
         expTime: Long? = null,
         unit: TimeUnit? = null,
-    ) {
-        redis.opsForValue().set(
-            this.buildDynamicKey(key),
-            data,
-            expTime ?: this.expTime,
-            unit ?: this.unit
-        )
-    }
+    ) = redis.opsForValue().set(
+        this.buildDynamicKey(key),
+        data,
+        expTime ?: this.expTime,
+        unit ?: this.unit
+    )
 
     private fun Group.delete(key: String) = redis.delete(this.buildDynamicKey(key))
 

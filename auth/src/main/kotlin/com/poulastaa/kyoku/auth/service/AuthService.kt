@@ -2,14 +2,15 @@ package com.poulastaa.kyoku.auth.service
 
 import com.poulastaa.kyoku.auth.model.Notification
 import com.poulastaa.kyoku.auth.model.dto.*
-import com.poulastaa.kyoku.auth.model.response.ResponseStatus
-import com.poulastaa.kyoku.auth.model.response.ResponseToken
-import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
+import com.poulastaa.kyoku.auth.model.response.*
 import com.poulastaa.kyoku.auth.utils.*
+import org.springframework.context.ApplicationContext
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
 import java.net.InetAddress
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 @Service
 class AuthService(
@@ -17,6 +18,7 @@ class AuthService(
     private val jwt: JWTService,
     private val cache: CacheService,
     private val db: DatabaseService,
+    private val context: ApplicationContext,
 ) {
     fun processEmailSingIn(
         email: Email,
@@ -165,7 +167,7 @@ class AuthService(
     )
 
     fun validateAuthenticationMailPayload(token: JWTToken): EmailVerificationStatus {
-        if (cache.isVerificationTokenUsed(token)) return EmailVerificationStatus.TOKEN_ALREADY_USED
+        if (cache.isJWTTokenUsed(token)) return EmailVerificationStatus.TOKEN_ALREADY_USED
 
         val email = jwt.verifyAndExtractClaim<Email>(
             token,
@@ -176,7 +178,7 @@ class AuthService(
         if (cache.cacheUserByEmail(email, UserType.EMAIL) == null) return EmailVerificationStatus.USER_NOT_FOUND
 
         return EmailVerificationStatus.VALID.also {
-            cache.storeUsedVerificationToken(token)
+            cache.storeUsedJWTToken(token)
             // this status is important...when getting access and refresh token for the first time
             // after authentication for email user....this status is checked first then jwt token is generated
             cache.setEmailVerificationState(email, UserType.EMAIL, true)
@@ -239,6 +241,54 @@ class AuthService(
         )
     } ?: ResponseToken() // invalid request
 
+    fun refreshToken(
+        payload: DtoAuthenticationTokenClaim,
+        token: JWTToken,
+    ): RefreshTokenResponse {
+        if (cache.isJWTTokenUsed(token)) return RefreshTokenResponse()
+        val claims = jwt.verifyAndExtractClaim<DtoAuthenticationTokenClaim>(
+            token = token,
+            type = JWTTokenType.TOKEN_REFRESH
+        ) ?: return RefreshTokenResponse(RefreshTokenResponseStatus.TOKEN_EXPIRED)
+
+        if (claims.email != payload.email) return RefreshTokenResponse(RefreshTokenResponseStatus.INVALID_TOKEN)
+        if (claims.userType != payload.userType) return RefreshTokenResponse(RefreshTokenResponseStatus.INVALID_TOKEN)
+
+        val user = getUser(payload.email, payload.userType)
+            ?: return RefreshTokenResponse(RefreshTokenResponseStatus.INVALID_TOKEN)
+        val accessToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_ACCESS
+        )
+        val refreshToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_REFRESH
+        )
+
+        db.updateRefreshToken(user.id, refreshToken).also {
+            val (time, unit) = context.getBean(
+                "provideRefreshTokenConfigurationsClass",
+                DtoJWTConfigInfo::class.java
+            ).expDuration.toBestFitUnit()
+
+            cache.storeUsedJWTToken(token, time, unit)
+        }
+
+        return RefreshTokenResponse(
+            status = RefreshTokenResponseStatus.SUCCESS,
+            payload = ResponseToken(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
+        )
+    }
+
     private fun getUser(
         email: Email,
         type: UserType,
@@ -256,5 +306,14 @@ class AuthService(
         InetAddress.getByName(this.substringAfter("@")) != null
     } catch (_: UnknownHostException) {
         false
+    }
+
+    fun Duration.toBestFitUnit() = when {
+        this.inWholeDays > 0 -> this.inWholeDays to TimeUnit.DAYS
+        this.inWholeHours > 0 -> this.inWholeHours to TimeUnit.HOURS
+        this.inWholeMinutes > 0 -> this.inWholeMinutes to TimeUnit.MINUTES
+        this.inWholeSeconds > 0 -> this.inWholeSeconds to TimeUnit.SECONDS
+        this.inWholeMilliseconds > 0 -> this.inWholeMilliseconds to TimeUnit.MILLISECONDS
+        else -> this.inWholeNanoseconds to TimeUnit.NANOSECONDS
     }
 }

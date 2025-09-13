@@ -3,11 +3,13 @@ package com.poulastaa.kyoku.auth.service
 import com.poulastaa.kyoku.auth.model.dto.DtoAuthenticationTokenClaim
 import com.poulastaa.kyoku.auth.model.dto.DtoJWTConfigInfo
 import com.poulastaa.kyoku.auth.model.dto.JWTTokenType
+import com.poulastaa.kyoku.auth.model.dto.UserType
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.json.GsonJsonParser
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -22,6 +24,8 @@ class JWTService(
     @param:Qualifier("provideRefreshTokenConfigurationsClass")
     private val refresh: DtoJWTConfigInfo,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun <T> verifyAndExtractClaim(
         token: JWTToken,
         type: JWTTokenType,
@@ -30,12 +34,31 @@ class JWTService(
 
         return when (type) {
             JWTTokenType.TOKEN_VERIFICATION_MAIL -> claim[verification.claimKey] as T?
+            JWTTokenType.TOKEN_ACCESS,
+            JWTTokenType.TOKEN_REFRESH,
+                -> try {
+                GsonJsonParser().parseMap(
+                    claim[
+                        if (type == JWTTokenType.TOKEN_ACCESS) access.claimKey
+                        else refresh.claimKey
+                    ].toString()
+                ).let { payload ->
+                    DtoAuthenticationTokenClaim(
+                        email = payload["email"] as String,
+                        userType = UserType.valueOf(payload["userType"] as String)
+                    )
+                }
+            } catch (e: Exception) {
+                logger.error("Error parsing JWT token: ${e.message}")
+                null
+            } as T?
+
             else -> TODO("not yet implemented")
         }
     }
 
-    fun generateToken(
-        payload: DtoAuthenticationTokenClaim,
+    fun <T> generateToken(
+        payload: T,
         type: JWTTokenType,
     ) = when (type) {
         JWTTokenType.TOKEN_ACCESS -> access
@@ -55,7 +78,7 @@ class JWTService(
                 .and()
                 .claim(conf.claimKey, payload)
                 .issuedAt(issueTime)
-                .expiration(Date(issueTime.time + conf.expTime.inWholeMilliseconds))
+                .expiration(Date(issueTime.time + conf.expDuration.inWholeMilliseconds))
                 .signWith(conf.key, Jwts.SIG.HS256)
                 .compact()
         }
@@ -68,6 +91,8 @@ class JWTService(
         val payload = when (type) {
             JWTTokenType.TOKEN_VERIFICATION_MAIL -> verification
             JWTTokenType.TOKEN_FORGOT_PASSWORD -> forgotPassword
+            JWTTokenType.TOKEN_REFRESH -> refresh
+            JWTTokenType.TOKEN_ACCESS -> access
             else -> TODO("not yet implemented")
         }
 

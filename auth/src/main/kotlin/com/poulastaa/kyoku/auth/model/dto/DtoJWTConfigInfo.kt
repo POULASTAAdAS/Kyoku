@@ -17,7 +17,7 @@ data class DtoJWTConfigInfo(
     val claimKey: String,
 ) {
     val key: SecretKey = Keys.hmacShaKeyFor(Base64.getUrlDecoder().decode(secret))
-    val expTime = when (unit.uppercase()) {
+    val expDuration = when (unit.uppercase()) {
         "MINUTES" -> expiresIn.minutes
         "HOURS" -> expiresIn.hours
         "DAYS" -> expiresIn.days

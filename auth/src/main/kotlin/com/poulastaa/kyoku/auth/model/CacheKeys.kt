@@ -17,7 +17,7 @@ open class CacheKeys {
         val expTime: Long = ExpTime.TEN.time,
         val unit: TimeUnit = ExpTime.TEN.unit,
     ) {
-        VERIFICATION_TOKEN,
+        JWT_TOKEN,
         EMAIL_VERIFICATION_STATUS,
         USER(expTime = ExpTime.FIFTEEN.time),
         PASSWORD_RESET_STATUS(expTime = ExpTime.FIFTEEN.time),

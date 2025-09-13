@@ -4,16 +4,15 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.kyoku.auth.model.Endpoints
-import com.poulastaa.kyoku.auth.model.dto.DtoUser
-import com.poulastaa.kyoku.auth.model.dto.EmailVerificationStatus
-import com.poulastaa.kyoku.auth.model.dto.GoogleAuthPayload
-import com.poulastaa.kyoku.auth.model.dto.UserType
+import com.poulastaa.kyoku.auth.model.dto.*
 import com.poulastaa.kyoku.auth.model.request.EmailSignUp
 import com.poulastaa.kyoku.auth.model.request.EmailSingIn
 import com.poulastaa.kyoku.auth.model.request.GoogleAuth
-import com.poulastaa.kyoku.auth.model.response.ResponseStatus
+import com.poulastaa.kyoku.auth.model.request.RefreshTokenRequest
+import com.poulastaa.kyoku.auth.model.response.RefreshTokenResponse
 import com.poulastaa.kyoku.auth.model.response.ResponseToken
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
+import com.poulastaa.kyoku.auth.model.response.ResponseStatus
 import com.poulastaa.kyoku.auth.service.AuthService
 import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
@@ -98,6 +97,27 @@ class AuthController(
                 type = type,
             )
         )
+    }
+
+    @PostMapping(Endpoints.REFRESH_TOKEN)
+    fun refreshToken(
+        @Valid @RequestBody req: RefreshTokenRequest,
+    ): ResponseEntity<RefreshTokenResponse> {
+        val type = try {
+            UserType.valueOf(req.type)
+        } catch (_: Exception) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(RefreshTokenResponse())
+        }
+
+        return service.refreshToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = req.email,
+                userType = type
+            ),
+            token = req.oldToken
+        ).let {
+            ResponseEntity.status(it.status.status).body(it)
+        }
     }
 
     fun GoogleAuth.validateToken(

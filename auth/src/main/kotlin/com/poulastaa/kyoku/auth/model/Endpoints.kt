@@ -11,10 +11,10 @@ object Endpoints {
     const val EMAIL_SING_UP = "$STATIC/email/create-account"
     const val VERIFY_EMAIL = "$STATIC/email/verify-email"
     const val CHECK_VERIFICATION_MAIL_STATE = "$STATIC/email/verify-email/state"
+    const val REFRESH_TOKEN = "$STATIC/email/refresh-token"
 
     // TODO --> think how to implement forgot password on device
 
-    const val REFRESH_TOKEN = "$STATIC/email/refresh-token"
 
     const val GOOGLE_AUTH = "$STATIC/google/join"
 
