@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sing_in">Sing In</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="forgot_password">Forgot Password ?</string>
+    <string name="email_not_registered">email not registered</string>
+    <string name="create_new_account">create a new account</string>
+    <string name="continue_text">continue</string>
+    <string name="dont_have_an_account">Don\'t have an account ?</string>
+    <string name="singup_button_text">SingUp</string>
+    <string name="or_login_with">or login with</string>
+    <string name="continue_with_google">continue with google</string>
+    <string name="kyoku">Kyoku</string>
+</resources>

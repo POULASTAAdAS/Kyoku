@@ -4,8 +4,14 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+
+val GoogleIcon: Painter
+    @Composable
+    get() = painterResource(id = R.drawable.ic_google)
 
 val AppLogo: ImageVector
     @Composable
@@ -50,3 +56,4 @@ val UserIcon: ImageVector
 val ArrowBackIcon: ImageVector
     @Composable
     get() = Icons.AutoMirrored.Rounded.ArrowBack
+

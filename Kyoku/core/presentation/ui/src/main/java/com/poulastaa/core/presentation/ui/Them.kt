@@ -113,7 +113,11 @@ fun KyokuThem(
         else -> ExpandedDimens
     }
 
+    val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
+
     AppThem(
+        mode = mode,
+        themColor = ThemeManager.instance.themColor,
         appDimens = appDimens,
         content = content
     )
@@ -122,11 +126,12 @@ fun KyokuThem(
 @Composable
 fun AppThem(
     them: Boolean? = null,
+    mode: Boolean = true,
+    themColor: ThemColor = ThemColor.BASE,
     appDimens: Dimens = CompactMediumDimens,
     content: @Composable () -> Unit,
 ) {
-    val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
-    val colorScheme = when (ThemeManager.instance.themColor) {
+    val colorScheme = when (themColor) {
         ThemColor.BASE -> if (them ?: mode) baseDarkScheme else baseLightScheme
         ThemColor.GREEN -> TODO()
     }
