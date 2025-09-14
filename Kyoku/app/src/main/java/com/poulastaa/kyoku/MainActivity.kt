@@ -3,45 +3,66 @@ package com.poulastaa.kyoku
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.poulastaa.kyoku.ui.theme.KyokuTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.poulastaa.core.presentation.ThemeManager
+import com.poulastaa.core.presentation.ui.KyokuThem
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewmodel by viewModels<RootViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        setupSplashScreen()
         setContent {
-            KyokuTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            viewmodel.loadThem(isSystemInDarkTheme())
+
+            val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
+            KyokuThem(mode) {
+                val nav = rememberNavController()
+                val state by viewmodel.state.collectAsStateWithLifecycle()
+
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    state.screen?.let {
+
+                    }
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    private fun setupSplashScreen() {
+        var keepSplashOpened = true
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    KyokuTheme {
-        Greeting("Android")
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewmodel.keepSplashOn.collectLatest {
+                    keepSplashOpened = it
+                }
+            }
+        }
+
+        installSplashScreen().setKeepOnScreenCondition {
+            keepSplashOpened
+        }
     }
 }
