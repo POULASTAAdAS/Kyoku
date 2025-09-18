@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.presentation.ThemeManager
 import com.poulastaa.core.presentation.ui.KyokuThem
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +44,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     state.screen?.let {
+                        IntroRootScreen {
 
+                        }
                     }
                 }
             }

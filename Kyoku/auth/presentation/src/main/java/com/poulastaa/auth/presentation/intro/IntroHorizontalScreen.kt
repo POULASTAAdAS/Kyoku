@@ -1,8 +1,10 @@
 package com.poulastaa.auth.presentation.intro
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,9 +41,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.poulastaa.auth.presentation.intro.components.IntroUiState
 import com.poulastaa.core.presentation.ui.AlternateEmailIcon
 import com.poulastaa.core.presentation.ui.AppLogo
 import com.poulastaa.core.presentation.ui.AppThem
@@ -53,31 +59,32 @@ import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.dimens
 
 @Composable
-fun IntroHorizontalScreen(
+internal fun IntroHorizontalScreen(
     modifier: Modifier = Modifier,
+    state: IntroUiState,
 ) {
-    val isValidEmail = false
-    val isNewUser = false
-    val email = "poulastaadas2@gmail.com"
-    val emailSupportText = ""
-    val passwordSupportText = ""
-
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(MaterialTheme.dimens.medium1)
+            .scrollable(
+                state = rememberScrollState(0),
+                orientation = Orientation.Horizontal
+            )
             .then(modifier),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(.5f))
+
         Image(
             imageVector = AppLogo,
             contentDescription = stringResource(R.string.kyoku),
-            modifier = Modifier.aspectRatio(9f / 4f)
+            modifier = Modifier.aspectRatio(2f)
         )
 
-        Spacer(Modifier.weight(.2f))
+        Spacer(Modifier.weight(1f))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -104,7 +111,7 @@ fun IntroHorizontalScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
                 OutlinedTextField(
-                    value = email,
+                    value = state.email.prop.value,
                     onValueChange = {
 
                     },
@@ -148,7 +155,7 @@ fun IntroHorizontalScreen(
                             contentDescription = stringResource(R.string.email)
                         )
                     },
-                    trailingIcon = isValidEmail.takeIf { it }?.let { _ ->
+                    trailingIcon = state.email.isValidEmail.takeIf { it }?.let { _ ->
                         {
                             Icon(
                                 imageVector = CheckIcon,
@@ -156,10 +163,10 @@ fun IntroHorizontalScreen(
                             )
                         }
                     },
-                    isError = false,
+                    isError = state.email.prop.isErr,
                     supportingText = {
                         Text(
-                            text = emailSupportText
+                            text = state.email.prop.errText.asString()
                         )
                     },
                     singleLine = true,
@@ -177,7 +184,7 @@ fun IntroHorizontalScreen(
                 Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
                 OutlinedTextField(
-                    value = "",
+                    value = state.password.prop.value,
                     onValueChange = {
 
                     },
@@ -223,32 +230,34 @@ fun IntroHorizontalScreen(
                     },
                     trailingIcon = {
                         Icon(
-                            imageVector = if (true) EyeOpenIcon else EyeCloseIcon,
+                            imageVector = if (state.password.isPasswordVisible) EyeOpenIcon else EyeCloseIcon,
                             contentDescription = stringResource(R.string.password)
                         )
                     },
-                    isError = false,
+                    isError = state.password.prop.isErr,
                     supportingText = {
                         Text(
-                            text = passwordSupportText
+                            text = state.password.prop.errText.asString()
                         )
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onNext = {
+                        onDone = {
 
                         }
-                    )
+                    ),
+                    visualTransformation = if (state.password.isPasswordVisible) VisualTransformation.None
+                    else PasswordVisualTransformation()
                 )
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(MaterialTheme.dimens.small1),
+                        .padding(top = MaterialTheme.dimens.small1),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -262,63 +271,64 @@ fun IntroHorizontalScreen(
             }
         }
 
-        AnimatedVisibility(isNewUser) {
-            Column {
-                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+        Column {
+            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    ),
-                    shape = MaterialTheme.shapes.small
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(.8f)
+                    .alpha(if (state.isNewEmailUser) 1f else 0f)
+                    .animateContentSize(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                shape = MaterialTheme.shapes.small
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.dimens.small3),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(MaterialTheme.dimens.small3),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = stringResource(R.string.email_not_registered),
-                            fontWeight = FontWeight.Light,
-                            fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                            color = MaterialTheme.colorScheme.tertiary
+                    Text(
+                        text = stringResource(R.string.email_not_registered),
+                        fontWeight = FontWeight.Light,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+
+                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
+
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        ),
+                        shape = MaterialTheme.shapes.extraSmall,
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 5.dp
                         )
-
-                        Spacer(Modifier.height(MaterialTheme.dimens.small3))
-
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                            shape = MaterialTheme.shapes.extraSmall,
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 5.dp
-                            )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(MaterialTheme.dimens.small1)
+                                .fillMaxWidth(.6f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(MaterialTheme.dimens.small1)
-                                    .fillMaxWidth(.6f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.create_new_account),
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                            Text(
+                                text = stringResource(R.string.create_new_account),
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }
             }
         }
 
-        Spacer(Modifier.height(MaterialTheme.dimens.medium3))
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
         Button(
             onClick = {
@@ -382,7 +392,11 @@ fun IntroHorizontalScreen(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 5.dp,
+                pressedElevation = 0.dp
+            )
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -423,10 +437,6 @@ fun IntroHorizontalScreen(
             }
         }
 
-        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-
-        // continue with google button
-
         Spacer(Modifier.weight(1f))
 
         Row(
@@ -459,6 +469,8 @@ fun IntroHorizontalScreen(
 @Composable
 private fun Preview() {
     AppThem(isSystemInDarkTheme()) {
-        IntroHorizontalScreen()
+        IntroHorizontalScreen(
+            state = IntroUiState()
+        )
     }
 }
