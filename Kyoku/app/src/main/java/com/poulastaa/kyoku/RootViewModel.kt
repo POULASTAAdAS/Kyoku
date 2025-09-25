@@ -42,7 +42,7 @@ class RootViewModel @Inject constructor(
 
         val screens = SavedScreen.INTRO
         val screen = when (screens) {
-            SavedScreen.INTRO -> Screens.Auth.Intro
+            SavedScreen.INTRO -> Screens.Auth
             SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> Screens.SetUp.ImportSpotifyPlaylist
             SavedScreen.SET_B_DATE -> Screens.SetUp.SetBirthDate
             SavedScreen.PIC_GENRE -> Screens.SetUp.PickGenre

@@ -1,8 +1,10 @@
 package com.poulastaa.auth.presentation.intro
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,7 +28,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,7 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -46,7 +54,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.presentation.intro.components.IntroUiState
+import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.ui.AlternateEmailIcon
 import com.poulastaa.core.presentation.ui.AppLogo
 import com.poulastaa.core.presentation.ui.AppThem
@@ -62,7 +70,11 @@ import com.poulastaa.core.presentation.ui.dimens
 internal fun IntroHorizontalScreen(
     modifier: Modifier = Modifier,
     state: IntroUiState,
+    onAction: (action: IntroUiAction) -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
+    val focus = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -81,10 +93,10 @@ internal fun IntroHorizontalScreen(
         Image(
             imageVector = AppLogo,
             contentDescription = stringResource(R.string.kyoku),
-            modifier = Modifier.aspectRatio(2f)
+            modifier = Modifier.aspectRatio(1.7f)
         )
 
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.weight(.3f))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -113,7 +125,7 @@ internal fun IntroHorizontalScreen(
                 OutlinedTextField(
                     value = state.email.prop.value,
                     onValueChange = {
-
+                        onAction(IntroUiAction.OnEmailChange(it))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraLarge,
@@ -176,7 +188,7 @@ internal fun IntroHorizontalScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = {
-
+                            focus.moveFocus(FocusDirection.Down)
                         }
                     )
                 )
@@ -186,7 +198,7 @@ internal fun IntroHorizontalScreen(
                 OutlinedTextField(
                     value = state.password.prop.value,
                     onValueChange = {
-
+                        onAction(IntroUiAction.OnPasswordChange(it))
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraLarge,
@@ -229,10 +241,28 @@ internal fun IntroHorizontalScreen(
                         )
                     },
                     trailingIcon = {
-                        Icon(
-                            imageVector = if (state.password.isPasswordVisible) EyeOpenIcon else EyeCloseIcon,
-                            contentDescription = stringResource(R.string.password)
-                        )
+                        IconButton(
+                            onClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                onAction(IntroUiAction.ObPasswordVisibilityToggle)
+                            }
+                        ) {
+                            AnimatedContent(
+                                state.password.isPasswordVisible
+                            ) {
+                                when (it) {
+                                    true -> Icon(
+                                        imageVector = EyeOpenIcon,
+                                        contentDescription = stringResource(R.string.password)
+                                    )
+
+                                    false -> Icon(
+                                        imageVector = EyeCloseIcon,
+                                        contentDescription = stringResource(R.string.password)
+                                    )
+                                }
+                            }
+                        }
                     },
                     isError = state.password.prop.isErr,
                     supportingText = {
@@ -247,7 +277,8 @@ internal fun IntroHorizontalScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-
+                            focus.clearFocus()
+                            onAction(IntroUiAction.OnSubmit)
                         }
                     ),
                     visualTransformation = if (state.password.isPasswordVisible) VisualTransformation.None
@@ -261,78 +292,136 @@ internal fun IntroHorizontalScreen(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = stringResource(R.string.forgot_password),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                    )
-                }
-            }
-        }
-
-        Column {
-            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(.8f)
-                    .alpha(if (state.isNewEmailUser) 1f else 0f)
-                    .animateContentSize(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                shape = MaterialTheme.shapes.small
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MaterialTheme.dimens.small3),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.email_not_registered),
-                        fontWeight = FontWeight.Light,
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-
-                    Spacer(Modifier.height(MaterialTheme.dimens.small3))
-
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        ),
-                        shape = MaterialTheme.shapes.extraSmall,
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 5.dp
-                        )
+                    Row(
+                        modifier = Modifier
+                            .clickable(
+                                indication = null,
+                                interactionSource = null,
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    onAction(IntroUiAction.OnForgotPasswordClick)
+                                }
+                            ),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(MaterialTheme.dimens.small1)
-                                .fillMaxWidth(.6f),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = stringResource(R.string.create_new_account),
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
+                        Text(
+                            text = stringResource(R.string.forgot_password),
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                        )
                     }
                 }
             }
         }
 
-        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+            AnimatedContent(
+                state.isNewEmailUser
+            ) {
+                when (it) {
+                    true -> Card(
+                        modifier = Modifier
+                            .fillMaxWidth(.8f)
+                            .animateContentSize(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(MaterialTheme.dimens.small3),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.email_not_registered),
+                                fontWeight = FontWeight.Light,
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+
+                            Spacer(Modifier.height(MaterialTheme.dimens.small3))
+
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                ),
+                                shape = MaterialTheme.shapes.extraSmall,
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 5.dp
+                                ),
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                    onAction(IntroUiAction.OnEmailSingUpClick)
+                                }
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(MaterialTheme.dimens.small1)
+                                        .fillMaxWidth(.6f),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.create_new_account),
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    false -> Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(MaterialTheme.dimens.small3),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.dont_have_an_account),
+                            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+
+                        Spacer(Modifier.width(MaterialTheme.dimens.small2))
+
+                        Text(
+                            modifier = Modifier.clickable(
+                                indication = null,
+                                interactionSource = null,
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                    onAction(IntroUiAction.OnEmailSingUpClick)
+                                }
+                            ),
+                            text = stringResource(R.string.singup_button_text),
+                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                            fontWeight = FontWeight.SemiBold,
+                            textDecoration = TextDecoration.Underline,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.weight(.5f))
 
         Button(
             onClick = {
-
+                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                onAction(IntroUiAction.OnSubmit)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -347,7 +436,7 @@ internal fun IntroHorizontalScreen(
         ) {
             Text(
                 text = stringResource(R.string.continue_text),
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize
             )
         }
@@ -388,7 +477,7 @@ internal fun IntroHorizontalScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth(.8f)
-                .heightIn(max = 46.dp),
+                .heightIn(max = 50.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
@@ -396,72 +485,71 @@ internal fun IntroHorizontalScreen(
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 5.dp,
                 pressedElevation = 0.dp
-            )
+            ),
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                onAction(IntroUiAction.OnGoogleAuthClick)
+            }
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            AnimatedContent(
+                state.isLoading
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .clip(CircleShape)
-                        .fillMaxHeight()
-                        .aspectRatio(1f)
-                        .background(MaterialTheme.colorScheme.tertiary)
-                ) {
-                    Image(
-                        painter = GoogleIcon,
-                        contentDescription = stringResource(R.string.continue_with_google),
-                    )
+                when (it) {
+                    true -> Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.background,
+                        )
+                    }
+
+                    false -> Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clip(CircleShape)
+                                .fillMaxHeight()
+                                .aspectRatio(1f)
+                                .background(MaterialTheme.colorScheme.tertiary)
+                        ) {
+                            Image(
+                                painter = GoogleIcon,
+                                contentDescription = stringResource(R.string.continue_with_google),
+                            )
+                        }
+
+                        Spacer(Modifier.weight(1f))
+
+                        Text(
+                            text = stringResource(R.string.continue_with_google),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = MaterialTheme.colorScheme.background
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        Spacer(
+                            modifier = Modifier
+                                .padding(3.dp)
+                                .clip(CircleShape)
+                                .fillMaxHeight()
+                                .aspectRatio(1f)
+                                .alpha(0f)
+                        )
+                    }
                 }
-
-                Spacer(Modifier.weight(1f))
-
-                Text(
-                    text = stringResource(R.string.continue_with_google),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    color = MaterialTheme.colorScheme.background
-                )
-
-                Spacer(Modifier.weight(1f))
-
-                Spacer(
-                    modifier = Modifier
-                        .padding(3.dp)
-                        .clip(CircleShape)
-                        .fillMaxHeight()
-                        .aspectRatio(1f)
-                        .alpha(0f)
-                )
             }
         }
 
-        Spacer(Modifier.weight(1f))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(MaterialTheme.dimens.small3),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.dont_have_an_account),
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-
-            Spacer(Modifier.width(MaterialTheme.dimens.small2))
-
-            Text(
-                text = stringResource(R.string.singup_button_text),
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
     }
 }
 
@@ -470,7 +558,8 @@ internal fun IntroHorizontalScreen(
 private fun Preview() {
     AppThem(isSystemInDarkTheme()) {
         IntroHorizontalScreen(
-            state = IntroUiState()
+            state = IntroUiState(),
+            onAction = {}
         )
     }
 }

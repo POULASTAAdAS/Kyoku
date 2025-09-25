@@ -1,6 +1,7 @@
 package com.poulastaa.kyoku
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -16,9 +17,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.core.presentation.ThemeManager
 import com.poulastaa.core.presentation.ui.KyokuThem
+import com.poulastaa.kyoku.navigation.RootNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -43,10 +44,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    state.screen?.let {
-                        IntroRootScreen {
-
-                        }
+                    state.screen?.let { screen ->
+                        RootNavigation(
+                            nav = nav,
+                            screens = screen
+                        )
                     }
                 }
             }
