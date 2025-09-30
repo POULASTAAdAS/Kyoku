@@ -9,7 +9,7 @@ sealed interface UiText {
     data class DynamicString(val value: String) : UiText
 
     class StringResource(
-        @StringRes val resId: Int,
+        @param:StringRes val resId: Int,
         val args: Array<Any> = arrayOf(),
     ) : UiText
 

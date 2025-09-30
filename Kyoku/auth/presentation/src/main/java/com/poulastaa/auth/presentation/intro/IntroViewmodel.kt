@@ -70,10 +70,12 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
 
             }
 
-            IntroUiAction.OnSubmit -> {
+            IntroUiAction.OnEmailSubmit -> {
+                // TODO: validate
+
                 _state.update {
                     it.copy(
-                        isLoading = true
+                        isEmailAuthLoading = true
                     )
                 }
             }
@@ -85,7 +87,7 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
             IntroUiAction.OnGoogleAuthClick -> {
                 _state.update {
                     it.copy(
-                        isLoading = true
+                        isGoogleAuthLoading = true
                     )
                 }
             }

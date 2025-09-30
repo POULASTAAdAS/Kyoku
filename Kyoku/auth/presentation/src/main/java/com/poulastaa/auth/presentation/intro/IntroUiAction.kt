@@ -8,7 +8,7 @@ sealed interface IntroUiAction {
     data class OnPasswordChange(val password: Password) : IntroUiAction
     data object ObPasswordVisibilityToggle : IntroUiAction
     data object OnForgotPasswordClick : IntroUiAction
-    data object OnSubmit : IntroUiAction
+    data object OnEmailSubmit : IntroUiAction
 
     data object OnEmailSingUpClick : IntroUiAction
 

@@ -17,4 +17,6 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.auth.domain)
 
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
 }

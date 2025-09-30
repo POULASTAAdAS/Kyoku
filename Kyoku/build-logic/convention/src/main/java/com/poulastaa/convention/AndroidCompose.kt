@@ -13,6 +13,8 @@ internal fun Project.configureAndroidCompose(
         }
 
         composeOptions {
+            useLiveLiterals = true
+
             kotlinCompilerExtensionVersion = libs
                 .findVersion("composeCompiler")
                 .get()
@@ -25,6 +27,9 @@ internal fun Project.configureAndroidCompose(
             "implementation"(platform(bom))
             "androidTestImplementation"(platform(bom))
             "debugImplementation"(libs.findLibrary("androidx.compose.ui.tooling.preview").get())
+
+            "debugImplementation"(libs.findLibrary("androidx.compose.ui.tooling").get())
+            "debugImplementation"(libs.findLibrary("androidx.compose.ui.test.manifest").get())
         }
     }
 }

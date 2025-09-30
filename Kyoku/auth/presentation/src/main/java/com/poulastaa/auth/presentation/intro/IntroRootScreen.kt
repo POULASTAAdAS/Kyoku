@@ -42,19 +42,32 @@ internal fun IntroRootScreen(
     KyokuWindowSize(
         windowSizeClass = windowSizeClass,
         compactContent = {
-            IntroHorizontalScreen(
+            IntroVerticalScreen(
                 state = state,
                 onAction = viewModel::onAction
             )
         },
-        expandedCompactContent = {
-
-        },
         mediumContent = {
 
         },
+        expandedSmallContent = {
+            IntroHorizontalCompactScreen(
+                state = state,
+                isSmall = true,
+                onAction = viewModel::onAction
+            )
+        },
+        expandedCompactContent = {
+            IntroHorizontalCompactScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
+        },
         expandedContent = {
-
+            IntroHorizontalLargeScreen(
+                state = state,
+                onAction = viewModel::onAction
+            )
         }
     )
 }
