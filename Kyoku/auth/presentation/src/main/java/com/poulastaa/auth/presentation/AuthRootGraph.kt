@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.auth.presentation.intro.IntroViewmodel
 import com.poulastaa.auth.presentation.intro.model.IntroNavigationScreens
+import com.poulastaa.auth.presentation.singup.EmailSingUpRootScreen
 import com.poulastaa.core.domain.SavedScreen
 
 @Composable
@@ -47,6 +48,10 @@ fun AuthRootGraph(
 
         composable<AuthScreens.EmailSignUp> {
             val email = it.toRoute<AuthScreens.ForgotPassword>().email
+
+            EmailSingUpRootScreen(email) {
+                nav.popBackStack()
+            }
         }
 
         composable<AuthScreens.ForgotPassword> {
