@@ -46,7 +46,6 @@ import com.poulastaa.core.presentation.ui.dimens
 internal fun IntroHorizontalCompactScreen(
     modifier: Modifier = Modifier,
     state: IntroUiState,
-    isSmall: Boolean = false,
     onAction: (action: IntroUiAction) -> Unit,
 ) {
     val focus = LocalFocusManager.current
@@ -101,8 +100,7 @@ internal fun IntroHorizontalCompactScreen(
             verticalArrangement = Arrangement.Center
         ) {
             LogInCard(
-                modifier = Modifier.fillMaxWidth(.9f),
-                heading = stringResource(R.string.sing_in)
+                modifier = Modifier.fillMaxWidth(.9f)
             ) {
                 AuthEmailTextField(state.email, onAction, focus)
 
@@ -140,21 +138,11 @@ internal fun IntroHorizontalCompactScreen(
                 }
             }
 
-            Spacer(
-                Modifier.height(
-                    if (isSmall) MaterialTheme.dimens.small1 else
-                        MaterialTheme.dimens.medium1
-                )
-            )
+            Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
             DontHaveAnAccount(haptic, onAction)
 
-            Spacer(
-                Modifier.height(
-                    if (isSmall) MaterialTheme.dimens.small1 else
-                        MaterialTheme.dimens.medium1
-                )
-            )
+            Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
             ContinueButton(
                 Modifier.fillMaxWidth(.5f),
@@ -177,7 +165,6 @@ private fun Preview() {
             state = IntroUiState(
                 isNewEmailUser = true
             ),
-            isSmall = LocalWindowInfo.current.containerSize.height < 1080,
             onAction = {}
         )
     }

@@ -2,16 +2,20 @@ package com.poulastaa.auth.presentation.intro
 
 import android.widget.Toast
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.auth.presentation.intro.model.IntroNavigationScreens
 import com.poulastaa.core.domain.SavedScreen
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.ui.dimens
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -48,12 +52,15 @@ internal fun IntroRootScreen(
             )
         },
         mediumContent = {
-
+            IntroVerticalScreen(
+                modifier = Modifier.padding(MaterialTheme.dimens.small3),
+                state = state,
+                onAction = viewModel::onAction
+            )
         },
         expandedSmallContent = {
             IntroHorizontalCompactScreen(
                 state = state,
-                isSmall = true,
                 onAction = viewModel::onAction
             )
         },
@@ -63,7 +70,7 @@ internal fun IntroRootScreen(
                 onAction = viewModel::onAction
             )
         },
-        expandedContent = {
+        expandedLargeContent = {
             IntroHorizontalLargeScreen(
                 state = state,
                 onAction = viewModel::onAction

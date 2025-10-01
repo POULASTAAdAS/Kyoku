@@ -2,6 +2,7 @@ package com.poulastaa.auth.presentation.intro
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.auth.presentation.intro.model.IntroNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.designsystem.TextProp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +32,10 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
     private var emailLogInJob: Job? = null
 
     fun onAction(action: IntroUiAction) {
+        if ((_state.value.isGoogleAuthLoading || _state.value.isEmailAuthLoading) &&
+            action != IntroUiAction.ObPasswordVisibilityToggle
+        ) return
+
         when (action) {
             is IntroUiAction.OnEmailChange -> {
                 _state.update {
@@ -66,8 +72,14 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
                 }
             }
 
-            IntroUiAction.OnForgotPasswordClick -> {
-
+            IntroUiAction.OnForgotPasswordClick -> viewModelScope.launch {
+                _uiEvent.send(
+                    IntroUiEvent.Navigate(
+                        IntroNavigationScreens.ForgotPassword(
+                            _state.value.email.prop.value
+                        )
+                    )
+                )
             }
 
             IntroUiAction.OnEmailSubmit -> {
@@ -80,8 +92,14 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
                 }
             }
 
-            IntroUiAction.OnEmailSingUpClick -> {
-
+            IntroUiAction.OnEmailSingUpClick -> viewModelScope.launch {
+                _uiEvent.send(
+                    IntroUiEvent.Navigate(
+                        IntroNavigationScreens.SingUp(
+                            _state.value.email.prop.value
+                        )
+                    )
+                )
             }
 
             IntroUiAction.OnGoogleAuthClick -> {

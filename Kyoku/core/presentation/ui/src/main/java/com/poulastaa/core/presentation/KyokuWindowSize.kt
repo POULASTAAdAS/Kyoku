@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 fun KyokuWindowSize(
     windowSizeClass: WindowSizeClass,
     compactContent: @Composable () -> Unit,
-    expandedCompactContent: @Composable () -> Unit,
-    expandedSmallContent: @Composable () -> Unit,
     mediumContent: @Composable () -> Unit,
-    expandedContent: @Composable () -> Unit,
+    expandedSmallContent: @Composable () -> Unit = {},
+    expandedCompactContent: @Composable () -> Unit,
+    expandedLargeContent: @Composable () -> Unit,
 ) {
     when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> compactContent()
@@ -21,7 +21,7 @@ fun KyokuWindowSize(
             when (windowSizeClass.heightSizeClass) {
                 WindowHeightSizeClass.Compact -> expandedCompactContent()
                 WindowHeightSizeClass.Medium -> expandedSmallContent()
-                WindowHeightSizeClass.Expanded -> expandedContent()
+                WindowHeightSizeClass.Expanded -> expandedLargeContent()
             }
         }
     }

@@ -1,8 +1,6 @@
 package com.poulastaa.core.presentation.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -55,5 +53,5 @@ val UserIcon: ImageVector
 
 val ArrowBackIcon: ImageVector
     @Composable
-    get() = Icons.AutoMirrored.Rounded.ArrowBack
+    get() = ImageVector.vectorResource(R.drawable.ic_arrow_back)
 
