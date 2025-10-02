@@ -10,14 +10,12 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.poulastaa.auth.presentation.intro.IntroUiAction
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
+import com.poulastaa.core.presentation.Email
 import com.poulastaa.core.presentation.ui.AlternateEmailIcon
 import com.poulastaa.core.presentation.ui.CheckIcon
 import com.poulastaa.core.presentation.ui.R
@@ -26,14 +24,12 @@ import com.poulastaa.core.presentation.ui.R
 @Composable
 internal fun AuthEmailTextField(
     email: EmailTextProp,
-    onAction: (IntroUiAction.OnEmailChange) -> Unit,
-    focus: FocusManager,
+    onEmailChange: (email: Email) -> Unit,
+    onMoveFocus: () -> Unit,
 ) {
     OutlinedTextField(
         value = email.prop.value,
-        onValueChange = {
-            onAction(IntroUiAction.OnEmailChange(it))
-        },
+        onValueChange = onEmailChange,
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
@@ -94,9 +90,7 @@ internal fun AuthEmailTextField(
             imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
-            onNext = {
-                focus.moveFocus(FocusDirection.Down)
-            }
+            onNext = { onMoveFocus() }
         )
     )
 }

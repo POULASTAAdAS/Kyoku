@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -97,7 +98,11 @@ internal fun IntroHorizontalLargeScreen(
                 modifier = Modifier.fillMaxWidth(.9f),
                 heading = stringResource(R.string.sing_in)
             ) {
-                AuthEmailTextField(state.email, onAction, focus)
+                AuthEmailTextField(
+                    state.email,
+                    { onAction(IntroUiAction.OnEmailChange(it)) }) {
+                    focus.moveFocus(FocusDirection.Down)
+                }
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small1))
 

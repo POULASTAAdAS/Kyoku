@@ -12,15 +12,6 @@ internal fun Project.configureAndroidCompose(
             compose = true
         }
 
-        composeOptions {
-            useLiveLiterals = true
-
-//            kotlinCompilerExtensionVersion = libs
-//                .findVersion("composeCompiler")
-//                .get()
-//                .toString()
-        }
-
         dependencies {
             val bom = libs.findLibrary("androidx.compose.bom").get()
 

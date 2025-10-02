@@ -2,7 +2,7 @@ package com.poulastaa.auth.presentation.intro
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.auth.presentation.intro.model.IntroNavigationScreens
+import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.designsystem.TextProp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,7 +75,7 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
             IntroUiAction.OnForgotPasswordClick -> viewModelScope.launch {
                 _uiEvent.send(
                     IntroUiEvent.Navigate(
-                        IntroNavigationScreens.ForgotPassword(
+                        IntroAllowedNavigationScreens.ForgotPassword(
                             _state.value.email.prop.value
                         )
                     )
@@ -95,7 +95,7 @@ internal class IntroViewmodel @Inject constructor() : ViewModel() {
             IntroUiAction.OnEmailSingUpClick -> viewModelScope.launch {
                 _uiEvent.send(
                     IntroUiEvent.Navigate(
-                        IntroNavigationScreens.SingUp(
+                        IntroAllowedNavigationScreens.SingUp(
                             _state.value.email.prop.value
                         )
                     )

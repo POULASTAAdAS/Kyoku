@@ -1,0 +1,73 @@
+package com.poulastaa.auth.presentation.forgot_password
+
+import android.widget.Toast
+import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
+import com.poulastaa.core.presentation.Email
+import com.poulastaa.core.presentation.KyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
+import com.poulastaa.core.presentation.ui.dimens
+
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@Composable
+internal fun ForgotPasswordRootScreen(
+    email: Email?,
+    viewmodel: ForgotPasswordViewmodel = hiltViewModel(),
+    navigate: (screen: ForgotPasswordAllowedNavigationScreens) -> Unit,
+) {
+    val activity = LocalActivity.current ?: return
+
+    LaunchedEffect(email) {
+        email?.let { viewmodel.populateEmailField(email) }
+    }
+
+    ObserveAsEvent(viewmodel.uiEvent) { event ->
+        when (event) {
+            is ForgotPasswordUiEvent.EmitToast -> Toast.makeText(
+                activity,
+                event.message.asString(activity),
+                Toast.LENGTH_LONG
+            ).show()
+
+            is ForgotPasswordUiEvent.OnNavigate -> navigate(event.screen)
+        }
+    }
+
+    val state by viewmodel.state.collectAsStateWithLifecycle()
+
+    KyokuWindowSize(
+        windowSizeClass = calculateWindowSizeClass(activity),
+        compactContent = {
+            ForgotPasswordCompactScreen(
+                state = state,
+                onAction = viewmodel::onAction
+            )
+        },
+        mediumContent = {
+            ForgotPasswordCompactScreen(
+                modifier = Modifier.padding(MaterialTheme.dimens.small3),
+                state = state,
+                onAction = viewmodel::onAction
+            )
+        },
+        expandedSmallContent = {
+
+        },
+        expandedCompactContent = {
+
+        },
+        expandedLargeContent = {
+
+        }
+    )
+}

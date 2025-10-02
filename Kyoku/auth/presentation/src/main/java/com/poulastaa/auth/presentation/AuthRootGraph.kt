@@ -7,9 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.poulastaa.auth.presentation.AuthScreens.Verify
+import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordRootScreen
+import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.auth.presentation.intro.IntroViewmodel
-import com.poulastaa.auth.presentation.intro.model.IntroNavigationScreens
+import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.singup.EmailSingUpRootScreen
 import com.poulastaa.core.domain.SavedScreen
 
@@ -30,13 +33,13 @@ fun AuthRootGraph(
                 navigateRoot = navigate,
                 navigateLocal = { screens ->
                     when (screens) {
-                        is IntroNavigationScreens.ForgotPassword -> nav.navigate(
+                        is IntroAllowedNavigationScreens.ForgotPassword -> nav.navigate(
                             AuthScreens.ForgotPassword(
                                 email = screens.email
                             )
                         )
 
-                        is IntroNavigationScreens.SingUp -> nav.navigate(
+                        is IntroAllowedNavigationScreens.SingUp -> nav.navigate(
                             AuthScreens.EmailSignUp(
                                 email = screens.email
                             )
@@ -57,6 +60,22 @@ fun AuthRootGraph(
         composable<AuthScreens.ForgotPassword> {
             val email = it.toRoute<AuthScreens.ForgotPassword>().email
 
+            ForgotPasswordRootScreen(
+                email = email,
+                navigate = { screen ->
+                    when (screen) {
+                        is ForgotPasswordAllowedNavigationScreens.Verify -> nav.navigate(
+                            Verify(screen.email)
+                        )
+
+                        ForgotPasswordAllowedNavigationScreens.NavigateBack -> nav.popBackStack()
+                    }
+                },
+            )
+        }
+
+        composable<AuthScreens.Verify> {
+            val email = it.toRoute<AuthScreens.Verify>().email
         }
     }
 }
