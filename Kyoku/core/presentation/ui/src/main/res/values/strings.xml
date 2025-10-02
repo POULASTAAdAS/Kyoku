@@ -13,6 +13,7 @@
     <string name="continue_with_google">continue with google</string>
     <string name="kyoku">Kyoku</string>
     <string name="reset_password">Reset password</string>
-    <string name="reset_password_subtitle">\"Enter the email associated with your account and we will send an email with verification code to reset your password.\"</string>
+    <string name="reset_password_subtitle">Enter the email associated with your account and we will send an email with verification code to reset your password.</string>
     <string name="back_button">back</string>
+    <string name="verify_text">verify</string>
 </resources>

@@ -20,9 +20,10 @@ import com.poulastaa.core.presentation.ui.R
 
 
 @Composable
-internal fun ContinueButton(
+internal fun ConformButton(
     modifier: Modifier,
-    isEmailAuthLoading: Boolean,
+    isLoading: Boolean,
+    heading: String? = null,
     onClick: () -> Unit,
 ) {
     Button(
@@ -47,15 +48,14 @@ internal fun ContinueButton(
                 modifier = Modifier
                     .heightIn(max = 30.dp)
                     .aspectRatio(1f)
-                    .alpha(if (isEmailAuthLoading) 1f else 0f)
+                    .alpha(if (isLoading) 1f else 0f)
             )
 
             Text(
-                text = stringResource(R.string.continue_text),
+                text = heading ?: stringResource(R.string.continue_text),
                 fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                modifier = Modifier
-                    .alpha(if (isEmailAuthLoading) 0f else 1f)
+                modifier = Modifier.alpha(if (isLoading) 0f else 1f)
             )
         }
     }

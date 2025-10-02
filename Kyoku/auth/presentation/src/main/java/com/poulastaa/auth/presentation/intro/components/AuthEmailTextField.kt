@@ -23,6 +23,7 @@ import com.poulastaa.core.presentation.ui.R
 
 @Composable
 internal fun AuthEmailTextField(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     email: EmailTextProp,
     onEmailChange: (email: Email) -> Unit,
     onMoveFocus: () -> Unit,
@@ -30,7 +31,7 @@ internal fun AuthEmailTextField(
     OutlinedTextField(
         value = email.prop.value,
         onValueChange = onEmailChange,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,

@@ -61,13 +61,22 @@ internal fun ForgotPasswordRootScreen(
             )
         },
         expandedSmallContent = {
-
+            ForgotPasswordExpandedScreen(
+                state = state,
+                onAction = viewmodel::onAction
+            )
         },
         expandedCompactContent = {
-
+            ForgotPasswordExpandedScreen(
+                state = state,
+                onAction = viewmodel::onAction
+            )
         },
         expandedLargeContent = {
-
+            ForgotPasswordExpandedScreen(
+                state = state,
+                onAction = viewmodel::onAction
+            )
         }
     )
 }

@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.poulastaa.auth.presentation.intro.components.AppLogo
 import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
-import com.poulastaa.auth.presentation.intro.components.ContinueButton
+import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
 import com.poulastaa.auth.presentation.intro.components.DontHaveAnAccount
 import com.poulastaa.auth.presentation.intro.components.InNewUserCard
@@ -99,10 +99,14 @@ internal fun IntroHorizontalLargeScreen(
                 heading = stringResource(R.string.sing_in)
             ) {
                 AuthEmailTextField(
-                    state.email,
-                    { onAction(IntroUiAction.OnEmailChange(it)) }) {
-                    focus.moveFocus(FocusDirection.Down)
-                }
+                    email = state.email,
+                    onEmailChange = {
+                        onAction(IntroUiAction.OnEmailChange(it))
+                    },
+                    onMoveFocus = {
+                        focus.moveFocus(FocusDirection.Down)
+                    }
+                )
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
@@ -144,9 +148,9 @@ internal fun IntroHorizontalLargeScreen(
 
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
-            ContinueButton(
+            ConformButton(
                 Modifier.fillMaxWidth(.5f),
-                isEmailAuthLoading = state.isEmailAuthLoading,
+                isLoading = state.isEmailAuthLoading,
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                     onAction(IntroUiAction.OnEmailSubmit)
