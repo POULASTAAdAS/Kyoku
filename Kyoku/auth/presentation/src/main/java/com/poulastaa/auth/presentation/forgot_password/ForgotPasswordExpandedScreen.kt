@@ -2,7 +2,6 @@ package com.poulastaa.auth.presentation.forgot_password
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,7 +44,7 @@ fun ForgotPasswordExpandedScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Text(
                         text = stringResource(R.string.reset_password),
@@ -71,7 +69,7 @@ fun ForgotPasswordExpandedScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.primary
                 )
             )
-        }
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -79,11 +77,9 @@ fun ForgotPasswordExpandedScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(MaterialTheme.dimens.medium1)
-                .systemBarsPadding()
                 .navigationBarsPadding()
                 .then(modifier),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = stringResource(R.string.reset_password_subtitle),
@@ -92,7 +88,7 @@ fun ForgotPasswordExpandedScreen(
                 lineHeight = MaterialTheme.typography.bodySmall.fontSize
             )
 
-            Spacer(Modifier.weight(.1f))
+            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
             AuthEmailTextField(
                 modifier = Modifier.fillMaxWidth(.7f),
@@ -106,7 +102,7 @@ fun ForgotPasswordExpandedScreen(
                 }
             )
 
-            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+            Spacer(Modifier.height(MaterialTheme.dimens.large1))
 
             ConformButton(
                 modifier = Modifier
@@ -119,8 +115,6 @@ fun ForgotPasswordExpandedScreen(
                     onAction(ForgotPasswordUiAction.OnSummit)
                 }
             )
-
-            Spacer(Modifier.weight(1f))
         }
     }
 }

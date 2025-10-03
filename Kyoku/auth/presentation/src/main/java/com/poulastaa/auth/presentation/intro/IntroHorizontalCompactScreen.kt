@@ -28,13 +28,13 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.poulastaa.auth.presentation.intro.components.AppLogo
+import com.poulastaa.auth.presentation.intro.components.AuthCard
 import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
-import com.poulastaa.auth.presentation.intro.components.DontHaveAnAccount
-import com.poulastaa.auth.presentation.intro.components.InNewUserCard
-import com.poulastaa.auth.presentation.intro.components.LogInCard
+import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
+import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.ui.AppThem
 import com.poulastaa.core.presentation.ui.PreviewCompactLandscape
@@ -80,7 +80,13 @@ internal fun IntroHorizontalCompactScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    InNewUserCard(haptic, onAction)
+                    InNewOrOldUserCard(
+                        title = stringResource(R.string.email_not_registered),
+                        content = stringResource(R.string.create_new_account)
+                    ) {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onAction(IntroUiAction.OnEmailSingUpClick)
+                    }
 
                     Spacer(Modifier.height(MaterialTheme.dimens.medium1))
                 }
@@ -99,7 +105,7 @@ internal fun IntroHorizontalCompactScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            LogInCard(
+            AuthCard(
                 modifier = Modifier.fillMaxWidth(.9f)
             ) {
                 AuthEmailTextField(
@@ -111,7 +117,18 @@ internal fun IntroHorizontalCompactScreen(
 
                 Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
-                AuthPasswordTextFiled(state.password, onAction, haptic, focus)
+                AuthPasswordTextFiled(
+                    password = state.password,
+                    onPasswordChange = { onAction(IntroUiAction.OnPasswordChange(it)) },
+                    onVisibilityToggle = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onAction(IntroUiAction.ObPasswordVisibilityToggle)
+                    },
+                    onSubmit = {
+                        focus.clearFocus()
+                        onAction(IntroUiAction.OnEmailSubmit)
+                    },
+                )
 
                 Row(
                     modifier = Modifier
@@ -145,7 +162,13 @@ internal fun IntroHorizontalCompactScreen(
 
             Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
-            DontHaveAnAccount(haptic, onAction)
+            LogInSingUpSwitcher(
+                type = stringResource(R.string.sing_up),
+                content = stringResource(R.string.dont_have_an_account)
+            ) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onAction(IntroUiAction.OnEmailSingUpClick)
+            }
 
             Spacer(Modifier.height(MaterialTheme.dimens.small1))
 

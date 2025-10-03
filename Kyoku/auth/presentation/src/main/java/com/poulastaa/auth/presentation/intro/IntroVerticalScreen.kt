@@ -31,13 +31,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.poulastaa.auth.presentation.intro.components.AppLogo
+import com.poulastaa.auth.presentation.intro.components.AuthCard
 import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
-import com.poulastaa.auth.presentation.intro.components.DontHaveAnAccount
-import com.poulastaa.auth.presentation.intro.components.InNewUserCard
-import com.poulastaa.auth.presentation.intro.components.LogInCard
+import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
+import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.ui.AppThem
 import com.poulastaa.core.presentation.ui.PreviewCompactPortrait
@@ -68,13 +68,13 @@ internal fun IntroVerticalScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(.5f))
+        Spacer(Modifier.weight(.2f))
 
         AppLogo(Modifier.aspectRatio(1.7f))
 
-        Spacer(Modifier.weight(.3f))
+        Spacer(Modifier.weight(.2f))
 
-        LogInCard(
+        AuthCard(
             modifier = Modifier.fillMaxWidth(),
             heading = stringResource(R.string.sing_in)
         ) {
@@ -90,7 +90,18 @@ internal fun IntroVerticalScreen(
 
             Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
-            AuthPasswordTextFiled(state.password, onAction, haptic, focus)
+            AuthPasswordTextFiled(
+                password = state.password,
+                onPasswordChange = { onAction(IntroUiAction.OnPasswordChange(it)) },
+                onVisibilityToggle = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onAction(IntroUiAction.ObPasswordVisibilityToggle)
+                },
+                onSubmit = {
+                    focus.clearFocus()
+                    onAction(IntroUiAction.OnEmailSubmit)
+                },
+            )
 
             Row(
                 modifier = Modifier
@@ -122,23 +133,7 @@ internal fun IntroVerticalScreen(
             }
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
-
-            AnimatedContent(
-                state.isNewEmailUser
-            ) {
-                when (it) {
-                    true -> InNewUserCard(haptic, onAction)
-
-                    false -> DontHaveAnAccount(haptic, onAction)
-                }
-            }
-        }
-
-        Spacer(Modifier.weight(.5f))
+        Spacer(Modifier.weight(.3f))
 
         ConformButton(
             Modifier.fillMaxWidth(.6f),
@@ -186,6 +181,38 @@ internal fun IntroVerticalScreen(
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             onAction(IntroUiAction.OnGoogleAuthClick)
         }
+
+        Spacer(Modifier.weight(.5f))
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+
+            AnimatedContent(
+                state.isNewEmailUser
+            ) {
+                when (it) {
+                    true -> InNewOrOldUserCard(
+                        title = stringResource(R.string.email_not_registered),
+                        content = stringResource(R.string.create_new_account)
+                    ) {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onAction(IntroUiAction.OnEmailSingUpClick)
+                    }
+
+                    false -> LogInSingUpSwitcher(
+                        type = stringResource(R.string.sing_up),
+                        content = stringResource(R.string.dont_have_an_account)
+                    ) {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onAction(IntroUiAction.OnEmailSingUpClick)
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(MaterialTheme.dimens.medium1))
     }
 }
 
@@ -194,9 +221,7 @@ internal fun IntroVerticalScreen(
 private fun Preview() {
     AppThem(isSystemInDarkTheme()) {
         IntroVerticalScreen(
-            state = IntroUiState(
-                isEmailAuthLoading = true
-            ),
+            state = IntroUiState(),
             onAction = {}
         )
     }

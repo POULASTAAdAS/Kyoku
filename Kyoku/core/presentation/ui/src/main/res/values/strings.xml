@@ -16,4 +16,11 @@
     <string name="reset_password_subtitle">Enter the email associated with your account and we will send an email with verification code to reset your password.</string>
     <string name="back_button">back</string>
     <string name="verify_text">verify</string>
+    <string name="sing_up">Sign up</string>
+    <string name="username">username</string>
+    <string name="eye_open">Visibility On</string>
+    <string name="eye_off">Visibility Off</string>
+    <string name="conform_password">conform password</string>
+    <string name="already_have_an_account">Already have an account ?</string>
+    <string name="email_already_registered">Email already registered.</string>
 </resources>

@@ -80,11 +80,7 @@ internal fun AuthEmailTextField(
             }
         },
         isError = email.prop.isErr,
-        supportingText = {
-            Text(
-                text = email.prop.errText.asString()
-            )
-        },
+        supportingText = { Text(text = email.prop.errText.asString()) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,

@@ -12,20 +12,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import com.poulastaa.auth.presentation.intro.IntroUiAction
-import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.dimens
 
 
 @Composable
-internal fun DontHaveAnAccount(
-    haptic: HapticFeedback,
-    onAction: (IntroUiAction.OnEmailSingUpClick) -> Unit,
+internal fun LogInSingUpSwitcher(
+    type: String,
+    content: String,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -35,7 +31,7 @@ internal fun DontHaveAnAccount(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(R.string.dont_have_an_account),
+            text = content,
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             color = MaterialTheme.colorScheme.tertiary
         )
@@ -46,12 +42,9 @@ internal fun DontHaveAnAccount(
             modifier = Modifier.clickable(
                 indication = null,
                 interactionSource = null,
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                    onAction(IntroUiAction.OnEmailSingUpClick)
-                }
+                onClick = onClick
             ),
-            text = stringResource(R.string.singup_button_text),
+            text = type,
             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
             fontWeight = FontWeight.SemiBold,
             textDecoration = TextDecoration.Underline,

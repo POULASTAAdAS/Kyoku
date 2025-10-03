@@ -18,7 +18,7 @@ import com.poulastaa.core.presentation.ui.dimens
 
 
 @Composable
-internal fun LogInCard(
+internal fun AuthCard(
     modifier: Modifier,
     heading: String? = null,
     content: @Composable ColumnScope.() -> Unit,

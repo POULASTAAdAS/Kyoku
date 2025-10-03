@@ -72,11 +72,27 @@ internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
                 )
             }
 
+            EmailSingUpUiAction.OnPasswordVisibilityToggle -> _state.update {
+                it.copy(
+                    password = it.password.copy(
+                        isPasswordVisible = it.password.isPasswordVisible.not()
+                    )
+                )
+            }
+
             is EmailSingUpUiAction.OnConformPasswordChange -> _state.update {
                 it.copy(
-                    password = PasswordTextProp(
+                    conformPassword = PasswordTextProp(
                         isPasswordVisible = false, // todo validate
                         prop = TextProp(action.password)
+                    )
+                )
+            }
+
+            EmailSingUpUiAction.OnConformPasswordVisibilityToggle -> _state.update {
+                it.copy(
+                    conformPassword = it.conformPassword.copy(
+                        isPasswordVisible = it.conformPassword.isPasswordVisible.not()
                     )
                 )
             }

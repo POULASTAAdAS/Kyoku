@@ -14,20 +14,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.presentation.intro.IntroUiAction
-import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.dimens
 
 @Composable
-internal fun InNewUserCard(
-    haptic: HapticFeedback,
-    onAction: (IntroUiAction.OnEmailSingUpClick) -> Unit,
+internal fun InNewOrOldUserCard(
+    title: String,
+    content: String,
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -46,13 +42,13 @@ internal fun InNewUserCard(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.email_not_registered),
+                text = content,
                 fontWeight = FontWeight.Light,
-                fontSize = MaterialTheme.typography.bodySmall.fontSize,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                 color = MaterialTheme.colorScheme.tertiary
             )
 
-            Spacer(Modifier.height(MaterialTheme.dimens.small3))
+            Spacer(Modifier.height(MaterialTheme.dimens.small1))
 
             Card(
                 colors = CardDefaults.cardColors(
@@ -60,12 +56,10 @@ internal fun InNewUserCard(
                 ),
                 shape = MaterialTheme.shapes.extraSmall,
                 elevation = CardDefaults.cardElevation(
-                    defaultElevation = 5.dp
+                    defaultElevation = 5.dp,
+                    pressedElevation = 0.dp
                 ),
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                    onAction(IntroUiAction.OnEmailSingUpClick)
-                }
+                onClick = onClick
             ) {
                 Column(
                     modifier = Modifier
@@ -75,7 +69,7 @@ internal fun InNewUserCard(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.create_new_account),
+                        text = title,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                         color = MaterialTheme.colorScheme.primary,

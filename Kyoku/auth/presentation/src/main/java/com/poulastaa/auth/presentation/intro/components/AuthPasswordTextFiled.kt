@@ -12,17 +12,14 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.poulastaa.auth.presentation.intro.IntroUiAction
 import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
+import com.poulastaa.core.presentation.Password
 import com.poulastaa.core.presentation.ui.EyeCloseIcon
 import com.poulastaa.core.presentation.ui.EyeOpenIcon
 import com.poulastaa.core.presentation.ui.PasswordIcon
@@ -30,17 +27,17 @@ import com.poulastaa.core.presentation.ui.R
 
 @Composable
 internal fun AuthPasswordTextFiled(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    heading: String = stringResource(R.string.password),
     password: PasswordTextProp,
-    onAction: (IntroUiAction) -> Unit,
-    haptic: HapticFeedback,
-    focus: FocusManager,
+    onPasswordChange: (password: Password) -> Unit,
+    onVisibilityToggle: () -> Unit,
+    onSubmit: () -> Unit,
 ) {
     OutlinedTextField(
         value = password.prop.value,
-        onValueChange = {
-            onAction(IntroUiAction.OnPasswordChange(it))
-        },
-        modifier = Modifier.fillMaxWidth(),
+        onValueChange = onPasswordChange,
+        modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
@@ -71,21 +68,18 @@ internal fun AuthPasswordTextFiled(
         ),
         placeholder = {
             Text(
-                text = stringResource(R.string.password)
+                text = heading
             )
         },
         leadingIcon = {
             Icon(
                 imageVector = PasswordIcon,
-                contentDescription = stringResource(R.string.password)
+                contentDescription = heading
             )
         },
         trailingIcon = {
             IconButton(
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onAction(IntroUiAction.ObPasswordVisibilityToggle)
-                }
+                onClick = onVisibilityToggle
             ) {
                 AnimatedContent(
                     password.isPasswordVisible
@@ -93,12 +87,12 @@ internal fun AuthPasswordTextFiled(
                     when (it) {
                         true -> Icon(
                             imageVector = EyeOpenIcon,
-                            contentDescription = stringResource(R.string.password)
+                            contentDescription = stringResource(R.string.eye_open)
                         )
 
                         false -> Icon(
                             imageVector = EyeCloseIcon,
-                            contentDescription = stringResource(R.string.password)
+                            contentDescription = stringResource(R.string.eye_off)
                         )
                     }
                 }
@@ -117,8 +111,7 @@ internal fun AuthPasswordTextFiled(
         ),
         keyboardActions = KeyboardActions(
             onDone = {
-                focus.clearFocus()
-                onAction(IntroUiAction.OnEmailSubmit)
+                onSubmit()
             }
         ),
         visualTransformation = if (password.isPasswordVisible) VisualTransformation.None

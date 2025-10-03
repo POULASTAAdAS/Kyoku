@@ -12,5 +12,5 @@ internal data class EmailSingUpUiState(
     val username: UsernameTextProp = UsernameTextProp(),
     val email: EmailTextProp = EmailTextProp(),
     val password: PasswordTextProp = PasswordTextProp(),
-    val conformPassword: PasswordTextProp = PasswordTextProp()
+    val conformPassword: PasswordTextProp = PasswordTextProp(),
 )
