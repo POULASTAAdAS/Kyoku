@@ -67,6 +67,10 @@ class ForgotPasswordViewmodel @Inject constructor() : ViewModel() {
                 if (_state.value.isLoading) return
 
                 viewModelScope.launch {
+                    // todo make sure to send valid email
+                    //  idea: cache the email when user enters submit
+
+
                     _uiEvent.send(
                         OnNavigate(
                             Verify(_state.value.email.prop.value.trim())

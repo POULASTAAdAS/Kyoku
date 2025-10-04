@@ -67,7 +67,7 @@ internal fun ArchBackground(
         drawCircle(
             color = background,
             radius = w / 1.5f,
-            center = Offset(x = w / 2, y = (h * 1.4f) - totalOffModeY)
+            center = Offset(x = w / 2, y = (h * 1.35f) - totalOffModeY)
         )
     }
 }

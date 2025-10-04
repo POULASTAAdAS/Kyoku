@@ -55,3 +55,11 @@ val ArrowBackIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.ic_arrow_back)
 
+val MinusIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_minus)
+
+val CloseIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_close)
+

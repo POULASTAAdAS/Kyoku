@@ -14,5 +14,5 @@ sealed interface AuthScreens {
     data class ForgotPassword(val email: Email? = null) : AuthScreens
 
     @Serializable
-    data class Verify(val email: Email? = null) : AuthScreens
+    data class Verify(val email: Email) : AuthScreens
 }

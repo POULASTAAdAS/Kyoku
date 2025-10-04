@@ -23,4 +23,16 @@
     <string name="conform_password">conform password</string>
     <string name="already_have_an_account">Already have an account ?</string>
     <string name="email_already_registered">Email already registered.</string>
+    <string name="verification">Verification</string>
+    <string name="verify_content">Please check the verification code we send to Email</string>
+    <string name="invalid_otp">Invalid OTP</string>
+    <string name="resend_in">Resend in</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="didnt_receive_otp">Didn\'t receive email? Check your spam or</string>
+    <string name="try_other_mail">try another email address</string>
+    <string name="navigate_back_otp_screen_warning_title">Are you sure you want to return?</string>
+    <string name="navigate_back_otp_screen_warning_content">You can\'t be able to return this page again.</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="conform_navigate_back_otp_screen_title">Conform</string>
 </resources>
