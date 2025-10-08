@@ -91,7 +91,7 @@ fun ForgotPasswordExpandedScreen(
             Spacer(Modifier.height(MaterialTheme.dimens.medium1))
 
             AuthEmailTextField(
-                modifier = Modifier.fillMaxWidth(.7f),
+                modifier = Modifier.fillMaxWidth(.6f),
                 email = state.email,
                 onEmailChange = {
                     onAction(ForgotPasswordUiAction.OnEmailChange(it))
@@ -106,7 +106,7 @@ fun ForgotPasswordExpandedScreen(
 
             ConformButton(
                 modifier = Modifier
-                    .fillMaxWidth(.3f)
+                    .fillMaxWidth(.25f)
                     .align(Alignment.CenterHorizontally),
                 isLoading = state.isLoading,
                 heading = if (state.isVerifyButtonEnabled) stringResource(R.string.verify_text)

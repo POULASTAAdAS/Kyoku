@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -60,6 +62,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.poulastaa.auth.presentation.components.ArchedScreen
@@ -96,33 +99,7 @@ internal fun OtpVerticalCompactScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.verification),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = MaterialTheme.typography.headlineSmall.fontSize
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            onAction(OtpUiAction.OnStateNavigateBackFlow)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = ArrowBackIcon,
-                            contentDescription = stringResource(R.string.back_button)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary
-                )
-            )
+            VerificationTopBar(haptic, onAction)
         }
     ) { paddingValues ->
         ArchedScreen(
@@ -147,184 +124,9 @@ internal fun OtpVerticalCompactScreen(
 
                 Spacer(Modifier.height(MaterialTheme.dimens.medium2))
 
-                BasicTextField(
-                    modifier = Modifier
-                        .fillMaxWidth(width),
-                    value = state.otp.value,
-                    onValueChange = {
-                        onAction(OtpUiAction.OnOTPChange(it))
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.NumberPassword,
-                        imeAction = ImeAction.Send
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            onAction(OtpUiAction.OnSubmit)
-                        }
-                    ),
-                    decorationBox = { innerTextField ->
-                        Row(
-                            modifier = Modifier
-                                .height(80.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            repeat(5) { index ->
-                                val char = when {
-                                    index >= state.otp.value.length -> ""
-                                    else -> state.otp.value[index].toString()
-                                }
+                OTPValidationTextField(width, state.otp, onAction, shake)
 
-                                val isFocused = state.otp.value.length == index
-
-                                AnimatedContent(
-                                    targetState = char,
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .weight(1f)
-                                        .aspectRatio(1f)
-                                        .offset(x = shake.value.dp),
-                                    transitionSpec = {
-                                        (fadeIn(animationSpec = tween(200)) +
-                                                scaleIn(
-                                                    initialScale = 0.3f,
-                                                    animationSpec = spring(
-                                                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                                                        stiffness = Spring.StiffnessMedium
-                                                    )
-                                                )).togetherWith(
-                                            fadeOut(animationSpec = tween(100)) +
-                                                    scaleOut(
-                                                        targetScale = 1.2f,
-                                                        animationSpec = tween(150)
-                                                    )
-                                        )
-                                    },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    val color = if (isFocused) MaterialTheme.colorScheme.primary
-                                    else MaterialTheme.colorScheme.secondary
-
-                                    when {
-                                        it == "" -> {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .border(
-                                                        width = if (isFocused) 1.5.dp else 1.dp,
-                                                        color = if (state.otp.isErr) MaterialTheme.colorScheme.errorContainer
-                                                        else color,
-                                                        shape = MaterialTheme.shapes.small
-                                                    ),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Box(
-                                                    Modifier.fillMaxSize(),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Icon(
-                                                        modifier = Modifier.fillMaxSize(.5f),
-                                                        imageVector = MinusIcon,
-                                                        contentDescription = null,
-                                                        tint = if (state.otp.isErr) MaterialTheme.colorScheme.error
-                                                        else color,
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        else -> Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .border(
-                                                    width = if (isFocused) 1.5.dp else 1.dp,
-                                                    color = if (state.otp.isErr) MaterialTheme.colorScheme.errorContainer
-                                                    else color,
-                                                    shape = MaterialTheme.shapes.small
-                                                ),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                modifier = Modifier.padding(MaterialTheme.dimens.small1),
-                                                text = char,
-                                                textAlign = TextAlign.Center,
-                                                fontSize = 50.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = if (state.otp.isErr) MaterialTheme.colorScheme.error
-                                                else color,
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Box(modifier = Modifier.size(0.dp)) { innerTextField() }
-                    }
-                )
-
-                AnimatedContent(
-                    targetState = state.otp.isErr,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) { isErr ->
-                    when (isErr) {
-                        true -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = stringResource(R.string.invalid_otp),
-                                color = MaterialTheme.colorScheme.error,
-                                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        false -> AnimatedContent(state.resendState) { resendState ->
-                            when (resendState) {
-                                ResendState.IDEAL -> Box(Modifier.fillMaxSize())
-                                ResendState.TICKER -> Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.resend_in),
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
-
-                                    Text(
-                                        text = state.ticker,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                                    )
-                                }
-
-                                ResendState.ENABLED -> Box(
-                                    Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.resend_otp),
-                                        fontWeight = FontWeight.Black,
-                                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier
-                                            .clip(MaterialTheme.shapes.small)
-                                            .clickable(
-                                                onClick = {
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    onAction(OtpUiAction.OnResendOTP)
-                                                }
-                                            )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                ReSendOrNavigateBack(state, haptic, onAction)
 
                 AnimatedVisibility(state.isTryAnotherEmailVisible) {
                     Column(
@@ -358,6 +160,236 @@ internal fun OtpVerticalCompactScreen(
             }
         }
     }
+}
+
+@Composable
+internal fun ReSendOrNavigateBack(
+    state: OtpUiState,
+    haptic: HapticFeedback,
+    onAction: (OtpUiAction.OnResendOTP) -> Unit,
+    height: Dp = 80.dp,
+) {
+    AnimatedContent(
+        targetState = state.otp.isErr,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = height)
+    ) { isErr ->
+        when (isErr) {
+            true -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = stringResource(R.string.invalid_otp),
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            false -> AnimatedContent(state.resendState) { resendState ->
+                when (resendState) {
+                    ResendState.IDEAL -> Box(Modifier.fillMaxWidth())
+                    ResendState.TICKER -> Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.resend_in),
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+
+                        Text(
+                            text = state.ticker,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        )
+                    }
+
+                    ResendState.ENABLED -> Box(
+                        Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.resend_otp),
+                            fontWeight = FontWeight.Black,
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable(
+                                    onClick = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        onAction(OtpUiAction.OnResendOTP)
+                                    }
+                                )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+internal fun OTPValidationTextField(
+    width: Float,
+    otp: TextProp,
+    onAction: (OtpUiAction) -> Unit,
+    shake: Animatable<Float, AnimationVector1D>,
+) {
+    BasicTextField(
+        modifier = Modifier
+            .fillMaxWidth(width),
+        value = otp.value,
+        onValueChange = {
+            onAction(OtpUiAction.OnOTPChange(it))
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.NumberPassword,
+            imeAction = ImeAction.Send
+        ),
+        keyboardActions = KeyboardActions(
+            onSend = {
+                onAction(OtpUiAction.OnSubmit)
+            }
+        ),
+        decorationBox = { innerTextField ->
+            Row(
+                modifier = Modifier
+                    .height(80.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(5) { index ->
+                    val char = when {
+                        index >= otp.value.length -> ""
+                        else -> otp.value[index].toString()
+                    }
+
+                    val isFocused = otp.value.length == index
+
+                    AnimatedContent(
+                        targetState = char,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .offset(x = shake.value.dp),
+                        transitionSpec = {
+                            (fadeIn(animationSpec = tween(200)) +
+                                    scaleIn(
+                                        initialScale = 0.3f,
+                                        animationSpec = spring(
+                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                            stiffness = Spring.StiffnessMedium
+                                        )
+                                    )).togetherWith(
+                                fadeOut(animationSpec = tween(100)) +
+                                        scaleOut(
+                                            targetScale = 1.2f,
+                                            animationSpec = tween(150)
+                                        )
+                            )
+                        },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val color = if (isFocused) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.secondary
+
+                        when {
+                            it == "" -> {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .border(
+                                            width = if (isFocused) 1.5.dp else 1.dp,
+                                            color = if (otp.isErr) MaterialTheme.colorScheme.errorContainer
+                                            else color,
+                                            shape = MaterialTheme.shapes.small
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Box(
+                                        Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.fillMaxSize(.5f),
+                                            imageVector = MinusIcon,
+                                            contentDescription = null,
+                                            tint = if (otp.isErr) MaterialTheme.colorScheme.error
+                                            else color,
+                                        )
+                                    }
+                                }
+                            }
+
+                            else -> Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .border(
+                                        width = if (isFocused) 1.5.dp else 1.dp,
+                                        color = if (otp.isErr) MaterialTheme.colorScheme.errorContainer
+                                        else color,
+                                        shape = MaterialTheme.shapes.small
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(MaterialTheme.dimens.small1),
+                                    text = char,
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 50.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = if (otp.isErr) MaterialTheme.colorScheme.error
+                                    else color,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Box(modifier = Modifier.size(0.dp)) { innerTextField() }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun VerificationTopBar(
+    haptic: HapticFeedback,
+    onAction: (OtpUiAction.OnStateNavigateBackFlow) -> Unit,
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.verification),
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onAction(OtpUiAction.OnStateNavigateBackFlow)
+                }
+            ) {
+                Icon(
+                    imageVector = ArrowBackIcon,
+                    contentDescription = stringResource(R.string.back_button)
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.primary
+        )
+    )
 }
 
 

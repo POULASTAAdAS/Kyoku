@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -25,6 +26,7 @@ import com.poulastaa.core.presentation.Email
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.dimens
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -41,6 +43,7 @@ internal fun OtpRootScreen(
     val shake: Animatable<Float, AnimationVector1D> = remember { Animatable(0f) }
     val state by viewmodel.uiState.collectAsStateWithLifecycle()
     val haptic = LocalHapticFeedback.current
+    val scope = rememberCoroutineScope()
 
     ObserveAsEvent(viewmodel.uiEvent) { event ->
         when (event) {
@@ -56,8 +59,9 @@ internal fun OtpRootScreen(
         }
     }
 
+
     LaunchedEffect(state.otp.isErr) {
-        if (state.otp.isErr) {
+        if (state.otp.isErr) scope.launch {
             shake.animateTo(
                 targetValue = 0f,
                 animationSpec = keyframes {
@@ -127,7 +131,7 @@ internal fun OtpRootScreen(
         },
         expandedSmallContent = {
             OtpHorizontalCompactScreen(
-                width = .5f,
+                width = .4f,
                 shake = shake,
                 state = state,
                 onAction = viewmodel::onAction
@@ -135,7 +139,7 @@ internal fun OtpRootScreen(
         },
         expandedCompactContent = {
             OtpHorizontalCompactScreen(
-                width = .5f,
+                width = .4f,
                 shake = shake,
                 state = state,
                 onAction = viewmodel::onAction
@@ -144,6 +148,7 @@ internal fun OtpRootScreen(
         expandedLargeContent = {
             OtpHorizontalCompactScreen(
                 modifier = Modifier.padding(MaterialTheme.dimens.small3),
+                isExtendedExtended = true,
                 width = .5f,
                 shake = shake,
                 state = state,
