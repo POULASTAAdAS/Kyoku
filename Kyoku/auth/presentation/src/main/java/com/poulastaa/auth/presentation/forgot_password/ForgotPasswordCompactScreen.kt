@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.poulastaa.auth.presentation.components.ArchedScreen
 import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.intro.components.ConformButton
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.ui.PreviewCompactPortrait
 import com.poulastaa.core.presentation.ui.R
@@ -47,7 +47,9 @@ internal fun ForgotPasswordCompactScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {},
+                title = {
+
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -132,7 +134,7 @@ internal fun ForgotPasswordCompactScreen(
 @PreviewCompactPortrait
 @Composable
 private fun Preview() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         ForgotPasswordCompactScreen(
             state = ForgotPasswordUiState()
         ) { }

@@ -39,7 +39,7 @@ import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
 import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
 import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewCompactPortrait
 import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.dimens
@@ -70,7 +70,7 @@ internal fun IntroVerticalScreen(
     ) {
         Spacer(Modifier.weight(.2f))
 
-        AppLogo(Modifier.aspectRatio(1.7f))
+        AppLogo(Modifier.aspectRatio(2f))
 
         Spacer(Modifier.weight(.2f))
 
@@ -219,7 +219,7 @@ internal fun IntroVerticalScreen(
 @PreviewCompactPortrait
 @Composable
 private fun Preview() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         IntroVerticalScreen(
             state = IntroUiState(),
             onAction = {}

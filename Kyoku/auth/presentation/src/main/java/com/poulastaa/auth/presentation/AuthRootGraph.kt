@@ -19,6 +19,7 @@ import com.poulastaa.auth.presentation.otp.OtpRootScreen
 import com.poulastaa.auth.presentation.singup.EmailSingUpRootScreen
 import com.poulastaa.core.domain.SavedScreen
 import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.ui.R
 
 @Composable
 fun AuthRootGraph(
@@ -73,7 +74,7 @@ fun AuthRootGraph(
                             nav.navigate(Verify(screen.email))
                         } ?: Toast.makeText(
                             context,
-                            UiText.StringResource(R.string.something_went_wrong).asString(context),
+                            UiText.StringResource(R.string.something_went_wrong_try_again).asString(context),
                             Toast.LENGTH_LONG
                         ).show()
 

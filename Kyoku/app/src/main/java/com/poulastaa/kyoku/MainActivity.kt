@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -17,7 +18,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.poulastaa.core.presentation.ThemeManager
 import com.poulastaa.core.presentation.ui.KyokuThem
 import com.poulastaa.kyoku.navigation.RootNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,10 +33,13 @@ class MainActivity : ComponentActivity() {
 
         setupSplashScreen()
         setContent {
-            viewmodel.loadThem(isSystemInDarkTheme())
+            val systemTheme = isSystemInDarkTheme()
 
-            val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
-            KyokuThem(mode) {
+            LaunchedEffect(Unit) {
+                viewmodel.loadThem(systemTheme)
+            }
+
+            KyokuThem {
                 val nav = rememberNavController()
                 val state by viewmodel.state.collectAsStateWithLifecycle()
 

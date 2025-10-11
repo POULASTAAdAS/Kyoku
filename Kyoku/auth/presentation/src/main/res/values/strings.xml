@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="something_went_wrong">Opp\'s something went wrong.</string>
+    <string name="invalid_email">Please enter a valid email</string>
+    <string name="empty_password">Password can\'t be empty</string>
+    <string name="password_too_short">Must be at-least 6 character</string>
+    <string name="password_too_long">Can\'t exceed 20 character</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="password_does_not_match">Password does\'t match</string>
 </resources>

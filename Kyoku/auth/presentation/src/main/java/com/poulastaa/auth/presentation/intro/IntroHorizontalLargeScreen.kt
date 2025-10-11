@@ -36,7 +36,7 @@ import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
 import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewLargeLandscape
 import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.dimens
@@ -186,7 +186,7 @@ internal fun IntroHorizontalLargeScreen(
 @PreviewLargeLandscape
 @Composable
 private fun Preview() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         IntroHorizontalLargeScreen(
             state = IntroUiState(
                 isNewEmailUser = true

@@ -38,7 +38,7 @@ class RootViewModel @Inject constructor(
 
     private suspend fun getSavedScreen() {
 //        val screens = ds.readSignInState()
-        delay(2000)
+        delay(1000)
 
         val screens = SavedScreen.INTRO
         val screen = when (screens) {

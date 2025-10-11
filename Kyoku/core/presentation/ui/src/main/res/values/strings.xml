@@ -35,4 +35,6 @@
     <string name="yes">yes</string>
     <string name="no">no</string>
     <string name="conform_navigate_back_otp_screen_title">Conform</string>
+    <string name="something_went_wrong_try_again">Opp\'s something went wrong.Please Try again</string>
+    <string name="please_check_internet_connection">Please check your internet connection.</string>
 </resources>

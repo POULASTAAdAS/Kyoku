@@ -70,7 +70,7 @@ import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.otp.components.Info
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.ui.MinusIcon
 import com.poulastaa.core.presentation.ui.PreviewCompactPortrait
@@ -435,7 +435,7 @@ private fun Preview() {
         }
     }
 
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         OtpVerticalCompactScreen(
             shake = shake,
             state = OtpUiState(

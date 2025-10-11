@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.poulastaa.core.domain.ThemColor
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class ThemeManager @Inject constructor() {
     private val _isModeDark = MutableStateFlow(true)
-    val isModeDark: StateFlow<Boolean> = _isModeDark
+    val isModeDark = _isModeDark.asStateFlow()
     var themColor by mutableStateOf(ThemColor.BASE)
         private set
 

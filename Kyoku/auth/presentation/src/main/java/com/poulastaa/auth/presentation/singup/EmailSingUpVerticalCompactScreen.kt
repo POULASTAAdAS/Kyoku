@@ -26,7 +26,7 @@ import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.singup.components.InfoCard
 import com.poulastaa.auth.presentation.singup.components.SingUpCard
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewLandscape
 import com.poulastaa.core.presentation.ui.dimens
 
@@ -95,7 +95,7 @@ internal fun EmailSingUpVerticalCompactScreen(
 @PreviewLandscape
 @Composable
 private fun Preview() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         EmailSingUpVerticalCompactScreen(state = EmailSingUpUiState(isOldUser = true)) { }
     }
 }

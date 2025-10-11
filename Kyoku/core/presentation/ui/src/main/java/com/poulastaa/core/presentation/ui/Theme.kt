@@ -14,10 +14,10 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
@@ -57,28 +57,30 @@ private val LocalAppDimens = compositionLocalOf {
 }
 
 val MaterialTheme.dimens
+    @ReadOnlyComposable
     @Composable
     get() = LocalAppDimens.current
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun KyokuThem(
-    darkTheme: Boolean,
     content: @Composable () -> Unit,
 ) {
+    val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
     val activity = context as ComponentActivity
     val view = LocalView.current
 
-    DisposableEffect(darkTheme) {
+    DisposableEffect(mode) {
         activity.enableEdgeToEdge(
-            statusBarStyle = if (darkTheme) SystemBarStyle.light(
+            statusBarStyle = if (mode) SystemBarStyle.light(
                 scrim = Color.Transparent.toArgb(),
                 darkScrim = Color.Transparent.toArgb()
             ) else SystemBarStyle.dark(
                 scrim = Color.Transparent.toArgb()
             ),
-            navigationBarStyle = if (darkTheme) SystemBarStyle.light(
+            navigationBarStyle = if (mode) SystemBarStyle.light(
                 scrim = Color.Transparent.toArgb(),
                 darkScrim = Color.Transparent.toArgb()
             ) else SystemBarStyle.dark(
@@ -96,8 +98,8 @@ fun KyokuThem(
 
         val windowsInsetsController = WindowCompat.getInsetsController(window, view)
 
-        windowsInsetsController.isAppearanceLightStatusBars = !darkTheme
-        windowsInsetsController.isAppearanceLightNavigationBars = !darkTheme
+        windowsInsetsController.isAppearanceLightStatusBars = !mode
+        windowsInsetsController.isAppearanceLightNavigationBars = !mode
     }
 
     val window = calculateWindowSizeClass(activity = context as Activity)
@@ -113,9 +115,8 @@ fun KyokuThem(
         else -> ExpandedDimens
     }
 
-    val mode by ThemeManager.instance.isModeDark.collectAsStateWithLifecycle()
 
-    AppThem(
+    AppTheme(
         mode = mode,
         themColor = ThemeManager.instance.themColor,
         appDimens = appDimens,
@@ -124,7 +125,7 @@ fun KyokuThem(
 }
 
 @Composable
-fun AppThem(
+fun AppTheme(
     them: Boolean? = null,
     mode: Boolean = true,
     themColor: ThemColor = ThemColor.BASE,
@@ -136,9 +137,7 @@ fun AppThem(
         ThemColor.GREEN -> TODO()
     }
 
-    val dimens = remember { appDimens }
-
-    CompositionLocalProvider(value = LocalAppDimens provides dimens) {
+    CompositionLocalProvider(value = LocalAppDimens provides appDimens) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = AppTypography,

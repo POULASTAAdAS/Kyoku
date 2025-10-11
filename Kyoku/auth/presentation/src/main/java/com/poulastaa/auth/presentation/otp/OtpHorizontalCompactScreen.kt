@@ -32,7 +32,7 @@ import com.poulastaa.auth.presentation.intro.components.ConformButton
 import com.poulastaa.auth.presentation.otp.components.Info
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
-import com.poulastaa.core.presentation.ui.AppThem
+import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewCompactLandscape
 import com.poulastaa.core.presentation.ui.PreviewLargeLandscape
 import com.poulastaa.core.presentation.ui.PreviewSmallLandscape
@@ -134,7 +134,7 @@ internal fun OtpHorizontalCompactScreen(
 @PreviewLargeLandscape
 @Composable
 private fun Preview1() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         var state by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         val shake = remember { Animatable(0f) }
@@ -174,7 +174,7 @@ private fun Preview1() {
             }
         }
 
-        AppThem(isSystemInDarkTheme()) {
+        AppTheme(isSystemInDarkTheme()) {
             OtpHorizontalCompactScreen(
                 isExtendedExtended = true,
                 width = .5f,
@@ -196,7 +196,7 @@ private fun Preview1() {
 @PreviewCompactLandscape
 @Composable
 private fun Preview2() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         var state by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         val shake = remember { Animatable(0f) }
@@ -236,7 +236,7 @@ private fun Preview2() {
             }
         }
 
-        AppThem(isSystemInDarkTheme()) {
+        AppTheme(isSystemInDarkTheme()) {
             OtpHorizontalCompactScreen(
                 width = .5f,
                 shake = shake,
@@ -257,7 +257,7 @@ private fun Preview2() {
 @PreviewSmallLandscape
 @Composable
 private fun Preview3() {
-    AppThem(isSystemInDarkTheme()) {
+    AppTheme(isSystemInDarkTheme()) {
         var state by remember { mutableStateOf(false) }
         val scope = rememberCoroutineScope()
         val shake = remember { Animatable(0f) }
@@ -297,7 +297,7 @@ private fun Preview3() {
             }
         }
 
-        AppThem(isSystemInDarkTheme()) {
+        AppTheme(isSystemInDarkTheme()) {
             OtpHorizontalCompactScreen(
                 width = .5f,
                 shake = shake,
