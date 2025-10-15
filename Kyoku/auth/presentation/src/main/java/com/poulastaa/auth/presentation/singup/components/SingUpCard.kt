@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.singup.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,15 +10,21 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.poulastaa.auth.presentation.intro.components.AuthCard
 import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.singup.EmailSingUpUiAction
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
+import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
 import com.poulastaa.core.presentation.designsystem.AppTextField
+import com.poulastaa.core.presentation.ui.AppTheme
+import com.poulastaa.core.presentation.ui.CheckIcon
 import com.poulastaa.core.presentation.ui.R
 import com.poulastaa.core.presentation.ui.UserIcon
 
@@ -39,6 +46,7 @@ internal fun SingUpCard(
             data = state.username.prop,
             onValueChange = { onAction(EmailSingUpUiAction.OnUsernameChange(it)) },
             isValid = state.username.isValidUsername,
+            trailingIcon = CheckIcon,
             placeHolder = stringResource(R.string.username),
             leadingIcon = UserIcon,
             keyboardOptions = KeyboardOptions(
@@ -86,6 +94,22 @@ internal fun SingUpCard(
                 focus.clearFocus()
                 onAction(EmailSingUpUiAction.OnSubmit)
             },
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun Preview() {
+    AppTheme(isSystemInDarkTheme()) {
+        SingUpCard(
+            Modifier, heading = stringResource(R.string.sing_in),
+            state = EmailSingUpUiState(
+                username = UsernameTextProp(isValidUsername = isSystemInDarkTheme())
+            ),
+            onAction = {},
+            focus = LocalFocusManager.current,
+            haptic = LocalHapticFeedback.current
         )
     }
 }

@@ -2,39 +2,65 @@ package com.poulastaa.auth.presentation.singup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.poulastaa.auth.domain.AuthValidator
+import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.model.PasswordStatus
+import com.poulastaa.auth.domain.model.UsernameStatus
+import com.poulastaa.auth.domain.model.response.DtoAuthResponseStatus
+import com.poulastaa.auth.presentation.R
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
 import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
+import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.poulastaa.core.presentation.ui.R as CoreR
 
 @HiltViewModel
-internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
-    private val _uiEvent = Channel<EmailSingUpUiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
-
+internal class EmailSingUpViewmodel @Inject constructor(
+    private val validator: AuthValidator,
+    private val repo: SingUpRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(EmailSingUpUiState())
-    val state = _state.stateIn(
+    val state = _state.onStart {
+        observeFailedAttemptCount()
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = EmailSingUpUiState()
     )
 
+    private val _uiEvent = Channel<EmailSingUpUiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    private var emailValidationJob: Job? = null
+    private var failedAttempts = MutableStateFlow(0)
+
+    override fun onCleared() {
+        super.onCleared()
+        emailValidationJob?.cancel()
+    }
+
     fun populateEmail(email: Email) {
         _state.update {
             it.copy(
                 email = EmailTextProp(
-                    isValidEmail = false,// todo validate
+                    isValidEmail = validator.isValidEmail(email),
                     prop = TextProp(email)
                 )
             )
@@ -45,19 +71,23 @@ internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
         if (_state.value.isLoading) return
 
         when (action) {
-            is EmailSingUpUiAction.OnUsernameChange -> _state.update {
-                it.copy(
-                    username = UsernameTextProp(
-                        isValidUsername = false, // todo validate
-                        prop = TextProp(action.username)
+            is EmailSingUpUiAction.OnUsernameChange -> {
+                val usernameValidationState = validator.isValidUserName(action.username)
+
+                _state.update {
+                    it.copy(
+                        username = UsernameTextProp(
+                            isValidUsername = usernameValidationState == UsernameStatus.VALID,
+                            prop = TextProp(value = action.username)
+                        )
                     )
-                )
+                }
             }
 
             is EmailSingUpUiAction.OnEmailChange -> _state.update {
                 it.copy(
                     email = EmailTextProp(
-                        isValidEmail = false, // todo validate
+                        isValidEmail = validator.isValidEmail(action.email),
                         prop = TextProp(action.email)
                     )
                 )
@@ -66,7 +96,6 @@ internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
             is EmailSingUpUiAction.OnPasswordChange -> _state.update {
                 it.copy(
                     password = PasswordTextProp(
-                        isPasswordVisible = false, // todo validate
                         prop = TextProp(action.password)
                     )
                 )
@@ -83,7 +112,6 @@ internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
             is EmailSingUpUiAction.OnConformPasswordChange -> _state.update {
                 it.copy(
                     conformPassword = PasswordTextProp(
-                        isPasswordVisible = false, // todo validate
                         prop = TextProp(action.password)
                     )
                 )
@@ -98,17 +126,164 @@ internal class EmailSingUpViewmodel @Inject constructor() : ViewModel() {
             }
 
             EmailSingUpUiAction.OnSubmit -> {
-                // todo validate all again
+                if (validate().not()) return
 
                 _state.update {
                     it.copy(
                         isLoading = true
                     )
                 }
+
+                viewModelScope.launch {
+                    when (val res = repo.emailSingUp(
+                        email = _state.value.email.prop.value.trim(),
+                        username = _state.value.username.prop.value.trim(),
+                        password = _state.value.password.prop.value.trim(),
+                    )) {
+                        is Result.Error -> when (res.error) {
+                            DataError.Network.NO_INTERNET -> _uiEvent.trySend(
+                                EmailSingUpUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        CoreR.string.please_check_internet_connection
+                                    )
+                                )
+                            )
+
+                            else -> _uiEvent.trySend(
+                                EmailSingUpUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        CoreR.string.something_went_wrong_try_again
+                                    )
+                                )
+                            )
+                        }
+
+                        is Result.Success -> when (res.data) {
+                            DtoAuthResponseStatus.USER_CREATED -> {
+                                emailValidationJob?.cancel()
+                                emailValidationJob = startEmailValidationJob()
+
+                                return@launch
+                            }
+
+                            DtoAuthResponseStatus.EMAIL_ALREADY_IN_USE,
+                                -> failedAttempts.update { it + 1 }
+
+                            DtoAuthResponseStatus.EMAIL_NOT_VALID -> _state.update {
+                                it.copy(
+                                    email = it.email.copy(
+                                        isValidEmail = false,
+                                        prop = it.email.prop.copy(
+                                            isErr = true,
+                                            errText = UiText.StringResource(R.string.invalid_email)
+                                        )
+                                    )
+                                )
+                            }
+
+                            else -> _uiEvent.trySend(
+                                EmailSingUpUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        CoreR.string.something_went_wrong_try_again
+                                    )
+                                )
+                            )
+                        }
+                    }
+
+                    _state.update { it.copy(isLoading = true) }
+                }
             }
 
             EmailSingUpUiAction.OnEmailLogInClick -> viewModelScope.launch {
                 _uiEvent.send(EmailSingUpUiEvent.OnNavigateBack)
+            }
+        }
+    }
+
+    private fun validate(): Boolean {
+        var isValidUserName = false
+        var isValidEmail = false
+        var isValidPassword = false
+        var isValidConformPassword = false
+
+        val usernameState = validator.isValidUserName(_state.value.username.prop.value)
+        when (usernameState) {
+            UsernameStatus.VALID -> UiText.DynamicString("")
+            UsernameStatus.INVALID -> UiText.StringResource(R.string.invalid_username)
+            UsernameStatus.INVALID_START_WITH_UNDERSCORE -> UiText.StringResource(
+                resId = R.string.invalid_username_start_with_underscore
+            )
+
+            UsernameStatus.EMPTY -> UiText.StringResource(R.string.invalid_username_empty)
+            UsernameStatus.TOO_LONG -> UiText.StringResource(R.string.invalid_username_too_long)
+        }.also { uiText ->
+            if (usernameState == UsernameStatus.VALID) isValidUserName = true
+            else _state.update {
+                it.copy(
+                    username = it.username.copy(
+                        isValidUsername = false,
+                        prop = it.username.prop.copy(
+                            isErr = true,
+                            errText = uiText
+                        )
+                    )
+                )
+            }
+        }
+
+        if (validator.isValidEmail(_state.value.email.prop.value)) isValidEmail = true
+        else _state.update {
+            it.copy(email = it.email.copy(false))
+        }
+
+        val passwordState = validator.validatePassword(_state.value.password.prop.value)
+        when (passwordState) {
+            PasswordStatus.VALID -> UiText.DynamicString("")
+            PasswordStatus.EMPTY -> UiText.StringResource(R.string.empty_password)
+            PasswordStatus.TOO_SHORT -> UiText.StringResource(R.string.password_too_short)
+            PasswordStatus.TOO_LONG -> UiText.StringResource(R.string.password_too_long)
+            PasswordStatus.INVALID -> UiText.StringResource(R.string.invalid_password)
+        }.also { uiText ->
+            if (passwordState == PasswordStatus.VALID) isValidPassword = true
+            else _state.update {
+                it.copy(
+                    password = it.password.copy(
+                        prop = it.password.prop.copy(
+                            isErr = true,
+                            errText = uiText
+                        )
+                    )
+                )
+            }
+        }
+
+        if (_state.value.password.prop.value == _state.value.conformPassword.prop.value)
+            isValidConformPassword = true
+        else _state.update {
+            it.copy(
+                password = it.password.copy(
+                    prop = it.password.prop.copy(
+                        isErr = true,
+                        errText = UiText.StringResource(R.string.password_does_not_match)
+                    )
+                )
+            )
+        }
+
+        return isValidEmail && isValidPassword && isValidConformPassword && isValidUserName
+    }
+
+    private fun startEmailValidationJob() = viewModelScope.launch {
+        // Todo: make sure to stop loader
+    }
+
+    private fun observeFailedAttemptCount() {
+        viewModelScope.launch {
+            failedAttempts.collectLatest {
+                if (it > 3) _state.update { uiState ->
+                    uiState.copy(isOldUser = true)
+                }.also { return@collectLatest }
             }
         }
     }

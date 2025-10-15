@@ -6,4 +6,8 @@
     <string name="password_too_long">Can\'t exceed 20 character</string>
     <string name="invalid_password">Invalid password</string>
     <string name="password_does_not_match">Password does\'t match</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="invalid_username_start_with_underscore">Username can\'t start with \'underscore\'</string>
+    <string name="invalid_username_empty">Username can\'t be empty</string>
+    <string name="invalid_username_too_long">Username can\'t exceed 20 charecters</string>
 </resources>

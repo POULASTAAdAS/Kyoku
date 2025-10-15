@@ -1,9 +1,11 @@
 package com.poulastaa.auth.data.di
 
+import com.poulastaa.auth.data.repository.OnlineFirstEmailSignUpRepository
 import com.poulastaa.auth.data.repository.OnlineFirstIntroRepository
 import com.poulastaa.auth.data.usercase.AuthFieldValidator
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.IntroRepository
+import com.poulastaa.auth.domain.SingUpRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +22,9 @@ object AuthDataModule {
     @Provides
     @ViewModelScoped
     fun provideOnlineFirstIntroRepository(): IntroRepository = OnlineFirstIntroRepository()
+
+    @Provides
+    @ViewModelScoped
+    fun provideOnlineFirstEmailSignUpRepository(): SingUpRepository =
+        OnlineFirstEmailSignUpRepository()
 }

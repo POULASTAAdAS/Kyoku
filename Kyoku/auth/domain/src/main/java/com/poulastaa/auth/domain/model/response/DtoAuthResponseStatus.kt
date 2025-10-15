@@ -1,6 +1,6 @@
 package com.poulastaa.auth.domain.model.response
 
-enum class DtoResponseStatus {
+enum class DtoAuthResponseStatus {
     USER_CREATED,
     USER_FOUND,
     USER_FOUND_NO_PLAYLIST,

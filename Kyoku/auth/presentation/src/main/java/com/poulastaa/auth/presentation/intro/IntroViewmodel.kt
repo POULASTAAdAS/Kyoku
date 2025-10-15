@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.IntroRepository
 import com.poulastaa.auth.domain.model.PasswordStatus
-import com.poulastaa.auth.domain.model.response.DtoResponseStatus
+import com.poulastaa.auth.domain.model.response.DtoAuthResponseStatus
 import com.poulastaa.auth.presentation.R
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
@@ -45,12 +45,12 @@ internal class IntroViewmodel @Inject constructor(
     private val _uiEvent = Channel<IntroUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private var emailLogInJob: Job? = null
-    private var logInAttempt = MutableStateFlow(0)
+    private var emailValidationJob: Job? = null
+    private var failedAttempts = MutableStateFlow(0)
 
     override fun onCleared() {
         super.onCleared()
-        emailLogInJob?.cancel()
+        emailValidationJob?.cancel()
     }
 
     fun onAction(action: IntroUiAction) {
@@ -110,7 +110,7 @@ internal class IntroViewmodel @Inject constructor(
                     )
                 }
 
-                logInAttempt.update { it + 1 }
+                failedAttempts.update { it + 1 }
 
                 viewModelScope.launch {
                     delay(2_000) // simulate network delay
@@ -140,15 +140,19 @@ internal class IntroViewmodel @Inject constructor(
                         }
 
                         is Result.Success -> when (res.data) {
-                            DtoResponseStatus.USER_CREATED, DtoResponseStatus.USER_FOUND,
-                            DtoResponseStatus.USER_FOUND_NO_PLAYLIST, DtoResponseStatus.USER_FOUND_NO_ARTIST,
-                            DtoResponseStatus.USER_FOUND_NO_GENRE, DtoResponseStatus.USER_FOUND_NO_B_DATE,
+                            DtoAuthResponseStatus.USER_FOUND,
+                            DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST,
+                            DtoAuthResponseStatus.USER_FOUND_NO_ARTIST,
+                            DtoAuthResponseStatus.USER_FOUND_NO_GENRE,
+                            DtoAuthResponseStatus.USER_FOUND_NO_B_DATE,
                                 -> {
-                                emailLogInJob?.cancel()
-                                emailLogInJob = startEmailValidationJob()
+                                emailValidationJob?.cancel()
+                                emailValidationJob = startEmailValidationJob()
+
+                                return@launch
                             }
 
-                            DtoResponseStatus.EMAIL_NOT_VALID -> _state.update {
+                            DtoAuthResponseStatus.EMAIL_NOT_VALID -> _state.update {
                                 it.copy(
                                     email = it.email.copy(
                                         isValidEmail = false,
@@ -160,7 +164,7 @@ internal class IntroViewmodel @Inject constructor(
                                 )
                             }
 
-                            DtoResponseStatus.PASSWORD_DOES_NOT_MATCH -> _state.update {
+                            DtoAuthResponseStatus.PASSWORD_DOES_NOT_MATCH -> _state.update {
                                 it.copy(
                                     password = it.password.copy(
                                         prop = it.password.prop.copy(
@@ -171,7 +175,7 @@ internal class IntroViewmodel @Inject constructor(
                                 )
                             }
 
-                            DtoResponseStatus.USER_NOT_FOUND -> _state.update {
+                            DtoAuthResponseStatus.USER_NOT_FOUND -> _state.update {
                                 it.copy(
                                     isNewEmailUser = true,
                                     email = it.email.copy(
@@ -276,12 +280,12 @@ internal class IntroViewmodel @Inject constructor(
     }
 
     private fun startEmailValidationJob() = viewModelScope.launch {
-
+        // Todo: make sure to stop loader
     }
 
     private fun observeFailedAttemptCount() {
         viewModelScope.launch {
-            logInAttempt.collectLatest {
+            failedAttempts.collectLatest {
                 if (it > 3) _state.update { uiState ->
                     uiState.copy(isNewEmailUser = true)
                 }.also { return@collectLatest }
