@@ -102,7 +102,7 @@ fun ForgotPasswordExpandedScreen(
                 }
             )
 
-            Spacer(Modifier.height(MaterialTheme.dimens.large1))
+            Spacer(Modifier.height(MaterialTheme.dimens.medium3))
 
             ConformButton(
                 modifier = Modifier
@@ -112,7 +112,8 @@ fun ForgotPasswordExpandedScreen(
                 heading = if (state.isVerifyButtonEnabled) stringResource(R.string.verify_text)
                 else stringResource(R.string.continue_text),
                 onClick = {
-                    onAction(ForgotPasswordUiAction.OnSummit)
+                    if (state.isVerifyButtonEnabled) onAction(ForgotPasswordUiAction.OnVerifyClick)
+                    else onAction(ForgotPasswordUiAction.OnSummit)
                 }
             )
         }

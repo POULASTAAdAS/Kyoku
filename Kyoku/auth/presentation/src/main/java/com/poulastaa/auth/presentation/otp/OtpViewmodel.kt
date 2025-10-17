@@ -110,7 +110,7 @@ internal class OtpViewmodel @Inject constructor() : ViewModel() {
             )
         }
 
-        val durationMillis = 4 * 60 * 1000L
+        val durationMillis = 4.minutes.inWholeMilliseconds
         val start = System.currentTimeMillis()
         val endTime = start + durationMillis
 
@@ -134,8 +134,9 @@ internal class OtpViewmodel @Inject constructor() : ViewModel() {
                 )
             }
 
-            if (_state.value.isTryAnotherEmailVisible.not() && totalSec < twoPointFiveMinute && failedAttempt > 1)
-                _state.update { it.copy(isTryAnotherEmailVisible = true) }
+            if (_state.value.isTryAnotherEmailVisible.not() &&
+                totalSec < twoPointFiveMinute && failedAttempt > 1
+            ) _state.update { it.copy(isTryAnotherEmailVisible = true) }
         }
 
         _state.update {

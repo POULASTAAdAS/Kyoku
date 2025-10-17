@@ -1,7 +1,7 @@
 package com.poulastaa.auth.data.repository
 
 import com.poulastaa.auth.domain.SingUpRepository
-import com.poulastaa.auth.domain.model.response.DtoAuthResponseStatus
+import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Email
 import com.poulastaa.core.domain.Password

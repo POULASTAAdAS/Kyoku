@@ -1,8 +1,11 @@
 package com.poulastaa.auth.presentation.forgot_password
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,9 +50,7 @@ internal fun ForgotPasswordCompactScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(
                         onClick = {
@@ -111,7 +112,32 @@ internal fun ForgotPasswordCompactScreen(
                     }
                 )
 
-                Spacer(Modifier.height(MaterialTheme.dimens.medium1))
+                AnimatedVisibility(state.isTickerVisible) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = stringResource(R.string.resend_in),
+                                color = MaterialTheme.colorScheme.secondary
+                            )
+
+                            Text(
+                                text = state.ticker,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                    }
+
+                }
+
+                Spacer(Modifier.height(MaterialTheme.dimens.large1))
 
                 ConformButton(
                     modifier = Modifier
@@ -121,7 +147,8 @@ internal fun ForgotPasswordCompactScreen(
                     heading = if (state.isVerifyButtonEnabled) stringResource(R.string.verify_text)
                     else stringResource(R.string.continue_text),
                     onClick = {
-                        onAction(ForgotPasswordUiAction.OnSummit)
+                        if (state.isVerifyButtonEnabled) onAction(ForgotPasswordUiAction.OnVerifyClick)
+                        else onAction(ForgotPasswordUiAction.OnSummit)
                     }
                 )
 
@@ -136,7 +163,9 @@ internal fun ForgotPasswordCompactScreen(
 private fun Preview() {
     AppTheme(isSystemInDarkTheme()) {
         ForgotPasswordCompactScreen(
-            state = ForgotPasswordUiState()
+            state = ForgotPasswordUiState(
+                isVerifyButtonEnabled = true
+            )
         ) { }
     }
 }

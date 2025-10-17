@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.IntroRepository
 import com.poulastaa.auth.domain.model.PasswordStatus
-import com.poulastaa.auth.domain.model.response.DtoAuthResponseStatus
+import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.presentation.R
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
