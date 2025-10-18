@@ -1,6 +1,7 @@
 package com.poulastaa.auth.presentation
 
-import com.poulastaa.core.presentation.Email
+import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.JWTToken
 import kotlinx.serialization.Serializable
 
 sealed interface AuthScreens {
@@ -15,4 +16,7 @@ sealed interface AuthScreens {
 
     @Serializable
     data class Verify(val email: Email) : AuthScreens
+
+    @Serializable
+    data class UpdatePassword(val token: JWTToken) : AuthScreens
 }

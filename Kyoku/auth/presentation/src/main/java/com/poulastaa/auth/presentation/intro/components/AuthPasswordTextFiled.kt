@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
-import com.poulastaa.core.presentation.Password
+import com.poulastaa.core.domain.Password
 import com.poulastaa.core.presentation.ui.EyeCloseIcon
 import com.poulastaa.core.presentation.ui.EyeOpenIcon
 import com.poulastaa.core.presentation.ui.PasswordIcon
@@ -64,7 +64,11 @@ internal fun AuthPasswordTextFiled(
             errorTextColor = MaterialTheme.colorScheme.error,
             errorLabelColor = MaterialTheme.colorScheme.error,
             errorCursorColor = MaterialTheme.colorScheme.error,
-            errorBorderColor = MaterialTheme.colorScheme.error
+            errorBorderColor = MaterialTheme.colorScheme.error,
+            errorSupportingTextColor = MaterialTheme.colorScheme.error,
+            errorPlaceholderColor = MaterialTheme.colorScheme.error,
+            errorLeadingIconColor = MaterialTheme.colorScheme.error,
+            errorTrailingIconColor = MaterialTheme.colorScheme.error
         ),
         placeholder = {
             Text(

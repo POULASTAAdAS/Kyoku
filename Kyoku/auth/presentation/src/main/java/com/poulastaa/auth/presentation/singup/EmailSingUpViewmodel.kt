@@ -4,17 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.UsernameStatus
-import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.presentation.R
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
 import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
 import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Email
 import com.poulastaa.core.domain.Result
-import com.poulastaa.core.presentation.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +68,10 @@ internal class EmailSingUpViewmodel @Inject constructor(
     }
 
     fun onAction(action: EmailSingUpUiAction) {
-        if (_state.value.isLoading) return
+        if (_state.value.isLoading &&
+            (action != EmailSingUpUiAction.OnPasswordVisibilityToggle ||
+                    action != EmailSingUpUiAction.OnConformPasswordVisibilityToggle)
+        ) return
 
         when (action) {
             is EmailSingUpUiAction.OnUsernameChange -> {
@@ -234,7 +237,15 @@ internal class EmailSingUpViewmodel @Inject constructor(
 
         if (validator.isValidEmail(_state.value.email.prop.value)) isValidEmail = true
         else _state.update {
-            it.copy(email = it.email.copy(false))
+            it.copy(
+                email = it.email.copy(
+                    isValidEmail = false,
+                    prop = it.email.prop.copy(
+                        isErr = true,
+                        errText = UiText.StringResource(R.string.invalid_email)
+                    )
+                )
+            )
         }
 
         val passwordState = validator.validatePassword(_state.value.password.prop.value)
@@ -258,12 +269,21 @@ internal class EmailSingUpViewmodel @Inject constructor(
             }
         }
 
-        if (_state.value.password.prop.value == _state.value.conformPassword.prop.value)
+        if (_state.value.conformPassword.prop.value.isBlank()) _state.update {
+            it.copy(
+                conformPassword = it.conformPassword.copy(
+                    prop = it.conformPassword.prop.copy(
+                        isErr = true,
+                        errText = UiText.StringResource(R.string.empty_password)
+                    )
+                )
+            )
+        } else if (_state.value.password.prop.value == _state.value.conformPassword.prop.value)
             isValidConformPassword = true
         else _state.update {
             it.copy(
-                password = it.password.copy(
-                    prop = it.password.prop.copy(
+                conformPassword = it.conformPassword.copy(
+                    prop = it.conformPassword.prop.copy(
                         isErr = true,
                         errText = UiText.StringResource(R.string.password_does_not_match)
                     )

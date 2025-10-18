@@ -1,8 +1,9 @@
 package com.poulastaa.auth.presentation.singup
 
-import com.poulastaa.core.presentation.Email
-import com.poulastaa.core.presentation.Password
-import com.poulastaa.core.presentation.Username
+import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.Password
+import com.poulastaa.core.domain.Username
+
 
 internal sealed interface EmailSingUpUiAction {
     data class OnUsernameChange(val username: Username) : EmailSingUpUiAction

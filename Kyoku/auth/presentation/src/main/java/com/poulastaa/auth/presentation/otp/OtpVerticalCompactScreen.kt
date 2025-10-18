@@ -177,7 +177,13 @@ internal fun ReSendOrNavigateBack(
     ) { isErr ->
         when (isErr) {
             true -> Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text(
+                if (state.otp.isErr) Text(
+                    text = state.otp.errText.asString(),
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+                else Text(
                     text = stringResource(R.string.invalid_otp),
                     color = MaterialTheme.colorScheme.error,
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize,

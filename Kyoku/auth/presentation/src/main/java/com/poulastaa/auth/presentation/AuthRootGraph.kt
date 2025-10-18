@@ -9,7 +9,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.poulastaa.auth.presentation.AuthScreens.Verify
 import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
@@ -71,10 +70,11 @@ fun AuthRootGraph(
                 navigate = { screen ->
                     when (screen) {
                         is ForgotPasswordAllowedNavigationScreens.Verify -> screen.email?.let {
-                            nav.navigate(Verify(screen.email))
+                            nav.navigate(AuthScreens.Verify(screen.email))
                         } ?: Toast.makeText(
                             context,
-                            UiText.StringResource(R.string.something_went_wrong_try_again).asString(context),
+                            UiText.StringResource(R.string.something_went_wrong_try_again)
+                                .asString(context),
                             Toast.LENGTH_LONG
                         ).show()
 
@@ -89,8 +89,17 @@ fun AuthRootGraph(
 
             OtpRootScreen(
                 email = email,
+                navigateToUpdatePassword = { token ->
+                    nav.navigate(AuthScreens.UpdatePassword(token))
+                },
                 navigateBack = { nav.popBackStack() }
             )
+        }
+
+        composable<AuthScreens.UpdatePassword> {
+            val payload = it.toRoute<AuthScreens.UpdatePassword>()
+
+
         }
     }
 }

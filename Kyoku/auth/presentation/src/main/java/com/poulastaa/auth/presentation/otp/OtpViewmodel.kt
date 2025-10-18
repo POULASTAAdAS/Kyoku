@@ -2,8 +2,13 @@ package com.poulastaa.auth.presentation.otp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.core.presentation.Email
+import com.poulastaa.auth.domain.OtpValidationRepository
+import com.poulastaa.core.domain.DataError
+import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
+import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -19,8 +24,12 @@ import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
 
+private const val MAX_TIMEOUT = "02:30"
+
 @HiltViewModel
-internal class OtpViewmodel @Inject constructor() : ViewModel() {
+internal class OtpViewmodel @Inject constructor(
+    private val repo: OtpValidationRepository,
+) : ViewModel() {
     private val _state = MutableStateFlow(OtpUiState())
     val uiState = _state.onStart {
         tickerJob?.cancel()
@@ -77,10 +86,62 @@ internal class OtpViewmodel @Inject constructor() : ViewModel() {
             }
 
             OtpUiAction.OnSubmit -> {
+                if (_state.value.otp.value.length != 5) {
+                    viewModelScope.launch {
+                        _state.update {
+                            it.copy(
+                                otp = it.otp.copy(
+                                    isErr = true,
+                                    errText = UiText.StringResource(R.string.invalid_otp)
+                                )
+                            )
+                        }
+
+                        delay(3_500) // 3.5 second
+
+                        _state.update {
+                            it.copy(
+                                otp = it.otp.copy(
+                                    isErr = false,
+                                    errText = UiText.DynamicString("")
+                                )
+                            )
+                        }
+                    }
+
+                    return
+                }
+
                 failedAttempt++;
 
                 _state.update {
                     it.copy(isLoading = true)
+                }
+
+                viewModelScope.launch {
+                    when (val res = repo.validateOtp(_state.value.otp.value)) {
+                        is Result.Error -> when (res.error) {
+                            DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                OtpUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        R.string.please_check_internet_connection
+                                    )
+                                )
+                            )
+
+                            else -> _uiEvent.send(
+                                OtpUiEvent.EmitToast(
+                                    UiText.StringResource(
+                                        R.string.something_went_wrong_try_again
+                                    )
+                                )
+                            )
+                        }
+
+                        is Result.Success -> _uiEvent.send(
+                            OtpUiEvent.NavigateToResetPassword(res.data)
+                        )
+                    }
                 }
             }
 
@@ -106,15 +167,15 @@ internal class OtpViewmodel @Inject constructor() : ViewModel() {
         _state.update {
             it.copy(
                 resendState = ResendState.TICKER,
-                ticker = "04:00"
+                ticker = MAX_TIMEOUT
             )
         }
 
-        val durationMillis = 4.minutes.inWholeMilliseconds
+        val durationMillis = 2.5.minutes.inWholeMilliseconds
         val start = System.currentTimeMillis()
         val endTime = start + durationMillis
 
-        val twoPointFiveMinute = 2.minutes.inWholeSeconds
+        val afterOnePointEightMinute = 1.8.minutes.inWholeSeconds
 
         while (System.currentTimeMillis() < endTime) {
             delay(1_000)
@@ -135,7 +196,7 @@ internal class OtpViewmodel @Inject constructor() : ViewModel() {
             }
 
             if (_state.value.isTryAnotherEmailVisible.not() &&
-                totalSec < twoPointFiveMinute && failedAttempt > 1
+                totalSec < afterOnePointEightMinute && failedAttempt > 1
             ) _state.update { it.copy(isTryAnotherEmailVisible = true) }
         }
 

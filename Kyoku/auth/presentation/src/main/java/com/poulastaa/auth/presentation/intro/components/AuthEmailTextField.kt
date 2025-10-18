@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
-import com.poulastaa.core.presentation.Email
+import com.poulastaa.core.domain.Email
 import com.poulastaa.core.presentation.ui.AlternateEmailIcon
 import com.poulastaa.core.presentation.ui.CheckIcon
 import com.poulastaa.core.presentation.ui.R
@@ -58,7 +58,11 @@ internal fun AuthEmailTextField(
             errorTextColor = MaterialTheme.colorScheme.error,
             errorLabelColor = MaterialTheme.colorScheme.error,
             errorCursorColor = MaterialTheme.colorScheme.error,
-            errorBorderColor = MaterialTheme.colorScheme.error
+            errorBorderColor = MaterialTheme.colorScheme.error,
+            errorSupportingTextColor = MaterialTheme.colorScheme.error,
+            errorPlaceholderColor = MaterialTheme.colorScheme.error,
+            errorLeadingIconColor = MaterialTheme.colorScheme.error,
+            errorTrailingIconColor = MaterialTheme.colorScheme.error
         ),
         placeholder = {
             Text(

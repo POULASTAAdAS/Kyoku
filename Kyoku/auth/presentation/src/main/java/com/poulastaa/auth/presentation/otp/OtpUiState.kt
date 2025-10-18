@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation.otp
 
 import androidx.compose.runtime.Stable
-import com.poulastaa.core.presentation.Email
+import com.poulastaa.core.domain.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 
 @Stable
@@ -29,5 +29,5 @@ internal data class OtpUiState(
 
     val email: Email = "",
     val otp: TextProp = TextProp(),
-    val ticker: String = "04:00",
+    val ticker: String = "02:30",
 )

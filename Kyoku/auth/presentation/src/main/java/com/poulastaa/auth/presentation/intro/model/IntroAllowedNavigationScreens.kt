@@ -1,6 +1,7 @@
 package com.poulastaa.auth.presentation.intro.model
 
-import com.poulastaa.core.presentation.Email
+import com.poulastaa.core.domain.Email
+
 
 sealed class IntroAllowedNavigationScreens {
     data class SingUp(val email: Email?) : IntroAllowedNavigationScreens()
