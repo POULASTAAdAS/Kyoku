@@ -87,7 +87,6 @@ internal fun OtpRootScreen(
             ).also { haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
         }
     }
-
     LaunchedEffect(state.otp.value.length) {
         if (state.otp.value.length == 5) viewmodel.onAction(OtpUiAction.OnSubmit)
     }

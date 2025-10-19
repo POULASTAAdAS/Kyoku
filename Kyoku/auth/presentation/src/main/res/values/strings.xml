@@ -9,5 +9,6 @@
     <string name="invalid_username">Invalid username</string>
     <string name="invalid_username_start_with_underscore">Username can\'t start with \'underscore\'</string>
     <string name="invalid_username_empty">Username can\'t be empty</string>
-    <string name="invalid_username_too_long">Username can\'t exceed 20 charecters</string>
+    <string name="invalid_username_too_long">Username can\'t exceed 20 characters</string>
+    <string name="same_as_old_password">Can\'t be same as old password</string>
 </resources>

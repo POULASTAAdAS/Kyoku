@@ -37,4 +37,8 @@
     <string name="conform_navigate_back_otp_screen_title">Conform</string>
     <string name="something_went_wrong_try_again">Opp\'s something went wrong.Please Try again</string>
     <string name="please_check_internet_connection">Please check your internet connection.</string>
+    <string name="create_new_password">Create new password</string>
+    <string name="create_new_password_sub_heading">Your new password must not be same as your old password.</string>
+    <string name="reset">reset</string>
+    <string name="login_again_to_continue">Please login again with the new password.</string>
 </resources>

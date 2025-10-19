@@ -2,7 +2,7 @@ package com.poulastaa.auth.presentation.singup.model
 
 import androidx.compose.runtime.Stable
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
-import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
+import com.poulastaa.auth.presentation.model.PasswordTextProp
 
 @Stable
 internal data class EmailSingUpUiState(

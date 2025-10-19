@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.intro.model
+package com.poulastaa.auth.presentation.model
 
 import com.poulastaa.core.presentation.designsystem.TextProp
 

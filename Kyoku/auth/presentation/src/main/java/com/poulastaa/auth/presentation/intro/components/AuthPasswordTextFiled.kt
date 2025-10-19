@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.poulastaa.auth.presentation.intro.model.PasswordTextProp
+import com.poulastaa.auth.presentation.model.PasswordTextProp
 import com.poulastaa.core.domain.Password
 import com.poulastaa.core.presentation.ui.EyeCloseIcon
 import com.poulastaa.core.presentation.ui.EyeOpenIcon

@@ -15,6 +15,7 @@ import com.poulastaa.auth.presentation.intro.IntroRootScreen
 import com.poulastaa.auth.presentation.intro.IntroViewmodel
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.otp.OtpRootScreen
+import com.poulastaa.auth.presentation.reset_password.ResetPasswordRootScreen
 import com.poulastaa.auth.presentation.singup.EmailSingUpRootScreen
 import com.poulastaa.core.domain.SavedScreen
 import com.poulastaa.core.presentation.designsystem.UiText
@@ -99,7 +100,19 @@ fun AuthRootGraph(
         composable<AuthScreens.UpdatePassword> {
             val payload = it.toRoute<AuthScreens.UpdatePassword>()
 
-
+            ResetPasswordRootScreen(
+                token = payload.token,
+                popUpToLogIn = {
+                    nav.navigate(AuthScreens.Intro) {
+                        popUpTo(AuthScreens.Intro) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateBack = {
+                    nav.popBackStack()
+                }
+            )
         }
     }
 }
