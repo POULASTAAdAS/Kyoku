@@ -1,6 +1,11 @@
 package com.poulastaa.auth.presentation
 
 import android.widget.Toast
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -20,6 +25,8 @@ import com.poulastaa.auth.presentation.singup.EmailSingUpRootScreen
 import com.poulastaa.core.domain.SavedScreen
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.ui.R
+
+private const val DEFAULT_ANIMATION_TIME = 600
 
 @Composable
 fun AuthRootGraph(
@@ -54,7 +61,21 @@ fun AuthRootGraph(
             )
         }
 
-        composable<AuthScreens.EmailSignUp> {
+        composable<AuthScreens.EmailSignUp>(
+            enterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideInHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            initialOffsetX = { it })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideOutHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            targetOffsetX = { it }
+                        )
+            }
+        ) {
             val email = it.toRoute<AuthScreens.ForgotPassword>().email
 
             EmailSingUpRootScreen(email) {
@@ -62,7 +83,21 @@ fun AuthRootGraph(
             }
         }
 
-        composable<AuthScreens.ForgotPassword> {
+        composable<AuthScreens.ForgotPassword>(
+            enterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideInHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            initialOffsetX = { it })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideOutHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            targetOffsetX = { it }
+                        )
+            }
+        ) {
             val email = it.toRoute<AuthScreens.ForgotPassword>().email
             val context = LocalContext.current
 
@@ -85,7 +120,23 @@ fun AuthRootGraph(
             )
         }
 
-        composable<AuthScreens.Verify> {
+        composable<AuthScreens.Verify>(
+            enterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideInHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            initialOffsetX = { it })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideOutHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            targetOffsetX = { it }
+                        )
+            },
+            popEnterTransition = null,
+            popExitTransition = null
+        ) {
             val email = it.toRoute<AuthScreens.Verify>().email
 
             OtpRootScreen(
@@ -97,7 +148,21 @@ fun AuthRootGraph(
             )
         }
 
-        composable<AuthScreens.UpdatePassword> {
+        composable<AuthScreens.UpdatePassword>(
+            enterTransition = {
+                fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideInHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            initialOffsetX = { it })
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
+                        slideOutHorizontally(
+                            animationSpec = tween(DEFAULT_ANIMATION_TIME),
+                            targetOffsetX = { it }
+                        )
+            }
+        ) {
             val payload = it.toRoute<AuthScreens.UpdatePassword>()
 
             ResetPasswordRootScreen(

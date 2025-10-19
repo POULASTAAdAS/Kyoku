@@ -96,7 +96,7 @@ internal fun OtpVerticalCompactScreen(
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             VerificationTopBar(haptic, onAction)
@@ -111,7 +111,8 @@ internal fun OtpVerticalCompactScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(MaterialTheme.dimens.medium1),
+                    .padding(MaterialTheme.dimens.medium1)
+                    .then(modifier),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

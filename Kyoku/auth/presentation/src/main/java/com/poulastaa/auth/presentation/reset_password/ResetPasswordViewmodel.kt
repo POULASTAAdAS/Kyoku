@@ -157,7 +157,7 @@ internal class ResetPasswordViewmodel @Inject constructor(
                 }
             }
 
-            ResetPasswordUiAction.OnNavigateBack -> _uiEvent.trySend(ResetPasswordUiEvent.PopUpToIntroScreen)
+            ResetPasswordUiAction.OnNavigateBack -> _uiEvent.trySend(ResetPasswordUiEvent.NavigateBack)
         }
     }
 
