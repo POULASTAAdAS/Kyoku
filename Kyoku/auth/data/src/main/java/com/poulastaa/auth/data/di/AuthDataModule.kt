@@ -8,10 +8,11 @@ import com.poulastaa.auth.data.repository.OnlineFirstResetPasswordRepository
 import com.poulastaa.auth.data.usercase.AuthFieldValidator
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.ForgotPasswordRepository
-import com.poulastaa.auth.domain.IntroRepository
+import com.poulastaa.auth.domain.intro.IntroRepository
 import com.poulastaa.auth.domain.OtpValidationRepository
 import com.poulastaa.auth.domain.ResetPasswordRepository
 import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,8 +29,8 @@ object AuthDataModule {
     @Provides
     @ViewModelScoped
     fun provideOnlineFirstIntroRepository(
-
-    ): IntroRepository = OnlineFirstIntroRepository()
+        remote: IntroRemoteDatasource
+    ): IntroRepository = OnlineFirstIntroRepository(remote)
 
     @Provides
     @ViewModelScoped

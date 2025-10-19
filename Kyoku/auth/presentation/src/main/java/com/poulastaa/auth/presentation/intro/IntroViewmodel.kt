@@ -3,7 +3,7 @@ package com.poulastaa.auth.presentation.intro
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
-import com.poulastaa.auth.domain.IntroRepository
+import com.poulastaa.auth.domain.intro.IntroRepository
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.presentation.R
@@ -120,19 +120,13 @@ internal class IntroViewmodel @Inject constructor(
                         _state.value.password.prop.value.trim()
                     )) {
                         is Result.Error -> when (res.error) {
-                            DataError.Network.NO_INTERNET -> _uiEvent.trySend(
+                            DataError.Network.NO_INTERNET -> _uiEvent.send(
                                 IntroUiEvent.EmitToast(
                                     UiText.StringResource(CoreR.string.please_check_internet_connection)
                                 )
                             )
 
-                            DataError.Network.SERVER_ERROR -> _uiEvent.trySend(
-                                IntroUiEvent.EmitToast(
-                                    UiText.StringResource(CoreR.string.something_went_wrong_try_again)
-                                )
-                            )
-
-                            else -> _uiEvent.trySend(
+                            else -> _uiEvent.send(
                                 IntroUiEvent.EmitToast(
                                     UiText.StringResource(CoreR.string.something_went_wrong_try_again)
                                 )

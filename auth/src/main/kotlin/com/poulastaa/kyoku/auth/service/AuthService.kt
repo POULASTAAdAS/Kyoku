@@ -55,7 +55,7 @@ class AuthService(
                 status = ResponseStatus.PASSWORD_DOES_NOT_MATCH
             )
         } ?: ResponseWrapper( // user not found
-            status = ResponseStatus.USER_NOT_FOUND
+            status = ResponseStatus.UNAUTHORIZED
         )
     } ?: ResponseWrapper( // invalid email
         status = ResponseStatus.EMAIL_NOT_VALID

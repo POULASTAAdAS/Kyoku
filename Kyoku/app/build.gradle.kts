@@ -67,6 +67,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.core.database)
+    implementation(projects.core.network)
 
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
@@ -74,4 +75,5 @@ dependencies {
     implementation(projects.auth.domain)
     implementation(projects.auth.data)
     implementation(projects.auth.presentation)
+    implementation(projects.auth.network)
 }
