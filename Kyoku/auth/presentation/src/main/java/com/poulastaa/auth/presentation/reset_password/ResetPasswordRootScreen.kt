@@ -115,13 +115,26 @@ internal fun ResetPasswordRootScreen(
                 )
             },
             expandedSmallContent = {
-
+                ResetPasswordHorizontalCompactScreen(
+                    state = state,
+                    haptic = haptic,
+                    onAction = viewmodel::onAction
+                )
             },
             expandedCompactContent = {
-
+                ResetPasswordHorizontalCompactScreen(
+                    state = state,
+                    haptic = haptic,
+                    onAction = viewmodel::onAction
+                )
             },
             expandedLargeContent = {
-
+                ResetPasswordHorizontalCompactScreen(
+                    modifier = Modifier.padding(MaterialTheme.dimens.medium1),
+                    state = state,
+                    haptic = haptic,
+                    onAction = viewmodel::onAction
+                )
             }
         )
 
