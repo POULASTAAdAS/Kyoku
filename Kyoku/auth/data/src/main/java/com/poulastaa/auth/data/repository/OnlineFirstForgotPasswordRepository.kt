@@ -3,7 +3,7 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.domain.ForgotPasswordRepository
 import com.poulastaa.auth.domain.model.DtoForgotPasswordSentStatus
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
 import javax.inject.Inject
 

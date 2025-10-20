@@ -1,7 +1,7 @@
 package com.poulastaa.auth.domain.model
 
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.Username
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.Username
 import com.poulastaa.core.domain.model.DtoUserType
 
 data class DtoResponseUser(

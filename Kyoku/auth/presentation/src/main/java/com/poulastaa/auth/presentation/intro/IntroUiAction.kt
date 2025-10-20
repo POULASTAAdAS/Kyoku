@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation.intro
 
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.Password
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.Password
 
 
 sealed interface IntroUiAction {

@@ -1,11 +1,11 @@
 package com.poulastaa.auth.network.domain.model.response
 
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.Username
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.Username
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseEmailLogIn(
+data class ResponseEmailAuth(
     val status: ResponseAuthResponseStatus,
     val email: Email,
     val username: Username,

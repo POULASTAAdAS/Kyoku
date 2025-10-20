@@ -13,7 +13,7 @@ import com.poulastaa.auth.presentation.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
@@ -128,7 +128,7 @@ internal class EmailSingUpViewmodel @Inject constructor(
                 )
             }
 
-            EmailSingUpUiAction.OnSubmit -> {
+            is EmailSingUpUiAction.OnSubmit -> {
                 if (validate().not()) return
 
                 _state.update {
@@ -138,10 +138,13 @@ internal class EmailSingUpViewmodel @Inject constructor(
                 }
 
                 viewModelScope.launch {
+                    val countryCode = action.context.resources.configuration.locales[0].country
+
                     when (val res = repo.emailSingUp(
                         email = _state.value.email.prop.value.trim(),
                         username = _state.value.username.prop.value.trim(),
                         password = _state.value.password.prop.value.trim(),
+                        countryCode = countryCode
                     )) {
                         is Result.Error -> when (res.error) {
                             DataError.Network.NO_INTERNET -> _uiEvent.trySend(
@@ -170,7 +173,22 @@ internal class EmailSingUpViewmodel @Inject constructor(
                             }
 
                             DtoAuthResponseStatus.EMAIL_ALREADY_IN_USE,
-                                -> failedAttempts.update { it + 1 }
+                                -> {
+                                _state.update {
+                                    it.copy(
+                                        email = it.email.copy(
+                                            prop = it.email.prop.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(
+                                                    CoreR.string.email_already_registered
+                                                )
+                                            )
+                                        )
+                                    )
+                                }
+
+                                failedAttempts.update { it + 1 }
+                            }
 
                             DtoAuthResponseStatus.EMAIL_NOT_VALID -> _state.update {
                                 it.copy(
@@ -194,7 +212,7 @@ internal class EmailSingUpViewmodel @Inject constructor(
                         }
                     }
 
-                    _state.update { it.copy(isLoading = true) }
+                    _state.update { it.copy(isLoading = false) }
                 }
             }
 

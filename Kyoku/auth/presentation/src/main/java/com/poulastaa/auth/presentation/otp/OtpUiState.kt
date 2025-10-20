@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation.otp
 
 import androidx.compose.runtime.Stable
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 
 @Stable

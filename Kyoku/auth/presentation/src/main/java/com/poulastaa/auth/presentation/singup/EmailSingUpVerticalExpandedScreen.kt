@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -38,6 +39,7 @@ internal fun EmailSingUpVerticalExpandedScreen(
     state: EmailSingUpUiState,
     onAction: (EmailSingUpUiAction) -> Unit,
 ) {
+    val context = LocalContext.current
     val focus = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
 
@@ -87,7 +89,7 @@ internal fun EmailSingUpVerticalExpandedScreen(
                 isLoading = state.isLoading,
                 onClick = {
                     focus.clearFocus()
-                    onAction(EmailSingUpUiAction.OnSubmit)
+                    onAction(EmailSingUpUiAction.OnSubmit(context))
                 }
             )
         }

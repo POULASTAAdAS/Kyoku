@@ -1,8 +1,9 @@
 package com.poulastaa.auth.presentation.singup
 
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.Password
-import com.poulastaa.core.domain.Username
+import android.content.Context
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.Password
+import com.poulastaa.core.domain.utils.Username
 
 
 internal sealed interface EmailSingUpUiAction {
@@ -14,7 +15,7 @@ internal sealed interface EmailSingUpUiAction {
 
     data class OnConformPasswordChange(val password: Password) : EmailSingUpUiAction
 
-    data object OnSubmit : EmailSingUpUiAction
+    data class OnSubmit(val context: Context) : EmailSingUpUiAction
 
     data object OnEmailLogInClick : EmailSingUpUiAction
 }

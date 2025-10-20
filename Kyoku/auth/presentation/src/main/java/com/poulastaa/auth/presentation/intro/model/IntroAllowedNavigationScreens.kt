@@ -1,6 +1,6 @@
 package com.poulastaa.auth.presentation.intro.model
 
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 
 
 sealed class IntroAllowedNavigationScreens {

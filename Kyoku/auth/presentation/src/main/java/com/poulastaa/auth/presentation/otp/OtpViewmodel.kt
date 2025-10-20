@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.OtpValidationRepository
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText

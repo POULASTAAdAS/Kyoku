@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation
 
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.JWTToken
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.JWTToken
 import kotlinx.serialization.Serializable
 
 sealed interface AuthScreens {

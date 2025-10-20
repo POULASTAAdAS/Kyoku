@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poulastaa.core.domain.JWTToken
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.circularConsumeAnimation
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent

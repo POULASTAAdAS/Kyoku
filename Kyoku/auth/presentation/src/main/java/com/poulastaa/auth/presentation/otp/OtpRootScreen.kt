@@ -22,8 +22,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.auth.presentation.otp.components.FinalAlertDialog
 import com.poulastaa.auth.presentation.otp.components.FirstAlertDialog
-import com.poulastaa.core.domain.Email
-import com.poulastaa.core.domain.JWTToken
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.dimens

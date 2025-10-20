@@ -8,7 +8,7 @@ import com.poulastaa.auth.domain.model.DtoResetPasswordState
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.presentation.R
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.JWTToken
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText

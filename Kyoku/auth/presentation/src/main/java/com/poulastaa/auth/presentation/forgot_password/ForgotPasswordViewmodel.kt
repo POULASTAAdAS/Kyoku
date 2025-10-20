@@ -11,7 +11,7 @@ import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllow
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens.Verify
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText

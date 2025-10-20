@@ -2,9 +2,10 @@ package com.poulastaa.auth.data.di
 
 import com.poulastaa.auth.data.repository.OnlineFirstEmailSignUpRepository
 import com.poulastaa.auth.data.repository.OnlineFirstForgotPasswordRepository
-import com.poulastaa.auth.data.repository.OnlineFirstIntroRepository
+import com.poulastaa.auth.data.repository.intro.OnlineFirstIntroRepository
 import com.poulastaa.auth.data.repository.OnlineFirstOtpValidationRepository
 import com.poulastaa.auth.data.repository.OnlineFirstResetPasswordRepository
+import com.poulastaa.auth.data.repository.intro.PreferencesIntroDatasource
 import com.poulastaa.auth.data.usercase.AuthFieldValidator
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.ForgotPasswordRepository
@@ -12,7 +13,10 @@ import com.poulastaa.auth.domain.intro.IntroRepository
 import com.poulastaa.auth.domain.OtpValidationRepository
 import com.poulastaa.auth.domain.ResetPasswordRepository
 import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.email_signup.EmailSingUpRemoteDatasource
+import com.poulastaa.auth.domain.intro.IntroLocalDatasource
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
+import com.poulastaa.core.domain.repository.PreferencesDatastoreRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,15 +32,22 @@ object AuthDataModule {
 
     @Provides
     @ViewModelScoped
+    fun provideLocalIntroDatasource(
+        ds: PreferencesDatastoreRepository,
+    ): IntroLocalDatasource = PreferencesIntroDatasource(ds)
+
+    @Provides
+    @ViewModelScoped
     fun provideOnlineFirstIntroRepository(
-        remote: IntroRemoteDatasource
-    ): IntroRepository = OnlineFirstIntroRepository(remote)
+        remote: IntroRemoteDatasource,
+        local: IntroLocalDatasource,
+    ): IntroRepository = OnlineFirstIntroRepository(remote, local)
 
     @Provides
     @ViewModelScoped
     fun provideOnlineFirstEmailSignUpRepository(
-
-    ): SingUpRepository = OnlineFirstEmailSignUpRepository()
+        remote: EmailSingUpRemoteDatasource,
+    ): SingUpRepository = OnlineFirstEmailSignUpRepository(remote)
 
     @Provides
     @ViewModelScoped

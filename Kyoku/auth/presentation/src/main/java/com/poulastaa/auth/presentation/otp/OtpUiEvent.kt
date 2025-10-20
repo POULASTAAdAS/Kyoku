@@ -1,6 +1,6 @@
 package com.poulastaa.auth.presentation.otp
 
-import com.poulastaa.core.domain.JWTToken
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.presentation.designsystem.UiText
 
 internal sealed interface OtpUiEvent {

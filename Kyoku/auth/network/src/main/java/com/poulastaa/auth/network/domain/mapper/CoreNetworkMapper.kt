@@ -3,11 +3,11 @@ package com.poulastaa.auth.network.domain.mapper
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.auth.network.domain.model.response.ResponseAuthResponseStatus
-import com.poulastaa.auth.network.domain.model.response.ResponseEmailLogIn
+import com.poulastaa.auth.network.domain.model.response.ResponseEmailAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseUserType
 import com.poulastaa.core.domain.model.DtoUserType
 
-internal fun ResponseEmailLogIn.toDtoUser(): DtoResponseUser = DtoResponseUser(
+internal fun ResponseEmailAuth.toDtoResponseUser(): DtoResponseUser = DtoResponseUser(
     status = when (this.status) {
         ResponseAuthResponseStatus.USER_CREATED -> DtoAuthResponseStatus.USER_CREATED
         ResponseAuthResponseStatus.USER_FOUND -> DtoAuthResponseStatus.USER_FOUND

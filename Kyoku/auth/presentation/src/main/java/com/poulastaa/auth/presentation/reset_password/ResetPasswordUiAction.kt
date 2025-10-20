@@ -1,6 +1,6 @@
 package com.poulastaa.auth.presentation.reset_password
 
-import com.poulastaa.core.domain.Password
+import com.poulastaa.core.domain.utils.Password
 
 internal sealed interface ResetPasswordUiAction {
     data class OnPasswordChange(val password: Password) : ResetPasswordUiAction

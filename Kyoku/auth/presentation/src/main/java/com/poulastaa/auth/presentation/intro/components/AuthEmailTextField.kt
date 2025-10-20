@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
-import com.poulastaa.core.domain.Email
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.ui.AlternateEmailIcon
 import com.poulastaa.core.presentation.ui.CheckIcon
 import com.poulastaa.core.presentation.ui.R

@@ -3,8 +3,8 @@ package com.poulastaa.auth.data.repository
 import com.poulastaa.auth.domain.ResetPasswordRepository
 import com.poulastaa.auth.domain.model.DtoResetPasswordState
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.JWTToken
-import com.poulastaa.core.domain.Password
+import com.poulastaa.core.domain.utils.JWTToken
+import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.Result
 import javax.inject.Inject
 

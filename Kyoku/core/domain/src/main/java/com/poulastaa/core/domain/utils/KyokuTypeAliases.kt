@@ -1,4 +1,4 @@
-package com.poulastaa.core.domain
+package com.poulastaa.core.domain.utils
 
 typealias Email = String
 typealias Username = String

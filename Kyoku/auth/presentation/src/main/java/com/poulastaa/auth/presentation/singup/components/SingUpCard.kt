@@ -10,6 +10,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
@@ -37,6 +38,8 @@ internal fun SingUpCard(
     focus: FocusManager,
     haptic: HapticFeedback,
 ) {
+    val context = LocalContext.current
+
     AuthCard(
         modifier = modifier,
         heading = heading,
@@ -92,7 +95,7 @@ internal fun SingUpCard(
             },
             onSubmit = {
                 focus.clearFocus()
-                onAction(EmailSingUpUiAction.OnSubmit)
+                onAction(EmailSingUpUiAction.OnSubmit(context))
             },
         )
     }

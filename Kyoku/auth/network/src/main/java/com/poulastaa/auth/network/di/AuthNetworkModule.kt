@@ -1,6 +1,8 @@
 package com.poulastaa.auth.network.di
 
+import com.poulastaa.auth.domain.email_signup.EmailSingUpRemoteDatasource
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
+import com.poulastaa.auth.network.repository.OkHttpEmailSingUiDatasource
 import com.poulastaa.auth.network.repository.OkHttpIntroDatasource
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import dagger.Module
@@ -14,7 +16,13 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object AuthNetworkModule {
     @Provides
     @ViewModelScoped
-    fun provideAuthIntoRemoteDatasource(
-        repo: ApiRepository
+    fun provideIntoRemoteDatasource(
+        repo: ApiRepository,
     ): IntroRemoteDatasource = OkHttpIntroDatasource(repo)
+
+    @Provides
+    @ViewModelScoped
+    fun provideOkHttpEmailSingUiDatasource(
+        repo: ApiRepository,
+    ): EmailSingUpRemoteDatasource = OkHttpEmailSingUiDatasource(repo)
 }
