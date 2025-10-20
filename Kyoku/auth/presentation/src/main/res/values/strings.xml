@@ -11,4 +11,7 @@
     <string name="invalid_username_empty">Username can\'t be empty</string>
     <string name="invalid_username_too_long">Username can\'t exceed 20 characters</string>
     <string name="same_as_old_password">Can\'t be same as old password</string>
+    <string name="check_for_verificaiton_mail">Please conform the verification mail sent to you.</string>
+    <string name="check_spam_for_mail">Make sure to check spam for mail.</string>
+    <string name="welcome_back">Welcome Back</string>
 </resources>

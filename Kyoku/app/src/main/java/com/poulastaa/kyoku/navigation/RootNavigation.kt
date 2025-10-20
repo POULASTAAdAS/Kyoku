@@ -23,11 +23,13 @@ internal fun RootNavigation(
 
                 }
 
-                SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> TODO()
-                SavedScreen.SET_B_DATE -> TODO()
-                SavedScreen.PIC_GENRE -> TODO()
-                SavedScreen.PIC_ARTIST -> TODO()
-                SavedScreen.MAIN -> TODO()
+                SavedScreen.IMPORT_SPOTIFY_PLAYLIST,
+                SavedScreen.SET_B_DATE,
+                SavedScreen.PIC_GENRE,
+                SavedScreen.PIC_ARTIST,
+                    -> TODO("setup screens not implemented")
+
+                SavedScreen.MAIN -> TODO("main app screens not implemented")
             }
         }
     }

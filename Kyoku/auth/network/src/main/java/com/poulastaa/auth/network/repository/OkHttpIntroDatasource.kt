@@ -10,8 +10,13 @@ import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
+import com.poulastaa.core.domain.model.DtoJWTToken
+import com.poulastaa.core.domain.model.DtoUserType
+import com.poulastaa.core.network.domain.model.DtoReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
+import com.poulastaa.core.network.domain.model.ResponseJWTToken
 import com.poulastaa.core.network.domain.repository.ApiRepository
+import com.poulastaa.core.network.toDtoJWTToken
 import jakarta.inject.Inject
 
 internal class OkHttpIntroDatasource @Inject constructor(
@@ -30,4 +35,17 @@ internal class OkHttpIntroDatasource @Inject constructor(
                 password = password
             )
         ).map { it.toDtoResponseUser() }
+
+    override suspend fun checkEmailVerificationStatus(
+        email: Email,
+        type: DtoUserType,
+    ): Result<DtoJWTToken, DataError.Network> = repo.authReq<Unit, ResponseJWTToken>(
+        route = Endpoints.CheckVerificationMailStatus,
+        method = ApiRepository.Method.GET,
+        type = ResponseJWTToken::class.java,
+        params = listOf(
+            DtoReqParam("email", email),
+            DtoReqParam("type", type.name),
+        )
+    ).map { it.toDtoJWTToken() }
 }

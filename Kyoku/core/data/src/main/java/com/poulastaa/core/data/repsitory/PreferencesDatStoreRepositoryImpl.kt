@@ -11,6 +11,7 @@ import com.poulastaa.core.data.mapper.toSerializedUser
 import com.poulastaa.core.data.model.SerializedUser
 import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.domain.repository.PreferencesDatastoreRepository
+import com.poulastaa.core.domain.utils.JWTToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.firstOrNull
@@ -23,6 +24,8 @@ internal class PreferencesDatStoreRepositoryImpl @Inject constructor(
 ) : PreferencesDatastoreRepository {
     private object Keys {
         val USER = stringPreferencesKey("local_user")
+        val ACCESS = stringPreferencesKey("access_token")
+        val REFRESH = stringPreferencesKey("refresh_token")
     }
 
     override suspend fun saveUser(user: DtoUser) {
@@ -45,4 +48,12 @@ internal class PreferencesDatStoreRepositoryImpl @Inject constructor(
                 }
             }
         }
+
+    override suspend fun saveAccessToken(token: JWTToken) {
+        ds.edit { it[Keys.ACCESS] = token }
+    }
+
+    override suspend fun saveRefreshToken(token: JWTToken) {
+        ds.edit { it[Keys.REFRESH] = token }
+    }
 }

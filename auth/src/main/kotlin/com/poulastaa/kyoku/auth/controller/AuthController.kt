@@ -73,10 +73,8 @@ class AuthController(
                 EmailVerificationStatus.USER_NOT_FOUND -> "UserNotFound.html"
             }
 
-        // TODO: IMPROVEMENT replace with grpc if needed
-        val uri = URI.create("${client.choose("file").uri}/${Endpoints.STATIC_FILE}?fileName=$fileName")
         ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-            .location(uri)
+            .location(URI.create("/${Endpoints.STATIC_FILE}?fileName=$fileName"))
             .build<Any>()
     }
 

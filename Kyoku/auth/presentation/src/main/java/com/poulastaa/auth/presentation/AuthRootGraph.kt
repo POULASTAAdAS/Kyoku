@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.poulastaa.auth.presentation.AuthScreens.*
 import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.IntroRootScreen
@@ -35,9 +36,9 @@ fun AuthRootGraph(
 ) {
     NavHost(
         navController = nav,
-        startDestination = AuthScreens.Intro
+        startDestination = Intro
     ) {
-        composable<AuthScreens.Intro> {
+        composable<Intro> {
             val viewModel: IntroViewmodel = hiltViewModel()
 
             IntroRootScreen(
@@ -46,22 +47,24 @@ fun AuthRootGraph(
                 navigateLocal = { screens ->
                     when (screens) {
                         is IntroAllowedNavigationScreens.ForgotPassword -> nav.navigate(
-                            AuthScreens.ForgotPassword(
+                            ForgotPassword(
                                 email = screens.email
                             )
                         )
 
                         is IntroAllowedNavigationScreens.SingUp -> nav.navigate(
-                            AuthScreens.EmailSignUp(
+                            EmailSignUp(
                                 email = screens.email
                             )
                         )
+
+                        is IntroAllowedNavigationScreens.App -> navigate(screens.screen.toNavigationScreen())
                     }
                 }
             )
         }
 
-        composable<AuthScreens.EmailSignUp>(
+        composable<EmailSignUp>(
             enterTransition = {
                 fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
                         slideInHorizontally(
@@ -76,14 +79,14 @@ fun AuthRootGraph(
                         )
             }
         ) {
-            val email = it.toRoute<AuthScreens.ForgotPassword>().email
+            val email = it.toRoute<ForgotPassword>().email
 
             EmailSingUpRootScreen(email) {
                 nav.popBackStack()
             }
         }
 
-        composable<AuthScreens.ForgotPassword>(
+        composable<ForgotPassword>(
             enterTransition = {
                 fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
                         slideInHorizontally(
@@ -98,7 +101,7 @@ fun AuthRootGraph(
                         )
             }
         ) {
-            val email = it.toRoute<AuthScreens.ForgotPassword>().email
+            val email = it.toRoute<ForgotPassword>().email
             val context = LocalContext.current
 
             ForgotPasswordRootScreen(
@@ -106,7 +109,7 @@ fun AuthRootGraph(
                 navigate = { screen ->
                     when (screen) {
                         is ForgotPasswordAllowedNavigationScreens.Verify -> screen.email?.let {
-                            nav.navigate(AuthScreens.Verify(screen.email))
+                            nav.navigate(Verify(screen.email))
                         } ?: Toast.makeText(
                             context,
                             UiText.StringResource(R.string.something_went_wrong_try_again)
@@ -120,7 +123,7 @@ fun AuthRootGraph(
             )
         }
 
-        composable<AuthScreens.Verify>(
+        composable<Verify>(
             enterTransition = {
                 fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
                         slideInHorizontally(
@@ -137,18 +140,18 @@ fun AuthRootGraph(
             popEnterTransition = null,
             popExitTransition = null
         ) {
-            val email = it.toRoute<AuthScreens.Verify>().email
+            val email = it.toRoute<Verify>().email
 
             OtpRootScreen(
                 email = email,
                 navigateToUpdatePassword = { token ->
-                    nav.navigate(AuthScreens.UpdatePassword(token))
+                    nav.navigate(UpdatePassword(token))
                 },
                 navigateBack = { nav.popBackStack() }
             )
         }
 
-        composable<AuthScreens.UpdatePassword>(
+        composable<UpdatePassword>(
             enterTransition = {
                 fadeIn(animationSpec = tween(DEFAULT_ANIMATION_TIME)) +
                         slideInHorizontally(
@@ -163,13 +166,13 @@ fun AuthRootGraph(
                         )
             }
         ) {
-            val payload = it.toRoute<AuthScreens.UpdatePassword>()
+            val payload = it.toRoute<UpdatePassword>()
 
             ResetPasswordRootScreen(
                 token = payload.token,
                 popUpToLogIn = {
-                    nav.navigate(AuthScreens.Intro) {
-                        popUpTo(AuthScreens.Intro) {
+                    nav.navigate(Intro) {
+                        popUpTo(Intro) {
                             inclusive = true
                         }
                     }

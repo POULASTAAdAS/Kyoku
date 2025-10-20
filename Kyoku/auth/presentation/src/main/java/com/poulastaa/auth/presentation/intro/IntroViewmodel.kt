@@ -11,6 +11,7 @@ import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import com.poulastaa.core.presentation.ui.R as CoreR
 
 @HiltViewModel
@@ -102,7 +105,17 @@ internal class IntroViewmodel @Inject constructor(
             }
 
             IntroUiAction.OnEmailSubmit -> {
-                if (validate().not()) return
+                if (validate().not()) {
+                    _uiEvent.trySend(
+                        IntroUiEvent.EmitToast(
+                            UiText.StringResource(
+                                R.string.check_spam_for_mail
+                            )
+                        )
+                    )
+
+                    return
+                }
 
                 _state.update {
                     it.copy(
@@ -140,8 +153,19 @@ internal class IntroViewmodel @Inject constructor(
                             DtoAuthResponseStatus.USER_FOUND_NO_GENRE,
                             DtoAuthResponseStatus.USER_FOUND_NO_B_DATE,
                                 -> {
+                                _uiEvent.send(
+                                    IntroUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.check_for_verificaiton_mail
+                                        )
+                                    )
+                                )
+
                                 emailValidationJob?.cancel()
-                                emailValidationJob = startEmailValidationJob()
+                                emailValidationJob = startEmailValidationJob(
+                                    email = _state.value.email.prop.value.trim(),
+                                    navigationScreen = res.data
+                                )
 
                                 return@launch
                             }
@@ -273,8 +297,66 @@ internal class IntroViewmodel @Inject constructor(
         return isValidEmail && isValidPassword
     }
 
-    private fun startEmailValidationJob() = viewModelScope.launch {
-        // Todo: make sure to stop loader
+    private fun startEmailValidationJob(
+        email: Email,
+        navigationScreen: DtoAuthResponseStatus,
+    ) = viewModelScope.launch {
+        var maxTime = 7.minutes.inWholeSeconds
+
+        // kick off delay
+        delay(7.seconds.inWholeMilliseconds)
+
+        while (maxTime > 0) {
+            val res = repo.checkEmailVerificationStatus(email)
+            when (res) {
+                is Result.Error -> {
+                    if (res.error == DataError.Network.NO_INTERNET) {
+                        _uiEvent.send(
+                            IntroUiEvent.EmitToast(
+                                UiText.StringResource(
+                                    CoreR.string.please_check_internet_connection
+                                )
+                            )
+                        )
+                    }
+
+                    emailValidationJob?.cancel()
+                    return@launch
+                }
+
+                is Result.Success -> if (res.data) {
+                    _uiEvent.send(
+                        IntroUiEvent.EmitToast(
+                            UiText.StringResource(
+                                R.string.welcome_back
+                            )
+                        )
+                    )
+
+                    val screen = when (navigationScreen) {
+                        DtoAuthResponseStatus.USER_FOUND -> IntroAllowedNavigationScreens.AppScreens.HOME
+                        DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST -> IntroAllowedNavigationScreens.AppScreens.IMPORT_SPOTIFY_PLAYLIST
+                        DtoAuthResponseStatus.USER_FOUND_NO_ARTIST -> IntroAllowedNavigationScreens.AppScreens.PIC_ARTIST
+                        DtoAuthResponseStatus.USER_FOUND_NO_GENRE -> IntroAllowedNavigationScreens.AppScreens.PIC_GENRE
+                        DtoAuthResponseStatus.USER_FOUND_NO_B_DATE -> IntroAllowedNavigationScreens.AppScreens.SET_B_DATE
+                        else -> throw IllegalStateException("Invalid navigation screen")
+                    }
+
+                    _uiEvent.send(
+                        IntroUiEvent.Navigate(
+                            IntroAllowedNavigationScreens.App(
+                                screen
+                            )
+                        )
+                    )
+
+                    return@launch
+                }
+            }
+
+            delay(5.seconds.inWholeMilliseconds)
+            maxTime = maxTime.minus(5.seconds.inWholeSeconds)
+        }
     }
 
     private fun observeFailedAttemptCount() {
