@@ -20,6 +20,7 @@ open class CacheKeys {
         JWT_TOKEN,
         EMAIL_VERIFICATION_STATUS,
         USER(expTime = ExpTime.FIFTEEN.time),
+        PASSWORD_RESET_CODE(expTime = ExpTime.TEN.time),
         PASSWORD_RESET_STATUS(expTime = ExpTime.FIFTEEN.time),
     }
 }

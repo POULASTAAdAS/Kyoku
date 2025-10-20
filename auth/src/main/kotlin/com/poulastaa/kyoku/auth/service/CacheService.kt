@@ -50,6 +50,11 @@ class CacheService(
         it.takeIf { it }?.let { Group.EMAIL_VERIFICATION_STATUS.delete("$type:$email") }
     }
 
+    fun setForgotPasswordCode(
+        email: Email,
+        code: String,
+    ) = Group.PASSWORD_RESET_CODE.set(email, code)
+
     private inline fun <reified T> Group.cache(
         key: String? = null,
     ) = redis.opsForValue().get(this.buildDynamicKey(key))?.let { data ->

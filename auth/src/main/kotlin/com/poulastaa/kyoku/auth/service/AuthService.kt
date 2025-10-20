@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import java.net.InetAddress
 import java.net.UnknownHostException
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 import kotlin.time.Duration
 
 @Service
@@ -288,6 +289,45 @@ class AuthService(
             )
         )
     }
+
+    fun sendForgotPasswordMail(
+        email: Email,
+    ): ResponseWrapper<ResponseForgoPasswordMailStatus> = email.takeIf { validateEmail(it) }?.let { _ ->
+        getUser(email, UserType.EMAIL)?.let { user ->
+            if (user.id == -1L) return@let ResponseWrapper(
+                status = ResponseStatus.USER_NOT_FOUND,
+                payload = ResponseForgoPasswordMailStatus.USER_NOT_FOUND
+            )
+
+            // generate 5 digit code sent to user through mail
+            val code = (10000..99999).random(Random)
+            notification.publishMail(
+                Notification.Email(
+                    email = email,
+                    username = user.username,
+                    data = code,
+                    type = Notification.Type.FORGOT_PASSWORD_CODE
+                )
+            )
+
+            // set same in redis with 10 minute expiry
+            cache.setForgotPasswordCode(
+                email = email,
+                code = code.toString()
+            )
+
+            ResponseWrapper(
+                status = ResponseStatus.USER_FOUND, // ignore this for now -> bad design
+                payload = ResponseForgoPasswordMailStatus.SENT
+            )
+        } ?: ResponseWrapper(
+            status = ResponseStatus.USER_NOT_FOUND,
+            payload = ResponseForgoPasswordMailStatus.USER_NOT_FOUND
+        )
+    } ?: ResponseWrapper(
+        status = ResponseStatus.EMAIL_NOT_VALID,
+        payload = ResponseForgoPasswordMailStatus.INVALID_EMAIL
+    )
 
     private fun getUser(
         email: Email,

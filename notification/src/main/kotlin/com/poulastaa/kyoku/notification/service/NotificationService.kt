@@ -26,6 +26,12 @@ class NotificationService(
                     token = jwt.generateVerificationMailToken(message.email)
                 )
             }
+
+            Notification.Type.FORGOT_PASSWORD_CODE -> mail.sendForgotPasswordCodeWithMail(
+                username = message.username,
+                email = message.email,
+                code = message.data.toString()
+            )
         }
     }
 }

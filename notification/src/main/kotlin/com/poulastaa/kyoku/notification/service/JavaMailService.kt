@@ -84,6 +84,20 @@ class JavaMailService(
         ),
     ).also { if (it) println("verification mail send to :$email") }
 
+    fun sendForgotPasswordCodeWithMail(
+        username: Username,
+        email: Email,
+        code: String,
+    ) = sendMail(
+        to = email,
+        subject = "$username Reset Your Kyoku Password",
+        content = generateForgotPasswordMailContent(
+            username = username,
+            code = code,
+            devMail = devMail
+        ),
+    ).also { if (it) println("forgot password code mail send to :$email") }
+
     private fun sendMail(
         to: String,
         subject: String,

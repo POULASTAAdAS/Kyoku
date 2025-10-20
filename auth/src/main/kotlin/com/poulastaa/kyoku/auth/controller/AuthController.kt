@@ -75,7 +75,7 @@ class AuthController(
 
         ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
             .location(URI.create("/${Endpoints.STATIC_FILE}?fileName=$fileName"))
-            .build<Any>()
+            .build<Unit>()
     }
 
     @GetMapping(Endpoints.CHECK_VERIFICATION_MAIL_STATE)
@@ -117,6 +117,11 @@ class AuthController(
             ResponseEntity.status(it.status.status).body(it)
         }
     }
+
+    @GetMapping(Endpoints.FORGOT_PASSWORD)
+    fun sendForgotPasswordMail(
+        @Valid @RequestParam email: Email,
+    ) = service.sendForgotPasswordMail(email)
 
     fun GoogleAuth.validateToken(
         @Value("\${jwt.google.secret}")

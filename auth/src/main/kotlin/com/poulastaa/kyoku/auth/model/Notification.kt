@@ -41,6 +41,7 @@ sealed class Notification(
         AUTHENTICATE(Property.Endpoint()),
         WELCOME(Property.Default()),
         WELCOME_BACK(Property.Default()),
+        FORGOT_PASSWORD_CODE(Property.Default()),
     }
 
     data class Email(

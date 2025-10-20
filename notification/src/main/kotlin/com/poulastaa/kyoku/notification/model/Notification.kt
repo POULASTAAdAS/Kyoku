@@ -16,5 +16,6 @@ sealed class Notification {
         AUTHENTICATE,
         WELCOME,
         WELCOME_BACK,
+        FORGOT_PASSWORD_CODE
     }
 }
