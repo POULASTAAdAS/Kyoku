@@ -14,4 +14,6 @@ interface SingUpRepository {
         password: Password,
         countryCode: String,
     ): Result<DtoAuthResponseStatus, DataError.Network>
+
+    suspend fun checkEmailVerificationStatus(email: Email): Result<Boolean, DataError.Network>
 }

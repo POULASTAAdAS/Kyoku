@@ -8,7 +8,10 @@ import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.UsernameStatus
 import com.poulastaa.auth.presentation.R
+import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
+import com.poulastaa.auth.presentation.intro.IntroUiEvent
 import com.poulastaa.auth.presentation.intro.model.EmailTextProp
+import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
@@ -20,6 +23,7 @@ import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +33,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import com.poulastaa.core.presentation.ui.R as CoreR
 
 @HiltViewModel
@@ -71,7 +77,17 @@ internal class EmailSingUpViewmodel @Inject constructor(
         if (_state.value.isLoading &&
             (action != EmailSingUpUiAction.OnPasswordVisibilityToggle ||
                     action != EmailSingUpUiAction.OnConformPasswordVisibilityToggle)
-        ) return
+        ) {
+            _uiEvent.trySend(
+                EmailSingUpUiEvent.EmitToast(
+                    UiText.StringResource(
+                        R.string.check_spam_for_mail
+                    )
+                )
+            )
+
+            return
+        }
 
         when (action) {
             is EmailSingUpUiAction.OnUsernameChange -> {
@@ -166,8 +182,18 @@ internal class EmailSingUpViewmodel @Inject constructor(
 
                         is Result.Success -> when (res.data) {
                             DtoAuthResponseStatus.USER_CREATED -> {
+                                _uiEvent.send(
+                                    EmailSingUpUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.check_for_verificaiton_mail
+                                        )
+                                    )
+                                )
+
                                 emailValidationJob?.cancel()
-                                emailValidationJob = startEmailValidationJob()
+                                emailValidationJob = startEmailValidationJob(
+                                    _state.value.email.prop.value.trim()
+                                )
 
                                 return@launch
                             }
@@ -312,8 +338,49 @@ internal class EmailSingUpViewmodel @Inject constructor(
         return isValidEmail && isValidPassword && isValidConformPassword && isValidUserName
     }
 
-    private fun startEmailValidationJob() = viewModelScope.launch {
-        // Todo: make sure to stop loader
+    private fun startEmailValidationJob(
+        email: Email,
+    ) = viewModelScope.launch {
+        var maxTime = 7.minutes.inWholeSeconds
+
+        // kick off delay
+        delay(7.seconds.inWholeMilliseconds)
+
+        while (maxTime > 0) {
+            val res = repo.checkEmailVerificationStatus(email)
+            when (res) {
+                is Result.Error -> {
+                    if (res.error == DataError.Network.NO_INTERNET) {
+                        _uiEvent.send(
+                            EmailSingUpUiEvent.EmitToast(
+                                UiText.StringResource(
+                                    CoreR.string.please_check_internet_connection
+                                )
+                            )
+                        )
+                    }
+
+                    emailValidationJob?.cancel()
+                    return@launch
+                }
+
+                is Result.Success -> if (res.data) {
+                    _uiEvent.send(
+                        EmailSingUpUiEvent.EmitToast(
+                            UiText.StringResource(
+                                R.string.welcome_back
+                            )
+                        )
+                    )
+
+                    _uiEvent.send(EmailSingUpUiEvent.NavigateToSetUp)
+                    return@launch
+                }
+            }
+
+            delay(5.seconds.inWholeMilliseconds)
+            maxTime = maxTime.minus(5.seconds.inWholeSeconds)
+        }
     }
 
     private fun observeFailedAttemptCount() {

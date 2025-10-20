@@ -1,11 +1,12 @@
 package com.poulastaa.auth.data.di
 
-import com.poulastaa.auth.data.repository.OnlineFirstEmailSignUpRepository
+import com.poulastaa.auth.data.repository.singup.OnlineFirstEmailSignUpRepository
 import com.poulastaa.auth.data.repository.OnlineFirstForgotPasswordRepository
 import com.poulastaa.auth.data.repository.intro.OnlineFirstIntroRepository
 import com.poulastaa.auth.data.repository.OnlineFirstOtpValidationRepository
 import com.poulastaa.auth.data.repository.OnlineFirstResetPasswordRepository
 import com.poulastaa.auth.data.repository.intro.PreferencesIntroDatasource
+import com.poulastaa.auth.data.repository.singup.PreferencesSingUpDatasource
 import com.poulastaa.auth.data.usercase.AuthFieldValidator
 import com.poulastaa.auth.domain.AuthValidator
 import com.poulastaa.auth.domain.ForgotPasswordRepository
@@ -13,6 +14,7 @@ import com.poulastaa.auth.domain.intro.IntroRepository
 import com.poulastaa.auth.domain.OtpValidationRepository
 import com.poulastaa.auth.domain.ResetPasswordRepository
 import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.email_signup.EmailSingUpLocalDatasource
 import com.poulastaa.auth.domain.email_signup.EmailSingUpRemoteDatasource
 import com.poulastaa.auth.domain.intro.IntroLocalDatasource
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
@@ -43,11 +45,19 @@ object AuthDataModule {
         local: IntroLocalDatasource,
     ): IntroRepository = OnlineFirstIntroRepository(remote, local)
 
+
+    @Provides
+    @ViewModelScoped
+    fun provideEmailSingUpLocalDatasource(
+        ds: PreferencesDatastoreRepository,
+    ): EmailSingUpLocalDatasource = PreferencesSingUpDatasource(ds)
+
     @Provides
     @ViewModelScoped
     fun provideOnlineFirstEmailSignUpRepository(
         remote: EmailSingUpRemoteDatasource,
-    ): SingUpRepository = OnlineFirstEmailSignUpRepository(remote)
+        local: EmailSingUpLocalDatasource,
+    ): SingUpRepository = OnlineFirstEmailSignUpRepository(remote, local)
 
     @Provides
     @ViewModelScoped

@@ -7,6 +7,7 @@ import com.poulastaa.auth.domain.intro.IntroRepository
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.presentation.R
+import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.domain.DataError
@@ -334,11 +335,11 @@ internal class IntroViewmodel @Inject constructor(
                     )
 
                     val screen = when (navigationScreen) {
-                        DtoAuthResponseStatus.USER_FOUND -> IntroAllowedNavigationScreens.AppScreens.HOME
-                        DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST -> IntroAllowedNavigationScreens.AppScreens.IMPORT_SPOTIFY_PLAYLIST
-                        DtoAuthResponseStatus.USER_FOUND_NO_ARTIST -> IntroAllowedNavigationScreens.AppScreens.PIC_ARTIST
-                        DtoAuthResponseStatus.USER_FOUND_NO_GENRE -> IntroAllowedNavigationScreens.AppScreens.PIC_GENRE
-                        DtoAuthResponseStatus.USER_FOUND_NO_B_DATE -> IntroAllowedNavigationScreens.AppScreens.SET_B_DATE
+                        DtoAuthResponseStatus.USER_FOUND -> AuthAllowedNavigationScreen.HOME
+                        DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST -> AuthAllowedNavigationScreen.IMPORT_SPOTIFY_PLAYLIST
+                        DtoAuthResponseStatus.USER_FOUND_NO_ARTIST -> AuthAllowedNavigationScreen.PIC_ARTIST
+                        DtoAuthResponseStatus.USER_FOUND_NO_GENRE -> AuthAllowedNavigationScreen.PIC_GENRE
+                        DtoAuthResponseStatus.USER_FOUND_NO_B_DATE -> AuthAllowedNavigationScreen.SET_B_DATE
                         else -> throw IllegalStateException("Invalid navigation screen")
                     }
 

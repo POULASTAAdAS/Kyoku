@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
@@ -22,6 +23,7 @@ import com.poulastaa.core.presentation.ui.dimens
 internal fun EmailSingUpRootScreen(
     email: Email?,
     viewmodel: EmailSingUpViewmodel = hiltViewModel(),
+    navigateToSetUp: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val activity = LocalActivity.current ?: return
@@ -39,6 +41,7 @@ internal fun EmailSingUpRootScreen(
             ).show()
 
             EmailSingUpUiEvent.OnNavigateBack -> navigateBack()
+            is EmailSingUpUiEvent.NavigateToSetUp -> navigateToSetUp()
         }
     }
 

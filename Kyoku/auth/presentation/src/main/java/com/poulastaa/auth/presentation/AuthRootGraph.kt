@@ -81,7 +81,11 @@ fun AuthRootGraph(
         ) {
             val email = it.toRoute<ForgotPassword>().email
 
-            EmailSingUpRootScreen(email) {
+            EmailSingUpRootScreen(
+                email,
+                navigateToSetUp = {
+                    navigate(SavedScreen.IMPORT_SPOTIFY_PLAYLIST)
+                }) {
                 nav.popBackStack()
             }
         }
