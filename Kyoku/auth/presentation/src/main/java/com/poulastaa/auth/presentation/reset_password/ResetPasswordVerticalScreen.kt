@@ -119,6 +119,7 @@ internal fun ResetPasswordVerticalScreen(
                     isLoading = state.isLoading,
                     heading = stringResource(R.string.reset),
                     onClick = {
+                        focus.clearFocus()
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                         onAction(ResetPasswordUiAction.OnSummit)
                     }
@@ -127,8 +128,6 @@ internal fun ResetPasswordVerticalScreen(
         }
     }
 }
-
-
 
 
 @PreviewCompactPortrait
