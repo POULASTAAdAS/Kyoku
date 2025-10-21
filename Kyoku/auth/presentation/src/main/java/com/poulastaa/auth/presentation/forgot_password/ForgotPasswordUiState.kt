@@ -1,7 +1,7 @@
 package com.poulastaa.auth.presentation.forgot_password
 
 import androidx.compose.runtime.Stable
-import com.poulastaa.auth.presentation.intro.model.EmailTextProp
+import com.poulastaa.auth.presentation.model.EmailTextProp
 
 @Stable
 data class ForgotPasswordUiState(

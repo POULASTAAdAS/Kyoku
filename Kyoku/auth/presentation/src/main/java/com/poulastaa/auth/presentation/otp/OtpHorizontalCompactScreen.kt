@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.presentation.intro.components.ConformButton
+import com.poulastaa.auth.presentation.components.ConformButton
 import com.poulastaa.auth.presentation.otp.components.Info
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText

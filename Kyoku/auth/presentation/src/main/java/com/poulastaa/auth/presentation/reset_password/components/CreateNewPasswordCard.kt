@@ -16,7 +16,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
+import com.poulastaa.auth.presentation.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.reset_password.ResetPasswordUiAction
 import com.poulastaa.auth.presentation.reset_password.ResetPasswordUiState
 import com.poulastaa.core.presentation.ui.R

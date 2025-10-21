@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.intro.components
+package com.poulastaa.auth.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

@@ -11,11 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.auth.presentation.intro.components.GoogleOneTapOnResult
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.core.domain.SavedScreen
 import com.poulastaa.core.presentation.KyokuWindowSize
 import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.dimens
+
+
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -75,6 +78,16 @@ internal fun IntroRootScreen(
                 state = state,
                 onAction = viewModel::onAction
             )
+        }
+    )
+
+    GoogleOneTapOnResult(
+        key = state.isGoogleAuthLoading,
+        onSuccess = { token ->
+            viewModel.onAction(IntroUiAction.OnGoogleTokenReceive(token))
+        },
+        onCanceled = {
+            viewModel.onAction(IntroUiAction.OnGoogleAuthCancel)
         }
     )
 }

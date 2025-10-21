@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.intro.model
 
+import com.poulastaa.auth.presentation.model.EmailTextProp
 import com.poulastaa.auth.presentation.model.PasswordTextProp
 
 internal data class IntroUiState(

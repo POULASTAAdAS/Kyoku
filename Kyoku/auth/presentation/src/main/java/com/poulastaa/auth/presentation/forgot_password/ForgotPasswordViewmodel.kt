@@ -10,7 +10,7 @@ import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordUiEvent.*
 import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordUiEvent.OnNavigate
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens.Verify
-import com.poulastaa.auth.presentation.intro.model.EmailTextProp
+import com.poulastaa.auth.presentation.model.EmailTextProp
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result

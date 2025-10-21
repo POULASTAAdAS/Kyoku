@@ -30,11 +30,11 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.presentation.intro.components.AppLogo
-import com.poulastaa.auth.presentation.intro.components.AuthCard
-import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
-import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
-import com.poulastaa.auth.presentation.intro.components.ConformButton
+import com.poulastaa.auth.presentation.components.AppLogo
+import com.poulastaa.auth.presentation.components.AuthCard
+import com.poulastaa.auth.presentation.components.AuthEmailTextField
+import com.poulastaa.auth.presentation.components.AuthPasswordTextFiled
+import com.poulastaa.auth.presentation.components.ConformButton
 import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
 import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
 import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher

@@ -1,5 +1,6 @@
 package com.poulastaa.auth.presentation.intro
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
@@ -59,7 +60,9 @@ internal class IntroViewmodel @Inject constructor(
 
     fun onAction(action: IntroUiAction) {
         if ((_state.value.isGoogleAuthLoading || _state.value.isEmailAuthLoading) &&
-            action != IntroUiAction.ObPasswordVisibilityToggle
+            (action != IntroUiAction.ObPasswordVisibilityToggle &&
+                    action != IntroUiAction.OnGoogleAuthCancel &&
+                    action !is IntroUiAction.OnGoogleTokenReceive)
         ) return
 
         when (action) {
@@ -231,12 +234,20 @@ internal class IntroViewmodel @Inject constructor(
                 )
             }
 
-            IntroUiAction.OnGoogleAuthClick -> {
-                _state.update {
-                    it.copy(
-                        isGoogleAuthLoading = true
-                    )
-                }
+            IntroUiAction.OnGoogleAuthClick -> _state.update {
+                it.copy(
+                    isGoogleAuthLoading = true
+                )
+            }
+
+            IntroUiAction.OnGoogleAuthCancel -> _state.update {
+                it.copy(
+                    isGoogleAuthLoading = false
+                )
+            }
+
+            is IntroUiAction.OnGoogleTokenReceive -> {
+                // todo send token to server
             }
         }
     }

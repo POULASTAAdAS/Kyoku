@@ -1,6 +1,7 @@
 package com.poulastaa.auth.presentation.intro
 
 import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.domain.utils.Password
 
 
@@ -14,4 +15,6 @@ sealed interface IntroUiAction {
     data object OnEmailSingUpClick : IntroUiAction
 
     data object OnGoogleAuthClick : IntroUiAction
+    data object OnGoogleAuthCancel : IntroUiAction
+    data class OnGoogleTokenReceive(val token: JWTToken) : IntroUiAction
 }

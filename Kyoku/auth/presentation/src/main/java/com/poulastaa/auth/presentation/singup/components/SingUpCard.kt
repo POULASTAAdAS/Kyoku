@@ -17,9 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import com.poulastaa.auth.presentation.intro.components.AuthCard
-import com.poulastaa.auth.presentation.intro.components.AuthEmailTextField
-import com.poulastaa.auth.presentation.intro.components.AuthPasswordTextFiled
+import com.poulastaa.auth.presentation.components.AuthCard
+import com.poulastaa.auth.presentation.components.AuthEmailTextField
+import com.poulastaa.auth.presentation.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.singup.EmailSingUpUiAction
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp

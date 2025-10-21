@@ -1,11 +1,9 @@
-package com.poulastaa.auth.presentation.intro.components
+package com.poulastaa.auth.presentation.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -16,27 +14,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import com.poulastaa.auth.presentation.model.PasswordTextProp
-import com.poulastaa.core.domain.utils.Password
-import com.poulastaa.core.presentation.ui.EyeCloseIcon
-import com.poulastaa.core.presentation.ui.EyeOpenIcon
-import com.poulastaa.core.presentation.ui.PasswordIcon
+import com.poulastaa.auth.presentation.model.EmailTextProp
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.presentation.ui.AlternateEmailIcon
+import com.poulastaa.core.presentation.ui.CheckIcon
 import com.poulastaa.core.presentation.ui.R
 
+
 @Composable
-internal fun AuthPasswordTextFiled(
+internal fun AuthEmailTextField(
     modifier: Modifier = Modifier.fillMaxWidth(),
-    heading: String = stringResource(R.string.password),
-    password: PasswordTextProp,
-    onPasswordChange: (password: Password) -> Unit,
-    onVisibilityToggle: () -> Unit,
-    onSubmit: () -> Unit,
+    email: EmailTextProp,
+    onEmailChange: (email: Email) -> Unit,
+    onMoveFocus: () -> Unit,
 ) {
     OutlinedTextField(
-        value = password.prop.value,
-        onValueChange = onPasswordChange,
+        value = email.prop.value,
+        onValueChange = onEmailChange,
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
         colors = OutlinedTextFieldDefaults.colors(
@@ -72,53 +66,32 @@ internal fun AuthPasswordTextFiled(
         ),
         placeholder = {
             Text(
-                text = heading
+                text = stringResource(R.string.email)
             )
         },
         leadingIcon = {
             Icon(
-                imageVector = PasswordIcon,
-                contentDescription = heading
+                imageVector = AlternateEmailIcon,
+                contentDescription = stringResource(R.string.email)
             )
         },
-        trailingIcon = {
-            IconButton(
-                onClick = onVisibilityToggle
-            ) {
-                AnimatedContent(
-                    password.isPasswordVisible
-                ) {
-                    when (it) {
-                        true -> Icon(
-                            imageVector = EyeOpenIcon,
-                            contentDescription = stringResource(R.string.eye_open)
-                        )
-
-                        false -> Icon(
-                            imageVector = EyeCloseIcon,
-                            contentDescription = stringResource(R.string.eye_off)
-                        )
-                    }
-                }
+        trailingIcon = email.isValidEmail.takeIf { it }?.let { _ ->
+            {
+                Icon(
+                    imageVector = CheckIcon,
+                    contentDescription = stringResource(R.string.email)
+                )
             }
         },
-        isError = password.prop.isErr,
-        supportingText = {
-            Text(
-                text = password.prop.errText.asString()
-            )
-        },
+        isError = email.prop.isErr,
+        supportingText = { Text(text = email.prop.errText.asString()) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
-            onDone = {
-                onSubmit()
-            }
-        ),
-        visualTransformation = if (password.isPasswordVisible) VisualTransformation.None
-        else PasswordVisualTransformation()
+            onNext = { onMoveFocus() }
+        )
     )
 }

@@ -10,7 +10,7 @@ import com.poulastaa.auth.domain.model.UsernameStatus
 import com.poulastaa.auth.presentation.R
 import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
 import com.poulastaa.auth.presentation.intro.IntroUiEvent
-import com.poulastaa.auth.presentation.intro.model.EmailTextProp
+import com.poulastaa.auth.presentation.model.EmailTextProp
 import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
