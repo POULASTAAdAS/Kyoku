@@ -2,7 +2,8 @@ package com.poulastaa.auth.presentation.otp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.auth.domain.OtpValidationRepository
+import com.poulastaa.auth.domain.otp.OtpValidationRepository
+import com.poulastaa.auth.domain.model.DtoValidateOTPStatus
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
+import com.poulastaa.auth.presentation.R as CoreR
 
 private const val MAX_TIMEOUT = "02:30"
 
@@ -119,7 +121,10 @@ internal class OtpViewmodel @Inject constructor(
                 }
 
                 viewModelScope.launch {
-                    when (val res = repo.validateOtp(_state.value.otp.value)) {
+                    when (val res = repo.validateOtp(
+                        otp = _state.value.otp.value,
+                        email = _state.value.email
+                    )) {
                         is Result.Error -> when (res.error) {
                             DataError.Network.NO_INTERNET -> _uiEvent.send(
                                 OtpUiEvent.EmitToast(
@@ -138,9 +143,51 @@ internal class OtpViewmodel @Inject constructor(
                             )
                         }
 
-                        is Result.Success -> _uiEvent.send(
-                            OtpUiEvent.NavigateToResetPassword(res.data)
-                        )
+                        is Result.Success -> when (res.data.status) {
+                            DtoValidateOTPStatus.VALID -> _uiEvent.send(
+                                OtpUiEvent.NavigateToResetPassword(res.data.token)
+                            )
+
+                            DtoValidateOTPStatus.INVALID_CODE -> _state.update {
+                                it.copy(
+                                    otp = it.otp.copy(
+                                        isErr = true,
+                                        errText = UiText.StringResource(R.string.invalid_otp)
+                                    )
+                                )
+                            }
+
+                            DtoValidateOTPStatus.INVALID_EMAIL -> _state.update {
+                                it.copy(
+                                    otp = it.otp.copy(
+                                        isErr = true,
+                                        errText = UiText.StringResource(CoreR.string.invalid_email)
+                                    )
+                                )
+                            }
+
+                            DtoValidateOTPStatus.USER_NOT_FOUND -> _state.update {
+                                it.copy(
+                                    otp = it.otp.copy(
+                                        isErr = true,
+                                        errText = UiText.StringResource(R.string.email_not_registered)
+                                    )
+                                )
+                            }
+
+                            DtoValidateOTPStatus.EXPIRED -> _state.update {
+                                it.copy(
+                                    otp = it.otp.copy(
+                                        isErr = true,
+                                        errText = UiText.StringResource(R.string.validationa_time_expaired)
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    _state.update {
+                        it.copy(isLoading = false)
                     }
                 }
             }

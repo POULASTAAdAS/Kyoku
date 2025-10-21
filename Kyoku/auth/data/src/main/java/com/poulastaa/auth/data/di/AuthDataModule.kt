@@ -9,15 +9,18 @@ import com.poulastaa.auth.data.repository.intro.PreferencesIntroDatasource
 import com.poulastaa.auth.data.repository.singup.PreferencesSingUpDatasource
 import com.poulastaa.auth.data.usercase.AuthFieldValidator
 import com.poulastaa.auth.domain.AuthValidator
-import com.poulastaa.auth.domain.ForgotPasswordRepository
+import com.poulastaa.auth.domain.forgot_password.ForgotPasswordRepository
 import com.poulastaa.auth.domain.intro.IntroRepository
-import com.poulastaa.auth.domain.OtpValidationRepository
-import com.poulastaa.auth.domain.ResetPasswordRepository
-import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.otp.OtpValidationRepository
+import com.poulastaa.auth.domain.update_password.ResetPasswordRepository
+import com.poulastaa.auth.domain.email_signup.SingUpRepository
 import com.poulastaa.auth.domain.email_signup.EmailSingUpLocalDatasource
 import com.poulastaa.auth.domain.email_signup.EmailSingUpRemoteDatasource
+import com.poulastaa.auth.domain.forgot_password.ForgotPasswordRemoteDatasource
 import com.poulastaa.auth.domain.intro.IntroLocalDatasource
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
+import com.poulastaa.auth.domain.otp.OtpValidationRemoteDataSource
+import com.poulastaa.auth.domain.update_password.ResetPasswordRemoteDatasource
 import com.poulastaa.core.domain.repository.PreferencesDatastoreRepository
 import dagger.Module
 import dagger.Provides
@@ -45,7 +48,6 @@ object AuthDataModule {
         local: IntroLocalDatasource,
     ): IntroRepository = OnlineFirstIntroRepository(remote, local)
 
-
     @Provides
     @ViewModelScoped
     fun provideEmailSingUpLocalDatasource(
@@ -62,16 +64,18 @@ object AuthDataModule {
     @Provides
     @ViewModelScoped
     fun provideOnlineFirstForgotPasswordRepository(
-
-    ): ForgotPasswordRepository = OnlineFirstForgotPasswordRepository()
-
-    @Provides
-    @ViewModelScoped
-    fun provideOnlineFirstOtpValidationRepository(): OtpValidationRepository =
-        OnlineFirstOtpValidationRepository()
+        remote: ForgotPasswordRemoteDatasource,
+    ): ForgotPasswordRepository = OnlineFirstForgotPasswordRepository(remote)
 
     @Provides
     @ViewModelScoped
-    fun provideOnlineFirstResetPasswordRepository(): ResetPasswordRepository =
-        OnlineFirstResetPasswordRepository()
+    fun provideOnlineFirstOtpValidationRepository(
+        remote: OtpValidationRemoteDataSource,
+    ): OtpValidationRepository = OnlineFirstOtpValidationRepository(remote)
+
+    @Provides
+    @ViewModelScoped
+    fun provideOnlineFirstResetPasswordRepository(
+        remote: ResetPasswordRemoteDatasource,
+    ): ResetPasswordRepository = OnlineFirstResetPasswordRepository(remote)
 }

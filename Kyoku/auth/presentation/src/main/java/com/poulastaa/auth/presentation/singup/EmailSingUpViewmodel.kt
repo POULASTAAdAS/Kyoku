@@ -3,7 +3,7 @@ package com.poulastaa.auth.presentation.singup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
-import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.email_signup.SingUpRepository
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.UsernameStatus

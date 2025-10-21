@@ -3,7 +3,7 @@ package com.poulastaa.auth.presentation.reset_password
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
-import com.poulastaa.auth.domain.ResetPasswordRepository
+import com.poulastaa.auth.domain.update_password.ResetPasswordRepository
 import com.poulastaa.auth.domain.model.DtoResetPasswordState
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.presentation.R
@@ -12,6 +12,7 @@ import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.designsystem.UiText.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.channels.Channel
@@ -63,7 +64,7 @@ internal class ResetPasswordViewmodel @Inject constructor(
     }
 
     fun onAction(action: ResetPasswordUiAction) {
-        if (_state.value.isLoading || _state.value.isReturnScreenVisible) return
+        if (_state.value.isLoading || _state.value.isSuccessReturnScreenVisible) return
 
         when (action) {
             is ResetPasswordUiAction.OnPasswordChange -> _state.update {
@@ -129,22 +130,107 @@ internal class ResetPasswordViewmodel @Inject constructor(
                             }
 
                             is Result.Success -> when (res.data) {
-                                DtoResetPasswordState.SUCCESS -> _state.update {
-                                    it.copy(isReturnScreenVisible = true)
+                                DtoResetPasswordState.UPDATED -> _state.update {
+                                    it.copy(isSuccessReturnScreenVisible = true)
                                 }.also { delayForTheAnimationToComplete() }
 
-                                DtoResetPasswordState.SAME_AS_OLD_PASSWORD -> _state.update {
+                                DtoResetPasswordState.SAME_PASSWORD -> _state.update {
                                     it.copy(
                                         password = it.password.copy(
                                             prop = it.password.prop.copy(
                                                 isErr = true,
-                                                errText = UiText.StringResource(R.string.same_as_old_password)
+                                                errText = StringResource(R.string.same_as_old_password)
                                             )
                                         ),
                                         conformPassword = it.conformPassword.copy(
                                             prop = it.conformPassword.prop.copy(
                                                 isErr = true,
-                                                errText = UiText.StringResource(R.string.same_as_old_password)
+                                                errText = StringResource(R.string.same_as_old_password)
+                                            )
+                                        )
+                                    )
+                                }
+
+                                DtoResetPasswordState.USER_NOT_FOUND -> _state.update {
+                                    it.copy(
+                                        password = it.password.copy(
+                                            prop = it.password.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.email_not_registered)
+                                            )
+                                        ),
+                                        conformPassword = it.conformPassword.copy(
+                                            prop = it.conformPassword.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.email_not_registered)
+                                            )
+                                        )
+                                    )
+                                }.also {
+                                    delay(1_000)
+
+                                    _uiEvent.send(
+                                        ResetPasswordUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                CoreR.string.email_not_registered
+                                            )
+                                        )
+                                    )
+                                    _uiEvent.send(ResetPasswordUiEvent.PopUpToIntroScreen)
+                                }
+
+                                DtoResetPasswordState.EXPIRED_TOKEN,
+                                DtoResetPasswordState.INVALID_TOKEN,
+                                    -> _state.update {
+                                    it.copy(
+                                        password = it.password.copy(
+                                            prop = it.password.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.validationa_time_expaired)
+                                            )
+                                        ),
+                                        conformPassword = it.conformPassword.copy(
+                                            prop = it.conformPassword.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.validationa_time_expaired)
+                                            )
+                                        )
+                                    )
+                                }.also {
+                                    delay(1_000)
+                                    _uiEvent.send(
+                                        ResetPasswordUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                CoreR.string.validationa_time_expaired
+                                            )
+                                        )
+                                    )
+
+                                    _uiEvent.send(ResetPasswordUiEvent.PopUpToIntroScreen)
+                                }
+
+                                DtoResetPasswordState.INVALID_PASSWORD,
+                                DtoResetPasswordState.ERROR,
+                                    -> _state.update {
+                                    it.copy(
+                                        password = it.password.copy(
+                                            prop = it.password.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.something_went_wrong_try_again)
+                                            )
+                                        ),
+                                        conformPassword = it.conformPassword.copy(
+                                            prop = it.conformPassword.prop.copy(
+                                                isErr = true,
+                                                errText = StringResource(CoreR.string.something_went_wrong_try_again)
+                                            )
+                                        )
+                                    )
+                                }.also {
+                                    _uiEvent.send(
+                                        ResetPasswordUiEvent.EmitToast(
+                                            UiText.StringResource(
+                                                CoreR.string.something_went_wrong_try_again
                                             )
                                         )
                                     )

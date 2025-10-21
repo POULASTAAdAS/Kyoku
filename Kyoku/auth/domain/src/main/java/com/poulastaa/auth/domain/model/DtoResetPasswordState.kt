@@ -1,6 +1,11 @@
 package com.poulastaa.auth.domain.model
 
 enum class DtoResetPasswordState {
-    SUCCESS,
-    SAME_AS_OLD_PASSWORD
+    UPDATED,
+    USER_NOT_FOUND,
+    SAME_PASSWORD,
+    INVALID_PASSWORD,
+    EXPIRED_TOKEN,
+    ERROR,
+    INVALID_TOKEN
 }

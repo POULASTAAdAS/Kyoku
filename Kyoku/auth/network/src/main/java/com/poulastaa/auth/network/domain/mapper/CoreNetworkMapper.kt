@@ -1,10 +1,17 @@
 package com.poulastaa.auth.network.domain.mapper
 
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
+import com.poulastaa.auth.domain.model.DtoResetPasswordState
 import com.poulastaa.auth.domain.model.DtoResponseUser
+import com.poulastaa.auth.domain.model.DtoValidateOTPPayload
+import com.poulastaa.auth.domain.model.DtoValidateOTPStatus
+import com.poulastaa.auth.network.domain.model.response.CodeValidationResponseStatus
 import com.poulastaa.auth.network.domain.model.response.ResponseAuthResponseStatus
 import com.poulastaa.auth.network.domain.model.response.ResponseEmailAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseUserType
+import com.poulastaa.auth.network.domain.model.response.ResponseValidateOTP
+import com.poulastaa.auth.network.domain.model.response.UpdatePasswordResponse
+import com.poulastaa.auth.network.domain.model.response.UpdatePasswordStatus
 import com.poulastaa.core.domain.model.DtoUserType
 
 internal fun ResponseEmailAuth.toDtoResponseUser(): DtoResponseUser = DtoResponseUser(
@@ -31,3 +38,24 @@ internal fun ResponseEmailAuth.toDtoResponseUser(): DtoResponseUser = DtoRespons
         ResponseUserType.DEFAULT -> DtoUserType.DEFAULT
     }
 )
+
+internal fun ResponseValidateOTP.toDtoValidationOTPPayload() = DtoValidateOTPPayload(
+    status = when (this.status) {
+        CodeValidationResponseStatus.VALID -> DtoValidateOTPStatus.VALID
+        CodeValidationResponseStatus.USER_NOT_FOUND -> DtoValidateOTPStatus.USER_NOT_FOUND
+        CodeValidationResponseStatus.INVALID_CODE -> DtoValidateOTPStatus.INVALID_CODE
+        CodeValidationResponseStatus.INVALID_EMAIL -> DtoValidateOTPStatus.INVALID_EMAIL
+        CodeValidationResponseStatus.EXPIRED -> DtoValidateOTPStatus.EXPIRED
+    },
+    token = this.token
+)
+
+internal fun UpdatePasswordResponse.toDtoUpdatePasswordStatus() = when (this.status) {
+    UpdatePasswordStatus.UPDATED -> DtoResetPasswordState.UPDATED
+    UpdatePasswordStatus.USER_NOT_FOUND -> DtoResetPasswordState.USER_NOT_FOUND
+    UpdatePasswordStatus.SAME_PASSWORD -> DtoResetPasswordState.SAME_PASSWORD
+    UpdatePasswordStatus.INVALID_PASSWORD -> DtoResetPasswordState.INVALID_PASSWORD
+    UpdatePasswordStatus.EXPIRED_TOKEN -> DtoResetPasswordState.EXPIRED_TOKEN
+    UpdatePasswordStatus.ERROR -> DtoResetPasswordState.ERROR
+    UpdatePasswordStatus.INVALID_TOKEN -> DtoResetPasswordState.INVALID_TOKEN
+}

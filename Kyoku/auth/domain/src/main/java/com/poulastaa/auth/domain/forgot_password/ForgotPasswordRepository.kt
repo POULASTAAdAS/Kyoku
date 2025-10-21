@@ -1,9 +1,9 @@
-package com.poulastaa.auth.domain
+package com.poulastaa.auth.domain.forgot_password
 
 import com.poulastaa.auth.domain.model.DtoForgotPasswordSentStatus
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.utils.Email
 
 interface ForgotPasswordRepository {
     suspend fun askForForgotPasswordMail(email: Email): Result<DtoForgotPasswordSentStatus, DataError.Network>

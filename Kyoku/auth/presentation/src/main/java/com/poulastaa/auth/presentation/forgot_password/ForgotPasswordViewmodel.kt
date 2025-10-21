@@ -3,9 +3,10 @@ package com.poulastaa.auth.presentation.forgot_password
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthValidator
-import com.poulastaa.auth.domain.ForgotPasswordRepository
+import com.poulastaa.auth.domain.forgot_password.ForgotPasswordRepository
 import com.poulastaa.auth.domain.model.DtoForgotPasswordSentStatus
 import com.poulastaa.auth.presentation.R
+import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordUiEvent.*
 import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordUiEvent.OnNavigate
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens.Verify
@@ -15,6 +16,7 @@ import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
+import com.poulastaa.core.presentation.designsystem.UiText.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -135,12 +137,23 @@ class ForgotPasswordViewmodel @Inject constructor(
 
                                 DtoForgotPasswordSentStatus.INVALID_EMAIL -> setInvalidEmail()
                                 DtoForgotPasswordSentStatus.ERROR -> _uiEvent.send(
-                                    ForgotPasswordUiEvent.EmitToast(
-                                        UiText.StringResource(
+                                    EmitToast(
+                                        StringResource(
                                             CoreR.string.something_went_wrong_try_again
                                         )
                                     )
                                 )
+
+                                DtoForgotPasswordSentStatus.USER_NOT_FOUND -> _state.update {
+                                    it.copy(
+                                        email = it.email.copy(
+                                            prop = it.email.prop.copy(
+                                                isErr = true,
+                                                errText = UiText.StringResource(CoreR.string.email_not_registered)
+                                            )
+                                        )
+                                    )
+                                }
                             }
                         }
                     }

@@ -1,7 +1,7 @@
 package com.poulastaa.auth.data.repository.singup
 
 import com.poulastaa.auth.data.mapper.toDtoUser
-import com.poulastaa.auth.domain.SingUpRepository
+import com.poulastaa.auth.domain.email_signup.SingUpRepository
 import com.poulastaa.auth.domain.email_signup.EmailSingUpLocalDatasource
 import com.poulastaa.auth.domain.email_signup.EmailSingUpRemoteDatasource
 import com.poulastaa.auth.domain.model.DtoAuthResponseStatus

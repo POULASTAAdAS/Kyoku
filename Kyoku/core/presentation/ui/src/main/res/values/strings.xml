@@ -41,4 +41,5 @@
     <string name="create_new_password_sub_heading">Your new password must not be same as your old password.</string>
     <string name="reset">reset</string>
     <string name="login_again_to_continue">Please login again with the new password.</string>
+    <string name="validationa_time_expaired">OTP validatio time expaired, try again.</string>
 </resources>

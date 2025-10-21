@@ -378,14 +378,12 @@ class AuthService(
             )
         )
 
-        val user = getUser(payload.email, payload.userType)
-            ?: return ResponseWrapper(
-                status = ResponseStatus.USER_NOT_FOUND,
-                payload = UpdatePasswordResponse(
-                    UpdatePasswordStatus.USER_NOT_FOUND
-                )
+        val user = getUser(payload.email, payload.userType) ?: return ResponseWrapper(
+            status = ResponseStatus.USER_NOT_FOUND,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.USER_NOT_FOUND
             )
-
+        )
 
         if (isSamePassword(password, user.passwordHash)) return ResponseWrapper(
             status = ResponseStatus.USER_FOUND,
@@ -394,13 +392,16 @@ class AuthService(
             )
         )
 
+        val passwordHash = password.encryptPassword() ?: return ResponseWrapper(
+            status = ResponseStatus.INTERNAL_SERVER_ERROR,
+            payload = UpdatePasswordResponse(UpdatePasswordStatus.ERROR)
+        )
         db.updatePassword(
             id = user.id,
-            passwordHash = password.encryptPassword() ?: return ResponseWrapper(
-                status = ResponseStatus.INTERNAL_SERVER_ERROR,
-                payload = UpdatePasswordResponse(UpdatePasswordStatus.ERROR)
-            )
-        )
+            passwordHash = passwordHash
+        ).also {
+            cache.setUserByEmail(user.copy(passwordHash = passwordHash))
+        }
 
         val (time, unit) = context.getBean(
             "provideUpdatePasswordTokenConfigurationsClass",
