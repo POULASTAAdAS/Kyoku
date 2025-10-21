@@ -8,6 +8,7 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.DtoJWTToken
 import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.domain.model.DtoUserType
+import com.poulastaa.core.domain.utils.JWTToken
 
 interface IntroRemoteDatasource {
     suspend fun emailLogIn(
@@ -19,4 +20,9 @@ interface IntroRemoteDatasource {
         email: Email,
         type: DtoUserType,
     ): Result<DtoJWTToken, DataError.Network>
+
+    suspend fun googleOneTap(
+        token: JWTToken,
+        countryCode: String,
+    ): Result<DtoResponseUser, DataError.Network>
 }

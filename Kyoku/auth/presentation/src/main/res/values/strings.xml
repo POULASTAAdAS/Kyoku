@@ -14,4 +14,5 @@
     <string name="check_for_verificaiton_mail">Please conform the verification mail sent to you.</string>
     <string name="check_spam_for_mail">Make sure to check spam for mail.</string>
     <string name="welcome_back">Welcome Back</string>
+    <string name="welcome">Happy to see you.</string>
 </resources>

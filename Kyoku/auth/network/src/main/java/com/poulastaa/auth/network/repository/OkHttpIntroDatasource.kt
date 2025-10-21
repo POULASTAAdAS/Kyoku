@@ -3,8 +3,9 @@ package com.poulastaa.auth.network.repository
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.auth.network.domain.mapper.toDtoResponseUser
+import com.poulastaa.auth.network.domain.model.request.RequestGoogleAuth
 import com.poulastaa.auth.network.domain.model.request.RequestEmailLogIn
-import com.poulastaa.auth.network.domain.model.response.ResponseEmailAuth
+import com.poulastaa.auth.network.domain.model.response.ResponseAuth
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.Password
@@ -12,6 +13,7 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.DtoJWTToken
 import com.poulastaa.core.domain.model.DtoUserType
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.network.domain.model.DtoReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import com.poulastaa.core.network.domain.model.ResponseJWTToken
@@ -26,10 +28,10 @@ internal class OkHttpIntroDatasource @Inject constructor(
         email: Email,
         password: Password,
     ): Result<DtoResponseUser, DataError.Network> =
-        repo.authReq<RequestEmailLogIn, ResponseEmailAuth>(
+        repo.authReq<RequestEmailLogIn, ResponseAuth>(
             route = Endpoints.EmailSingIn,
             method = ApiRepository.Method.POST,
-            type = ResponseEmailAuth::class.java,
+            type = ResponseAuth::class.java,
             body = RequestEmailLogIn(
                 email = email,
                 password = password
@@ -48,4 +50,17 @@ internal class OkHttpIntroDatasource @Inject constructor(
             DtoReqParam("type", type.name),
         )
     ).map { it.toDtoJWTToken() }
+
+    override suspend fun googleOneTap(
+        token: JWTToken,
+        countryCode: String,
+    ): Result<DtoResponseUser, DataError.Network> = repo.authReq<RequestGoogleAuth, ResponseAuth>(
+        route = Endpoints.ValidateForgotPasswordCode,
+        method = ApiRepository.Method.POST,
+        type = ResponseAuth::class.java,
+        body = RequestGoogleAuth(
+            token = token,
+            code = countryCode
+        )
+    ).map { it.toDtoResponseUser() }
 }

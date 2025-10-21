@@ -11,6 +11,7 @@ import com.poulastaa.kyoku.auth.model.request.GoogleAuth
 import com.poulastaa.kyoku.auth.model.request.RefreshTokenRequest
 import com.poulastaa.kyoku.auth.model.request.UpdatePassword
 import com.poulastaa.kyoku.auth.model.response.RefreshTokenResponse
+import com.poulastaa.kyoku.auth.model.response.ResponseGoogleAuth
 import com.poulastaa.kyoku.auth.model.response.ResponseToken
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
@@ -19,7 +20,6 @@ import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -30,7 +30,10 @@ import java.security.GeneralSecurityException
 @RestController
 class AuthController(
     private val service: AuthService,
-    private val client: LoadBalancerClient,
+    @param:Value("\${jwt.google.clientId}")
+    private val clientId: String = "",
+    @param:Value("\${jwt.google.issuer}")
+    private val issuer: String = "",
 ) {
     @PostMapping(Endpoints.EMAIL_SING_IN)
     fun emailLogIn(
@@ -48,18 +51,6 @@ class AuthController(
         email = req.email,
         password = req.password,
         countryCode = req.countryCode,
-    ).toSingInUpResponse()
-
-    @PostMapping(Endpoints.GOOGLE_AUTH)
-    fun googleAuth(
-        @Valid @RequestBody req: GoogleAuth,
-    ) = req.validateToken()?.let {
-        service.processGoogleAuth(
-            payload = it,
-            countryCode = req.code,
-        ).toSingInUpResponse()
-    } ?: ResponseWrapper<DtoUser>( // google token not valid
-        status = ResponseStatus.INTERNAL_SERVER_ERROR
     ).toSingInUpResponse()
 
     @GetMapping(Endpoints.VERIFY_EMAIL)
@@ -138,25 +129,24 @@ class AuthController(
         token = req.token,
     )
 
-    fun GoogleAuth.validateToken(
-        @Value("\${jwt.google.secret}")
-        clientId: String = "",
-        @Value("\${jwt.google.issuer}")
-        issuer: String = "",
-    ) = try {
+    @PostMapping(Endpoints.GOOGLE_AUTH)
+    fun googleAuth(
+        @Valid @RequestBody req: GoogleAuth,
+    ) = req.validateToken()?.let {
+        service.processGoogleAuth(
+            payload = it,
+            countryCode = req.code,
+        )
+    } ?: ResponseWrapper( // google token not valid
+        status = ResponseStatus.INTERNAL_SERVER_ERROR
+    )
+
+    fun GoogleAuth.validateToken() = try {
         GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
             .setAudience(listOf(clientId))
             .setIssuer(issuer)
             .build()
             .verify(this.token)?.let {
-                println()
-                println(it.payload)
-                println()
-                println()
-                println(it.payload)
-                println()
-                println()
-
                 GoogleAuthPayload(
                     sub = it.payload.subject,
                     name = it.payload["name"] as? String ?: return@let null,

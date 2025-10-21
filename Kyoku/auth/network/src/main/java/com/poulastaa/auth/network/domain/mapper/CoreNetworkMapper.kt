@@ -7,14 +7,14 @@ import com.poulastaa.auth.domain.model.DtoValidateOTPPayload
 import com.poulastaa.auth.domain.model.DtoValidateOTPStatus
 import com.poulastaa.auth.network.domain.model.response.CodeValidationResponseStatus
 import com.poulastaa.auth.network.domain.model.response.ResponseAuthResponseStatus
-import com.poulastaa.auth.network.domain.model.response.ResponseEmailAuth
+import com.poulastaa.auth.network.domain.model.response.ResponseAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseUserType
 import com.poulastaa.auth.network.domain.model.response.ResponseValidateOTP
 import com.poulastaa.auth.network.domain.model.response.UpdatePasswordResponse
 import com.poulastaa.auth.network.domain.model.response.UpdatePasswordStatus
 import com.poulastaa.core.domain.model.DtoUserType
 
-internal fun ResponseEmailAuth.toDtoResponseUser(): DtoResponseUser = DtoResponseUser(
+internal fun ResponseAuth.toDtoResponseUser(): DtoResponseUser = DtoResponseUser(
     status = when (this.status) {
         ResponseAuthResponseStatus.USER_CREATED -> DtoAuthResponseStatus.USER_CREATED
         ResponseAuthResponseStatus.USER_FOUND -> DtoAuthResponseStatus.USER_FOUND

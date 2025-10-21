@@ -247,7 +247,79 @@ internal class IntroViewmodel @Inject constructor(
             }
 
             is IntroUiAction.OnGoogleTokenReceive -> {
-                // todo send token to server
+                val countryCode = action.context.resources.configuration.locales[0].country
+                
+                viewModelScope.launch {
+                    when (val result = repo.googleOneTap(action.token, countryCode)) {
+                        is Result.Error -> when (result.error) {
+                            DataError.Network.NO_INTERNET -> _uiEvent.send(
+                                IntroUiEvent.EmitToast(
+                                    UiText.StringResource(CoreR.string.please_check_internet_connection)
+                                )
+                            )
+
+                            else -> _uiEvent.send(
+                                IntroUiEvent.EmitToast(
+                                    UiText.StringResource(CoreR.string.something_went_wrong_try_again)
+                                )
+                            )
+                        }
+
+                        is Result.Success -> when (result.data) {
+                            DtoAuthResponseStatus.USER_CREATED,
+                            DtoAuthResponseStatus.USER_FOUND,
+                            DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST,
+                            DtoAuthResponseStatus.USER_FOUND_NO_ARTIST,
+                            DtoAuthResponseStatus.USER_FOUND_NO_GENRE,
+                            DtoAuthResponseStatus.USER_FOUND_NO_B_DATE,
+                                -> {
+                                val screen = when (result.data) {
+                                    DtoAuthResponseStatus.USER_FOUND -> AuthAllowedNavigationScreen.HOME
+                                    DtoAuthResponseStatus.USER_CREATED,
+                                    DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST,
+                                        -> AuthAllowedNavigationScreen.IMPORT_SPOTIFY_PLAYLIST
+
+                                    DtoAuthResponseStatus.USER_FOUND_NO_ARTIST -> AuthAllowedNavigationScreen.PIC_ARTIST
+                                    DtoAuthResponseStatus.USER_FOUND_NO_GENRE -> AuthAllowedNavigationScreen.PIC_GENRE
+                                    DtoAuthResponseStatus.USER_FOUND_NO_B_DATE -> AuthAllowedNavigationScreen.SET_B_DATE
+                                    else -> throw IllegalStateException("Invalid navigation screen")
+                                }
+
+                                if (screen == AuthAllowedNavigationScreen.HOME) _uiEvent.trySend(
+                                    IntroUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.welcome_back
+                                        )
+                                    )
+                                ) else _uiEvent.trySend(
+                                    IntroUiEvent.EmitToast(
+                                        UiText.StringResource(
+                                            R.string.welcome
+                                        )
+                                    )
+                                )
+
+                                _uiEvent.send(
+                                    IntroUiEvent.Navigate(
+                                        IntroAllowedNavigationScreens.App(screen)
+                                    )
+                                )
+                            }
+
+                            else -> _uiEvent.send(
+                                IntroUiEvent.EmitToast(
+                                    UiText.StringResource(CoreR.string.something_went_wrong_try_again)
+                                )
+                            )
+                        }
+                    }
+                }
+
+                _state.update {
+                    it.copy(
+                        isGoogleAuthLoading = false
+                    )
+                }
             }
         }
     }

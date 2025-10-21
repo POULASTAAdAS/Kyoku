@@ -19,7 +19,6 @@ import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.dimens
 
 
-
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 internal fun IntroRootScreen(
@@ -84,7 +83,7 @@ internal fun IntroRootScreen(
     GoogleOneTapOnResult(
         key = state.isGoogleAuthLoading,
         onSuccess = { token ->
-            viewModel.onAction(IntroUiAction.OnGoogleTokenReceive(token))
+            viewModel.onAction(IntroUiAction.OnGoogleTokenReceive(token, context))
         },
         onCanceled = {
             viewModel.onAction(IntroUiAction.OnGoogleAuthCancel)

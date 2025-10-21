@@ -10,6 +10,7 @@ import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.DtoUserType
 import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.domain.utils.Password
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -60,5 +61,27 @@ internal class OnlineFirstIntroRepository @Inject constructor(
         }
 
         return result.map { false }
+    }
+
+    override suspend fun googleOneTap(
+        token: JWTToken,
+        countryCode: String,
+    ): Result<DtoAuthResponseStatus, DataError.Network> {
+        val response = remote.googleOneTap(token, countryCode)
+        if (response is Result.Success) {
+            when (response.data.status) {
+                DtoAuthResponseStatus.USER_CREATED,
+                DtoAuthResponseStatus.USER_FOUND,
+                DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST,
+                DtoAuthResponseStatus.USER_FOUND_NO_ARTIST,
+                DtoAuthResponseStatus.USER_FOUND_NO_GENRE,
+                DtoAuthResponseStatus.USER_FOUND_NO_B_DATE,
+                    -> local.saveUser(response.data.toDtoUser())
+
+                else -> Unit
+            }
+        }
+
+        return response.map { it.status }
     }
 }

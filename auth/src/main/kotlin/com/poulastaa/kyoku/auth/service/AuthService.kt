@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.auth.service
 
+import com.poulastaa.kyoku.auth.controller.toResponse
 import com.poulastaa.kyoku.auth.model.Notification
 import com.poulastaa.kyoku.auth.model.dto.*
 import com.poulastaa.kyoku.auth.model.response.*
@@ -118,15 +119,35 @@ class AuthService(
         //  new user -> opted out after creating account thus no initial data is collected to proceed
         //  no playlist | artist | genre -> does not have enough collected data to proceed
         //  change response accordingly
-        val data = user
-        val status = ResponseStatus.USER_FOUND
+
+        val accessToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_ACCESS
+        )
+        val refreshToken = jwt.generateToken(
+            payload = DtoAuthenticationTokenClaim(
+                email = user.email,
+                userType = user.type,
+            ),
+            type = JWTTokenType.TOKEN_REFRESH
+        )
+
+        //  save refresh token to db
+        db.updateRefreshToken(user.id, refreshToken)
 
         ResponseWrapper(
-            payload = data,
-            status = status
+            status = ResponseStatus.USER_FOUND,
+            payload = ResponseGoogleAuth(
+                user = user.toResponse(ResponseStatus.USER_FOUND),
+                token = ResponseToken(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken
+                )
+            )
         ).also { _ ->
-            cache.setEmailVerificationState(user.email, UserType.EMAIL, true)
-
             notification.publishMail(
                 Notification.Email(
                     email = payload.email,
@@ -145,16 +166,38 @@ class AuthService(
                 countryCode = countryCode,
                 type = UserType.GOOGLE,
             )
-        ).let {
-            cache.setUserByEmail(it)
+        ).let { user ->
+            cache.setUserByEmail(user)
+
+            val accessToken = jwt.generateToken(
+                payload = DtoAuthenticationTokenClaim(
+                    email = user.email,
+                    userType = user.type,
+                ),
+                type = JWTTokenType.TOKEN_ACCESS
+            )
+            val refreshToken = jwt.generateToken(
+                payload = DtoAuthenticationTokenClaim(
+                    email = user.email,
+                    userType = user.type,
+                ),
+                type = JWTTokenType.TOKEN_REFRESH
+            )
+
+            //  save refresh token to db
+            db.updateRefreshToken(user.id, refreshToken)
 
             ResponseWrapper(
-                payload = it,
                 status = ResponseStatus.USER_CREATED,
+                payload = ResponseGoogleAuth(
+                    user = user.toResponse(ResponseStatus.USER_CREATED),
+                    token = ResponseToken(
+                        accessToken = accessToken,
+                        refreshToken = refreshToken
+                    )
+                ),
             )
         }.also {
-            cache.setEmailVerificationState(it.payload!!.email, UserType.EMAIL, true)
-
             notification.publishMail(
                 Notification.Email(
                     email = payload.email,

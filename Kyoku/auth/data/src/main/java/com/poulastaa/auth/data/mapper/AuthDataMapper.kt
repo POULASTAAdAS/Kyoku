@@ -7,5 +7,5 @@ internal fun DtoResponseUser.toDtoUser() = DtoUser(
     username = this.username,
     email = this.email,
     profileUrl = this.profileUrl,
-    type = this.type
+    type = this.type,
 )

@@ -5,7 +5,7 @@ import com.poulastaa.core.domain.utils.Username
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseEmailAuth(
+data class ResponseAuth(
     val status: ResponseAuthResponseStatus,
     val email: Email,
     val username: Username,

@@ -53,6 +53,24 @@ class AuthInterceptor {
             }.uri(service.uri)
         }
         .route(service.id) { r ->
+            r.path("${service.path}google/join").filters { f ->
+                f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
+                    .modifyResponseBody(
+                        ResponseWrapper::class.java,
+                        Any::class.java,
+                    ) { _, response ->
+
+                        if (response.payload != null) Mono.just(response.payload)
+                        else Mono.just(
+                            ResponseWrapper(
+                                status = response.status,
+                                payload = response.status,
+                            )
+                        )
+                    }
+            }.uri(service.uri)
+        }
+        .route(service.id) { r ->
             r.path("${service.path}forgot-password").filters { f ->
                 f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
                     .modifyResponseBody(

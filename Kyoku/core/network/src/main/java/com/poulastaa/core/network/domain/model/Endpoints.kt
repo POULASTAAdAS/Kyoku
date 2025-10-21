@@ -13,4 +13,5 @@ sealed class Endpoints(
     data object RequestForVerificationCode : Endpoints("$VERSION_V1/auth/forgot-password")
     data object ValidateForgotPasswordCode : Endpoints("$VERSION_V1/auth/forgot-password/validate")
     data object UpdatePassword : Endpoints("$VERSION_V1/auth/reset-password")
+    data object GoogleAuth : Endpoints("$VERSION_V1/auth/google/join")
 }
