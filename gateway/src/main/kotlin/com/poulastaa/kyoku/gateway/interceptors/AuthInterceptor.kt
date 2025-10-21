@@ -19,11 +19,6 @@ class AuthInterceptor {
     ) = builder.routes()
         .route(service.id) { r ->
             r.path("${service.path}email/create-account").filters { f ->
-                println(service.path)
-                println(service.path)
-                println(service.path)
-                println(service.path)
-
                 f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
                     .modifyResponseBody(
                         ResponseWrapper::class.java,
@@ -41,6 +36,42 @@ class AuthInterceptor {
         }
         .route(service.id) { r ->
             r.path("${service.path}email/login").filters { f ->
+                f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
+                    .modifyResponseBody(
+                        ResponseWrapper::class.java,
+                        Any::class.java,
+                    ) { _, response ->
+
+                        if (response.payload != null) Mono.just(response.payload)
+                        else Mono.just(
+                            ResponseWrapper(
+                                status = response.status,
+                                payload = response.status,
+                            )
+                        )
+                    }
+            }.uri(service.uri)
+        }
+        .route(service.id) { r ->
+            r.path("${service.path}forgot-password").filters { f ->
+                f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
+                    .modifyResponseBody(
+                        ResponseWrapper::class.java,
+                        Any::class.java,
+                    ) { _, response ->
+
+                        if (response.payload != null) Mono.just(response.payload)
+                        else Mono.just(
+                            ResponseWrapper(
+                                status = response.status,
+                                payload = response.status,
+                            )
+                        )
+                    }
+            }.uri(service.uri)
+        }
+        .route(service.id) { r ->
+            r.path("${service.path}reset-password").filters { f ->
                 f.dedupeAllCorsHeaders() // todo: add retry and circuit breaker
                     .modifyResponseBody(
                         ResponseWrapper::class.java,

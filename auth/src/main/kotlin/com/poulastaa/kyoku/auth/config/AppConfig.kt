@@ -62,20 +62,20 @@ class AppConfig {
     )
 
     @Bean
-    fun provideForgotPasswordMailConfigurationsClass(
-        @Value("\${jwt.mail.forgot-password.secret}")
+    fun provideUpdatePasswordTokenConfigurationsClass(
+        @Value("\${jwt.update-password.secret}")
         secret: String,
-        @Value("\${jwt.mail.forgot-password.subject}")
+        @Value("\${jwt.update-password.subject}")
         subject: String,
-        @Value("\${jwt.mail.forgot-password.issuer}")
+        @Value("\${jwt.update-password.issuer}")
         issuer: String,
-        @Value("\${jwt.mail.forgot-password.audience}")
+        @Value("\${jwt.update-password.audience}")
         audience: String,
-        @Value("\${jwt.mail.forgot-password.time}")
+        @Value("\${jwt.update-password.time}")
         expTime: Int,
-        @Value("\${jwt.mail.forgot-password.unit}")
+        @Value("\${jwt.update-password.unit}")
         unit: String = "MINUTES",
-        @Value("\${jwt.mail.forgot-password.claim.key}")
+        @Value("\${jwt.update-password.claim.key}")
         claimKey: String,
     ) = DtoJWTConfigInfo(
         secret = secret,

@@ -329,6 +329,93 @@ class AuthService(
         payload = ResponseForgoPasswordMailStatus.INVALID_EMAIL
     )
 
+    fun validateForgotPasswordCode(code: String, email: Email) = email.takeIf { validateEmail(it) }?.let { _ ->
+        getUser(email, UserType.EMAIL)?.let { user ->
+            if (user.id == -1L) return@let CodeValidationResponse(CodeValidationResponseStatus.USER_NOT_FOUND)
+
+            val cacheCode = cache.cacheForgotPasswordCode(email)
+                ?: return@let CodeValidationResponse(CodeValidationResponseStatus.EXPIRED)
+
+            if (code == cacheCode) {
+                val token = jwt.generateToken(
+                    payload = DtoAuthenticationTokenClaim(
+                        email = user.email,
+                        userType = user.type,
+                    ),
+                    type = JWTTokenType.TOKEN_UPDATE_PASSWORD
+                ).also { cache.deleteForgotPasswordCode(email) }
+
+                CodeValidationResponse(CodeValidationResponseStatus.VALID, token)
+            } else CodeValidationResponse(CodeValidationResponseStatus.INVALID_CODE)
+        } ?: CodeValidationResponse(CodeValidationResponseStatus.USER_NOT_FOUND)
+    } ?: CodeValidationResponse(CodeValidationResponseStatus.INVALID_EMAIL)
+
+    fun updatePassword(
+        password: Password,
+        token: JWTToken,
+    ): ResponseWrapper<UpdatePasswordResponse> {
+        if (cache.isJWTTokenUsed(token)) return ResponseWrapper(
+            status = ResponseStatus.UNAUTHORIZED,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.EXPIRED_TOKEN
+            )
+        )
+
+        if (password.length < 6 || password.isBlank()) return ResponseWrapper(
+            status = ResponseStatus.UNAUTHORIZED,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.INVALID_PASSWORD
+            )
+        )
+
+        val payload = jwt.verifyAndExtractClaim<DtoAuthenticationTokenClaim>(
+            token = token,
+            type = JWTTokenType.TOKEN_UPDATE_PASSWORD
+        ) ?: return ResponseWrapper(
+            status = ResponseStatus.UNAUTHORIZED,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.INVALID_TOKEN
+            )
+        )
+
+        val user = getUser(payload.email, payload.userType)
+            ?: return ResponseWrapper(
+                status = ResponseStatus.USER_NOT_FOUND,
+                payload = UpdatePasswordResponse(
+                    UpdatePasswordStatus.USER_NOT_FOUND
+                )
+            )
+
+
+        if (isSamePassword(password, user.passwordHash)) return ResponseWrapper(
+            status = ResponseStatus.USER_FOUND,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.SAME_PASSWORD
+            )
+        )
+
+        db.updatePassword(
+            id = user.id,
+            passwordHash = password.encryptPassword() ?: return ResponseWrapper(
+                status = ResponseStatus.INTERNAL_SERVER_ERROR,
+                payload = UpdatePasswordResponse(UpdatePasswordStatus.ERROR)
+            )
+        )
+
+        val (time, unit) = context.getBean(
+            "provideUpdatePasswordTokenConfigurationsClass",
+            DtoJWTConfigInfo::class.java
+        ).expDuration.toBestFitUnit()
+        cache.storeUsedJWTToken(token, time, unit)
+
+        return ResponseWrapper(
+            status = ResponseStatus.USER_FOUND,
+            payload = UpdatePasswordResponse(
+                UpdatePasswordStatus.UPDATED
+            )
+        )
+    }
+
     private fun getUser(
         email: Email,
         type: UserType,

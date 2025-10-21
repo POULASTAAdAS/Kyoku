@@ -55,6 +55,9 @@ class CacheService(
         code: String,
     ) = Group.PASSWORD_RESET_CODE.set(email, code)
 
+    fun cacheForgotPasswordCode(email: Email) = Group.PASSWORD_RESET_CODE.cache<String>(email)
+    fun deleteForgotPasswordCode(email: Email) = Group.PASSWORD_RESET_CODE.delete(email)
+
     private inline fun <reified T> Group.cache(
         key: String? = null,
     ) = redis.opsForValue().get(this.buildDynamicKey(key))?.let { data ->

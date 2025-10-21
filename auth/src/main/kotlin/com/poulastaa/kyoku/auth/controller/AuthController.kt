@@ -9,6 +9,7 @@ import com.poulastaa.kyoku.auth.model.request.EmailSignUp
 import com.poulastaa.kyoku.auth.model.request.EmailSingIn
 import com.poulastaa.kyoku.auth.model.request.GoogleAuth
 import com.poulastaa.kyoku.auth.model.request.RefreshTokenRequest
+import com.poulastaa.kyoku.auth.model.request.UpdatePassword
 import com.poulastaa.kyoku.auth.model.response.RefreshTokenResponse
 import com.poulastaa.kyoku.auth.model.response.ResponseToken
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
@@ -122,6 +123,20 @@ class AuthController(
     fun sendForgotPasswordMail(
         @Valid @RequestParam email: Email,
     ) = service.sendForgotPasswordMail(email)
+
+    @GetMapping(Endpoints.VALIDATE_PASSWORD_OTP)
+    fun validateForgotPasswordOTP(
+        @Valid @RequestParam code: String,
+        @Valid @RequestParam email: Email,
+    ) = service.validateForgotPasswordCode(code, email)
+
+    @PostMapping(Endpoints.RESET_PASSWORD)
+    fun resetPassword(
+        @Valid @RequestBody req: UpdatePassword,
+    ) = service.updatePassword(
+        password = req.password,
+        token = req.token,
+    )
 
     fun GoogleAuth.validateToken(
         @Value("\${jwt.google.secret}")

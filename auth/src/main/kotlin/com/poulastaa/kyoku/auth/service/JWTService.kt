@@ -17,8 +17,8 @@ import java.util.*
 class JWTService(
     @param:Qualifier("provideVerificationMailConfigurationsClass")
     private val verification: DtoJWTConfigInfo,
-    @param:Qualifier("provideForgotPasswordMailConfigurationsClass")
-    private val forgotPassword: DtoJWTConfigInfo,
+    @param:Qualifier("provideUpdatePasswordTokenConfigurationsClass")
+    private val updatePassword: DtoJWTConfigInfo,
     @param:Qualifier("provideAccessTokenConfigurationsClass")
     private val access: DtoJWTConfigInfo,
     @param:Qualifier("provideRefreshTokenConfigurationsClass")
@@ -36,11 +36,15 @@ class JWTService(
             JWTTokenType.TOKEN_VERIFICATION_MAIL -> claim[verification.claimKey] as T?
             JWTTokenType.TOKEN_ACCESS,
             JWTTokenType.TOKEN_REFRESH,
+            JWTTokenType.TOKEN_UPDATE_PASSWORD,
                 -> try {
                 GsonJsonParser().parseMap(
                     claim[
-                        if (type == JWTTokenType.TOKEN_ACCESS) access.claimKey
-                        else refresh.claimKey
+                        when (type) {
+                            JWTTokenType.TOKEN_ACCESS -> access.claimKey
+                            JWTTokenType.TOKEN_REFRESH -> refresh.claimKey
+                            else -> updatePassword.claimKey
+                        }
                     ].toString()
                 ).let { payload ->
                     DtoAuthenticationTokenClaim(
@@ -52,8 +56,6 @@ class JWTService(
                 logger.error("Error parsing JWT token: ${e.message}")
                 null
             } as T?
-
-            else -> TODO("not yet implemented")
         }
     }
 
@@ -63,9 +65,7 @@ class JWTService(
     ) = when (type) {
         JWTTokenType.TOKEN_ACCESS -> access
         JWTTokenType.TOKEN_REFRESH -> refresh
-
-        JWTTokenType.TOKEN_FORGOT_PASSWORD -> TODO()
-        JWTTokenType.TOKEN_SUBMIT_NEW_PASSWORD -> TODO()
+        JWTTokenType.TOKEN_UPDATE_PASSWORD -> updatePassword
 
         else -> throw IllegalArgumentException("Invalid token generation type")
     }.let { conf ->
@@ -90,7 +90,7 @@ class JWTService(
     ): Claims? {
         val payload = when (type) {
             JWTTokenType.TOKEN_VERIFICATION_MAIL -> verification
-            JWTTokenType.TOKEN_FORGOT_PASSWORD -> forgotPassword
+            JWTTokenType.TOKEN_UPDATE_PASSWORD -> updatePassword
             JWTTokenType.TOKEN_REFRESH -> refresh
             JWTTokenType.TOKEN_ACCESS -> access
             else -> TODO("not yet implemented")

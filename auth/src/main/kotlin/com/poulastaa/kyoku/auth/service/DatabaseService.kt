@@ -57,6 +57,14 @@ class DatabaseService(
         }
     }
 
+    fun updatePassword(id: UserId, passwordHash: String) {
+        val entry = user.findById(id).orElse(null)
+        if (entry != null) {
+            entry.passwordHash = passwordHash
+            user.save(entry)
+        }
+    }
+
     private fun getUserTypeByType(type: UserType) = this.userType.findByTypeIgnoreCase(type.name)
     private fun getCountryByCode(code: String) = country.getEntityCountryByCodeIgnoreCase(code)
 
