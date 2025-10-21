@@ -248,7 +248,7 @@ internal class IntroViewmodel @Inject constructor(
 
             is IntroUiAction.OnGoogleTokenReceive -> {
                 val countryCode = action.context.resources.configuration.locales[0].country
-                
+
                 viewModelScope.launch {
                     when (val result = repo.googleOneTap(action.token, countryCode)) {
                         is Result.Error -> when (result.error) {

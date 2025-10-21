@@ -1,11 +1,14 @@
 package com.poulastaa.auth.network.repository
 
+import android.util.Log
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
+import com.poulastaa.auth.domain.model.DtoGoogleAuth
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.auth.network.domain.mapper.toDtoResponseUser
 import com.poulastaa.auth.network.domain.model.request.RequestGoogleAuth
 import com.poulastaa.auth.network.domain.model.request.RequestEmailLogIn
 import com.poulastaa.auth.network.domain.model.response.ResponseAuth
+import com.poulastaa.auth.network.domain.model.response.ResponseGoogleAuth
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.Password
@@ -54,13 +57,19 @@ internal class OkHttpIntroDatasource @Inject constructor(
     override suspend fun googleOneTap(
         token: JWTToken,
         countryCode: String,
-    ): Result<DtoResponseUser, DataError.Network> = repo.authReq<RequestGoogleAuth, ResponseAuth>(
-        route = Endpoints.ValidateForgotPasswordCode,
-        method = ApiRepository.Method.POST,
-        type = ResponseAuth::class.java,
-        body = RequestGoogleAuth(
-            token = token,
-            code = countryCode
-        )
-    ).map { it.toDtoResponseUser() }
+    ): Result<DtoGoogleAuth, DataError.Network> =
+        repo.authReq<RequestGoogleAuth, ResponseGoogleAuth>(
+            route = Endpoints.GoogleAuth,
+            method = ApiRepository.Method.POST,
+            type = ResponseGoogleAuth::class.java,
+            body = RequestGoogleAuth(
+                token = token,
+                code = countryCode
+            )
+        ).map {
+            DtoGoogleAuth(
+                user = it.user.toDtoResponseUser(),
+                token = it.token.toDtoJWTToken()
+            )
+        }
 }

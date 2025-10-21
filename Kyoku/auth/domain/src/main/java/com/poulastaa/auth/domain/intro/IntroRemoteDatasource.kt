@@ -1,5 +1,6 @@
 package com.poulastaa.auth.domain.intro
 
+import com.poulastaa.auth.domain.model.DtoGoogleAuth
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.utils.Email
@@ -24,5 +25,5 @@ interface IntroRemoteDatasource {
     suspend fun googleOneTap(
         token: JWTToken,
         countryCode: String,
-    ): Result<DtoResponseUser, DataError.Network>
+    ): Result<DtoGoogleAuth, DataError.Network>
 }

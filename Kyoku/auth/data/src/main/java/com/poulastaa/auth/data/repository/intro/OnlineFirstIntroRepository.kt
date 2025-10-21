@@ -69,19 +69,27 @@ internal class OnlineFirstIntroRepository @Inject constructor(
     ): Result<DtoAuthResponseStatus, DataError.Network> {
         val response = remote.googleOneTap(token, countryCode)
         if (response is Result.Success) {
-            when (response.data.status) {
+            when (response.data.user.status) {
                 DtoAuthResponseStatus.USER_CREATED,
                 DtoAuthResponseStatus.USER_FOUND,
                 DtoAuthResponseStatus.USER_FOUND_NO_PLAYLIST,
                 DtoAuthResponseStatus.USER_FOUND_NO_ARTIST,
                 DtoAuthResponseStatus.USER_FOUND_NO_GENRE,
                 DtoAuthResponseStatus.USER_FOUND_NO_B_DATE,
-                    -> local.saveUser(response.data.toDtoUser())
+                    -> {
+                    withContext(Dispatchers.IO) {
+                        listOf(
+                            async { local.saveUser(response.data.user.toDtoUser()) },
+                            async { local.saveAccessToken(response.data.token.access) },
+                            async { local.saveRefreshToken(response.data.token.refresh) },
+                        )
+                    }
+                }
 
                 else -> Unit
             }
         }
 
-        return response.map { it.status }
+        return response.map { it.user.status }
     }
 }

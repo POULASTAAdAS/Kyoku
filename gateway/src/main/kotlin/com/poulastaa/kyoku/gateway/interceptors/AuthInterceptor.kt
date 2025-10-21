@@ -59,7 +59,6 @@ class AuthInterceptor {
                         ResponseWrapper::class.java,
                         Any::class.java,
                     ) { _, response ->
-
                         if (response.payload != null) Mono.just(response.payload)
                         else Mono.just(
                             ResponseWrapper(
