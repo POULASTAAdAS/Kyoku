@@ -1,9 +1,0 @@
-PORTFOLIO/MARKET DATA (investing -> BUKA)
-timeFrame , unit(jump) , dateTimeFormat
-  1D        1-5m         time(08:00 am/pm)
-  1W	     1h	         time(08:00 am/pm Sep 9)
-  1M	     1h          time(08:00 am/pm Sep 9)
-  3M	     1D		 time(Sep 9, 2025)
-  YTD	     1D		 time(Sep 9, 2025) 
-  1Y	     1D		 time(Sep 9, 2025)
-  MAX	     1D		 time(Sep 9, 2025)	 

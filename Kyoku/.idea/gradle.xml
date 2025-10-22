@@ -28,6 +28,11 @@
             <option value="$PROJECT_DIR$/auth/domain" />
             <option value="$PROJECT_DIR$/auth/network" />
             <option value="$PROJECT_DIR$/auth/presentation" />
+            <option value="$PROJECT_DIR$/board" />
+            <option value="$PROJECT_DIR$/board/data" />
+            <option value="$PROJECT_DIR$/board/domain" />
+            <option value="$PROJECT_DIR$/board/network" />
+            <option value="$PROJECT_DIR$/board/presentation" />
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/build-logic/convention" />
             <option value="$PROJECT_DIR$/core" />

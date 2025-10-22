@@ -35,6 +35,7 @@ dependencies {
 
     // security
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // sql
     runtimeOnly("com.mysql:mysql-connector-j")

@@ -11,6 +11,7 @@ import com.poulastaa.kyoku.auth.model.dto.UserType
 import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import com.poulastaa.kyoku.auth.utils.UserId
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
