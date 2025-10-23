@@ -33,8 +33,8 @@ import com.poulastaa.auth.presentation.components.AuthEmailTextField
 import com.poulastaa.auth.presentation.components.AuthPasswordTextFiled
 import com.poulastaa.auth.presentation.components.ConformButton
 import com.poulastaa.auth.presentation.intro.components.ContinueWithGoogleCard
-import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.components.InNewOrOldUserCard
+import com.poulastaa.auth.presentation.intro.components.LogInSingUpSwitcher
 import com.poulastaa.auth.presentation.intro.model.IntroUiState
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewLargeLandscape

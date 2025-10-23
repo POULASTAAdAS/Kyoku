@@ -8,16 +8,13 @@ import com.poulastaa.auth.domain.model.DtoAuthResponseStatus
 import com.poulastaa.auth.domain.model.PasswordStatus
 import com.poulastaa.auth.domain.model.UsernameStatus
 import com.poulastaa.auth.presentation.R
-import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
-import com.poulastaa.auth.presentation.intro.IntroUiEvent
 import com.poulastaa.auth.presentation.model.EmailTextProp
-import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.auth.presentation.model.PasswordTextProp
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
 import com.poulastaa.auth.presentation.singup.model.UsernameTextProp
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -19,4 +19,7 @@ sealed interface Screens {
         @Serializable
         data object PickArtist : Screens
     }
+
+    @Serializable
+    data object Main : Screens
 }

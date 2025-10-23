@@ -6,8 +6,8 @@ import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.auth.domain.model.DtoValidateOTPPayload
 import com.poulastaa.auth.domain.model.DtoValidateOTPStatus
 import com.poulastaa.auth.network.domain.model.response.CodeValidationResponseStatus
-import com.poulastaa.auth.network.domain.model.response.ResponseAuthResponseStatus
 import com.poulastaa.auth.network.domain.model.response.ResponseAuth
+import com.poulastaa.auth.network.domain.model.response.ResponseAuthResponseStatus
 import com.poulastaa.auth.network.domain.model.response.ResponseUserType
 import com.poulastaa.auth.network.domain.model.response.ResponseValidateOTP
 import com.poulastaa.auth.network.domain.model.response.UpdatePasswordResponse

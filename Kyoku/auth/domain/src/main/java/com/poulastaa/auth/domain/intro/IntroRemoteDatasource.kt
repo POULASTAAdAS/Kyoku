@@ -3,13 +3,12 @@ package com.poulastaa.auth.domain.intro
 import com.poulastaa.auth.domain.model.DtoGoogleAuth
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
-import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.model.DtoJWTToken
-import com.poulastaa.core.domain.model.DtoUser
 import com.poulastaa.core.domain.model.DtoUserType
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.JWTToken
+import com.poulastaa.core.domain.utils.Password
 
 interface IntroRemoteDatasource {
     suspend fun emailLogIn(

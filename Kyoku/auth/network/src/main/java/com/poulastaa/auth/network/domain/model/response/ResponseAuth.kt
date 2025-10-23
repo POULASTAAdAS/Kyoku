@@ -10,5 +10,5 @@ data class ResponseAuth(
     val email: Email,
     val username: Username,
     val profileUrl: String? = null,
-    val type: ResponseUserType
+    val type: ResponseUserType,
 )

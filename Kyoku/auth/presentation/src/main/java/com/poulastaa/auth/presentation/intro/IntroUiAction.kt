@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.intro
 
-import android.app.Activity
 import android.content.Context
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.JWTToken

@@ -14,7 +14,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.poulastaa.auth.presentation.AuthScreens.*
+import com.poulastaa.auth.presentation.AuthScreens.EmailSignUp
+import com.poulastaa.auth.presentation.AuthScreens.ForgotPassword
+import com.poulastaa.auth.presentation.AuthScreens.Intro
+import com.poulastaa.auth.presentation.AuthScreens.UpdatePassword
+import com.poulastaa.auth.presentation.AuthScreens.Verify
 import com.poulastaa.auth.presentation.forgot_password.ForgotPasswordRootScreen
 import com.poulastaa.auth.presentation.forgot_password.model.ForgotPasswordAllowedNavigationScreens
 import com.poulastaa.auth.presentation.intro.IntroRootScreen

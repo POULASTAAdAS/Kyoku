@@ -21,6 +21,6 @@ object CoreNetworkModule {
         authClient: OkHttpClient,
         @Named("mainClient")
         mainClient: OkHttpClient,
-        gson: Gson
-    ): ApiRepository = OkHttpDatasource(authClient,mainClient, gson)
+        gson: Gson,
+    ): ApiRepository = OkHttpDatasource(authClient, mainClient, gson)
 }

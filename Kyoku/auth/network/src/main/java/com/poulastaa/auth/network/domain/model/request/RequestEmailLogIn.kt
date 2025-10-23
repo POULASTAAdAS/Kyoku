@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RequestEmailLogIn(
     val email: Email,
-    val password: Password
+    val password: Password,
 )

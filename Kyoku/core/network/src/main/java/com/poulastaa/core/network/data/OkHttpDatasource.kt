@@ -2,7 +2,6 @@ package com.poulastaa.core.network.data
 
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.network.BuildConfig

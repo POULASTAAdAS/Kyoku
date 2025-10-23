@@ -2,11 +2,11 @@ package com.poulastaa.auth.presentation.otp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.auth.domain.otp.OtpValidationRepository
 import com.poulastaa.auth.domain.model.DtoValidateOTPStatus
+import com.poulastaa.auth.domain.otp.OtpValidationRepository
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.Result
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiText
 import com.poulastaa.core.presentation.ui.R

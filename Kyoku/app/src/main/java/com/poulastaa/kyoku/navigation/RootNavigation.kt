@@ -1,11 +1,13 @@
 package com.poulastaa.kyoku.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.auth.presentation.AuthRootGraph
+import com.poulastaa.board.presentation.import_playlist.ImportPlaylistRootScreen
 import com.poulastaa.core.domain.SavedScreen
 
 @Composable
@@ -17,21 +19,24 @@ internal fun RootNavigation(
         navController = nav,
         startDestination = screens
     ) {
-        authGraph { screen ->
-            when (screen) {
-                SavedScreen.INTRO -> authGraph {
-
+        authGraph { authNavigableScreen ->
+            nav.navigate(authNavigableScreen) {
+                popUpTo(authNavigableScreen) {
+                    inclusive = true
                 }
-
-                SavedScreen.IMPORT_SPOTIFY_PLAYLIST,
-                SavedScreen.SET_B_DATE,
-                SavedScreen.PIC_GENRE,
-                SavedScreen.PIC_ARTIST,
-                    -> TODO("setup screens not implemented")
-
-                SavedScreen.MAIN -> TODO("main app screens not implemented")
             }
         }
+
+        boardGraph(
+            nac = nav,
+            navigateToMain = {
+                nav.navigate(Screens.Main) {
+                    popUpTo(Screens.Main) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
 }
 
@@ -40,5 +45,28 @@ private fun NavGraphBuilder.authGraph(
 ) {
     composable<Screens.Auth> {
         AuthRootGraph(navigate = navigate)
+    }
+}
+
+private fun NavGraphBuilder.boardGraph(
+    nac: NavController,
+    navigateToMain: () -> Unit,
+) {
+    composable<Screens.SetUp.ImportSpotifyPlaylist> {
+        ImportPlaylistRootScreen {
+            nac.navigate(Screens.SetUp.SetBirthDate)
+        }
+    }
+
+    composable<Screens.SetUp.SetBirthDate> {
+
+    }
+
+    composable<Screens.SetUp.PickGenre> {
+
+    }
+
+    composable<Screens.SetUp.PickArtist> {
+
     }
 }

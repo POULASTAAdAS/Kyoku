@@ -7,19 +7,18 @@ import com.poulastaa.auth.network.domain.model.request.RequestEmailSingUp
 import com.poulastaa.auth.network.domain.model.response.ResponseAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseUserType
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
-import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.Result
-import com.poulastaa.core.domain.utils.Username
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.DtoJWTToken
+import com.poulastaa.core.domain.utils.Email
+import com.poulastaa.core.domain.utils.Password
+import com.poulastaa.core.domain.utils.Username
 import com.poulastaa.core.network.domain.model.DtoReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import com.poulastaa.core.network.domain.model.ResponseJWTToken
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import com.poulastaa.core.network.toDtoJWTToken
 import javax.inject.Inject
-import kotlin.Unit
 
 internal class OkHttpEmailSingUiDatasource @Inject constructor(
     private val repo: ApiRepository,

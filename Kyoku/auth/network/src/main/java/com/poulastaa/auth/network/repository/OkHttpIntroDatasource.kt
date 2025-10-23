@@ -1,22 +1,21 @@
 package com.poulastaa.auth.network.repository
 
-import android.util.Log
 import com.poulastaa.auth.domain.intro.IntroRemoteDatasource
 import com.poulastaa.auth.domain.model.DtoGoogleAuth
 import com.poulastaa.auth.domain.model.DtoResponseUser
 import com.poulastaa.auth.network.domain.mapper.toDtoResponseUser
-import com.poulastaa.auth.network.domain.model.request.RequestGoogleAuth
 import com.poulastaa.auth.network.domain.model.request.RequestEmailLogIn
+import com.poulastaa.auth.network.domain.model.request.RequestGoogleAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseAuth
 import com.poulastaa.auth.network.domain.model.response.ResponseGoogleAuth
 import com.poulastaa.core.domain.DataError
-import com.poulastaa.core.domain.utils.Email
-import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.model.DtoJWTToken
 import com.poulastaa.core.domain.model.DtoUserType
+import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.JWTToken
+import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.network.domain.model.DtoReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import com.poulastaa.core.network.domain.model.ResponseJWTToken

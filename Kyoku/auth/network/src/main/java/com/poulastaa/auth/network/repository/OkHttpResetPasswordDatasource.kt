@@ -5,7 +5,6 @@ import com.poulastaa.auth.domain.update_password.ResetPasswordRemoteDatasource
 import com.poulastaa.auth.network.domain.mapper.toDtoUpdatePasswordStatus
 import com.poulastaa.auth.network.domain.model.request.RequestUpdatePassword
 import com.poulastaa.auth.network.domain.model.response.UpdatePasswordResponse
-import com.poulastaa.auth.network.domain.model.response.UpdatePasswordStatus
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map

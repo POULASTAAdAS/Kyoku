@@ -1,6 +1,5 @@
 package com.poulastaa.auth.presentation.singup
 
-import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
 import com.poulastaa.core.presentation.designsystem.UiText
 
 internal sealed interface EmailSingUpUiEvent {

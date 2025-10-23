@@ -1,7 +1,6 @@
 package com.poulastaa.auth.presentation
 
 import com.poulastaa.auth.presentation.components.AuthAllowedNavigationScreen
-import com.poulastaa.auth.presentation.intro.model.IntroAllowedNavigationScreens
 import com.poulastaa.core.domain.SavedScreen
 
 internal fun AuthAllowedNavigationScreen.toNavigationScreen() = when (this) {
