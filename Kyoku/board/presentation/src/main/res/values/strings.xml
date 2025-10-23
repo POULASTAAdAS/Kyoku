@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="import_your_spotify_playlist">Import your spotify playlist</string>
+    <string name="import_button">Import</string>
+    <string name="link_label">link</string>
+    <string name="drop_down">Drop down</string>
+</resources>

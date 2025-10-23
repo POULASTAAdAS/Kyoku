@@ -63,3 +63,10 @@ val CloseIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.ic_close)
 
+val LinkIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_link)
+
+val DropDownArrowIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_drow_down)

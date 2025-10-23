@@ -28,18 +28,18 @@ internal class ImportPlaylistViewmodel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(ImportPlaylistUiState())
     val state = _state.onStart {
-        viewModelScope.launch {
-            while (true) {
-                eventManager.showEvent(
-                    SnackBarUiEvent(
-                        eventType = SnackBarEventType.ERROR,
-                        message = UiText.StringResource(R.string.please_check_internet_connection)
-                    )
-                )
-
-                delay(4.seconds)
-            }
-        }
+//        viewModelScope.launch {
+//            while (true) {
+//                eventManager.showEvent(
+//                    SnackBarUiEvent(
+//                        eventType = SnackBarEventType.ERROR,
+//                        message = UiText.StringResource(R.string.please_check_internet_connection)
+//                    )
+//                )
+//
+//                delay(4.seconds)
+//            }
+//        }
         loadInitialData()
     }.stateIn(
         scope = viewModelScope,
