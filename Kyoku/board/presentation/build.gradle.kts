@@ -9,10 +9,11 @@ android {
 
 dependencies {
     implementation(libs.material3WindowSizeClass)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.coil.compose)
 
     implementation(projects.core.domain)
     implementation(projects.board.domain)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
 }

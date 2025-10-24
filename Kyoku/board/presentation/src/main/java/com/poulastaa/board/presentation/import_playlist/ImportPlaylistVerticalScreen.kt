@@ -1,6 +1,7 @@
 package com.poulastaa.board.presentation.import_playlist
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -10,14 +11,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -44,6 +49,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.poulastaa.board.presentation.R
 import com.poulastaa.core.presentation.designsystem.UiPrevPlaylistSong
@@ -119,7 +126,8 @@ internal fun ImportPlaylistVerticalScreen(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Uri
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
@@ -262,12 +270,61 @@ internal fun ImportPlaylistVerticalScreen(
                             playlist.isExpanded,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(
-                                modifier = Modifier.padding(MaterialTheme.dimens.small3)
-                            ) {
-                                this@LazyColumn.items(playlist.songs) { song ->
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
 
+                                playlist.songs.forEach { song ->
+                                    Card(
+                                        modifier = Modifier
+                                            .heightIn(max = 80.dp)
+                                            .fillMaxWidth()
+                                            .padding(horizontal = MaterialTheme.dimens.small3),
+                                        shape = MaterialTheme.shapes.extraSmall,
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                                        ),
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 3.dp
+                                        )
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxSize(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Box(
+                                                Modifier
+                                                    .fillMaxHeight()
+                                                    .clip(MaterialTheme.shapes.extraSmall)
+                                                    .aspectRatio(1f)
+                                                    .background(MaterialTheme.colorScheme.primary)
+                                            )
+
+                                            Spacer(Modifier.width(MaterialTheme.dimens.medium1))
+
+                                            Column {
+                                                Text(
+                                                    text = song.title,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                                                    color = MaterialTheme.colorScheme.onBackground
+                                                )
+
+                                                Text(
+                                                    text = song.artist,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis,
+                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(Modifier.height(MaterialTheme.dimens.small2))
                                 }
+
+                                Spacer(Modifier.height(MaterialTheme.dimens.small2))
                             }
                         }
                     }
