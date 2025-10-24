@@ -11,7 +11,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     api(libs.androidx.compose.material3)
     implementation(libs.material3WindowSizeClass)
-    implementation(libs.coil.compose)
+    implementation(libs.coil3.coil.compose)
     implementation(libs.pagingCompose)
 
     implementation(projects.core.domain)

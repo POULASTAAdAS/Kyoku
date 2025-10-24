@@ -13,7 +13,7 @@ import javax.inject.Named
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object CoreNetworkModule {
+object CoreNetworkViewmodelModule {
     @Provides
     @ViewModelScoped
     fun provideCoreApi(

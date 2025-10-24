@@ -38,7 +38,7 @@ internal class PreferencesDatStoreRepositoryImpl @Inject constructor(
         gson.fromJson(gson.toJson(it), SerializedUser::class.java)
     }?.toDtoUser()
 
-    override suspend fun getUserFlow(): Flow<DtoUser?> =
+    override fun getUserFlow(): Flow<DtoUser?> =
         ds.data.catch { emit(emptyPreferences()) }.map {
             it[Keys.USER]
         }.let { flow ->
@@ -52,6 +52,14 @@ internal class PreferencesDatStoreRepositoryImpl @Inject constructor(
     override suspend fun saveAccessToken(token: JWTToken) {
         ds.edit { it[Keys.ACCESS] = token }
     }
+
+    override fun getAccessTokenFlow(): Flow<String?> = ds.data.catch {
+        emit(emptyPreferences())
+    }.map { it[Keys.ACCESS] }
+
+    override suspend fun getAccessTokenFirst(): String? = ds.data.catch {
+        emit(emptyPreferences())
+    }.map { it[Keys.ACCESS] }.firstOrNull()
 
     override suspend fun saveRefreshToken(token: JWTToken) {
         ds.edit { it[Keys.REFRESH] = token }

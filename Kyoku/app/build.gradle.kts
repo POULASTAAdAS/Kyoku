@@ -63,6 +63,10 @@ dependencies {
     implementation(libs.androidx.work)
     implementation(libs.hilt.work)
 
+    // coil
+    implementation(libs.coil3.core)
+    implementation(libs.coil3.coil.compose)
+
     // project
     implementation(projects.core.domain)
     implementation(projects.core.data)

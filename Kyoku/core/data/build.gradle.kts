@@ -8,11 +8,13 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.domain)
-    implementation(projects.core.database)
 
     implementation(libs.gson)
-
+    implementation(libs.coil3.core)
+    implementation(libs.coil3.coil.compose)
     implementation(libs.androidx.palette)
     implementation(libs.datastore.preferences)
+
+    implementation(projects.core.database)
+    implementation(projects.core.domain)
 }

@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface PreferencesDatastoreRepository {
     suspend fun saveUser(user: DtoUser)
     suspend fun getUser(): DtoUser?
-    suspend fun getUserFlow(): Flow<DtoUser?>
+    fun getUserFlow(): Flow<DtoUser?>
     suspend fun saveAccessToken(token: JWTToken)
+    fun getAccessTokenFlow(): Flow<String?>
+    suspend fun getAccessTokenFirst(): String?
     suspend fun saveRefreshToken(token: JWTToken)
 }

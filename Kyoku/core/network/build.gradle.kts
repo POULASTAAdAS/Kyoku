@@ -15,5 +15,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.gson)
 
+    implementation(libs.coil3.network.okhttp)
+
     implementation(projects.core.domain)
 }
