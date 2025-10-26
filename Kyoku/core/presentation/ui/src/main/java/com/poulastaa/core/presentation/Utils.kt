@@ -20,9 +20,14 @@ fun Dp.toPxf(density: Density): Float = with(density) { this@toPxf.toPx() }
 @Composable
 internal fun Dp.toPxf(): Float = toPxf(LocalDensity.current)
 
-internal fun lerp(start: Float, stop: Float, fraction: Float) =
-    (start * (1 - fraction) + stop * fraction)
+internal fun lerp(
+    start: Float,
+    stop: Float,
+    fraction: Float,
+) = (start * (1 - fraction) + stop * fraction)
 
-internal fun chooseCornerSize(sizeHeight: Float, cornerRadius: Float) =
-    if (sizeHeight > cornerRadius) cornerRadius
-    else sizeHeight
+internal fun chooseCornerSize(
+    sizeHeight: Float,
+    cornerRadius: Float,
+) = if (sizeHeight > cornerRadius) cornerRadius
+else sizeHeight
