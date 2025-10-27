@@ -26,11 +26,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideThemeManager(): ThemeManager {
-        val themeManager = ThemeManager()
-        ThemeManager.setInstance(themeManager)
-        return themeManager
-    }
+    fun provideThemeManager(): ThemeManager = ThemeManager()
 
     @Provides
     @Singleton

@@ -42,4 +42,5 @@
     <string name="reset">reset</string>
     <string name="login_again_to_continue">Please login again with the new password.</string>
     <string name="validationa_time_expaired">OTP validatio time expaired, try again.</string>
+    <string name="skip">skip</string>
 </resources>

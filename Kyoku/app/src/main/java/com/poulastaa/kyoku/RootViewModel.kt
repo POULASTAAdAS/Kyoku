@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
-    private val themeManager: ThemeManager,
+    val themeManager: ThemeManager,
 ) : ViewModel() {
     private val _state = MutableStateFlow(RootUiState())
     val state = _state.onStart {
@@ -29,11 +29,11 @@ class RootViewModel @Inject constructor(
     )
 
     private val _keepSplashOn = MutableStateFlow(true)
-    val keepSplashOn get() = _keepSplashOn.asStateFlow()
+    val keepSplashOn = _keepSplashOn.asStateFlow()
 
-    fun loadThem(isSystemThemDark: Boolean) {
-        if (themeManager.isModeDark.value != isSystemThemDark)
-            themeManager.loadOrChangeTheme(isSystemThemDark)
+    fun loadThem(isSystemThem: Boolean) {
+        if (themeManager.isModeDark.value != isSystemThem)
+            themeManager.loadOrChangeTheme(isSystemThem)
     }
 
     private suspend fun getSavedScreen() {

@@ -23,10 +23,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.auth.presentation.components.AppLogo
-import com.poulastaa.auth.presentation.components.ConformButton
 import com.poulastaa.auth.presentation.singup.components.InfoCard
 import com.poulastaa.auth.presentation.singup.components.SingUpCard
 import com.poulastaa.auth.presentation.singup.model.EmailSingUpUiState
+import com.poulastaa.core.presentation.ConformButton
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewLandscape
 import com.poulastaa.core.presentation.ui.dimens

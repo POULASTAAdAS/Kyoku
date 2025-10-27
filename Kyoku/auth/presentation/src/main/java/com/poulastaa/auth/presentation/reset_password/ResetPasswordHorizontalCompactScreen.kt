@@ -29,8 +29,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.poulastaa.auth.presentation.components.ConformButton
 import com.poulastaa.auth.presentation.reset_password.components.CreateNewPasswordCard
+import com.poulastaa.core.presentation.ConformButton
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.ui.PreviewCompactLandscape

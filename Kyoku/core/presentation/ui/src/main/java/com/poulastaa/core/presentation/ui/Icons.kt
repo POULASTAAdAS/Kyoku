@@ -70,3 +70,7 @@ val LinkIcon: ImageVector
 val DropDownArrowIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.ic_drow_down)
+
+val MusicIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_music_vector)

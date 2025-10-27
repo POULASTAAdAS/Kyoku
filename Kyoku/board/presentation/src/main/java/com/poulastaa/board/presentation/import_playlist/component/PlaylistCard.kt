@@ -34,8 +34,10 @@ import coil3.compose.SubcomposeAsyncImage
 import com.poulastaa.board.presentation.R
 import com.poulastaa.board.presentation.import_playlist.ImportPlaylistUiAction
 import com.poulastaa.board.presentation.import_playlist.UiPreviewPlaylist
+import com.poulastaa.core.presentation.noRippleClickable
 import com.poulastaa.core.presentation.shimmerEffect
 import com.poulastaa.core.presentation.ui.DropDownArrowIcon
+import com.poulastaa.core.presentation.ui.MusicIcon
 import com.poulastaa.core.presentation.ui.dimens
 
 @Composable
@@ -69,7 +71,12 @@ internal fun PlaylistCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(MaterialTheme.dimens.small3)
-                .padding(horizontal = MaterialTheme.dimens.small2),
+                .padding(horizontal = MaterialTheme.dimens.small2)
+                .noRippleClickable(
+                    onClick = {
+                        onAction(ImportPlaylistUiAction.OnItemStateToggle(playlist.id))
+                    }
+                ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -151,8 +158,28 @@ internal fun PlaylistCard(
                                     }
                                 },
                                 error = {
-                                    Box(Modifier.fillMaxSize()) {
 
+                                    Card(
+                                        modifier = Modifier.fillMaxSize(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                        ),
+                                        elevation = CardDefaults.cardElevation(
+                                            defaultElevation = 3.dp
+                                        ),
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    ) {
+                                        Box(
+                                            Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = MusicIcon,
+                                                contentDescription = null,
+                                                modifier = Modifier.fillMaxSize(.7f),
+                                                tint = MaterialTheme.colorScheme.tertiary
+                                            )
+                                        }
                                     }
                                 }
                             )
@@ -173,14 +200,12 @@ internal fun PlaylistCard(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
-                            Spacer(Modifier.height(MaterialTheme.dimens.small1))
-
                             Text(
                                 text = song.artist,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = MaterialTheme.typography.bodyMedium.fontSize
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize
                             )
                         }
                     }

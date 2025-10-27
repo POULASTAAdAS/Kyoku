@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.poulastaa.auth.presentation.components.ArchedScreen
 import com.poulastaa.auth.presentation.components.AuthEmailTextField
-import com.poulastaa.auth.presentation.components.ConformButton
+import com.poulastaa.core.presentation.ConformButton
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.ArrowBackIcon
 import com.poulastaa.core.presentation.ui.PreviewCompactPortrait

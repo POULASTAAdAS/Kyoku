@@ -45,7 +45,7 @@
             <option value="$PROJECT_DIR$/core/presentation/ui" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="true" />
+        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
     <option name="parallelModelFetch" value="true" />

@@ -1,4 +1,4 @@
-package com.poulastaa.auth.presentation.components
+package com.poulastaa.core.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,9 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.poulastaa.core.presentation.ui.R
 
-
 @Composable
-internal fun ConformButton(
+fun ConformButton(
     modifier: Modifier,
     isLoading: Boolean,
     heading: String? = null,

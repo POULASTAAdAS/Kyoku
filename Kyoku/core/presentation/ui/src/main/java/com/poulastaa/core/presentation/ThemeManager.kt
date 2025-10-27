@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import javax.inject.Singleton
+
 
 class ThemeManager @Inject constructor() {
     private val _isModeDark = MutableStateFlow(true)
@@ -21,18 +23,6 @@ class ThemeManager @Inject constructor() {
         // TODO: if saved them is null set system them as default
         _isModeDark.update {
             isSystemThemDark
-        }
-    }
-
-    companion object {
-        @Volatile
-        private var INSTANCE: ThemeManager? = null
-
-        val instance: ThemeManager
-            get() = INSTANCE ?: throw IllegalStateException("ThemeManager not initialized")
-
-        fun setInstance(themeManager: ThemeManager) {
-            INSTANCE = themeManager
         }
     }
 }

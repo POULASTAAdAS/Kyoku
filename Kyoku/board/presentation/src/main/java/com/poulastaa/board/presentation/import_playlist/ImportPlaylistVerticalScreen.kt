@@ -41,6 +41,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.poulastaa.board.presentation.R
 import com.poulastaa.board.presentation.import_playlist.component.PlaylistCard
+import com.poulastaa.board.presentation.import_playlist.component.SkipButton
+import com.poulastaa.core.presentation.designsystem.TextProp
 import com.poulastaa.core.presentation.designsystem.UiPrevPlaylistSong
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.LinkIcon
@@ -75,7 +77,9 @@ internal fun ImportPlaylistVerticalScreen(
         },
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-
+            SkipButton(modifier = Modifier.fillMaxWidth(.3f)){
+                onAction(ImportPlaylistUiAction.OnSkipClick)
+            }
         }
     ) { paddingValues ->
         Column(
@@ -90,73 +94,10 @@ internal fun ImportPlaylistVerticalScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = state.link.value,
-                    onValueChange = {
-                        onAction(ImportPlaylistUiAction.OnLinkChange(it))
-                    },
-                    shape = MaterialTheme.shapes.large,
+                ImportPlaylistTextField(
                     modifier = Modifier.weight(1f),
-                    isError = state.link.isErr,
-                    supportingText = {
-                        Text(text = state.link.errText.asString())
-                    },
-                    label = {
-                        Text(text = stringResource(R.string.link_label))
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = LinkIcon,
-                            contentDescription = stringResource(R.string.link_label)
-                        )
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Uri,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onAction(ImportPlaylistUiAction.OnImportClick)
-                        }
-                    ),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-
-                        cursorColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
-
-                        focusedTextColor = MaterialTheme.colorScheme.secondary,
-                        focusedLabelColor = MaterialTheme.colorScheme.secondary,
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedPlaceholderColor = MaterialTheme.colorScheme.secondary,
-                        focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
-                        focusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
-
-                        focusedSupportingTextColor = MaterialTheme.colorScheme.error,
-                        unfocusedSupportingTextColor = MaterialTheme.colorScheme.error,
-
-                        errorTextColor = MaterialTheme.colorScheme.error,
-                        errorLabelColor = MaterialTheme.colorScheme.error,
-                        errorCursorColor = MaterialTheme.colorScheme.error,
-                        errorBorderColor = MaterialTheme.colorScheme.error,
-                        errorSupportingTextColor = MaterialTheme.colorScheme.error,
-                        errorPlaceholderColor = MaterialTheme.colorScheme.error,
-                        errorLeadingIconColor = MaterialTheme.colorScheme.error,
-                        errorTrailingIconColor = MaterialTheme.colorScheme.error,
-
-                        selectionColors = TextSelectionColors(
-                            handleColor = MaterialTheme.colorScheme.secondary,
-                            backgroundColor = Color.Transparent
-                        )
-                    )
+                    link = state.link,
+                    onAction = onAction
                 )
 
                 Spacer(Modifier.width(MaterialTheme.dimens.medium1))
@@ -169,12 +110,13 @@ internal fun ImportPlaylistVerticalScreen(
                     Box(contentAlignment = Alignment.Center) {
                         Text(
                             text = stringResource(R.string.import_button),
-                            modifier = Modifier.alpha(if (state.isMakingApiCall) 0f else 1f)
+                            modifier = Modifier.alpha(if (state.isMakingApiCall) 0f else 1f),
+                            color = MaterialTheme.colorScheme.background
                         )
 
                         CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.alpha(if (state.isMakingApiCall) 1f else 0f)
+                            color = MaterialTheme.colorScheme.background,
+                            modifier = Modifier.alpha(if (state.isMakingApiCall) 1f else 0f),
                         )
                     }
                 }
@@ -200,6 +142,82 @@ internal fun ImportPlaylistVerticalScreen(
             }
         }
     }
+}
+
+@Composable
+internal fun ImportPlaylistTextField(
+    modifier: Modifier,
+    link: TextProp,
+    onAction: (ImportPlaylistUiAction) -> Unit,
+) {
+    OutlinedTextField(
+        value = link.value,
+        onValueChange = {
+            onAction(ImportPlaylistUiAction.OnLinkChange(it))
+        },
+        shape = MaterialTheme.shapes.large,
+        modifier = modifier,
+        isError = link.isErr,
+        supportingText = {
+            Text(text = link.errText.asString())
+        },
+        label = {
+            Text(text = stringResource(R.string.link_label))
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = LinkIcon,
+                contentDescription = stringResource(R.string.link_label)
+            )
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Uri,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                onAction(ImportPlaylistUiAction.OnImportClick)
+            }
+        ),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+
+            cursorColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedPlaceholderColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedLeadingIconColor = MaterialTheme.colorScheme.tertiary,
+            unfocusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
+
+            focusedTextColor = MaterialTheme.colorScheme.secondary,
+            focusedLabelColor = MaterialTheme.colorScheme.secondary,
+            focusedBorderColor = MaterialTheme.colorScheme.secondary,
+            focusedPlaceholderColor = MaterialTheme.colorScheme.secondary,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
+            focusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
+
+            focusedSupportingTextColor = MaterialTheme.colorScheme.error,
+            unfocusedSupportingTextColor = MaterialTheme.colorScheme.error,
+
+            errorTextColor = MaterialTheme.colorScheme.error,
+            errorLabelColor = MaterialTheme.colorScheme.error,
+            errorCursorColor = MaterialTheme.colorScheme.error,
+            errorBorderColor = MaterialTheme.colorScheme.error,
+            errorSupportingTextColor = MaterialTheme.colorScheme.error,
+            errorPlaceholderColor = MaterialTheme.colorScheme.error,
+            errorLeadingIconColor = MaterialTheme.colorScheme.error,
+            errorTrailingIconColor = MaterialTheme.colorScheme.error,
+
+            selectionColors = TextSelectionColors(
+                handleColor = MaterialTheme.colorScheme.secondary,
+                backgroundColor = Color.Transparent
+            )
+        )
+    )
 }
 
 @PreviewCompactPortrait
