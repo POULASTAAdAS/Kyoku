@@ -4,4 +4,5 @@
     <string name="import_button">Import</string>
     <string name="link_label">link</string>
     <string name="drop_down">Drop down</string>
+    <string name="invalid_link">Invalid url</string>
 </resources>

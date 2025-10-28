@@ -2,7 +2,7 @@ package com.poulastaa.core.network.domain.repository
 
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
-import com.poulastaa.core.network.domain.model.DtoReqParam
+import com.poulastaa.core.network.domain.model.ReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import java.lang.reflect.Type
 
@@ -18,7 +18,7 @@ interface ApiRepository {
         method: Method,
         type: Type,
         body: Req? = null,
-        params: List<DtoReqParam> = emptyList(),
+        params: List<ReqParam> = emptyList(),
     ): Result<Res, DataError.Network>
 
 //    suspend fun <Req : Any, Res : Any> apiReq(

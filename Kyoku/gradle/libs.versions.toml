@@ -1,6 +1,6 @@
 [versions]
 agp = "8.13.0"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 ksp = "2.2.20-2.0.3"
 
 coreKtx = "1.17.0"
@@ -9,26 +9,26 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
-composeBom = "2025.09.01"
+composeBom = "2025.10.01"
 
-jetbrainsKotlinJvm = "2.2.20"
+jetbrainsKotlinJvm = "2.2.21"
 coroutines = "1.10.2"
 
 desugar_jdk_libs = "2.1.5"
 kotlinxSerialization = "1.9.0"
 gson = "2.13.2"
 
-dagger = "2.57.1"
-hiltCompiler = "2.57.1"
+dagger = "2.57.2"
+hiltCompiler = "2.57.2"
 hilt = "1.3.0"
 
-okhttp = "5.1.0"
+okhttp = "5.2.1"
 navigation = "2.9.5"
-room = "2.8.1"
+room = "2.8.3"
 splashScreen = "1.0.1"
 datastorePreferences = "1.1.7"
 paging = "3.3.6"
-foundation = "1.9.2"
+foundation = "1.9.4"
 
 credentials = "1.5.0"
 googleId = "1.1.1"
@@ -45,9 +45,9 @@ media = "1.7.1"
 legacySupport = "1.0.0"
 glide = "5.0.5"
 palette = "1.0.0"
-lottie = "6.6.9"
+lottie = "6.6.10"
 
-work = "2.10.5"
+work = "2.11.0"
 
 
 androidTools = "31.13.0"
@@ -127,7 +127,6 @@ credentials = { group = "androidx.credentials", name = "credentials", version.re
 credentialsPlayServicesAuth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 google-id = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleId" }
 
-
 coil3-core = { module = "io.coil-kt.coil3:coil-core", version.ref = "coilCore" }
 coil3-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCore" }
 coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilComposeVersion" }
@@ -140,7 +139,6 @@ media3-session = { group = "androidx.media3", name = "media3-session", version.r
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 media = { group = "androidx.media", name = "media", version.ref = "media" }
 legacy-support-V4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupport" }
-
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }

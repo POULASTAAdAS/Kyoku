@@ -16,9 +16,9 @@ import com.poulastaa.core.domain.model.DtoUserType
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.JWTToken
 import com.poulastaa.core.domain.utils.Password
-import com.poulastaa.core.network.domain.model.DtoReqParam
+import com.poulastaa.core.network.domain.model.ReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
-import com.poulastaa.core.network.domain.model.ResponseJWTToken
+import com.poulastaa.core.network.domain.model.response.ResponseJWTToken
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import com.poulastaa.core.network.toDtoJWTToken
 import jakarta.inject.Inject
@@ -48,8 +48,8 @@ internal class OkHttpIntroDatasource @Inject constructor(
         method = ApiRepository.Method.GET,
         type = ResponseJWTToken::class.java,
         params = listOf(
-            DtoReqParam("email", email),
-            DtoReqParam("type", type.name),
+            ReqParam("email", email),
+            ReqParam("type", type.name),
         )
     ).map { it.toDtoJWTToken() }
 

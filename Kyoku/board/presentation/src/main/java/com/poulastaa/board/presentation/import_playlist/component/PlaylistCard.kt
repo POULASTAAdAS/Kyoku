@@ -200,13 +200,15 @@ internal fun PlaylistCard(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
-                            Text(
-                                text = song.artist,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = MaterialTheme.typography.bodySmall.fontSize
-                            )
+                            song.artist?.let {
+                                Text(
+                                    text = it,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    fontSize = MaterialTheme.typography.bodySmall.fontSize
+                                )
+                            }
                         }
                     }
                 }

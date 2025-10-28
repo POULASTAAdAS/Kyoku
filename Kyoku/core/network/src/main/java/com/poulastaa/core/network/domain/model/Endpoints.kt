@@ -7,6 +7,7 @@ sealed class Endpoints(
         private const val VERSION_V1: String = "/api/v1"
     }
 
+    // auth
     data object EmailSingIn : Endpoints("$VERSION_V1/auth/email/login")
     data object EmailSingUp : Endpoints("$VERSION_V1/auth/email/create-account")
     data object CheckVerificationMailStatus : Endpoints("$VERSION_V1/auth/email/verify-email/state")
@@ -14,4 +15,8 @@ sealed class Endpoints(
     data object ValidateForgotPasswordCode : Endpoints("$VERSION_V1/auth/forgot-password/validate")
     data object UpdatePassword : Endpoints("$VERSION_V1/auth/reset-password")
     data object GoogleAuth : Endpoints("$VERSION_V1/auth/google/join")
+
+    // board
+    // todo change import playlist route
+    data object ImportPlaylist : Endpoints("$VERSION_V1/something/import_playlist")
 }

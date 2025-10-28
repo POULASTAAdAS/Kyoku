@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.network.BuildConfig
-import com.poulastaa.core.network.domain.model.DtoReqParam
+import com.poulastaa.core.network.domain.model.ReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +43,7 @@ internal class OkHttpDatasource @Inject constructor(
         method: ApiRepository.Method,
         type: Type,
         body: Req?,
-        params: List<DtoReqParam>,
+        params: List<ReqParam>,
     ): Result<Res, DataError.Network> {
         val uriBuilder = constructRoute(route.endpoint).toHttpUrlOrNull()?.newBuilder()
             ?: return Result.Error(DataError.Network.UNKNOWN)

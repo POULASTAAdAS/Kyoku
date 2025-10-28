@@ -8,7 +8,7 @@ import com.poulastaa.core.domain.DataError
 import com.poulastaa.core.domain.Result
 import com.poulastaa.core.domain.map
 import com.poulastaa.core.domain.utils.Email
-import com.poulastaa.core.network.domain.model.DtoReqParam
+import com.poulastaa.core.network.domain.model.ReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import javax.inject.Inject
@@ -24,8 +24,8 @@ internal class OTPValidationRemoteDatasource @Inject constructor(
         method = ApiRepository.Method.GET,
         type = ResponseValidateOTP::class.java,
         params = listOf(
-            DtoReqParam("email", email),
-            DtoReqParam("code", otp),
+            ReqParam("email", email),
+            ReqParam("code", otp),
         )
     ).map { it.toDtoValidationOTPPayload() }
 }

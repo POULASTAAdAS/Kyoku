@@ -13,9 +13,9 @@ import com.poulastaa.core.domain.model.DtoJWTToken
 import com.poulastaa.core.domain.utils.Email
 import com.poulastaa.core.domain.utils.Password
 import com.poulastaa.core.domain.utils.Username
-import com.poulastaa.core.network.domain.model.DtoReqParam
+import com.poulastaa.core.network.domain.model.ReqParam
 import com.poulastaa.core.network.domain.model.Endpoints
-import com.poulastaa.core.network.domain.model.ResponseJWTToken
+import com.poulastaa.core.network.domain.model.response.ResponseJWTToken
 import com.poulastaa.core.network.domain.repository.ApiRepository
 import com.poulastaa.core.network.toDtoJWTToken
 import javax.inject.Inject
@@ -48,8 +48,8 @@ internal class OkHttpEmailSingUiDatasource @Inject constructor(
         method = ApiRepository.Method.GET,
         type = ResponseJWTToken::class.java,
         params = listOf(
-            DtoReqParam("email", email),
-            DtoReqParam("type", ResponseUserType.EMAIL.name),
+            ReqParam("email", email),
+            ReqParam("type", ResponseUserType.EMAIL.name),
         )
     ).map { it.toDtoJWTToken() }
 }

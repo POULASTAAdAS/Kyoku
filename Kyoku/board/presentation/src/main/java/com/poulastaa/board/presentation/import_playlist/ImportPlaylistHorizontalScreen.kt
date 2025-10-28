@@ -32,7 +32,7 @@ import com.poulastaa.board.presentation.R
 import com.poulastaa.board.presentation.import_playlist.component.PlaylistCard
 import com.poulastaa.board.presentation.import_playlist.component.SkipButton
 import com.poulastaa.core.presentation.ConformButton
-import com.poulastaa.core.presentation.designsystem.UiPrevPlaylistSong
+import com.poulastaa.core.presentation.designsystem.UiPrevSong
 import com.poulastaa.core.presentation.ui.AppTheme
 import com.poulastaa.core.presentation.ui.PreviewCompactLandscape
 import com.poulastaa.core.presentation.ui.PreviewLandscape
@@ -140,10 +140,12 @@ private fun Preview() {
             state = ImportPlaylistUiState(
                 data = (1..3).map { playlistId ->
                     UiPreviewPlaylist(
+                        internalId = playlistId.toLong(),
                         id = playlistId.toLong(),
                         title = "Playlist $playlistId",
                         songs = (1..5).map { songId ->
-                            UiPrevPlaylistSong(
+                            UiPrevSong(
+                                internalId = songId.toLong(),
                                 id = songId.toLong(),
                                 title = "Song $songId",
                                 artist = "Artist $songId",

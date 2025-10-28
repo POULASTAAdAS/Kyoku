@@ -5,6 +5,7 @@ typealias Username = String
 typealias Password = String
 typealias JWTToken = String
 
+typealias InternalId = Long
 typealias PlaylistId = Long
 typealias SongId = Long
 typealias AlbumId = Long

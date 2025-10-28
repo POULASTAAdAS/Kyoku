@@ -1,4 +1,4 @@
-package com.poulastaa.core.network.domain.model
+package com.poulastaa.core.network.domain.model.response
 
 import com.poulastaa.core.domain.utils.JWTToken
 import kotlinx.serialization.Serializable

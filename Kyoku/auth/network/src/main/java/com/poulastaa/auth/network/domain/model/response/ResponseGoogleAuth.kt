@@ -1,6 +1,6 @@
 package com.poulastaa.auth.network.domain.model.response
 
-import com.poulastaa.core.network.domain.model.ResponseJWTToken
+import com.poulastaa.core.network.domain.model.response.ResponseJWTToken
 import kotlinx.serialization.Serializable
 
 @Serializable
