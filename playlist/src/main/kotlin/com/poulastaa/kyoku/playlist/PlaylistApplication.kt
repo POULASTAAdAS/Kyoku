@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.playlist
 
+import com.poulastaa.kyoku.playlist.grpc.RequestSong
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -7,5 +8,5 @@ import org.springframework.boot.runApplication
 class PlaylistApplication
 
 fun main(args: Array<String>) {
-	runApplication<PlaylistApplication>(*args)
+    runApplication<PlaylistApplication>(*args)
 }
