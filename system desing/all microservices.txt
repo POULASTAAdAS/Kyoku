@@ -1,10 +1,11 @@
 api-gateway(reverse-proxy)
 
-service-discovery
+discovery-service
 
 notification-service (manage notifications)
 request-validation (validate each request)
 auth-service (singup/signin user, refreshtoken , forgotpassowrd)
+
 user-service (profile managemnet)
 playlist-service (manage playlist)
 activity-service (manage album , artist , favourite , pinned , history)
@@ -16,3 +17,12 @@ file-service (serve static files)
 
 
 create if needed -> analytical-service (manage numbers - play count , popularity etc)
+
+
+
+config-service
+discovery-service
+
+api-gateway
+file-service
+notification-service

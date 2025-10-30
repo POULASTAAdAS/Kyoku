@@ -40,7 +40,7 @@ class RootViewModel @Inject constructor(
 //        val screens = ds.readSignInState()
         delay(1000)
 
-        val screens = SavedScreen.IMPORT_SPOTIFY_PLAYLIST
+        val screens = SavedScreen.SET_B_DATE
         val screen = when (screens) {
             SavedScreen.INTRO -> Screens.Auth
             SavedScreen.IMPORT_SPOTIFY_PLAYLIST -> Screens.SetUp.ImportSpotifyPlaylist
