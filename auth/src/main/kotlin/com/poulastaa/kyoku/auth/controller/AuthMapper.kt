@@ -28,7 +28,6 @@ fun DtoUser.toResponse(status: ResponseStatus) = ResponseUser(
     }
 )
 
-
 fun ResponseWrapper<DtoUser>.toSingInUpResponse() = ResponseWrapper(
     status = this.status,
     payload = this.payload?.toResponse(this.status) ?: ResponseUser(

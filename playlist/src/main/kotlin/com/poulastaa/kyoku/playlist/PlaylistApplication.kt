@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku.playlist
 
-import com.poulastaa.kyoku.playlist.grpc.RequestSong
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 

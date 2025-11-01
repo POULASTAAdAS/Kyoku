@@ -15,10 +15,12 @@ import com.poulastaa.kyoku.auth.model.response.ResponseGoogleAuth
 import com.poulastaa.kyoku.auth.model.response.ResponseToken
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
+import com.poulastaa.kyoku.auth.model.response.ResponseUser
 import com.poulastaa.kyoku.auth.service.AuthService
 import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import jakarta.validation.Valid
+import org.apache.commons.lang.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -46,12 +48,18 @@ class AuthController(
     @PostMapping(Endpoints.EMAIL_SING_UP)
     fun emailCreateAccount(
         @Valid @RequestBody req: EmailSignUp,
-    ) = service.processEmailSingUp(
-        username = req.username,
-        email = req.email,
-        password = req.password,
-        countryCode = req.countryCode,
-    ).toSingInUpResponse()
+    ): ResponseEntity<ResponseWrapper<ResponseUser>> {
+        // done to prevent XSS(Cross-Site Scripting) injection
+        val username = StringEscapeUtils.escapeHtml(req.username) ?: return ResponseEntity.badRequest()
+            .body(ResponseWrapper(ResponseStatus.UNAUTHORIZED))
+
+        return service.processEmailSingUp(
+            username = username,
+            email = req.email,
+            password = req.password,
+            countryCode = req.countryCode,
+        ).toSingInUpResponse()
+    }
 
     @GetMapping(Endpoints.VERIFY_EMAIL)
     fun validateAuthenticationMail(
