@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.gateway_playlist";
+
+package gatewayPlaylist;
+
+// request
+message RequestUser{
+  string email = 1;
+  UserType type = 2;
+
+  enum UserType{
+    DEFAULT = 0;
+    EMAIL = 1;
+    GOOGLE = 2;
+  }
+};
+
+message RequestGetPlaylist{
+  string playlistId = 1;
+  RequestUser user = 2;
+};
+
+// response
+message ResponsePlaylist{
+  int64 playlistId = 1;
+  string name = 2;
+  int64 popularity = 3;
+  ResponsePlaylistVisibilityState status = 4;
+
+  enum ResponsePlaylistVisibilityState{
+    PUBLIC = 0;
+    PRIVATE = 1;
+  };
+};
+
+message ResponseSong{
+  int64 songId = 1;
+  string title = 2;
+  optional string poster = 3;
+  string masterPlaylist = 4;
+  // todo add more items
+};
+
+message ResponseFullPlaylist{
+  ResponsePlaylist playlist = 1;
+  repeated ResponseSong songs = 2;
+};
+
+
+
+service GatewayPlaylistService{
+  rpc getPlaylist(RequestGetPlaylist) returns (ResponseFullPlaylist);
+}

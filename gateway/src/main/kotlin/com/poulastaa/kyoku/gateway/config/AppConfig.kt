@@ -22,7 +22,7 @@ class AppConfig {
     )
 
     @Bean
-    fun providePlaylistServicePayload(
+    fun provideRequestValidatorServicePayload(
         @Value("\${spring.cloud.gateway.server.webflux.routes[2].id}")
         name: String,
         @Value("\${spring.cloud.gateway.server.webflux.routes[2].uri}")
@@ -35,13 +35,14 @@ class AppConfig {
         servicePath = servicePath
     )
 
+    // grpc
     @Bean
-    fun provideRequestValidatorServicePayload(
-        @Value("\${spring.cloud.gateway.server.webflux.routes[2].id}")
+    fun providePlaylistServicePayload(
+        @Value("\${spring.cloud.gateway.server.webflux.routes[4].id}")
         name: String,
-        @Value("\${spring.cloud.gateway.server.webflux.routes[2].uri}")
+        @Value("\${spring.cloud.gateway.server.webflux.routes[4].uri}")
         uri: String,
-        @Value("\${spring.cloud.gateway.server.webflux.routes[2].predicates[0]}")
+        @Value("\${spring.cloud.gateway.server.webflux.routes[4].predicates[0]}")
         servicePath: String,
     ) = ServiceConfigPayload(
         id = name,

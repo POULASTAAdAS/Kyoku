@@ -28,7 +28,6 @@ extra["springGrpcVersion"] = "0.12.0"
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // sql
@@ -39,8 +38,9 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     // gRPC
-    implementation("io.grpc:grpc-services")
-    implementation("org.springframework.grpc:spring-grpc-server-web-spring-boot-starter")
+    implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
+    implementation("io.grpc:grpc-protobuf")
+    implementation("io.grpc:grpc-stub")
 
     // jwt
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

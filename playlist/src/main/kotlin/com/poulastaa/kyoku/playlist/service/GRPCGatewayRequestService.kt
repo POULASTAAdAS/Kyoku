@@ -3,9 +3,11 @@ package com.poulastaa.kyoku.playlist.service
 import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
 import com.poulastaa.kyoku.grpc.gateway_playlist.RequestGetPlaylist
 import com.poulastaa.kyoku.grpc.gateway_playlist.ResponseFullPlaylist
+import com.poulastaa.kyoku.grpc.gateway_playlist.ResponsePlaylist
+import com.poulastaa.kyoku.grpc.gateway_playlist.ResponseSong
 import io.grpc.stub.StreamObserver
-import org.springframework.grpc.client.interceptor.security.BearerTokenAuthenticationInterceptor
-import org.springframework.grpc.server.service.GrpcService
+import net.devh.boot.grpc.server.service.GrpcService
+import kotlin.random.Random
 
 @GrpcService
 class GRPCGatewayRequestService : GatewayPlaylistServiceGrpc.GatewayPlaylistServiceImplBase() {
@@ -13,7 +15,28 @@ class GRPCGatewayRequestService : GatewayPlaylistServiceGrpc.GatewayPlaylistServ
         request: RequestGetPlaylist,
         responseObserver: StreamObserver<ResponseFullPlaylist>,
     ) {
-        println("djaidjwijdwi")
-        print(request)
+        println(request.toString())
+
+        responseObserver.onNext(
+            ResponseFullPlaylist.newBuilder()
+                .setPlaylist(
+                    ResponsePlaylist.newBuilder()
+                        .setPlaylistId(1)
+                        .setName("Playlist #385")
+                        .setPopularity(4279782)
+                        .setStatus(ResponsePlaylist.ResponsePlaylistVisibilityState.PRIVATE)
+                        .build()
+                )
+                .addAllSongs((1..10).map {
+                    ResponseSong.newBuilder().apply {
+                        this.songId = it.toLong()
+                        this.title = "song $it"
+                        this.masterPlaylist = "/master-playlist/song_$it.m3u8"
+                        if (Random.nextBoolean()) this.poster = "/image/song/$it.jpg"
+                    }.build()
+                })
+                .build()
+        )
+        responseObserver.onCompleted()
     }
 }
