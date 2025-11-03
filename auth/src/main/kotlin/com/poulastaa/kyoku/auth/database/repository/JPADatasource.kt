@@ -19,6 +19,4 @@ interface UserDataSource : JpaRepository<EntityUser, UserId> {
 
 interface UserJWTTokenDataSource : JpaRepository<EntityJWTToken, UserId>
 
-interface CountryDataSource : JpaRepository<EntityCountry, CountryId> {
-    fun getEntityCountryByCodeIgnoreCase(code: String): EntityCountry
-}
+interface CountryDataSource : JpaRepository<EntityCountry, CountryId>

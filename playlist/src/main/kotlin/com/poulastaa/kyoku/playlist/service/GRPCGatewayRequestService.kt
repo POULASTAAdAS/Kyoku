@@ -15,8 +15,6 @@ class GRPCGatewayRequestService : GatewayPlaylistServiceGrpc.GatewayPlaylistServ
         request: RequestGetPlaylist,
         responseObserver: StreamObserver<ResponseFullPlaylist>,
     ) {
-        println(request.toString())
-
         responseObserver.onNext(
             ResponseFullPlaylist.newBuilder()
                 .setPlaylist(

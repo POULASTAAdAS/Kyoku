@@ -1,6 +1,6 @@
-package com.poulastaa.kyoku.gateway.config
+package com.poulastaa.kyoku.auth.config
 
-import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
+import com.poulastaa.kyoku.grpc.user_core.CoreUserServiceGrpc
 import net.devh.boot.grpc.client.inject.StubTransformer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,8 +11,8 @@ class GRPCConfig {
     @Bean
     fun stubTransformer(): StubTransformer {
         return StubTransformer { _, stub ->
-            if (stub is GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub)
-                stub.withDeadlineAfter(10, TimeUnit.SECONDS)
+            if (stub is CoreUserServiceGrpc.CoreUserServiceFutureStub)
+                stub.withDeadlineAfter(30, TimeUnit.SECONDS)
             else stub
         }
     }

@@ -1,0 +1,66 @@
+logging:
+  level:
+    root: warn
+    com.poulastaa: warn
+
+spring:
+  application:
+    name: ${user-service.name:user}
+    version: ${user-service.version:1.0.0}
+
+  config:
+    name: ${discovery.name:discovery}
+    import: optional:configserver:http://kyoku.poulastaa.shop:1200
+  profiles:
+    active: dev
+
+  cloud:
+    config: # --------------------------------- CONFIG-SERVER ---------------------------------
+      uri: http://kyoku.poulastaa.shop:1200
+      username: admin
+      password: configServer101$@
+      profile: dev
+      label: main
+      fail-fast: true
+
+      retry:
+        initial-interval: 1000
+        multiplier: 1.6
+        max-attempts: 4
+        max-interval: 2000
+
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+
+  mvc:
+    log-request-details: true
+  output:
+    ansi:
+      enabled: detect
+
+  devtools:
+    livereload:
+      enabled: true
+      port: ${user-service.livereload-port:8087}
+
+  datasource: # -------------------------- SQL --------------------------
+    url: ${sql.user}
+  jpa:
+    show-sql: ${sql.show-sql}
+    database: ${sql.database}
+    hibernate:
+      ddl-auto: ${sql.ddl-auto}
+      naming:
+        physical-strategy: ${sql.physical-strategy}
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: http://kyoku.poulastaa.shop:8001/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      grpc.port: ${user-service.grpc.port:8086}

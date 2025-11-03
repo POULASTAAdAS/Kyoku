@@ -166,7 +166,7 @@ class AuthService(
                 countryCode = countryCode,
                 type = UserType.GOOGLE,
             )
-        ).let { user ->
+        )?.let { user ->
             cache.setUserByEmail(user)
 
             val accessToken = jwt.generateToken(
@@ -196,15 +196,15 @@ class AuthService(
                         refreshToken = refreshToken
                     )
                 ),
-            )
-        }.also {
-            notification.publishMail(
-                Notification.Email(
-                    email = payload.email,
-                    username = payload.name,
-                    type = Notification.Type.WELCOME
+            ).also {
+                notification.publishMail(
+                    Notification.Email(
+                        email = payload.email,
+                        username = payload.name,
+                        type = Notification.Type.WELCOME
+                    )
                 )
-            )
+            }
         }
     } ?: ResponseWrapper( // encrypting password failed
         status = ResponseStatus.INTERNAL_SERVER_ERROR
@@ -260,7 +260,7 @@ class AuthService(
                 countryCode = user.countryCode,
                 type = type
             )
-        ).also {
+        )?.also {
             cache.setUserByEmail(it) // update -1 ID with new generated ID
             notification.publishMail(
                 Notification.Email(
@@ -269,7 +269,8 @@ class AuthService(
                     type = Notification.Type.WELCOME
                 )
             )
-        } else notification.publishMail(
+        } ?: return@let ResponseToken()
+        else notification.publishMail(
             Notification.Email(
                 email = user.email,
                 username = user.username,
@@ -439,11 +440,27 @@ class AuthService(
             status = ResponseStatus.INTERNAL_SERVER_ERROR,
             payload = UpdatePasswordResponse(UpdatePasswordStatus.ERROR)
         )
-        db.updatePassword(
+
+        when (db.updatePassword(
             id = user.id,
             passwordHash = passwordHash
-        ).also {
-            cache.setUserByEmail(user.copy(passwordHash = passwordHash))
+        )) {
+            true -> cache.setUserByEmail(user.copy(passwordHash = passwordHash))
+
+            false -> return ResponseWrapper(
+                status = ResponseStatus.INTERNAL_SERVER_ERROR,
+                payload = UpdatePasswordResponse(
+                    UpdatePasswordStatus.ERROR
+                )
+            )
+
+            // null means no user
+            null -> return ResponseWrapper(
+                status = ResponseStatus.USER_NOT_FOUND,
+                payload = UpdatePasswordResponse(
+                    UpdatePasswordStatus.USER_NOT_FOUND
+                )
+            )
         }
 
         val (time, unit) = context.getBean(

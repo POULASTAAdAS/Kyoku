@@ -62,8 +62,8 @@ docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% -e "SHOW VARI
 
 REM Setup each replica
 call :setup_replica user-replica1
-call :setup_replica user-replica2  
-call :setup_replica user-replica3
+@REM call :setup_replica user-replica2  
+@REM call :setup_replica user-replica3
 
 echo [SUCCESS] Replication setup complete!
 echo [INFO] Checking status in 5 seconds...
@@ -74,8 +74,8 @@ echo ================================================
 echo            Replication Status Check
 echo ================================================
 call :check_replica_status user-replica1
-call :check_replica_status user-replica2
-call :check_replica_status user-replica3
+@REM call :check_replica_status user-replica2
+@REM call :check_replica_status user-replica3
 
 echo [INFO] Setup completed. Press any key to exit.
 pause

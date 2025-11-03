@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.user_core";
+
+package user;
+
+enum GRPCUserType{
+  DEFAULT = 0;
+  EMAIL = 1;
+  GOOGLE = 2;
+};
+
+// request
+message GRPCRequestUser{
+  string username = 1;
+  string displayName = 2;
+  string email = 3;
+  string passwordHash = 4;
+  optional string profileUrl = 5;
+  optional string dateOfBrith = 6;
+  GRPCUserType type = 7;
+  string countryCode = 8;
+};
+
+message GRPCRequestUpdatePassword{
+  int64 userId = 1;
+  string passwordHash = 2;
+};
+
+// response
+message GRPCResponseUser{
+  int64 userId = 1;
+  string username = 2;
+  string displayName = 3;
+  string email = 4;
+  string passwordHash = 5;
+  optional string profileUrl = 6;
+  optional string dateOfBrith = 7;
+  GRPCUserType type = 8;
+  string countryCode = 9;
+};
+
+message EmptyResponse{};
+
+service CoreUserService{
+  rpc createUser(GRPCRequestUser) returns (GRPCResponseUser);
+  rpc updatePassword(GRPCRequestUpdatePassword) returns (EmptyResponse);
+}
