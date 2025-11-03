@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.auth.service
 
 import com.poulastaa.kyoku.auth.database.entity.EntityJWTToken
 import com.poulastaa.kyoku.auth.database.entity.EntityUser
-import com.poulastaa.kyoku.auth.database.repository.CountryDataSource
 import com.poulastaa.kyoku.auth.database.repository.UserDataSource
 import com.poulastaa.kyoku.auth.database.repository.UserJWTTokenDataSource
 import com.poulastaa.kyoku.auth.database.repository.UserTypeDataSource
@@ -17,20 +16,17 @@ import com.poulastaa.kyoku.grpc.user_core.GRPCRequestUser
 import com.poulastaa.kyoku.grpc.user_core.GRPCUserType
 import net.devh.boot.grpc.client.inject.GrpcClient
 import org.slf4j.LoggerFactory
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 @Service
-@Transactional
 class DatabaseService(
     private val user: UserDataSource,
     private val jwt: UserJWTTokenDataSource,
     private val userType: UserTypeDataSource,
 ) {
-    @GrpcClient("user")
+    @GrpcClient("user") // this name must be same as service name
     private lateinit var grpcCoreUser: CoreUserServiceGrpc.CoreUserServiceFutureStub
     private val logger = LoggerFactory.getLogger(this::class.java)
 
