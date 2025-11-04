@@ -39,18 +39,19 @@ class DatabaseService(
     )?.toDtoUse()
 
     fun createUser(newUser: DtoUser) = try {
-        val user = grpcCoreUser.withDeadlineAfter(30, TimeUnit.SECONDS).createUser(
-            GRPCRequestUser.newBuilder().apply {
-                this.username = newUser.username
-                this.displayName = newUser.displayName
-                this.email = newUser.email
-                this.passwordHash = newUser.passwordHash
-                newUser.profileUrl?.let { this.profileUrl = it }
-                newUser.birthDate?.let { this.dateOfBrith = it.toString() }
-                this.type = GRPCUserType.valueOf(newUser.type.toString())
-                this.countryCode = newUser.countryCode
-            }.build()
-        ).get()
+        val user = grpcCoreUser.withDeadlineAfter(30, TimeUnit.SECONDS)
+            .createUser(
+                GRPCRequestUser.newBuilder().apply {
+                    this.username = newUser.username
+                    this.displayName = newUser.displayName
+                    this.email = newUser.email
+                    this.passwordHash = newUser.passwordHash
+                    newUser.profileUrl?.let { this.profileUrl = it }
+                    newUser.birthDate?.let { this.dateOfBrith = it.toString() }
+                    this.type = GRPCUserType.valueOf(newUser.type.toString())
+                    this.countryCode = newUser.countryCode
+                }.build()
+            ).get()
 
         DtoUser(
             id = user.userId,

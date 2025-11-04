@@ -5,4 +5,6 @@
     <string name="link_label">link</string>
     <string name="drop_down">Drop down</string>
     <string name="invalid_link">Invalid url</string>
+    <string name="set_bdate_title">Tell us your birthday</string>
+    <string name="bdate_label">DD-MM-YYYY</string>
 </resources>

@@ -74,3 +74,7 @@ val DropDownArrowIcon: ImageVector
 val MusicIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(R.drawable.ic_music_vector)
+
+val CalendarIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(R.drawable.ic_b_date)

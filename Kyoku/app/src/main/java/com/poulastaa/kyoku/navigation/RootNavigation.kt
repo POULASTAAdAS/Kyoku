@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.poulastaa.auth.presentation.AuthRootGraph
 import com.poulastaa.board.presentation.import_playlist.ImportPlaylistRootScreen
+import com.poulastaa.board.presentation.set_bdate.SetBDateRootScreen
 import com.poulastaa.core.domain.SavedScreen
 
 @Composable
@@ -28,7 +29,7 @@ internal fun RootNavigation(
         }
 
         boardGraph(
-            nac = nav,
+            nav = nav,
             navigateToMain = {
                 nav.navigate(Screens.Main) {
                     popUpTo(Screens.Main) {
@@ -49,17 +50,21 @@ private fun NavGraphBuilder.authGraph(
 }
 
 private fun NavGraphBuilder.boardGraph(
-    nac: NavController,
+    nav: NavController,
     navigateToMain: () -> Unit,
 ) {
     composable<Screens.SetUp.ImportSpotifyPlaylist> {
         ImportPlaylistRootScreen {
-            nac.navigate(Screens.SetUp.SetBirthDate)
+            nav.navigate(Screens.SetUp.SetBirthDate)
         }
     }
 
     composable<Screens.SetUp.SetBirthDate> {
-
+        SetBDateRootScreen(
+            navigateBack = {
+                nav.popBackStack()
+            }
+        )
     }
 
     composable<Screens.SetUp.PickGenre> {
