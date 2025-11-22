@@ -1,10 +1,6 @@
 package com.poulastaa.kyoku.playlist.service
 
-import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
-import com.poulastaa.kyoku.grpc.gateway_playlist.RequestGetPlaylist
-import com.poulastaa.kyoku.grpc.gateway_playlist.ResponseFullPlaylist
-import com.poulastaa.kyoku.grpc.gateway_playlist.ResponsePlaylist
-import com.poulastaa.kyoku.grpc.gateway_playlist.ResponseSong
+import com.poulastaa.kyoku.grpc.gateway_playlist.*
 import io.grpc.stub.StreamObserver
 import net.devh.boot.grpc.server.service.GrpcService
 import kotlin.random.Random

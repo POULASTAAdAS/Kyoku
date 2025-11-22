@@ -1,5 +1,6 @@
 package com.poulastaa.board.presentation.set_bdate
 
+import android.widget.Toast
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.core.presentation.StateFullKyokuWindowSize
+import com.poulastaa.core.presentation.designsystem.ObserveAsEvent
 import com.poulastaa.core.presentation.ui.dimens
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -21,6 +23,16 @@ fun SetBDateRootScreen(
     val activity = LocalActivity.current ?: return
     val viewmodel = hiltViewModel<SetUpBDateViewmodel>()
     val state by viewmodel.state.collectAsStateWithLifecycle()
+
+    ObserveAsEvent(viewmodel.uiEvent) { event ->
+        when (event) {
+            is SetUpBDateUiEvent.EmitToast -> Toast.makeText(
+                activity,
+                event.message.asString(activity),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     StateFullKyokuWindowSize(
         sharedFlow = viewmodel.eventManager.rootEvent,

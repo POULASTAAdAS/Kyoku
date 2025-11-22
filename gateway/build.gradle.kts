@@ -44,6 +44,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     // gRPC
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
     implementation("net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE") {
         exclude(group = "io.grpc", module = "grpc-netty-shaded")
     }
