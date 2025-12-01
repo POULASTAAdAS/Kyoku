@@ -33,8 +33,7 @@ class ValidationFilter(
     private val mapper: ObjectMapper,
 ) : GatewayFilter { // Must implement GatewayFilter, not WebFilter
 
-    @GrpcClient("playlist")
-    // Use CoroutineStub for Reactive/Non-blocking
+    @GrpcClient("validator")
     private lateinit var validator: ValidationServiceGrpc.ValidationServiceFutureStub
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {

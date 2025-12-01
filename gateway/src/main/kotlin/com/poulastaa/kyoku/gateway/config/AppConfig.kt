@@ -64,4 +64,18 @@ class AppConfig {
         uri = uri,
         servicePath = servicePath
     )
+
+    @Bean
+    fun provideValidatorServicePayload(
+        @Value("\${spring.cloud.gateway.server.webflux.routes[6].id}")
+        name: String,
+        @Value("\${spring.cloud.gateway.server.webflux.routes[6].uri}")
+        uri: String,
+        @Value("\${spring.cloud.gateway.server.webflux.routes[6].predicates[0]}")
+        servicePath: String,
+    ) = ServiceConfigPayload(
+        id = name,
+        uri = uri,
+        servicePath = servicePath
+    )
 }
