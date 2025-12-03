@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.validation";
+
+package validation;
+
+message ValidationRequest{
+  string token = 1;
+};
+
+enum UserType{
+  DEFAULT = 0;
+  EMAIL = 1;
+  GOOGLE = 2;
+}
+
+message ResponseUser{
+  int64 userId = 1;
+  string username = 2;
+  string email = 3;
+  UserType type = 4;
+};
+
+enum ResponseStatus{
+  ERROR = 0;
+  SUCCESS = 1;
+  TOKEN_EXPIRED = 2;
+}
+
+message ValidationResponse{
+  ResponseUser user = 1;
+  ResponseStatus status = 2;
+}
+
+service ValidationService{
+  rpc validateAccessToken(ValidationRequest) returns (ValidationResponse);
+}
