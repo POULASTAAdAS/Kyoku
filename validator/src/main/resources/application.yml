@@ -3,6 +3,11 @@ logging:
     root: warn
     com.poulastaa: warn
 
+grpc:
+  server:
+    port: ${validator-service.grpc.port:8078}
+    reflection-service-enabled: true
+
 spring:
   application:
     name: ${validator-service.name:validator}
@@ -32,8 +37,6 @@ spring:
       request-connect-timeout: 5000
       request-read-timeout: 5000
 
-  mvc:
-    log-request-details: true
   output:
     ansi:
       enabled: detect
@@ -41,18 +44,18 @@ spring:
   devtools:
     livereload:
       enabled: true
-      port: ${validator-service.livereload-port:8087}
+      port: ${validator-service.livereload-port:8079}
 
-
-#  datasource: # -------------------------- SQL --------------------------
-#    url: ${sql.user}
-#  jpa:
-#    show-sql: ${sql.show-sql}
-#    database: ${sql.database}
-#    hibernate:
-#      ddl-auto: ${sql.ddl-auto}
-#      naming:
-#        physical-strategy: ${sql.physical-strategy}
+jwt:
+  access:
+    secret: ${jwt.access.secret}
+    subject: ${jwt.access.subject}
+    issuer: ${jwt.access.issuer}
+    audience: ${jwt.access.audience}
+    claim:
+      key: ${jwt.access.claim-key}
+    time: ${jwt.access.time}
+    unit: ${jwt.access.unit}
 
 eureka:
   client:
@@ -64,4 +67,4 @@ eureka:
   instance:
     prefer-ip-address: true
     metadata-map:
-      grpc.port: ${validator-service.grpc.port:8086}
+      grpc.port: ${validator-service.grpc.port:8078}

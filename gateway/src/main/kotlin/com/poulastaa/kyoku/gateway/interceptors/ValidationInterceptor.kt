@@ -1,8 +1,8 @@
 package com.poulastaa.kyoku.gateway.interceptors
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.poulastaa.kyoku.gateway.model.DtoUser
 import com.poulastaa.kyoku.gateway.model.UserType
+import com.poulastaa.kyoku.gateway.model.dto.DtoAuthenticationTokenClaim
 import com.poulastaa.kyoku.gateway.model.request.EmptyRequest
 import com.poulastaa.kyoku.gateway.model.response.ResponseStatus
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
@@ -25,6 +25,7 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 import reactor.util.retry.Retry
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 import com.poulastaa.kyoku.grpc.validation.ResponseStatus as GrpcResponseStatus
 import com.poulastaa.kyoku.grpc.validation.UserType as GrpcUserType
 
@@ -34,7 +35,10 @@ class ValidationFilter(
 ) : GatewayFilter { // Must implement GatewayFilter, not WebFilter
 
     @GrpcClient("validator")
-    private lateinit var validator: ValidationServiceGrpc.ValidationServiceFutureStub
+    private lateinit var validatorStub: ValidationServiceGrpc.ValidationServiceFutureStub
+
+    private val validator: ValidationServiceGrpc.ValidationServiceFutureStub
+        get() = validatorStub.withDeadlineAfter(5, TimeUnit.SECONDS)
 
     override fun filter(exchange: ServerWebExchange, chain: GatewayFilterChain): Mono<Void> {
         val token = exchange.request.headers
@@ -46,34 +50,28 @@ class ValidationFilter(
             )
 
         return mono(Dispatchers.IO) { // Use IO Context for gRPC work
-            try {
-                // Suspend function (non-blocking)
-                val response = validator.validateAccessToken(
-                    ValidationRequest.newBuilder().setToken(token).build()
-                ).await()
+            // Suspend function (non-blocking)
+            val response = validator.validateAccessToken(
+                ValidationRequest.newBuilder().setToken(token).build()
+            ).await()
 
-                when (response.status) {
-                    GrpcResponseStatus.SUCCESS -> response.user
-                    GrpcResponseStatus.TOKEN_EXPIRED -> throw RetryableAuthenticationException(
-                        "Token expired",
-                        HttpStatus.PRECONDITION_FAILED
-                    )
+            when (response.status) {
+                GrpcResponseStatus.SUCCESS -> response.payload
+                GrpcResponseStatus.TOKEN_EXPIRED -> throw RetryableAuthenticationException(
+                    "Token expired",
+                    HttpStatus.PRECONDITION_FAILED
+                )
 
-                    else -> throw NonRetryableAuthenticationException(
-                        "Invalid Token",
-                        HttpStatus.UNAUTHORIZED
-                    )
-                }
-            } catch (e: Exception) {
-                throw e // Rethrow to be caught by retry/onErrorResume
+                else -> throw NonRetryableAuthenticationException(
+                    "Invalid Token",
+                    HttpStatus.UNAUTHORIZED
+                )
             }
         }.flatMap { user ->
             // Store user in attributes
-            exchange.attributes[AUTHENTICATED_USER_KEY] = DtoUser(
-                userId = user.userId,
-                username = user.username,
+            exchange.attributes[AUTHENTICATED_USER_KEY] = DtoAuthenticationTokenClaim(
                 email = user.email,
-                type = when (user.type) {
+                userType = when (user.type) {
                     GrpcUserType.EMAIL -> UserType.EMAIL
                     GrpcUserType.GOOGLE -> UserType.GOOGLE
                     else -> return@flatMap Mono.error(
@@ -89,12 +87,35 @@ class ValidationFilter(
         }.retryWhen(
             Retry.fixedDelay(RETRY_ATTEMPTS, RETRY_DELAY)
                 .filter { it is RetryableAuthenticationException }
-        ).onErrorResume {
-            writeErrorResponse(
-                exchange,
-                HttpStatusCode.valueOf(HttpStatus.UNAUTHORIZED.value()),
-                ResponseWrapper<EmptyRequest>()
-            )
+        ).onErrorResume { error ->
+            when (error) {
+                is NonRetryableAuthenticationException -> {
+                    writeErrorResponse(
+                        exchange,
+                        error.status,
+                        ResponseWrapper<EmptyRequest>(status = error.responseStatus)
+                    )
+                }
+
+                is RetryableAuthenticationException -> {
+                    writeErrorResponse(
+                        exchange,
+                        error.status,
+                        ResponseWrapper<EmptyRequest>(status = error.responseStatus)
+                    )
+                }
+
+                else -> {
+                    // Log unexpected errors
+                    println("Unexpected error in ValidationFilter: ${error.message}")
+                    error.printStackTrace()
+                    writeErrorResponse(
+                        exchange,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        ResponseWrapper<EmptyRequest>(status = ResponseStatus.INTERNAL_SERVER_ERROR)
+                    )
+                }
+            }
         }
     }
 

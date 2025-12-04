@@ -2,9 +2,9 @@ package com.poulastaa.kyoku.gateway.interceptors
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.util.JsonFormat
-import com.poulastaa.kyoku.gateway.model.DtoUser
 import com.poulastaa.kyoku.gateway.model.ServiceConfigPayload
 import com.poulastaa.kyoku.gateway.model.UserType
+import com.poulastaa.kyoku.gateway.model.dto.DtoAuthenticationTokenClaim
 import com.poulastaa.kyoku.gateway.model.response.ResponseStatus
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
 import com.poulastaa.kyoku.gateway.utils.NonRetryableAuthenticationException
@@ -23,13 +23,16 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
+import java.util.concurrent.TimeUnit
 
 @Configuration
 class PlaylistRouteConfig {
 
     @GrpcClient("playlist")
-    // Use CoroutineStub
-    private lateinit var playlist: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
+    private lateinit var playlistStub: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
+
+    private val playlist: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
+        get() = playlistStub.withDeadlineAfter(5, TimeUnit.SECONDS)
 
     @Bean
     fun providePlaylistRoute(
@@ -47,11 +50,12 @@ class PlaylistRouteConfig {
                     // 2. Add Custom Logic Filter
                     f.filter { exchange, _ ->
                         mono(Dispatchers.IO) {
-                            val user = exchange.attributes[ValidationFilter.AUTHENTICATED_USER_KEY] as? DtoUser
-                                ?: throw NonRetryableAuthenticationException(
-                                    "User context missing",
-                                    HttpStatus.UNAUTHORIZED
-                                )
+                            val user =
+                                exchange.attributes[ValidationFilter.AUTHENTICATED_USER_KEY] as? DtoAuthenticationTokenClaim
+                                    ?: throw NonRetryableAuthenticationException(
+                                        "User context missing",
+                                        HttpStatus.UNAUTHORIZED
+                                    )
 
                             val playlistId = exchange.request.queryParams["playlistId"]?.firstOrNull()
                                 ?: return@mono ResponseEntity(
@@ -66,7 +70,7 @@ class PlaylistRouteConfig {
                                 this.playlistId = playlistId
                                 this.user = RequestUser.newBuilder().apply {
                                     email = user.email
-                                    type = when (user.type) {
+                                    type = when (user.userType) {
                                         UserType.EMAIL -> RequestUser.UserType.EMAIL
                                         UserType.GOOGLE -> RequestUser.UserType.GOOGLE
                                     }
@@ -94,6 +98,23 @@ class PlaylistRouteConfig {
                                 is ResponseWrapper<*> -> mapper.writeValueAsBytes(body) // It's an error object
                                 else -> ByteArray(0)
                             }
+
+                            response.writeWith(
+                                Mono.just(response.bufferFactory().wrap(bytes))
+                            )
+                        }.onErrorResume { error ->
+                            println("Error in PlaylistInterceptor: ${error.message}")
+                            error.printStackTrace()
+
+                            val response = exchange.response
+                            response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+                            response.headers.contentType = MediaType.APPLICATION_JSON
+
+                            val errorWrapper = ResponseWrapper(
+                                status = ResponseStatus.INTERNAL_SERVER_ERROR,
+                                payload = error.message
+                            )
+                            val bytes = mapper.writeValueAsBytes(errorWrapper)
 
                             response.writeWith(
                                 Mono.just(response.bufferFactory().wrap(bytes))

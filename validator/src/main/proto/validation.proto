@@ -15,9 +15,7 @@ enum UserType{
   GOOGLE = 2;
 }
 
-message ResponseUser{
-  int64 userId = 1;
-  string username = 2;
+message Payload{
   string email = 3;
   UserType type = 4;
 };
@@ -29,7 +27,7 @@ enum ResponseStatus{
 }
 
 message ValidationResponse{
-  ResponseUser user = 1;
+  Payload payload = 1;
   ResponseStatus status = 2;
 }
 
