@@ -14,7 +14,7 @@ class GRPCPlaylistUserService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun saveUserPlaylist(
-        request: RequestSaveUserPlaylist?,
+        request: RequestSaveUserPlaylist,
         responseObserver: StreamObserver<EmptyResponse>,
     ) {
 

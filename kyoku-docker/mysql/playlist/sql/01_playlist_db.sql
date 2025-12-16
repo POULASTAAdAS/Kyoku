@@ -10,14 +10,12 @@ CREATE TABLE
         visibility_state BOOL DEFAULT FALSE,
         popularity BIGINT UNSIGNED NOT NULL DEFAULT 0,
         song_count INT UNSIGNED DEFAULT 0,
-        total_duration INT UNSIGNED NOT NULL,
+        total_duration BIGINT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        --
         INDEX idx_playlist_name (`name`)
     );
-
-
-
 
 CREATE TABLE
     SongPlaylist (
