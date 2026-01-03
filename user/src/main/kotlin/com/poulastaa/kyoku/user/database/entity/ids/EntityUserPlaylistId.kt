@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable
 import java.io.Serializable
 
 @Embeddable
-data class UserPlaylistId(
+data class EntityUserPlaylistId(
     @Column(name = "user_id", nullable = false)
     val userId: Long = 0,
 
