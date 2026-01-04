@@ -14,25 +14,25 @@ import java.sql.Timestamp
     name = "Playlist",
     indexes = [Index(columnList = "`name`", name = "idx_playlist_name")],
 )
-class EntityPlaylist : BaseIdEntity<PlaylistId>() {
+class EntityPlaylist(
     @Column(name = "name", nullable = false, length = 120)
-    var email: String = ""
+    var name: String = "",
 
     @Column(name = "description", nullable = false)
-    var description: String = ""
+    var description: String = "",
 
     @Column(name = "visibility_state", nullable = false)
-    var isPublic: Boolean = false
+    var isPublic: Boolean = false,
 
     @Column(name = "popularity", nullable = false)
-    var popularity: Long = 0
+    var popularity: Long = 0,
 
     @Column(name = "song_count", nullable = false)
-    var totalSongs: Int = 0
+    var totalSongs: Int = 0,
 
     @Column(name = "total_duration", nullable = false)
-    var totalDuration: Long = 0
-
+    var totalDuration: Long = 0,
+) : BaseIdEntity<PlaylistId>() {
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     var createdAtt: Timestamp? = null

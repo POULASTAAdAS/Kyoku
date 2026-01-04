@@ -56,6 +56,13 @@ dependencies {
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    // spotify api
+    implementation("se.michaelthelin.spotify:spotify-web-api-java:9.4.0")
+
+    // ktor client
+    implementation("io.ktor:ktor-client-core-jvm:3.3.3")
+    implementation("io.ktor:ktor-client-apache-jvm:3.3.3")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
