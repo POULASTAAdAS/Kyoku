@@ -1,21 +1,10 @@
 syntax = "proto3";
+import "mddel.proto";
 
 option java_multiple_files = true;
 option java_package = "com.poulastaa.kyoku.grpc.gateway_playlist";
 
 package gatewayPlaylist;
-
-// request
-message RequestUser{
-  string email = 1;
-  UserType type = 2;
-
-  enum UserType{
-    DEFAULT = 0;
-    EMAIL = 1;
-    GOOGLE = 2;
-  }
-};
 
 message RequestGetPlaylist{
   string playlistId = 1;
@@ -47,7 +36,6 @@ message ResponseFullPlaylist{
   ResponsePlaylist playlist = 1;
   repeated ResponseSong songs = 2;
 };
-
 
 
 service GatewayPlaylistService{

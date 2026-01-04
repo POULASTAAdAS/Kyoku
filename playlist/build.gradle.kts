@@ -31,8 +31,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // sql
-//    runtimeOnly("com.mysql:mysql-connector-j")
-//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
     // service discovery
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")

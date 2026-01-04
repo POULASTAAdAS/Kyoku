@@ -4,6 +4,7 @@ import com.poulastaa.kyoku.user.database.entity.ids.EntityUserPlaylistId
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 
+@Suppress("JpaDataSourceORMInspection")
 @Entity
 @Table(name = "UserPlaylist")
 class EntityUserPlaylist(

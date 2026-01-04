@@ -4,8 +4,8 @@ import com.poulastaa.kyoku.user.database.entity.EntityCountry
 import com.poulastaa.kyoku.user.database.entity.EntityUser
 import com.poulastaa.kyoku.user.database.entity.EntityUserPlaylist
 import com.poulastaa.kyoku.user.database.entity.EntityUserType
-import com.poulastaa.kyoku.user.database.entity.ids.EntityUserPlaylistId
 import com.poulastaa.kyoku.user.utils.CountryId
+import com.poulastaa.kyoku.user.utils.PlaylistId
 import com.poulastaa.kyoku.user.utils.UserId
 import com.poulastaa.kyoku.user.utils.UserTypeId
 import org.springframework.data.jpa.repository.JpaRepository
@@ -20,4 +20,4 @@ interface CountryDataSource : JpaRepository<EntityCountry, CountryId> {
     fun getEntityCountryByCodeIgnoreCase(code: String): EntityCountry
 }
 
-interface UserPlaylistDataSource : JpaRepository<EntityUserPlaylist, EntityUserPlaylistId>
+interface UserPlaylistDataSource : JpaRepository<EntityUserPlaylist, PlaylistId>

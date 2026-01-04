@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "mddel.proto";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.playlist_user";
+
+package playlistUser;
+
+message RequestSaveUserPlaylist{
+  int64 playlistId = 1;
+  RequestUser user = 2;
+};
+
+message EmptyResponse{};
+
+service  PlaylistUserService{
+  rpc saveUserPlaylist(RequestSaveUserPlaylist) returns (EmptyResponse);
+}
