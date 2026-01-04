@@ -6,7 +6,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.poulastaa.kyoku.grpc.gateway_playlist.*
-import com.poulastaa.kyoku.grpc.model.RequestUser
+import com.poulastaa.kyoku.grpc.model.*
 import com.poulastaa.kyoku.grpc.playlist_user.EmptyResponse
 import com.poulastaa.kyoku.grpc.playlist_user.PlaylistUserServiceGrpc
 import com.poulastaa.kyoku.grpc.playlist_user.RequestSaveUserPlaylist
@@ -28,12 +28,12 @@ import io.ktor.utils.io.*
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import net.devh.boot.grpc.server.service.GrpcService
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 
 private const val SPOTIFY_ACCESS_TOKEN_URL = "https://accounts.spotify.com/api/token"
@@ -44,9 +44,12 @@ private const val SPOTIFY_ACCESS_TOKEN_PARAM_VALUE = "client_credentials"
 @GrpcService
 class GRPCGatewayRequestService(
     private val playlistDB: PlaylistDataSource,
+    private val playlist: PlaylistDataService,
+
     @param:Value("\${spotify.clientId}")
     private val clientId: String,
     @param:Value("\${spotify.clientSecret}")
+
     private val clientSecret: String,
     private val gson: Gson,
 ) : GatewayPlaylistServiceGrpc.GatewayPlaylistServiceImplBase() {
@@ -55,31 +58,43 @@ class GRPCGatewayRequestService(
         get() = userServiceStub.withDeadlineAfter(5, TimeUnit.SECONDS)
 
     @Transactional
-    fun getSongTitles(
+    override fun getPlaylist(
         request: RequestGetPlaylist,
         responseObserver: StreamObserver<ResponseFullPlaylist>,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             // extract songs from playlistId
             val spotifySongTitleList = getSongTitles(request.playlistId)
-            val songs = getSongs(spotifySongTitleList)
+            if (spotifySongTitleList.isEmpty()) {
+                responseObserver.onError(
+                    Status.ABORTED.withDescription("no songs found on playlist")
+                        .asRuntimeException()
+                )
+                return@launch
+            }
+
+            val songsDef = async { playlist.getSongByTitles(spotifySongTitleList) }
 
             //1. save playlist
-            val existingPlaylists = playlistDB.count()
-            val dbPlaylist = playlistDB.save(
-                EntityPlaylist(
-                    name = "Playlist #${existingPlaylists + 1}",
-                    description = "Enjoy your imported playlist",
-                    visibility = PlaylistVisibility.PRIVATE.status,
-                    totalSongs = 0, // TODO
-                    totalDuration = 0, // TODO
+            val dbPlaylistDef = async {
+                val existingPlaylists = playlistDB.count()
+                playlistDB.save(
+                    EntityPlaylist(
+                        name = "Playlist #${existingPlaylists + 1}",
+                        description = "Enjoy your imported playlist",
+                        visibility = PlaylistVisibility.PRIVATE.status,
+                        totalDuration = 0, // TODO
+                    )
                 )
-            )
+            }
+            val songs = songsDef.await()
+            val dbPlaylist = dbPlaylistDef.await()
+            async { dbPlaylist.totalSongs = songs.size }.await()
+
             //2. save playlistId + songId
 
+
             //3. save userId + playlistId to user-service
-
-
             Futures.addCallback(
                 userService.saveUserPlaylist(RequestSaveUserPlaylist.newBuilder().apply {
                     this.playlistId = dbPlaylist.id
@@ -90,25 +105,112 @@ class GRPCGatewayRequestService(
                 }.build()),
                 object : FutureCallback<EmptyResponse> {
                     override fun onSuccess(result: EmptyResponse?) {
-                        // todo add actual playlist latter
                         responseObserver.onNext(
-                            ResponseFullPlaylist.newBuilder()
-                                .setPlaylist(
-                                    ResponsePlaylist.newBuilder()
-                                        .setPlaylistId(1)
-                                        .setName("Playlist #385")
-                                        .setPopularity(4279782)
-                                        .setStatus(ResponsePlaylist.ResponsePlaylistVisibilityState.PRIVATE)
-                                        .build()
+                            ResponseFullPlaylist.newBuilder().apply {
+                                playlist = ResponsePlaylist.newBuilder().apply {
+                                    playlistId = dbPlaylist.id
+                                    name = dbPlaylist.name
+                                    popularity = dbPlaylist.popularity
+                                    status = when (dbPlaylist.visibility) {
+                                        true -> ResponsePlaylist.ResponsePlaylistVisibilityState.PUBLIC
+                                        false -> ResponsePlaylist.ResponsePlaylistVisibilityState.PRIVATE
+                                    }
+                                }.build()
+
+                                addAllSongs(
+                                    songs.map { song ->
+                                        ResponseSong.newBuilder().apply {
+                                            id = song.id
+                                            title = song.title
+                                            poster = song.poster
+                                            masterPlaylist = song.masterPlaylist
+
+                                            info = SongInfo.newBuilder().apply {
+                                                songId = song.id
+                                                releaseYear = song.info.releaseYear
+                                                addAllComposers(
+                                                    song.info.composer.map { composer ->
+                                                        Composer.newBuilder().apply {
+                                                            id = composer.id
+                                                            name = composer.name
+                                                            coverImage = composer.coverImage
+                                                            followers = composer.followers
+                                                        }.build()
+                                                    }
+                                                )
+                                                popularity = song.info.popularity
+                                            }.build()
+
+                                            addAllArtists(
+                                                song.artists.map { artist ->
+                                                    Artist.newBuilder().apply {
+                                                        id = artist.id
+                                                        name = artist.name
+                                                        coverImage = artist.coverImage
+                                                        followers = artist.followers
+                                                        birthDate = artist.birthDate.toString()
+                                                        monthlyListeners = artist.monthlyListeners
+                                                        addAllAlbums(
+                                                            artist.albums.map { album ->
+                                                                Album.newBuilder().apply {
+                                                                    id = album.id
+                                                                    name = album.name
+                                                                    poster = album.poster
+                                                                    addAllArtists(
+                                                                        album.artists.map { albumArtist ->
+                                                                            Artist.newBuilder().apply {
+                                                                                id = albumArtist.id
+                                                                                name = albumArtist.name
+                                                                                coverImage = albumArtist.coverImage
+                                                                                followers = albumArtist.followers
+                                                                                birthDate =
+                                                                                    albumArtist.birthDate.toString()
+                                                                                monthlyListeners =
+                                                                                    albumArtist.monthlyListeners
+                                                                            }.build()
+                                                                        }
+                                                                    )
+                                                                }.build()
+                                                            }
+                                                        )
+                                                        addAllGenre(
+                                                            artist.genres.map { genre ->
+                                                                Genre.newBuilder().apply {
+                                                                    id = genre.id
+                                                                    name = genre.name
+                                                                    coverImage = genre.coverImage
+                                                                    popularity = genre.popularity
+                                                                }.build()
+                                                            }
+                                                        )
+                                                    }.build()
+                                                }
+                                            )
+
+                                            addAllGenre(
+                                                song.genre.map { genre ->
+                                                    Genre.newBuilder().apply {
+                                                        id = genre.id
+                                                        name = genre.name
+                                                        coverImage = genre.coverImage
+                                                        popularity = genre.popularity
+                                                    }.build()
+                                                }
+                                            )
+
+                                            addAllCountry(
+                                                song.country.map { country ->
+                                                    Country.newBuilder().apply {
+                                                        id = country.id
+                                                        this.country = country.country
+                                                        code = country.code
+                                                    }.build()
+                                                }
+                                            )
+                                        }.build()
+                                    }
                                 )
-                                .addAllSongs((1..10).map {
-                                    ResponseSong.newBuilder().apply {
-                                        this.songId = it.toLong()
-                                        this.title = "song $it"
-                                        this.masterPlaylist = "/master-playlist/song_$it.m3u8"
-                                        if (Random.nextBoolean()) this.poster = "/image/song/$it.jpg"
-                                    }.build()
-                                }).build()
+                            }.build()
                         )
                         responseObserver.onCompleted()
                     }
@@ -170,9 +272,6 @@ class GRPCGatewayRequestService(
         return list ?: emptyList()
     }
 
-    fun getSongs(title: List<SpotifySongTitle>): List<String> {
-
-    }
 
     private fun String.encodeBase64() = Base64.getEncoder().encodeToString(this.toByteArray())
     private fun String.removeAlbumNameIfAny() = this.replace(Regex("\\(.*"), "").trim()

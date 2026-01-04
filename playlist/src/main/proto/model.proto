@@ -1,0 +1,64 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.model";
+
+package model;
+
+message RequestUser{
+  string email = 1;
+  UserType type = 2;
+
+  enum UserType{
+    DEFAULT = 0;
+    EMAIL = 1;
+    GOOGLE = 2;
+  }
+};
+
+message Composer{
+  sint64 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 followers = 4;
+};
+
+message Genre{
+  int32 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 popularity = 4;
+};
+
+message Country{
+  int32 id = 1;
+  string country = 2;
+  string code = 3;
+};
+
+message Album{
+  int64 id = 1;
+  string name = 2;
+  uint64 popularity = 3;
+  optional string poster = 4;
+  repeated Artist artists = 5;
+};
+
+message Artist{
+  int64 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 followers = 4;
+  optional string birthDate = 5;
+  uint64 monthlyListeners = 6;
+  repeated Album albums = 7;
+  repeated Genre genres = 8;
+};
+
+message SongInfo{
+  int64 songId = 1;
+  int32 releaseYear = 2;
+  repeated Composer composers = 3;
+  uint64 popularity = 4;
+};

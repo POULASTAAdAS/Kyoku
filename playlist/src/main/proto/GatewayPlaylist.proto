@@ -1,5 +1,5 @@
 syntax = "proto3";
-import "mddel.proto";
+import "model.proto";
 
 option java_multiple_files = true;
 option java_package = "com.poulastaa.kyoku.grpc.gateway_playlist";
@@ -8,7 +8,7 @@ package gatewayPlaylist;
 
 message RequestGetPlaylist{
   string playlistId = 1;
-  RequestUser user = 2;
+  model.RequestUser user = 2;
 };
 
 // response
@@ -25,11 +25,14 @@ message ResponsePlaylist{
 };
 
 message ResponseSong{
-  int64 songId = 1;
+  int64 id = 1;
   string title = 2;
   optional string poster = 3;
   string masterPlaylist = 4;
-  // todo add more items
+  model.SongInfo info = 5;
+  repeated model.Artist artists = 6;
+  repeated model.Genre genre = 7;
+  repeated model.Country country = 8;
 };
 
 message ResponseFullPlaylist{

@@ -1,6 +1,11 @@
 package com.poulastaa.kyoku.playlist.utils
 
 typealias UserId = Long
+typealias SongTitle = String
+typealias GenreId = Int
+typealias ArtistId = Long
+typealias AlbumId = Long
+typealias SongId = Long
 typealias PlaylistId = Long
 typealias Email = String
 typealias PasswordHash = String

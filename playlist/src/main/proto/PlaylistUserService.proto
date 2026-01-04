@@ -1,5 +1,5 @@
 syntax = "proto3";
-import "mddel.proto";
+import "model.proto";
 
 option java_multiple_files = true;
 option java_package = "com.poulastaa.kyoku.grpc.playlist_user";
@@ -8,7 +8,7 @@ package playlistUser;
 
 message RequestSaveUserPlaylist{
   int64 playlistId = 1;
-  RequestUser user = 2;
+  model.RequestUser user = 2;
 };
 
 message EmptyResponse{};
