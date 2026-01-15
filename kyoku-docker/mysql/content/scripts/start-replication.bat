@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo ================================================
-echo       MySQL PLAYLIST Database Setup
+echo       MySQL CONTENT Database Setup
 echo ================================================
 REM Run replication setup
 echo ----------------------------------------

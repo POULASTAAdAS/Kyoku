@@ -104,7 +104,7 @@ if !replica_attempts! geq 10 (
     goto :eof
 )
 echo [INFO] Waiting for %replica_name%... attempt !replica_attempts!/10
-timeout /t 3 /nobreak >nul
+timeout /t 1 /nobreak >nul
 goto :test_replica
 
 :configure_replication

@@ -40,7 +40,6 @@ message ResponseFullPlaylist{
   repeated ResponseSong songs = 2;
 };
 
-
 service GatewayPlaylistService{
   rpc getPlaylist(RequestGetPlaylist) returns (ResponseFullPlaylist);
 }

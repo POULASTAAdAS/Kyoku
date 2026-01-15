@@ -1,12 +1,12 @@
 import com.google.protobuf.gradle.id
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.spring") version "2.0.21"
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.protobuf") version "0.9.4"
-    kotlin("plugin.jpa") version "1.9.25"
+    kotlin("plugin.jpa") version "2.0.21"
 }
 
 group = "com.poulastaa.kyoku"
@@ -60,8 +60,8 @@ dependencies {
     implementation("se.michaelthelin.spotify:spotify-web-api-java:9.4.0")
 
     // ktor client
-    implementation("io.ktor:ktor-client-core-jvm:3.3.3")
-    implementation("io.ktor:ktor-client-apache-jvm:3.3.3")
+    implementation("io.ktor:ktor-client-core-jvm:3.0.1")
+    implementation("io.ktor:ktor-client-apache-jvm:3.0.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

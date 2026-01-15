@@ -11,8 +11,11 @@ import com.poulastaa.kyoku.grpc.playlist_user.EmptyResponse
 import com.poulastaa.kyoku.grpc.playlist_user.PlaylistUserServiceGrpc
 import com.poulastaa.kyoku.grpc.playlist_user.RequestSaveUserPlaylist
 import com.poulastaa.kyoku.playlist.database.entity.EntityPlaylist
+import com.poulastaa.kyoku.playlist.database.entity.EntitySongPlaylist
 import com.poulastaa.kyoku.playlist.database.entity.PlaylistVisibility
+import com.poulastaa.kyoku.playlist.database.entity.ids.SongPlaylistId
 import com.poulastaa.kyoku.playlist.database.repository.PlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.repository.SongPlaylistDataSource
 import com.poulastaa.kyoku.playlist.domain.model.internal.PlaylistResponse
 import com.poulastaa.kyoku.playlist.utils.DebugUtils
 import com.poulastaa.kyoku.playlist.utils.SpotifySongTitle
@@ -24,7 +27,6 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.utils.io.*
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,13 +46,14 @@ private const val SPOTIFY_ACCESS_TOKEN_PARAM_VALUE = "client_credentials"
 @GrpcService
 class GRPCGatewayRequestService(
     private val playlistDB: PlaylistDataSource,
-    private val playlist: PlaylistDataService,
+    private val songPlaylistDB: SongPlaylistDataSource,
+    private val playlistRepo: PlaylistRepository,
 
     @param:Value("\${spotify.clientId}")
     private val clientId: String,
     @param:Value("\${spotify.clientSecret}")
-
     private val clientSecret: String,
+
     private val gson: Gson,
 ) : GatewayPlaylistServiceGrpc.GatewayPlaylistServiceImplBase() {
     private lateinit var userServiceStub: PlaylistUserServiceGrpc.PlaylistUserServiceFutureStub
@@ -73,7 +76,7 @@ class GRPCGatewayRequestService(
                 return@launch
             }
 
-            val songsDef = async { playlist.getSongByTitles(spotifySongTitleList) }
+            val songsDef = async { playlistRepo.getSongByTitles(spotifySongTitleList) }
 
             //1. save playlist
             val dbPlaylistDef = async {
@@ -83,7 +86,7 @@ class GRPCGatewayRequestService(
                         name = "Playlist #${existingPlaylists + 1}",
                         description = "Enjoy your imported playlist",
                         visibility = PlaylistVisibility.PRIVATE.status,
-                        totalDuration = 0, // TODO
+                        totalDuration = 0, // TODO add if possible
                     )
                 )
             }
@@ -92,9 +95,21 @@ class GRPCGatewayRequestService(
             async { dbPlaylist.totalSongs = songs.size }.await()
 
             //2. save playlistId + songId
+            songs.map {
+                EntitySongPlaylist(
+                    id = SongPlaylistId(
+                        songId = it.id,
+                        playlistId = dbPlaylist.id
+                    ),
+                    playlist = dbPlaylist
+                )
+            }.let {
+                songPlaylistDB.saveAll(it)
+            }
 
 
             //3. save userId + playlistId to user-service
+            // TODO: remove duplicate code
             Futures.addCallback(
                 userService.saveUserPlaylist(RequestSaveUserPlaylist.newBuilder().apply {
                     this.playlistId = dbPlaylist.id
@@ -229,7 +244,6 @@ class GRPCGatewayRequestService(
         }
     }
 
-    @OptIn(InternalAPI::class)
     private suspend fun getSpotifyAccessToken(): String? {
         val client = HttpClient()
 
@@ -274,5 +288,4 @@ class GRPCGatewayRequestService(
 
 
     private fun String.encodeBase64() = Base64.getEncoder().encodeToString(this.toByteArray())
-    private fun String.removeAlbumNameIfAny() = this.replace(Regex("\\(.*"), "").trim()
 }

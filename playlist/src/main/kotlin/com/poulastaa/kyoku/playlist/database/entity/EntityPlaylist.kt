@@ -14,7 +14,6 @@ enum class PlaylistVisibility(val status: Boolean) {
     PRIVATE(false)
 }
 
-@Suppress("JpaDataSourceORMInspection")
 @Entity
 @Table(
     name = "Playlist",

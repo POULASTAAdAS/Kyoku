@@ -104,7 +104,7 @@ services:
     volumes:
       - ./mysql/user/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
 
-      - ./data/mysql/data/proxysql:/var/lib/proxysql
+      - ./data/mysql/data/proxysql-user:/var/lib/proxysql
     networks:
       - db-network
     depends_on:
@@ -114,53 +114,53 @@ services:
       # - user-replica3
 
 
-  # playlist-primary:
-  #   image: mysql:8.4.0
-  #   container_name: playlist-primary
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-  #     MYSQL_REPLICATION_USER: ${MYSQL_PLAYLIST_REPLICATION_USER}
-  #     MYSQL_REPLICATION_PASSWORD: ${MYSQL_PLAYLIST_REPLICATION_PASSWORD}
-  #   ports:
-  #     - "1010:3306"
-  #   volumes:
-  #     - ./mysql/playlist/sql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
-  #     - ./mysql/playlist/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+  playlist-primary:
+    image: mysql:8.4.0
+    container_name: playlist-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_PLAYLIST_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_PLAYLIST_REPLICATION_PASSWORD}
+    ports:
+      - "1010:3306"
+    volumes:
+      - ./mysql/playlist/sql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      - ./mysql/playlist/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
       
-  #     - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
-  #   networks:
-  #     - db-network
-  #   command: >
-  #     --server-id=1
-  #     --log-bin=mysql-bin
-  #     --binlog-do-db=PLAYLIST
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --binlog-expire-logs-seconds=604800
+      - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=PLAYLIST
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
 
 
-  # playlist-replica1:
-  #   image: mysql:8.4.0
-  #   container_name: playlist-replica1
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-  #   ports:
-  #     - "1011:3306"
-  #   volumes:
-  #     - ./data/mysql/data/playlist-replica1/data:/var/lib/mysql
-  #   networks:
-  #     - db-network
-  #   depends_on:
-  #     - playlist-primary
-  #   command: >
-  #     --server-id=2
-  #     --relay-log=relay-bin
-  #     --read-only=1
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --skip-replica-start=1
+  playlist-replica1:
+    image: mysql:8.4.0
+    container_name: playlist-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+    ports:
+      - "1011:3306"
+    volumes:
+      - ./data/mysql/data/playlist-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
 
   # playlist-replica2:
   #   image: mysql:8.4.0
@@ -231,22 +231,24 @@ services:
   #     --skip-replica-start=1
 
 
-  # playlist-proxysql:
-  #   image: proxysql/proxysql:2.5.5
-  #   container_name: playlist-proxysql
-  #   ports:
-  #     - "1015:6033"
-  #     - "1016:6032"
-  #   volumes:
-  #     - ./mysql/playlist/proxy/proxysql.conf:/etc/proxysql.conf:ro
-  #   networks:
-  #     - db-network
-  #   depends_on:
-  #     - playlist-primary
-  #     - playlist-replica1
-  #     # - playlist-replica2
-  #     # - playlist-replica3
-  #     # - playlist-replica4
+  playlist-proxysql:
+    image: proxysql/proxysql:2.6.3
+    container_name: playlist-proxysql
+    ports:
+      - "1015:6033"
+      - "1016:6032"
+    volumes:
+      - ./mysql/playlist/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
+
+      - ./data/mysql/data/proxysql-playlist:/var/lib/proxysql
+    networks:
+      - db-network
+    depends_on:
+      - playlist-primary
+      - playlist-replica1
+      # - playlist-replica2
+      # - playlist-replica3
+      # - playlist-replica4
 
 
   # activity-primary:
@@ -346,13 +348,14 @@ services:
 
 
   # activity-proxysql:
-  #   image: proxysql/proxysql:2.5.5
+  #   image: proxysql/proxysql:2.6.3
   #   container_name: activity-proxysql
   #   ports:
   #     - "1024:6033"
   #     - "1025:6032"
   #   volumes:
   #     - ./mysql/activity/proxy/proxysql.conf:/etc/proxysql.conf:ro
+  #     - ./data/mysql/data/proxysql-activity:/var/lib/proxysql
   #   networks:
   #     - db-network
   #   depends_on:
@@ -517,13 +520,14 @@ services:
 
 
   # content-proxysql:
-  #   image: proxysql/proxysql:2.5.5
+  #   image: proxysql/proxysql:2.6.3
   #   container_name: content-proxysql
   #   ports:
   #     - "1036:6033"
   #     - "1037:6032"
   #   volumes:
   #     - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.conf:ro
+  #     - ./data/mysql/data/proxysql-content:/var/lib/proxysql  
   #   networks:
   #     - db-network
   #   depends_on:

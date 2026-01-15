@@ -52,7 +52,7 @@ echo [SUCCESS] Test data inserted on primary!
 
 REM Wait for replication
 echo [INFO] Waiting 3 seconds for replication...
-timeout /t 3 /nobreak >nul
+timeout /t 1 /nobreak >nul
 
 REM Check if data appears on replicas
 echo ----------------------------------------

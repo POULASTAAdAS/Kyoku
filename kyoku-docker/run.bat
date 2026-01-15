@@ -71,7 +71,7 @@ echo.
 REM Wait for services to initialize
 echo [INFO] Waiting 30 seconds for all services to initialize...
 echo [INFO] This includes MySQL initialization and ProxySQL setup...
-timeout /t 30 /nobreak >nul
+timeout /t 5 /nobreak >nul
 
 echo
 echo ================================================================================================
@@ -85,11 +85,11 @@ call mysql\playlist\scripts\start-replication.bat
 echo ================================================================================================
 echo                                            3
 echo ================================================================================================
-call mysql\activity\scripts\start-replication.bat
+@REM call mysql\activity\scripts\start-replication.bat
 echo ================================================================================================
 echo                                            4
 echo ================================================================================================
-call mysql\content\scripts\start-replication.bat
+@REM call mysql\content\scripts\start-replication.bat
 echo ================================================================================================
 echo ==============================================DONE==============================================
 echo ==============================================DONE==============================================

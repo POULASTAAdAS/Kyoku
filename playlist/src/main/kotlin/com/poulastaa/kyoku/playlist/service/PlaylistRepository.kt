@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.regex.Pattern
 
 @Service
-class PlaylistDataService(
+class PlaylistRepository(
     private val db: SongDataSource,
     private val cache: RedisCacheService,
 ) {
@@ -30,9 +30,6 @@ class PlaylistDataService(
                 cache.setSongByTitle(it)
             }
         }.await() else emptyList()
-
-        // cache song by id
-        // cache song by title
 
         cachedSongsByTitle.values + dbSongs
     }
