@@ -5,7 +5,7 @@ import com.google.protobuf.util.JsonFormat
 import com.poulastaa.kyoku.gateway.model.ServiceConfigPayload
 import com.poulastaa.kyoku.gateway.model.UserType
 import com.poulastaa.kyoku.gateway.model.dto.DtoAuthenticationTokenClaim
-import com.poulastaa.kyoku.gateway.model.response.ResponseStatus
+import com.poulastaa.kyoku.gateway.model.response.CustomResponseStatus
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
 import com.poulastaa.kyoku.gateway.utils.NonRetryableAuthenticationException
 import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
@@ -60,7 +60,7 @@ class PlaylistRouteConfig {
                             val playlistId = exchange.request.queryParams["playlistId"]?.firstOrNull()
                                 ?: return@mono ResponseEntity(
                                     ResponseWrapper(
-                                        status = ResponseStatus.UNAUTHORIZED,
+                                        status = CustomResponseStatus.UNAUTHORIZED,
                                         payload = "Missing playlistId"
                                     ),
                                     HttpStatus.BAD_REQUEST
@@ -99,26 +99,34 @@ class PlaylistRouteConfig {
                                 else -> ByteArray(0)
                             }
 
-                            response.writeWith(
-                                Mono.just(response.bufferFactory().wrap(bytes))
-                            )
+                            response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
                         }.onErrorResume { error ->
                             println("Error in PlaylistInterceptor: ${error.message}")
                             error.printStackTrace()
 
                             val response = exchange.response
-                            response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                             response.headers.contentType = MediaType.APPLICATION_JSON
 
                             val errorWrapper = ResponseWrapper(
-                                status = ResponseStatus.INTERNAL_SERVER_ERROR,
-                                payload = error.message
+                                status = when {
+                                    error.message?.contains("NOT_FOUND", ignoreCase = true) == true -> {
+                                        response.statusCode = HttpStatus.NOT_FOUND
+                                        CustomResponseStatus.NOT_FOUND
+                                    }
+                                    else -> {
+                                        response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+                                        CustomResponseStatus.INTERNAL_SERVER_ERROR
+                                    }
+                                },
+                                payload = if (error.message?.contains(
+                                        "DEADLINE_EXCEEDED",
+                                        ignoreCase = true
+                                    ) == true
+                                ) CustomResponseStatus.INTERNAL_SERVER_ERROR.message else error.message
                             )
-                            val bytes = mapper.writeValueAsBytes(errorWrapper)
 
-                            response.writeWith(
-                                Mono.just(response.bufferFactory().wrap(bytes))
-                            )
+                            val bytes = mapper.writeValueAsBytes(errorWrapper)
+                            response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
                         }
                     }
                 }

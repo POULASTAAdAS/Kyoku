@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.poulastaa.kyoku.gateway.model.UserType
 import com.poulastaa.kyoku.gateway.model.dto.DtoAuthenticationTokenClaim
 import com.poulastaa.kyoku.gateway.model.request.EmptyRequest
-import com.poulastaa.kyoku.gateway.model.response.ResponseStatus
+import com.poulastaa.kyoku.gateway.model.response.CustomResponseStatus
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
 import com.poulastaa.kyoku.gateway.utils.NonRetryableAuthenticationException
 import com.poulastaa.kyoku.gateway.utils.RetryableAuthenticationException
@@ -46,7 +46,7 @@ class ValidationFilter(
             ?: return writeErrorResponse(
                 exchange,
                 HttpStatus.UNAUTHORIZED,
-                ResponseWrapper(ResponseStatus.UNAUTHORIZED, "Authorization header missing")
+                ResponseWrapper(CustomResponseStatus.UNAUTHORIZED, "Authorization header missing")
             )
 
         return mono(Dispatchers.IO) { // Use IO Context for gRPC work
@@ -112,7 +112,7 @@ class ValidationFilter(
                     writeErrorResponse(
                         exchange,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        ResponseWrapper<EmptyRequest>(status = ResponseStatus.INTERNAL_SERVER_ERROR)
+                        ResponseWrapper<EmptyRequest>(status = CustomResponseStatus.INTERNAL_SERVER_ERROR)
                     )
                 }
             }

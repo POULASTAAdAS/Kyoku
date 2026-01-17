@@ -1,16 +1,16 @@
 package com.poulastaa.kyoku.gateway.utils
 
-import com.poulastaa.kyoku.gateway.model.response.ResponseStatus
+import com.poulastaa.kyoku.gateway.model.response.CustomResponseStatus
 import org.springframework.http.HttpStatus
 
 class NonRetryableAuthenticationException(
     message: String,
     val status: HttpStatus,
-    val responseStatus: ResponseStatus = ResponseStatus.UNAUTHORIZED,
+    val responseStatus: CustomResponseStatus = CustomResponseStatus.UNAUTHORIZED,
 ) : RuntimeException(message)
 
 class RetryableAuthenticationException(
     message: String,
     val status: HttpStatus,
-    val responseStatus: ResponseStatus = ResponseStatus.INTERNAL_SERVER_ERROR,
+    val responseStatus: CustomResponseStatus = CustomResponseStatus.INTERNAL_SERVER_ERROR,
 ) : RuntimeException(message)

@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.gateway.model.response
 
-enum class ResponseStatus(val message: String? = null) {
+enum class CustomResponseStatus(val message: String? = null) {
     USER_CREATED,
     USER_FOUND,
     USER_FOUND_NO_PLAYLIST,
@@ -17,5 +17,6 @@ enum class ResponseStatus(val message: String? = null) {
 
     // non retriable error
     USER_NOT_FOUND("No user found, please register first"),
+    NOT_FOUND,
     UNAUTHORIZED("You do not have permission to access this resource"),
 }

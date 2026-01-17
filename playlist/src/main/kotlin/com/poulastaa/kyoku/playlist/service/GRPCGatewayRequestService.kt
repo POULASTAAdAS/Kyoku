@@ -70,7 +70,7 @@ class GRPCGatewayRequestService(
             val spotifySongTitleList = getSongTitles(request.playlistId)
             if (spotifySongTitleList.isEmpty()) {
                 responseObserver.onError(
-                    Status.ABORTED.withDescription("no songs found on playlist")
+                    Status.NOT_FOUND.withDescription("spotify playlist not found")
                         .asRuntimeException()
                 )
                 return@launch
@@ -109,7 +109,6 @@ class GRPCGatewayRequestService(
 
 
             //3. save userId + playlistId to user-service
-            // TODO: remove duplicate code
             Futures.addCallback(
                 userService.saveUserPlaylist(RequestSaveUserPlaylist.newBuilder().apply {
                     this.playlistId = dbPlaylist.id

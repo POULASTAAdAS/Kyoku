@@ -1,9 +1,9 @@
 package com.poulastaa.kyoku.auth.controller
 
 import com.poulastaa.kyoku.auth.model.dto.DtoUser
+import com.poulastaa.kyoku.auth.model.response.ResponseStatus
 import com.poulastaa.kyoku.auth.model.response.ResponseUser
 import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
-import com.poulastaa.kyoku.auth.model.response.ResponseStatus
 import com.poulastaa.kyoku.auth.model.response.UserStatus
 import org.springframework.http.ResponseEntity
 
@@ -48,4 +48,4 @@ fun ResponseWrapper<DtoUser>.toSingInUpResponse() = ResponseWrapper(
     )
 ).let { wrapper ->
     ResponseEntity.status(wrapper.status.code).body(wrapper)
-}
+}!!
