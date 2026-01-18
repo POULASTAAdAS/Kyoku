@@ -38,6 +38,7 @@ class RedisCacheService(
         redis.executePipelined { op ->
             val ops = op as RedisOperations<String, Any>
             data.forEach { ops.opsForValue().set("${this.prefix}${it.key}", it.value, this.expTime) }
+            null
         }
     }
 }

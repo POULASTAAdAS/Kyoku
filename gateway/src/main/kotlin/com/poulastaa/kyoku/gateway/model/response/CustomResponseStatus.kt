@@ -19,4 +19,5 @@ enum class CustomResponseStatus(val message: String? = null) {
     USER_NOT_FOUND("No user found, please register first"),
     NOT_FOUND,
     UNAUTHORIZED("You do not have permission to access this resource"),
+    UN_WANTED_REQUESTS("FUCK YOU"),
 }
