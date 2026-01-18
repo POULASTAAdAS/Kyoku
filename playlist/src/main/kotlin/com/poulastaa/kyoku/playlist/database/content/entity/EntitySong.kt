@@ -1,5 +1,6 @@
-package com.poulastaa.kyoku.playlist.database.entity
+package com.poulastaa.kyoku.playlist.database.content.entity
 
+import com.poulastaa.kyoku.playlist.database.playlist.entity.BaseIdEntity
 import com.poulastaa.kyoku.playlist.utils.SongId
 import jakarta.persistence.*
 
@@ -13,6 +14,6 @@ class EntitySong(
     @Column(name = "master_playlist", nullable = false, length = 300)
     val url: String,
 ) : BaseIdEntity<SongId>() {
-    @OneToOne(mappedBy = "song", cascade = [CascadeType.ALL], optional = true)
+    @OneToOne(mappedBy = "song", cascade = [CascadeType.ALL], optional = true, fetch = FetchType.EAGER)
     var songInfo: EntitySongInfo? = null
 }

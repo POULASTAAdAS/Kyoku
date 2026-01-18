@@ -31,7 +31,7 @@ class GlobalFallbackRouteConfig(
                             val path = exchange.request.uri.path
 
                             val errorWrapper = ResponseWrapper(
-                                status = CustomResponseStatus.UN_WANTED_REQUESTS,
+                                status = CustomResponseStatus.FUCK_YOU,
                                 payload = mapOf(
                                     "message" to "Man your mom felt so good last night.",
                                     "path" to "you can take this back ASSHOLE: $path",

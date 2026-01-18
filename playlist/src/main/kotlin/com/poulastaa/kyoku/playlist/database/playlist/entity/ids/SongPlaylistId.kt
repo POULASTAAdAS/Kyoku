@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.playlist.database.entity.ids
+package com.poulastaa.kyoku.playlist.database.playlist.entity.ids
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable

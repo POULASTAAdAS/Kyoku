@@ -1,7 +1,7 @@
 package com.poulastaa.kyoku.playlist.service
 
-import com.poulastaa.kyoku.playlist.database.entity.EntitySong
-import com.poulastaa.kyoku.playlist.database.repository.SongDataSource
+import com.poulastaa.kyoku.playlist.database.content.entity.EntitySong
+import com.poulastaa.kyoku.playlist.database.repository.content.SongDataSource
 import com.poulastaa.kyoku.playlist.domain.model.DtoSong
 import com.poulastaa.kyoku.playlist.utils.SpotifySongTitle
 import kotlinx.coroutines.Dispatchers
