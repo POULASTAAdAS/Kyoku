@@ -365,89 +365,89 @@ services:
   #     # - activity-replica3
 
 
-  # content-primary:
-  #   image: mysql:8.4.0
-  #   container_name: content-primary
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-  #     MYSQL_REPLICATION_USER: ${MYSQL_CONTENT_REPLICATION_USER}
-  #     MYSQL_REPLICATION_PASSWORD: ${MYSQL_CONTENT_REPLICATION_PASSWORD}
-  #   ports:
-  #     - "1030:3306"
-  #   volumes:
-  #     - ./mysql/content/sql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
-  #     - ./mysql/content/sql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
-  #     - ./mysql/content/sql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
-  #     - ./mysql/content/sql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
-  #     - ./mysql/content/sql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
-  #     - ./mysql/content/sql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
-  #     - ./mysql/content/sql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
-  #     - ./mysql/content/sql/8_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/8_insert_content_db_artistinfo.sql
-  #     - ./mysql/content/sql/100_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/100_insert_content_db_relation_artist_album.sql
-  #     - ./mysql/content/sql/101_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/101_insert_content_db_relation_artist_country.sql
-  #     - ./mysql/content/sql/102_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/102_insert_content_db_relation_artist_genre.sql
-  #     - ./mysql/content/sql/103_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/103_insert_content_db_relation_song_album.sql
-  #     - ./mysql/content/sql/104_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/104_insert_content_db_relation_song_artist.sql
-  #     - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
-  #     - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
-  #     - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+  content-primary:
+    image: mysql:8.4.0
+    container_name: content-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_CONTENT_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_CONTENT_REPLICATION_PASSWORD}
+    ports:
+      - "1030:3306"
+    volumes:
+      - ./mysql/content/sql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
+      - ./mysql/content/sql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
+      - ./mysql/content/sql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
+      - ./mysql/content/sql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
+      - ./mysql/content/sql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
+      - ./mysql/content/sql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
+      - ./mysql/content/sql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
+      - ./mysql/content/sql/8_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/8_insert_content_db_artistinfo.sql
+      - ./mysql/content/sql/100_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/100_insert_content_db_relation_artist_album.sql
+      - ./mysql/content/sql/101_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/101_insert_content_db_relation_artist_country.sql
+      - ./mysql/content/sql/102_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/102_insert_content_db_relation_artist_genre.sql
+      - ./mysql/content/sql/103_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/103_insert_content_db_relation_song_album.sql
+      - ./mysql/content/sql/104_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/104_insert_content_db_relation_song_artist.sql
+      - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
+      - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
+      - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
 
-  #     - ./data/mysql/data/content-primary/data:/var/lib/mysql
-  #   networks:
-  #     - db-network
-  #   command: >
-  #     --server-id=1
-  #     --log-bin=mysql-bin
-  #     --binlog-do-db=CONTENT
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --binlog-expire-logs-seconds=604800
+      - ./data/mysql/data/content-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=CONTENT
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
 
 
-  # content-replica1:
-  #   image: mysql:8.4.0
-  #   container_name: content-replica1
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-  #   ports:
-  #     - "1031:3306"
-  #   volumes:
-  #     - ./data/mysql/data/content-replica1/data:/var/lib/mysql
-  #   networks:
-  #     - db-network
-  #   depends_on:
-  #     - content-primary
-  #   command: >
-  #     --server-id=2
-  #     --relay-log=relay-bin
-  #     --read-only=1
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --skip-replica-start=1
+  content-replica1:
+    image: mysql:8.4.0
+    container_name: content-replica1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+    ports:
+      - "1031:3306"
+    volumes:
+      - ./data/mysql/data/content-replica1/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
 
-  # content-replica2:
-  #   image: mysql:8.4.0
-  #   container_name: content-replica2
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-  #   ports:
-  #     - "1032:3306"
-  #   volumes:
-  #     - ./data/mysql/data/content-replica2/data:/var/lib/mysql
-  #   networks:
-  #     - db-network
-  #   depends_on:
-  #     - content-primary
-  #   command: >
-  #     --server-id=3
-  #     --relay-log=relay-bin
-  #     --read-only=1
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --skip-replica-start=1
+  content-replica2:
+    image: mysql:8.4.0
+    container_name: content-replica2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+    ports:
+      - "1032:3306"
+    volumes:
+      - ./data/mysql/data/content-replica2/data:/var/lib/mysql
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+    command: >
+      --server-id=3
+      --relay-log=relay-bin
+      --read-only=1
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --skip-replica-start=1
 
 
   # content-replica3:
@@ -519,24 +519,25 @@ services:
   #     --skip-replica-start=1
 
 
-  # content-proxysql:
-  #   image: proxysql/proxysql:2.6.3
-  #   container_name: content-proxysql
-  #   ports:
-  #     - "1036:6033"
-  #     - "1037:6032"
-  #   volumes:
-  #     - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.conf:ro
-  #     - ./data/mysql/data/proxysql-content:/var/lib/proxysql  
-  #   networks:
-  #     - db-network
-  #   depends_on:
-  #     - content-primary
-  #     - content-replica1
-  #     - content-replica2
-  #     # - content-replica3
-  #     # - content-replica4
-  #     # - content-replica5
+  content-proxysql:
+    image: proxysql/proxysql:2.6.3
+    container_name: content-proxysql
+    ports:
+      - "1036:6033"
+      - "1037:6032"
+    volumes:
+      - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.cnf:ro
+      
+      - ./data/mysql/data/proxysql-content:/var/lib/proxysql  
+    networks:
+      - db-network
+    depends_on:
+      - content-primary
+      - content-replica1
+      - content-replica2
+      # - content-replica3
+      # - content-replica4
+      # - content-replica5
 
 
   gateway-redis:
