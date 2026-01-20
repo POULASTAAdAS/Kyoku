@@ -41,6 +41,10 @@ dependencies {
     implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")
     implementation("io.grpc:grpc-protobuf")
     implementation("io.grpc:grpc-stub")
+    implementation("net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE") {
+        exclude(group = "io.grpc", module = "grpc-netty-shaded")
+    }
+    implementation("net.devh:grpc-client-spring-boot-autoconfigure:2.15.0.RELEASE")
 
     // jwt
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

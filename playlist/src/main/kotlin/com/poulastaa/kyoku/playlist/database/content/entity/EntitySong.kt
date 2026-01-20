@@ -14,6 +14,38 @@ class EntitySong(
     @Column(name = "master_playlist", nullable = false, length = 300)
     val url: String,
 ) : BaseIdEntity<SongId>() {
-    @OneToOne(mappedBy = "song", cascade = [CascadeType.ALL], optional = true, fetch = FetchType.EAGER)
+    @Transient
     var songInfo: EntitySongInfo? = null
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "SongArtist",
+        joinColumns = [JoinColumn(name = "song_id")],
+        inverseJoinColumns = [JoinColumn(name = "artist_id")]
+    )
+    val artists: MutableSet<EntityArtist> = mutableSetOf()
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "SongAlbum",
+        joinColumns = [JoinColumn(name = "song_id")],
+        inverseJoinColumns = [JoinColumn(name = "album_id")]
+    )
+    val albums: MutableSet<EntityAlbum> = mutableSetOf()
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "SongGenre",
+        joinColumns = [JoinColumn(name = "song_id")],
+        inverseJoinColumns = [JoinColumn(name = "genre_id")]
+    )
+    val genres: MutableSet<EntityGenre> = mutableSetOf()
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "SongCountry",
+        joinColumns = [JoinColumn(name = "song_id")],
+        inverseJoinColumns = [JoinColumn(name = "country_id")]
+    )
+    val countries: MutableSet<EntityCountry> = mutableSetOf()
 }

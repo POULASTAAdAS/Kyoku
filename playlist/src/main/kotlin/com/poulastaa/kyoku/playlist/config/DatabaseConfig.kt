@@ -1,6 +1,8 @@
 package com.poulastaa.kyoku.playlist.config
 
+import com.poulastaa.kyoku.playlist.database.repository.content.ArtistInfoDataSource
 import com.poulastaa.kyoku.playlist.database.repository.content.SongDataSource
+import com.poulastaa.kyoku.playlist.database.repository.content.SongInfoDataSource
 import com.poulastaa.kyoku.playlist.database.repository.playlist.PlaylistDataSource
 import com.poulastaa.kyoku.playlist.database.repository.playlist.SongPlaylistDataSource
 import com.zaxxer.hikari.HikariDataSource
@@ -82,7 +84,11 @@ class PlaylistDatasourceConfig {
     includeFilters = [
         ComponentScan.Filter(
             type = FilterType.ASSIGNABLE_TYPE,
-            classes = [SongDataSource::class]
+            classes = [
+                SongDataSource::class,
+                SongInfoDataSource::class,
+                ArtistInfoDataSource::class
+            ]
         )
     ],
     transactionManagerRef = "contentTransactionManger",

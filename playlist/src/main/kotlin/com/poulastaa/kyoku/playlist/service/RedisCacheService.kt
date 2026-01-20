@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.poulastaa.kyoku.playlist.domain.model.DtoSong
 import com.poulastaa.kyoku.playlist.domain.model.RedisKeys
 import com.poulastaa.kyoku.playlist.utils.SongTitle
-import org.springframework.data.redis.core.RedisOperations
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 
@@ -35,9 +34,10 @@ class RedisCacheService(
     private inline fun <reified V : Any> Group.multiSet(
         data: Map<String, V>,
     ) {
-        redis.executePipelined { op ->
-            val ops = op as RedisOperations<String, Any>
-            data.forEach { ops.opsForValue().set("${this.prefix}${it.key}", it.value, this.expTime) }
+        redis.executePipelined {
+            data.forEach {
+                redis.opsForValue().set("${this.prefix}${it.key}", it.value, this.expTime)
+            }
             null
         }
     }

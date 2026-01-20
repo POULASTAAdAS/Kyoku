@@ -32,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import net.devh.boot.grpc.client.inject.GrpcClient
 import net.devh.boot.grpc.server.service.GrpcService
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
@@ -56,6 +57,7 @@ class GRPCGatewayRequestService(
 
     private val gson: Gson,
 ) : GatewayPlaylistServiceGrpc.GatewayPlaylistServiceImplBase() {
+    @GrpcClient("user")
     private lateinit var userServiceStub: PlaylistUserServiceGrpc.PlaylistUserServiceFutureStub
     private val userService: PlaylistUserServiceGrpc.PlaylistUserServiceFutureStub
         get() = userServiceStub.withDeadlineAfter(5, TimeUnit.SECONDS)
@@ -108,7 +110,7 @@ class GRPCGatewayRequestService(
             }
 
 
-            //3. save userId + playlistId to user-service
+            //3. save userId + playlistId
             Futures.addCallback(
                 userService.saveUserPlaylist(RequestSaveUserPlaylist.newBuilder().apply {
                     this.playlistId = dbPlaylist.id

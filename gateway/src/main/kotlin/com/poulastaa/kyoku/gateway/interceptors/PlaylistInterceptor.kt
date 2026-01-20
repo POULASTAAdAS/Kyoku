@@ -32,7 +32,7 @@ class PlaylistRouteConfig {
     private lateinit var playlistStub: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
 
     private val playlist: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
-        get() = playlistStub.withDeadlineAfter(5, TimeUnit.SECONDS)
+        get() = playlistStub.withDeadlineAfter(8, TimeUnit.SECONDS)
 
     @Bean
     fun providePlaylistRoute(
