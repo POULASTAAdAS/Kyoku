@@ -1,20 +1,21 @@
-package com.poulastaa.kyoku.user.database.entity
+package com.poulastaa.kyoku.user.database.playlist.entity
 
-import com.poulastaa.kyoku.user.database.entity.ids.SongPlaylistId
+import com.poulastaa.kyoku.user.database.playlist.entity.ids.UserPlaylistId
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 
 @Entity
-@Table(name = "SongPlaylist")
-class EntitySongPlaylist(
+@Table(name = "UserPlaylist")
+class EntityUserPlaylist(
     @EmbeddedId
-    val id: SongPlaylistId = SongPlaylistId(),
+    val id: UserPlaylistId = UserPlaylistId(),
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("playlistId")
     @JoinColumn(
         name = "playlist_id",
         nullable = false,
+        insertable = false,
+        updatable = false,
         foreignKey = ForeignKey(
             name = "fk_song_playlist",
             foreignKeyDefinition = "FOREIGN KEY (`playlist_id`) REFERENCES `Playlist`(`id`) ON DELETE CASCADE"
@@ -32,7 +33,7 @@ class EntitySongPlaylist(
             if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
 
         if (thisEffectiveClass != oEffectiveClass) return false
-        other as EntitySongPlaylist
+        other as EntityUserPlaylist
 
         return id == other.id
     }

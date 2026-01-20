@@ -1,5 +1,6 @@
 package com.poulastaa.kyoku.playlist.database.playlist.entity
 
+import com.poulastaa.kyoku.playlist.database.BaseIdEntity
 import com.poulastaa.kyoku.playlist.utils.PlaylistId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

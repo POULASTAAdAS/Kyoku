@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.playlist.database.repository.content
+package com.poulastaa.kyoku.playlist.database.content.repository
 
 import com.poulastaa.kyoku.playlist.database.content.entity.EntityArtistInfo
 import com.poulastaa.kyoku.playlist.database.content.entity.EntitySong

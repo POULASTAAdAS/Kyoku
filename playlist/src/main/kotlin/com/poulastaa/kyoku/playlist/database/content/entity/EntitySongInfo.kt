@@ -1,6 +1,6 @@
 package com.poulastaa.kyoku.playlist.database.content.entity
 
-import com.poulastaa.kyoku.playlist.database.playlist.entity.BaseIdEntity
+import com.poulastaa.kyoku.playlist.database.BaseIdEntity
 import com.poulastaa.kyoku.playlist.utils.SongId
 import jakarta.persistence.*
 

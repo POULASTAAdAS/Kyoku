@@ -28,6 +28,7 @@ extra["springGrpcVersion"] = "0.12.0"
 
 dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // service discovery
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")

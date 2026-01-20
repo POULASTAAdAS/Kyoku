@@ -1,16 +1,10 @@
 package com.poulastaa.kyoku.user.service
 
-import com.poulastaa.kyoku.grpc.user_core.CoreUserServiceGrpc
-import com.poulastaa.kyoku.grpc.user_core.EmptyResponse
-import com.poulastaa.kyoku.grpc.user_core.GRPCRequestUpdatePassword
-import com.poulastaa.kyoku.grpc.user_core.GRPCRequestUser
-import com.poulastaa.kyoku.grpc.user_core.GRPCResponseUser
-import com.poulastaa.kyoku.grpc.user_core.GRPCUserType
-import com.poulastaa.kyoku.user.database.entity.EntityCountry
-import com.poulastaa.kyoku.user.database.entity.EntityUser
-import com.poulastaa.kyoku.user.database.repository.CountryDataSource
-import com.poulastaa.kyoku.user.database.repository.UserDataSource
-import com.poulastaa.kyoku.user.database.repository.UserTypeDataSource
+import com.poulastaa.kyoku.grpc.user_core.*
+import com.poulastaa.kyoku.user.database.user.entity.EntityUser
+import com.poulastaa.kyoku.user.database.user.repository.CountryDataSource
+import com.poulastaa.kyoku.user.database.user.repository.UserDataSource
+import com.poulastaa.kyoku.user.database.user.repository.UserTypeDataSource
 import com.poulastaa.kyoku.user.domain.model.dto.UserType
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
@@ -18,7 +12,6 @@ import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import net.devh.boot.grpc.server.service.GrpcService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import java.sql.Date
 import java.time.LocalDate
 
@@ -44,7 +37,12 @@ class CoreUserService(
                     this.passwordHash = request.passwordHash
                     this.profilePicUrl = request.profileUrl
                     this.country = getCountryByCode(request.countryCode)
-                    this.userType = getUserTypeByType(UserType.valueOf(request.type.name))
+                    this.userType = getUserTypeByType(UserType.valueOf(request.type.name)) ?: let {
+                        responseObserver.onError(
+                            Status.NOT_FOUND.withDescription("Usertype not found").asRuntimeException()
+                        )
+                        return
+                    }
 
                     if (request.dateOfBrith.isNotBlank() && request.dateOfBrith.isNotEmpty())
                         this.birthDate = Date.valueOf(LocalDate.parse(request.dateOfBrith))

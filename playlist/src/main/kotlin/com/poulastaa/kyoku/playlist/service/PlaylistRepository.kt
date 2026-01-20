@@ -1,12 +1,14 @@
 package com.poulastaa.kyoku.playlist.service
 
 import com.poulastaa.kyoku.playlist.database.content.entity.*
-import com.poulastaa.kyoku.playlist.database.repository.content.ArtistInfoDataSource
-import com.poulastaa.kyoku.playlist.database.repository.content.SongDataSource
-import com.poulastaa.kyoku.playlist.database.repository.content.SongInfoDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.ArtistInfoDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.SongDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.SongInfoDataSource
 import com.poulastaa.kyoku.playlist.domain.model.*
 import com.poulastaa.kyoku.playlist.utils.SpotifySongTitle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.regex.Pattern
@@ -26,7 +28,9 @@ class PlaylistRepository(
         val uncachedTitles = titles.filter { it !in cachedSongsByTitle.keys }
 
         val dbSongs = if (uncachedTitles.isNotEmpty()) {
-            fetchSongsFromDatabase(uncachedTitles)
+            withContext(Dispatchers.IO) {
+                fetchSongsFromDatabase(uncachedTitles)
+            }
         } else emptyList()
 
         cachedSongsByTitle.values + dbSongs

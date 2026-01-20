@@ -14,8 +14,8 @@ import com.poulastaa.kyoku.playlist.database.playlist.entity.EntityPlaylist
 import com.poulastaa.kyoku.playlist.database.playlist.entity.EntitySongPlaylist
 import com.poulastaa.kyoku.playlist.database.playlist.entity.PlaylistVisibility
 import com.poulastaa.kyoku.playlist.database.playlist.entity.ids.SongPlaylistId
-import com.poulastaa.kyoku.playlist.database.repository.playlist.PlaylistDataSource
-import com.poulastaa.kyoku.playlist.database.repository.playlist.SongPlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.playlist.repository.PlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.playlist.repository.SongPlaylistDataSource
 import com.poulastaa.kyoku.playlist.domain.model.internal.PlaylistResponse
 import com.poulastaa.kyoku.playlist.utils.DebugUtils
 import com.poulastaa.kyoku.playlist.utils.SpotifySongTitle
@@ -149,7 +149,7 @@ class GRPCGatewayRequestService(
                                                         Composer.newBuilder().apply {
                                                             id = composer.id
                                                             name = composer.name
-                                                            coverImage = composer.coverImage
+                                                            composer.coverImage?.let { coverImage = it }
                                                             followers = composer.followers
                                                         }.build()
                                                     }
@@ -162,7 +162,7 @@ class GRPCGatewayRequestService(
                                                     Artist.newBuilder().apply {
                                                         id = artist.id
                                                         name = artist.name
-                                                        coverImage = artist.coverImage
+                                                        artist.coverImage?.let { coverImage = it }
                                                         followers = artist.followers
                                                         birthDate = artist.birthDate.toString()
                                                         monthlyListeners = artist.monthlyListeners
@@ -177,7 +177,9 @@ class GRPCGatewayRequestService(
                                                                             Artist.newBuilder().apply {
                                                                                 id = albumArtist.id
                                                                                 name = albumArtist.name
-                                                                                coverImage = albumArtist.coverImage
+                                                                                albumArtist.coverImage?.let {
+                                                                                    coverImage = it
+                                                                                }
                                                                                 followers = albumArtist.followers
                                                                                 birthDate =
                                                                                     albumArtist.birthDate.toString()
@@ -194,7 +196,7 @@ class GRPCGatewayRequestService(
                                                                 Genre.newBuilder().apply {
                                                                     id = genre.id
                                                                     name = genre.name
-                                                                    coverImage = genre.coverImage
+                                                                    genre.coverImage?.let { coverImage = it }
                                                                     popularity = genre.popularity
                                                                 }.build()
                                                             }

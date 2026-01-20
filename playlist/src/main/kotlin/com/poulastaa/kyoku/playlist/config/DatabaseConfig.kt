@@ -1,10 +1,10 @@
 package com.poulastaa.kyoku.playlist.config
 
-import com.poulastaa.kyoku.playlist.database.repository.content.ArtistInfoDataSource
-import com.poulastaa.kyoku.playlist.database.repository.content.SongDataSource
-import com.poulastaa.kyoku.playlist.database.repository.content.SongInfoDataSource
-import com.poulastaa.kyoku.playlist.database.repository.playlist.PlaylistDataSource
-import com.poulastaa.kyoku.playlist.database.repository.playlist.SongPlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.ArtistInfoDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.SongDataSource
+import com.poulastaa.kyoku.playlist.database.content.repository.SongInfoDataSource
+import com.poulastaa.kyoku.playlist.database.playlist.repository.PlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.playlist.repository.SongPlaylistDataSource
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
@@ -20,7 +20,7 @@ import javax.sql.DataSource
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = ["com.poulastaa.kyoku.playlist.database.repository.playlist"],
+    basePackages = ["com.poulastaa.kyoku.playlist.database.playlist.repository"],
     includeFilters = [
         ComponentScan.Filter(
             type = FilterType.ASSIGNABLE_TYPE,
@@ -80,7 +80,7 @@ class PlaylistDatasourceConfig {
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    basePackages = ["com.poulastaa.kyoku.playlist.database.repository.content"],
+    basePackages = ["com.poulastaa.kyoku.playlist.database.content.repository"],
     includeFilters = [
         ComponentScan.Filter(
             type = FilterType.ASSIGNABLE_TYPE,

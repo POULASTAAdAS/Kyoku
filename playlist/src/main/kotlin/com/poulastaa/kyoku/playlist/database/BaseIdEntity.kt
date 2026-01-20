@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.user.database.entity
+package com.poulastaa.kyoku.playlist.database
 
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy

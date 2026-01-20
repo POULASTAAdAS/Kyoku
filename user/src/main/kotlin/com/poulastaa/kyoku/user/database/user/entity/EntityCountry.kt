@@ -1,5 +1,6 @@
-package com.poulastaa.kyoku.user.database.entity
+package com.poulastaa.kyoku.user.database.user.entity
 
+import com.poulastaa.kyoku.user.database.BaseIdEntity
 import com.poulastaa.kyoku.user.utils.CountryId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

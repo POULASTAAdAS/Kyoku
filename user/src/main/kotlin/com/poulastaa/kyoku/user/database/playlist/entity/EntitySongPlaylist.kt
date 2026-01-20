@@ -1,15 +1,14 @@
-package com.poulastaa.kyoku.user.database.entity
+package com.poulastaa.kyoku.user.database.playlist.entity
 
-import com.poulastaa.kyoku.user.database.entity.ids.EntityUserPlaylistId
+import com.poulastaa.kyoku.user.database.playlist.entity.ids.SongPlaylistId
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 
-@Suppress("JpaDataSourceORMInspection")
 @Entity
-@Table(name = "UserPlaylist")
-class EntityUserPlaylist(
+@Table(name = "SongPlaylist")
+class EntitySongPlaylist(
     @EmbeddedId
-    val id: EntityUserPlaylistId = EntityUserPlaylistId(),
+    val id: SongPlaylistId = SongPlaylistId(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("playlistId")
@@ -33,7 +32,7 @@ class EntityUserPlaylist(
             if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
 
         if (thisEffectiveClass != oEffectiveClass) return false
-        other as EntityUserPlaylist
+        other as EntitySongPlaylist
 
         return id == other.id
     }

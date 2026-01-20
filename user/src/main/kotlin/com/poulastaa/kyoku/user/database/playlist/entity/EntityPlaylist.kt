@@ -1,5 +1,6 @@
-package com.poulastaa.kyoku.user.database.entity
+package com.poulastaa.kyoku.user.database.playlist.entity
 
+import com.poulastaa.kyoku.user.database.BaseIdEntity
 import com.poulastaa.kyoku.user.utils.PlaylistId
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -8,6 +9,11 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.sql.Timestamp
+
+enum class PlaylistVisibility(val status: Boolean) {
+    PUBLIC(true),
+    PRIVATE(false)
+}
 
 @Entity
 @Table(
@@ -22,7 +28,7 @@ class EntityPlaylist(
     var description: String = "",
 
     @Column(name = "visibility_state", nullable = false)
-    var isPublic: Boolean = false,
+    var visibility: Boolean = PlaylistVisibility.PRIVATE.status,
 
     @Column(name = "popularity", nullable = false)
     var popularity: Long = 0,

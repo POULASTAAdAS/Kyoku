@@ -5,16 +5,20 @@ option java_package = "com.poulastaa.kyoku.grpc.playlistUser";
 
 package playlistUser;
 
-enum RequestPlaylistVisibilityType{
-  UNDEFINED = 0;
-  PRIVATE = 1;
-  PUBLIC = 2;
-}
+message RequestUser{
+  string email = 1;
+  UserType type = 2;
+
+  enum UserType{
+    DEFAULT = 0;
+    EMAIL = 1;
+    GOOGLE = 2;
+  }
+};
 
 message RequestSaveUserPlaylist{
-  int64 userId = 1;
-  int64 playlistId = 2;
-  RequestPlaylistVisibilityType type = 3;
+  int64 playlistId = 1;
+  RequestUser user = 2;
 };
 
 message EmptyResponse{};
