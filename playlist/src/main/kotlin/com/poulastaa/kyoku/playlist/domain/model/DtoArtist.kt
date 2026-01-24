@@ -9,6 +9,7 @@ data class DtoArtist(
     private val rawCoverImage: String? = null,
     val followers: Long = 0,
     val birthDate: Date? = null,
+    val biography: String? = null,
     val monthlyListeners: Long = 0,
     val albums: List<DtoAlbum> = emptyList(),
     val genres: List<DtoGenre> = emptyList(),

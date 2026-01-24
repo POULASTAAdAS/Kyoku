@@ -51,9 +51,10 @@ message Artist{
   optional string coverImage = 3;
   uint64 followers = 4;
   optional string birthDate = 5;
-  uint64 monthlyListeners = 6;
-  repeated Album albums = 7;
-  repeated Genre genres = 8;
+  optional string biography = 6;
+  uint64 monthlyListeners = 7;
+  repeated Album albums = 8;
+  repeated Genre genres = 9;
 };
 
 message SongInfo{

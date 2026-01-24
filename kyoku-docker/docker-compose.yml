@@ -376,13 +376,14 @@ services:
       - "1030:3306"
     volumes:
       - ./mysql/content/sql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
-      - ./mysql/content/sql/2_insert_content_db_country.sql:/docker-entrypoint-initdb.d/2_insert_content_db_country.sql
-      - ./mysql/content/sql/3_insert_content_db_album.sql:/docker-entrypoint-initdb.d/3_insert_content_db_album.sql
-      - ./mysql/content/sql/4_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/4_insert_content_db_genre.sql
-      - ./mysql/content/sql/5_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/5_insert_content_db_artist.sql
-      - ./mysql/content/sql/6_insert_content_db_song.sql:/docker-entrypoint-initdb.d/6_insert_content_db_song.sql
-      - ./mysql/content/sql/7_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/7_insert_content_db_songInfo.sql
-      - ./mysql/content/sql/8_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/8_insert_content_db_artistinfo.sql
+      - ./mysql/content/sql/02_insert_content_db_country.sql:/docker-entrypoint-initdb.d/02_insert_content_db_country.sql
+      - ./mysql/content/sql/03_insert_content_db_album.sql:/docker-entrypoint-initdb.d/03_insert_content_db_album.sql
+      - ./mysql/content/sql/04_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/04_insert_content_db_genre.sql
+      - ./mysql/content/sql/05_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/05_insert_content_db_artist.sql
+      - ./mysql/content/sql/06_insert_content_db_song.sql:/docker-entrypoint-initdb.d/06_insert_content_db_song.sql
+      - ./mysql/content/sql/07_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/07_insert_content_db_songInfo.sql
+      - ./mysql/content/sql/08_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/08_insert_content_db_artistinfo.sql
+
       - ./mysql/content/sql/100_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/100_insert_content_db_relation_artist_album.sql
       - ./mysql/content/sql/101_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/101_insert_content_db_relation_artist_country.sql
       - ./mysql/content/sql/102_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/102_insert_content_db_relation_artist_genre.sql
@@ -390,6 +391,7 @@ services:
       - ./mysql/content/sql/104_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/104_insert_content_db_relation_song_artist.sql
       - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
       - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
+      
       - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
 
       - ./data/mysql/data/content-primary/data:/var/lib/mysql

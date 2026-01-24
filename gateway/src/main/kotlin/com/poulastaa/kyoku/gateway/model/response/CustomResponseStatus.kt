@@ -17,7 +17,7 @@ enum class CustomResponseStatus(val message: String? = null) {
 
     // non retriable error
     USER_NOT_FOUND("No user found, please register first"),
-    NOT_FOUND,
+    NO_CONTENT,
     UNAUTHORIZED("You do not have permission to access this resource"),
     FUCK_YOU("FUCK YOU"),
 }

@@ -111,8 +111,14 @@ class PlaylistRouteConfig {
                                 status = when {
                                     error.message?.contains("NOT_FOUND", ignoreCase = true) == true -> {
                                         response.statusCode = HttpStatus.NOT_FOUND
-                                        CustomResponseStatus.NOT_FOUND
+                                        CustomResponseStatus.NO_CONTENT
                                     }
+
+                                    error.message?.contains("CANCELLED", ignoreCase = true) == true -> {
+                                        response.statusCode = HttpStatus.NO_CONTENT
+                                        CustomResponseStatus.NO_CONTENT
+                                    }
+
                                     else -> {
                                         response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
                                         CustomResponseStatus.INTERNAL_SERVER_ERROR

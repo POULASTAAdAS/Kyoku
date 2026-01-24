@@ -33,6 +33,7 @@ message ResponseSong{
   repeated model.Artist artists = 6;
   repeated model.Genre genre = 7;
   repeated model.Country country = 8;
+  repeated model.Album albums = 9;
 };
 
 message ResponseFullPlaylist{

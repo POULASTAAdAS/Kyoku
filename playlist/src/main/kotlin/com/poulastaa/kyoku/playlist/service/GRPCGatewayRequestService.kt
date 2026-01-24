@@ -93,8 +93,16 @@ class GRPCGatewayRequestService(
                 )
             }
             val songs = songsDef.await()
+            if (songs.isEmpty()) {
+                responseObserver.onError(
+                    Status.CANCELLED.withDescription("The playlist is empty").asRuntimeException()
+                )
+
+                return@launch
+            }
+
             val dbPlaylist = dbPlaylistDef.await()
-            async { dbPlaylist.totalSongs = songs.size }.await()
+            async { playlistDB.updateTotalSongsById(songs.size, dbPlaylist.id) }.await()
 
             //2. save playlistId + songId
             songs.map {
@@ -164,14 +172,15 @@ class GRPCGatewayRequestService(
                                                         name = artist.name
                                                         artist.coverImage?.let { coverImage = it }
                                                         followers = artist.followers
-                                                        birthDate = artist.birthDate.toString()
+                                                        artist.birthDate?.let { birthDate = it.toString() }
+                                                        artist.biography?.let { biography = it }
                                                         monthlyListeners = artist.monthlyListeners
                                                         addAllAlbums(
                                                             artist.albums.map { album ->
                                                                 Album.newBuilder().apply {
                                                                     id = album.id
                                                                     name = album.name
-                                                                    poster = album.poster
+                                                                    album.poster?.let { poster = it }
                                                                     addAllArtists(
                                                                         album.artists.map { albumArtist ->
                                                                             Artist.newBuilder().apply {
@@ -181,8 +190,12 @@ class GRPCGatewayRequestService(
                                                                                     coverImage = it
                                                                                 }
                                                                                 followers = albumArtist.followers
-                                                                                birthDate =
-                                                                                    albumArtist.birthDate.toString()
+                                                                                albumArtist.birthDate?.let {
+                                                                                    birthDate = it.toString()
+                                                                                }
+                                                                                albumArtist.biography?.let {
+                                                                                    biography = it
+                                                                                }
                                                                                 monthlyListeners =
                                                                                     albumArtist.monthlyListeners
                                                                             }.build()
@@ -222,6 +235,32 @@ class GRPCGatewayRequestService(
                                                         id = country.id
                                                         this.country = country.country
                                                         code = country.code
+                                                    }.build()
+                                                }
+                                            )
+
+                                            addAllAlbums(
+                                                song.album.map { album ->
+                                                    Album.newBuilder().apply {
+                                                        id = album.id
+                                                        name = album.name
+                                                        popularity = album.popularity
+                                                        album.poster?.let { poster = it }
+                                                        addAllArtists(
+                                                            album.artists.map { albumArtist ->
+                                                                Artist.newBuilder().apply {
+                                                                    id = albumArtist.id
+                                                                    name = albumArtist.name
+                                                                    albumArtist.coverImage?.let { coverImage = it }
+                                                                    followers = albumArtist.followers
+                                                                    albumArtist.birthDate?.let {
+                                                                        birthDate = it.toString()
+                                                                    }
+                                                                    albumArtist.biography?.let { biography = it }
+                                                                    monthlyListeners = albumArtist.monthlyListeners
+                                                                }.build()
+                                                            }
+                                                        )
                                                     }.build()
                                                 }
                                             )

@@ -71,8 +71,11 @@ class PlaylistRepository(
             .groupBy({ it.first }, { it.second })
             .mapValues { it.value.distinctBy { country -> country.id } }
 
-        // Fetch artist info
-        val artistIds = artistsBySongId.values.flatten().map { it.id }.distinct()
+        // Fetch artist info for all artists (from songs and albums)
+        val songArtistIds = artistsBySongId.values.flatten().map { it.id }
+        val albumArtistIds = albumsBySongId.values.flatten()
+            .flatMap { album -> album.artists.map { it.id } }
+        val artistIds = (songArtistIds + albumArtistIds).distinct()
         val artistInfoMap = if (artistIds.isNotEmpty()) {
             artistInfoDb.findAllByIds(artistIds).associateBy { it.id }
         } else emptyMap()
@@ -90,13 +93,20 @@ class PlaylistRepository(
             val genres = genresBySongId[songId] ?: emptyList()
             val countries = countriesBySongId[songId] ?: emptyList()
 
-            // Populate artist info
+            // Populate artist info for song artists
             artists.forEach { artist ->
                 artist.artistInfo = artistInfoMap[artist.id]
             }
 
+            // Populate artist info for album artists
+            albums.forEach { album ->
+                album.artists.forEach { artist ->
+                    artist.artistInfo = artistInfoMap[artist.id]
+                }
+            }
+
             // Convert to DTO
-            DtoSong(
+            val dtoSong = DtoSong(
                 id = baseSong.id,
                 title = baseSong.title,
                 rawPoster = baseSong.poster,
@@ -107,6 +117,8 @@ class PlaylistRepository(
                 genre = genres.map { it.toDtoGenre() },
                 country = countries.map { it.toDtoCountry() }
             )
+
+            dtoSong
         }.also {
             cache.setSongById(it)
             cache.setSongByTitle(it)
@@ -135,6 +147,7 @@ class PlaylistRepository(
         name = this.name,
         rawCoverImage = this.coverImage,
         followers = this.followers,
+        biography = this.artistInfo?.biography,
         birthDate = this.artistInfo?.birthDate,
         monthlyListeners = this.artistInfo?.monthlyListeners ?: 0,
         albums = emptyList(), // Avoid circular reference
@@ -146,7 +159,19 @@ class PlaylistRepository(
         name = this.name,
         popularity = this.popularity,
         rawPoster = null,
-        artists = emptyList() // Avoid circular reference
+        artists = this.artists.map { artist ->
+            DtoArtist(
+                id = artist.id,
+                name = artist.name,
+                rawCoverImage = artist.coverImage,
+                followers = artist.followers,
+                biography = artist.artistInfo?.biography,
+                birthDate = artist.artistInfo?.birthDate,
+                monthlyListeners = artist.artistInfo?.monthlyListeners ?: 0,
+                albums = emptyList(), // Avoid deeper circular reference
+                genres = emptyList() // Genres not needed at this depth
+            )
+        }
     )
 
     private fun EntityGenre.toDtoGenre(): DtoGenre = DtoGenre(

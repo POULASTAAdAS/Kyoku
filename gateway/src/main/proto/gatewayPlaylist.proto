@@ -22,6 +22,54 @@ message RequestGetPlaylist{
   RequestUser user = 2;
 };
 
+// Model messages
+message Composer{
+  sint64 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 followers = 4;
+};
+
+message Genre{
+  int32 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 popularity = 4;
+};
+
+message Country{
+  int32 id = 1;
+  string country = 2;
+  string code = 3;
+};
+
+message Album{
+  int64 id = 1;
+  string name = 2;
+  uint64 popularity = 3;
+  optional string poster = 4;
+  repeated Artist artists = 5;
+};
+
+message Artist{
+  int64 id = 1;
+  string name = 2;
+  optional string coverImage = 3;
+  uint64 followers = 4;
+  optional string birthDate = 5;
+  optional string biography = 6;
+  uint64 monthlyListeners = 7;
+  repeated Album albums = 8;
+  repeated Genre genres = 9;
+};
+
+message SongInfo{
+  int64 songId = 1;
+  int32 releaseYear = 2;
+  repeated Composer composers = 3;
+  uint64 popularity = 4;
+};
+
 // response
 message ResponsePlaylist{
   int64 playlistId = 1;
@@ -40,7 +88,11 @@ message ResponseSong{
   string title = 2;
   optional string poster = 3;
   string masterPlaylist = 4;
-  // todo add more items
+  SongInfo info = 5;
+  repeated Artist artists = 6;
+  repeated Genre genre = 7;
+  repeated Country country = 8;
+  repeated Album albums = 9;
 };
 
 message ResponseFullPlaylist{

@@ -32,7 +32,8 @@ interface SongDataSource : JpaRepository<EntitySong, SongId> {
     @Query(
         """
             SELECT DISTINCT s FROM EntitySong s
-            LEFT JOIN FETCH s.artists
+            LEFT JOIN FETCH s.artists a
+            LEFT JOIN FETCH a.genres
             WHERE s.id IN :ids
         """
     )
@@ -41,7 +42,8 @@ interface SongDataSource : JpaRepository<EntitySong, SongId> {
     @Query(
         """
             SELECT DISTINCT s FROM EntitySong s
-            LEFT JOIN FETCH s.albums
+            LEFT JOIN FETCH s.albums alb
+            LEFT JOIN FETCH alb.artists
             WHERE s.id IN :ids
         """
     )
