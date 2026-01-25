@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "content_model.proto";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.gateway_setup";
+
+package gatewaySetup;
+
+service GatewaySetupService{
+  rpc getGenre(content_model.GenreRequest) returns (content_model.GenreResponse);
+}

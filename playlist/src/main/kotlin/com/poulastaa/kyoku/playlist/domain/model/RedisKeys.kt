@@ -18,12 +18,12 @@ open class RedisKeys {
         val unit: TimeUnit,
     ) {
         SONG_BY_ID(
-            prefix = "SONG_BY_ID:",
+            prefix = "SONG:ID:",
             expTime = ExpTime.HOUR_6.time,
             unit = ExpTime.HOUR_6.unit
         ),
         SONG_BY_TITLE(
-            prefix = "SONG_BY_TITLE:",
+            prefix = "SONG:TITLE:",
             expTime = ExpTime.HOUR_6.time,
             unit = ExpTime.HOUR_6.unit
         ),

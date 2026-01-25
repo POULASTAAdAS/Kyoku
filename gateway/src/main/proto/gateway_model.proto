@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.model";
+
+package gateway_model;
+
+message ResponseGenre{
+  int32 id = 1;
+  string type = 2;
+  optional string poster = 3;
+  int64 popularity = 4;
+};
+
+message GenreResponse{
+  repeated ResponseGenre list = 1;
+  bool hasMore = 2;
+};
+
+message GenreRequest{
+  int32 page = 1;
+  int32 size = 2;
+  string query = 3;
+};
