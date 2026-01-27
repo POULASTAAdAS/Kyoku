@@ -13,3 +13,4 @@ typealias Username = String
 typealias UserTypeId = Int
 typealias CountryId = Int
 typealias SpotifySongTitle = String
+typealias HasMoreGenre = Boolean

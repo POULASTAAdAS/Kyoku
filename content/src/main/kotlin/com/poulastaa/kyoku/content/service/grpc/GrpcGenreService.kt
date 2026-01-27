@@ -26,9 +26,9 @@ class GrpcGenreService(
 
             responseObserver.onNext(
                 GenreResponse.newBuilder().apply {
-                    hasMore = true
+                    hasMore = pageData.second
                     addAllList(
-                        pageData.map { dto ->
+                        pageData.first.map { dto ->
                             ResponseGenre.newBuilder().apply {
                                 this.id = dto.id
                                 this.type = dto.type

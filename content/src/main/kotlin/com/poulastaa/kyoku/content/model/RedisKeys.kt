@@ -13,21 +13,9 @@ open class RedisKeys {
         val prefix: String,
         val expTime: ExpTime,
     ) {
-        GENRE_BY_ID(
-            prefix = "GENRE:ID:",
+        GENRE(
+            prefix = "GENRE",
             expTime = ExpTime.MIN_30
-        ),
-        GENRE_BY_TYPE(
-            prefix = "GENRE:TYPE:",
-            expTime = ExpTime.MIN_30
-        ),
-        GENRE_BY_POPULARITY(
-            prefix = "GENRE:POPULARITY:",
-            expTime = ExpTime.MIN_30
-        ),
-        GENRE_BY_QUERY(
-            prefix = "GENRE:QUERY:",
-            expTime = ExpTime.MIN_10
         ),
     }
 }
