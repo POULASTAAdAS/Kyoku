@@ -1,4 +1,4 @@
-package com.poulastaa.kyoku.playlist.utils
+package com.poulastaa.kyoku.activity.utils
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
@@ -15,10 +15,10 @@ class LogFilter : TurboFilter() {
         params: Array<out Any?>?,
         t: Throwable?,
     ): FilterReply {
-        return if (format?.contains("eureka") == true) FilterReply.DENY
-        else if (format?.contains("docker") == true) FilterReply.DENY
-        else if (format == "Accept=[application/json, application/*+json]") FilterReply.DENY
-        else if (format == "Response 200 OK") FilterReply.DENY
+        return if (format?.contains("eureka") == true) return FilterReply.DENY
+        else if (format?.contains("docker") == true) return FilterReply.DENY
+        else if (format == "Accept=[application/json, application/*+json]") return FilterReply.DENY
+        else if (format == "Response 200 OK") return FilterReply.DENY
         else FilterReply.NEUTRAL
     }
 }
