@@ -6,6 +6,9 @@ import com.poulastaa.kyoku.activity.database.content.repository.SongDatasource
 import com.poulastaa.kyoku.activity.database.content.repository.SongInfoDatasource
 import com.poulastaa.kyoku.activity.database.playlist.repository.PlaylistDatasource
 import com.poulastaa.kyoku.activity.database.playlist.repository.SongPlaylistDatasource
+import com.poulastaa.kyoku.activity.database.user.repository.UserCountryDatasource
+import com.poulastaa.kyoku.activity.database.user.repository.UserDatasource
+import com.poulastaa.kyoku.activity.database.user.repository.UserTypeDatasource
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
@@ -125,5 +128,55 @@ class PlaylistDatabaseConfig {
     @Bean
     fun providePlaylistTransactionManager(
         @Qualifier(value = "providePlaylistEntityManagerFactory") factory: LocalContainerEntityManagerFactoryBean,
+    ) = JpaTransactionManager(factory.`object`!!)
+}
+
+@Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories(
+    basePackages = ["com.poulastaa.kyoku.activity.database.user.repository"],
+    includeFilters = [
+        ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = [
+                UserDatasource::class,
+                UserTypeDatasource::class,
+                UserCountryDatasource::class
+            ]
+        )
+    ],
+    transactionManagerRef = "provideUserTransactionManager",
+    entityManagerFactoryRef = "provideUserEntityManagerFactory"
+)
+class UserDatabaseConfig {
+    @Bean
+    @ConfigurationProperties(value = "spring.datasource.user")
+    fun provideUserDatasourceProperties() = DataSourceProperties()
+
+    @Bean
+    fun provideUserDatasource(
+        @Qualifier(value = "provideUserDatasourceProperties")
+        dp: DataSourceProperties,
+    ) = dp.initializeDataSourceBuilder()
+        .type(HikariDataSource::class.java)
+        .build().apply {
+            maximumPoolSize = 10
+            connectionTimeout = 30_000
+            poolName = "user"
+        }!!
+
+    @Bean
+    fun provideUserEntityManagerFactory(
+        builder: EntityManagerFactoryBuilder,
+        @Qualifier(value = "provideUserDatasource") datasource: DataSource,
+    ) = builder.dataSource(datasource)
+        .packages("com.poulastaa.kyoku.activity.database.user.entity")
+        .properties(prop)
+        .persistenceUnit("user")
+        .build()!!
+
+    @Bean
+    fun provideUserTransactionManager(
+        @Qualifier(value = "provideUserEntityManagerFactory") factory: LocalContainerEntityManagerFactoryBean,
     ) = JpaTransactionManager(factory.`object`!!)
 }
