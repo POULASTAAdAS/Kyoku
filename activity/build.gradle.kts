@@ -53,6 +53,9 @@ dependencies {
     // gson
     implementation("com.google.code.gson:gson:2.13.1")
 
+    // mongo
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

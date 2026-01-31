@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import javax.sql.DataSource
 
 private val prop = mapOf(
-    "hibernate.hbm2ddl.auto" to "non",
+    "hibernate.hbm2ddl.auto" to "none",
     "hibernate.physical_naming_strategy" to "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl",
     "hibernate.show_sql" to true,
     "hibernate.format_sql" to true,

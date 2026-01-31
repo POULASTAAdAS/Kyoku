@@ -541,6 +541,21 @@ services:
       # - content-replica4
       # - content-replica5
 
+  activity-nosql:
+    image: mongo:latest
+    container_name: activity-nosql
+    ports:
+      - "1038:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ACTIVITY_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ACTIVITY_PASSWORD}
+    volumes:
+      - ./nosql/activity/1_init.js:/docker-entrypoint-initdb.d/1_init.js:ro
+      
+      - G:/kyoku/mongo:/data/db
+    restart: unless-stopped
+
+
 
   gateway-redis:
     image: redis/redis-stack:latest
