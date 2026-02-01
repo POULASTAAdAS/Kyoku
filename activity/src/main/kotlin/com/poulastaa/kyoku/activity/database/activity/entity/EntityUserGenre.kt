@@ -4,10 +4,13 @@ import com.poulastaa.kyoku.activity.utils.GenreId
 import com.poulastaa.kyoku.activity.utils.UserId
 import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.Instant
 
 @Document(collation = "userGenre")
-data class UserGenre(
+data class EntityUserGenre(
     @Id
     val userId: UserId,
-    val genre: List<GenreId>,
+    val genreIds: List<GenreId>,
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
 )
