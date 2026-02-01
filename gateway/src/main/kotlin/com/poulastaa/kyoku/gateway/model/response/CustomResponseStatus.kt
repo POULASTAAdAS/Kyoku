@@ -11,6 +11,8 @@ enum class CustomResponseStatus(val message: String? = null) {
     PASSWORD_DOES_NOT_MATCH,
     EMAIL_ALREADY_IN_USE,
 
+    SUCCESS,
+
     // retriable error
     SERVICE_UNAVAILABLE("Service unavailable, please try again later"),
     INTERNAL_SERVER_ERROR("Opps! Something went wrong. Please try again later"),
@@ -18,6 +20,8 @@ enum class CustomResponseStatus(val message: String? = null) {
     // non retriable error
     USER_NOT_FOUND("No user found, please register first"),
     NO_CONTENT,
+    METHOD_NOT_ALLOWED("Method not allowed"),
+    INVALID_REQUEST_BODY("Request body is not valid"),
     UNAUTHORIZED("You do not have permission to access this resource"),
     FUCK_YOU("FUCK YOU"),
 }

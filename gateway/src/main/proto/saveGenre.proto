@@ -1,0 +1,9 @@
+syntax = "proto3";
+import "gateway_model.proto";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.activity_save_genre";
+
+service SaveGenre{
+  rpc storeUserGenre(gateway_model.RequestSaveUserGenre) returns (gateway_model.EmptyResponse);
+}

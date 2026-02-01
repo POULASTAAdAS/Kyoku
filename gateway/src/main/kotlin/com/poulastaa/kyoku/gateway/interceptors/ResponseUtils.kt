@@ -1,7 +1,9 @@
 package com.poulastaa.kyoku.gateway.interceptors
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.poulastaa.kyoku.gateway.model.response.CustomResponseStatus
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.server.ServerWebExchange
@@ -22,5 +24,26 @@ fun Mono<ResponseEntity<out Any>>.wrapResponse(
         else -> ByteArray(0)
     }
 
+    response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
+}
+
+fun Mono<Void>.generalErrorResponse(
+    errorTag: String,
+    exchange: ServerWebExchange,
+    status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
+    mapper: ObjectMapper,
+): Mono<Void> = this.onErrorResume { error ->
+    println("$errorTag: ${error.message}")
+    error.printStackTrace()
+
+    val response = exchange.response
+    response.headers.contentType = MediaType.APPLICATION_JSON
+    response.statusCode = status
+    val errorWrapper = ResponseWrapper(
+        status = CustomResponseStatus.INTERNAL_SERVER_ERROR,
+        payload = CustomResponseStatus.INTERNAL_SERVER_ERROR.message
+    )
+
+    val bytes = mapper.writeValueAsBytes(errorWrapper)
     response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
 }

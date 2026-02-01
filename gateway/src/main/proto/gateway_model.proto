@@ -22,3 +22,10 @@ message GenreRequest{
   int32 size = 2;
   string query = 3;
 };
+
+message RequestSaveUserGenre{
+  int64 userId = 1;
+  repeated int32 genreList = 2;
+};
+
+message EmptyResponse{};

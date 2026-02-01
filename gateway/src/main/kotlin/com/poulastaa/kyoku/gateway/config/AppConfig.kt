@@ -79,4 +79,19 @@ class AppConfig {
         uri = uri,
         servicePath = servicePath
     )
+
+    // grpc
+    @Bean
+    fun provideActivityServicePayload(
+        @Value("\${spring.cloud.gateway.server.webflux.routes[7].id}")
+        name: String,
+        @Value("\${spring.cloud.gateway.server.webflux.routes[7].uri}")
+        uri: String,
+        @Value("\${spring.cloud.gateway.server.webflux.routes[7].predicates[0]}")
+        servicePath: String,
+    ) = ServiceConfigPayload(
+        id = name,
+        uri = uri,
+        servicePath = servicePath
+    )
 }

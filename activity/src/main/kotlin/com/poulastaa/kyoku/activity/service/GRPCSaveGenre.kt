@@ -25,9 +25,12 @@ class GRPCSaveGenre(
                 )
             )
 
+            println("user genre saved on userId: ${request.userId}")
+
             responseObserver.onNext(EmptyResponse.newBuilder().build())
             responseObserver.onCompleted()
         } catch (e: Exception) {
+            e.printStackTrace()
             responseObserver.onError(
                 Status.ABORTED.withDescription(e.message ?: "Something went wrong").asRuntimeException()
             )
