@@ -555,6 +555,71 @@ services:
       - G:/kyoku/mongo:/data/db
     restart: unless-stopped
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=true
+      
+      - ELASTIC_PASSWORD={ELASTIC_ROOT_PASSWORD}
+
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ports:
+      - "1200:9200"
+    volumes:
+      - G:/kyoku/search/elastic:/usr/share/elasticsearch/data
+    networks:
+      - db-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:${ELASTIC_ROOT_PASSWORD} -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=true
+
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+
+    ports:
+      - "1201:5601"
+    networks:
+      - db-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  logstash:
+      image: docker.elastic.co/logstash/logstash:8.11.0
+      container_name: logstash
+      volumes:
+        - G:/kyoku/search/logstash/pipeline:/usr/share/logstash/pipeline
+        - G:/kyoku/search/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+        - G:/kyoku/search/logstash/mysql-connector-j-8.2.0.jar:/usr/share/logstash/mysql-connector-j-8.2.0.jar
+      ports:
+        - "1202:5044"
+        - "1203:9600"
+      networks:
+        - db-network
+      depends_on:
+        - elasticsearch
+        - content-primary
+      environment:
+        - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+        - ELASTICSEARCH_USERNAME=elastic
+        - ELASTICSEARCH_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+        - MYSQL_ROOT_CONTENT_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
+
 
 
   gateway-redis:
@@ -647,19 +712,6 @@ services:
     volumes:
       - "./data/redis/playlist:/data"
 
-  notification-rabbitmq:
-    image: rabbitmq:3.12.0-management
-    container_name: notification-rabbitmq
-    ports:
-      - "1100:5672"     # AMQP (your custom host port)
-      - "14000:15672"   # management UI
-    environment:
-      RABBITMQ_DEFAULT_USER: ${NOTIFICATION_RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${NOTIFICATION_RABBITMQ_PASSWORD}
-    volumes:
-      - "./data/rabbit/notification:/var/lib/rabbitmq"
-
-
   kyoku-file-minio:
     image: minio/minio:latest
     container_name: kyoku-file-minio
@@ -698,6 +750,18 @@ services:
       timeout: 20s
       retries: 3
 
+
+  notification-rabbitmq:
+    image: rabbitmq:3.12.0-management
+    container_name: notification-rabbitmq
+    ports:
+      - "1100:5672"     # AMQP (your custom host port)
+      - "14000:15672"   # management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${NOTIFICATION_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${NOTIFICATION_RABBITMQ_PASSWORD}
+    volumes:
+      - "./data/rabbit/notification:/var/lib/rabbitmq"
 
 
 networks:

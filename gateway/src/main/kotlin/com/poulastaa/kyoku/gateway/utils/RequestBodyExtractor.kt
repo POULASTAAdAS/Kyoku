@@ -21,19 +21,17 @@ object RequestBodyExtractor {
      * @return The request body as a String
      * @throws IllegalStateException if the body is empty or cannot be read
      */
-    suspend fun extractBodyAsString(exchange: ServerWebExchange): String {
-        return DataBufferUtils.join(exchange.request.body)
-            .flatMap { dataBuffer ->
-                try {
-                    val bytes = ByteArray(dataBuffer.readableByteCount())
-                    dataBuffer.read(bytes)
-                    Mono.just(String(bytes, StandardCharsets.UTF_8))
-                } finally {
-                    // Always release buffer in finally block to prevent leaks
-                    DataBufferUtils.release(dataBuffer)
-                }
+    suspend fun extractBodyAsString(exchange: ServerWebExchange) = DataBufferUtils.join(exchange.request.body)
+        .flatMap { dataBuffer ->
+            try {
+                val bytes = ByteArray(dataBuffer.readableByteCount())
+                dataBuffer.read(bytes)
+                Mono.just(String(bytes, StandardCharsets.UTF_8))
+            } finally {
+                // Always release buffer in finally block to prevent leaks
+                DataBufferUtils.release(dataBuffer)
             }
-            .switchIfEmpty(Mono.error(IllegalArgumentException("Request body is empty")))
-            .awaitSingle()
-    }
+        }
+        .switchIfEmpty(Mono.error(IllegalArgumentException("Request body is empty")))
+        .awaitSingle()!!
 }

@@ -1,8 +1,0 @@
-package com.poulastaa.auth.domain.model
-
-enum class DtoForgotPasswordSentStatus {
-    SENT,
-    USER_NOT_FOUND,
-    INVALID_EMAIL,
-    ERROR
-}

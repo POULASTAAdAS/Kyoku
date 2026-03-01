@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit
 
 @Configuration
 class PlaylistRouteConfig {
-
     @GrpcClient("playlist")
     private lateinit var playlistStub: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
 
@@ -114,7 +113,7 @@ class PlaylistRouteConfig {
                                     }
                                 },
                                 payload = if (error.message?.contains(
-                                        "DEADLINE_EXCEEDED",
+                                        other = "DEADLINE_EXCEEDED",
                                         ignoreCase = true
                                     ) == true
                                 ) CustomResponseStatus.INTERNAL_SERVER_ERROR.message else error.message
