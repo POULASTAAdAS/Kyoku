@@ -1,0 +1,2 @@
+elasticsearch==8.11.0
+mysql-connector-python==8.2.0

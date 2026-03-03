@@ -10,7 +10,7 @@ pushd "%~dp0..\..\.."
 
 if not exist ".env" (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -63,4 +63,3 @@ if !errorlevel! neq 0 (
 
 echo.
 echo [INFO] Status check completed. Press any key to exit.
-pause

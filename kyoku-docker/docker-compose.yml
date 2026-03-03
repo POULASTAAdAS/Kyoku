@@ -562,8 +562,8 @@ services:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
       - xpack.security.enabled=true
-      
-      - ELASTIC_PASSWORD={ELASTIC_ROOT_PASSWORD}
+      - ELASTIC_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
 
       - xpack.security.http.ssl.enabled=false
       - xpack.security.enrollment.enabled=false
@@ -587,8 +587,8 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - xpack.security.enabled=true
 
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
 
     ports:
       - "1201:5601"
@@ -599,27 +599,35 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  logstash:
-      image: docker.elastic.co/logstash/logstash:8.11.0
-      container_name: logstash
-      volumes:
-        - G:/kyoku/search/logstash/pipeline:/usr/share/logstash/pipeline
-        - G:/kyoku/search/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
-        - G:/kyoku/search/logstash/mysql-connector-j-8.2.0.jar:/usr/share/logstash/mysql-connector-j-8.2.0.jar
-      ports:
-        - "1202:5044"
-        - "1203:9600"
-      networks:
-        - db-network
-      depends_on:
-        - elasticsearch
-        - content-primary
-      environment:
-        - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
-        - ELASTICSEARCH_USERNAME=elastic
-        - ELASTICSEARCH_PASSWORD=${ELASTIC_ROOT_PASSWORD}
-        - MYSQL_ROOT_CONTENT_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
-
+  elastic-setup:
+    build:
+      context: ./elastic
+      dockerfile: Dockerfile
+    container_name: elastic-setup
+    networks:
+      - db-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      content-proxysql:
+        condition: service_started
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ES_USER=elastic
+      - ES_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+      - MYSQL_HOST=content-proxysql
+      - MYSQL_PORT=6033
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
+    command: >
+      sh -c "echo 'Starting setup...' &&
+             python setup_index.py &&
+             echo 'Setup complete. Starting import...' &&
+             python import_data.py"
+    restart: "on-failure:3"
+    profiles:
+      - setup
 
 
   gateway-redis:

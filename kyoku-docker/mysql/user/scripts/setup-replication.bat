@@ -10,7 +10,7 @@ pushd "%~dp0..\..\.."
 
 if not exist ".env" (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -40,7 +40,7 @@ if !errorlevel! equ 0 (
 )
 if !attempts! geq 10 (
     echo [ERROR] Could not connect to primary database after 10 attempts
-    pause
+    
     exit /b 1
 )
 echo [INFO] Waiting for primary... attempt !attempts!/10
@@ -78,7 +78,7 @@ call :check_replica_status user-replica1
 @REM call :check_replica_status user-replica3
 
 echo [INFO] Setup completed. Press any key to exit.
-pause
+
 exit /b 0
 
 REM Function to setup individual replica

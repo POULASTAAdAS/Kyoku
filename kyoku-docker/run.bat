@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo ================================================================================================
-echo       Development Environment Setup Script Runnig......
+echo       Development Environment Setup Script Running......
 echo ================================================================================================
 
 REM Check if Docker is running
@@ -10,7 +10,7 @@ docker --version >nul 2>&1
 if !errorlevel! neq 0 (
     echo [ERROR] Docker is not running or not installed!
     echo [INFO] Please start Docker Desktop and try again.
-    pause
+    
     exit /b 1
 )
 
@@ -25,28 +25,28 @@ echo  ==========================================================================
 call mysql\user\scripts\generate-configs.bat
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to generate mysql\user\scripts\generate-configs.bat configuration files!
-    pause
+    
     exit /b 1
 )
 
 call mysql\playlist\scripts\generate-configs.bat
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to generate mysql\playlist\scripts\generate-configs.bat configuration files!
-    pause
+    
     exit /b 1
 )
 
 call mysql\activity\scripts\generate-configs.bat
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to generate mysql\activity\scripts\generate-configs.bat configuration files!
-    pause
+    
     exit /b 1
 )
 
 call mysql\content\scripts\generate-configs.bat
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to generate mysql\content\scripts\generate-configs.bat configuration files!
-    pause
+    
     exit /b 1
 )
 
@@ -61,7 +61,7 @@ docker-compose up -d
 if !errorlevel! neq 0 (
     echo [ERROR] Failed to start Docker services!
     echo [INFO] Check your docker-compose.yml file and try again.
-    pause
+    
     exit /b 1
 )
 
@@ -91,6 +91,15 @@ echo                                            4
 echo ================================================================================================
 call mysql\content\scripts\start-replication.bat
 echo ================================================================================================
+echo
+echo ================================================================================================
+echo   Step 5: Elasticsearch Setup and Data Import
+echo ================================================================================================
+echo
+echo ================================================================================================
+call elastic\start.bat
+echo ================================================================================================
+echo
 echo ==============================================DONE==============================================
 echo ==============================================DONE==============================================
 echo ==============================================DONE==============================================

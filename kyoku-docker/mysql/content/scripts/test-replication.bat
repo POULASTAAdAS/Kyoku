@@ -10,7 +10,7 @@ pushd "%~dp0..\..\.."
 
 if not exist ".env"  (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -96,4 +96,3 @@ echo [INFO] Check the output above to verify replication is working.
 echo [INFO] All replicas should show the test data during the check phase.
 echo.
 echo [INFO] Press any key to exit.
-pause

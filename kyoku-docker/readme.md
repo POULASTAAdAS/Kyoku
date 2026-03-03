@@ -11,24 +11,30 @@
 7. [Scripts Documentation](#scripts-documentation)
 8. [ProxySQL Configuration](#proxysql-configuration)
 9. [Replication Setup Process](#replication-setup-process)
-10. [Monitoring and Maintenance](#monitoring-and-maintenance)
-11. [Troubleshooting](#troubleshooting)
-12. [Best Practices](#best-practices)
+10. [Elasticsearch Setup](#elasticsearch-setup)
+11. [Monitoring and Maintenance](#monitoring-and-maintenance)
+12. [Troubleshooting](#troubleshooting)
+13. [Best Practices](#best-practices)
 
 ## Overview
 
-This is a MySQL Database Replication System, a containerized database solution designed
-for high availability and read scalability.
-It implements a master-slave replication architecture with ProxySQL for
-intelligent query routing and load-balancing, specifically optimized for user management operations.
+This is a comprehensive Database and Search System, a containerized solution designed
+for high availability, read scalability, and fast search operations.
+It implements:
+- **MySQL Master-Slave Replication** with ProxySQL for query routing
+- **Elasticsearch** for full-text search on artist data
+- **Kibana** for search visualization and management
+
+Specifically optimized for user management and content discovery operations.
 
 ### Key Features
 
-- **Master-Slave Replication**: 1 primary (master) + 3 replicas (slaves)
+- **Master-Slave Replication**: 1 primary (master) + 3 replicas (slaves) per database
 - **GTID-based Replication**: Global Transaction Identifiers for consistent replication
 - **ProxySQL Load Balancing**: Automatic read/write query routing
+- **Elasticsearch Search**: Fast artist search with autocomplete
 - **Automated Setup**: One-click deployment and configuration
-- **Health Monitoring**: Built-in replication status checking
+- **Health Monitoring**: Built-in replication and search status checking
 - **Docker Containerization**: Consistent deployment across environments
 
 ### Use Cases
@@ -36,6 +42,7 @@ intelligent query routing and load-balancing, specifically optimized for user ma
 - Database management systems requiring high read throughput.
 - Applications needing database high availability.
 - Systems requiring separation of read and write operations.
+- **Music/content platforms requiring fast artist search and filtering.**
 - Development environments mimicking production setups.
 
 ## Architecture
@@ -55,15 +62,45 @@ intelligent query routing and load-balancing, specifically optimized for user ma
                     │         ▲         ▲         ▲
                     └─────────┴─────────┴─────────┘
                            GTID Replication
+
+┌─────────────────────────────────────────────────────────────┐
+│                     Search Layer                            │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐         ┌─────────────┐         ┌────────┐ │
+│  │   Kibana    │         │ Elasticsearch│         │Python │ │
+│  │  (Port:1201)│<───────>│  (Port:1200) │<───────│Setup  │ │
+│  │  Dashboard  │         │  Search Index│         │Import │ │
+│  └─────────────┘         └─────────────┘         └────────┘ │
+│                              ▲                              │
+│                              │ (MySQL via ProxySQL)         │
+│                         ┌────┴────┐                         │
+│                         │ ProxySQL│                         │
+│                         │ Content │                         │
+│                         │ (Port:1036)                      │
+│                         └─────────┘                         │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Roles
 
+#### Database Layer
 - **Primary (Master)**: Handles all write operations, source of truth
 - **Replicas (Slaves)**: Handle read operations, maintain synchronized copies
 - **ProxySQL**: Routes queries based on type:-
     - INSERT/UPDATE/DELETE → primary
     - SELECT → replicas
+
+#### Search Layer
+- **Elasticsearch**: Full-text search engine for artist data
+    - Stores denormalized artist + country data
+    - Provides fast autocomplete and filtering
+    - Accessible on port 1200
+- **Kibana**: Visualization and management UI for Elasticsearch
+    - Query and inspect search data
+    - Accessible on port 1201
+- **Python Setup**: One-time data import from MySQL to Elasticsearch
+    - Runs automatically after database setup
+    - Creates index mappings and imports ~37K artists
 
 ## Directory Structure
 
@@ -72,23 +109,27 @@ D:\KYOKU\KYOKU-DOCKER/
 ├── .env.example                  # Template for environment setup
 ├── .gitignore                    # Git ignore rules
 ├── docker-compose.yml            # Docker services definition
-├── run.bat  ──────────────────>  # Main setup and execution script
-├── data/
-│   └── mysql/                    # Persistent data storage
-└── mysql/
-    └── user/
-        ├── proxy/
-        │   └── proxysql.conf.template       # ProxySQL template
-        ├── scripts/
-        │   ├── check-replication.bat        # Status monitoring
-        │   ├── generate-configs.bat         # Config file generation
-        │   ├── setup-replication.bat        # Replication setup
-        │   ├── start-replication.bat        # Replication starter
-        │   └── test-replication.bat         # Functionality testing
-        └── sql/
-            ├── 01_user_db.sql               # Database schema
-            ├── insert_user_db.sql           # Initial data
-            └── setup-replication-master.sql.template  # Master setup template
+├── run.bat                       # Main setup and execution script
+├── readme.md                     # This documentation
+├── data/                         # Persistent data storage
+│   ├── mysql/                    # MySQL data files
+│   └── redis/                    # Redis data files
+├── mysql/                        # MySQL configuration
+│   ├── content/                  # Content database (artists, songs)
+│   │   ├── proxy/
+│   │   ├── scripts/
+│   │   └── sql/
+│   ├── playlist/
+│   ├── user/
+│   └── activity/
+├── nosql/                        # MongoDB configuration
+├── python-setup/                 # NEW: Elasticsearch data import
+│   ├── Dockerfile                # Python container definition
+│   ├── setup_index.py            # Index creation with mappings
+│   ├── import_data.py            # Bulk data import script
+│   ├── requirements.txt          # Python dependencies
+│   └── README.md                 # Python setup documentation
+└── elastic/                      # Elasticsearch data (if persisted)
 ```
 
 ## Environment Configuration
@@ -97,26 +138,40 @@ D:\KYOKU\KYOKU-DOCKER/
 
 Remove `.example` from file `.env.example` in the root directory.Then add the following variables:
 
+#### Database Credentials
+
 ```dotenv
-# Root MySQL Password
+# Root MySQL Passwords
 MYSQL_ROOT_USER_PASSWORD=your_strong_root_password
+MYSQL_ROOT_PLAYLIST_PASSWORD=your_strong_root_password
+MYSQL_ROOT_CONTENT_PASSWORD=your_strong_root_password
+MYSQL_ROOT_ACTIVITY_PASSWORD=your_strong_root_password
 
 # Replication User Credentials
 MYSQL_USER_REPLICATION_USER=repl_user
 MYSQL_USER_REPLICATION_PASSWORD=repl_password
-
-# Application User Credentials
-MYSQL_USER_USER=app_user
-MYSQL_USER_PASSWORD=app_password
-
-# ProxySQL Admin Credentials
-MYSQL_USER_PROXY_ADMIN=proxy_admin
-MYSQL_USER_PROXY_PASSWORD=proxy_password
-
-# Monitor User Credentials (for ProxySQL monitoring)
-MYSQL_USER_MONITOR_USER=monitor_user
-MYSQL_USER_MONITOR_PASSWORD=monitor_password
+MYSQL_PLAYLIST_REPLICATION_USER=repl_user
+MYSQL_PLAYLIST_REPLICATION_PASSWORD=repl_password
+MYSQL_CONTENT_REPLICATION_USER=repl_user
+MYSQL_CONTENT_REPLICATION_PASSWORD=repl_password
+MYSQL_ACTIVITY_REPLICATION_USER=repl_user
+MYSQL_ACTIVITY_REPLICATION_PASSWORD=repl_password
 ```
+
+#### Elasticsearch Credentials
+
+```dotenv
+# Elasticsearch
+ELASTIC_ROOT_PASSWORD=your_elastic_password
+```
+
+**Purpose**: Superuser password for Elasticsearch authentication.
+
+**Usage**:
+- Access Elasticsearch API: `http://elastic:password@localhost:1200`
+- Login to Kibana: `elastic` / `password`
+
+**Security Note**: Use a strong password. Elasticsearch has security enabled by default.
 
 ### Security Considerations
 
@@ -295,21 +350,28 @@ CREATE TABLE UserJWTToken
 
 ### run.bat - Main Execution Script
 
-**Purpose**: Primary script that orchestrates the entire setup process
+**Purpose**: Primary script that orchestrates the entire setup process including databases and search
 
 **Execution Flow**:
 
 1. **Docker Validation**: Verifies Docker is running
-2. **Configuration Generation**: Calls `generate-configs.bat`
+2. **Configuration Generation**: Calls `generate-configs.bat` for all databases
 3. **Service Startup**: Executes `docker-compose up -d`
 4. **Initialization Wait**: 30-second delay for service initialization
-5. **Replication Setup**: Calls `start-replication.bat`
+5. **Replication Setup**: Calls `start-replication.bat` for MySQL databases
+6. **Elasticsearch Setup**: 
+   - Waits for Elasticsearch and MySQL ProxySQL to be healthy
+   - Builds Python setup image
+   - Creates `artists` index with mappings
+   - Imports ~37K artists from MySQL to Elasticsearch
+   - Verifies document count
 
 **Error Handling**:
 
 - Exits on Docker unavailability
 - Validates each step before proceeding
 - Provides clear error messages
+- Elasticsearch setup failures are reported but don't block MySQL setup
 
 **Usage**:
 
@@ -559,6 +621,119 @@ For each replica server:
 2. **Lag Monitoring**: Verify replication lag is minimal
 3. **Error Detection**: Identify and report any issues
 4. **Functional Testing**: Validate data replication through test insertions
+
+## Elasticsearch Setup
+
+Elasticsearch provides full-text search capabilities for artist data, enabling fast search by name and filtering by country code.
+
+### Architecture Overview
+
+```
+MySQL (CONTENT DB)
+    ↓ (via ProxySQL)
+Python Setup Script
+    ↓ (HTTP Bulk API)
+Elasticsearch ← Kibana (UI)
+    ↓
+Search Service (future)
+```
+
+### Components
+
+| Component | Port | Purpose |
+|-----------|------|---------|
+| Elasticsearch | 1200 | Search engine API |
+| Kibana | 1201 | Visualization and management UI |
+| Python Setup | - | One-time data import |
+
+### Automated Setup Process
+
+The Elasticsearch setup runs automatically as **Step 5** in `run.bat`, after all MySQL databases are configured:
+
+1. **Wait for Elasticsearch** - Health check until ready
+2. **Wait for MySQL ProxySQL** - Ensure content database is accessible
+3. **Build Python Image** - Container with elasticsearch and mysql-connector packages
+4. **Create Index** - Setup index with custom analyzer for artist name search
+5. **Import Data** - Bulk import ~37K artists from MySQL to Elasticsearch
+6. **Verify Import** - Check document count matches expected
+
+### Manual Setup (Optional)
+
+If you need to run Elasticsearch setup separately:
+
+```batch
+# Start infrastructure only
+docker-compose up -d elasticsearch kibana content-proxysql
+
+# Wait for services to be healthy
+# Then run setup
+docker-compose --profile setup run --rm python-setup
+```
+
+### Index Mapping
+
+The `artists` index is configured with:
+
+#### Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | keyword | Artist ID from MySQL |
+| `name` | text + keyword | Artist name with edge n-gram analyzer for autocomplete |
+| `coverImage` | keyword | Artist cover image URL (not indexed) |
+| `followers` | long | Follower count for popularity sorting |
+| `countryCodes` | keyword[] | Array of country codes (e.g., ["IN", "US"]) |
+| `countryNames` | text[] | Array of country names |
+
+#### Custom Analyzer: artist_name_analyzer
+
+Creates edge n-grams (2-20 characters) for prefix matching:
+- **Input**: "Eminem"
+- **Tokens**: ["Em", "Emi", "Emin", "Eminem"]
+- **Use Case**: Search "Emin" → finds "Eminem"
+
+### Accessing Elasticsearch
+
+**Via HTTP API:**
+```bash
+# Check cluster health
+curl -u elastic:$ELASTIC_ROOT_PASSWORD http://localhost:1200/_cluster/health
+
+# Search artists
+curl -u elastic:$ELASTIC_ROOT_PASSWORD http://localhost:1200/artists/_search?q=name:Eminem
+
+# Get document count
+curl -u elastic:$ELASTIC_ROOT_PASSWORD http://localhost:1200/artists/_count
+```
+
+**Via Kibana:**
+1. Open http://localhost:1201
+2. Login: `elastic` / `$ELASTIC_ROOT_PASSWORD`
+3. Navigate to Dev Tools
+4. Run queries in the console
+
+### Re-importing Data
+
+To force a re-import (deletes and recreates index):
+
+```bash
+# Delete existing index
+curl -X DELETE -u elastic:$ELASTIC_ROOT_PASSWORD http://localhost:1200/artists
+
+# Re-run setup
+docker-compose --profile setup run --rm python-setup
+```
+
+Or simply run `run.bat` again - it will detect missing/partial data and re-import automatically.
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Import fails with connection error | Check Elasticsearch health: `docker-compose ps` |
+| MySQL connection refused | Verify ProxySQL is running on port 1036 |
+| Document count is 0 | Check Python setup logs: `docker-compose logs python-setup` |
+| Kibana can't connect to ES | Verify ES is healthy before starting Kibana |
 
 ## Monitoring and Maintenance
 

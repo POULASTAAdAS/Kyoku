@@ -10,7 +10,7 @@ pushd "%~dp0..\..\.."
 
 if not exist ".env"  (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -44,7 +44,7 @@ if !errorlevel! neq 0 (
     REM CHANGE: Show table structure to debug column size issues
     echo [DEBUG] Checking Playlist table structure...
     docker exec playlist-primary mysql -uroot -p%MYSQL_ROOT_PLAYLIST_PASSWORD% PLAYLIST -e "DESCRIBE Playlist;"
-    pause
+    
     exit /b 1
 )
 
@@ -120,4 +120,3 @@ echo [INFO] Check the output above to verify replication is working.
 echo [INFO] All replicas should show the test data during the check phase.
 echo.
 echo [INFO] Press any key to exit.
-pause

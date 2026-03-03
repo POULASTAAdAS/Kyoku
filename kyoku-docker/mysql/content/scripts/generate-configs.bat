@@ -8,7 +8,7 @@ pushd "%~dp0..\..\.."
 REM Check if .env file exists
 if not exist ".env" (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -23,14 +23,14 @@ REM Check if template files exist
 if not exist "mysql\content\proxy\proxysql.conf.template" (
     echo [ERROR] proxysql.conf.template not found!
     echo [INFO] Please create the template file first.
-    pause
+    
     exit /b 1
 )
 
 if not exist "mysql\content\sql\setup-replication-master.sql.template" (
     echo [ERROR] setup-replication-master.sql.template not found!
     echo [INFO] Please create the template file first.
-    pause
+    
     exit /b 1
 )
 

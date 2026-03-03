@@ -10,7 +10,7 @@ pushd "%~dp0..\..\.."
 
 if not exist ".env"  (
     echo [ERROR] .env file not found in root directory.
-    pause
+    
     exit /b 1
 )
 
@@ -44,7 +44,7 @@ if !errorlevel! neq 0 (
     REM CHANGE: Show table structure to debug column size issues
     echo [DEBUG] Checking UserType table structure...
     docker exec user-primary mysql -uroot -p%MYSQL_ROOT_USER_PASSWORD% USER -e "DESCRIBE UserType;"
-    pause
+    
     exit /b 1
 )
 
@@ -111,4 +111,3 @@ echo [INFO] Check the output above to verify replication is working.
 echo [INFO] All replicas should show the test data during the check phase.
 echo.
 echo [INFO] Press any key to exit.
-pause

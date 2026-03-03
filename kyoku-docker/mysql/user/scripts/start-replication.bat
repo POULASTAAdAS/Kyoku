@@ -36,4 +36,3 @@ echo   Replica 3:        localhost:1003
 echo   ProxySQL:         localhost:1004 (MySQL) / localhost:1005 (Admin)
 echo.
 echo [INFO] Press any key to exit.
-pause
