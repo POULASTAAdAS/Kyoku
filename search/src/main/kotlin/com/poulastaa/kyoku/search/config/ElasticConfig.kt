@@ -2,7 +2,14 @@ package com.poulastaa.kyoku.search.config
 
 import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient
 import co.elastic.clients.elasticsearch.ElasticsearchClient
+import co.elastic.clients.json.jackson.JacksonJsonpMapper
+import co.elastic.clients.transport.rest_client.RestClientTransport
 import com.poulastaa.kyoku.search.domain.model.dto.DtoElasticSearchConfigInfo
+import org.apache.http.HttpHost
+import org.apache.http.auth.AuthScope
+import org.apache.http.auth.UsernamePasswordCredentials
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.elasticsearch.client.RestClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,18 +32,37 @@ class ElasticConfig {
     )
 
     @Bean
-    fun provideElasticSearchClint(
-        config: DtoElasticSearchConfigInfo,
-    ) = ElasticsearchClient.of { builder ->
-        builder.host(config.host)
-            .usernameAndPassword(config.username, config.password)
-    }!!
+    fun provideRestClient(config: DtoElasticSearchConfigInfo): RestClient {
+        val credentialsProvider = BasicCredentialsProvider().apply {
+            setCredentials(
+                AuthScope.ANY,
+                UsernamePasswordCredentials(
+                    config.username,
+                    config.password
+                )
+            )
+        }
+
+        return RestClient.builder(
+            HttpHost(
+                config.host,
+                config.port,
+                config.schema
+            )
+        ).setHttpClientConfigCallback { httpClientBuilder ->
+            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
+        }.build()
+    }
 
     @Bean
-    fun provideElasticSearchAsyncClient(
-        config: DtoElasticSearchConfigInfo,
-    ) = ElasticsearchAsyncClient.of { builder ->
-        builder.host(config.host)
-            .usernameAndPassword(config.username, config.password)
-    }!!
+    fun provideElasticTransport(restClient: RestClient) = RestClientTransport(
+        restClient,
+        JacksonJsonpMapper()
+    )
+
+    @Bean
+    fun provideElasticSearchClient(transport: RestClientTransport) = ElasticsearchClient(transport)
+
+    @Bean
+    fun provideElasticSearchAsyncClient(transport: RestClientTransport) = ElasticsearchAsyncClient(transport)
 }

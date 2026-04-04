@@ -52,8 +52,8 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 	// elastic-search
-	implementation("co.elastic.clients:elasticsearch-java:9.3.2")
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.21.1")
+	implementation("co.elastic.clients:elasticsearch-java:8.11.0")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
 	implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
