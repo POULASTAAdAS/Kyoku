@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "search_model.proto";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc_search";
+
+package grpc_search;
+
+service GatewaySearchService{
+  rpc importArtist(search_model.RequestImportArtist) returns (search_model.ResponseImportArtist);
+}

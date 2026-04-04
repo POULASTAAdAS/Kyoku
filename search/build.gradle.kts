@@ -41,7 +41,8 @@ dependencies {
 //	implementation("org.springframework.cloud:spring-cloud-starter-config")
 
 	// redis
-	implementation("org.springframework.session:spring-session-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("com.google.code.gson:gson:2.13.2")
 
 	// gRPC
 	implementation("net.devh:grpc-server-spring-boot-starter:3.1.0.RELEASE")

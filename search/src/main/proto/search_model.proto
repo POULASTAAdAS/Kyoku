@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc_search";
+
+package search_model;
+
+
+message RequestImportArtist{
+  string q = 1;
+  string countryCode = 2;
+  int32 page = 3;
+  int32 limit = 4;
+};
+
+message ResponseArtist{
+  int64 id = 1;
+  string name = 2;
+  string cover = 3;
+  int64 popularity = 4;
+};
+
+message ResponseImportArtist{
+  repeated ResponseArtist artists = 1;
+}
