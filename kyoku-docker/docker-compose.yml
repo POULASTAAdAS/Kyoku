@@ -392,7 +392,7 @@ services:
       - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
       - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
       
-      - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+      # - ./mysql/content/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql // commened out for minimal setup
 
       - ./data/mysql/data/content-primary/data:/var/lib/mysql
     networks:
@@ -570,7 +570,8 @@ services:
     ports:
       - "1200:9200"
     volumes:
-      - G:/kyoku/search/elastic:/usr/share/elasticsearch/data
+      # - G:/kyoku/search/elastic:/usr/share/elasticsearch/data
+      - ./data/elastic:/usr/share/elasticsearch/data 
     networks:
       - db-network
     healthcheck:
@@ -609,15 +610,18 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-      content-proxysql:
+      # content-proxysql:
+      content-primary:
         condition: service_started
     environment:
       - ES_HOST=elasticsearch
       - ES_PORT=9200
       - ES_USER=elastic
       - ES_PASSWORD=${ELASTIC_ROOT_PASSWORD}
-      - MYSQL_HOST=content-proxysql
-      - MYSQL_PORT=6033
+      # - MYSQL_HOST=content-proxysql
+      - MYSQL_HOST=content-primary
+      - MYSQL_PORT=3306
+      # - MYSQL_PORT=6033
       - MYSQL_USER=root
       - MYSQL_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
     command: >

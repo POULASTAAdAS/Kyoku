@@ -28,17 +28,17 @@ extra["springGrpcVersion"] = "0.12.0"
 
 dependencies {
 	// sql
-	runtimeOnly("com.mysql:mysql-connector-j")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+//	runtimeOnly("com.mysql:mysql-connector-j")
+//	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	// service discovery
-	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+//	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
 	// config
-	implementation("org.springframework.cloud:spring-cloud-starter-config")
+//	implementation("org.springframework.cloud:spring-cloud-starter-config")
 
 	// redis
 	implementation("org.springframework.session:spring-session-data-redis")
