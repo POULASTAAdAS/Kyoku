@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.poulastaa.kyoku.search.domain.model.RedisKeys
 import com.poulastaa.kyoku.search.domain.model.dto.DtoArtist
+import com.poulastaa.kyoku.search.domain.model.dto.DtoCountry
 import com.poulastaa.kyoku.search.utils.Country
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
@@ -27,7 +28,10 @@ class RedisCacheService(
         ?.drop(page * size)
         ?.take(size)
 
-    private inline fun <reified DATA : Any> Group.setList(data: List<DATA>, key: String) {
+    fun getAllCountries() = Group.COUNTRY_BY_NAME.getList<DtoCountry>()
+    fun setAllCountries(countries: List<DtoCountry>) = Group.COUNTRY_BY_NAME.setList(countries)
+
+    private inline fun <reified DATA : Any> Group.setList(data: List<DATA>, key: String? = null) {
         redis.opsForValue().set(
             this.buildKey(key),
             data,
@@ -35,7 +39,7 @@ class RedisCacheService(
         )
     }
 
-    private inline fun <reified DATA : Any> Group.getList(key: String): List<DATA>? {
+    private inline fun <reified DATA : Any> Group.getList(key: String? = null): List<DATA>? {
         val raw = redis.opsForValue().get(this.buildKey(key)) ?: return null
         return gson.fromJson(
             gson.toJson(raw),
