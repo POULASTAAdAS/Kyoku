@@ -10,4 +10,9 @@ message RequestSaveUserGenre{
   repeated int32 genreList = 2;
 };
 
+message RequestSaveUserArtist{
+  int64 userId = 1;
+  repeated int64 artistIdList = 2;
+}
+
 message EmptyResponse{};
