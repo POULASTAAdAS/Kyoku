@@ -1,9 +1,9 @@
 package com.poulastaa.kyoku.auth.database.repository
 
 import com.poulastaa.kyoku.auth.database.entity.EntityCountry
+import com.poulastaa.kyoku.auth.database.entity.EntityJWTToken
 import com.poulastaa.kyoku.auth.database.entity.EntityUser
 import com.poulastaa.kyoku.auth.database.entity.EntityUserType
-import com.poulastaa.kyoku.auth.database.entity.EntityJWTToken
 import com.poulastaa.kyoku.auth.utils.CountryId
 import com.poulastaa.kyoku.auth.utils.UserId
 import com.poulastaa.kyoku.auth.utils.UserTypeId

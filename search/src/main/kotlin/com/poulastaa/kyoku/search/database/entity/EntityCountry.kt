@@ -22,16 +22,16 @@ import jakarta.persistence.UniqueConstraint
         )
     ]
 )
-class EntityCountry : BaseIdEntity<CountryId>() {
-    @Column(name = "country", nullable = false, length = 40)
-    val country: String = ""
+class EntityCountry(
+    @Column(name = "country", nullable = false, length = 40, unique = true)
+    val country: String,
 
-    @Column(name = "code", nullable = false, length = 4)
-    val code: String = ""
-
+    @Column(name = "code", nullable = false, length = 4, unique = true)
+    val code: String,
+) : BaseIdEntity<CountryId>() {
     fun toDtoCountry() = DtoCountry(
-        id = this.id,
-        name = this.country,
-        code = this.code,
+        id = id,
+        name = country,
+        code = code
     )
 }

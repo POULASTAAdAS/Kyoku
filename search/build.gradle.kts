@@ -28,8 +28,9 @@ extra["springGrpcVersion"] = "0.12.0"
 
 dependencies {
 	// sql
-//	runtimeOnly("com.mysql:mysql-connector-j")
-//	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly("com.mysql:mysql-connector-j")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

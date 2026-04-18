@@ -2,7 +2,6 @@ package com.poulastaa.kyoku.search.database
 
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
-import org.springframework.data.annotation.Id
 
 @MappedSuperclass
 class BaseIdEntity<T : Number>(

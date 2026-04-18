@@ -37,18 +37,18 @@ class GRPCGatewayRequestService(
                 key = country.name
             )
 
-            if (cacheArtist.isNullOrEmpty().not()) {
-                if (cacheArtist.size == request.limit) cacheArtist
+            cacheArtist.takeIf { it.isNullOrEmpty().not() }?.let { res ->
+                if (res.size == request.limit) res
                 else {
                     es.getArtistByCountry(
                         request.q,
                         country.code,
-                        request.limit - cacheArtist.size,
+                        request.limit - res.size,
                         request.limit * request.page,
-                        cacheArtist.map { it.name }
-                    ) + cacheArtist
+                        res.map { it.name }
+                    ) + res
                 }
-            } else {
+            } ?: run {
                 // miss
                 // query database with max limit (MAX_IMPORT_ARTIST_LIMIT + 1) also put in cache
                 val dbList = es.getMostPopularArtistByCountry(MAX_IMPORT_ARTIST_LIMIT + 1, country.code)
@@ -83,7 +83,7 @@ class GRPCGatewayRequestService(
         val cachedCountry = cache.getAllCountries()
 
         return if (cachedCountry == null) {
-            val dbList = db.getAllCountry().map { it.toDtoCountry() }
+            val dbList = db.findAll().map { it.toDtoCountry() }
             cache.setAllCountries(dbList)
             dbList.firstOrNull { it.code == countryCode }
         } else cachedCountry.firstOrNull { it.code == countryCode }
