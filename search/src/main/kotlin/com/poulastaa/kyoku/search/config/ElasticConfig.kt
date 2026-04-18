@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient
 import co.elastic.clients.elasticsearch.ElasticsearchClient
 import co.elastic.clients.json.jackson.JacksonJsonpMapper
 import co.elastic.clients.transport.rest_client.RestClientTransport
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.poulastaa.kyoku.search.domain.model.dto.DtoElasticSearchConfigInfo
 import org.apache.http.HttpHost
 import org.apache.http.auth.AuthScope
@@ -55,9 +56,12 @@ class ElasticConfig {
     }
 
     @Bean
-    fun provideElasticTransport(restClient: RestClient) = RestClientTransport(
+    fun provideElasticTransport(
+        restClient: RestClient,
+        mapper: ObjectMapper,
+    ) = RestClientTransport(
         restClient,
-        JacksonJsonpMapper()
+        JacksonJsonpMapper(mapper)
     )
 
     @Bean

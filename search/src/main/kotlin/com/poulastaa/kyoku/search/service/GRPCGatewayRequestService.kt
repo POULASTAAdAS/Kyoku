@@ -24,7 +24,9 @@ class GRPCGatewayRequestService(
         responseObserver: StreamObserver<ResponseImportArtist>,
     ) {
         val country = getCountry(request.countryCode) ?: run {
-            responseObserver.onError(Status.UNKNOWN.withDescription("Invalid country code").asRuntimeException())
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT.withDescription("Invalid country code").asRuntimeException()
+            )
             responseObserver.onCompleted()
             return
         }
@@ -85,7 +87,7 @@ class GRPCGatewayRequestService(
         return if (cachedCountry == null) {
             val dbList = db.findAll().map { it.toDtoCountry() }
             cache.setAllCountries(dbList)
-            dbList.firstOrNull { it.code == countryCode }
-        } else cachedCountry.firstOrNull { it.code == countryCode }
+            dbList.firstOrNull { it.code.equals(countryCode, ignoreCase = true) }
+        } else cachedCountry.firstOrNull { it.code.equals(countryCode, ignoreCase = true) }
     }
 }

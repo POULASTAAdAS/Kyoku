@@ -4,7 +4,6 @@ import com.poulastaa.kyoku.gateway.model.ServiceConfigPayload
 import com.poulastaa.kyoku.gateway.model.response.ResponseWrapper
 import com.poulastaa.kyoku.gateway.utils.dedupeAllCorsHeaders
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.cloud.gateway.route.builder.GatewayFilterSpec
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -106,6 +105,4 @@ class AuthInterceptor {
             }.uri(service.uri)
         }
         .build()!!
-
-
 }
