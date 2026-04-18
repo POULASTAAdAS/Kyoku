@@ -29,7 +29,7 @@ class GRPCGatewayRequestService(
             return
         }
 
-        if (request.q.isBlank()) {
+        val result = if (request.q.isBlank()) {
             // if empty query check cache
             val cacheArtist = cache.getMostPopularArtistByCountry(
                 size = request.limit,
@@ -37,7 +37,18 @@ class GRPCGatewayRequestService(
                 key = country.name
             )
 
-            val result = if (cacheArtist.isNullOrEmpty().not()) cacheArtist else {
+            if (cacheArtist.isNullOrEmpty().not()) {
+                if (cacheArtist.size == request.limit) cacheArtist
+                else {
+                    es.getArtistByCountry(
+                        request.q,
+                        country.code,
+                        request.limit - cacheArtist.size,
+                        request.limit * request.page,
+                        cacheArtist.map { it.name }
+                    ) + cacheArtist
+                }
+            } else {
                 // miss
                 // query database with max limit (MAX_IMPORT_ARTIST_LIMIT + 1) also put in cache
                 val dbList = es.getMostPopularArtistByCountry(MAX_IMPORT_ARTIST_LIMIT + 1, country.code)
@@ -45,29 +56,27 @@ class GRPCGatewayRequestService(
 
                 dbList.drop(request.page * request.limit).take(request.limit)
             }
-
-            responseObserver.onNext(
-                ResponseImportArtist.newBuilder().apply {
-                    addAllArtists(
-                        result.map { dto ->
-                            ResponseArtist.newBuilder().apply {
-                                this.id = dto.id
-                                this.name = dto.name
-                                this.cover = dto.cover
-                                this.popularity = dto.popularity
-                            }.build()
-                        }
-                    )
-                }.build()
-            )
-
-            responseObserver.onCompleted()
-            return
+        } else {
+            // has query string
+            // query database directly
+            es.getArtistByCountry(request.q, country.code, request.limit, request.limit * request.page)
         }
 
-        // has query string
-        // query database directly
-
+        responseObserver.onNext(
+            ResponseImportArtist.newBuilder().apply {
+                addAllArtists(
+                    result.map { dto ->
+                        ResponseArtist.newBuilder().apply {
+                            this.id = dto.id
+                            this.name = dto.name
+                            this.cover = dto.cover
+                            this.popularity = dto.popularity
+                        }.build()
+                    }
+                )
+            }.build()
+        )
+        responseObserver.onCompleted()
     }
 
     private fun getCountry(countryCode: String): DtoCountry? {

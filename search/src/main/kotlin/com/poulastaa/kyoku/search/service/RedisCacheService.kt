@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.poulastaa.kyoku.search.domain.model.RedisKeys
 import com.poulastaa.kyoku.search.domain.model.dto.DtoArtist
 import com.poulastaa.kyoku.search.domain.model.dto.DtoCountry
-import com.poulastaa.kyoku.search.utils.Country
+import com.poulastaa.kyoku.search.utils.CountryName
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import kotlin.time.toJavaDuration
@@ -17,13 +17,13 @@ class RedisCacheService(
 ) : RedisKeys() {
     fun setMostPopularArtistsByCountry(
         data: List<DtoArtist>,
-        key: Country,
+        key: CountryName,
     ) = Group.POPULAR_ARTIST_BY_COUNTRY.setList(data, key)
 
     fun getMostPopularArtistByCountry(
         size: Int,
         page: Int,
-        key: Country,
+        key: CountryName,
     ) = Group.POPULAR_ARTIST_BY_COUNTRY.getList<DtoArtist>(key)
         ?.drop(page * size)
         ?.take(size)
