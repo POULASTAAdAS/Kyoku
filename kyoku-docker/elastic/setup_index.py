@@ -106,7 +106,7 @@ def create_index_with_mapping(es):
         "mappings": {
             "properties": {
                 "id": {
-                    "type": "keyword",
+                    "type": "long",
                     "store": True
                 },
                 "name": {
