@@ -1,6 +1,3 @@
-rootProject.name = "Kyoku"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 pluginManagement {
     repositories {
         google {
@@ -32,4 +29,12 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":composeApp")
+
+rootProject.name = "Kyoku"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+include(
+    ":auth:domain",
+    ":auth:ui",
+    ":composeApp"
+)

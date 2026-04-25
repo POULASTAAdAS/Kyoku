@@ -42,6 +42,10 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            // project
+            implementation(projects.auth.domain)
+            implementation(projects.auth.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
