@@ -16,6 +16,7 @@ kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
 material3 = "1.10.0-alpha05"
 kotlinStdlib = "2.3.20"
+material3WindowSizeClass = "1.9.0"
 runner = "1.7.0"
 core = "1.7.0"
 jetbrainsKotlinJvm = "2.3.20"
@@ -44,6 +45,7 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", versio
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+material3-window-size-classss = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

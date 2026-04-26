@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.androidLibrary
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
@@ -16,7 +14,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "com.poulastaa.auth.ui"
+        namespace = "com.poulastaa.common.ui"
         compileSdk = 36
         minSdk = 26
 
@@ -37,7 +35,7 @@ kotlin {
     // A step-by-step guide on how to include this library in an XCode
     // project can be found here:
     // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "auth::uiKit"
+    val xcfName = "common:uiKit"
 
     iosX64 {
         binaries.framework {
@@ -68,12 +66,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                // Add KMP dependencies here
 
                 implementation(libs.compose.material3)
                 implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.material3.window.size.classss)
 
-                // projects
-                implementation(projects.auth.domain)
+                implementation(projects.common.domain)
             }
         }
 
@@ -93,8 +93,8 @@ kotlin {
 
         getByName("androidDeviceTest") {
             dependencies {
-                implementation(libs.androidx.runner)
                 implementation(libs.androidx.core)
+                implementation(libs.androidx.runner)
                 implementation(libs.androidx.testExt.junit)
             }
         }

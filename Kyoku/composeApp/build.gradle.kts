@@ -42,10 +42,13 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.material3.window.size.classss)
 
             // project
             implementation(projects.auth.domain)
             implementation(projects.auth.ui)
+            implementation(projects.common.domain)
+            implementation(projects.common.ui)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

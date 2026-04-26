@@ -38,3 +38,5 @@ include(
     ":auth:ui",
     ":composeApp"
 )
+include(":common:ui")
+include(":common:domain")
