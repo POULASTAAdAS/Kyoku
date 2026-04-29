@@ -238,7 +238,7 @@ private val highContrastDarkColorScheme = darkColorScheme(
 @Composable
 fun AppTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
-    type: Typography = AppTypography(),
+    type: Typography = appTypography(),
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(

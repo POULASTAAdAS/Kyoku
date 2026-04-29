@@ -74,6 +74,8 @@ kotlin {
 
                 // projects
                 implementation(projects.auth.domain)
+                implementation(projects.common.ui)
+                implementation(projects.common.domain)
             }
         }
 

@@ -18,59 +18,62 @@ import kyoku.common.ui.generated.resources.arima_regular
 import kyoku.common.ui.generated.resources.arima_semi_bold
 import kyoku.common.ui.generated.resources.arima_thin
 import kyoku.common.ui.generated.resources.averia_serif_libre_bold
-import kyoku.common.ui.generated.resources.averia_serif_libre_bold_Italic
+import kyoku.common.ui.generated.resources.averia_serif_libre_bold_italic
+import kyoku.common.ui.generated.resources.averia_serif_libre_italic
 import kyoku.common.ui.generated.resources.averia_serif_libre_light
-import kyoku.common.ui.generated.resources.averia_serif_libre_light_Italic
+import kyoku.common.ui.generated.resources.averia_serif_libre_light_italic
 import kyoku.common.ui.generated.resources.averia_serif_libre_regular
 import org.jetbrains.compose.resources.Font
 
-val Arima: FontFamily
-    @Composable
-    get() = FontFamily(
-        Font(Res.font.arima_thin, FontWeight.Thin),
-        Font(Res.font.arima_extra_light, FontWeight.ExtraLight),
-        Font(Res.font.arima_regular, FontWeight.Light),
-        Font(Res.font.arima_regular, FontWeight.Normal),
-        Font(Res.font.arima_medium, FontWeight.Medium),
-        Font(Res.font.arima_semi_bold, FontWeight.SemiBold),
-        Font(Res.font.arima_bold, FontWeight.Bold),
-        Font(Res.font.arima_bold, FontWeight.ExtraBold),
-        Font(Res.font.arima_bold, FontWeight.Black),
+@Composable
+expect fun calculateWindowSizeClass(): WindowSizeClass
 
-        Font(Res.font.arima_thin, FontWeight.Thin, FontStyle.Italic),
-        Font(Res.font.arima_extra_light, FontWeight.ExtraLight, FontStyle.Italic),
-        Font(Res.font.arima_regular, FontWeight.Light, FontStyle.Italic),
-        Font(Res.font.arima_regular, FontWeight.Normal, FontStyle.Italic),
-        Font(Res.font.arima_medium, FontWeight.Medium, FontStyle.Italic),
-        Font(Res.font.arima_semi_bold, FontWeight.SemiBold, FontStyle.Italic),
-        Font(Res.font.arima_bold, FontWeight.Bold, FontStyle.Italic),
-        Font(Res.font.arima_bold, FontWeight.ExtraBold, FontStyle.Italic),
-        Font(Res.font.arima_bold, FontWeight.Black, FontStyle.Italic),
-    )
+@Composable
+fun displayFontFamily(): FontFamily = FontFamily(
+    Font(Res.font.averia_serif_libre_light, FontWeight.Thin),
+    Font(Res.font.averia_serif_libre_light, FontWeight.ExtraLight),
+    Font(Res.font.averia_serif_libre_light, FontWeight.Light),
+    Font(Res.font.averia_serif_libre_regular, FontWeight.Normal),
+    Font(Res.font.averia_serif_libre_regular, FontWeight.Medium),
+    Font(Res.font.averia_serif_libre_bold, FontWeight.SemiBold),
+    Font(Res.font.averia_serif_libre_bold, FontWeight.Bold),
+    Font(Res.font.averia_serif_libre_bold, FontWeight.ExtraBold),
+    Font(Res.font.averia_serif_libre_bold, FontWeight.Black),
 
-val AveriaSerifLibre: FontFamily
-    @Composable
-    get() = FontFamily(
-        Font(Res.font.averia_serif_libre_light, FontWeight.Thin),
-        Font(Res.font.averia_serif_libre_light, FontWeight.ExtraLight),
-        Font(Res.font.averia_serif_libre_light, FontWeight.Light),
-        Font(Res.font.averia_serif_libre_regular, FontWeight.Normal),
-        Font(Res.font.averia_serif_libre_regular, FontWeight.Medium),
-        Font(Res.font.averia_serif_libre_bold, FontWeight.SemiBold),
-        Font(Res.font.averia_serif_libre_bold, FontWeight.Bold),
-        Font(Res.font.averia_serif_libre_bold, FontWeight.ExtraBold),
-        Font(Res.font.averia_serif_libre_bold, FontWeight.Black),
+    Font(Res.font.averia_serif_libre_light_italic, FontWeight.Thin, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_light_italic, FontWeight.ExtraLight, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_light_italic, FontWeight.Light, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_italic, FontWeight.Medium, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_bold_italic, FontWeight.Bold, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_bold_italic, FontWeight.ExtraBold, FontStyle.Italic),
+    Font(Res.font.averia_serif_libre_bold_italic, FontWeight.Black, FontStyle.Italic),
+)
 
-        Font(Res.font.averia_serif_libre_light_Italic, FontWeight.Thin, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_light_Italic, FontWeight.ExtraLight, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_light_Italic, FontWeight.Light, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_regular, FontWeight.Normal, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_regular, FontWeight.Medium, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_bold_Italic, FontWeight.SemiBold, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_bold_Italic, FontWeight.Bold, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_bold_Italic, FontWeight.ExtraBold, FontStyle.Italic),
-        Font(Res.font.averia_serif_libre_bold_Italic, FontWeight.Black, FontStyle.Italic),
-    )
+@Composable
+fun bodyFontFamily(): FontFamily = FontFamily(
+    Font(Res.font.arima_thin, FontWeight.Thin),
+    Font(Res.font.arima_extra_light, FontWeight.ExtraLight),
+    Font(Res.font.arima_regular, FontWeight.Light),
+    Font(Res.font.arima_regular, FontWeight.Normal),
+    Font(Res.font.arima_medium, FontWeight.Medium),
+    Font(Res.font.arima_semi_bold, FontWeight.SemiBold),
+    Font(Res.font.arima_bold, FontWeight.Bold),
+    Font(Res.font.arima_bold, FontWeight.ExtraBold),
+    Font(Res.font.arima_bold, FontWeight.Black),
+
+    Font(Res.font.arima_thin, FontWeight.Thin, FontStyle.Italic),
+    Font(Res.font.arima_extra_light, FontWeight.ExtraLight, FontStyle.Italic),
+    Font(Res.font.arima_regular, FontWeight.Light, FontStyle.Italic),
+    Font(Res.font.arima_regular, FontWeight.Normal, FontStyle.Italic),
+    Font(Res.font.arima_medium, FontWeight.Medium, FontStyle.Italic),
+    Font(Res.font.arima_semi_bold, FontWeight.SemiBold, FontStyle.Italic),
+    Font(Res.font.arima_bold, FontWeight.Bold, FontStyle.Italic),
+    Font(Res.font.arima_bold, FontWeight.ExtraBold, FontStyle.Italic),
+    Font(Res.font.arima_bold, FontWeight.Black, FontStyle.Italic),
+)
+
 
 private data class TypeScale(
     // Display
@@ -216,17 +219,12 @@ private val ExpandedScale = TypeScale(
     labelSmallHeight = 16.sp,
 )
 
-
 @Composable
-expect fun calculateWindowSizeClass(): WindowSizeClass
-
-@Composable
-fun AppTypography(
+fun appTypography(
     windowSizeClass: WindowSizeClass = calculateWindowSizeClass(),
 ): Typography {
-    val display = Arima
-    val body = AveriaSerifLibre
-
+    val display = displayFontFamily()
+    val body = bodyFontFamily()
 
     val scale = when (windowSizeClass.widthSizeClass) {
         WindowWidthSizeClass.Expanded -> ExpandedScale
