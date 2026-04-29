@@ -1,7 +1,6 @@
 package com.poulastaa.common.ui.components
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -17,7 +16,7 @@ fun ColumnSpacer(height: Dp) = Spacer(Modifier.fillMaxWidth().height(height))
 fun ColumnSpacer(height: Int) = Spacer(Modifier.fillMaxWidth().height(height.dp))
 
 @Composable
-fun RowSpacer(width: Dp) = Spacer(Modifier.fillMaxHeight().width(width))
+fun RowSpacer(width: Dp) = Spacer(Modifier.width(width))
 
 @Composable
-fun RowSpacer(width: Int) = Spacer(Modifier.fillMaxHeight().width(width.dp))
+fun RowSpacer(width: Int) = Spacer(Modifier.width(width.dp))

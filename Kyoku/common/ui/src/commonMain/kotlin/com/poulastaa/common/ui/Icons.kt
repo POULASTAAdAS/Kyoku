@@ -8,6 +8,7 @@ import kyoku.common.ui.generated.resources.ic_eye_close
 import kyoku.common.ui.generated.resources.ic_eye_open
 import kyoku.common.ui.generated.resources.ic_password_type_key
 import kyoku.common.ui.generated.resources.ic_password_type_lock
+import kyoku.common.ui.generated.resources.ic_show_more
 import org.jetbrains.compose.resources.vectorResource
 
 
@@ -32,3 +33,7 @@ val IconEyeOpen: ImageVector
 val IconEyeClose: ImageVector
     @Composable
     get() = vectorResource(Res.drawable.ic_eye_close)
+
+val IconShowMore: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_show_more)
