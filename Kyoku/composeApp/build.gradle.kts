@@ -44,6 +44,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.material3.window.size.classss)
 
+//            implementation(libs.androidx.splashscreen)
+            
+            implementation(libs.androidx.viewmodel)
+            implementation(libs.androidx.navigation)
+
             // project
             implementation(projects.auth.domain)
             implementation(projects.auth.ui)

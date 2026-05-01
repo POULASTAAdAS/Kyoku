@@ -1,4 +1,4 @@
-package com.poulastaa.auth.ui
+package com.poulastaa.auth.ui.sign_in
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
@@ -58,37 +58,40 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.poulastaa.common.ui.IconAppLogo
-import com.poulastaa.common.ui.IconEmail
-import com.poulastaa.common.ui.IconEyeClose
-import com.poulastaa.common.ui.IconEyeOpen
-import com.poulastaa.common.ui.IconGoogle
-import com.poulastaa.common.ui.IconPasswordLock
-import com.poulastaa.common.ui.IconShowMore
-import com.poulastaa.common.ui.StringAppIcon
-import com.poulastaa.common.ui.StringContinueWithGoogle
-import com.poulastaa.common.ui.StringCreateAccount
-import com.poulastaa.common.ui.StringDontHaveAccount
-import com.poulastaa.common.ui.StringEmail
-import com.poulastaa.common.ui.StringForgotPassword
-import com.poulastaa.common.ui.StringInvalidEmail
-import com.poulastaa.common.ui.StringOrSigninWith
-import com.poulastaa.common.ui.StringPassword
-import com.poulastaa.common.ui.StringPasswordVisibility
-import com.poulastaa.common.ui.StringSignIn
-import com.poulastaa.common.ui.StringSignInRest
-import com.poulastaa.common.ui.StringSignInS
-import com.poulastaa.common.ui.StringWelcomeBack
+import com.poulastaa.common.ui.LocalNavController
+import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.RowSpacer
-import com.poulastaa.common.ui.dimens
+import com.poulastaa.common.ui.design_system.IconAppLogo
+import com.poulastaa.common.ui.design_system.IconEmail
+import com.poulastaa.common.ui.design_system.IconEyeClose
+import com.poulastaa.common.ui.design_system.IconEyeOpen
+import com.poulastaa.common.ui.design_system.IconGoogle
+import com.poulastaa.common.ui.design_system.IconPasswordLock
+import com.poulastaa.common.ui.design_system.IconShowMore
+import com.poulastaa.common.ui.design_system.StringAppIcon
+import com.poulastaa.common.ui.design_system.StringContinueWithGoogle
+import com.poulastaa.common.ui.design_system.StringCreateAccount
+import com.poulastaa.common.ui.design_system.StringDontHaveAccount
+import com.poulastaa.common.ui.design_system.StringEmail
+import com.poulastaa.common.ui.design_system.StringForgotPassword
+import com.poulastaa.common.ui.design_system.StringInvalidEmail
+import com.poulastaa.common.ui.design_system.StringOrSigninWith
+import com.poulastaa.common.ui.design_system.StringPassword
+import com.poulastaa.common.ui.design_system.StringPasswordVisibility
+import com.poulastaa.common.ui.design_system.StringSignIn
+import com.poulastaa.common.ui.design_system.StringSignInRest
+import com.poulastaa.common.ui.design_system.StringSignInS
+import com.poulastaa.common.ui.design_system.StringWelcomeBack
+import com.poulastaa.common.ui.design_system.dimens
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SignInScreen() {
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
+    val navController = LocalNavController.current
 
     // TODO: will be moved to viewmodel
     val email = remember { mutableStateOf("") }
@@ -230,7 +233,7 @@ fun SignInScreen() {
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(
                     onClick = {
-                        // TODO: navigate to forgot password screen
+                        navController.navigate(Screens.AuthScreens.ForgotPassword(email.value))
                     }
                 ),
             )
@@ -246,7 +249,7 @@ fun SignInScreen() {
             ElevatedGradientButton(
                 width = 0.7f,
                 onClick = {
-                    // TODO: navigate to sign up screen
+                    // TODO: action signin with email
                 },
                 colors = CardDefaults.elevatedCardColors(
                     contentColor = MaterialTheme.colorScheme.background,
@@ -297,7 +300,7 @@ fun SignInScreen() {
             ElevatedGradientButton(
                 width = 1f,
                 onClick = {
-                    // TODO: signin with google
+                    // TODO: action signin with google
                 },
             ) {
                 Row(
@@ -374,7 +377,7 @@ fun SignInScreen() {
                         ),
                         linkInteractionListener = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            // TODO: navigate to create account screen
+                            navController.navigate(Screens.AuthScreens.SignUp)
                         }
                     )
                 ) {

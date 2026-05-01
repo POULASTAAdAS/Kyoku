@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeHotReload)
+
+    alias(libs.plugins.kotlinSerializationPlugin)
 }
 
 kotlin {
@@ -58,6 +60,8 @@ kotlin {
                 implementation(libs.compose.ui)
                 implementation(libs.compose.components.resources)
                 implementation(libs.material3.window.size.classss)
+
+                implementation(libs.androidx.navigation)
 
                 implementation(projects.common.domain)
             }

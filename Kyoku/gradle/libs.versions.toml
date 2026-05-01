@@ -22,6 +22,10 @@ core = "1.7.0"
 jetbrainsKotlinJvm = "2.3.20"
 material = "1.13.0"
 
+composeNavigationVersion = "2.9.2"
+viewmodel = "2.10.0"
+splash = "1.2.0"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -47,6 +51,11 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3-window-size-classss = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
 
+androidx-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "viewmodel" }
+androidx-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNavigationVersion" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
+
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -58,3 +67,4 @@ androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.lib
 androidLint = { id = "com.android.lint", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

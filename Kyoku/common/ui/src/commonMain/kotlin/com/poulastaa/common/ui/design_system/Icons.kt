@@ -1,4 +1,4 @@
-package com.poulastaa.common.ui
+package com.poulastaa.common.ui.design_system
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
