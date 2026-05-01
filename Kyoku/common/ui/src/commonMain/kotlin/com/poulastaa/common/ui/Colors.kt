@@ -2,14 +2,6 @@ package com.poulastaa.common.ui
 
 import androidx.compose.ui.graphics.Color
 
-// =============================================================
-//  LIGHT THEME
-//  Primary  : #D97706  — deep amber
-//  BG/Surf  : #FFF1E9  — warm cream
-//  Secondary: #6A5844  — warm taupe  (same hue as primary, very low chroma — clearly supporting)
-//  Tertiary : #8C4A46  — rosewood    (hue rotated ~60° warm-side from primary per M3 spec)
-// =============================================================
-
 val primaryLight                    = Color(0xFFD97706)
 val onPrimaryLight                  = Color(0xFFFFFFFF)
 val primaryContainerLight           = Color(0xFFFFE4B8)

@@ -1,8 +1,10 @@
 package com.poulastaa.auth.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -36,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
@@ -56,11 +58,27 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.poulastaa.common.ui.IconAppLogo
 import com.poulastaa.common.ui.IconEmail
 import com.poulastaa.common.ui.IconEyeClose
 import com.poulastaa.common.ui.IconEyeOpen
+import com.poulastaa.common.ui.IconGoogle
 import com.poulastaa.common.ui.IconPasswordLock
 import com.poulastaa.common.ui.IconShowMore
+import com.poulastaa.common.ui.StringAppIcon
+import com.poulastaa.common.ui.StringContinueWithGoogle
+import com.poulastaa.common.ui.StringCreateAccount
+import com.poulastaa.common.ui.StringDontHaveAccount
+import com.poulastaa.common.ui.StringEmail
+import com.poulastaa.common.ui.StringForgotPassword
+import com.poulastaa.common.ui.StringInvalidEmail
+import com.poulastaa.common.ui.StringOrSigninWith
+import com.poulastaa.common.ui.StringPassword
+import com.poulastaa.common.ui.StringPasswordVisibility
+import com.poulastaa.common.ui.StringSignIn
+import com.poulastaa.common.ui.StringSignInRest
+import com.poulastaa.common.ui.StringSignInS
+import com.poulastaa.common.ui.StringWelcomeBack
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.RowSpacer
@@ -91,21 +109,21 @@ fun SignInScreen() {
                 .fillMaxWidth(0.3f)
                 .aspectRatio(1f)
                 .clip(MaterialTheme.shapes.small)
-                .background(MaterialTheme.colorScheme.primary)
                 .align(Alignment.CenterHorizontally),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = IconEmail,
-                contentDescription = "app icon",
-                modifier = Modifier.fillMaxSize(0.8f)
+                imageVector = IconAppLogo,
+                contentDescription = StringAppIcon,
+                modifier = Modifier.fillMaxSize(1f),
+                tint = MaterialTheme.colorScheme.primary
             )
         }
 
         Spacer(Modifier.weight(0.2f))
 
         Text(
-            text = "WELCOME BACK",
+            text = StringWelcomeBack,
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Black,
                 letterSpacing = 4.sp,
@@ -123,13 +141,13 @@ fun SignInScreen() {
                     MaterialTheme.typography.displayLarge.copy(fontStyle = FontStyle.Italic)
                         .toSpanStyle()
                 ) {
-                    append("S")
+                    append(StringSignInS)
                 }
                 withStyle(
                     MaterialTheme.typography.displaySmall.copy(fontStyle = FontStyle.Italic)
                         .toSpanStyle()
                 ) {
-                    append("ign in.")
+                    append(StringSignInRest)
                 }
             },
             style = MaterialTheme.typography.displayLarge,
@@ -151,10 +169,10 @@ fun SignInScreen() {
             value = email.value,
             onValueChange = { email.value = it },
             modifier = Modifier.fillMaxWidth(),
-            label = "email",
+            label = StringEmail,
             leadingIcon = IconEmail,
             isError = isError,
-            supportingText = if (isError) "Invalid email" else "",
+            supportingText = if (isError) StringInvalidEmail else "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -170,7 +188,7 @@ fun SignInScreen() {
             value = password.value,
             onValueChange = { password.value = it },
             modifier = Modifier.fillMaxWidth(),
-            label = "password",
+            label = StringPassword,
             leadingIcon = IconPasswordLock,
             supportingText = "",
             trailingContent = {
@@ -185,7 +203,7 @@ fun SignInScreen() {
                 ) {
                     Icon(
                         imageVector = if (it) IconEyeClose else IconEyeOpen,
-                        contentDescription = "password visibility",
+                        contentDescription = StringPasswordVisibility,
                     )
                 }
             },
@@ -207,7 +225,7 @@ fun SignInScreen() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Forgot password ?",
+                text = StringForgotPassword,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(
@@ -226,30 +244,29 @@ fun SignInScreen() {
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.spacing.small)
         ) {
             ElevatedGradientButton(
+                width = 0.7f,
                 onClick = {
                     // TODO: navigate to sign up screen
-                }
+                },
+                colors = CardDefaults.elevatedCardColors(
+                    contentColor = MaterialTheme.colorScheme.background,
+                )
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.onBackground,
-                                ),
-                            ),
+                            color = MaterialTheme.colorScheme.primary,
                             shape = MaterialTheme.shapes.small,
                         ).minimumInteractiveComponentSize(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "SIGN IN", fontWeight = FontWeight.SemiBold)
+                    Text(text = StringSignIn, fontWeight = FontWeight.SemiBold)
 
                     RowSpacer(MaterialTheme.dimens.spacing.small)
 
-                    Icon(imageVector = IconShowMore, contentDescription = "sign in")
+                    Icon(imageVector = IconShowMore, contentDescription = StringSignIn)
                 }
             }
 
@@ -265,7 +282,7 @@ fun SignInScreen() {
                 )
 
                 Text(
-                    text = "or signin with",
+                    text = StringOrSigninWith,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -280,19 +297,14 @@ fun SignInScreen() {
             ElevatedGradientButton(
                 width = 1f,
                 onClick = {
-                    // TODO: navigate to sign up screen
-                }
+                    // TODO: signin with google
+                },
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.onBackground,
-                                ),
-                            ),
+                            color = MaterialTheme.colorScheme.primary,
                             shape = MaterialTheme.shapes.small,
                         )
                         .minimumInteractiveComponentSize(),
@@ -303,23 +315,25 @@ fun SignInScreen() {
                         Modifier
                             .padding(MaterialTheme.dimens.spacing.hairline)
                             .background(
-                                MaterialTheme.colorScheme.onPrimaryContainer,
+                                color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer
+                                else MaterialTheme.colorScheme.primaryContainer,
                                 shape = MaterialTheme.shapes.small
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = IconShowMore,
-                            contentDescription = "sign in",
-                            modifier = Modifier.minimumInteractiveComponentSize()
+                        Image(
+                            imageVector = IconGoogle,
+                            contentDescription = StringContinueWithGoogle,
+                            modifier = Modifier.minimumInteractiveComponentSize(),
                         )
                     }
 
                     Spacer(Modifier.weight(1f))
 
                     Text(
-                        text = "CONTINUE WITH GOOGLE",
-                        fontWeight = FontWeight.SemiBold
+                        text = StringContinueWithGoogle,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.background,
                     )
 
                     Spacer(Modifier.weight(1f))
@@ -331,7 +345,7 @@ fun SignInScreen() {
                             shape = MaterialTheme.shapes.small
                         ).alpha(0f)
                     ) {
-                        Icon(imageVector = IconShowMore, contentDescription = null)
+                        Icon(imageVector = IconGoogle, contentDescription = null)
                     }
                 }
             }
@@ -343,8 +357,9 @@ fun SignInScreen() {
             val annotatedString = buildAnnotatedString {
                 withStyle(
                     MaterialTheme.typography.bodyMedium.toSpanStyle()
+                        .copy(color = MaterialTheme.colorScheme.onSurface)
                 ) {
-                    append("Don't have an account ? ")
+                    append(StringDontHaveAccount)
                 }
 
                 withLink(
@@ -363,7 +378,7 @@ fun SignInScreen() {
                         }
                     )
                 ) {
-                    append("Create Account")
+                    append(StringCreateAccount)
                 }
             }
 
@@ -377,6 +392,7 @@ fun SignInScreen() {
 @Composable
 private fun ElevatedGradientButton(
     width: Float = 0.6f,
+    colors: CardColors = CardDefaults.elevatedCardColors(),
     onClick: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -391,9 +407,7 @@ private fun ElevatedGradientButton(
                 pressedElevation = 0.dp,
             ),
             shape = MaterialTheme.shapes.small,
-            colors = CardDefaults.elevatedCardColors(
-                contentColor = MaterialTheme.colorScheme.background,
-            ),
+            colors = colors,
             onClick = onClick,
             content = content,
         )
