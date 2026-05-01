@@ -90,8 +90,6 @@ fun SignInScreen() {
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
 
-    // Test git setup
-
     // TODO: will be moved to viewmodel
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
