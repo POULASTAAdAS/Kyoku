@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import kyoku.common.ui.generated.resources.Res
 import kyoku.common.ui.generated.resources.ic_app_logo_dark
 import kyoku.common.ui.generated.resources.ic_app_logo_light
+import kyoku.common.ui.generated.resources.ic_arrow_back
 import kyoku.common.ui.generated.resources.ic_email
 import kyoku.common.ui.generated.resources.ic_eye_close
 import kyoku.common.ui.generated.resources.ic_eye_open
@@ -58,3 +59,7 @@ val IconShowMore: ImageVector
 val IconGoogle: ImageVector
     @Composable
     get() = vectorResource(Res.drawable.ic_google)
+
+val IconArrowBack: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_arrow_back)

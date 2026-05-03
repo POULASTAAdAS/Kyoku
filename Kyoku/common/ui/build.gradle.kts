@@ -63,6 +63,10 @@ kotlin {
 
                 implementation(libs.androidx.navigation)
 
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+
                 implementation(projects.common.domain)
             }
         }
