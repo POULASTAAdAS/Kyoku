@@ -8,7 +8,9 @@ import com.poulastaa.common.ui.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
 import org.koin.compose.viewmodel.koinViewModel
 
-fun MainViewController() = ComposeUIViewController {
+fun MainViewController() = ComposeUIViewController(
+    configure = { initKoinIos() }
+) {
     AppTheme {
         val viewmodel = koinViewModel<RootViewmodel>()
         val rootState by viewmodel.state.collectAsStateWithLifecycle()

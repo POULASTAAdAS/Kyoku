@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_icon">app icon</string>
-    <string name="welcome_back">WELCOME  BACK</string>
-    <string name="sign_in_s">S</string>
+
+    <!--    Sign In-->
+    <string name="login_welcome_back_message">WELCOME  BACK</string>
+    <string name="s">S</string>
     <string name="sign_in_rest">ign in.</string>
     <string name="email">email</string>
     <string name="invalid_email">Invalid email</string>
@@ -14,4 +16,14 @@
     <string name="continue_with_google">CONTINUE WITH GOOGLE</string>
     <string name="dont_have_account">Don\'t have an account ? </string>
     <string name="create_account">Create Account</string>
+
+    <!--    Sign Up-->
+    <string name="signup_welcome_message">LISTEN TO YOUR HEART’s CONTENT</string>
+    <string name="sign_up_rest">ign up.</string>
+    <string name="username">username</string>
+    <string name="invalid_username">Invalid username</string>
+    <string name="already_have_an_account">Already have an account ? </string>
+    <string name="log_in">LogIn</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="or_signup_with">or signup with</string>
 </resources>

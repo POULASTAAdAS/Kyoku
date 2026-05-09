@@ -14,6 +14,7 @@ import kyoku.common.ui.generated.resources.ic_google
 import kyoku.common.ui.generated.resources.ic_password_type_key
 import kyoku.common.ui.generated.resources.ic_password_type_lock
 import kyoku.common.ui.generated.resources.ic_show_more
+import kyoku.common.ui.generated.resources.ic_user
 import org.jetbrains.compose.resources.vectorResource
 
 
@@ -63,3 +64,7 @@ val IconGoogle: ImageVector
 val IconArrowBack: ImageVector
     @Composable
     get() = vectorResource(Res.drawable.ic_arrow_back)
+
+val IconUser: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_user)
