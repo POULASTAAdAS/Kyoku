@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.poulastaa.auth.ui.forgot_password.ForgotPasswordScreen
 import com.poulastaa.auth.ui.sign_in.SignInScreen
 import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
@@ -73,7 +74,7 @@ fun App(
             }
 
             composable<Screens.AuthScreens.ForgotPassword> {
-
+                ForgotPasswordScreen()
             }
         }
     }

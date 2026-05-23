@@ -32,7 +32,7 @@ import com.poulastaa.common.ui.design_system.dimens
 
 @Composable
 fun AuthActionTypeList(
-    emailButtonText: String,
+    buttonText: String,
     subTitle: String,
     onEmailAuthClick: () -> Unit,
     onGoogleAuthClick: () -> Unit,
@@ -59,11 +59,11 @@ fun AuthActionTypeList(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = emailButtonText, fontWeight = FontWeight.SemiBold)
+                Text(text = buttonText, fontWeight = FontWeight.SemiBold)
 
                 RowSpacer(MaterialTheme.dimens.spacing.small)
 
-                Icon(imageVector = IconShowMore, contentDescription = emailButtonText)
+                Icon(imageVector = IconShowMore, contentDescription = buttonText)
             }
         }
 

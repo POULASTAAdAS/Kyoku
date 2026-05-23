@@ -17,11 +17,12 @@ import com.poulastaa.common.ui.design_system.dimens
 fun ElevatedGradientButton(
     width: Float = 0.6f,
     colors: CardColors = CardDefaults.elevatedCardColors(),
+    enabled: Boolean = true,
     onClick: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
-        Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         ElevatedCard(
@@ -32,6 +33,7 @@ fun ElevatedGradientButton(
             ),
             shape = MaterialTheme.shapes.small,
             colors = colors,
+            enabled = enabled,
             onClick = onClick,
             content = content,
         )

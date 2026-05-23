@@ -198,7 +198,7 @@ fun SignInScreen() {
         Spacer(Modifier.weight(0.3f))
 
         AuthActionTypeList(
-            emailButtonText = StringSignIn,
+            buttonText = StringSignIn,
             subTitle = StringOrSigninWith,
             onEmailAuthClick = {
 

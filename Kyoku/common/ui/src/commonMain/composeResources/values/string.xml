@@ -26,4 +26,12 @@
     <string name="log_in">LogIn</string>
     <string name="sign_up">SIGN UP</string>
     <string name="or_signup_with">or signup with</string>
+
+    <!--    Forgot Password-->
+    <string name="reset_password">Reset password</string>
+    <string name="reset_password_message">Enter the email associated with your account and we will send an email with verification code to reset your password.</string>
+    <string name="get_otp">Get OTP</string>
+
+    <!--    Common-->
+    <string name="back_button">Back Button</string>
 </resources>

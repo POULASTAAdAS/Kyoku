@@ -216,7 +216,7 @@ fun SingUpScreen() {
         Spacer(Modifier.weight(0.2f))
 
         AuthActionTypeList(
-            emailButtonText = StringSignUp,
+            buttonText = StringSignUp,
             subTitle = StringOrSignUpWith,
             onEmailAuthClick = {
 
