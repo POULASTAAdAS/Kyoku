@@ -71,6 +71,8 @@ kotlin {
 
                 implementation(libs.compose.material3)
                 implementation(libs.compose.ui)
+                implementation(libs.compose.ui.backhandler)
+                implementation(libs.compose.uiToolingPreview)
 
                 implementation(libs.androidx.navigation)
 
@@ -119,4 +121,8 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    androidRuntimeClasspath(libs.androidx.compose.uiTooling)
 }

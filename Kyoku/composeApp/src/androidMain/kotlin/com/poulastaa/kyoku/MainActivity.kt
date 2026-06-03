@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
             AppTheme {
                 Surface {
-                    App(state = rootState)
+                    RootNavigation(state = rootState)
                 }
             }
         }

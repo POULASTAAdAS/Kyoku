@@ -18,19 +18,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.poulastaa.auth.ui.forgot_password.ForgotPasswordScreen
+import com.poulastaa.auth.ui.otp.OtpScreen
+import com.poulastaa.auth.ui.reset_password.ResetPasswordScreen
 import com.poulastaa.auth.ui.sign_in.SignInScreen
 import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.root.RootUiState
 
-private const val ANIMATION_TIME_MS = 500
+private const val ANIMATION_TIME_MS = 400
 
 @Composable
-fun App(
-    state: RootUiState,
-) {
+fun RootNavigation(state: RootUiState) {
     val navController = rememberNavController()
 
     CompositionLocalProvider(LocalNavController.provides(navController)) {
@@ -73,8 +74,31 @@ fun App(
                 SingUpScreen()
             }
 
-            composable<Screens.AuthScreens.ForgotPassword> {
+            composable<Screens.AuthScreens.ForgotPassword>(
+                enterTransition = {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                    )
+                },
+                popExitTransition = {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                        animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                    )
+                }
+            ) {
                 ForgotPasswordScreen()
+            }
+
+            composable<Screens.AuthScreens.ValidateOTP> {
+                val payload = it.toRoute<Screens.AuthScreens.ValidateOTP>()
+                OtpScreen()
+            }
+
+            composable<Screens.AuthScreens.ResetPassword> {
+                val payload = it.toRoute<Screens.AuthScreens.ResetPassword>()
+                ResetPasswordScreen()
             }
         }
     }

@@ -47,7 +47,7 @@ fun ForgotPasswordScreen() {
 
     Scaffold(
         topBar = {
-            DefaultTopBar(onBackCLick = navController::popBackStack)
+            DefaultTopBar(rotation = 270f, onBackCLick = navController::popBackStack)
         },
         modifier = Modifier
             .fillMaxSize()
@@ -69,7 +69,8 @@ fun ForgotPasswordScreen() {
 
             Text(
                 text = StringResetPasswordMessage,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             ColumnSpacer(MaterialTheme.dimens.spacing.extraLarge)

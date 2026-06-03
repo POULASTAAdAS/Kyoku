@@ -58,7 +58,9 @@ kotlin {
 
                 implementation(libs.compose.material3)
                 implementation(libs.compose.ui)
+                implementation(libs.compose.ui.backhandler)
                 implementation(libs.compose.components.resources)
+                implementation(libs.compose.uiToolingPreview)
                 implementation(libs.material3.window.size.classss)
 
                 implementation(libs.androidx.navigation)
@@ -101,6 +103,10 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    debugImplementation(libs.androidx.compose.uiTooling)
 }
 
 android {

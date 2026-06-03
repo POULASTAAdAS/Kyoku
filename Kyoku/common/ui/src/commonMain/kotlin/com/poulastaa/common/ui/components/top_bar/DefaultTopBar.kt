@@ -12,8 +12,10 @@ import com.poulastaa.common.ui.components.BackButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultTopBar(
+    navigateBackEnabled: Boolean = true,
+    rotation: Float = 0f,
     titleContent: @Composable () -> Unit = {},
-    onBackCLick: () -> Unit,
+    onBackCLick: () -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
         containerColor = Color.Transparent,
@@ -22,7 +24,7 @@ fun DefaultTopBar(
     TopAppBar(
         title = titleContent,
         navigationIcon = {
-            BackButton(onClick = onBackCLick)
+            if (navigateBackEnabled) BackButton(rotation = rotation, onClick = onBackCLick)
         },
         actions = trailingContent,
         colors = colors,
