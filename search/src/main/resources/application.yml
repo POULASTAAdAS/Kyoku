@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: search
+
+  data:
+    redis:
+      host: localhost
+      port: 1045
+      password: password
+
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost:1030/CONTENT
+    username: root
+    password: pass
+
+server:
+  port: 8084
+
+grpc:
+  server:
+    port: 9094
+
+elasticsearch:
+  artist:
+    index: artists
+    host: localhost
+    port: 1200
+    username: elastic
+    password: password
+    scheme: http
+
+debug: true
+
+logging:
+  level:
+    root: debug

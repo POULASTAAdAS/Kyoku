@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -40,3 +41,6 @@ include(
 )
 include(":common:ui")
 include(":common:domain")
+include(":setup:ui")
+include(":setup:data")
+include(":setup:domain")

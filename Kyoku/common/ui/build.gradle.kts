@@ -1,106 +1,45 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeHotReload)
-
     alias(libs.plugins.kotlinSerializationPlugin)
 }
 
 kotlin {
-
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidTarget()
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "common:uiKit"
+    val xcfName = "common-uiKit"
 
     iosX64 {
-        binaries.framework {
-            baseName = xcfName
-        }
+        binaries.framework { baseName = xcfName }
     }
-
     iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
+        binaries.framework { baseName = xcfName }
     }
-
     iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
+        binaries.framework { baseName = xcfName }
     }
 
     jvm()
 
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation(libs.kotlin.stdlib)
-                // Add KMP dependencies here
-
-                implementation(libs.compose.material3)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.ui.backhandler)
-                implementation(libs.compose.components.resources)
-                implementation(libs.compose.uiToolingPreview)
-                implementation(libs.material3.window.size.classss)
-
-                implementation(libs.androidx.navigation)
-
-                implementation(libs.koin.core)
-                implementation(libs.koin.compose)
-                implementation(libs.koin.compose.viewmodel)
-
-                implementation(projects.common.domain)
-            }
+        commonMain.dependencies {
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.backhandler)
+            implementation(libs.compose.components.resources)
+            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.material3.window.size.classss)
+            implementation(libs.androidx.navigation)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(projects.common.domain)
         }
-
-        commonTest {
-            dependencies {
-                implementation(libs.kotlin.test)
-            }
-        }
-
-        androidMain {
-            dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
-            }
-        }
-
-        iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP's default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
-            }
-        }
-
-        jvmMain {
-            dependencies {
-
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
 }
@@ -111,10 +50,10 @@ dependencies {
 
 android {
     namespace = "com.poulastaa.common.ui"
-    compileSdk = 36
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 
     sourceSets {

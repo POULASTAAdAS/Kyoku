@@ -15,7 +15,7 @@ fun DefaultTopBar(
     navigateBackEnabled: Boolean = true,
     rotation: Float = 0f,
     titleContent: @Composable () -> Unit = {},
-    onBackCLick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(
         containerColor = Color.Transparent,
@@ -24,7 +24,7 @@ fun DefaultTopBar(
     TopAppBar(
         title = titleContent,
         navigationIcon = {
-            if (navigateBackEnabled) BackButton(rotation = rotation, onClick = onBackCLick)
+            if (navigateBackEnabled) BackButton(rotation = rotation, onClick = onBackClick)
         },
         actions = trailingContent,
         colors = colors,

@@ -62,8 +62,8 @@ fun OtpScreen() {
     var isValidating by remember { mutableStateOf(false) }
     val isValidOTP by remember(otp) { mutableStateOf(otp.length == OTP_LENGTH) }
 
-    LaunchedEffect(otp.length == OTP_LENGTH) {
-        isValidating = true
+    LaunchedEffect(isValidOTP) {
+        if (isValidOTP) isValidating = true
     }
 
     Scaffold(
@@ -78,8 +78,7 @@ fun OtpScreen() {
                             style = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.primary)
                         )
                     }
-                },
-                onBackCLick = { /* No/Op */ },
+                }
             )
         }
     ) {
@@ -118,7 +117,7 @@ fun OtpScreen() {
                 BasicTextField(
                     modifier = Modifier.then(if (this.maxWidth > 780.dp) Modifier.fillMaxWidth(0.7f) else Modifier.fillMaxWidth()),
                     onValueChange = { str ->
-                        str.takeIf { it.length <= OTP_LENGTH }?.let {
+                        str.takeIf { it.length <= OTP_LENGTH && isValidating.not() }?.let {
                             otp = it
                         }
                     },
@@ -203,7 +202,8 @@ fun OtpScreen() {
                     Text(
                         text = "Submit",
                         fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.alpha(if (isValidating) 0f else 1f)
+                        modifier = Modifier.alpha(if (isValidating) 0f else 1f),
+                        color = MaterialTheme.colorScheme.background
                     )
                     CircularProgressIndicator(
                         Modifier.alpha(if (isValidating) 1f else 0f),

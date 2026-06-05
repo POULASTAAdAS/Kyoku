@@ -47,7 +47,7 @@ fun ForgotPasswordScreen() {
 
     Scaffold(
         topBar = {
-            DefaultTopBar(rotation = 270f, onBackCLick = navController::popBackStack)
+            DefaultTopBar(rotation = 270f, onBackClick = navController::popBackStack)
         },
         modifier = Modifier
             .fillMaxSize()
