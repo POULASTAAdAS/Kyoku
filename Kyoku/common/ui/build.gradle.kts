@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlinSerializationPlugin)
 }
 
-kotlin {
-    androidLibrary {
-        namespace = "com.poulastaa.common.ui"
-    }
+android {
+    namespace = "com.poulastaa.common.ui"
 }
