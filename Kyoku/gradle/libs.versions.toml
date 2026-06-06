@@ -85,3 +85,5 @@ kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", 
 kyoku-kmp-library = { id = "kyoku.kmp.library", version = "unspecified" }
 kyoku-kmp-compose-library = { id = "kyoku.kmp.compose.library", version = "unspecified" }
 kyoku-kmp-feature-ui = { id = "kyoku.kmp.feature.ui", version = "unspecified" }
+kyoku-kmp-common-ui = { id = "kyoku.kmp.common.ui", version = "unspecified" }
+kyoku-kmp-application = { id = "kyoku.kmp.application", version = "unspecified" }

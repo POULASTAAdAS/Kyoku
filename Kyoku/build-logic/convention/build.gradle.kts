@@ -23,5 +23,13 @@ gradlePlugin {
             id = "kyoku.kmp.feature.ui"
             implementationClass = "KmpFeatureUiConventionPlugin"
         }
+        register("kmpCommonUi") {
+            id = "kyoku.kmp.common.ui"
+            implementationClass = "KmpCommonUiConventionPlugin"
+        }
+        register("kmpApplication") {
+            id = "kyoku.kmp.application"
+            implementationClass = "KmpApplicationConventionPlugin"
+        }
     }
 }
