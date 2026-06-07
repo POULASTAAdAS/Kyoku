@@ -21,7 +21,7 @@ fun AppOutlinedTextField(
     leadingIcon: ImageVector? = null,
     trailingIcon: ImageVector? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    supportingText: String,
+    supportingText: String? = null,
     isError: Boolean = false,
     singleLine: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -53,9 +53,7 @@ fun AppOutlinedTextField(
                 )
             }
         },
-        supportingText = {
-            Text(text = supportingText)
-        },
+        supportingText = supportingText?.let { { Text(text = it) } },
         isError = isError,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,

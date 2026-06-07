@@ -22,11 +22,11 @@ import androidx.navigation.toRoute
 import com.poulastaa.auth.ui.forgot_password.ForgotPasswordScreen
 import com.poulastaa.auth.ui.otp.OtpScreen
 import com.poulastaa.auth.ui.reset_password.ResetPasswordScreen
-import com.poulastaa.auth.ui.sign_in.SignInScreen
 import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.root.RootUiState
+import com.poulastaa.setup.ui.import_spotify_playlist.ImportSpotifyPlaylist
 
 private const val ANIMATION_TIME_MS = 400
 
@@ -54,7 +54,8 @@ fun RootNavigation(state: RootUiState) {
             }
 
             composable<Screens.AuthScreens.SignIn> {
-                SignInScreen()
+                ImportSpotifyPlaylist()
+//                 SignInScreen()
             }
 
             composable<Screens.AuthScreens.SignUp>(

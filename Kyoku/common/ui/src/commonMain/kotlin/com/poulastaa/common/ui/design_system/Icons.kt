@@ -4,9 +4,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import kyoku.common.ui.generated.resources.Res
+import kyoku.common.ui.generated.resources.ic_add_link
 import kyoku.common.ui.generated.resources.ic_app_logo_dark
 import kyoku.common.ui.generated.resources.ic_app_logo_light
 import kyoku.common.ui.generated.resources.ic_arrow_back
+import kyoku.common.ui.generated.resources.ic_close
 import kyoku.common.ui.generated.resources.ic_email
 import kyoku.common.ui.generated.resources.ic_eye_close
 import kyoku.common.ui.generated.resources.ic_eye_open
@@ -68,3 +70,11 @@ val IconArrowBack: ImageVector
 val IconUser: ImageVector
     @Composable
     get() = vectorResource(Res.drawable.ic_user)
+
+val IconAddLink: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_add_link)
+
+val IconClose: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_close)
