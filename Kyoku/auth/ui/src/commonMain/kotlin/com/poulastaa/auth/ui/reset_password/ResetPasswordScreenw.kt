@@ -39,7 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
-import com.poulastaa.common.ui.components.ElevatedGradientButton
+import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.design_system.IconEyeClose
 import com.poulastaa.common.ui.design_system.IconEyeOpen
 import com.poulastaa.common.ui.design_system.IconPasswordLock
@@ -163,7 +163,7 @@ fun ResetPasswordScreen() {
 
             ColumnSpacer(MaterialTheme.dimens.spacing.extraLarge)
 
-            ElevatedGradientButton(
+            ElevatedDefaultButton(
                 width = 0.7f,
                 onClick = {
 

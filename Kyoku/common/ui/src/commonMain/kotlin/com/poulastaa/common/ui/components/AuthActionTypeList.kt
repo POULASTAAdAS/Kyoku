@@ -42,7 +42,7 @@ fun AuthActionTypeList(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.spacing.small)
     ) {
-        ElevatedGradientButton(
+        ElevatedDefaultButton(
             width = 0.7f,
             onClick = onEmailAuthClick,
             colors = CardDefaults.elevatedCardColors(
@@ -91,7 +91,7 @@ fun AuthActionTypeList(
             )
         }
 
-        ElevatedGradientButton(
+        ElevatedDefaultButton(
             width = 1f,
             onClick = onGoogleAuthClick,
         ) {

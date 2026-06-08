@@ -1,5 +1,6 @@
 package com.poulastaa.common.ui.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.poulastaa.common.ui.design_system.dimens
 
 @Composable
-fun ElevatedGradientButton(
+fun ElevatedDefaultButton(
     width: Float = 0.6f,
     colors: CardColors = CardDefaults.elevatedCardColors(),
     enabled: Boolean = true,
@@ -22,11 +23,11 @@ fun ElevatedGradientButton(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.animateContentSize().fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth(width),
+            modifier = Modifier.animateContentSize().fillMaxWidth(width),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = MaterialTheme.dimens.elevation.level3,
                 pressedElevation = 0.dp,

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
-import com.poulastaa.common.ui.components.ElevatedGradientButton
+import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.components.top_bar.DefaultTopBar
 import com.poulastaa.common.ui.design_system.IconEmail
 import com.poulastaa.common.ui.design_system.StringEmail
@@ -95,7 +95,7 @@ fun ForgotPasswordScreen() {
 
             ColumnSpacer(MaterialTheme.dimens.spacing.small)
 
-            ElevatedGradientButton(
+            ElevatedDefaultButton(
                 width = 0.7f,
                 enabled = isValidEmail,
                 onClick = {

@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.poulastaa.common.ui.components.ColumnSpacer
-import com.poulastaa.common.ui.components.ElevatedGradientButton
+import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.components.top_bar.DefaultTopBar
 import com.poulastaa.common.ui.design_system.dimens
 
@@ -178,7 +178,7 @@ fun OtpScreen() {
 
             ColumnSpacer(MaterialTheme.dimens.spacing.large)
 
-            ElevatedGradientButton(
+            ElevatedDefaultButton(
                 width = 0.7f,
                 enabled = isValidOTP,
                 onClick = {
