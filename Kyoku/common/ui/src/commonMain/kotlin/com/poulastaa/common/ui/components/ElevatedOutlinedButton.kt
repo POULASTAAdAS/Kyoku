@@ -22,7 +22,7 @@ import com.poulastaa.common.ui.design_system.dimens
 @Composable
 fun ElevatedOutlinedButton(
     width: Float = 0.6f,
-    borderWidth: Dp  = 1.5.dp,
+    borderWidth: Dp = 1.5.dp,
     borderColors: List<Color> = listOf(
         MaterialTheme.colorScheme.primaryContainer,
         MaterialTheme.colorScheme.primaryContainer

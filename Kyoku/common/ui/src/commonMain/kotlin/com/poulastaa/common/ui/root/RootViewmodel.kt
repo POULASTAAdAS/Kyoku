@@ -15,7 +15,7 @@ class RootViewmodel : ViewModel() {
         viewModelScope.launch {
             delay(800)
             state.update {
-                it.copy(startDestination = Screens.AuthScreens.SignIn)
+                it.copy(startDestination = Screens.AuthGraph)
             }
         }
     }

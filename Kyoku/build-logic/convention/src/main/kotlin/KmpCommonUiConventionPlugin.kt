@@ -39,8 +39,14 @@ class KmpCommonUiConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("compose-ui").get())
                 add("commonMainImplementation", libs.findLibrary("compose-ui-backhandler").get())
                 add("commonMainImplementation", libs.findLibrary("compose-uiToolingPreview").get())
-                add("commonMainImplementation", libs.findLibrary("compose-components-resources").get())
-                add("commonMainImplementation", libs.findLibrary("material3-window-size-classss").get())
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("compose-components-resources").get()
+                )
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("material3-window-size-classss").get()
+                )
                 add("commonMainImplementation", libs.findLibrary("androidx-navigation").get())
                 add("commonMainImplementation", libs.findLibrary("koin-core").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose").get())

@@ -41,7 +41,10 @@ class KmpLibraryConventionPlugin : Plugin<Project> {
                 add("commonTestImplementation", libs.findLibrary("kotlin-test").get())
                 add("androidDeviceTestImplementation", libs.findLibrary("androidx-core").get())
                 add("androidDeviceTestImplementation", libs.findLibrary("androidx-runner").get())
-                add("androidDeviceTestImplementation", libs.findLibrary("androidx-testExt-junit").get())
+                add(
+                    "androidDeviceTestImplementation",
+                    libs.findLibrary("androidx-testExt-junit").get()
+                )
             }
         }
     }

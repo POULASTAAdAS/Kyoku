@@ -6,39 +6,48 @@ sealed interface Screens {
     @Serializable
     object Loading : Screens
 
-    sealed interface AuthScreens {
+    @Serializable
+    object AuthGraph : Screens
+
+    @Serializable
+    object SetupGraph : Screens
+
+    @Serializable
+    object MainGraph : Screens
+
+    sealed interface AuthScreens : Screens {
         @Serializable
-        object SignIn : Screens
+        object SignIn : AuthScreens
 
         @Serializable
-        object SignUp : Screens
+        object SignUp : AuthScreens
 
         @Serializable
-        data class ForgotPassword(val email: String? = null) : Screens
+        data class ForgotPassword(val email: String? = null) : AuthScreens
 
         @Serializable
-        data class ValidateOTP(val email: String, val token: String) : Screens
+        data class ValidateOTP(val email: String, val token: String) : AuthScreens
 
         @Serializable
-        data class ResetPassword(val token: String) : Screens
+        data class ResetPassword(val token: String) : AuthScreens
     }
 
-    sealed interface SetupScreens {
+    sealed interface SetupScreens : Screens {
         @Serializable
-        object ImportPlaylist : Screens
+        object ImportPlaylist : SetupScreens
 
         @Serializable
-        object SelectArtist : Screens
+        object SelectArtist : SetupScreens
 
         @Serializable
-        object SelectGenre : Screens
+        object SelectGenre : SetupScreens
     }
 
-    sealed interface MainScreens {
+    sealed interface MainScreens : Screens {
         @Serializable
-        object Home : Screens
+        object Home : MainScreens
 
         @Serializable
-        object Profile : Screens
+        object Profile : MainScreens
     }
 }

@@ -65,10 +65,10 @@ import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.components.ElevatedOutlinedButton
 import com.poulastaa.common.ui.components.RowSpacer
+import com.poulastaa.common.ui.components.SmallClearButton
 import com.poulastaa.common.ui.design_system.IconAddLink
 import com.poulastaa.common.ui.design_system.IconAppLogo
 import com.poulastaa.common.ui.design_system.IconArrowBack
-import com.poulastaa.common.ui.design_system.IconClose
 import com.poulastaa.common.ui.design_system.StringBackButton
 import com.poulastaa.common.ui.design_system.dimens
 import kotlin.random.Random
@@ -178,17 +178,10 @@ fun ImportSpotifyPlaylist() {
                 label = "playlist link",
                 leadingIcon = IconAddLink,
                 trailingContent = {
-                    AnimatedVisibility(visible = link.isNotEmpty()) {
-                        Icon(
-                            imageVector = IconClose,
-                            contentDescription = "Clear",
-                            modifier = Modifier.clip(CircleShape).clickable(
-                                onClick = {
-                                    link = ""
-                                }
-                            )
-                        )
-                    }
+                    SmallClearButton(
+                        visible = link.isNotEmpty(),
+                        oClick = { link = "" }
+                    )
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(

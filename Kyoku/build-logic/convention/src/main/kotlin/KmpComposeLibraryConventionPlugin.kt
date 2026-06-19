@@ -19,7 +19,10 @@ class KmpComposeLibraryConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("compose-ui").get())
                 add("commonMainImplementation", libs.findLibrary("compose-ui-backhandler").get())
                 add("commonMainImplementation", libs.findLibrary("compose-uiToolingPreview").get())
-                add("commonMainImplementation", libs.findLibrary("compose-components-resources").get())
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("compose-components-resources").get()
+                )
                 add("androidRuntimeClasspath", libs.findLibrary("androidx-compose-uiTooling").get())
             }
         }

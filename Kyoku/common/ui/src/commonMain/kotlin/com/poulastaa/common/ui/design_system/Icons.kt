@@ -8,10 +8,13 @@ import kyoku.common.ui.generated.resources.ic_add_link
 import kyoku.common.ui.generated.resources.ic_app_logo_dark
 import kyoku.common.ui.generated.resources.ic_app_logo_light
 import kyoku.common.ui.generated.resources.ic_arrow_back
+import kyoku.common.ui.generated.resources.ic_artist
+import kyoku.common.ui.generated.resources.ic_check
 import kyoku.common.ui.generated.resources.ic_close
 import kyoku.common.ui.generated.resources.ic_email
 import kyoku.common.ui.generated.resources.ic_eye_close
 import kyoku.common.ui.generated.resources.ic_eye_open
+import kyoku.common.ui.generated.resources.ic_genre
 import kyoku.common.ui.generated.resources.ic_google
 import kyoku.common.ui.generated.resources.ic_password_type_key
 import kyoku.common.ui.generated.resources.ic_password_type_lock
@@ -78,3 +81,15 @@ val IconAddLink: ImageVector
 val IconClose: ImageVector
     @Composable
     get() = vectorResource(Res.drawable.ic_close)
+
+val IconGenre: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_genre)
+
+val IconCheck: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_check)
+
+val IconArtist: ImageVector
+    @Composable
+    get() = vectorResource(Res.drawable.ic_artist)

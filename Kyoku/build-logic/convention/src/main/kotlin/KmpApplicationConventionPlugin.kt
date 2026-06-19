@@ -69,11 +69,23 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("compose-material3").get())
                 add("commonMainImplementation", libs.findLibrary("compose-ui").get())
                 add("commonMainImplementation", libs.findLibrary("compose-ui-backhandler").get())
-                add("commonMainImplementation", libs.findLibrary("compose-components-resources").get())
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("compose-components-resources").get()
+                )
                 add("commonMainImplementation", libs.findLibrary("compose-uiToolingPreview").get())
-                add("commonMainImplementation", libs.findLibrary("androidx-lifecycle-viewmodelCompose").get())
-                add("commonMainImplementation", libs.findLibrary("androidx-lifecycle-runtimeCompose").get())
-                add("commonMainImplementation", libs.findLibrary("material3-window-size-classss").get())
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("androidx-lifecycle-viewmodelCompose").get()
+                )
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("androidx-lifecycle-runtimeCompose").get()
+                )
+                add(
+                    "commonMainImplementation",
+                    libs.findLibrary("material3-window-size-classss").get()
+                )
                 add("commonMainImplementation", libs.findLibrary("androidx-viewmodel").get())
                 add("commonMainImplementation", libs.findLibrary("androidx-navigation").get())
                 add("commonMainImplementation", libs.findLibrary("koin-core").get())
@@ -81,7 +93,10 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
 
                 add("androidMainImplementation", libs.findLibrary("compose-uiToolingPreview").get())
-                add("androidMainImplementation", libs.findLibrary("androidx-activity-compose").get())
+                add(
+                    "androidMainImplementation",
+                    libs.findLibrary("androidx-activity-compose").get()
+                )
                 add("androidMainImplementation", libs.findLibrary("koin-android").get())
 
                 add("jvmMainImplementation", libs.findLibrary("kotlinx-coroutinesSwing").get())

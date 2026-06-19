@@ -53,7 +53,9 @@ fun AppOutlinedTextField(
                 )
             }
         },
-        supportingText = supportingText?.let { { Text(text = it) } },
+        supportingText = supportingText
+            ?.takeIf { it.isNotBlank() }
+            ?.let { { Text(text = it) } },
         isError = isError,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
