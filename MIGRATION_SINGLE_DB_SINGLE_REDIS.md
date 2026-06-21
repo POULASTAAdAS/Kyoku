@@ -12,6 +12,9 @@ This file documents exactly what changed and how to revert it.
 - `/Users/poulastaad/personal/Kyoku/config-server/src/main/resources/application.yml`
 - `/Users/poulastaad/personal/Kyoku/discovery/src/main/resources/application.yml`
 - `/Users/poulastaad/personal/Kyoku/gateway/src/main/resources/application.yml`
+- `/Users/poulastaad/personal/Kyoku/validator/src/main/resources/application.yml`
+- `/Users/poulastaad/personal/Kyoku/auth/.gitignore`
+- `/Users/poulastaad/personal/Kyoku/auth/src/main/resources/application.yml`
 - `/Users/poulastaad/personal/secrates/application-dev.yml`
 
 ## Runtime Started During Verification
@@ -42,6 +45,24 @@ To stop these manually started Spring services:
 pkill -f "config-server.*gradlew bootRun"
 pkill -f "discovery.*gradlew bootRun"
 pkill -f "gateway.*gradlew bootRun"
+```
+
+If any of ports `8888`, `8001`, or `8080` are still busy after the commands above, identify and stop the remaining Java child process by PID:
+
+```bash
+lsof -nP -iTCP:8888 -sTCP:LISTEN
+lsof -nP -iTCP:8001 -sTCP:LISTEN
+lsof -nP -iTCP:8080 -sTCP:LISTEN
+
+kill <PID_FROM_LSOF>
+```
+
+During verification cleanup, these leftover Kyoku processes were stopped:
+
+```text
+config-server: 73241 and Gradle wrapper 73219
+discovery: 73384 and Gradle wrapper 73329
+gateway: 75785 and Gradle wrapper 75763
 ```
 
 To stop the Docker stack:
@@ -339,6 +360,101 @@ password: ${gateway.redis.password:contentRedis}
 
 To revert, change config-server URL back to `http://localhost:1200` and Redis password default back to `gatewayRedis`.
 
+## validator application.yml Changes
+
+File: `/Users/poulastaad/personal/Kyoku/validator/src/main/resources/application.yml`
+
+Local config-server and discovery-server variables were added, matching the gateway style:
+
+```yaml
+config-server:
+  url: http://localhost:8888
+
+discovery-server:
+  url: http://localhost:8001/eureka/
+```
+
+Config server import changed from remote/old port to local config-server on `8888`.
+
+Old value:
+
+```yaml
+spring.config.import: optional:configserver:http://kyoku.poulastaa.shop:1200
+```
+
+New value:
+
+```yaml
+spring.config.import: optional:configserver:${config-server.url}
+```
+
+Config client URI changed from remote/old port to local config-server on `8888`.
+
+Old value:
+
+```yaml
+spring.cloud.config.uri: http://kyoku.poulastaa.shop:1200
+```
+
+New value:
+
+```yaml
+spring.cloud.config.uri: ${config-server.url}
+```
+
+Eureka default zone changed from remote to local.
+
+Old value:
+
+```yaml
+defaultZone: http://kyoku.poulastaa.shop:8001/eureka/
+```
+
+New value:
+
+```yaml
+defaultZone: ${eureka.url:${discovery-server.url}}
+```
+
+To revert, restore the remote config-server import/URI and remote Eureka default zone, then remove the added local `config-server` and `discovery-server` blocks if no longer needed.
+
+## auth application.yml Changes
+
+File: `/Users/poulastaad/personal/Kyoku/auth/src/main/resources/application.yml`
+
+This file did not exist before this migration. It was added so the auth service follows the same local config-server/discovery pattern as gateway, discovery, config-server, and validator.
+
+`/Users/poulastaad/personal/Kyoku/auth/.gitignore` was also changed to unignore this exact file because the auth module previously ignored `/src/main/resources/application.yml`. Without this exception, the new auth YAML would not appear in normal `git status` or `git add` flows.
+
+Important local defaults added:
+
+```yaml
+config-server.url: http://localhost:8888
+discovery-server.url: http://localhost:8001/eureka/
+server.port: ${auth.port:8082}
+spring.config.import: optional:configserver:${config-server.url}
+spring.cloud.config.uri: ${config-server.url}
+eureka.client.service-url.defaultZone: ${eureka.url:${discovery-server.url}}
+```
+
+The auth YAML also maps existing central config keys from `/Users/poulastaad/personal/secrates/application-dev.yml` into the property names currently used by auth code:
+
+```yaml
+spring.datasource.url: ${sql.user}
+spring.data.redis.host: ${auth.redis.host:localhost}
+spring.data.redis.port: ${auth.redis.port:1040}
+spring.data.redis.password: ${auth.redis.password:contentRedis}
+spring.rabbitmq.host: ${rabbit.notification.host:localhost}
+spring.rabbitmq.port: ${rabbit.notification.port:1100}
+spring.rabbitmq.username: ${rabbit.notification.username:root}
+spring.rabbitmq.password: ${rabbit.notification.password:rabbitNotification}
+grpc.client.user.address: ${user-service.grpc.url:discovery:///user}
+```
+
+Auth JWT mappings were added because auth code reads keys like `jwt.mail.verify.*`, while the central config stores the mail verification values under `auth.jwt.verify-mail.*`.
+
+To revert, delete `/Users/poulastaad/personal/Kyoku/auth/src/main/resources/application.yml` if the auth service should return to having no local application YAML, and remove the `!/src/main/resources/application.yml` exception from `/Users/poulastaad/personal/Kyoku/auth/.gitignore`.
+
 ## External application-dev.yml Changes
 
 File: `/Users/poulastaad/personal/secrates/application-dev.yml`
@@ -526,6 +642,9 @@ git checkout -- kyoku-docker/docker-compose.yml
 git checkout -- config-server/src/main/resources/application.yml
 git checkout -- discovery/src/main/resources/application.yml
 git checkout -- gateway/src/main/resources/application.yml
+git checkout -- validator/src/main/resources/application.yml
+git checkout -- auth/.gitignore
+rm auth/src/main/resources/application.yml
 ```
 
 4. Manually revert `/Users/poulastaad/personal/secrates/application-dev.yml` because it is outside this repository:

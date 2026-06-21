@@ -1,17 +1,19 @@
 package com.poulastaa.kyoku.notification.utils
 
-private enum class Social(val link: String) {
-    TWITTER("https://x.com/PoulastaaD22643"),
-    LINKEDIN("https://www.linkedin.com/in/poulastaa-das-7a5332235/"),
-    MEDIUM("https://poulastaa.medium.com/"),
-    GITHUB("https://github.com/POULASTAAdAS"),
-}
+data class SocialLinks(
+    val twitter: String,
+    val linkedin: String,
+    val medium: String,
+    val github: String,
+)
 
 fun generateVerificationMailContent(
     token: JWTToken,
     username: Username,
     endpoint: String,
     devMail: Email,
+    socialLinks: SocialLinks,
+    verificationLinkExpiration: String,
 ) = """
     <!DOCTYPE html>
     <html lang="en">
@@ -401,7 +403,7 @@ fun generateVerificationMailContent(
                 <div class="security-badge">
                     <p>
                         <span class="security-icon">🔒</span>
-                        <strong>Security Notice:</strong> This verification link expires in <strong>10 minutes</strong> for your protection.
+                        <strong>Security Notice:</strong> This verification link expires in <strong>$verificationLinkExpiration</strong> for your protection.
                         If you didn't create an account with Kyoku, please disregard this email or contact our support team immediately.
                     </p>
                 </div>
@@ -410,10 +412,10 @@ fun generateVerificationMailContent(
             <!-- Footer Section -->
             <div class="footer">
                 <div class="social-icons">
-                    <a href="${Social.TWITTER.link}" class="social-icon" title="Twitter">𝕏</a>
-                    <a href="${Social.LINKEDIN.link}" class="social-icon" title="LinkedIn">in</a>
-                    <a href="${Social.MEDIUM.link}" class="social-icon" title="Medium">Md</a>
-                    <a href="${Social.GITHUB.link}" class="social-icon" title="GitHub">Gh</a>
+                    <a href="${socialLinks.twitter}" class="social-icon" title="Twitter">𝕏</a>
+                    <a href="${socialLinks.linkedin}" class="social-icon" title="LinkedIn">in</a>
+                    <a href="${socialLinks.medium}" class="social-icon" title="Medium">Md</a>
+                    <a href="${socialLinks.github}" class="social-icon" title="GitHub">Gh</a>
                 </div>
 
                 <p>Questions? We're here to help!</p>
@@ -442,7 +444,8 @@ fun generateVerificationMailContent(
 fun generateWelcomeMailContent(
     username: Username,
     devMail: Email,
-    appUrl: String = "http://kyoku.poulastaa.shop:8080",
+    socialLinks: SocialLinks,
+    appUrl: String,
 ) = """
     <!DOCTYPE html>
     <html lang="en">
@@ -764,10 +767,10 @@ fun generateWelcomeMailContent(
             <!-- Footer Section -->
             <div class="footer">
                 <div class="social-icons">
-                    <a href="${Social.TWITTER.link}" class="social-icon" title="Twitter">𝕏</a>
-                    <a href="${Social.LINKEDIN.link}" class="social-icon" title="LinkedIn">in</a>
-                    <a href="${Social.MEDIUM.link}" class="social-icon" title="Medium">Md</a>
-                    <a href="${Social.GITHUB.link}" class="social-icon" title="GitHub">Gh</a></div>
+                    <a href="${socialLinks.twitter}" class="social-icon" title="Twitter">𝕏</a>
+                    <a href="${socialLinks.linkedin}" class="social-icon" title="LinkedIn">in</a>
+                    <a href="${socialLinks.medium}" class="social-icon" title="Medium">Md</a>
+                    <a href="${socialLinks.github}" class="social-icon" title="GitHub">Gh</a></div>
 
                 <p>Questions or feedback? We'd love to hear from you!</p>
                 <p>
@@ -798,7 +801,8 @@ fun generateWelcomeBackContent(
     allLibrarySongs: Int,
     playlist: Int,
     totalHour: Int,
-    appUrl: String = "http://kyoku.poulastaa.shop:8080",
+    socialLinks: SocialLinks,
+    appUrl: String,
 ) = """
     <!DOCTYPE html>
     <html lang="en">
@@ -1121,10 +1125,10 @@ fun generateWelcomeBackContent(
         <tr>
             <td class="footer-section">
                 <div class="social-links">
-                    <a href="${Social.TWITTER.link}" class="social-link">𝕏</a>
-                    <a href="${Social.LINKEDIN.link}" class="social-link">in</a>
-                    <a href="${Social.MEDIUM.link}" class="social-link">Me</a>
-                    <a href="${Social.GITHUB.link}" class="social-link">Gh</a>
+                    <a href="${socialLinks.twitter}" class="social-link">𝕏</a>
+                    <a href="${socialLinks.linkedin}" class="social-link">in</a>
+                    <a href="${socialLinks.medium}" class="social-link">Me</a>
+                    <a href="${socialLinks.github}" class="social-link">Gh</a>
                 </div>
 
                 <p class="footer-text">Need help? Contact us at</p>
@@ -1148,6 +1152,8 @@ fun generateForgotPasswordMailContent(
     code: String,
     username: Username,
     devMail: Email,
+    socialLinks: SocialLinks,
+    passwordResetCodeExpiration: String,
 ) = """
 <!DOCTYPE html>
 <html lang="en">
@@ -1555,7 +1561,7 @@ fun generateForgotPasswordMailContent(
                 <div class="security-badge">
                     <p>
                         <span class="security-icon">🔒</span>
-                        <strong>Security Notice:</strong> This verification code expires in <strong>10 minutes</strong> for your security.
+                        <strong>Security Notice:</strong> This verification code expires in <strong>$passwordResetCodeExpiration</strong> for your security.
                         The code can only be used once and will be invalidated after successful password reset.
                     </p>
                 </div>
@@ -1572,10 +1578,10 @@ fun generateForgotPasswordMailContent(
             <!-- Footer Section -->
             <div class="footer">
                 <div class="social-icons">
-                    <a href="${Social.TWITTER.link}" class="social-icon" title="Twitter">𝕏</a>
-                    <a href="${Social.LINKEDIN.link}" class="social-icon" title="LinkedIn">in</a>
-                    <a href="${Social.MEDIUM.link}" class="social-icon" title="Medium">Md</a>
-                    <a href="${Social.GITHUB.link}" class="social-icon" title="GitHub">Gh</a>
+                    <a href="${socialLinks.twitter}" class="social-icon" title="Twitter">𝕏</a>
+                    <a href="${socialLinks.linkedin}" class="social-icon" title="LinkedIn">in</a>
+                    <a href="${socialLinks.medium}" class="social-icon" title="Medium">Md</a>
+                    <a href="${socialLinks.github}" class="social-icon" title="GitHub">Gh</a>
                 </div>
 
                 <p>Questions or concerns? We're here to help!</p>

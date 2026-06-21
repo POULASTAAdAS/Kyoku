@@ -21,7 +21,8 @@ class GlobalFallbackRouteConfig(
     fun globalFallbackRoute(builder: RouteLocatorBuilder): RouteLocator {
         return builder.routes()
             .route("global-fallback-route") { r ->
-                r.path("/**") // Catch all routes
+                r.order(Int.MAX_VALUE)
+                    .path("/**") // Catch all routes
                     .filters { f ->
                         f.filter { exchange, _ ->
                             val response = exchange.response

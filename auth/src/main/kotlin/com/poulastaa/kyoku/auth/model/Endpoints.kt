@@ -1,8 +1,8 @@
 package com.poulastaa.kyoku.auth.model
 
 object Endpoints {
-    private const val VERSION: String = "v1"
     private const val API = "api"
+    private const val VERSION: String = "v1"
     private const val TYPE = "auth"
 
     private const val STATIC = "$API/$VERSION/$TYPE"

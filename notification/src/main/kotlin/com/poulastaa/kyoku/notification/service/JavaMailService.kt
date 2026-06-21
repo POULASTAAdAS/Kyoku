@@ -21,7 +21,28 @@ class JavaMailService(
     private val devMail: Email,
     @param:Value("\${basUrl}")
     private val baseUrl: String,
+    @param:Value("\${notification.email.app-url}")
+    private val appUrl: String,
+    @param:Value("\${notification.email.verification-link-expiration}")
+    private val verificationLinkExpiration: String,
+    @param:Value("\${notification.email.password-reset-code-expiration}")
+    private val passwordResetCodeExpiration: String,
+    @param:Value("\${notification.email.social.twitter}")
+    private val twitterUrl: String,
+    @param:Value("\${notification.email.social.linkedin}")
+    private val linkedinUrl: String,
+    @param:Value("\${notification.email.social.medium}")
+    private val mediumUrl: String,
+    @param:Value("\${notification.email.social.github}")
+    private val githubUrl: String,
 ) {
+    private val socialLinks = SocialLinks(
+        twitter = twitterUrl,
+        linkedin = linkedinUrl,
+        medium = mediumUrl,
+        github = githubUrl,
+    )
+
     private val session by lazy {
         Session.getInstance(
             Properties().apply {
@@ -50,10 +71,15 @@ class JavaMailService(
     ) = sendMail(
         to = email,
         subject = "Welcome $username to Kyoku.",
-        content = generateWelcomeMailContent(username, this.devMail),
+        content = generateWelcomeMailContent(
+            username = username,
+            devMail = this.devMail,
+            socialLinks = socialLinks,
+            appUrl = appUrl,
+        ),
     ).also { if (it) println("welcome mail send to :$email") }
 
-    // TODO pull data from user or content service
+    // TODO pull data from user or content service if more details are needed
     fun sendWelcomeBackMail(
         email: Email,
         username: String,
@@ -64,7 +90,9 @@ class JavaMailService(
             this.devMail,
             allLibrarySongs = 234,
             playlist = 12,
-            totalHour = 89
+            totalHour = 89,
+            socialLinks = socialLinks,
+            appUrl = appUrl,
         ),
     ).also { if (it) println("welcome back mail send to :$email") }
 
@@ -80,7 +108,9 @@ class JavaMailService(
             token = token,
             username = username,
             endpoint = "$baseUrl/$endPoint",
-            devMail = devMail
+            devMail = devMail,
+            socialLinks = socialLinks,
+            verificationLinkExpiration = verificationLinkExpiration,
         ),
     ).also { if (it) println("verification mail send to :$email") }
 
@@ -94,7 +124,9 @@ class JavaMailService(
         content = generateForgotPasswordMailContent(
             username = username,
             code = code,
-            devMail = devMail
+            devMail = devMail,
+            socialLinks = socialLinks,
+            passwordResetCodeExpiration = passwordResetCodeExpiration,
         ),
     ).also { if (it) println("forgot password code mail send to :$email") }
 
