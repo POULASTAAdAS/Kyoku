@@ -11,7 +11,7 @@ services:
     volumes:
       - ./mysql/user/sql/01_user_db.sql:/docker-entrypoint-initdb.d/01_user_db.sql
       - ./mysql/user/sql/insert_user_db.sql:/docker-entrypoint-initdb.d/insert_user_db.sql
-      - ./mysql/user/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+      # - ./mysql/user/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
 
       - ./data/mysql/data/user-primary/data:/var/lib/mysql
     networks:
@@ -26,27 +26,27 @@ services:
       --binlog-expire-logs-seconds=604800
 
 
-  user-replica1:
-    image: mysql:8.4.0
-    container_name: user-replica1
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
-    ports:
-      - "1001:3306"
-    volumes:
-      - ./data/mysql/data/user-replica1/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - user-primary
-    command: >
-      --server-id=2
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # user-replica1:
+  #   image: mysql:8.4.0
+  #   container_name: user-replica1
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+  #   ports:
+  #     - "1001:3306"
+  #   volumes:
+  #     - ./data/mysql/data/user-replica1/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - user-primary
+  #   command: >
+  #     --server-id=2
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
   # user-replica2:
@@ -95,23 +95,23 @@ services:
   #     --skip-replica-start=1
 
 
-  user-proxysql:
-    image: proxysql/proxysql:2.6.3
-    container_name: user-proxysql
-    ports:
-      - "1004:6033"
-      - "1005:6032"
-    volumes:
-      - ./mysql/user/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
+  # user-proxysql:
+  #   image: proxysql/proxysql:2.6.3
+  #   container_name: user-proxysql
+  #   ports:
+  #     - "1004:6033"
+  #     - "1005:6032"
+  #   volumes:
+  #     - ./mysql/user/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
 
-      - ./data/mysql/data/proxysql-user:/var/lib/proxysql
-    networks:
-      - db-network
-    depends_on:
-      - user-primary
-      - user-replica1
-      # - user-replica2
-      # - user-replica3
+  #     - ./data/mysql/data/proxysql-user:/var/lib/proxysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - user-primary
+  #     - user-replica1
+  #     # - user-replica2
+  #     # - user-replica3
 
 
   playlist-primary:
@@ -125,7 +125,7 @@ services:
       - "1010:3306"
     volumes:
       - ./mysql/playlist/sql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
-      - ./mysql/playlist/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+      # - ./mysql/playlist/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
       
       - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
     networks:
@@ -140,27 +140,27 @@ services:
       --binlog-expire-logs-seconds=604800
 
 
-  playlist-replica1:
-    image: mysql:8.4.0
-    container_name: playlist-replica1
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
-    ports:
-      - "1011:3306"
-    volumes:
-      - ./data/mysql/data/playlist-replica1/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - playlist-primary
-    command: >
-      --server-id=2
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # playlist-replica1:
+  #   image: mysql:8.4.0
+  #   container_name: playlist-replica1
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+  #   ports:
+  #     - "1011:3306"
+  #   volumes:
+  #     - ./data/mysql/data/playlist-replica1/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - playlist-primary
+  #   command: >
+  #     --server-id=2
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
   # playlist-replica2:
   #   image: mysql:8.4.0
@@ -231,51 +231,51 @@ services:
   #     --skip-replica-start=1
 
 
-  playlist-proxysql:
-    image: proxysql/proxysql:2.6.3
-    container_name: playlist-proxysql
-    ports:
-      - "1015:6033"
-      - "1016:6032"
-    volumes:
-      - ./mysql/playlist/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
-
-      - ./data/mysql/data/proxysql-playlist:/var/lib/proxysql
-    networks:
-      - db-network
-    depends_on:
-      - playlist-primary
-      - playlist-replica1
-      # - playlist-replica2
-      # - playlist-replica3
-      # - playlist-replica4
-
-
-  # activity-primary:
-  #   image: mysql:8.4.0
-  #   container_name: activity-primary
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
-  #     MYSQL_REPLICATION_USER: ${MYSQL_ACTIVITY_REPLICATION_USER}
-  #     MYSQL_REPLICATION_PASSWORD: ${MYSQL_ACTIVITY_REPLICATION_PASSWORD}
+  # playlist-proxysql:
+  #   image: proxysql/proxysql:2.6.3
+  #   container_name: playlist-proxysql
   #   ports:
-  #     - "1020:3306"
+  #     - "1015:6033"
+  #     - "1016:6032"
   #   volumes:
-  #     - ./mysql/activity/sql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
-  #     - ./mysql/activity/sql/1_insert_activity_db.sql:/docker-entrypoint-initdb.d/1_insert_activity_db.sql
-  #     - ./mysql/activity/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+  #     - ./mysql/playlist/proxy/proxysql.cnf:/etc/proxysql.cnf:ro
 
-  #     - ./data/mysql/data/activity-primary/data:/var/lib/mysql
+  #     - ./data/mysql/data/proxysql-playlist:/var/lib/proxysql
   #   networks:
   #     - db-network
-  #   command: >
-  #     --server-id=1
-  #     --log-bin=mysql-bin
-  #     --binlog-do-db=ACTIVITY
-  #     --gtid-mode=ON
-  #     --enforce-gtid-consistency=ON
-  #     --log-replica-updates=ON
-  #     --binlog-expire-logs-seconds=604800
+  #   depends_on:
+  #     - playlist-primary
+  #     - playlist-replica1
+  #     # - playlist-replica2
+  #     # - playlist-replica3
+  #     # - playlist-replica4
+
+
+  activity-primary:
+    image: mysql:8.4.0
+    container_name: activity-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_ACTIVITY_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_ACTIVITY_REPLICATION_PASSWORD}
+    ports:
+      - "1020:3306"
+    volumes:
+      - ./mysql/activity/sql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
+      - ./mysql/activity/sql/1_insert_activity_db.sql:/docker-entrypoint-initdb.d/1_insert_activity_db.sql
+      # - ./mysql/activity/sql/setup-replication-master.sql:/docker-entrypoint-initdb.d/setup-replication-master.sql
+
+      - ./data/mysql/data/activity-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=ACTIVITY
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
 
 
   # activity-replica1:
@@ -407,49 +407,49 @@ services:
       --binlog-expire-logs-seconds=604800
 
 
-  content-replica1:
-    image: mysql:8.4.0
-    container_name: content-replica1
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-    ports:
-      - "1031:3306"
-    volumes:
-      - ./data/mysql/data/content-replica1/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - content-primary
-    command: >
-      --server-id=2
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # content-replica1:
+  #   image: mysql:8.4.0
+  #   container_name: content-replica1
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+  #   ports:
+  #     - "1031:3306"
+  #   volumes:
+  #     - ./data/mysql/data/content-replica1/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #   command: >
+  #     --server-id=2
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
-  content-replica2:
-    image: mysql:8.4.0
-    container_name: content-replica2
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
-    ports:
-      - "1032:3306"
-    volumes:
-      - ./data/mysql/data/content-replica2/data:/var/lib/mysql
-    networks:
-      - db-network
-    depends_on:
-      - content-primary
-    command: >
-      --server-id=3
-      --relay-log=relay-bin
-      --read-only=1
-      --gtid-mode=ON
-      --enforce-gtid-consistency=ON
-      --log-replica-updates=ON
-      --skip-replica-start=1
+  # content-replica2:
+  #   image: mysql:8.4.0
+  #   container_name: content-replica2
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+  #   ports:
+  #     - "1032:3306"
+  #   volumes:
+  #     - ./data/mysql/data/content-replica2/data:/var/lib/mysql
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #   command: >
+  #     --server-id=3
+  #     --relay-log=relay-bin
+  #     --read-only=1
+  #     --gtid-mode=ON
+  #     --enforce-gtid-consistency=ON
+  #     --log-replica-updates=ON
+  #     --skip-replica-start=1
 
 
   # content-replica3:
@@ -521,25 +521,25 @@ services:
   #     --skip-replica-start=1
 
 
-  content-proxysql:
-    image: proxysql/proxysql:2.6.3
-    container_name: content-proxysql
-    ports:
-      - "1036:6033"
-      - "1037:6032"
-    volumes:
-      - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.cnf:ro
-      
-      - ./data/mysql/data/proxysql-content:/var/lib/proxysql  
-    networks:
-      - db-network
-    depends_on:
-      - content-primary
-      - content-replica1
-      - content-replica2
-      # - content-replica3
-      # - content-replica4
-      # - content-replica5
+  # content-proxysql:
+  #   image: proxysql/proxysql:2.6.3
+  #   container_name: content-proxysql
+  #   ports:
+  #     - "1036:6033"
+  #     - "1037:6032"
+  #   volumes:
+  #     - ./mysql/content/proxy/proxysql.conf:/etc/proxysql.cnf:ro
+  #     
+  #     - ./data/mysql/data/proxysql-content:/var/lib/proxysql  
+  #   networks:
+  #     - db-network
+  #   depends_on:
+  #     - content-primary
+  #     - content-replica1
+  #     - content-replica2
+  #     # - content-replica3
+  #     # - content-replica4
+  #     # - content-replica5
 
   activity-nosql:
     image: mongo:latest
@@ -547,12 +547,15 @@ services:
     ports:
       - "1038:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ACTIVITY_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ACTIVITY_PASSWORD}
+      # MONGO_INITDB_ROOT_USERNAME: ${MONGO_ACTIVITY_USER}
+      MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ACTIVITY_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - ./nosql/activity/1_init.js:/docker-entrypoint-initdb.d/1_init.js:ro
       
-      - G:/kyoku/mongo:/data/db
+      # - G:/kyoku/mongo:/data/db
+      - ./data/mongo/activity:/data/db
     restart: unless-stopped
 
   elasticsearch:
@@ -641,88 +644,89 @@ services:
     ports:
       - "1040:6379"
     environment:
-      REDIS_PASSWROD: ${REDIS_GATEWAY_PASSWORD}
+      # REDIS_PASSWROD: ${REDIS_CONTENT_PASSWORD}
+      REDIS_PASSWROD: contentRedis
     command: [
       "redis-server",
       "--requirepass",
-      "${REDIS_GATEWAY_PASSWORD}",
+      "contentRedis",
       "--appendonly",
       "yes"
     ]
     volumes:
       - "./data/redis/gateway:/data"
 
-  auth-redis:
-    image: redis/redis-stack:latest
-    container_name: auth-redis
-    restart: always
-    ports:
-      - "1041:6379"
-    environment:
-      REDIS_PASSWROD: ${REDIS_AUTH_PASSWORD}
-    command: [
-      "redis-server",
-      "--requirepass",
-      "${REDIS_AUTH_PASSWORD}",
-      "--appendonly",
-      "yes"
-    ]
-    volumes:
-      - "./data/redis/auth:/data"
+  # auth-redis:
+  #   image: redis/redis-stack:latest
+  #   container_name: auth-redis
+  #   restart: always
+  #   ports:
+  #     - "1041:6379"
+  #   environment:
+  #     REDIS_PASSWROD: ${REDIS_AUTH_PASSWORD}
+  #   command: [
+  #     "redis-server",
+  #     "--requirepass",
+  #     "${REDIS_AUTH_PASSWORD}",
+  #     "--appendonly",
+  #     "yes"
+  #   ]
+  #   volumes:
+  #     - "./data/redis/auth:/data"
 
-  playlist-redis:
-    image: redis/redis-stack:latest
-    container_name: playlist-redis
-    restart: always
-    ports:
-      - "1044:6379"
-    environment:
-      REDIS_PASSWROD: ${REDIS_PLAYLIST_PASSWORD}
-    command: [
-      "redis-server",
-      "--requirepass",
-      "${REDIS_PLAYLIST_PASSWORD}",
-      "--appendonly",
-      "yes"
-    ]
-    volumes:
-      - "./data/redis/playlist:/data"
+  # playlist-redis:
+  #   image: redis/redis-stack:latest
+  #   container_name: playlist-redis
+  #   restart: always
+  #   ports:
+  #     - "1044:6379"
+  #   environment:
+  #     REDIS_PASSWROD: ${REDIS_PLAYLIST_PASSWORD}
+  #   command: [
+  #     "redis-server",
+  #     "--requirepass",
+  #     "${REDIS_PLAYLIST_PASSWORD}",
+  #     "--appendonly",
+  #     "yes"
+  #   ]
+  #   volumes:
+  #     - "./data/redis/playlist:/data"
 
-  content-redis:
-    image: redis/redis-stack:latest
-    container_name: content-redis
-    restart: always
-    ports:
-      - "1045:6379"
-    environment:
-      REDIS_PASSWROD: ${REDIS_CONTENT_PASSWORD}
-    command: [
-      "redis-server",
-      "--requirepass",
-      "${REDIS_CONTENT_PASSWORD}",
-      "--appendonly",
-      "yes"
-    ]
-    volumes:
-      - "./data/redis/playlist:/data"
+  # content-redis:
+  #   image: redis/redis-stack:latest
+  #   container_name: content-redis
+  #   restart: always
+  #   ports:
+  #     - "1045:6379"
+  #   environment:
+  #     REDIS_PASSWROD: ${REDIS_CONTENT_PASSWORD}
+  #   command: [
+  #     "redis-server",
+  #     "--requirepass",
+  #     "${REDIS_CONTENT_PASSWORD}",
+  #     "--appendonly",
+  #     "yes"
+  #   ]
+  #   volumes:
+  #     - "./data/redis/playlist:/data"
 
-  activity-redis:
-    image: redis/redis-stack:latest
-    container_name: activity-redis
-    restart: always
-    ports:
-      - "1046:6379"
-    environment:
-      REDIS_PASSWROD: ${REDIS_ACTIVITY_PASSWORD}
-    command: [
-      "redis-server",
-      "--requirepass",
-      "${REDIS_ACTIVITY_PASSWORD}",
-      "--appendonly",
-      "yes"
-    ]
-    volumes:
-      - "./data/redis/playlist:/data"
+  # activity-redis:
+  #   image: redis/redis-stack:latest
+  #   container_name: activity-redis
+  #   restart: always
+  #   ports:
+  #     - "1046:6379"
+  #   environment:
+  #     REDIS_PASSWROD: ${REDIS_ACTIVITY_PASSWORD}
+  #   command: [
+  #     "redis-server",
+  #     "--requirepass",
+  #     "${REDIS_ACTIVITY_PASSWORD}",
+  #     "--appendonly",
+  #     "yes"
+  #   ]
+  #   volumes:
+  #     - "./data/redis/playlist:/data"
 
   kyoku-file-minio:
     image: minio/minio:latest
@@ -736,7 +740,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
-      - G:/minio/file/upload-storage:/data
+      # - G:/minio/file/upload-storage:/data
+      - ./data/minio/file/upload-storage:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -755,7 +760,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
-      - G:/minio/song/upload-storage:/data
+      # - G:/minio/song/upload-storage:/data
+      - ./data/minio/song/upload-storage:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -770,8 +776,10 @@ services:
       - "1100:5672"     # AMQP (your custom host port)
       - "14000:15672"   # management UI
     environment:
-      RABBITMQ_DEFAULT_USER: ${NOTIFICATION_RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${NOTIFICATION_RABBITMQ_PASSWORD}
+      # RABBITMQ_DEFAULT_USER: ${NOTIFICATION_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_USER: root
+      # RABBITMQ_DEFAULT_PASS: ${NOTIFICATION_RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_PASS: rabbitNotification
     volumes:
       - "./data/rabbit/notification:/var/lib/rabbitmq"
 
