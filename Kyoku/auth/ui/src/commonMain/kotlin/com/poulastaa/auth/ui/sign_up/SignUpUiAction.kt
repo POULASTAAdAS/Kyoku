@@ -1,0 +1,16 @@
+package com.poulastaa.auth.ui.sign_up
+
+sealed interface SignUpUiAction {
+    data class OnEmailChange(val email: String) : SignUpUiAction
+    data class OnPasswordChange(val password: String) : SignUpUiAction
+    data class OnUsernameChange(val username: String) : SignUpUiAction
+
+    data class SignUp(
+        val email: String,
+        val password: String,
+        val username: String,
+    ) : SignUpUiAction
+
+    data object OnLoginClick : SignUpUiAction
+    data object OnGoogleSignInClick : SignUpUiAction
+}

@@ -20,6 +20,10 @@ class KmpCommonUiConventionPlugin : Plugin<Project> {
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
+                compilerOptions {
+                    freeCompilerArgs.add("-Xexpect-actual-classes")
+                }
+
                 androidTarget()
                 iosX64()
                 iosArm64()
