@@ -9,6 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.poulastaa.kyoku"
+        //noinspection OldTargetApi
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
@@ -26,6 +27,9 @@ kotlin {
 
             implementation(projects.setup.domain)
             implementation(projects.setup.ui)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.splashscreen)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

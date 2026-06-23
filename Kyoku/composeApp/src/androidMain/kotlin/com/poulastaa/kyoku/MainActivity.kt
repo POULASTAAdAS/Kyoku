@@ -1,6 +1,5 @@
 package com.poulastaa.kyoku
 
-//import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.app.Application
 import android.graphics.Color
 import android.os.Bundle
@@ -10,12 +9,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.design_system.AppTheme
 import com.poulastaa.common.ui.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
 import org.koin.android.ext.koin.androidContext
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class KyokuApp : Application() {
     override fun onCreate() {
@@ -27,9 +28,17 @@ class KyokuApp : Application() {
 }
 
 class MainActivity : ComponentActivity() {
-    //    val splashScreen = installSplashScreen()
+    private val viewmodel by viewModel<RootViewmodel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
+        splashScreen.setKeepOnScreenCondition {
+            viewmodel.uiState.value.isLoading
+        }
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(
                 lightScrim = Color.TRANSPARENT,
@@ -37,14 +46,9 @@ class MainActivity : ComponentActivity() {
             ),
         )
         setContent {
-            val viewmodel = koinViewModel<RootViewmodel>()
             val rootState by viewmodel.uiState.collectAsStateWithLifecycle()
 
-//            splashScreen.setKeepOnScreenCondition {
-//                rootState.startDestination == Screens.Loading
-//            }
-
-            AppTheme {
+            if (rootState.startDestination != Screens.Loading) AppTheme {
                 Surface {
                     RootNavigation(state = rootState)
                 }

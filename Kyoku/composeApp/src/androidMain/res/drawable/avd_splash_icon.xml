@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:drawable="@drawable/splash_icon">
+    <target
+            android:name="splash_k_stem"
+            android:animation="@animator/splash_stem_draw" />
+    <target
+            android:name="splash_k_upper_arm"
+            android:animation="@animator/splash_upper_arm_draw" />
+    <target
+            android:name="splash_k_lower_leg"
+            android:animation="@animator/splash_lower_leg_draw" />
+</animated-vector>

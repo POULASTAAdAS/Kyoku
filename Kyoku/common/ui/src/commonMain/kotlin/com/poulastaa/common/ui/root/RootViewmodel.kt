@@ -9,9 +9,12 @@ import kotlinx.coroutines.launch
 class RootViewmodel : BaseViewmodel<RootUiState, Nothing, Nothing>(RootUiState()) {
     init {
         viewModelScope.launch {
-            delay(800)
+            delay(1200)
             updateState {
-                copy(startDestination = Screens.AuthGraph)
+                copy(
+                    isLoading = false,
+                    startDestination = Screens.AuthGraph,
+                )
             }
         }
     }
