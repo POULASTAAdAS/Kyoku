@@ -18,7 +18,7 @@ fun main() {
         ) {
             AppTheme {
                 val viewmodel = koinViewModel<RootViewmodel>()
-                val rootState by viewmodel.state.collectAsStateWithLifecycle()
+                val rootState by viewmodel.uiState.collectAsStateWithLifecycle()
                 RootNavigation(state = rootState)
             }
         }

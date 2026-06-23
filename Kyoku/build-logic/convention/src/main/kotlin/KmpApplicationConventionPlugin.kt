@@ -17,6 +17,7 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.compose")
                 apply("org.jetbrains.kotlin.plugin.compose")
                 apply("org.jetbrains.compose.hot-reload")
+                apply("io.insert-koin.compiler.plugin")
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
@@ -89,6 +90,8 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("androidx-viewmodel").get())
                 add("commonMainImplementation", libs.findLibrary("androidx-navigation").get())
                 add("commonMainImplementation", libs.findLibrary("koin-core").get())
+                add("commonMainImplementation", libs.findLibrary("koin-core-coroutines").get())
+                add("commonMainImplementation", libs.findLibrary("koin-annotations").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
 

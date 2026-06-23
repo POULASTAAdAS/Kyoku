@@ -22,6 +22,7 @@
     <string name="sign_up_rest">ign up.</string>
     <string name="username">username</string>
     <string name="invalid_username">Invalid username</string>
+    <string name="invalid_password">Invalid password</string>
     <string name="already_have_an_account">Already have an account ? </string>
     <string name="log_in">LogIn</string>
     <string name="sign_up">SIGN UP</string>

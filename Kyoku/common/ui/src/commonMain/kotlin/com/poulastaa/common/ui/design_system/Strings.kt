@@ -12,6 +12,7 @@ import kyoku.common.ui.generated.resources.email
 import kyoku.common.ui.generated.resources.forgot_password
 import kyoku.common.ui.generated.resources.get_otp
 import kyoku.common.ui.generated.resources.invalid_email
+import kyoku.common.ui.generated.resources.invalid_password
 import kyoku.common.ui.generated.resources.invalid_username
 import kyoku.common.ui.generated.resources.log_in
 import kyoku.common.ui.generated.resources.login_welcome_back_message
@@ -53,6 +54,10 @@ val StringEmail: String
 val StringInvalidEmail: String
     @Composable
     get() = stringResource(Res.string.invalid_email)
+
+val StringInvalidPassword: String
+    @Composable
+    get() = stringResource(Res.string.invalid_password)
 
 val StringPassword: String
     @Composable

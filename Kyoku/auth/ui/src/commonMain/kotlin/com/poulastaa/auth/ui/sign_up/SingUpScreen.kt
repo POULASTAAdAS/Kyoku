@@ -21,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import com.poulastaa.common.ui.design_system.StringAlreadyHaveAccount
 import com.poulastaa.common.ui.design_system.StringAppIcon
 import com.poulastaa.common.ui.design_system.StringEmail
 import com.poulastaa.common.ui.design_system.StringInvalidEmail
+import com.poulastaa.common.ui.design_system.StringInvalidPassword
 import com.poulastaa.common.ui.design_system.StringInvalidUsername
 import com.poulastaa.common.ui.design_system.StringLogIn
 import com.poulastaa.common.ui.design_system.StringOrSignUpWith
@@ -67,20 +70,28 @@ import com.poulastaa.common.ui.design_system.StringSignUpRest
 import com.poulastaa.common.ui.design_system.StringSignUpWelcomeBackMessage
 import com.poulastaa.common.ui.design_system.StringUsername
 import com.poulastaa.common.ui.design_system.dimens
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SingUpScreen() {
+fun SingUpScreen(
+    viewmodel: SignUpViewmodel = koinViewModel(),
+) {
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
+    val state by viewmodel.uiState.collectAsState()
 
-    // TODO: will be moved to viewmodel
-    val username = remember { mutableStateOf("") }
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val isError by remember { mutableStateOf(false) }
     val isPasswordVisible = remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewmodel) {
+        viewmodel.event.collect { event ->
+            when (event) {
+                SignUpUiEvent.NavigateToLogIn -> navController.popBackStack()
+                SignUpUiEvent.StartGoogleAuthFlow -> Unit
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -140,13 +151,14 @@ fun SingUpScreen() {
         ColumnSpacer(MaterialTheme.dimens.spacing.large)
 
         AppOutlinedTextField(
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = state.username.value,
+            onValueChange = { viewmodel.onAction(SignUpUiAction.OnUsernameChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = StringUsername,
             leadingIcon = IconUser,
-            isError = isError,
-            supportingText = if (isError) StringInvalidUsername else "",
+            isError = state.username.isError,
+            supportingText = if (state.username.isError) state.username.errorMessage
+                ?: StringInvalidUsername else "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
@@ -159,13 +171,14 @@ fun SingUpScreen() {
         )
 
         AppOutlinedTextField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = state.email.value,
+            onValueChange = { viewmodel.onAction(SignUpUiAction.OnEmailChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = StringEmail,
             leadingIcon = IconEmail,
-            isError = isError,
-            supportingText = if (isError) StringInvalidEmail else "",
+            isError = state.email.isError,
+            supportingText = if (state.email.isError) state.email.errorMessage
+                ?: StringInvalidEmail else "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -178,12 +191,13 @@ fun SingUpScreen() {
         )
 
         AppOutlinedTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = state.password.value,
+            onValueChange = { viewmodel.onAction(SignUpUiAction.OnPasswordChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = StringPassword,
             leadingIcon = IconPasswordLock,
-            supportingText = "",
+            isError = state.password.isError,
+            supportingText = if (state.password.isError) state.password.errorMessage?.ifEmpty { StringInvalidPassword } else "",
             trailingContent = {
                 AnimatedContent(
                     targetState = isPasswordVisible.value,
@@ -218,11 +232,19 @@ fun SingUpScreen() {
         AuthActionTypeList(
             buttonText = StringSignUp,
             subTitle = StringOrSignUpWith,
+            isMakingApiCall = state.isMakingApiCall,
             onEmailAuthClick = {
-
+                focusManager.clearFocus(false)
+                viewmodel.onAction(
+                    SignUpUiAction.SignUp(
+                        email = state.email.value,
+                        password = state.password.value,
+                        username = state.username.value,
+                    )
+                )
             },
             onGoogleAuthClick = {
-
+                viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)
             }
         )
 
@@ -233,7 +255,7 @@ fun SingUpScreen() {
             navigationType = StringLogIn,
             onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                navController.popBackStack()
+                viewmodel.onAction(SignUpUiAction.OnLoginClick)
             }
         )
 

@@ -1,5 +1,8 @@
 package com.poulastaa.common.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,8 +14,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +39,7 @@ import com.poulastaa.common.ui.design_system.dimens
 fun AuthActionTypeList(
     buttonText: String,
     subTitle: String,
+    isMakingApiCall: Boolean = false,
     onEmailAuthClick: () -> Unit,
     onGoogleAuthClick: () -> Unit,
 ) {
@@ -44,6 +50,7 @@ fun AuthActionTypeList(
     ) {
         ElevatedDefaultButton(
             width = 0.7f,
+            enabled = isMakingApiCall.not(),
             onClick = onEmailAuthClick,
             colors = CardDefaults.elevatedCardColors(
                 contentColor = MaterialTheme.colorScheme.background,
@@ -59,11 +66,10 @@ fun AuthActionTypeList(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = buttonText, fontWeight = FontWeight.SemiBold)
-
-                RowSpacer(MaterialTheme.dimens.spacing.small)
-
-                Icon(imageVector = IconShowMore, contentDescription = buttonText)
+                EmailAuthButtonContent(
+                    buttonText = buttonText,
+                    isMakingApiCall = isMakingApiCall,
+                )
             }
         }
 
@@ -93,6 +99,7 @@ fun AuthActionTypeList(
 
         ElevatedDefaultButton(
             width = 1f,
+            enabled = isMakingApiCall.not(),
             onClick = onGoogleAuthClick,
         ) {
             Row(
@@ -142,6 +149,46 @@ fun AuthActionTypeList(
                 ) {
                     Icon(imageVector = IconGoogle, contentDescription = null)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmailAuthButtonContent(
+    buttonText: String,
+    isMakingApiCall: Boolean,
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedVisibility(
+            visible = isMakingApiCall,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.background,
+                strokeWidth = 2.dp,
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isMakingApiCall.not(),
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text = buttonText, fontWeight = FontWeight.SemiBold)
+
+                RowSpacer(MaterialTheme.dimens.spacing.small)
+
+                Icon(imageVector = IconShowMore, contentDescription = buttonText)
             }
         }
     }

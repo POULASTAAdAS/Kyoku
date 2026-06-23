@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             val viewmodel = koinViewModel<RootViewmodel>()
-            val rootState by viewmodel.state.collectAsStateWithLifecycle()
+            val rootState by viewmodel.uiState.collectAsStateWithLifecycle()
 
 //            splashScreen.setKeepOnScreenCondition {
 //                rootState.startDestination == Screens.Loading

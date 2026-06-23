@@ -27,6 +27,7 @@ composeNavigationVersion = "2.9.2"
 viewmodel = "2.10.0"
 splash = "1.2.0"
 koin = "4.2.1"
+koinCompilerPlugin = "1.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -60,6 +61,8 @@ androidx-navigation = { module = "org.jetbrains.androidx.navigation:navigation-c
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
@@ -81,6 +84,7 @@ androidLint = { id = "com.android.lint", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+koinCompiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompilerPlugin" }
 
 kyoku-kmp-library = { id = "kyoku.kmp.library", version = "unspecified" }
 kyoku-kmp-compose-library = { id = "kyoku.kmp.compose.library", version = "unspecified" }
