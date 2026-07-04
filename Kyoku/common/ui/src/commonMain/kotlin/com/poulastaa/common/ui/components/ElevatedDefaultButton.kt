@@ -32,7 +32,7 @@ fun ElevatedDefaultButton(
                 defaultElevation = MaterialTheme.dimens.elevation.level3,
                 pressedElevation = 0.dp,
             ),
-            shape = MaterialTheme.shapes.small,
+            shape = MaterialTheme.shapes.large,
             colors = colors,
             enabled = enabled,
             onClick = onClick,

@@ -32,7 +32,7 @@ fun AppOutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.large,
         singleLine = singleLine,
         label = if (label.isNotEmpty()) {
             { Text(text = label) }

@@ -246,6 +246,7 @@ fun AppTheme(
     CompositionLocalProvider(LocalDimensions provides dimens) {
         MaterialTheme(
             colorScheme = if (isDarkTheme) darkScheme else lightScheme,
+            shapes = appMaterialShapes(dimens),
             typography = type,
             content = content,
         )
