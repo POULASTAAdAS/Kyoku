@@ -14,7 +14,7 @@
     <string name="sign_in">SIGN IN</string>
     <string name="or_signin_with">or signin with</string>
     <string name="continue_with_google">CONTINUE WITH GOOGLE</string>
-    <string name="dont_have_account">Don\'t have an account ? </string>
+    <string name="dont_have_account">Don't have an account ? </string>
     <string name="create_account">Create Account</string>
 
     <!--    Sign Up-->

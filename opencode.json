@@ -1,6 +1,21 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "instructions": [".opencode/rules/git-safety.md"],
+  "mcp": {
+    "kyoku_project_knowledge": {
+      "type": "local",
+      "command": ["./tools/rag/.venv/bin/python", "./tools/rag/mcp_project_knowledge.py"],
+      "enabled": true,
+      "timeout": 20000,
+      "environment": {
+        "KYOKU_RAG_DB": "./tools/rag/data/kyoku_project_knowledge.sqlite",
+        "KYOKU_RAG_DATA_DIR": "./tools/rag/data",
+        "KYOKU_RAG_EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
+        "KYOKU_RAG_AUTO_REFRESH": "1",
+        "KYOKU_RAG_REFRESH_MIN_INTERVAL_SECONDS": "300"
+      }
+    }
+  },
   "permission": {
     "bash": {
       "*": "ask",

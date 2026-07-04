@@ -10,13 +10,13 @@ spring:
 
   config:
     name: ${discovery.name:discovery}
-    import: optional:configserver:http://kyoku.poulastaa.shop:1200
+    import: optional:configserver:http://kyoku-gateway.poulastaa.dev:1200
   profiles:
     active: dev
 
   cloud:
     config: # --------------------------------- CONFIG-SERVER ---------------------------------
-      uri: http://kyoku.poulastaa.shop:1200
+      uri: http://kyoku-gateway.poulastaa.dev:1200
       username: admin
       password: configServer101$@
       profile: dev
