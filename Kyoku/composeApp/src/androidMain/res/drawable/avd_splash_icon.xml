@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Sequenced entrance on the brand glyph: stem, then top line, then bottom line.
+     Each part slides down (translateY -80 -> 0) while fading in (fillAlpha 0 -> 1);
+     the bottom line also expands from the K joint (scale 0.25 -> 1).
+     Timeline (ms):  stem 0-500 | top 450-950 | bottom 900-1400  (within 1600). -->
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
                  android:drawable="@drawable/splash_icon">
     <target
             android:name="splash_k_stem"
-            android:animation="@animator/splash_stem_draw" />
+            android:animation="@animator/splash_stem_enter" />
+    <target
+            android:name="splash_k_stem_path"
+            android:animation="@animator/splash_stem_fade" />
+
     <target
             android:name="splash_k_upper_arm"
-            android:animation="@animator/splash_upper_arm_draw" />
+            android:animation="@animator/splash_upper_arm_enter" />
+    <target
+            android:name="splash_k_upper_arm_path"
+            android:animation="@animator/splash_upper_arm_fade" />
+
     <target
             android:name="splash_k_lower_leg"
-            android:animation="@animator/splash_lower_leg_draw" />
+            android:animation="@animator/splash_lower_leg_enter" />
+    <target
+            android:name="splash_k_lower_leg_path"
+            android:animation="@animator/splash_lower_leg_fade" />
 </animated-vector>

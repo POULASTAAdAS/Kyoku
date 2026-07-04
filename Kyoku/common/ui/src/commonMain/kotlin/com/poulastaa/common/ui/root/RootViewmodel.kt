@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 class RootViewmodel : BaseViewmodel<RootUiState, Nothing, Nothing>(RootUiState()) {
     init {
         viewModelScope.launch {
-            delay(1200)
+            delay(1600) // keep splash on-screen until the animated icon finishes (~1580ms), matching windowSplashScreenAnimationDuration
             updateState {
                 copy(
                     isLoading = false,

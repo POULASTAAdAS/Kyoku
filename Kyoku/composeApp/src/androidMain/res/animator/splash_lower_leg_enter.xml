@@ -2,19 +2,27 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
      android:ordering="together">
     <objectAnimator
-            android:duration="860"
+            android:duration="500"
+            android:startOffset="900"
+            android:interpolator="@android:interpolator/fast_out_slow_in"
+            android:propertyName="translateY"
+            android:valueFrom="-80"
+            android:valueTo="0"
+            android:valueType="floatType" />
+    <objectAnimator
+            android:duration="500"
+            android:startOffset="900"
             android:interpolator="@android:interpolator/fast_out_slow_in"
             android:propertyName="scaleX"
-            android:startOffset="720"
-            android:valueFrom="0.001"
+            android:valueFrom="0.25"
             android:valueTo="1"
             android:valueType="floatType" />
     <objectAnimator
-            android:duration="860"
+            android:duration="500"
+            android:startOffset="900"
             android:interpolator="@android:interpolator/fast_out_slow_in"
             android:propertyName="scaleY"
-            android:startOffset="720"
-            android:valueFrom="0.001"
+            android:valueFrom="0.25"
             android:valueTo="1"
             android:valueType="floatType" />
 </set>

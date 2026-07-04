@@ -39,6 +39,17 @@ class MainActivity : ComponentActivity() {
             viewmodel.uiState.value.isLoading
         }
 
+        splashScreen.setOnExitAnimationListener { splashProvider ->
+            splashProvider.iconView.alpha = 0f
+
+            splashProvider.view
+                .animate()
+                .alpha(0f)
+                .setDuration(300L)
+                .withEndAction { splashProvider.remove() }
+                .start()
+        }
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(
                 lightScrim = Color.TRANSPARENT,
