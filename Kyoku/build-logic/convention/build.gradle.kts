@@ -31,5 +31,9 @@ gradlePlugin {
             id = "kyoku.kmp.application"
             implementationClass = "KmpApplicationConventionPlugin"
         }
+        register("kmpNetwork") {
+            id = "kyoku.kmp.network"
+            implementationClass = "KmpNetworkConventionPlugin"
+        }
     }
 }

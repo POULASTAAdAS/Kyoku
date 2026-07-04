@@ -11,5 +11,6 @@ plugins {
     alias(libs.plugins.androidLint) apply false
     alias(libs.plugins.jetbrainsKotlinJvm) apply false
     alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.kotlinSerializationPlugin) apply false
     alias(libs.plugins.koinCompiler) apply false
 }
