@@ -107,7 +107,7 @@ fun AuthActionTypeList(
                     .fillMaxWidth()
                     .background(
                         color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.small,
+                        shape = MaterialTheme.shapes.large,
                     )
                     .minimumInteractiveComponentSize(),
                 horizontalArrangement = Arrangement.Center,
@@ -119,7 +119,7 @@ fun AuthActionTypeList(
                         .background(
                             color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer
                             else MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.small
+                            shape = MaterialTheme.shapes.large
                         ),
                     contentAlignment = Alignment.Center
                 ) {

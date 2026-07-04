@@ -22,9 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +57,7 @@ import com.poulastaa.common.ui.design_system.StringDontHaveAccount
 import com.poulastaa.common.ui.design_system.StringEmail
 import com.poulastaa.common.ui.design_system.StringForgotPassword
 import com.poulastaa.common.ui.design_system.StringInvalidEmail
+import com.poulastaa.common.ui.design_system.StringInvalidPassword
 import com.poulastaa.common.ui.design_system.StringLogInWelcomeBackMessage
 import com.poulastaa.common.ui.design_system.StringOrSigninWith
 import com.poulastaa.common.ui.design_system.StringPassword
@@ -65,19 +66,30 @@ import com.poulastaa.common.ui.design_system.StringS
 import com.poulastaa.common.ui.design_system.StringSignIn
 import com.poulastaa.common.ui.design_system.StringSignInRest
 import com.poulastaa.common.ui.design_system.dimens
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    viewmodel: SignInViewmodel = koinViewModel(),
+) {
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
     val navController = LocalNavController.current
+    val state by viewmodel.uiState.collectAsState()
 
-    // TODO: will be moved to viewmodel
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-    val isError by remember { mutableStateOf(false) }
-    val isPasswordVisible = remember { mutableStateOf(false) }
+    LaunchedEffect(viewmodel) {
+        viewmodel.event.collect { event ->
+            when (event) {
+                is SignInUiEvent.NavigateToForgotPassword -> navController.navigate(
+                    Screens.AuthScreens.ForgotPassword(event.email)
+                )
+
+                SignInUiEvent.NavigateToSignUp -> navController.navigate(Screens.AuthScreens.SignUp)
+                SignInUiEvent.StartGoogleAuthFlow -> Unit
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -125,13 +137,14 @@ fun SignInScreen() {
         ColumnSpacer(MaterialTheme.dimens.spacing.large)
 
         AppOutlinedTextField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = state.email.value,
+            onValueChange = { viewmodel.onAction(SignInUiAction.OnEmailChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = StringEmail,
             leadingIcon = IconEmail,
-            isError = isError,
-            supportingText = if (isError) StringInvalidEmail else "",
+            isError = state.email.isError,
+            supportingText = if (state.email.isError) state.email.errorMessage
+                ?: StringInvalidEmail else "",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -144,19 +157,21 @@ fun SignInScreen() {
         )
 
         AppOutlinedTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = state.password.value,
+            onValueChange = { viewmodel.onAction(SignInUiAction.OnPasswordChange(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = StringPassword,
             leadingIcon = IconPasswordLock,
-            supportingText = "",
+            isError = state.password.isError,
+            supportingText = if (state.password.isError) state.password.errorMessage
+                ?: StringInvalidPassword else "",
             trailingContent = {
                 AnimatedContent(
-                    targetState = isPasswordVisible.value,
+                    targetState = state.isPasswordVisible,
                     modifier = Modifier.clip(CircleShape).clickable(
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            isPasswordVisible.value = !isPasswordVisible.value
+                            viewmodel.onAction(SignInUiAction.OnPasswordVisibilityToggle)
                         }
                     )
                 ) {
@@ -175,7 +190,7 @@ fun SignInScreen() {
                     focusManager.clearFocus(false)
                 }
             ),
-            visualTransformation = if (isPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         )
 
         Row(
@@ -189,7 +204,7 @@ fun SignInScreen() {
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clip(MaterialTheme.shapes.small).clickable(
                     onClick = {
-                        navController.navigate(Screens.AuthScreens.ForgotPassword(email.value))
+                        viewmodel.onAction(SignInUiAction.OnForgotPasswordClick(state.email.value))
                     }
                 ),
             )
@@ -200,11 +215,18 @@ fun SignInScreen() {
         AuthActionTypeList(
             buttonText = StringSignIn,
             subTitle = StringOrSigninWith,
+            isMakingApiCall = state.isMakingApiCall,
             onEmailAuthClick = {
-
+                focusManager.clearFocus(false)
+                viewmodel.onAction(
+                    SignInUiAction.SignIn(
+                        email = state.email.value,
+                        password = state.password.value,
+                    )
+                )
             },
             onGoogleAuthClick = {
-
+                viewmodel.onAction(SignInUiAction.OnGoogleSignInClick)
             }
         )
 
@@ -215,7 +237,7 @@ fun SignInScreen() {
             navigationType = StringCreateAccount,
             onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                navController.navigate(Screens.AuthScreens.SignUp)
+                viewmodel.onAction(SignInUiAction.OnCreateAccountClick)
             }
         )
 

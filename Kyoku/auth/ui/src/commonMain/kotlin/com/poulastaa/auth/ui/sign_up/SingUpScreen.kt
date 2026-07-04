@@ -24,8 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,8 +79,6 @@ fun SingUpScreen(
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
     val state by viewmodel.uiState.collectAsState()
-
-    val isPasswordVisible = remember { mutableStateOf(false) }
 
     LaunchedEffect(viewmodel) {
         viewmodel.event.collect { event ->
@@ -200,11 +196,11 @@ fun SingUpScreen(
             supportingText = if (state.password.isError) state.password.errorMessage?.ifEmpty { StringInvalidPassword } else "",
             trailingContent = {
                 AnimatedContent(
-                    targetState = isPasswordVisible.value,
+                    targetState = state.isPasswordVisible,
                     modifier = Modifier.clip(CircleShape).clickable(
                         onClick = {
                             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            isPasswordVisible.value = !isPasswordVisible.value
+                            viewmodel.onAction(SignUpUiAction.OnPasswordVisibilityToggle)
                         }
                     )
                 ) {
@@ -223,7 +219,7 @@ fun SingUpScreen(
                     focusManager.clearFocus(false)
                 }
             ),
-            visualTransformation = if (isPasswordVisible.value) VisualTransformation.None
+            visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
             else PasswordVisualTransformation(),
         )
 

@@ -26,8 +26,7 @@ internal class SmoothCorner(
     )
 
     private val shouldCurveInterpolate = radius <= maximumCurveStartDistanceFromVertex / 2f
-    private val interpolationMultiplier =
-        (radius - maximumCurveStartDistanceFromVertex / 2f) /
+    private val interpolationMultiplier = (radius - maximumCurveStartDistanceFromVertex / 2f) /
             (maximumCurveStartDistanceFromVertex / 2f)
 
     private val angleAlpha = if (shouldCurveInterpolate) {
