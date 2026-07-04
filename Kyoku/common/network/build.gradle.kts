@@ -4,12 +4,12 @@ plugins {
 
 kotlin {
     androidLibrary {
-        namespace = "com.poulastaa.auth.network"
+        namespace = "com.poulastaa.common.network"
     }
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.auth.domain)
+            implementation(projects.common.domain)
         }
     }
 }
