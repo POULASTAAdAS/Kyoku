@@ -18,12 +18,7 @@ class SignInViewmodel(
     initialSate = SignInUiState(),
 ) {
     override fun handleAction(action: SignInUiAction) {
-        if (action == SignInUiAction.OnPasswordVisibilityToggle) {
-            updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
-            return
-        }
-
-        if (_uiState.value.isMakingApiCall) return
+        if (_uiState.value.isMakingApiCall && action != SignInUiAction.OnPasswordVisibilityToggle) return
 
         when (action) {
             is SignInUiAction.OnEmailChange -> updateState {
@@ -72,7 +67,7 @@ class SignInViewmodel(
 
             SignInUiAction.OnGoogleSignInClick -> onEvent(SignInUiEvent.StartGoogleAuthFlow)
 
-            SignInUiAction.OnPasswordVisibilityToggle -> Unit
+            SignInUiAction.OnPasswordVisibilityToggle -> updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
         }
     }
 }

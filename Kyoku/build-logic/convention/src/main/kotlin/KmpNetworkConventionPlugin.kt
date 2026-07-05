@@ -47,10 +47,13 @@ class KmpNetworkConventionPlugin : Plugin<Project> {
 
             dependencies {
                 add("commonMainImplementation", libs.findLibrary("ktor-client-core").get())
+                add("commonMainImplementation", libs.findLibrary("ktor-client-auth").get())
                 add(
                     "commonMainImplementation",
                     libs.findLibrary("ktor-client-content-negotiation").get()
                 )
+                add("commonMainImplementation", libs.findLibrary("ktor-client-encoding").get())
+                add("commonMainImplementation", libs.findLibrary("ktor-client-logging").get())
                 add(
                     "commonMainImplementation",
                     libs.findLibrary("ktor-client-serialization-kotlinx-json").get()

@@ -11,6 +11,6 @@ class RemoteAuthRepository(
     private val local: AuthLocalDatasource,
 ) : AuthRepository {
     override suspend fun signIn(email: String, password: String) {
-        remote.signIn(email, password)
+        val result = remote.signIn(email, password)
     }
 }
