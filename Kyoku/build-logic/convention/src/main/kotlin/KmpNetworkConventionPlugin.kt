@@ -14,7 +14,7 @@ class KmpNetworkConventionPlugin : Plugin<Project> {
                 apply("com.android.kotlin.multiplatform.library")
                 apply("com.android.lint")
                 apply("org.jetbrains.kotlin.plugin.serialization")
-                apply("io.insert-koin.compiler.plugin")
+                apply("kyoku.kmp.koin")
             }
 
             extensions.configure<KotlinMultiplatformExtension> {
@@ -55,8 +55,6 @@ class KmpNetworkConventionPlugin : Plugin<Project> {
                     "commonMainImplementation",
                     libs.findLibrary("ktor-client-serialization-kotlinx-json").get()
                 )
-                add("commonMainImplementation", libs.findLibrary("koin-core").get())
-                add("commonMainImplementation", libs.findLibrary("koin-annotations").get())
                 add("androidMainImplementation", libs.findLibrary("ktor-client-okhttp").get())
                 add("jvmMainImplementation", libs.findLibrary("ktor-client-cio").get())
                 add("commonTestImplementation", libs.findLibrary("kotlin-test").get())

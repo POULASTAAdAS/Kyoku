@@ -29,6 +29,9 @@ splash = "1.2.0"
 koin = "4.2.1"
 koinCompilerPlugin = "1.0.1"
 ktor = "3.5.1"
+room = "2.8.4"
+ksp = "2.3.9"
+sqlite = "2.6.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -75,9 +78,14 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+
 # Gradle plugin artifacts (used as compileOnly deps in build-logic)
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 
 [plugins]
@@ -93,6 +101,8 @@ jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrains
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerializationPlugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 koinCompiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompilerPlugin" }
+room = { id = "androidx.room", version.ref = "room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 kyoku-kmp-library = { id = "kyoku.kmp.library", version = "unspecified" }
 kyoku-kmp-compose-library = { id = "kyoku.kmp.compose.library", version = "unspecified" }
@@ -100,3 +110,5 @@ kyoku-kmp-feature-ui = { id = "kyoku.kmp.feature.ui", version = "unspecified" }
 kyoku-kmp-common-ui = { id = "kyoku.kmp.common.ui", version = "unspecified" }
 kyoku-kmp-application = { id = "kyoku.kmp.application", version = "unspecified" }
 kyoku-kmp-network = { id = "kyoku.kmp.network", version = "unspecified" }
+kyoku-kmp-room = { id = "kyoku.kmp.room", version = "unspecified" }
+kyoku-kmp-koin = { id = "kyoku.kmp.koin", version = "unspecified" }

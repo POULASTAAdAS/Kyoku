@@ -7,6 +7,7 @@ group = "com.poulastaa.kyoku.buildlogic"
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -34,6 +35,14 @@ gradlePlugin {
         register("kmpNetwork") {
             id = "kyoku.kmp.network"
             implementationClass = "KmpNetworkConventionPlugin"
+        }
+        register("kmpRoom") {
+            id = "kyoku.kmp.room"
+            implementationClass = "KmpRoomConventionPlugin"
+        }
+        register("kmpKoin") {
+            id = "kyoku.kmp.koin"
+            implementationClass = "KmpKoinConventionPlugin"
         }
     }
 }

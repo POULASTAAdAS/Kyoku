@@ -13,4 +13,6 @@ plugins {
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinSerializationPlugin) apply false
     alias(libs.plugins.koinCompiler) apply false
+    alias(libs.plugins.room) apply false
+    alias(libs.plugins.ksp) apply false
 }
