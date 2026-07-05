@@ -19,14 +19,19 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.auth.data)
             implementation(projects.auth.domain)
+            implementation(projects.auth.network)
             implementation(projects.auth.ui)
 
             implementation(projects.common.domain)
+            implementation(projects.common.network)
             implementation(projects.common.ui)
 
             implementation(projects.setup.domain)
             implementation(projects.setup.ui)
+
+            implementation(libs.ktor.client.core)
         }
         androidMain.dependencies {
             implementation(libs.androidx.splashscreen)

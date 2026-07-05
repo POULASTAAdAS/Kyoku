@@ -1,15 +1,20 @@
 package com.poulastaa.auth.ui.sign_in
 
 import androidx.compose.runtime.Immutable
+import androidx.lifecycle.viewModelScope
+import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
 import com.poulastaa.auth.ui.utils.passwordError
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
+import kotlinx.coroutines.launch
 
 @Immutable
-class SignInViewmodel : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEvent>(
+class SignInViewmodel(
+    private val repo: AuthRepository,
+) : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEvent>(
     initialSate = SignInUiState(),
 ) {
     override fun handleAction(action: SignInUiAction) {
@@ -52,7 +57,9 @@ class SignInViewmodel : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEve
                     )
                 }
 
-                // TODO: make api request
+                viewModelScope.launch {
+                    val result = repo.signIn(email, password)
+                }
             }
 
             is SignInUiAction.OnForgotPasswordClick -> onEvent(

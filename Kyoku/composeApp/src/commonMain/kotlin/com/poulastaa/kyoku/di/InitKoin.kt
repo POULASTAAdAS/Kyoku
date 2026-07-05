@@ -11,6 +11,7 @@ fun initKoin(config: (KoinApplication.() -> Unit)? = null) {
 private fun SharedApplication.startKoin(config: (KoinApplication.() -> Unit)?) {
     startKoinContext {
         config?.invoke(this)
+        modules(dependencyModule)
         lazyModules(viewModelModule)
     }
 }
