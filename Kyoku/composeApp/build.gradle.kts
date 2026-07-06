@@ -25,7 +25,6 @@ kotlin {
             implementation(projects.auth.ui)
 
             implementation(projects.common.domain)
-            implementation(projects.common.network)
             implementation(projects.common.ui)
 
             implementation(projects.setup.domain)

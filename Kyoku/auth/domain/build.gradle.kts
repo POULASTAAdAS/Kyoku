@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.kyoku.kmp.library)
+    alias(libs.plugins.kyoku.kmp.domain)
 }
 
 kotlin {

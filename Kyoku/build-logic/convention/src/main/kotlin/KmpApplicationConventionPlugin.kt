@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.poulastaa.convention.addCommonNetworkDependency
 import com.poulastaa.convention.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -94,6 +95,7 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin-annotations").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
+                addCommonNetworkDependency()
 
                 add("androidMainImplementation", libs.findLibrary("compose-uiToolingPreview").get())
                 add(

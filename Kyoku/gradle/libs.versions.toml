@@ -110,6 +110,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kyoku-kmp-library = { id = "kyoku.kmp.library", version = "unspecified" }
 kyoku-kmp-compose-library = { id = "kyoku.kmp.compose.library", version = "unspecified" }
 kyoku-kmp-feature-ui = { id = "kyoku.kmp.feature.ui", version = "unspecified" }
+kyoku-kmp-domain = { id = "kyoku.kmp.domain", version = "unspecified" }
 kyoku-kmp-common-ui = { id = "kyoku.kmp.common.ui", version = "unspecified" }
 kyoku-kmp-application = { id = "kyoku.kmp.application", version = "unspecified" }
 kyoku-kmp-network = { id = "kyoku.kmp.network", version = "unspecified" }

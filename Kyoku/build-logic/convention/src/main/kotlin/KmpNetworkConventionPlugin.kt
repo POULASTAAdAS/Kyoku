@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.androidLibrary
+import com.poulastaa.convention.addCommonNetworkDependency
 import com.poulastaa.convention.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -46,6 +47,7 @@ class KmpNetworkConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
+                addCommonNetworkDependency()
                 add("commonMainImplementation", libs.findLibrary("ktor-client-core").get())
                 add("commonMainImplementation", libs.findLibrary("ktor-client-auth").get())
                 add(

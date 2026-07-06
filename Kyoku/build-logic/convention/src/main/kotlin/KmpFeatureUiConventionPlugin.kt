@@ -1,3 +1,4 @@
+import com.poulastaa.convention.addCommonNetworkDependency
 import com.poulastaa.convention.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,6 +16,7 @@ class KmpFeatureUiConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
                 add("commonMainImplementation", project(":common:ui"))
                 add("commonMainImplementation", project(":common:domain"))
+                addCommonNetworkDependency()
             }
         }
     }
