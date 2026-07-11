@@ -77,7 +77,7 @@ class PlatformHttpClient : KoinComponent {
 
     val client by lazy {
         platformHttpClient {
-            expectSuccess = true
+            expectSuccess = false
 
             install(HttpTimeout) {
                 requestTimeoutMillis = MAX_REQUEST_TIMEOUT

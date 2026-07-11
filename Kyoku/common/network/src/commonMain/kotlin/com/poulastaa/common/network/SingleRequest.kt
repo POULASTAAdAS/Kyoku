@@ -13,7 +13,7 @@ class SingleRequest<RESPONSE> {
     private var inProgress: CompletableDeferred<Result<RESPONSE>>? = null
     private var duplicateCount: Int = 0
 
-    val iActive = mutex.isLocked || inProgress != null
+    val isActive = mutex.isLocked || inProgress != null
 
     suspend fun run(
         reStart: Boolean,

@@ -23,7 +23,8 @@ interface ApiError : Error {
     }
 }
 
-fun ApiError.toErrorResponse(
+@PublishedApi
+internal fun ApiError.toErrorResponse(
     message: String? = null,
     code: Int = -1,
 ) = ErrorResponse(this, code, message ?: "")

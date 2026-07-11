@@ -3,6 +3,7 @@ package com.poulastaa.common.network
 import com.poulastaa.common.network.model.ApiErrorResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -29,43 +30,35 @@ suspend inline fun <reified Req, reified Res> HttpClient.req(
     return try {
         val url = route.toUrlString()
 
+        val buildRequest: HttpRequestBuilder.() -> Unit = {
+            params.forEach { (key, value) -> parameter(key, value) }
+            body?.let { setBody(it) }
+        }
+
         val response = when (type) {
-            ApiRequestType.GET -> this.get(urlString = url) {
-                params.takeIf { it.isNotEmpty() }?.forEach { (key, value) ->
-                    parameter(key, value)
-                }
-            }
-
-            ApiRequestType.POST -> this.post(urlString = url) {
-                params.takeIf { it.isNotEmpty() }?.forEach { (key, value) ->
-                    parameter(key, value)
-                }
-                body?.let { setBody(it) }
-            }
-
-            ApiRequestType.PUT -> this.put(urlString = url) {
-                params.takeIf { it.isNotEmpty() }?.forEach { (key, value) ->
-                    parameter(key, value)
-                }
-                body?.let { setBody(it) }
-            }
-
-            ApiRequestType.DELETE -> this.delete(urlString = url) {
-                params.takeIf { it.isNotEmpty() }?.forEach { (key, value) ->
-                    parameter(key, value)
-                }
-                body?.let { setBody(it) }
-            }
+            ApiRequestType.GET -> this.get(urlString = url, block = buildRequest)
+            ApiRequestType.POST -> this.post(urlString = url, block = buildRequest)
+            ApiRequestType.PUT -> this.put(urlString = url, block = buildRequest)
+            ApiRequestType.DELETE -> this.delete(urlString = url, block = buildRequest)
         }
 
         when (response.status.value) {
             in 200..299 -> try {
                 ApiResult.Success(response.body<Res>())
+            } catch (e: SerializationException) {
+                ApiResult.Error(
+                    cause = e,
+                    error = ApiError.Network.SERIALISATION.toErrorResponse(
+                        e.message,
+                        code = response.status.value
+                    )
+                )
             } catch (_: Exception) {
                 try {
                     val errorResponse = response.body<ApiErrorResponse>()
                     val cause = ApiError.Network.valueOf(errorResponse.status.uppercase())
                     ApiResult.Error(
+                        cause = null,
                         error = cause.toErrorResponse(
                             errorResponse.message,
                             errorResponse.code
@@ -113,12 +106,13 @@ suspend inline fun <reified Req, reified Res> HttpClient.req(
     }
 }
 
-fun String.toUrlString() = this
+@PublishedApi
+internal fun String.toUrlString() = this
 
-
-fun handleException(
+@PublishedApi
+internal fun handleException(
     exception: Exception,
-) = when (exception) {
+): ApiResult.Error<Error> = when (exception) {
     is UnresolvedAddressException -> ApiResult.Error(
         cause = exception,
         error = ApiError.Network.NO_INTERNET.toErrorResponse(exception.message, -1)
