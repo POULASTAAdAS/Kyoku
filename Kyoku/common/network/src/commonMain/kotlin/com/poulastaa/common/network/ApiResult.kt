@@ -12,7 +12,7 @@ data class ErrorResponse<out E : Err>(
 sealed interface ApiResult<out RESPONSE, out ERROR : Err> {
     data class Success<out RESPONSE>(val response: RESPONSE) : ApiResult<RESPONSE, Nothing>
     data class Error<out ERROR : Err>(
-        val cause: Throwable,
+        val cause: Throwable? = null,
         val error: ErrorResponse<ERROR>,
     ) : ApiResult<Nothing, ERROR>
 }
@@ -39,7 +39,7 @@ fun <RESULT, ERROR : Err> Result<RESULT>.toApiResponse(
 
 inline fun <SUCCESS, RESULT, ERROR : Err> ApiResult<SUCCESS, ERROR>.map(
     onSuccess: (SUCCESS) -> RESULT,
-    onFailure: (error: ErrorResponse<ERROR>, cause: Throwable) -> RESULT,
+    onFailure: (error: ErrorResponse<ERROR>, cause: Throwable?) -> RESULT,
 ) = when (this) {
     is ApiResult.Success -> onSuccess(response)
     is ApiResult.Error -> onFailure(error, cause)

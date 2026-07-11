@@ -3,6 +3,14 @@ package com.poulastaa.common.network
 interface Error
 
 interface ApiError : Error {
+    enum class Network : ApiError {
+        NO_INTERNET,
+        SERVER_ERROR,
+        NOT_FOUND,
+        SERIALISATION,
+        SOMETHING_WENT_WRONG,
+    }
+
     enum class Authentication : ApiError {
         UNAUTHORIZED,
         PASSWORD_DOES_NOT_MATCH,
@@ -12,6 +20,10 @@ interface ApiError : Error {
         INVALID_PASSWORD,
         EMAIL_NOT_VERIFIED,
         ACCOUNT_NOT_FOUND,
-        SOMETHING_WENT_WRONG,
     }
 }
+
+fun ApiError.toErrorResponse(
+    message: String? = null,
+    code: Int = -1,
+) = ErrorResponse(this, code, message ?: "")

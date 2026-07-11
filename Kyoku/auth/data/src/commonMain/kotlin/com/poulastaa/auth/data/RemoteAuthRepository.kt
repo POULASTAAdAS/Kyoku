@@ -15,7 +15,7 @@ class RemoteAuthRepository(
     override suspend fun signIn(
         email: String,
         password: String,
-    ): ApiResult<Unit, ApiError.Authentication> {
+    ): ApiResult<Unit, ApiError> {
         val response = remote.signIn(email, password)
         return response
     }
