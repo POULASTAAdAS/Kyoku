@@ -15,7 +15,7 @@ import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 class SignUpViewmodel : BaseViewmodel<SingUpUiState, SignUpUiAction, SignUpUiEvent>(
     initialSate = SingUpUiState(),
 ) {
-    override fun handleAction(action: SignUpUiAction) {
+    override suspend fun handleAction(action: SignUpUiAction) {
         if (action == SignUpUiAction.OnPasswordVisibilityToggle) {
             updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
             return

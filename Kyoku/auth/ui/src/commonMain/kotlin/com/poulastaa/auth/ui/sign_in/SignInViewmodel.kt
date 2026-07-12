@@ -1,15 +1,16 @@
 package com.poulastaa.auth.ui.sign_in
 
 import androidx.compose.runtime.Immutable
-import androidx.lifecycle.viewModelScope
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
 import com.poulastaa.auth.ui.utils.passwordError
+import com.poulastaa.common.network.ApiError
+import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
-import kotlinx.coroutines.launch
+import com.poulastaa.common.network.Error as NetworkError
 
 @Immutable
 class SignInViewmodel(
@@ -17,7 +18,7 @@ class SignInViewmodel(
 ) : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEvent>(
     initialSate = SignInUiState(),
 ) {
-    override fun handleAction(action: SignInUiAction) {
+    override suspend fun handleAction(action: SignInUiAction) {
         if (_uiState.value.isMakingApiCall && action != SignInUiAction.OnPasswordVisibilityToggle) return
 
         when (action) {
@@ -52,9 +53,19 @@ class SignInViewmodel(
                     )
                 }
 
-                viewModelScope.launch {
-                    val result = repo.signIn(email, password)
+                if (emailError != null || passwordError != null) return
+
+                when (val result = repo.signIn(email, password)) {
+                    is ApiResult.Error -> {
+                        handleSignInError(result.error.error)
+                    }
+
+                    is ApiResult.Success -> {
+                        // TODO: do something
+                    }
                 }
+
+                updateState { copy(isMakingApiCall = false) }
             }
 
             is SignInUiAction.OnForgotPasswordClick -> onEvent(
@@ -69,5 +80,53 @@ class SignInViewmodel(
 
             SignInUiAction.OnPasswordVisibilityToggle -> updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
         }
+    }
+
+    private fun handleSignInError(error: NetworkError) {
+        when (error) {
+            ApiError.Network.NO_INTERNET -> {
+
+            }
+
+            ApiError.Network.SERVER_ERROR -> {
+
+            }
+
+            ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> {
+                setPasswordError(ApiError.Authentication.PASSWORD_DOES_NOT_MATCH.message)
+            }
+
+            ApiError.Authentication.OLD_ACCOUNT_FOUND -> {
+                setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
+            }
+
+            ApiError.Authentication.ACCOUNT_NOT_FOUND -> {
+                setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
+            }
+
+            ApiError.Authentication.INVALID_EMAIL -> {
+                setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+            }
+
+            ApiError.Authentication.INVALID_PASSWORD -> {
+                setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
+            }
+
+            ApiError.Authentication.EMAIL_NOT_VERIFIED -> {
+                setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
+            }
+
+            else -> {
+
+            }
+        }
+    }
+
+    private fun setEmailError(message: String) = updateState {
+        copy(email = email.copy(isError = true, errorMessage = message))
+    }
+
+    private fun setPasswordError(message: String) = updateState {
+        copy(password = password.copy(isError = true, errorMessage = message))
     }
 }

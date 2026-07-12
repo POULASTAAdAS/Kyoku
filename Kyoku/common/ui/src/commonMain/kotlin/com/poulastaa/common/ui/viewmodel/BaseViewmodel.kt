@@ -26,5 +26,5 @@ abstract class BaseViewmodel<UI_STATE, ACTION, EVENT>(initialSate: UI_STATE) : V
         _uiState.update { it.block() }
     }
 
-    protected abstract fun handleAction(action: ACTION)
+    protected abstract suspend fun handleAction(action: ACTION)
 }

@@ -9,7 +9,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.common.domain)
+            api(projects.common.domain)
             implementation(projects.common.platform)
         }
     }

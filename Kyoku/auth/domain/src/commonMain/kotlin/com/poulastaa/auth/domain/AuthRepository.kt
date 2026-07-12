@@ -1,8 +1,8 @@
 package com.poulastaa.auth.domain
 
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.EmptyResponse
+import com.poulastaa.common.network.Error
 
 interface AuthRepository {
-    suspend fun signIn(email: String, password: String): ApiResult<Unit, ApiError>
+    suspend fun signIn(email: String, password: String): EmptyResponse<Error>
 }

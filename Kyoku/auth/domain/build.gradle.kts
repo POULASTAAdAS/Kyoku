@@ -6,4 +6,9 @@ kotlin {
     androidLibrary {
         namespace = "com.poulastaa.auth.domain"
     }
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.common.domain)
+        }
+    }
 }

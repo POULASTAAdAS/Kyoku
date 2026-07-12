@@ -10,6 +10,7 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
@@ -21,12 +22,24 @@ enum class ApiRequestType {
     DELETE
 }
 
-suspend inline fun <reified Req, reified Res> HttpClient.req(
+/**
+ * Executes a Ktor request and wraps the result in [ApiResult].
+ *
+ * [ERROR] is the endpoint-specific API error enum used to decode backend `status` values.
+ * For example, auth requests should pass [ApiError.Authentication] so a backend status like
+ * `PASSWORD_DOES_NOT_MATCH` maps to that auth error.
+ *
+ * The returned error type is still [ApiError], not [ERROR], because every endpoint can also fail
+ * with shared network errors such as no internet, serialization failure, unauthorized, or server
+ * errors. In short: [ERROR] controls backend status mapping, while [ApiResult] can still carry
+ * either endpoint-specific errors or [ApiError.Network] failures.
+ */
+suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
     route: String,
     type: ApiRequestType,
     params: List<Pair<String, String>> = emptyList(),
     body: Req? = null,
-): ApiResult<Res, Error> {
+): ApiResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError {
     return try {
         val url = route.toUrlString()
 
@@ -54,52 +67,10 @@ suspend inline fun <reified Req, reified Res> HttpClient.req(
                     )
                 )
             } catch (_: Exception) {
-                try {
-                    val errorResponse = response.body<ApiErrorResponse>()
-                    val cause = ApiError.Network.valueOf(errorResponse.status.uppercase())
-                    ApiResult.Error(
-                        cause = null,
-                        error = cause.toErrorResponse(
-                            errorResponse.message,
-                            errorResponse.code
-                        )
-                    )
-                } catch (e: Exception) {
-                    handleException(e)
-                }
+                response.toApiErrorResult<ERROR>()
             }
 
-            401 -> ApiResult.Error(
-                cause = null,
-                error = ApiError.Authentication.UNAUTHORIZED.toErrorResponse(
-                    response.status.description,
-                    response.status.value
-                )
-            )
-
-            404 -> ApiResult.Error(
-                cause = null,
-                error = ApiError.Network.NOT_FOUND.toErrorResponse(
-                    response.status.description,
-                    response.status.value
-                )
-            )
-
-            in 500..599 -> ApiResult.Error(
-                cause = null,
-                error = ApiError.Network.SERVER_ERROR.toErrorResponse(
-                    response.status.description,
-                    response.status.value
-                )
-            )
-
-            else -> ApiResult.Error(
-                cause = null,
-                error = ApiError.Network.SOMETHING_WENT_WRONG.toErrorResponse(
-                    response.status.description,
-                    response.status.value
-                )
-            )
+            else -> response.toApiErrorResult<ERROR>()
         }
     } catch (e: Exception) {
         handleException(e)
@@ -109,10 +80,77 @@ suspend inline fun <reified Req, reified Res> HttpClient.req(
 @PublishedApi
 internal fun String.toUrlString() = this
 
+/**
+ * Converts a non-success HTTP response, or a success response that failed to deserialize as [Res],
+ * into an [ApiResult.Error].
+ *
+ * Mapping order:
+ * 1. Try parsing the backend error body as [ApiErrorResponse].
+ * 2. Try mapping `status` to the endpoint-specific [ERROR] enum.
+ * 3. Fall back to [ApiError.Network] if the status is a shared network status.
+ * 4. Fall back to an HTTP-code based [ApiError.Network] if the error body cannot be parsed.
+ */
+@PublishedApi
+internal suspend inline fun <reified ERROR> HttpResponse.toApiErrorResult(): ApiResult.Error<ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
+    try {
+        val errorResponse = body<ApiErrorResponse>()
+
+        ApiResult.Error(
+            cause = null,
+            error = errorResponse.toApiError<ERROR>().toErrorResponse(
+                message = errorResponse.message,
+                code = errorResponse.code,
+            )
+        )
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        val error = status.value.toNetworkError()
+
+        ApiResult.Error(
+            cause = null,
+            error = error.toErrorResponse(
+                message = status.description,
+                code = status.value,
+            )
+        )
+    }
+
+/**
+ * Maps the backend `status` string to the most specific [ApiError].
+ *
+ * [ERROR] is checked first so endpoint errors win over generic network errors. If the backend
+ * sends a status unknown to that endpoint enum, shared [ApiError.Network] values are checked next.
+ */
+@PublishedApi
+internal inline fun <reified ERROR> ApiErrorResponse.toApiError(): ApiError where ERROR : Enum<ERROR>, ERROR : ApiError {
+    val responseStatus = status.uppercase()
+
+    return enumValues<ERROR>().firstOrNull { it.name == responseStatus }
+        ?: enumValues<ApiError.Network>().firstOrNull { it.name == responseStatus }
+        ?: ApiError.Network.SOMETHING_WENT_WRONG
+}
+
+/**
+ * Last-resort mapping used when the response body cannot be decoded as [ApiErrorResponse].
+ */
+@PublishedApi
+internal fun Int.toNetworkError() = when (this) {
+    401 -> ApiError.Network.UNAUTHORIZED
+    404 -> ApiError.Network.NOT_FOUND
+    in 500..599 -> ApiError.Network.SERVER_ERROR
+    else -> ApiError.Network.SOMETHING_WENT_WRONG
+}
+
+/**
+ * Converts request-level failures into shared network errors.
+ *
+ * Cancellation is rethrown so coroutine cancellation still behaves correctly.
+ */
 @PublishedApi
 internal fun handleException(
     exception: Exception,
-): ApiResult.Error<Error> = when (exception) {
+): ApiResult.Error<ApiError> = when (exception) {
     is UnresolvedAddressException -> ApiResult.Error(
         cause = exception,
         error = ApiError.Network.NO_INTERNET.toErrorResponse(exception.message, -1)

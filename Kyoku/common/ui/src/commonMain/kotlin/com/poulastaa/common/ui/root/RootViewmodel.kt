@@ -19,5 +19,5 @@ class RootViewmodel : BaseViewmodel<RootUiState, Nothing, Nothing>(RootUiState()
         }
     }
 
-    override fun handleAction(action: Nothing) = Unit
+    override suspend fun handleAction(action: Nothing) = Unit
 }
