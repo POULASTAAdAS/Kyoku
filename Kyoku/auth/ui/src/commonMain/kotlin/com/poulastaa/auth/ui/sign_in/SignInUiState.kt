@@ -7,6 +7,7 @@ import com.poulastaa.common.ui.states.UiTextFiledState
 @Stable
 @Immutable
 data class SignInUiState(
+    val isGoogleAuthInProgress: Boolean = false,
     val isMakingApiCall: Boolean = false,
     val isPasswordVisible: Boolean = false,
     val email: UiTextFiledState = UiTextFiledState(),

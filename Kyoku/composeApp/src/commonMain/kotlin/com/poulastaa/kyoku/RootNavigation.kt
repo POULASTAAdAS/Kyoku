@@ -19,6 +19,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.poulastaa.auth.ui.forgot_password.ForgotPasswordScreen
 import com.poulastaa.auth.ui.otp.OtpScreen
 import com.poulastaa.auth.ui.reset_password.ResetPasswordScreen
@@ -85,8 +86,10 @@ fun RootNavigation(state: RootUiState) {
                             animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
                         )
                     }
-                ) {
-                    ForgotPasswordScreen()
+                ) { backStackEntry ->
+                    ForgotPasswordScreen(
+                        email = backStackEntry.toRoute<Screens.AuthScreens.ForgotPassword>().email,
+                    )
                 }
 
                 composable<Screens.AuthScreens.ValidateOTP> {

@@ -1,6 +1,7 @@
 package com.poulastaa.auth.ui.sign_up
 
 import androidx.compose.runtime.Immutable
+import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
@@ -8,20 +9,22 @@ import com.poulastaa.auth.ui.utils.normalizedUsername
 import com.poulastaa.auth.ui.utils.passwordError
 import com.poulastaa.auth.ui.utils.usernameError
 import com.poulastaa.auth.ui.utils.usernameInputError
+import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 
 @Immutable
-class SignUpViewmodel : BaseViewmodel<SingUpUiState, SignUpUiAction, SignUpUiEvent>(
+class SignUpViewmodel(
+    private val repo: AuthRepository,
+) : BaseViewmodel<SingUpUiState, SignUpUiAction, SignUpUiEvent>(
     initialSate = SingUpUiState(),
 ) {
     override suspend fun handleAction(action: SignUpUiAction) {
-        if (action == SignUpUiAction.OnPasswordVisibilityToggle) {
-            updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
-            return
-        }
-
-        if (_uiState.value.isMakingApiCall) return
+        if ((_uiState.value.isMakingApiCall ||
+                    _uiState.value.isGoogleAuthInProgress) &&
+            (action !is SignUpUiAction.OnPasswordVisibilityToggle &&
+                    action !is SignUpUiAction.OnGoogleAuthCanceled)
+        ) return
 
         when (action) {
             is SignUpUiAction.OnEmailChange -> updateState {
@@ -47,7 +50,25 @@ class SignUpViewmodel : BaseViewmodel<SingUpUiState, SignUpUiAction, SignUpUiEve
                 }
             }
 
-            SignUpUiAction.OnGoogleSignInClick -> onEvent(SignUpUiEvent.StartGoogleAuthFlow)
+            SignUpUiAction.OnGoogleSignInClick -> updateState { copy(isGoogleAuthInProgress = true) }
+
+            is SignUpUiAction.OnGoogleTokenReceived -> {
+                when (val result = repo.googleAuth(action.token, TODO())) {
+                    is ApiResult.Error -> {
+                        updateState { copy(isGoogleAuthInProgress = false) }
+                        handleCommonError(result.error.error)
+                    }
+
+                    is ApiResult.Success -> {
+                        updateState { copy(isGoogleAuthInProgress = false) }
+
+                        if (result.response.isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
+                        else onEvent(SignUpUiEvent.NavigateToHome)
+                    }
+                }
+            }
+
+            SignUpUiAction.OnGoogleAuthCanceled -> updateState { copy(isGoogleAuthInProgress = false) }
 
             is SignUpUiAction.SignUp -> {
                 val email = action.email.normalizedEmail()

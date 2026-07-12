@@ -6,7 +6,6 @@ import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
 import com.poulastaa.auth.ui.utils.passwordError
-import com.poulastaa.common.domain.Log
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
@@ -20,7 +19,13 @@ class SignInViewmodel(
     initialSate = SignInUiState(),
 ) {
     override suspend fun handleAction(action: SignInUiAction) {
-        if (_uiState.value.isMakingApiCall && action != SignInUiAction.OnPasswordVisibilityToggle) return
+        val isGoogleAuthCompletion = action is SignInUiAction.OnGoogleAuthSuccess ||
+                action == SignInUiAction.OnGoogleAuthCanceled
+
+        if ((_uiState.value.isMakingApiCall || _uiState.value.isGoogleAuthInProgress) &&
+            action != SignInUiAction.OnPasswordVisibilityToggle &&
+            isGoogleAuthCompletion.not()
+        ) return
 
         when (action) {
             is SignInUiAction.OnEmailChange -> updateState {
@@ -79,7 +84,27 @@ class SignInViewmodel(
 
             SignInUiAction.OnCreateAccountClick -> onEvent(SignInUiEvent.NavigateToSignUp)
 
-            SignInUiAction.OnGoogleSignInClick -> onEvent(SignInUiEvent.StartGoogleAuthFlow)
+            SignInUiAction.OnGoogleSignInClick -> {
+                updateState { copy(isGoogleAuthInProgress = true) }
+            }
+
+            is SignInUiAction.OnGoogleAuthSuccess -> {
+                when (val result = repo.googleAuth(action.token, TODO())) {
+                    is ApiResult.Error -> {
+                        updateState { copy(isGoogleAuthInProgress = false) }
+                        handleSignInError(result.error.error)
+                    }
+
+                    is ApiResult.Success -> {
+                        updateState { copy(isGoogleAuthInProgress = false) }
+
+                        if (result.response.isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
+                        else onEvent(SignInUiEvent.NavigateToHome)
+                    }
+                }
+            }
+
+            SignInUiAction.OnGoogleAuthCanceled -> updateState { copy(isGoogleAuthInProgress = false) }
 
             SignInUiAction.OnPasswordVisibilityToggle -> updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
         }
@@ -87,8 +112,6 @@ class SignInViewmodel(
 
     private fun handleSignInError(error: NetworkError) {
         if (handleCommonError(error)) return
-
-        Log.d("SignInViewmodel", error.toString())
 
         when (error) {
             ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> {

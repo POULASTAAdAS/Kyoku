@@ -1,5 +1,6 @@
 package com.poulastaa.common.network
 
+import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
 import com.poulastaa.common.network.model.ApiErrorResponse
 import io.ktor.client.HttpClient
@@ -75,6 +76,8 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
         }
     } catch (e: Exception) {
         handleException(e)
+    }.also {
+        Log.d("ApiRequestExt", it.toString())
     }
 }
 

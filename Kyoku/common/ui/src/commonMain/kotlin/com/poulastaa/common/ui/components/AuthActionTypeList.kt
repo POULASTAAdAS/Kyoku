@@ -40,6 +40,7 @@ fun AuthActionTypeList(
     buttonText: String,
     subTitle: String,
     isMakingApiCall: Boolean = false,
+    isGoogleAuthInProgress: Boolean = false,
     onEmailAuthClick: () -> Unit,
     onGoogleAuthClick: () -> Unit,
 ) {
@@ -50,7 +51,7 @@ fun AuthActionTypeList(
     ) {
         ElevatedDefaultButton(
             width = 0.7f,
-            enabled = isMakingApiCall.not(),
+            enabled = (isMakingApiCall || isGoogleAuthInProgress).not(),
             onClick = onEmailAuthClick,
             colors = CardDefaults.elevatedCardColors(
                 contentColor = MaterialTheme.colorScheme.background,
@@ -99,56 +100,78 @@ fun AuthActionTypeList(
 
         ElevatedDefaultButton(
             width = 1f,
-            enabled = isMakingApiCall.not(),
+            enabled = (isMakingApiCall || isGoogleAuthInProgress).not(),
             onClick = onGoogleAuthClick,
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
+            GoogleAuthButtonContent(isGoogleAuthInProgress)
+        }
+    }
+}
+
+@Composable
+private fun GoogleAuthButtonContent(
+    isGoogleAuthInProgress: Boolean,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.large,
+            )
+            .minimumInteractiveComponentSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(20.dp)
+                .alpha(if (isGoogleAuthInProgress) 1f else 0f),
+            color = MaterialTheme.colorScheme.background,
+            strokeWidth = 2.dp,
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(if (isGoogleAuthInProgress) 0f else 1f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                Modifier
+                    .padding(MaterialTheme.dimens.spacing.hairline)
                     .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.large,
-                    )
-                    .minimumInteractiveComponentSize(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                        color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.large
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    Modifier
-                        .padding(MaterialTheme.dimens.spacing.hairline)
-                        .background(
-                            color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onPrimaryContainer
-                            else MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.large
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        imageVector = IconGoogle,
-                        contentDescription = StringContinueWithGoogle,
-                        modifier = Modifier.minimumInteractiveComponentSize(),
-                    )
-                }
-
-                Spacer(Modifier.weight(1f))
-
-                Text(
-                    text = StringContinueWithGoogle,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.background,
+                Image(
+                    imageVector = IconGoogle,
+                    contentDescription = StringContinueWithGoogle,
+                    modifier = Modifier.minimumInteractiveComponentSize(),
                 )
+            }
 
-                Spacer(Modifier.weight(1f))
+            Spacer(Modifier.weight(1f))
 
-                // place holder
-                Box(
-                    Modifier.background(
-                        Color.Transparent,
-                        shape = MaterialTheme.shapes.small
-                    ).alpha(0f)
-                ) {
-                    Icon(imageVector = IconGoogle, contentDescription = null)
-                }
+            Text(
+                text = StringContinueWithGoogle,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.background,
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            // place holder
+            Box(
+                Modifier.background(
+                    Color.Transparent,
+                    shape = MaterialTheme.shapes.small
+                ).alpha(0f)
+            ) {
+                Icon(imageVector = IconGoogle, contentDescription = null)
             }
         }
     }

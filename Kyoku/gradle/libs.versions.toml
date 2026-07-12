@@ -33,6 +33,8 @@ room = "2.8.4"
 ksp = "2.3.9"
 sqlite = "2.6.2"
 buildconfig = "6.0.10"
+credentials = "1.6.0"
+googleid = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -64,6 +66,9 @@ material3-window-size-classss = { module = "org.jetbrains.compose.material3:mate
 androidx-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "viewmodel" }
 androidx-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "composeNavigationVersion" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }

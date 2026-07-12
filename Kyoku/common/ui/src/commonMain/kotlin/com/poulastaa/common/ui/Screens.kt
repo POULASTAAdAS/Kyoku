@@ -26,7 +26,7 @@ sealed interface Screens {
         data class ForgotPassword(val email: String? = null) : AuthScreens
 
         @Serializable
-        data class ValidateOTP(val email: String, val token: String) : AuthScreens
+        data class ValidateOTP(val email: String) : AuthScreens
 
         @Serializable
         data class ResetPassword(val token: String) : AuthScreens

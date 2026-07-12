@@ -10,8 +10,10 @@ sealed interface SignInUiAction {
     ) : SignInUiAction
 
     data class OnForgotPasswordClick(val email: String) : SignInUiAction
+    data class OnGoogleAuthSuccess(val token: String) : SignInUiAction
 
     data object OnCreateAccountClick : SignInUiAction
     data object OnGoogleSignInClick : SignInUiAction
+    data object OnGoogleAuthCanceled : SignInUiAction
     data object OnPasswordVisibilityToggle : SignInUiAction
 }

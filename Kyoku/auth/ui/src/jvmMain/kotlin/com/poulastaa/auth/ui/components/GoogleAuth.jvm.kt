@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 @Composable
 actual fun StartActivityForResult(
     key: Boolean,
-    clientId: String,
     onSuccess: (token: String) -> Unit,
     onCanceled: () -> Unit,
 ) {

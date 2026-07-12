@@ -14,15 +14,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import com.poulastaa.common.ui.LocalNavController
+import com.poulastaa.common.ui.Screens.AuthScreens.ValidateOTP
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
@@ -34,16 +35,44 @@ import com.poulastaa.common.ui.design_system.StringInvalidEmail
 import com.poulastaa.common.ui.design_system.StringResetPassword
 import com.poulastaa.common.ui.design_system.StringResetPasswordMessage
 import com.poulastaa.common.ui.design_system.dimens
+import com.poulastaa.common.ui.viewmodel.CommonUiEvent
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun ForgotPasswordScreen() {
-    // TODO: will be moved to viewmodel
-    val email = remember { mutableStateOf("") }
-    val isError by remember { mutableStateOf(false) }
-    val isValidEmail by remember { mutableStateOf(false) }
-
+fun ForgotPasswordScreen(
+    email: String? = null,
+    viewmodel: ForgotPasswordViewmodel = koinViewModel(),
+) {
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
+    val state by viewmodel.uiState.collectAsState()
+    val isGetOtpEnabled = state.email.isError.not() && state.isMakingApiCall.not()
+
+    LaunchedEffect(email) {
+        email?.let { viewmodel.onAction(ForgotPasswordUiAction.OnEmailChange(it)) }
+    }
+
+    LaunchedEffect(viewmodel) {
+        viewmodel.event.collect { event ->
+            when (event) {
+                is ForgotPasswordUiEvent.NavigateToOtp -> navController.navigate(
+                    ValidateOTP(
+                        email = event.email,
+                    )
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(viewmodel) {
+        viewmodel.commonEvent.collect { event ->
+            when (event) {
+                is CommonUiEvent.ShowError -> {
+                    // TODO: handle errors
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -76,13 +105,14 @@ fun ForgotPasswordScreen() {
             ColumnSpacer(MaterialTheme.dimens.spacing.extraLarge)
 
             AppOutlinedTextField(
-                value = email.value,
-                onValueChange = { email.value = it },
+                value = state.email.value,
+                onValueChange = { viewmodel.onAction(ForgotPasswordUiAction.OnEmailChange(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 label = StringEmail,
                 leadingIcon = IconEmail,
-                isError = isError,
-                supportingText = if (isError) StringInvalidEmail else "",
+                isError = state.email.isError,
+                supportingText = if (state.email.isError) state.email.errorMessage
+                    ?: StringInvalidEmail else "",
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                 ),
@@ -97,12 +127,13 @@ fun ForgotPasswordScreen() {
 
             ElevatedDefaultButton(
                 width = 0.7f,
-                enabled = isValidEmail,
+                enabled = isGetOtpEnabled,
                 onClick = {
-
+                    focusManager.clearFocus(false)
+                    viewmodel.onAction(ForgotPasswordUiAction.GetOtp(state.email.value))
                 },
                 colors = CardDefaults.elevatedCardColors(
-                    contentColor = if (isValidEmail) MaterialTheme.colorScheme.background
+                    contentColor = if (isGetOtpEnabled) MaterialTheme.colorScheme.background
                     else MaterialTheme.colorScheme.onBackground,
                 )
             ) {
@@ -110,7 +141,7 @@ fun ForgotPasswordScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = if (isValidEmail) MaterialTheme.colorScheme.primary
+                            color = if (isGetOtpEnabled) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.primaryContainer,
                             shape = MaterialTheme.shapes.small,
                         ).minimumInteractiveComponentSize(),

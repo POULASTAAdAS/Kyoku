@@ -41,7 +41,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.poulastaa.auth.ui.components.AuthTypeTitle
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
+import com.poulastaa.auth.ui.components.StartActivityForResult
 import com.poulastaa.common.ui.LocalNavController
+import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.AuthActionTypeList
 import com.poulastaa.common.ui.components.BackButton
@@ -80,11 +82,18 @@ fun SingUpScreen(
     val haptic = LocalHapticFeedback.current
     val state by viewmodel.uiState.collectAsState()
 
+    StartActivityForResult(
+        key = state.isGoogleAuthInProgress,
+        onSuccess = { token -> viewmodel.onAction(SignUpUiAction.OnGoogleTokenReceived(token)) },
+        onCanceled = { viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled) },
+    )
+
     LaunchedEffect(viewmodel) {
         viewmodel.event.collect { event ->
             when (event) {
                 SignUpUiEvent.NavigateToLogIn -> navController.popBackStack()
-                SignUpUiEvent.StartGoogleAuthFlow -> Unit
+                SignUpUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
+                SignUpUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
             }
         }
     }
@@ -229,6 +238,7 @@ fun SingUpScreen(
             buttonText = StringSignUp,
             subTitle = StringOrSignUpWith,
             isMakingApiCall = state.isMakingApiCall,
+            isGoogleAuthInProgress = state.isGoogleAuthInProgress,
             onEmailAuthClick = {
                 focusManager.clearFocus(false)
                 viewmodel.onAction(

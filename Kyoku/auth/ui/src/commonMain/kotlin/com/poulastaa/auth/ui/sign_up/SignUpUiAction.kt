@@ -11,7 +11,10 @@ sealed interface SignUpUiAction {
         val username: String,
     ) : SignUpUiAction
 
+    data class OnGoogleTokenReceived(val token: String) : SignUpUiAction
+
     data object OnLoginClick : SignUpUiAction
     data object OnGoogleSignInClick : SignUpUiAction
+    data object OnGoogleAuthCanceled : SignUpUiAction
     data object OnPasswordVisibilityToggle : SignUpUiAction
 }

@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.poulastaa.auth.ui.components.AuthTypeTitle
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
+import com.poulastaa.auth.ui.components.StartActivityForResult
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.Screens.AuthScreens.ForgotPassword
@@ -81,6 +82,12 @@ fun SignInScreen(
     val navController = LocalNavController.current
     val state by viewmodel.uiState.collectAsState()
 
+    StartActivityForResult(
+        key = state.isGoogleAuthInProgress,
+        onSuccess = { token -> viewmodel.onAction(SignInUiAction.OnGoogleAuthSuccess(token)) },
+        onCanceled = { viewmodel.onAction(SignInUiAction.OnGoogleAuthCanceled) },
+    )
+
     LaunchedEffect(viewmodel) {
         viewmodel.event.collect { event ->
             when (event) {
@@ -89,9 +96,6 @@ fun SignInScreen(
                 )
 
                 SignInUiEvent.NavigateToSignUp -> navController.navigate(SignUp)
-                SignInUiEvent.StartGoogleAuthFlow -> {
-                    // TODO: start google auth flow
-                }
 
                 SignInUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
                 SignInUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
@@ -234,6 +238,7 @@ fun SignInScreen(
             buttonText = StringSignIn,
             subTitle = StringOrSigninWith,
             isMakingApiCall = state.isMakingApiCall,
+            isGoogleAuthInProgress = state.isGoogleAuthInProgress,
             onEmailAuthClick = {
                 focusManager.clearFocus(false)
                 viewmodel.onAction(

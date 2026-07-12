@@ -8,6 +8,7 @@ import com.poulastaa.kyoku.auth.model.response.UserStatus
 import org.springframework.http.ResponseEntity
 
 fun DtoUser.toResponse(status: ResponseStatus) = ResponseUser(
+    userId = this.id,
     email = this.email,
     username = this.username,
     profileUrl = this.profileUrl,
