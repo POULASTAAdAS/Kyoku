@@ -1,5 +1,6 @@
 package com.poulastaa.common.network
 
+import com.poulastaa.common.domain.SharedConfig
 import com.poulastaa.common.network.model.ApiErrorResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -78,7 +79,7 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
 }
 
 @PublishedApi
-internal fun String.toUrlString() = "https://kyoku-gateway.poulastaa.dev$this"
+internal fun String.toUrlString() = SharedConfig.BASE_URL + this
 
 /**
  * Converts a non-success HTTP response, or a success response that failed to deserialize as [Res],
