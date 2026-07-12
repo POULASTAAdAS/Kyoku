@@ -1,15 +1,21 @@
 package com.poulastaa.auth.ui.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import org.koin.core.module.Module
+import org.koin.dsl.module
+import org.koin.mp.KoinPlatform
 
-@Composable
-actual fun StartActivityForResult(
-    key: Boolean,
-    onSuccess: (token: String) -> Unit,
-    onCanceled: () -> Unit,
-) {
-    LaunchedEffect(key) {
-        if (key) onCanceled()
+actual val googleAuthModule: Module = module {
+    single<GoogleAuthWrapper> { IosGoogleAuthWrapper() }
+}
+
+fun registerGoogleAuthWrapper(interop: GoogleAuthWrapper) {
+    KoinPlatform.getKoin().declare<GoogleAuthWrapper>(interop)
+}
+
+private class IosGoogleAuthWrapper : GoogleAuthWrapper {
+    override var onResult: ((GoogleAuthResult) -> Unit)? = null
+
+    override fun startGoogleAuth() {
+        onResult?.invoke(GoogleAuthResult.Canceled)
     }
 }

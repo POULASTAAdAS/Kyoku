@@ -1,11 +1,10 @@
 package com.poulastaa.auth.ui.components
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
+import android.os.Bundle
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -17,39 +16,80 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
 private const val TAG = "GoogleAuth"
 
-@Composable
-actual fun StartActivityForResult(
-    key: Boolean,
-    onSuccess: (token: String) -> Unit,
-    onCanceled: () -> Unit,
-) {
-    val context = LocalContext.current
-    val clientId = SharedConfig.GOOGLE_WEB_CLIENT_ID
+actual val googleAuthModule: Module = module {
+    single<GoogleAuthWrapper> { AndroidGoogleAuthWrapper(get()) }
+}
 
-    LaunchedEffect(key, clientId) {
-        if (key.not()) return@LaunchedEffect
+private class AndroidGoogleAuthWrapper(
+    context: Context,
+) : GoogleAuthWrapper {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var currentActivity: Activity? = context.findActivity()
 
+    override var onResult: ((GoogleAuthResult) -> Unit)? = null
+
+    init {
+        (context.applicationContext as? Application)?.registerActivityLifecycleCallbacks(
+            object : Application.ActivityLifecycleCallbacks {
+                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) =
+                    Unit
+
+                override fun onActivityStarted(activity: Activity) {
+                    currentActivity = activity
+                }
+
+                override fun onActivityResumed(activity: Activity) {
+                    currentActivity = activity
+                }
+
+                override fun onActivityPaused(activity: Activity) = Unit
+
+                override fun onActivityStopped(activity: Activity) = Unit
+
+                override fun onActivitySaveInstanceState(
+                    activity: Activity,
+                    outState: Bundle,
+                ) = Unit
+
+                override fun onActivityDestroyed(activity: Activity) {
+                    if (currentActivity === activity) currentActivity = null
+                }
+            }
+        )
+    }
+
+    override fun startGoogleAuth() {
         Log.d(TAG, "Starting Google auth flow")
 
-        val activity = context.findActivity()
+        val activity = currentActivity
+        val clientId = SharedConfig.GOOGLE_WEB_CLIENT_ID
+
         if (activity == null || clientId.isBlank()) {
-            Log.e(TAG, "Google auth canceled: activity missing or client id not configured")
-            onCanceled()
-            return@LaunchedEffect
+            Log.e(TAG, "Google auth failed: activity missing or client id not configured")
+            onResult?.invoke(GoogleAuthResult.Canceled)
+            return
         }
 
-        val credentialManager = CredentialManager.create(activity)
-        val token = credentialManager.getGoogleIdToken(activity, clientId)
+        scope.launch {
+            val credentialManager = CredentialManager.create(activity)
+            val token = credentialManager.getGoogleIdToken(activity, clientId)
 
-        if (token == null) {
-            Log.d(TAG, "Google auth canceled: no token returned")
-            onCanceled()
-        } else {
-            Log.d(TAG, "Google auth completed with id token")
-            onSuccess(token)
+            if (token == null) {
+                Log.d(TAG, "Google auth canceled: no token returned")
+                onResult?.invoke(GoogleAuthResult.Canceled)
+            } else {
+                Log.d(TAG, "Google auth completed with id token")
+                onResult?.invoke(GoogleAuthResult.Success(token))
+            }
         }
     }
 }

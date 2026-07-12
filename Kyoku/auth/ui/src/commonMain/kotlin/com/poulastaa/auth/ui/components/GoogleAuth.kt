@@ -1,10 +1,16 @@
 package com.poulastaa.auth.ui.components
 
-import androidx.compose.runtime.Composable
+import org.koin.core.module.Module
 
-@Composable
-expect fun StartActivityForResult(
-    key: Boolean,
-    onSuccess: (token: String) -> Unit,
-    onCanceled: () -> Unit,
-)
+interface GoogleAuthWrapper {
+    fun startGoogleAuth()
+    var onResult: ((GoogleAuthResult) -> Unit)?
+}
+
+sealed interface GoogleAuthResult {
+    data class Success(val token: String) : GoogleAuthResult
+    data object Canceled : GoogleAuthResult
+    data class Error(val exception: Exception) : GoogleAuthResult
+}
+
+expect val googleAuthModule: Module

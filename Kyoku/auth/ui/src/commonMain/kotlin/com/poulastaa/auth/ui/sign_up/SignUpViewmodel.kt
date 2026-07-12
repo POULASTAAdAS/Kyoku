@@ -20,10 +20,13 @@ class SignUpViewmodel(
     initialSate = SingUpUiState(),
 ) {
     override suspend fun handleAction(action: SignUpUiAction) {
+        val isGoogleAuthCompletion = action is SignUpUiAction.OnGoogleTokenReceived ||
+                action == SignUpUiAction.OnGoogleAuthCanceled
+
         if ((_uiState.value.isMakingApiCall ||
                     _uiState.value.isGoogleAuthInProgress) &&
             (action !is SignUpUiAction.OnPasswordVisibilityToggle &&
-                    action !is SignUpUiAction.OnGoogleAuthCanceled)
+                    isGoogleAuthCompletion.not())
         ) return
 
         when (action) {

@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,8 +41,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.poulastaa.auth.ui.components.AuthTypeTitle
+import com.poulastaa.auth.ui.components.GoogleAuthResult
+import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
-import com.poulastaa.auth.ui.components.StartActivityForResult
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.AppOutlinedTextField
@@ -70,6 +72,7 @@ import com.poulastaa.common.ui.design_system.StringSignUpRest
 import com.poulastaa.common.ui.design_system.StringSignUpWelcomeBackMessage
 import com.poulastaa.common.ui.design_system.StringUsername
 import com.poulastaa.common.ui.design_system.dimens
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,13 +83,24 @@ fun SingUpScreen(
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
     val haptic = LocalHapticFeedback.current
+    val googleAuthWrapper = koinInject<GoogleAuthWrapper>()
     val state by viewmodel.uiState.collectAsState()
 
-    StartActivityForResult(
-        key = state.isGoogleAuthInProgress,
-        onSuccess = { token -> viewmodel.onAction(SignUpUiAction.OnGoogleTokenReceived(token)) },
-        onCanceled = { viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled) },
-    )
+    DisposableEffect(googleAuthWrapper, viewmodel) {
+        googleAuthWrapper.onResult = { result ->
+            when (result) {
+                is GoogleAuthResult.Success -> viewmodel.onAction(SignUpUiAction.OnGoogleTokenReceived(result.token))
+                GoogleAuthResult.Canceled,
+                is GoogleAuthResult.Error -> viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled)
+            }
+        }
+
+        onDispose { googleAuthWrapper.onResult = null }
+    }
+
+    LaunchedEffect(state.isGoogleAuthInProgress, googleAuthWrapper) {
+        if (state.isGoogleAuthInProgress) googleAuthWrapper.startGoogleAuth()
+    }
 
     LaunchedEffect(viewmodel) {
         viewmodel.event.collect { event ->
