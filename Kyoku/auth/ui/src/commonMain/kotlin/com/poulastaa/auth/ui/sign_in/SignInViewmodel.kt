@@ -6,6 +6,7 @@ import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
 import com.poulastaa.auth.ui.utils.passwordError
+import com.poulastaa.common.domain.Log
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
@@ -37,35 +38,35 @@ class SignInViewmodel(
                 val emailError = email.emailError()
                 val passwordError = password.passwordError()
 
+                if (emailError != null || passwordError != null) return
+
                 updateState {
                     copy(
-                        isMakingApiCall = emailError == null && passwordError == null,
+                        isMakingApiCall = true,
                         email = UiTextFiledState(
                             value = email,
-                            isError = emailError != null,
+                            isError = false,
                             errorMessage = emailError,
                         ),
                         password = UiTextFiledState(
                             value = password,
-                            isError = passwordError != null,
+                            isError = false,
                             errorMessage = passwordError,
                         ),
                     )
                 }
 
-                if (emailError != null || passwordError != null) return
-
                 when (val result = repo.signIn(email, password)) {
                     is ApiResult.Error -> {
+                        updateState { copy(isMakingApiCall = false) }
                         handleSignInError(result.error.error)
                     }
 
                     is ApiResult.Success -> {
+                        updateState { copy(isMakingApiCall = false) }
                         // TODO: do something
                     }
                 }
-
-                updateState { copy(isMakingApiCall = false) }
             }
 
             is SignInUiAction.OnForgotPasswordClick -> onEvent(
@@ -84,6 +85,8 @@ class SignInViewmodel(
 
     private fun handleSignInError(error: NetworkError) {
         if (handleCommonError(error)) return
+
+        Log.d("SignInViewmodel", error.toString())
 
         when (error) {
             ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> {

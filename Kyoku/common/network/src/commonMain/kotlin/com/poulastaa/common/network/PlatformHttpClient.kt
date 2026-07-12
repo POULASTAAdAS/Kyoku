@@ -13,6 +13,7 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.compression.ContentEncoding
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
@@ -23,6 +24,7 @@ import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodedPath
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import kotlin.math.pow
@@ -88,6 +90,10 @@ class PlatformHttpClient : KoinComponent {
             install(ContentEncoding) {
                 gzip(quality = 1.0f)
                 deflate(quality = 0.9f)
+            }
+
+            install(ContentNegotiation) {
+                json(json)
             }
 
             install(Logging) {

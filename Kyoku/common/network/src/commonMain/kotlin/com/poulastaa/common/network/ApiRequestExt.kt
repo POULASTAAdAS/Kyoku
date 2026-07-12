@@ -78,7 +78,7 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
 }
 
 @PublishedApi
-internal fun String.toUrlString() = this
+internal fun String.toUrlString() = "https://kyoku-gateway.poulastaa.dev$this"
 
 /**
  * Converts a non-success HTTP response, or a success response that failed to deserialize as [Res],
