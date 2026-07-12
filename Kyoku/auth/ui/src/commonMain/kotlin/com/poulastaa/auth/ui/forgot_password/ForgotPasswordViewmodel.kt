@@ -1,13 +1,19 @@
 package com.poulastaa.auth.ui.forgot_password
 
 import androidx.compose.runtime.Immutable
+import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.domain.model.DtoForgotPasswordStatus
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
+import com.poulastaa.common.network.ApiError
+import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 
 @Immutable
-class ForgotPasswordViewmodel :
+class ForgotPasswordViewmodel(
+    private val repo: AuthRepository,
+) :
     BaseViewmodel<ForgotPasswordUiState, ForgotPasswordUiAction, ForgotPasswordUiEvent>(
         initialSate = ForgotPasswordUiState(),
     ) {
@@ -59,11 +65,33 @@ class ForgotPasswordViewmodel :
                     )
                 }
 
-                //TODO: make api call
+                when (val result = repo.sendForgotPasswordMail(email)) {
+                    is ApiResult.Error -> {
+                        updateState { copy(isMakingApiCall = false) }
+                        if (handleCommonError(result.error.error)) return
+                    }
 
-                updateState { copy(isMakingApiCall = false) }
-                onEvent(ForgotPasswordUiEvent.NavigateToOtp(email))
+                    is ApiResult.Success -> {
+                        when (result.response.status) {
+                            DtoForgotPasswordStatus.SENT -> onEvent(
+                                ForgotPasswordUiEvent.NavigateToOtp(
+                                    email
+                                )
+                            )
+
+                            DtoForgotPasswordStatus.USER_NOT_FOUND -> setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
+                            DtoForgotPasswordStatus.INVALID_EMAIL -> setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+                            DtoForgotPasswordStatus.ERROR -> setEmailError(ApiError.Network.SOMETHING_WENT_WRONG.message)
+                        }
+
+                        updateState { copy(isMakingApiCall = false) }
+                    }
+                }
             }
         }
+    }
+
+    private fun setEmailError(message: String) = updateState {
+        copy(email = email.copy(isError = true, errorMessage = message))
     }
 }
