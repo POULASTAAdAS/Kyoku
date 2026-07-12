@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.LibraryExtension
+import com.poulastaa.convention.addCommonNetworkDependency
 import com.poulastaa.convention.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -56,6 +57,7 @@ class KmpCommonUiConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin-compose").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
                 add("commonMainImplementation", project(":common:domain"))
+                addCommonNetworkDependency()
 
                 add("commonTestImplementation", libs.findLibrary("kotlin-test").get())
                 add("debugImplementation", libs.findLibrary("androidx-compose-uiTooling").get())

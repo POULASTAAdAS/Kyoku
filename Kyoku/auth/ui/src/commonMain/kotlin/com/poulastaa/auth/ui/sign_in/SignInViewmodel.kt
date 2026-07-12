@@ -83,15 +83,9 @@ class SignInViewmodel(
     }
 
     private fun handleSignInError(error: NetworkError) {
+        if (handleCommonError(error)) return
+
         when (error) {
-            ApiError.Network.NO_INTERNET -> {
-
-            }
-
-            ApiError.Network.SERVER_ERROR -> {
-
-            }
-
             ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> {
                 setPasswordError(ApiError.Authentication.PASSWORD_DOES_NOT_MATCH.message)
             }

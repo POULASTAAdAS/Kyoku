@@ -66,6 +66,7 @@ import com.poulastaa.common.ui.design_system.StringS
 import com.poulastaa.common.ui.design_system.StringSignIn
 import com.poulastaa.common.ui.design_system.StringSignInRest
 import com.poulastaa.common.ui.design_system.dimens
+import com.poulastaa.common.ui.viewmodel.CommonUiEvent
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -87,6 +88,16 @@ fun SignInScreen(
 
                 SignInUiEvent.NavigateToSignUp -> navController.navigate(Screens.AuthScreens.SignUp)
                 SignInUiEvent.StartGoogleAuthFlow -> Unit
+            }
+        }
+    }
+
+    LaunchedEffect(viewmodel) {
+        viewmodel.commonEvent.collect { event ->
+            when (event) {
+                is CommonUiEvent.ShowError -> {
+                    // TODO: handle errors
+                }
             }
         }
     }
