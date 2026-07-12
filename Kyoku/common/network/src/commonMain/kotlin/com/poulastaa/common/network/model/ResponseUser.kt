@@ -9,11 +9,13 @@ data class ResponseUser(
     val username: String,
     val email: String,
     val profilePictureUrl: String? = null,
+    val isNewUser: Boolean = false,
 ) {
     fun toDto() = DtoUser(
         userId = userId,
         username = username,
         email = email,
         profilePictureUrl = profilePictureUrl,
+        isNewUser = isNewUser,
     )
 }

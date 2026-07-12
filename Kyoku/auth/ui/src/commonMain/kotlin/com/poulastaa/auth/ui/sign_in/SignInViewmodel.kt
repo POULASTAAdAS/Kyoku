@@ -64,7 +64,9 @@ class SignInViewmodel(
 
                     is ApiResult.Success -> {
                         updateState { copy(isMakingApiCall = false) }
-                        // TODO: do something
+
+                        if (result.response.isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
+                        else onEvent(SignInUiEvent.NavigateToHome)
                     }
                 }
             }

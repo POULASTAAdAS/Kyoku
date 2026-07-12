@@ -43,6 +43,8 @@ import com.poulastaa.auth.ui.components.AuthTypeTitle
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
+import com.poulastaa.common.ui.Screens.AuthScreens.ForgotPassword
+import com.poulastaa.common.ui.Screens.AuthScreens.SignUp
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.AuthActionTypeList
 import com.poulastaa.common.ui.components.ColumnSpacer
@@ -83,11 +85,16 @@ fun SignInScreen(
         viewmodel.event.collect { event ->
             when (event) {
                 is SignInUiEvent.NavigateToForgotPassword -> navController.navigate(
-                    Screens.AuthScreens.ForgotPassword(event.email)
+                    ForgotPassword(event.email)
                 )
 
-                SignInUiEvent.NavigateToSignUp -> navController.navigate(Screens.AuthScreens.SignUp)
-                SignInUiEvent.StartGoogleAuthFlow -> Unit
+                SignInUiEvent.NavigateToSignUp -> navController.navigate(SignUp)
+                SignInUiEvent.StartGoogleAuthFlow -> {
+                    // TODO: start google auth flow
+                }
+
+                SignInUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
+                SignInUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
             }
         }
     }

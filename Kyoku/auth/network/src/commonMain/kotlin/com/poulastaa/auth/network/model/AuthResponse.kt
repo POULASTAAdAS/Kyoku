@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class AuthResponse(
     val user: ResponseUser,
     val tokens: ResponseTokens,
-){
+) {
     fun toDto() = DtoAuthResponse(
         user = user.toDto(),
         tokens = tokens.toDto(),

@@ -5,4 +5,5 @@ data class DtoUser(
     val username: String,
     val email: String,
     val profilePictureUrl: String? = null,
+    val isNewUser: Boolean = false,
 )

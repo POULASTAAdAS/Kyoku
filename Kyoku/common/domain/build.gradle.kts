@@ -30,5 +30,8 @@ buildConfig {
     useKotlinOutput { internalVisibility = false }
 
     buildConfigField("BASE_URL", requiredSharedProperty("baseUrl"))
-    buildConfigField("IS_DEBUG", !isReleaseBuild && requiredSharedProperty("debug").toBooleanStrict())
+    buildConfigField(
+        "IS_DEBUG",
+        !isReleaseBuild && requiredSharedProperty("debug").toBooleanStrict()
+    )
 }
