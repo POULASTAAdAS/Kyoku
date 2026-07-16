@@ -43,23 +43,23 @@ class SignInViewmodel(
                 val emailError = email.emailError()
                 val passwordError = password.passwordError()
 
-                if (emailError != null || passwordError != null) return
-
                 updateState {
                     copy(
-                        isMakingApiCall = true,
+                        isMakingApiCall = emailError == null && passwordError == null,
                         email = UiTextFiledState(
                             value = email,
-                            isError = false,
+                            isError = emailError != null,
                             errorMessage = emailError,
                         ),
                         password = UiTextFiledState(
                             value = password,
-                            isError = false,
+                            isError = passwordError != null,
                             errorMessage = passwordError,
                         ),
                     )
                 }
+
+                if (emailError != null || passwordError != null) return
 
                 when (val result = repo.signIn(email, password)) {
                     is ApiResult.Error -> {

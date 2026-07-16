@@ -30,7 +30,7 @@ class ForgotPasswordViewmodel(
                         email = UiTextFiledState(
                             value = email,
                             isError = emailError != null,
-                            errorMessage = emailError,
+                            errorMessage = emailError ?: "",
                         ),
                     )
                 }
@@ -60,7 +60,7 @@ class ForgotPasswordViewmodel(
                         email = UiTextFiledState(
                             value = email,
                             isError = false,
-                            errorMessage = emailError,
+                            errorMessage = emailError ?: "",
                         ),
                     )
                 }

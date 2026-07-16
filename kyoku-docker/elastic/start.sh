@@ -18,12 +18,24 @@ set -a
 source .env
 set +a
 
+docker_compose() {
+    if docker compose version >/dev/null 2>&1; then
+        docker compose "$@"
+    elif command -v docker-compose >/dev/null 2>&1; then
+        docker-compose "$@"
+    else
+        echo "[ERROR] Docker Compose is not available."
+        echo "[INFO] Install Docker Compose v2 or docker-compose v1."
+        exit 1
+    fi
+}
+
 echo "----------------------------------------"
 echo "  Step 1: Waiting for Elasticsearch"
 echo "----------------------------------------"
 echo "[INFO] Waiting for Elasticsearch to be healthy..."
 while true; do
-    if docker-compose ps elasticsearch | grep -q "healthy"; then
+    if docker_compose ps elasticsearch | grep -q "healthy"; then
         echo "[SUCCESS] Elasticsearch is healthy!"
         break
     fi
@@ -76,7 +88,7 @@ echo ""
 echo "----------------------------------------"
 echo "  Step 4: Building Elastic Setup Image"
 echo "----------------------------------------"
-docker-compose build elastic-setup
+docker_compose build elastic-setup
 if [ $? -ne 0 ]; then
     echo "[ERROR] Failed to build elastic-setup image!"
     echo "[INFO] Check docker-compose.yml and elastic/Dockerfile."
@@ -92,15 +104,15 @@ echo "[INFO] This will:"
 echo "       1. Create the 'artists' index with mappings"
 echo "       2. Import artist data from MySQL to Elasticsearch"
 echo ""
-docker-compose --profile setup run --rm elastic-setup
+docker_compose --profile setup run --rm elastic-setup
 
 if [ $? -ne 0 ]; then
     echo ""
     echo "[ERROR] Setup/Import failed!"
     echo "[INFO] Troubleshooting:"
-    echo "      1. Check logs: docker-compose logs elastic-setup"
-    echo "      2. Verify Elasticsearch: docker-compose logs elasticsearch"
-    echo "      3. Verify MySQL: docker-compose logs content-primary"
+    echo "      1. Check logs: docker compose logs elastic-setup"
+    echo "      2. Verify Elasticsearch: docker compose logs elasticsearch"
+    echo "      3. Verify MySQL: docker compose logs content-primary"
     echo ""
     exit 1
 fi
@@ -139,7 +151,7 @@ echo "  Kibana:           http://localhost:1201"
 echo "  MySQL Primary:    localhost:1030"
 echo ""
 echo "[INFO] Useful commands:"
-echo "  - View ES logs:      docker-compose logs -f elasticsearch"
-echo "  - View MySQL logs:   docker-compose logs -f content-primary"
-echo "  - Re-run import:     docker-compose --profile setup run --rm elastic-setup"
+echo "  - View ES logs:      docker compose logs -f elasticsearch"
+echo "  - View MySQL logs:   docker compose logs -f content-primary"
+echo "  - Re-run import:     docker compose --profile setup run --rm elastic-setup"
 echo ""

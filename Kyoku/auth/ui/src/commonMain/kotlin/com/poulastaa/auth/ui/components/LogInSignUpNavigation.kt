@@ -1,54 +1,44 @@
 package com.poulastaa.auth.ui.components
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LogInSignUpNavigation(
     title: String,
     navigationType: String,
     onClick: () -> Unit,
 ) {
-    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        val annotatedString = buildAnnotatedString {
-            withStyle(
-                MaterialTheme.typography.bodyMedium.toSpanStyle()
-                    .copy(color = MaterialTheme.colorScheme.onSurface)
-            ) {
-                append(title)
-            }
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+        )
 
-            withLink(
-                LinkAnnotation.Clickable(
-                    tag = navigationType,
-                    styles = TextLinkStyles(
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                        ).toSpanStyle()
-                    ),
-                    linkInteractionListener = {
-                        onClick()
-                    }
-                )
-            ) {
-                append(navigationType)
-            }
-        }
-
-        Text(text = annotatedString)
+        Text(
+            text = navigationType,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline,
+            ),
+            modifier = Modifier.clickable(onClick = onClick),
+        )
     }
 }

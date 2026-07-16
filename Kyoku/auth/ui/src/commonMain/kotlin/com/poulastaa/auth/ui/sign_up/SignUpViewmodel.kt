@@ -103,12 +103,16 @@ class SignUpViewmodel(
                     )
                 }
 
+                if (emailError != null || passwordError != null || usernameError != null) return
+
                 // TODO: make api request
             }
 
             SignUpUiAction.OnLoginClick -> onEvent(SignUpUiEvent.NavigateToLogIn)
 
-            SignUpUiAction.OnPasswordVisibilityToggle -> Unit
+            SignUpUiAction.OnPasswordVisibilityToggle -> updateState {
+                copy(isPasswordVisible = isPasswordVisible.not())
+            }
         }
     }
 }

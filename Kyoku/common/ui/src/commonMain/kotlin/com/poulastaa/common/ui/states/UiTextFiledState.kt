@@ -9,6 +9,4 @@ data class UiTextFiledState(
     val value: String = "",
     val isError: Boolean = false,
     val errorMessage: String? = null,
-    val isSupportingText: Boolean = false,
-    val supportingText: String? = null,
 )
