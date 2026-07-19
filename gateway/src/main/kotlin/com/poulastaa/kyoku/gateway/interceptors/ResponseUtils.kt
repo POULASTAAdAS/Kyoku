@@ -140,7 +140,9 @@ private fun CustomResponseStatus.toErrorHttpStatus(
     CustomResponseStatus.EMAIL_ALREADY_IN_USE -> HttpStatus.CONFLICT
     CustomResponseStatus.EMAIL_NOT_VALID -> HttpStatus.FORBIDDEN
     CustomResponseStatus.PASSWORD_DOES_NOT_MATCH -> HttpStatus.FORBIDDEN
+    CustomResponseStatus.INVALID_PASSWORD -> HttpStatus.FORBIDDEN
     CustomResponseStatus.USER_NOT_FOUND,
+    CustomResponseStatus.NOT_FOUND,
     CustomResponseStatus.NO_CONTENT,
         -> HttpStatus.NOT_FOUND
 
@@ -156,7 +158,7 @@ private fun HttpStatusCode?.toResponseStatus() = when (this?.value()) {
     in 200..299 -> CustomResponseStatus.SUCCESS
     400 -> CustomResponseStatus.INVALID_REQUEST_BODY
     401 -> CustomResponseStatus.UNAUTHORIZED
-    404 -> CustomResponseStatus.NO_CONTENT
+    404 -> CustomResponseStatus.NOT_FOUND
     405 -> CustomResponseStatus.METHOD_NOT_ALLOWED
     503 -> CustomResponseStatus.SERVICE_UNAVAILABLE
     in 500..599 -> CustomResponseStatus.INTERNAL_SERVER_ERROR
@@ -171,7 +173,9 @@ private fun ResponseWrapper<*>.toResponseMessage(): String? {
         CustomResponseStatus.EMAIL_NOT_VALID -> "Check your email"
         CustomResponseStatus.EMAIL_ALREADY_IN_USE -> "Email already in use"
         CustomResponseStatus.PASSWORD_DOES_NOT_MATCH -> "Wrong password"
+        CustomResponseStatus.INVALID_PASSWORD -> CustomResponseStatus.INVALID_PASSWORD.message
         CustomResponseStatus.USER_NOT_FOUND -> "No account found"
+        CustomResponseStatus.NOT_FOUND -> CustomResponseStatus.NOT_FOUND.message
         CustomResponseStatus.NO_CONTENT -> "Couldn't find that"
         CustomResponseStatus.SERVICE_UNAVAILABLE -> CustomResponseStatus.SERVICE_UNAVAILABLE.message
         CustomResponseStatus.INTERNAL_SERVER_ERROR -> CustomResponseStatus.INTERNAL_SERVER_ERROR.message

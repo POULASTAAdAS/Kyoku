@@ -4,18 +4,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.poulastaa.kyoku.auth.model.Endpoints
-import com.poulastaa.kyoku.auth.model.dto.*
-import com.poulastaa.kyoku.auth.model.request.EmailSignUp
-import com.poulastaa.kyoku.auth.model.request.EmailSingIn
-import com.poulastaa.kyoku.auth.model.request.GoogleAuth
-import com.poulastaa.kyoku.auth.model.request.RefreshTokenRequest
-import com.poulastaa.kyoku.auth.model.request.UpdatePassword
-import com.poulastaa.kyoku.auth.model.response.RefreshTokenResponse
-import com.poulastaa.kyoku.auth.model.response.ResponseGoogleAuth
-import com.poulastaa.kyoku.auth.model.response.ResponseToken
-import com.poulastaa.kyoku.auth.model.response.ResponseWrapper
+import com.poulastaa.kyoku.auth.model.dto.DtoAuthenticationTokenClaim
+import com.poulastaa.kyoku.auth.model.dto.EmailVerificationStatus
+import com.poulastaa.kyoku.auth.model.dto.GoogleAuthPayload
+import com.poulastaa.kyoku.auth.model.dto.UserType
+import com.poulastaa.kyoku.auth.model.request.*
+import com.poulastaa.kyoku.auth.model.response.*
 import com.poulastaa.kyoku.auth.model.response.ResponseStatus
-import com.poulastaa.kyoku.auth.model.response.ResponseUser
 import com.poulastaa.kyoku.auth.service.AuthService
 import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
@@ -51,7 +46,13 @@ class AuthController(
     ): ResponseEntity<ResponseWrapper<ResponseUser>> {
         // done to prevent XSS(Cross-Site Scripting) injection
         val username = StringEscapeUtils.escapeHtml(req.username) ?: return ResponseEntity.badRequest()
-            .body(ResponseWrapper(ResponseStatus.UNAUTHORIZED))
+            .body(
+                ResponseWrapper<ResponseUser>(
+                    status = ResponseStatus.INVALID_REQUEST_BODY,
+                    message = ResponseStatus.INVALID_REQUEST_BODY.message,
+                    code = HttpStatus.BAD_REQUEST.value(),
+                )
+            )
 
         return service.processEmailSingUp(
             username = username,
@@ -82,29 +83,34 @@ class AuthController(
     fun checkVerificationStatus(
         @Valid @RequestParam email: Email,
         @Valid @RequestParam type: String,
-    ): ResponseEntity<ResponseToken> {
-        val type = try {
+    ): ResponseEntity<ResponseWrapper<ResponseToken>> {
+        val userType = try {
             UserType.valueOf(type)
         } catch (_: Exception) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ResponseToken())
+            return ResponseWrapper<ResponseToken>(status = ResponseStatus.INVALID_REQUEST_BODY).toResponseEntity()
         }
 
-        return ResponseEntity.ok(
-            service.generateAuthenticationTokens(
-                email = email,
-                type = type,
-            )
-        )
+        return service.generateAuthenticationTokens(
+            email = email,
+            type = userType,
+        ).let { token ->
+            if (token.isValid()) ResponseWrapper(
+                status = ResponseStatus.SUCCESS,
+                payload = token,
+            ).toResponseEntity() else ResponseWrapper<ResponseToken>(
+                status = ResponseStatus.UNAUTHORIZED,
+            ).toResponseEntity()
+        }
     }
 
     @PostMapping(Endpoints.REFRESH_TOKEN)
     fun refreshToken(
         @Valid @RequestBody req: RefreshTokenRequest,
-    ): ResponseEntity<RefreshTokenResponse> {
+    ): ResponseEntity<ResponseWrapper<ResponseToken>> {
         val type = try {
             UserType.valueOf(req.type)
         } catch (_: Exception) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(RefreshTokenResponse())
+            return ResponseWrapper<ResponseToken>(status = ResponseStatus.INVALID_REQUEST_BODY).toResponseEntity()
         }
 
         return service.refreshToken(
@@ -113,41 +119,42 @@ class AuthController(
                 userType = type
             ),
             token = req.oldToken
-        ).let {
-            ResponseEntity.status(it.status.status).body(it)
-        }
+        ).toResponseWrapper().toResponseEntity()
     }
 
     @GetMapping(Endpoints.FORGOT_PASSWORD)
     fun sendForgotPasswordMail(
         @Valid @RequestParam email: Email,
-    ) = service.sendForgotPasswordMail(email)
+    ): ResponseEntity<ResponseWrapper<ResponseForgoPasswordMailStatus>> =
+        service.sendForgotPasswordMail(email).toResponseEntity()
 
     @GetMapping(Endpoints.VALIDATE_PASSWORD_OTP)
     fun validateForgotPasswordOTP(
         @Valid @RequestParam code: String,
         @Valid @RequestParam email: Email,
-    ) = service.validateForgotPasswordCode(code, email)
+    ): ResponseEntity<ResponseWrapper<CodeValidationResponse>> =
+        service.validateForgotPasswordCode(code, email).toResponseWrapper().toResponseEntity()
 
     @PostMapping(Endpoints.RESET_PASSWORD)
     fun resetPassword(
         @Valid @RequestBody req: UpdatePassword,
-    ) = service.updatePassword(
-        password = req.password,
-        token = req.token,
-    )
+    ): ResponseEntity<ResponseWrapper<UpdatePasswordResponse>> =
+        service.updatePassword(
+            password = req.password,
+            token = req.token,
+        ).toUpdatePasswordResponseWrapper().toResponseEntity()
 
     @PostMapping(Endpoints.GOOGLE_AUTH)
     fun googleAuth(
         @Valid @RequestBody req: GoogleAuth,
-    ) = req.validateToken()?.let {
+    ): ResponseEntity<ResponseWrapper<ResponseGoogleAuth>> = req.validateToken()?.let {
         service.processGoogleAuth(
             payload = it,
             countryCode = req.code,
-        )
-    } ?: ResponseWrapper( // google token not valid
-        status = ResponseStatus.INTERNAL_SERVER_ERROR
-    )
+        ).toResponseEntity()
+    } ?: ResponseWrapper<ResponseGoogleAuth>( // google token not valid
+        status = ResponseStatus.UNAUTHORIZED
+    ).toResponseEntity()
 
     fun GoogleAuth.validateToken() = try {
         GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
@@ -171,3 +178,51 @@ class AuthController(
         null
     }
 }
+
+private fun RefreshTokenResponse.toResponseWrapper() = when (status) {
+    RefreshTokenResponseStatus.SUCCESS -> ResponseWrapper(
+        status = ResponseStatus.SUCCESS,
+        payload = payload,
+    )
+
+    RefreshTokenResponseStatus.TOKEN_EXPIRED,
+    RefreshTokenResponseStatus.INVALID_TOKEN,
+        -> ResponseWrapper(
+        status = ResponseStatus.UNAUTHORIZED,
+    )
+}
+
+private fun CodeValidationResponse.toResponseWrapper() = ResponseWrapper(
+    status = when (status) {
+        CodeValidationResponseStatus.VALID -> ResponseStatus.SUCCESS
+        CodeValidationResponseStatus.USER_NOT_FOUND -> ResponseStatus.USER_NOT_FOUND
+        CodeValidationResponseStatus.INVALID_CODE -> ResponseStatus.INVALID_REQUEST_BODY
+        CodeValidationResponseStatus.INVALID_EMAIL -> ResponseStatus.EMAIL_NOT_VALID
+        CodeValidationResponseStatus.EXPIRED -> ResponseStatus.UNAUTHORIZED
+    },
+    payload = this,
+)
+
+private fun ResponseWrapper<UpdatePasswordResponse>.toUpdatePasswordResponseWrapper(): ResponseWrapper<UpdatePasswordResponse> {
+    val updatePasswordStatus = payload?.status
+
+    return copy(
+        status = when (updatePasswordStatus) {
+            UpdatePasswordStatus.UPDATED -> ResponseStatus.SUCCESS
+            UpdatePasswordStatus.USER_NOT_FOUND -> ResponseStatus.USER_NOT_FOUND
+            UpdatePasswordStatus.SAME_PASSWORD,
+            UpdatePasswordStatus.INVALID_PASSWORD,
+                -> ResponseStatus.INVALID_PASSWORD
+
+            UpdatePasswordStatus.EXPIRED_TOKEN,
+            UpdatePasswordStatus.INVALID_TOKEN,
+                -> ResponseStatus.UNAUTHORIZED
+
+            UpdatePasswordStatus.ERROR,
+            null,
+                -> ResponseStatus.INTERNAL_SERVER_ERROR
+        },
+    )
+}
+
+private fun ResponseToken.isValid() = accessToken.isNotBlank() && refreshToken.isNotBlank()

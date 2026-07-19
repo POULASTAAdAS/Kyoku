@@ -48,7 +48,7 @@ class GlobalErrorHandler(
     private fun HttpStatusCode.toResponseStatus() = when (value()) {
         400 -> CustomResponseStatus.INVALID_REQUEST_BODY
         401 -> CustomResponseStatus.UNAUTHORIZED
-        404 -> CustomResponseStatus.NO_CONTENT
+        404 -> CustomResponseStatus.NOT_FOUND
         405 -> CustomResponseStatus.METHOD_NOT_ALLOWED
         503 -> CustomResponseStatus.SERVICE_UNAVAILABLE
         in 500..599 -> CustomResponseStatus.INTERNAL_SERVER_ERROR

@@ -185,7 +185,6 @@ internal fun String.toApiErrorStatus() = when (uppercase()) {
 
     "INVALID_REQUEST_BODY",
     "METHOD_NOT_ALLOWED",
-    "FUCK_YOU",
         -> ApiError.Network.SOMETHING_WENT_WRONG.name
 
     else -> uppercase()

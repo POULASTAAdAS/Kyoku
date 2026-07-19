@@ -29,24 +29,18 @@ fun DtoUser.toResponse(status: ResponseStatus) = ResponseUser(
     }
 )
 
-fun ResponseWrapper<DtoUser>.toSingInUpResponse() = ResponseWrapper(
+fun ResponseWrapper<DtoUser>.toSingInUpResponse() = ResponseWrapper<ResponseUser>(
     status = this.status,
-    payload = this.payload?.toResponse(this.status) ?: ResponseUser(
-        status = when (this.status) {
-            ResponseStatus.USER_CREATED -> UserStatus.USER_CREATED
-            ResponseStatus.USER_FOUND -> UserStatus.USER_FOUND
-            ResponseStatus.USER_FOUND_NO_PLAYLIST -> UserStatus.USER_FOUND_NO_PLAYLIST
-            ResponseStatus.USER_FOUND_NO_ARTIST -> UserStatus.USER_FOUND_NO_ARTIST
-            ResponseStatus.USER_FOUND_NO_GENRE -> UserStatus.USER_FOUND_NO_GENRE
-            ResponseStatus.USER_FOUND_NO_B_DATE -> UserStatus.USER_FOUND_NO_B_DATE
-            ResponseStatus.EMAIL_NOT_VALID -> UserStatus.INVALID_EMAIL
-            ResponseStatus.PASSWORD_DOES_NOT_MATCH -> UserStatus.PASSWORD_DOES_NOT_MATCH
-            ResponseStatus.USER_NOT_FOUND -> UserStatus.USER_NOT_FOUND
-            ResponseStatus.UNAUTHORIZED -> UserStatus.USER_NOT_FOUND
-            ResponseStatus.INTERNAL_SERVER_ERROR -> UserStatus.INTERNAL_SERVER_ERROR
-            ResponseStatus.EMAIL_ALREADY_IN_USE -> UserStatus.EMAIL_ALREADY_IN_USE
-        }
+    payload = this.payload?.toResponse(this.status)
+).toResponseEntity()
+
+fun <T> ResponseWrapper<T>.toResponseEntity(): ResponseEntity<ResponseWrapper<T>> {
+    val statusCode = status.code
+
+    return ResponseEntity.status(statusCode).body(
+        copy(
+            message = message ?: status.message,
+            code = code.takeIf { it > 0 } ?: statusCode.value(),
+        )
     )
-).let { wrapper ->
-    ResponseEntity.status(wrapper.status.code).body(wrapper)
-}!!
+}

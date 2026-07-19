@@ -9,6 +9,7 @@ enum class CustomResponseStatus(val message: String? = null) {
     USER_FOUND_NO_B_DATE,
     EMAIL_NOT_VALID,
     PASSWORD_DOES_NOT_MATCH,
+    INVALID_PASSWORD("Check your password"),
     EMAIL_ALREADY_IN_USE,
 
     SUCCESS,
@@ -19,9 +20,9 @@ enum class CustomResponseStatus(val message: String? = null) {
 
     // non retriable error
     USER_NOT_FOUND("No user found, please register first"),
+    NOT_FOUND("Couldn't find that"),
     NO_CONTENT,
     METHOD_NOT_ALLOWED("Method not allowed"),
     INVALID_REQUEST_BODY("Request body is not valid"),
     UNAUTHORIZED("You do not have permission to access this resource"),
-    FUCK_YOU("FUCK YOU"),
 }
