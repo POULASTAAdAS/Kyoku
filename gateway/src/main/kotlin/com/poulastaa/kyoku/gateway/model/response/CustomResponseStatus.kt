@@ -24,5 +24,6 @@ enum class CustomResponseStatus(val message: String? = null) {
     NO_CONTENT,
     METHOD_NOT_ALLOWED("Method not allowed"),
     INVALID_REQUEST_BODY("Request body is not valid"),
+    TOO_MANY_REQUESTS("Too many requests"),
     UNAUTHORIZED("You do not have permission to access this resource"),
 }

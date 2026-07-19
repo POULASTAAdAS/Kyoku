@@ -50,6 +50,7 @@ class GlobalErrorHandler(
         401 -> CustomResponseStatus.UNAUTHORIZED
         404 -> CustomResponseStatus.NOT_FOUND
         405 -> CustomResponseStatus.METHOD_NOT_ALLOWED
+        429 -> CustomResponseStatus.TOO_MANY_REQUESTS
         503 -> CustomResponseStatus.SERVICE_UNAVAILABLE
         in 500..599 -> CustomResponseStatus.INTERNAL_SERVER_ERROR
         else -> CustomResponseStatus.INTERNAL_SERVER_ERROR

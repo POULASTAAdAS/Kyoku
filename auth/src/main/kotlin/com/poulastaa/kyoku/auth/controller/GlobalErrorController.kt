@@ -33,6 +33,7 @@ class GlobalErrorController : ErrorController {
         HttpStatus.UNAUTHORIZED -> ResponseStatus.UNAUTHORIZED
         HttpStatus.NOT_FOUND -> ResponseStatus.NOT_FOUND
         HttpStatus.METHOD_NOT_ALLOWED -> ResponseStatus.METHOD_NOT_ALLOWED
+        HttpStatus.TOO_MANY_REQUESTS -> ResponseStatus.TOO_MANY_REQUESTS
         HttpStatus.SERVICE_UNAVAILABLE -> ResponseStatus.SERVICE_UNAVAILABLE
         else -> ResponseStatus.INTERNAL_SERVER_ERROR
     }

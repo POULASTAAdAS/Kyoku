@@ -63,6 +63,8 @@ dependencies {
 
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("com.bucket4j:bucket4j_jdk17-redis-common:8.19.0")
+    implementation("com.bucket4j:bucket4j_jdk17-lettuce:8.19.0")
 
     // gRPC
     implementation("net.devh:grpc-client-spring-boot-starter:3.1.0.RELEASE")

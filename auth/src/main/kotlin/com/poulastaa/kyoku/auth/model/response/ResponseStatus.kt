@@ -23,6 +23,7 @@ enum class ResponseStatus(
 
     INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "Request body is not valid"),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "Method not allowed"),
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "Too many requests"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "You do not have permission to access this resource"),
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "Service unavailable, please try again later"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Opps! Something went wrong. Please try again later"),
