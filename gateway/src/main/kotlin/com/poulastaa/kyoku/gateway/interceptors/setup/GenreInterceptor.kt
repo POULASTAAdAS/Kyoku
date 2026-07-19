@@ -7,6 +7,7 @@ import com.google.protobuf.util.JsonFormat
 import com.poulastaa.kyoku.gateway.interceptors.ValidationFilter
 import com.poulastaa.kyoku.gateway.interceptors.generalErrorResponse
 import com.poulastaa.kyoku.gateway.interceptors.wrapResponse
+import com.poulastaa.kyoku.gateway.interceptors.writeResponseWrapper
 import com.poulastaa.kyoku.gateway.model.ServiceConfigPayload
 import com.poulastaa.kyoku.gateway.model.request.ApiRequestSaveGenre
 import com.poulastaa.kyoku.gateway.model.response.CustomResponseStatus
@@ -27,9 +28,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import reactor.core.publisher.Mono
 import java.util.concurrent.TimeUnit
 
 @Configuration
@@ -150,35 +149,20 @@ class GenreRouteConfig {
                                 ResponseWrapper<EmptyResponse>(status = CustomResponseStatus.SUCCESS),
                                 HttpStatus.OK
                             )
-                        }.flatMap { responseEntity ->
-                            val response = exchange.response
-                            response.statusCode = responseEntity.statusCode
-                            response.headers.contentType = MediaType.APPLICATION_JSON
-
-                            val bytes = when (val body = responseEntity.body) {
-                                is ResponseWrapper<*> -> mapper.writeValueAsBytes(body) // It's an error object
-                                else -> ByteArray(0)
-                            }
-                            response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
-                        }.onErrorResume { e -> // handle empty request body error
+                        }.wrapResponse(exchange, mapper).onErrorResume { e -> // handle empty request body error
                             when (e) {
                                 is IllegalArgumentException, is ValueInstantiationException -> {
                                     println("Invalid request in SaveGenreInterceptor: ${e.message}")
                                     e.printStackTrace()
 
-                                    val response = exchange.response
-                                    response.headers.contentType = MediaType.APPLICATION_JSON
-                                    response.statusCode = HttpStatus.BAD_REQUEST
-                                    val errorWrapper = ResponseEntity(
-                                        ResponseWrapper(
+                                    exchange.writeResponseWrapper(
+                                        statusCode = HttpStatus.BAD_REQUEST,
+                                        responseWrapper = ResponseWrapper(
                                             status = CustomResponseStatus.INVALID_REQUEST_BODY,
                                             payload = CustomResponseStatus.INVALID_REQUEST_BODY.message
                                         ),
-                                        HttpStatus.BAD_REQUEST
+                                        mapper = mapper
                                     )
-
-                                    val bytes = mapper.writeValueAsBytes(errorWrapper)
-                                    response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
                                 }
 
                                 else -> throw e

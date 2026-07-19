@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.protobuf.util.JsonFormat
 import com.poulastaa.kyoku.gateway.interceptors.ValidationFilter
 import com.poulastaa.kyoku.gateway.interceptors.wrapResponse
+import com.poulastaa.kyoku.gateway.interceptors.writeResponseWrapper
 import com.poulastaa.kyoku.gateway.model.ServiceConfigPayload
 import com.poulastaa.kyoku.gateway.model.UserType
 import com.poulastaa.kyoku.gateway.model.dto.DtoAuthenticationTokenClaim
@@ -22,9 +23,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import reactor.core.publisher.Mono
 import java.util.concurrent.TimeUnit
 
 @Configuration
@@ -93,7 +92,6 @@ class PlaylistRouteConfig {
                             error.printStackTrace()
 
                             val response = exchange.response
-                            response.headers.contentType = MediaType.APPLICATION_JSON
 
                             val errorWrapper = ResponseWrapper(
                                 status = when {
@@ -119,8 +117,11 @@ class PlaylistRouteConfig {
                                 ) CustomResponseStatus.INTERNAL_SERVER_ERROR.message else error.message
                             )
 
-                            val bytes = mapper.writeValueAsBytes(errorWrapper)
-                            response.writeWith(Mono.just(response.bufferFactory().wrap(bytes)))
+                            exchange.writeResponseWrapper(
+                                statusCode = response.statusCode ?: HttpStatus.INTERNAL_SERVER_ERROR,
+                                responseWrapper = errorWrapper,
+                                mapper = mapper
+                            )
                         }
                     }
                 }

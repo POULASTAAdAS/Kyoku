@@ -19,7 +19,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
@@ -123,14 +122,7 @@ class ValidationFilter(
         exchange: ServerWebExchange,
         statusCode: HttpStatusCode,
         responseWrapper: ResponseWrapper<*>,
-    ): Mono<Void> {
-        exchange.response.statusCode = statusCode
-        exchange.response.headers.contentType = MediaType.APPLICATION_JSON
-        val bytes = mapper.writeValueAsBytes(responseWrapper)
-        return exchange.response.writeWith(
-            Mono.just(exchange.response.bufferFactory().wrap(bytes))
-        )
-    }
+    ): Mono<Void> = exchange.writeResponseWrapper(statusCode, responseWrapper, mapper)
 
     companion object {
         const val AUTHENTICATED_USER_KEY = "authenticated-user"
