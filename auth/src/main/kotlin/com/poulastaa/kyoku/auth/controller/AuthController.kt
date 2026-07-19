@@ -38,16 +38,16 @@ class AuthController(
     ) = service.processEmailSingIn(
         req.email,
         req.password
-    ).toSingInUpResponse()
+    ).toResponseEntity()
 
     @PostMapping(Endpoints.EMAIL_SING_UP)
     fun emailCreateAccount(
         @Valid @RequestBody req: EmailSignUp,
-    ): ResponseEntity<ResponseWrapper<ResponseUser>> {
+    ): ResponseEntity<ResponseWrapper<AuthResponse>> {
         // done to prevent XSS(Cross-Site Scripting) injection
         val username = StringEscapeUtils.escapeHtml(req.username) ?: return ResponseEntity.badRequest()
             .body(
-                ResponseWrapper<ResponseUser>(
+                ResponseWrapper(
                     status = ResponseStatus.INVALID_REQUEST_BODY,
                     message = ResponseStatus.INVALID_REQUEST_BODY.message,
                     code = HttpStatus.BAD_REQUEST.value(),
@@ -59,7 +59,7 @@ class AuthController(
             email = req.email,
             password = req.password,
             countryCode = req.countryCode,
-        ).toSingInUpResponse()
+        ).toResponseEntity()
     }
 
     @GetMapping(Endpoints.VERIFY_EMAIL)

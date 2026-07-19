@@ -204,6 +204,7 @@ internal fun CompatVerticalSignUpScreen(
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus(false)
+                    viewmodel.onAction(SignUpUiAction.SignUp)
                 }
             ),
             visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
@@ -219,13 +220,7 @@ internal fun CompatVerticalSignUpScreen(
             isGoogleAuthInProgress = state.isGoogleAuthInProgress,
             onEmailAuthClick = {
                 focusManager.clearFocus(false)
-                viewmodel.onAction(
-                    SignUpUiAction.SignUp(
-                        email = state.email.value,
-                        password = state.password.value,
-                        username = state.username.value,
-                    )
-                )
+                viewmodel.onAction(SignUpUiAction.SignUp)
             },
             onGoogleAuthClick = {
                 viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)

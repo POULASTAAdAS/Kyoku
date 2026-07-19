@@ -29,11 +29,6 @@ fun DtoUser.toResponse(status: ResponseStatus) = ResponseUser(
     }
 )
 
-fun ResponseWrapper<DtoUser>.toSingInUpResponse() = ResponseWrapper<ResponseUser>(
-    status = this.status,
-    payload = this.payload?.toResponse(this.status)
-).toResponseEntity()
-
 fun <T> ResponseWrapper<T>.toResponseEntity(): ResponseEntity<ResponseWrapper<T>> {
     val statusCode = status.code
 

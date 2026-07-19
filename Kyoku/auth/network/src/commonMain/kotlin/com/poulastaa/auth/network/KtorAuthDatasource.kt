@@ -2,18 +2,21 @@ package com.poulastaa.auth.network
 
 import com.poulastaa.auth.domain.AuthRemoteDatasource
 import com.poulastaa.auth.domain.model.DtoAuthResponse
+import com.poulastaa.auth.domain.model.DtoEmailAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.auth.network.model.AuthResponse
 import com.poulastaa.auth.network.model.ForgotPasswordResponse
 import com.poulastaa.auth.network.model.GoogleAuthRequest
+import com.poulastaa.auth.network.model.GoogleAuthResponse
 import com.poulastaa.auth.network.model.SignInRequest
 import com.poulastaa.auth.network.model.SignUpRequest
+import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.network.ApiEndpoints
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiRequestType
 import com.poulastaa.common.network.ApiResult
-import com.poulastaa.common.network.ErrorResponse
 import com.poulastaa.common.network.map
+import com.poulastaa.common.network.model.ResponseTokens
 import com.poulastaa.common.network.req
 import com.poulastaa.platfrom.PlatformUtils
 import io.ktor.client.HttpClient
@@ -26,18 +29,28 @@ class KtorAuthDatasource(
     override suspend fun signIn(
         email: String,
         password: String,
-    ): ApiResult<DtoAuthResponse, ApiError> =
+    ): ApiResult<DtoEmailAuthResponse, ApiError> =
         client.req<SignInRequest, AuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.SIGN_IN,
             type = ApiRequestType.POST,
             body = SignInRequest(email, password),
-        ).map { it.toDto() }
+        ).map(AuthResponse::toDto)
+
+    override suspend fun checkVerificationStatus(email: String): ApiResult<DtoTokens, ApiError> =
+        client.req<Unit, ResponseTokens, ApiError.Authentication>(
+            route = ApiEndpoints.Auth.CHECK_VERIFICATION_MAIL_STATE,
+            type = ApiRequestType.GET,
+            params = listOf(
+                "email" to email,
+                "type" to EMAIL_USER_TYPE,
+            ),
+        ).map(ResponseTokens::toDto)
 
     override suspend fun signUp(
         email: String,
         username: String,
         password: String,
-    ): ApiResult<DtoAuthResponse, ApiError> =
+    ): ApiResult<DtoEmailAuthResponse, ApiError> =
         client.req<SignUpRequest, AuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.SIGN_UP,
             type = ApiRequestType.POST,
@@ -47,53 +60,29 @@ class KtorAuthDatasource(
                 password = password,
                 countryCode = PlatformUtils.countryCode,
             ),
-        ).map { it.toDto() }
+        ).map(AuthResponse::toDto)
 
     override suspend fun googleAuth(
         token: String,
         countryCode: String,
     ): ApiResult<DtoAuthResponse, ApiError> =
-        client.req<GoogleAuthRequest, AuthResponse, ApiError.Authentication>(
+        client.req<GoogleAuthRequest, GoogleAuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.GOOGLE_AUTH,
             type = ApiRequestType.POST,
             body = GoogleAuthRequest(
                 token = token,
                 code = countryCode,
             ),
-        ).map { it.toDto() }
+        ).map(GoogleAuthResponse::toDto)
 
     override suspend fun sendForgotPasswordMail(email: String): ApiResult<DtoForgotPasswordResponse, ApiError> =
         client.req<Unit, ForgotPasswordResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.FORGOT_PASSWORD,
             type = ApiRequestType.GET,
             params = listOf("email" to email),
-        ).toForgotPasswordApiResult()
+        ).map(ForgotPasswordResponse::toDto)
 
-    private fun ApiResult<ForgotPasswordResponse, ApiError>.toForgotPasswordApiResult(): ApiResult<DtoForgotPasswordResponse, ApiError> =
-        when (this) {
-            is ApiResult.Error -> this
-            is ApiResult.Success -> when (response) {
-                ForgotPasswordResponse.SENT -> ApiResult.Success(response.toDto())
-                ForgotPasswordResponse.USER_NOT_FOUND -> ApiResult.Error(
-                    error = ErrorResponse(
-                        error = ApiError.Authentication.ACCOUNT_NOT_FOUND,
-                        message = ApiError.Authentication.ACCOUNT_NOT_FOUND.message,
-                    )
-                )
-
-                ForgotPasswordResponse.INVALID_EMAIL -> ApiResult.Error(
-                    error = ErrorResponse(
-                        error = ApiError.Authentication.INVALID_EMAIL,
-                        message = ApiError.Authentication.INVALID_EMAIL.message,
-                    )
-                )
-
-                ForgotPasswordResponse.ERROR -> ApiResult.Error(
-                    error = ErrorResponse(
-                        error = ApiError.Network.SOMETHING_WENT_WRONG,
-                        message = ApiError.Network.SOMETHING_WENT_WRONG.message,
-                    )
-                )
-            }
-        }
+    private companion object {
+        const val EMAIL_USER_TYPE = "EMAIL"
+    }
 }

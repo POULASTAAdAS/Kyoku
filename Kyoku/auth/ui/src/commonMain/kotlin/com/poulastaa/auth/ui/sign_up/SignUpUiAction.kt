@@ -5,11 +5,7 @@ sealed interface SignUpUiAction {
     data class OnPasswordChange(val password: String) : SignUpUiAction
     data class OnUsernameChange(val username: String) : SignUpUiAction
 
-    data class SignUp(
-        val email: String,
-        val password: String,
-        val username: String,
-    ) : SignUpUiAction
+    data object SignUp: SignUpUiAction
 
     data class OnGoogleTokenReceived(val token: String) : SignUpUiAction
 

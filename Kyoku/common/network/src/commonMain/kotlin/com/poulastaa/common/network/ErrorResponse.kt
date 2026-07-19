@@ -24,7 +24,8 @@ interface ApiError : Error {
         NOT_FOUND("Couldn't find that"),
         SERIALISATION("Couldn't read response"),
         UNAUTHORIZED("Please sign in again"),
-        SOMETHING_WENT_WRONG("Something went wrong"),
+        RATE_LIMITED("Too many requests, Please try again later."),
+        SOMETHING_WENT_WRONG("Something went wrong."),
     }
 
     /**

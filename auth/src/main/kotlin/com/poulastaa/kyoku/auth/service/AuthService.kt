@@ -28,8 +28,9 @@ class AuthService(
     ) = email.takeIf { validateEmail(it) }?.let { _ ->
         getUser(email, UserType.EMAIL)?.let { user ->
             // if user first tries to sing-up before validating email tries to log-in
+            println(user)
             if (user.id == -1L) return@let ResponseWrapper(
-                status = ResponseStatus.USER_NOT_FOUND
+                status = ResponseStatus.USER_NOT_FOUND,
             )
 
             user.takeIf { isSamePassword(password, user.passwordHash) }?.let { dtoUser ->
@@ -38,11 +39,13 @@ class AuthService(
                 //  new user -> opted out after creating account thus no initial data is collected to proceed
                 //  no playlist | artist | genre -> does not have enough collected data to proceed
                 //  change response accordingly
-                val data = dtoUser
                 val status = ResponseStatus.USER_FOUND
 
                 ResponseWrapper(
-                    payload = data,
+                    payload = AuthResponse(
+                        user = dtoUser.toResponse(status),
+                        isNewUser = true, // TODO: check if user has any data collected
+                    ),
                     status = status
                 ).also { _ ->
                     notification.publishMail(
@@ -56,11 +59,13 @@ class AuthService(
             } ?: ResponseWrapper( // password does not match
                 status = ResponseStatus.PASSWORD_DOES_NOT_MATCH
             )
-        } ?: ResponseWrapper( // user not found
-            status = ResponseStatus.UNAUTHORIZED
+        } ?: ResponseWrapper(
+            // user not found
+            status = ResponseStatus.USER_NOT_FOUND,
         )
-    } ?: ResponseWrapper( // invalid email
-        status = ResponseStatus.EMAIL_NOT_VALID
+    } ?: ResponseWrapper(
+        // invalid email
+        status = ResponseStatus.EMAIL_NOT_VALID,
     )
 
     /**
@@ -72,7 +77,7 @@ class AuthService(
         email: Email,
         password: Password,
         countryCode: String,
-    ) = email.takeIf { validateEmail(it) }?.let { _ ->
+    ): ResponseWrapper<AuthResponse> = email.takeIf { validateEmail(it) }?.let { _ ->
         val user = getUser(email, UserType.EMAIL)
 
         // no user found in database or cache
@@ -80,15 +85,18 @@ class AuthService(
         if (user == null || user.id == -1L) {
             password.encryptPassword()?.let { passwordHash ->
                 ResponseWrapper(
-                    payload = cache.setUserByEmail(
-                        DtoUser(
-                            username = username,
-                            displayName = username,
-                            email = email,
-                            passwordHash = passwordHash,
-                            countryCode = countryCode,
-                            type = UserType.EMAIL,
-                        )
+                    payload = AuthResponse(
+                        user = cache.setUserByEmail(
+                            DtoUser(
+                                username = username,
+                                displayName = username,
+                                email = email,
+                                passwordHash = passwordHash,
+                                countryCode = countryCode,
+                                type = UserType.EMAIL,
+                            )
+                        ).toResponse(ResponseStatus.USER_CREATED),
+                        isNewUser = true,
                     ),
                     status = ResponseStatus.USER_CREATED,
                 ).also {

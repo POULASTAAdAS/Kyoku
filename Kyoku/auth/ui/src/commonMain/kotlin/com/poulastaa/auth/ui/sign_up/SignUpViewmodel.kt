@@ -13,6 +13,7 @@ import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
+import kotlinx.coroutines.delay
 import com.poulastaa.common.network.Error as NetworkError
 
 @Immutable
@@ -75,9 +76,9 @@ class SignUpViewmodel(
             SignUpUiAction.OnGoogleAuthCanceled -> updateState { copy(isGoogleAuthInProgress = false) }
 
             is SignUpUiAction.SignUp -> {
-                val email = action.email.normalizedEmail()
-                val username = action.username.normalizedUsername()
-                val password = action.password.normalizedPassword()
+                val email = _uiState.value.email.value.normalizedEmail()
+                val username = _uiState.value.username.value.normalizedUsername()
+                val password = _uiState.value.password.value.normalizedPassword()
 
                 val emailError = email.emailError()
                 val usernameError = username.usernameError()
@@ -113,10 +114,10 @@ class SignUpViewmodel(
                     }
 
                     is ApiResult.Success -> {
-                        updateState { copy(isMakingApiCall = false) }
-
-                        if (result.response.isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
-                        else onEvent(SignUpUiEvent.NavigateToHome)
+                        pollVerificationStatus(
+                            email = email,
+                            isNewUser = result.response,
+                        )
                     }
                 }
             }
@@ -129,37 +130,44 @@ class SignUpViewmodel(
         }
     }
 
+    private suspend fun pollVerificationStatus(
+        email: String,
+        isNewUser: Boolean,
+    ) {
+        while (true) {
+            delay(VERIFICATION_POLL_INTERVAL_MS)
+
+            when (val result = repo.checkVerificationStatus(email)) {
+                is ApiResult.Error -> {
+                    if (result.error.error == ApiError.Network.UNAUTHORIZED) continue
+
+                    updateState { copy(isMakingApiCall = false) }
+                    handleSignUpError(result.error.error)
+                    return
+                }
+
+                is ApiResult.Success -> {
+                    updateState { copy(isMakingApiCall = false) }
+
+                    if (isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
+                    else onEvent(SignUpUiEvent.NavigateToHome)
+                    return
+                }
+            }
+        }
+    }
+
     private fun handleSignUpError(error: NetworkError) {
         if (handleCommonError(error)) return
 
         when (error) {
-            ApiError.Authentication.EMAIL_ALREADY_IN_USE -> {
-                setEmailError(ApiError.Authentication.EMAIL_ALREADY_IN_USE.message)
-            }
-
-            ApiError.Authentication.OLD_ACCOUNT_FOUND -> {
-                setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
-            }
-
-            ApiError.Authentication.ACCOUNT_NOT_FOUND -> {
-                setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
-            }
-
-            ApiError.Authentication.INVALID_EMAIL -> {
-                setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
-            }
-
-            ApiError.Authentication.INVALID_PASSWORD -> {
-                setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
-            }
-
-            ApiError.Authentication.EMAIL_NOT_VERIFIED -> {
-                setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
-            }
-
-            else -> {
-
-            }
+            ApiError.Authentication.EMAIL_ALREADY_IN_USE -> setEmailError(ApiError.Authentication.EMAIL_ALREADY_IN_USE.message)
+            ApiError.Authentication.OLD_ACCOUNT_FOUND -> setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
+            ApiError.Authentication.ACCOUNT_NOT_FOUND -> setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
+            ApiError.Authentication.INVALID_EMAIL -> setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+            ApiError.Authentication.INVALID_PASSWORD -> setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
+            ApiError.Authentication.EMAIL_NOT_VERIFIED -> setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
+            else -> setEmailError(ApiError.Network.SOMETHING_WENT_WRONG.message)
         }
     }
 
@@ -169,5 +177,9 @@ class SignUpViewmodel(
 
     private fun setPasswordError(message: String) = updateState {
         copy(password = password.copy(isError = true, errorMessage = message))
+    }
+
+    private companion object {
+        const val VERIFICATION_POLL_INTERVAL_MS = 5_000L
     }
 }

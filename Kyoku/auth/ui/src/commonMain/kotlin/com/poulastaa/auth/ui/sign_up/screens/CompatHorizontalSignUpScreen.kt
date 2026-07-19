@@ -86,13 +86,7 @@ internal fun CompatHorizontalSignUpScreen(
                 isGoogleAuthInProgress = state.isGoogleAuthInProgress,
                 onEmailAuthClick = {
                     focusManager.clearFocus(false)
-                    viewmodel.onAction(
-                        SignUpUiAction.SignUp(
-                            email = state.email.value,
-                            password = state.password.value,
-                            username = state.username.value,
-                        )
-                    )
+                    viewmodel.onAction(SignUpUiAction.SignUp)
                 },
                 onGoogleAuthClick = {
                     viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)

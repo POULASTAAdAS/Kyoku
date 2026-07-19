@@ -4,10 +4,7 @@ sealed interface SignInUiAction {
     data class OnEmailChange(val email: String) : SignInUiAction
     data class OnPasswordChange(val password: String) : SignInUiAction
 
-    data class SignIn(
-        val email: String,
-        val password: String,
-    ) : SignInUiAction
+    data object SignIn : SignInUiAction
 
     data class OnForgotPasswordClick(val email: String) : SignInUiAction
     data class OnGoogleAuthSuccess(val token: String) : SignInUiAction

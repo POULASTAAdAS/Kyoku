@@ -37,8 +37,8 @@ class SignInViewmodel(
             }
 
             is SignInUiAction.SignIn -> {
-                val email = action.email.normalizedEmail()
-                val password = action.password.normalizedPassword()
+                val email = _uiState.value.email.value.normalizedEmail()
+                val password = _uiState.value.password.value.normalizedPassword()
 
                 val emailError = email.emailError()
                 val passwordError = password.passwordError()
@@ -70,7 +70,7 @@ class SignInViewmodel(
                     is ApiResult.Success -> {
                         updateState { copy(isMakingApiCall = false) }
 
-                        if (result.response.isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
+                        if (result.response) onEvent(SignInUiEvent.NavigateToImportPlaylist)
                         else onEvent(SignInUiEvent.NavigateToHome)
                     }
                 }
@@ -114,33 +114,13 @@ class SignInViewmodel(
         if (handleCommonError(error)) return
 
         when (error) {
-            ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> {
-                setPasswordError(ApiError.Authentication.PASSWORD_DOES_NOT_MATCH.message)
-            }
-
-            ApiError.Authentication.OLD_ACCOUNT_FOUND -> {
-                setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
-            }
-
-            ApiError.Authentication.ACCOUNT_NOT_FOUND -> {
-                setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
-            }
-
-            ApiError.Authentication.INVALID_EMAIL -> {
-                setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
-            }
-
-            ApiError.Authentication.INVALID_PASSWORD -> {
-                setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
-            }
-
-            ApiError.Authentication.EMAIL_NOT_VERIFIED -> {
-                setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
-            }
-
-            else -> {
-
-            }
+            ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> setPasswordError(ApiError.Authentication.PASSWORD_DOES_NOT_MATCH.message)
+            ApiError.Authentication.OLD_ACCOUNT_FOUND -> setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
+            ApiError.Authentication.ACCOUNT_NOT_FOUND -> setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
+            ApiError.Authentication.INVALID_EMAIL -> setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+            ApiError.Authentication.INVALID_PASSWORD -> setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
+            ApiError.Authentication.EMAIL_NOT_VERIFIED -> setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
+            else -> setEmailError(ApiError.Network.SOMETHING_WENT_WRONG.message)
         }
     }
 

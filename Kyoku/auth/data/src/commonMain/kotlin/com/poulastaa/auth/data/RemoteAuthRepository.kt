@@ -8,6 +8,7 @@ import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.asEmptyResponse
 import com.poulastaa.common.network.map
 import org.koin.core.annotation.Single
 
@@ -19,23 +20,29 @@ class RemoteAuthRepository(
     override suspend fun signIn(
         email: String,
         password: String,
-    ): ApiResult<DtoUser, ApiError> {
-        val response = remote.signIn(email, password)
-        response.saveAuthData()
-
-        return response.map { it.user }
+    ): ApiResult<Boolean, ApiError> {
+        val result = remote.signIn(email, password)
+        if (result is ApiResult.Success) local.saveUser(result.response.user)
+        return result.map { it.user.isNewUser }
     }
 
     override suspend fun signUp(
         email: String,
         username: String,
         password: String,
-    ): ApiResult<DtoUser, ApiError> {
-        val response = remote.signUp(email, username, password)
-        response.saveAuthData()
-
-        return response.map { it.user }
+    ): ApiResult<Boolean, ApiError> {
+        val result = remote.signUp(email, username, password)
+        if (result is ApiResult.Success) local.saveUser(result.response.user)
+        return result.map { true }
     }
+
+    override suspend fun checkVerificationStatus(email: String): ApiResult<Unit, ApiError> {
+        val result = remote.checkVerificationStatus(email)
+        if (result is ApiResult.Success) local.saveTokens(result.response)
+
+        return result.asEmptyResponse()
+    }
+
 
     override suspend fun googleAuth(
         token: String,
