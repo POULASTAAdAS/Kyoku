@@ -2,7 +2,7 @@ package com.poulastaa.common.network
 
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
-import com.poulastaa.common.network.model.ApiErrorResponse
+import com.poulastaa.common.network.model.ApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -15,6 +15,9 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlin.coroutines.cancellation.CancellationException
 
 enum class ApiRequestType {
@@ -57,23 +60,7 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
             ApiRequestType.DELETE -> this.delete(urlString = url, block = buildRequest)
         }
 
-        when (response.status.value) {
-            in 200..299 -> try {
-                ApiResult.Success(response.body<Res>())
-            } catch (e: SerializationException) {
-                ApiResult.Error(
-                    cause = e,
-                    error = ApiError.Network.SERIALISATION.toErrorResponse(
-                        e.message,
-                        code = response.status.value
-                    )
-                )
-            } catch (_: Exception) {
-                response.toApiErrorResult<ERROR>()
-            }
-
-            else -> response.toApiErrorResult<ERROR>()
-        }
+        response.toApiResult<Res, ERROR>()
     } catch (e: Exception) {
         handleException(e)
     }.also {
@@ -85,40 +72,87 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
 internal fun String.toUrlString() = SharedConfig.BASE_URL + this
 
 /**
- * Converts a non-success HTTP response, or a success response that failed to deserialize as [Res],
- * into an [ApiResult.Error].
+ * Converts a gateway response envelope into [ApiResult].
  *
- * Mapping order:
- * 1. Try parsing the backend error body as [ApiErrorResponse].
- * 2. Try mapping `status` to the endpoint-specific [ERROR] enum.
- * 3. Fall back to [ApiError.Network] if the status is a shared network status.
- * 4. Fall back to an HTTP-code based [ApiError.Network] if the error body cannot be parsed.
+ * The gateway wraps both success and error responses as [ApiResponse]. We decode the envelope
+ * using [JsonElement] first so error payloads do not have to match an endpoint success type.
  */
 @PublishedApi
-internal suspend inline fun <reified ERROR> HttpResponse.toApiErrorResult(): ApiResult.Error<ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
+internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResult(): ApiResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
     try {
-        val errorResponse = body<ApiErrorResponse>()
+        val apiResponse = body<ApiResponse<JsonElement>>()
 
-        ApiResult.Error(
-            cause = null,
-            error = errorResponse.toApiError<ERROR>().toErrorResponse(
-                message = errorResponse.message,
-                code = errorResponse.code,
-            )
-        )
+        if (status.value in 200..299)
+            apiResponse.toSuccessResult<Res>(status.value)
+        else apiResponse.toApiErrorResult<ERROR>(status.value)
     } catch (e: CancellationException) {
         throw e
-    } catch (_: Exception) {
-        val error = status.value.toNetworkError()
+    } catch (e: SerializationException) {
+        if (status.value in 200..299) {
+            ApiResult.Error(
+                cause = e,
+                error = ApiError.Network.SERIALISATION.toErrorResponse(
+                    e.message,
+                    code = status.value
+                )
+            )
+        } else toNetworkErrorResult()
+    } catch (e: Exception) {
+        if (status.value in 200..299) {
+            ApiResult.Error(
+                cause = e,
+                error = ApiError.Network.SERIALISATION.toErrorResponse(
+                    e.message,
+                    code = status.value
+                )
+            )
+        } else toNetworkErrorResult()
+    }
 
+@PublishedApi
+internal inline fun <reified Res> ApiResponse<JsonElement>.toSuccessResult(
+    responseCode: Int,
+): ApiResult<Res, ApiError> {
+    val payload = payload
+
+    if (payload == null || payload is JsonNull) {
+        return if (Res::class == Unit::class) {
+            @Suppress("UNCHECKED_CAST")
+            ApiResult.Success(Unit as Res)
+        } else {
+            ApiResult.Error(
+                error = ApiError.Network.SERIALISATION.toErrorResponse(
+                    message = "Response payload missing",
+                    code = resolvedCode(responseCode)
+                )
+            )
+        }
+    }
+
+    return try {
+        ApiResult.Success(PlatformHttpClient.json.decodeFromJsonElement<Res>(payload))
+    } catch (e: SerializationException) {
         ApiResult.Error(
-            cause = null,
-            error = error.toErrorResponse(
-                message = status.description,
-                code = status.value,
+            cause = e,
+            error = ApiError.Network.SERIALISATION.toErrorResponse(
+                e.message,
+                code = resolvedCode(responseCode)
             )
         )
     }
+}
+
+@PublishedApi
+internal inline fun <reified ERROR> ApiResponse<*>.toApiErrorResult(
+    responseCode: Int,
+): ApiResult.Error<ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
+    ApiResult.Error(
+        cause = null,
+        error = toApiError<ERROR>().toErrorResponse(
+            message = message,
+            code = resolvedCode(responseCode),
+        )
+    )
 
 /**
  * Maps the backend `status` string to the most specific [ApiError].
@@ -127,16 +161,38 @@ internal suspend inline fun <reified ERROR> HttpResponse.toApiErrorResult(): Api
  * sends a status unknown to that endpoint enum, shared [ApiError.Network] values are checked next.
  */
 @PublishedApi
-internal inline fun <reified ERROR> ApiErrorResponse.toApiError(): ApiError where ERROR : Enum<ERROR>, ERROR : ApiError {
-    val responseStatus = status.uppercase()
+internal inline fun <reified ERROR> ApiResponse<*>.toApiError(): ApiError where ERROR : Enum<ERROR>, ERROR : ApiError {
+    val responseStatus = status.toApiErrorStatus()
 
     return enumValues<ERROR>().firstOrNull { it.name == responseStatus }
         ?: enumValues<ApiError.Network>().firstOrNull { it.name == responseStatus }
         ?: ApiError.Network.SOMETHING_WENT_WRONG
 }
 
+@PublishedApi
+internal fun ApiResponse<*>.resolvedCode(
+    responseCode: Int,
+) = code.takeIf { it > 0 } ?: responseCode
+
+@PublishedApi
+internal fun String.toApiErrorStatus() = when (uppercase()) {
+    "EMAIL_NOT_VALID" -> ApiError.Authentication.INVALID_EMAIL.name
+    "USER_NOT_FOUND" -> ApiError.Authentication.ACCOUNT_NOT_FOUND.name
+    "NO_CONTENT" -> ApiError.Network.NOT_FOUND.name
+    "SERVICE_UNAVAILABLE",
+    "INTERNAL_SERVER_ERROR",
+        -> ApiError.Network.SERVER_ERROR.name
+
+    "INVALID_REQUEST_BODY",
+    "METHOD_NOT_ALLOWED",
+    "FUCK_YOU",
+        -> ApiError.Network.SOMETHING_WENT_WRONG.name
+
+    else -> uppercase()
+}
+
 /**
- * Last-resort mapping used when the response body cannot be decoded as [ApiErrorResponse].
+ * Last-resort mapping used when the response body cannot be decoded as [ApiResponse].
  */
 @PublishedApi
 internal fun Int.toNetworkError() = when (this) {
@@ -144,6 +200,19 @@ internal fun Int.toNetworkError() = when (this) {
     404 -> ApiError.Network.NOT_FOUND
     in 500..599 -> ApiError.Network.SERVER_ERROR
     else -> ApiError.Network.SOMETHING_WENT_WRONG
+}
+
+@PublishedApi
+internal fun HttpResponse.toNetworkErrorResult(): ApiResult.Error<ApiError> {
+    val error = status.value.toNetworkError()
+
+    return ApiResult.Error(
+        cause = null,
+        error = error.toErrorResponse(
+            message = status.description,
+            code = status.value,
+        )
+    )
 }
 
 /**
