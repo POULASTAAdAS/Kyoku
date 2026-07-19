@@ -9,4 +9,5 @@ actual object PlatformUtils {
 
     actual val platform: PlatformType = if (isAndroidTab()) PlatformType.ANDROID_TAB else PlatformType.ANDROID
     actual val os: String = Build.VERSION.RELEASE
+    actual val countryCode: String = java.util.Locale.getDefault().country
 }

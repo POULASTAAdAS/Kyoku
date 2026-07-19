@@ -26,6 +26,17 @@ class RemoteAuthRepository(
         return response.map { it.user }
     }
 
+    override suspend fun signUp(
+        email: String,
+        username: String,
+        password: String,
+    ): ApiResult<DtoUser, ApiError> {
+        val response = remote.signUp(email, username, password)
+        response.saveAuthData()
+
+        return response.map { it.user }
+    }
+
     override suspend fun googleAuth(
         token: String,
         countryCode: String,

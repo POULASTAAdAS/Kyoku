@@ -9,9 +9,11 @@ import com.poulastaa.auth.ui.utils.normalizedUsername
 import com.poulastaa.auth.ui.utils.passwordError
 import com.poulastaa.auth.ui.utils.usernameError
 import com.poulastaa.auth.ui.utils.usernameInputError
+import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
+import com.poulastaa.common.network.Error as NetworkError
 
 @Immutable
 class SignUpViewmodel(
@@ -23,10 +25,9 @@ class SignUpViewmodel(
         val isGoogleAuthCompletion = action is SignUpUiAction.OnGoogleTokenReceived ||
                 action == SignUpUiAction.OnGoogleAuthCanceled
 
-        if ((_uiState.value.isMakingApiCall ||
-                    _uiState.value.isGoogleAuthInProgress) &&
-            (action !is SignUpUiAction.OnPasswordVisibilityToggle &&
-                    isGoogleAuthCompletion.not())
+        if ((_uiState.value.isMakingApiCall || _uiState.value.isGoogleAuthInProgress) &&
+            action != SignUpUiAction.OnPasswordVisibilityToggle &&
+            isGoogleAuthCompletion.not()
         ) return
 
         when (action) {
@@ -59,7 +60,7 @@ class SignUpViewmodel(
                 when (val result = repo.googleAuth(action.token, TODO())) {
                     is ApiResult.Error -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
-                        handleCommonError(result.error.error)
+                        handleSignUpError(result.error.error)
                     }
 
                     is ApiResult.Success -> {
@@ -105,7 +106,19 @@ class SignUpViewmodel(
 
                 if (emailError != null || passwordError != null || usernameError != null) return
 
-                // TODO: make api request
+                when (val result = repo.signUp(email, username, password)) {
+                    is ApiResult.Error -> {
+                        updateState { copy(isMakingApiCall = false) }
+                        handleSignUpError(result.error.error)
+                    }
+
+                    is ApiResult.Success -> {
+                        updateState { copy(isMakingApiCall = false) }
+
+                        if (result.response.isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
+                        else onEvent(SignUpUiEvent.NavigateToHome)
+                    }
+                }
             }
 
             SignUpUiAction.OnLoginClick -> onEvent(SignUpUiEvent.NavigateToLogIn)
@@ -114,5 +127,47 @@ class SignUpViewmodel(
                 copy(isPasswordVisible = isPasswordVisible.not())
             }
         }
+    }
+
+    private fun handleSignUpError(error: NetworkError) {
+        if (handleCommonError(error)) return
+
+        when (error) {
+            ApiError.Authentication.EMAIL_ALREADY_IN_USE -> {
+                setEmailError(ApiError.Authentication.EMAIL_ALREADY_IN_USE.message)
+            }
+
+            ApiError.Authentication.OLD_ACCOUNT_FOUND -> {
+                setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
+            }
+
+            ApiError.Authentication.ACCOUNT_NOT_FOUND -> {
+                setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
+            }
+
+            ApiError.Authentication.INVALID_EMAIL -> {
+                setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+            }
+
+            ApiError.Authentication.INVALID_PASSWORD -> {
+                setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
+            }
+
+            ApiError.Authentication.EMAIL_NOT_VERIFIED -> {
+                setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
+            }
+
+            else -> {
+
+            }
+        }
+    }
+
+    private fun setEmailError(message: String) = updateState {
+        copy(email = email.copy(isError = true, errorMessage = message))
+    }
+
+    private fun setPasswordError(message: String) = updateState {
+        copy(password = password.copy(isError = true, errorMessage = message))
     }
 }

@@ -37,6 +37,7 @@ interface ApiError : Error {
         INVALID_EMAIL("Check your email"),
         INVALID_PASSWORD("Check your password"),
         EMAIL_NOT_VERIFIED("Verify your email"),
+        EMAIL_ALREADY_IN_USE("Email already in use"),
     }
 }
 

@@ -17,4 +17,6 @@ actual object PlatformUtils {
         osName.takeIf(String::isNotBlank),
         System.getProperty("os.version")?.takeIf(String::isNotBlank),
     ).joinToString(separator = " ").ifBlank { "Unknown" }
+
+    actual val countryCode: String = java.util.Locale.getDefault().country
 }
