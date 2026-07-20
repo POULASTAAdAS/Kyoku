@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,8 +35,10 @@ import com.poulastaa.auth.ui.components.LogInSignUpNavigation
 import com.poulastaa.auth.ui.sign_up.SignUpUiAction
 import com.poulastaa.auth.ui.sign_up.SignUpViewmodel
 import com.poulastaa.auth.ui.sign_up.SingUpUiState
+import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.AuthActionTypeList
+import com.poulastaa.common.ui.components.BackButton
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.RowSpacer
 import com.poulastaa.common.ui.design_system.IconEmail
@@ -65,134 +68,145 @@ internal fun CompatHorizontalSignUpScreen(
     focusManager: FocusManager,
     haptic: HapticFeedback,
 ) {
-    Row(
-        modifier = Modifier
+    val navController = LocalNavController.current
+
+    Box(
+        Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(MaterialTheme.dimens.layout.contentPadding)
-            .navigationBarsPadding(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(0.4f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        BackButton(
+            modifier = Modifier.align(Alignment.TopStart),
+            onClick = navController::popBackStack
+        )
+
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            AuthActionTypeList(
-                buttonText = StringSignUp,
-                subTitle = StringOrSignUpWith,
-                isMakingApiCall = state.isMakingApiCall,
-                isGoogleAuthInProgress = state.isGoogleAuthInProgress,
-                onEmailAuthClick = {
-                    focusManager.clearFocus(false)
-                    viewmodel.onAction(SignUpUiAction.SignUp)
-                },
-                onGoogleAuthClick = {
-                    viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)
-                }
-            )
-
-            ColumnSpacer(MaterialTheme.dimens.spacing.large)
-
-            LogInSignUpNavigation(
-                title = StringAlreadyHaveAccount,
-                navigationType = StringLogIn,
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    viewmodel.onAction(SignUpUiAction.OnLoginClick)
-                }
-            )
-        }
-
-        RowSpacer(MaterialTheme.dimens.spacing.medium)
-
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top,
-        ) {
-            AuthTypeTitle(StringS, StringSignUpRest)
-
-            ColumnSpacer(MaterialTheme.dimens.spacing.large)
-
-            AppOutlinedTextField(
-                value = state.username.value,
-                onValueChange = { viewmodel.onAction(SignUpUiAction.OnUsernameChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                label = StringUsername,
-                leadingIcon = IconUser,
-                isError = state.username.isError,
-                supportingText = if (state.username.isError) state.username.errorMessage
-                    ?: StringInvalidUsername else "",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                ),
-            )
-
-            AppOutlinedTextField(
-                value = state.email.value,
-                onValueChange = { viewmodel.onAction(SignUpUiAction.OnEmailChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                label = StringEmail,
-                leadingIcon = IconEmail,
-                isError = state.email.isError,
-                supportingText = if (state.email.isError) state.email.errorMessage
-                    ?: StringInvalidEmail else "",
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next,
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                ),
-            )
-
-            AppOutlinedTextField(
-                value = state.password.value,
-                onValueChange = { viewmodel.onAction(SignUpUiAction.OnPasswordChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                label = StringPassword,
-                leadingIcon = IconPasswordLock,
-                isError = state.password.isError,
-                supportingText = if (state.password.isError) state.password.errorMessage?.ifEmpty { StringInvalidPassword } else "",
-                trailingContent = {
-                    AnimatedContent(
-                        targetState = state.isPasswordVisible,
-                        modifier = Modifier.clip(CircleShape).clickable(
-                            onClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                viewmodel.onAction(SignUpUiAction.OnPasswordVisibilityToggle)
-                            }
-                        )
-                    ) {
-                        Icon(
-                            imageVector = if (it) IconEyeClose else IconEyeOpen,
-                            contentDescription = StringPasswordVisibility,
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
+            Column(
+                modifier = Modifier.fillMaxWidth(0.4f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                AuthActionTypeList(
+                    buttonText = StringSignUp,
+                    subTitle = StringOrSignUpWith,
+                    isMakingApiCall = state.isMakingApiCall,
+                    isGoogleAuthInProgress = state.isGoogleAuthInProgress,
+                    onEmailAuthClick = {
                         focusManager.clearFocus(false)
+                        viewmodel.onAction(SignUpUiAction.SignUp)
+                    },
+                    onGoogleAuthClick = {
+                        viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)
                     }
-                ),
-                visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
-                else PasswordVisualTransformation(),
-            )
+                )
+
+                ColumnSpacer(MaterialTheme.dimens.spacing.large)
+
+                LogInSignUpNavigation(
+                    title = StringAlreadyHaveAccount,
+                    navigationType = StringLogIn,
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewmodel.onAction(SignUpUiAction.OnLoginClick)
+                    }
+                )
+            }
+
+            RowSpacer(MaterialTheme.dimens.spacing.medium)
+
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Top,
+            ) {
+                AuthTypeTitle(StringS, StringSignUpRest)
+
+                ColumnSpacer(MaterialTheme.dimens.spacing.large)
+
+                AppOutlinedTextField(
+                    value = state.username.value,
+                    onValueChange = { viewmodel.onAction(SignUpUiAction.OnUsernameChange(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = StringUsername,
+                    leadingIcon = IconUser,
+                    isError = state.username.isError,
+                    supportingText = if (state.username.isError) state.username.errorMessage
+                        ?: StringInvalidUsername else "",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    ),
+                )
+
+                AppOutlinedTextField(
+                    value = state.email.value,
+                    onValueChange = { viewmodel.onAction(SignUpUiAction.OnEmailChange(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = StringEmail,
+                    leadingIcon = IconEmail,
+                    isError = state.email.isError,
+                    supportingText = if (state.email.isError) state.email.errorMessage
+                        ?: StringInvalidEmail else "",
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    ),
+                )
+
+                AppOutlinedTextField(
+                    value = state.password.value,
+                    onValueChange = { viewmodel.onAction(SignUpUiAction.OnPasswordChange(it)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = StringPassword,
+                    leadingIcon = IconPasswordLock,
+                    isError = state.password.isError,
+                    supportingText = if (state.password.isError) state.password.errorMessage?.ifEmpty { StringInvalidPassword } else "",
+                    trailingContent = {
+                        AnimatedContent(
+                            targetState = state.isPasswordVisible,
+                            modifier = Modifier.clip(CircleShape).clickable(
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    viewmodel.onAction(SignUpUiAction.OnPasswordVisibilityToggle)
+                                }
+                            )
+                        ) {
+                            Icon(
+                                imageVector = if (it) IconEyeClose else IconEyeOpen,
+                                contentDescription = StringPasswordVisibility,
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus(false)
+                        }
+                    ),
+                    visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                )
+            }
         }
     }
 }

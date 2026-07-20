@@ -71,7 +71,6 @@ fun SingUpScreen(
                 focusManager,
                 haptic
             )
-            ScreenSizeType.LargeVertical -> TODO()
 
             ScreenSizeType.CompactHorizontal -> CompatHorizontalSignUpScreen(
                 state,
@@ -80,6 +79,7 @@ fun SingUpScreen(
                 haptic
             )
 
+            ScreenSizeType.LargeVertical -> TODO()
             ScreenSizeType.LargeHorizontal -> TODO()
         }
     }

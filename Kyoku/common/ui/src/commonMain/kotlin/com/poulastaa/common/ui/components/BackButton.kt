@@ -19,6 +19,7 @@ import com.poulastaa.common.ui.design_system.StringBackButton
 
 @Composable
 fun BackButton(
+    modifier: Modifier = Modifier,
     rotation: Float = 0f,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(
         containerColor = Color.Transparent,
@@ -29,6 +30,7 @@ fun BackButton(
     IconButton(
         onClick = onClick,
         colors = colors,
+        modifier = modifier,
     ) {
         Box(
             Modifier.minimumInteractiveComponentSize()
