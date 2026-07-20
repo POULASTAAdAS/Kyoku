@@ -42,15 +42,15 @@ class AuthRateLimitInterceptor(
         response.setHeader(RATE_LIMIT_REMAINING_HEADER, result.remainingTokens.toString())
         if (result.consumed) return true
 
-        response.status = ResponseStatus.TOO_MANY_REQUESTS.code.value()
+        response.status = ResponseStatus.RATE_LIMITED.code.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.setHeader(RETRY_AFTER_HEADER, result.retryAfterSeconds.toString())
         objectMapper.writeValue(
             response.outputStream,
             ResponseWrapper<Unit>(
-                status = ResponseStatus.TOO_MANY_REQUESTS,
-                message = ResponseStatus.TOO_MANY_REQUESTS.message,
-                code = ResponseStatus.TOO_MANY_REQUESTS.code.value(),
+                status = ResponseStatus.RATE_LIMITED,
+                message = ResponseStatus.RATE_LIMITED.message,
+                code = ResponseStatus.RATE_LIMITED.code.value(),
             )
         )
         return false

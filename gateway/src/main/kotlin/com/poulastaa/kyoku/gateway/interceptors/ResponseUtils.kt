@@ -152,7 +152,7 @@ private fun CustomResponseStatus.toErrorHttpStatus(
     CustomResponseStatus.INTERNAL_SERVER_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR
     CustomResponseStatus.METHOD_NOT_ALLOWED -> HttpStatus.METHOD_NOT_ALLOWED
     CustomResponseStatus.INVALID_REQUEST_BODY -> HttpStatus.BAD_REQUEST
-    CustomResponseStatus.TOO_MANY_REQUESTS -> HttpStatus.TOO_MANY_REQUESTS
+    CustomResponseStatus.RATE_LIMITED -> HttpStatus.TOO_MANY_REQUESTS
     else -> HttpStatus.BAD_REQUEST
 }
 
@@ -162,7 +162,7 @@ private fun HttpStatusCode?.toResponseStatus() = when (this?.value()) {
     401 -> CustomResponseStatus.UNAUTHORIZED
     404 -> CustomResponseStatus.NOT_FOUND
     405 -> CustomResponseStatus.METHOD_NOT_ALLOWED
-    429 -> CustomResponseStatus.TOO_MANY_REQUESTS
+    429 -> CustomResponseStatus.RATE_LIMITED
     503 -> CustomResponseStatus.SERVICE_UNAVAILABLE
     in 500..599 -> CustomResponseStatus.INTERNAL_SERVER_ERROR
     else -> CustomResponseStatus.INTERNAL_SERVER_ERROR
@@ -185,7 +185,7 @@ private fun ResponseWrapper<*>.toResponseMessage(): String? {
         CustomResponseStatus.UNAUTHORIZED -> CustomResponseStatus.UNAUTHORIZED.message
         CustomResponseStatus.INVALID_REQUEST_BODY -> CustomResponseStatus.INVALID_REQUEST_BODY.message
         CustomResponseStatus.METHOD_NOT_ALLOWED -> CustomResponseStatus.METHOD_NOT_ALLOWED.message
-        CustomResponseStatus.TOO_MANY_REQUESTS -> CustomResponseStatus.TOO_MANY_REQUESTS.message
+        CustomResponseStatus.RATE_LIMITED -> CustomResponseStatus.RATE_LIMITED.message
         else -> "Something went wrong"
     } ?: "Something went wrong"
 }
