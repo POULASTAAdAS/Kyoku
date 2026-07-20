@@ -197,6 +197,7 @@ internal fun String.toApiErrorStatus() = when (uppercase()) {
 internal fun Int.toNetworkError() = when (this) {
     401 -> ApiError.Network.UNAUTHORIZED
     404 -> ApiError.Network.NOT_FOUND
+    429 -> ApiError.Network.RATE_LIMITED
     in 500..599 -> ApiError.Network.SERVER_ERROR
     else -> ApiError.Network.SOMETHING_WENT_WRONG
 }

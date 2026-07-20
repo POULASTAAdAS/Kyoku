@@ -11,7 +11,6 @@ import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens.AuthScreens.ValidateOTP
 import com.poulastaa.common.ui.components.ScreenSizeType
 import com.poulastaa.common.ui.components.ScreenSizeWrapper
-import com.poulastaa.common.ui.viewmodel.CommonUiEvent
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -36,16 +35,6 @@ fun ForgotPasswordScreen(
                         email = event.email,
                     )
                 )
-            }
-        }
-    }
-
-    LaunchedEffect(viewmodel) {
-        viewmodel.commonEvent.collect { event ->
-            when (event) {
-                is CommonUiEvent.ShowError -> {
-                    // TODO: handle errors
-                }
             }
         }
     }

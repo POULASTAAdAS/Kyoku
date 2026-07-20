@@ -7,6 +7,7 @@ import kyoku.common.ui.generated.resources.app_icon
 import kyoku.common.ui.generated.resources.back_button
 import kyoku.common.ui.generated.resources.continue_with_google
 import kyoku.common.ui.generated.resources.create_account
+import kyoku.common.ui.generated.resources.dismiss_message
 import kyoku.common.ui.generated.resources.dont_have_account
 import kyoku.common.ui.generated.resources.email
 import kyoku.common.ui.generated.resources.forgot_password
@@ -144,3 +145,7 @@ val StringGetOtp: String
 val StringBackButton: String
     @Composable
     get() = stringResource(Res.string.back_button)
+
+val StringDismissMessage: String
+    @Composable
+    get() = stringResource(Res.string.dismiss_message)

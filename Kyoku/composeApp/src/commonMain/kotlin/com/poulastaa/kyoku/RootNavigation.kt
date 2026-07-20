@@ -5,6 +5,7 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import com.poulastaa.auth.ui.sign_in.SignInScreen
 import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
+import com.poulastaa.common.ui.components.CommonSnackbarHost
 import com.poulastaa.common.ui.root.RootUiState
 import com.poulastaa.setup.ui.import_spotify_playlist.ImportSpotifyPlaylist
 import com.poulastaa.setup.ui.select_artist.SelectArtist
@@ -44,87 +46,92 @@ fun RootNavigation(state: RootUiState) {
     }
 
     CompositionLocalProvider(LocalNavController.provides(navController)) {
-        NavHost(
-            navController = navController,
-            startDestination = state.startDestination
-        ) {
-            // auth
-            navigation<Screens.AuthGraph>(
-                startDestination = Screens.AuthScreens.SignIn,
+        Box(modifier = Modifier.fillMaxSize()) {
+            NavHost(
+                navController = navController,
+                startDestination = state.startDestination,
+                modifier = Modifier.fillMaxSize(),
             ) {
-                composable<Screens.AuthScreens.SignIn> {
-                    SignInScreen()
-                }
-
-                composable<Screens.AuthScreens.SignUp>(
-                    enterTransition = {
-                        slideIntoContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                            animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
-                        )
-                    },
-                    popExitTransition = {
-                        slideOutOfContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                            animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
-                        )
-                    }
+                // auth
+                navigation<Screens.AuthGraph>(
+                    startDestination = Screens.AuthScreens.SignIn,
                 ) {
-                    SingUpScreen()
-                }
+                    composable<Screens.AuthScreens.SignIn> {
+                        SignInScreen()
+                    }
 
-                composable<Screens.AuthScreens.ForgotPassword>(
-                    enterTransition = {
-                        slideIntoContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Up,
-                            animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
-                        )
-                    },
-                    popExitTransition = {
-                        slideOutOfContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                            animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                    composable<Screens.AuthScreens.SignUp>(
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                            )
+                        }
+                    ) {
+                        SingUpScreen()
+                    }
+
+                    composable<Screens.AuthScreens.ForgotPassword>(
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(ANIMATION_TIME_MS, easing = EaseInOut)
+                            )
+                        }
+                    ) { backStackEntry ->
+                        ForgotPasswordScreen(
+                            email = backStackEntry.toRoute<Screens.AuthScreens.ForgotPassword>().email,
                         )
                     }
-                ) { backStackEntry ->
-                    ForgotPasswordScreen(
-                        email = backStackEntry.toRoute<Screens.AuthScreens.ForgotPassword>().email,
-                    )
+
+                    composable<Screens.AuthScreens.ValidateOTP> {
+                        OtpScreen()
+                    }
+
+                    composable<Screens.AuthScreens.ResetPassword> {
+                        ResetPasswordScreen()
+                    }
                 }
 
-                composable<Screens.AuthScreens.ValidateOTP> {
-                    OtpScreen()
+                // setup
+                navigation<Screens.SetupGraph>(
+                    startDestination = Screens.SetupScreens.ImportPlaylist
+                ) {
+                    composable<Screens.SetupScreens.ImportPlaylist> {
+                        ImportSpotifyPlaylist()
+                    }
+
+                    composable<Screens.SetupScreens.SelectGenre> {
+                        SelectGenre()
+                    }
+
+                    composable<Screens.SetupScreens.SelectArtist> {
+                        SelectArtist()
+                    }
                 }
 
-                composable<Screens.AuthScreens.ResetPassword> {
-                    ResetPasswordScreen()
-                }
-            }
+                navigation<Screens.MainGraph>(
+                    startDestination = Screens.MainScreens.Home,
+                ) {
+                    composable<Screens.MainScreens.Home> {
 
-            // setup
-            navigation<Screens.SetupGraph>(
-                startDestination = Screens.SetupScreens.ImportPlaylist
-            ) {
-                composable<Screens.SetupScreens.ImportPlaylist> {
-                    ImportSpotifyPlaylist()
-                }
-
-                composable<Screens.SetupScreens.SelectGenre> {
-                    SelectGenre()
-                }
-
-                composable<Screens.SetupScreens.SelectArtist> {
-                    SelectArtist()
-                }
-            }
-
-            navigation<Screens.MainGraph>(
-                startDestination = Screens.MainScreens.Home,
-            ) {
-                composable<Screens.MainScreens.Home> {
-
+                    }
                 }
             }
+
+            CommonSnackbarHost(modifier = Modifier.align(Alignment.BottomCenter))
         }
     }
 }

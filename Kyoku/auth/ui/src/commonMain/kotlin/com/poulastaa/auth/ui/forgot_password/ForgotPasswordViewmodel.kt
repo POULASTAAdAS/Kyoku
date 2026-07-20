@@ -13,10 +13,9 @@ import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 @Immutable
 class ForgotPasswordViewmodel(
     private val repo: AuthRepository,
-) :
-    BaseViewmodel<ForgotPasswordUiState, ForgotPasswordUiAction, ForgotPasswordUiEvent>(
-        initialSate = ForgotPasswordUiState(),
-    ) {
+) : BaseViewmodel<ForgotPasswordUiState, ForgotPasswordUiAction, ForgotPasswordUiEvent>(
+    initialSate = ForgotPasswordUiState(),
+) {
     override suspend fun handleAction(action: ForgotPasswordUiAction) {
         if (_uiState.value.isMakingApiCall) return
 

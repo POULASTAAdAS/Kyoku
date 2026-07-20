@@ -35,4 +35,5 @@
 
     <!--    Common-->
     <string name="back_button">Back Button</string>
+    <string name="dismiss_message">Dismiss message</string>
 </resources>

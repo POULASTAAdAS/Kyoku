@@ -17,7 +17,6 @@ import com.poulastaa.common.ui.Screens.AuthScreens.ForgotPassword
 import com.poulastaa.common.ui.Screens.AuthScreens.SignUp
 import com.poulastaa.common.ui.components.ScreenSizeType
 import com.poulastaa.common.ui.components.ScreenSizeWrapper
-import com.poulastaa.common.ui.viewmodel.CommonUiEvent
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -64,16 +63,6 @@ fun SignInScreen(
 
                 SignInUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
                 SignInUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
-            }
-        }
-    }
-
-    LaunchedEffect(viewmodel) {
-        viewmodel.commonEvent.collect { event ->
-            when (event) {
-                is CommonUiEvent.ShowError -> {
-                    // TODO: handle errors
-                }
             }
         }
     }
