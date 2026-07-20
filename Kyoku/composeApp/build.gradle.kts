@@ -49,6 +49,17 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.poulastaa.kyoku"
             packageVersion = "1.0.0"
+
+            val iconsRoot = project.file("src/jvmMain/resources")
+            macOS {
+                iconFile.set(iconsRoot.resolve("app-icon.icns"))
+            }
+            windows {
+                iconFile.set(iconsRoot.resolve("app-icon.ico"))
+            }
+            linux {
+                iconFile.set(iconsRoot.resolve("app-icon.png"))
+            }
         }
     }
 }
