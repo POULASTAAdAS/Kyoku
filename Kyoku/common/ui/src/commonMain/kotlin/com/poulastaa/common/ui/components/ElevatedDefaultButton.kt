@@ -1,6 +1,5 @@
 package com.poulastaa.common.ui.components
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +22,11 @@ fun ElevatedDefaultButton(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
-        modifier = Modifier.animateContentSize().fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         ElevatedCard(
-            modifier = Modifier.animateContentSize().fillMaxWidth(width),
+            modifier = Modifier.fillMaxWidth(width),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = MaterialTheme.dimens.elevation.level3,
                 pressedElevation = 0.dp,

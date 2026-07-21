@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -67,22 +68,25 @@ fun CommonSnackbarHost(
     AnimatedVisibility(
         visibleState = snackbarVisibility,
         modifier = modifier
-            .navigationBarsPadding()
-            .padding(
-                horizontal = MaterialTheme.dimens.layout.marginHorizontal,
-                vertical = MaterialTheme.dimens.layout.marginVertical,
-            ),
+            .navigationBarsPadding(),
         enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
         exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
     ) {
-        displayedSnackbar?.let { snackbarData ->
-            CommonSnackbar(
-                data = snackbarData,
-                onDismiss = {
-                    snackbarVisibility.targetState = false
-                    CommonUiStateHolder.dismissSnackbar()
-                },
-            )
+        Box(
+            modifier = Modifier.padding(
+                horizontal = MaterialTheme.dimens.layout.marginHorizontal,
+                vertical = MaterialTheme.dimens.layout.marginVertical,
+            ),
+        ) {
+            displayedSnackbar?.let { snackbarData ->
+                CommonSnackbar(
+                    data = snackbarData,
+                    onDismiss = {
+                        snackbarVisibility.targetState = false
+                        CommonUiStateHolder.dismissSnackbar()
+                    },
+                )
+            }
         }
     }
 }
@@ -108,6 +112,7 @@ private fun CommonSnackbar(
             SnackbarType.Info -> MaterialTheme.colorScheme.onSecondaryContainer
         },
         shadowElevation = MaterialTheme.dimens.elevation.level3,
+        tonalElevation = MaterialTheme.dimens.elevation.level3
     ) {
         Row(
             modifier = Modifier

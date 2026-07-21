@@ -10,6 +10,7 @@
 - Do not touch code outside what needs to change for the current request or job.
 - Do not change unrelated code even if it blocks verification or the current task; ask before touching anything outside the requested scope.
 - Never write or add test cases.
+- Never read, search, inspect, execute, or modify external or Android Gradle files, including `Kyoku/gradlew` and Gradle build files, under any circumstances.
 - If you need to touch a file that has already been updated or is in progress, do not revert those changes; work around them because the user may be working in the same file.
 - Do not revert any outside code without asking.
 - Do not push anything to Git, ever.
