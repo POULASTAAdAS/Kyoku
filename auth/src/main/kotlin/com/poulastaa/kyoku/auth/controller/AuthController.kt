@@ -93,14 +93,7 @@ class AuthController(
         return service.generateAuthenticationTokens(
             email = email,
             type = userType,
-        ).let { token ->
-            if (token.isValid()) ResponseWrapper(
-                status = ResponseStatus.SUCCESS,
-                payload = token,
-            ).toResponseEntity() else ResponseWrapper<ResponseToken>(
-                status = ResponseStatus.UNAUTHORIZED,
-            ).toResponseEntity()
-        }
+        ).toResponseEntity()
     }
 
     @PostMapping(Endpoints.REFRESH_TOKEN)
@@ -224,5 +217,3 @@ private fun ResponseWrapper<UpdatePasswordResponse>.toUpdatePasswordResponseWrap
         },
     )
 }
-
-private fun ResponseToken.isValid() = accessToken.isNotBlank() && refreshToken.isNotBlank()

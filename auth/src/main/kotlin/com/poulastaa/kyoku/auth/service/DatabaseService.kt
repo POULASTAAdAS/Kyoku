@@ -38,7 +38,7 @@ class DatabaseService(
         userTypeId = getUserTypeByType(type).id
     )?.toDtoUse()
 
-    fun createUser(newUser: DtoUser) = try {
+    fun createUser(newUser: DtoUser) = runCatching {
         val user = grpcCoreUser.withDeadlineAfter(30, TimeUnit.SECONDS)
             .createUser(
                 GRPCRequestUser.newBuilder().apply {
@@ -64,9 +64,8 @@ class DatabaseService(
             profileUrl = user.profileUrl,
             birthDate = if (user.dateOfBrith.isNotBlank()) LocalDate.parse(user.dateOfBrith) else null
         )
-    } catch (e: Exception) {
+    }.onFailure { e ->
         logger.error(e.message, e)
-        null
     }
 
     fun updateRefreshToken(id: UserId, refreshToken: JWTToken) {

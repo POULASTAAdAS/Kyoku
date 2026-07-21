@@ -5,6 +5,7 @@ import com.poulastaa.kyoku.auth.model.Notification
 import com.poulastaa.kyoku.auth.model.dto.*
 import com.poulastaa.kyoku.auth.model.response.*
 import com.poulastaa.kyoku.auth.utils.*
+import io.grpc.Status
 import org.springframework.context.ApplicationContext
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
@@ -174,46 +175,51 @@ class AuthService(
                 countryCode = countryCode,
                 type = UserType.GOOGLE,
             )
-        )?.let { user ->
-            cache.setUserByEmail(user)
+        ).fold(
+            onSuccess = { user ->
+                cache.setUserByEmail(user)
 
-            val accessToken = jwt.generateToken(
-                payload = DtoAuthenticationTokenClaim(
-                    email = user.email,
-                    userType = user.type,
-                ),
-                type = JWTTokenType.TOKEN_ACCESS
-            )
-            val refreshToken = jwt.generateToken(
-                payload = DtoAuthenticationTokenClaim(
-                    email = user.email,
-                    userType = user.type,
-                ),
-                type = JWTTokenType.TOKEN_REFRESH
-            )
-
-            //  save refresh token to db
-            db.updateRefreshToken(user.id, refreshToken)
-
-            ResponseWrapper(
-                status = ResponseStatus.USER_CREATED,
-                payload = ResponseGoogleAuth(
-                    user = user.toResponse(ResponseStatus.USER_CREATED),
-                    token = ResponseToken(
-                        accessToken = accessToken,
-                        refreshToken = refreshToken
-                    )
-                ),
-            ).also {
-                notification.publishMail(
-                    Notification.Email(
-                        email = payload.email,
-                        username = payload.name,
-                        type = Notification.Type.WELCOME
-                    )
+                val accessToken = jwt.generateToken(
+                    payload = DtoAuthenticationTokenClaim(
+                        email = user.email,
+                        userType = user.type,
+                    ),
+                    type = JWTTokenType.TOKEN_ACCESS
                 )
+                val refreshToken = jwt.generateToken(
+                    payload = DtoAuthenticationTokenClaim(
+                        email = user.email,
+                        userType = user.type,
+                    ),
+                    type = JWTTokenType.TOKEN_REFRESH
+                )
+
+                //  save refresh token to db
+                db.updateRefreshToken(user.id, refreshToken)
+
+                ResponseWrapper(
+                    status = ResponseStatus.USER_CREATED,
+                    payload = ResponseGoogleAuth(
+                        user = user.toResponse(ResponseStatus.USER_CREATED),
+                        token = ResponseToken(
+                            accessToken = accessToken,
+                            refreshToken = refreshToken
+                        )
+                    ),
+                ).also {
+                    notification.publishMail(
+                        Notification.Email(
+                            email = payload.email,
+                            username = payload.name,
+                            type = Notification.Type.WELCOME
+                        )
+                    )
+                }
+            },
+            onFailure = { error ->
+                ResponseWrapper(status = error.toDownstreamFailureResponseStatus())
             }
-        }
+        )
     } ?: ResponseWrapper( // encrypting password failed
         status = ResponseStatus.INTERNAL_SERVER_ERROR
     )
@@ -240,8 +246,13 @@ class AuthService(
     fun generateAuthenticationTokens(
         email: Email,
         type: UserType,
-    ) = email.takeIf { email -> cache.cacheAndDeleteEmailVerificationState(email, UserType.EMAIL) }?.let { _ ->
-        var user = cache.cacheUserByEmail(email, type) ?: return ResponseToken()
+    ): ResponseWrapper<ResponseToken> {
+        if (!cache.cacheAndDeleteEmailVerificationState(email, UserType.EMAIL)) {
+            return ResponseWrapper(status = ResponseStatus.UNAUTHORIZED)
+        }
+
+        var user = cache.cacheUserByEmail(email, type)
+            ?: return ResponseWrapper(status = ResponseStatus.UNAUTHORIZED)
 
         val accessToken = jwt.generateToken(
             payload = DtoAuthenticationTokenClaim(
@@ -259,26 +270,31 @@ class AuthService(
         )
 
         // is userId == -1 new user ---> first create entry
-        if (user.id == -1L) user = db.createUser(
-            DtoUser(
-                username = user.username,
-                displayName = user.displayName,
-                email = user.email,
-                passwordHash = user.passwordHash,
-                countryCode = user.countryCode,
-                type = type
-            )
-        )?.also {
-            cache.setUserByEmail(it) // update -1 ID with new generated ID
-            notification.publishMail(
-                Notification.Email(
-                    email = user.email,
+        if (user.id == -1L) {
+            user = db.createUser(
+                DtoUser(
                     username = user.username,
-                    type = Notification.Type.WELCOME
+                    displayName = user.displayName,
+                    email = user.email,
+                    passwordHash = user.passwordHash,
+                    countryCode = user.countryCode,
+                    type = type
                 )
-            )
-        } ?: return@let ResponseToken()
-        else notification.publishMail(
+            ).getOrElse { error ->
+                cache.setEmailVerificationState(email, UserType.EMAIL, true)
+
+                return ResponseWrapper(status = error.toDownstreamFailureResponseStatus())
+            }.also {
+                cache.setUserByEmail(it) // update -1 ID with new generated ID
+                notification.publishMail(
+                    Notification.Email(
+                        email = user.email,
+                        username = user.username,
+                        type = Notification.Type.WELCOME
+                    )
+                )
+            }
+        } else notification.publishMail(
             Notification.Email(
                 email = user.email,
                 username = user.username,
@@ -288,11 +304,14 @@ class AuthService(
 
         db.updateRefreshToken(user.id, refreshToken)
 
-        ResponseToken(
-            accessToken = accessToken,
-            refreshToken = refreshToken
+        return ResponseWrapper(
+            status = ResponseStatus.SUCCESS,
+            payload = ResponseToken(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
         )
-    } ?: ResponseToken() // invalid request
+    }
 
     fun refreshToken(
         payload: DtoAuthenticationTokenClaim,
@@ -496,6 +515,10 @@ class AuthService(
 
     private fun String.encryptPassword(): PasswordHash? = BCrypt.hashpw(this, BCrypt.gensalt(15))
     private fun isSamePassword(password: String, passwordHash: Password) = BCrypt.checkpw(password, passwordHash)
+
+    private fun Throwable.toDownstreamFailureResponseStatus() =
+        if (Status.fromThrowable(this).code == Status.Code.UNAVAILABLE) ResponseStatus.SERVICE_UNAVAILABLE
+        else ResponseStatus.INTERNAL_SERVER_ERROR
 
     private fun String.isValidEmail() = this.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex())
     private fun String.isValidDomain() = try {
