@@ -28,7 +28,7 @@ enum class ApiRequestType {
 }
 
 /**
- * Executes a Ktor request and wraps the result in [ApiResult].
+ * Executes a Ktor request and wraps the result in [AppResult].
  *
  * [ERROR] is the endpoint-specific API error enum used to decode backend `status` values.
  * For example, auth requests should pass [ApiError.Authentication] so a backend status like
@@ -36,7 +36,7 @@ enum class ApiRequestType {
  *
  * The returned error type is still [ApiError], not [ERROR], because every endpoint can also fail
  * with shared network errors such as no internet, serialization failure, unauthorized, or server
- * errors. In short: [ERROR] controls backend status mapping, while [ApiResult] can still carry
+ * errors. In short: [ERROR] controls backend status mapping, while [AppResult] can still carry
  * either endpoint-specific errors or [ApiError.Network] failures.
  */
 suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
@@ -44,7 +44,7 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
     type: ApiRequestType,
     params: List<Pair<String, String>> = emptyList(),
     body: Req? = null,
-): ApiResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError {
+): AppResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError {
     return try {
         val url = route.toUrlString()
 
@@ -72,13 +72,13 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
 internal fun String.toUrlString() = SharedConfig.BASE_URL + this
 
 /**
- * Converts a gateway response envelope into [ApiResult].
+ * Converts a gateway response envelope into [AppResult].
  *
  * The gateway wraps both success and error responses as [ApiResponse]. We decode the envelope
  * using [JsonElement] first so error payloads do not have to match an endpoint success type.
  */
 @PublishedApi
-internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResult(): ApiResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
+internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResult(): AppResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
     try {
         val apiResponse = body<ApiResponse<JsonElement>>()
 
@@ -89,7 +89,7 @@ internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResul
         throw e
     } catch (e: SerializationException) {
         if (status.value in 200..299) {
-            ApiResult.Error(
+            AppResult.Error(
                 cause = e,
                 error = ApiError.Network.SERIALISATION.toErrorResponse(
                     e.message,
@@ -99,7 +99,7 @@ internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResul
         } else toNetworkErrorResult()
     } catch (e: Exception) {
         if (status.value in 200..299) {
-            ApiResult.Error(
+            AppResult.Error(
                 cause = e,
                 error = ApiError.Network.SERIALISATION.toErrorResponse(
                     e.message,
@@ -112,15 +112,15 @@ internal suspend inline fun <reified Res, reified ERROR> HttpResponse.toApiResul
 @PublishedApi
 internal inline fun <reified Res> ApiResponse<JsonElement>.toSuccessResult(
     responseCode: Int,
-): ApiResult<Res, ApiError> {
+): AppResult<Res, ApiError> {
     val payload = payload
 
     if (payload == null || payload is JsonNull) {
         return if (Res::class == Unit::class) {
             @Suppress("UNCHECKED_CAST")
-            ApiResult.Success(Unit as Res)
+            AppResult.Success(Unit as Res)
         } else {
-            ApiResult.Error(
+            AppResult.Error(
                 error = ApiError.Network.SERIALISATION.toErrorResponse(
                     message = "Response payload missing",
                     code = resolvedCode(responseCode)
@@ -130,9 +130,9 @@ internal inline fun <reified Res> ApiResponse<JsonElement>.toSuccessResult(
     }
 
     return try {
-        ApiResult.Success(PlatformHttpClient.json.decodeFromJsonElement<Res>(payload))
+        AppResult.Success(PlatformHttpClient.json.decodeFromJsonElement<Res>(payload))
     } catch (e: SerializationException) {
-        ApiResult.Error(
+        AppResult.Error(
             cause = e,
             error = ApiError.Network.SERIALISATION.toErrorResponse(
                 e.message,
@@ -145,8 +145,8 @@ internal inline fun <reified Res> ApiResponse<JsonElement>.toSuccessResult(
 @PublishedApi
 internal inline fun <reified ERROR> ApiResponse<*>.toApiErrorResult(
     responseCode: Int,
-): ApiResult.Error<ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
-    ApiResult.Error(
+): AppResult.Error<ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError =
+    AppResult.Error(
         cause = null,
         error = toApiError<ERROR>().toErrorResponse(
             message = message,
@@ -203,10 +203,10 @@ internal fun Int.toNetworkError() = when (this) {
 }
 
 @PublishedApi
-internal fun HttpResponse.toNetworkErrorResult(): ApiResult.Error<ApiError> {
+internal fun HttpResponse.toNetworkErrorResult(): AppResult.Error<ApiError> {
     val error = status.value.toNetworkError()
 
-    return ApiResult.Error(
+    return AppResult.Error(
         cause = null,
         error = error.toErrorResponse(
             message = status.description,
@@ -223,20 +223,20 @@ internal fun HttpResponse.toNetworkErrorResult(): ApiResult.Error<ApiError> {
 @PublishedApi
 internal fun handleException(
     exception: Exception,
-): ApiResult.Error<ApiError> = when (exception) {
-    is UnresolvedAddressException -> ApiResult.Error(
+): AppResult.Error<ApiError> = when (exception) {
+    is UnresolvedAddressException -> AppResult.Error(
         cause = exception,
         error = ApiError.Network.NO_INTERNET.toErrorResponse(exception.message, -1)
     )
 
-    is SerializationException -> ApiResult.Error(
+    is SerializationException -> AppResult.Error(
         cause = exception,
         error = ApiError.Network.SERIALISATION.toErrorResponse(exception.message, -1)
     )
 
     is CancellationException -> throw exception
 
-    else -> ApiResult.Error(
+    else -> AppResult.Error(
         cause = exception,
         error = ApiError.Network.SOMETHING_WENT_WRONG.toErrorResponse(exception.message, -1)
     )

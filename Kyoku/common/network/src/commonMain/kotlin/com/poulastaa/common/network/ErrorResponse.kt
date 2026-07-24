@@ -1,7 +1,7 @@
 package com.poulastaa.common.network
 
 /**
- * Marker for typed errors used by [ApiResult].
+ * Marker for typed errors used by [AppResult].
  */
 interface Error
 

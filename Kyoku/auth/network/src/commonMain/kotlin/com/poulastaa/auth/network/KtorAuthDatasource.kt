@@ -14,7 +14,7 @@ import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.network.ApiEndpoints
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiRequestType
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.network.map
 import com.poulastaa.common.network.model.ResponseTokens
 import com.poulastaa.common.network.req
@@ -29,14 +29,14 @@ class KtorAuthDatasource(
     override suspend fun signIn(
         email: String,
         password: String,
-    ): ApiResult<DtoEmailAuthResponse, ApiError> =
+    ): AppResult<DtoEmailAuthResponse, ApiError> =
         client.req<SignInRequest, AuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.SIGN_IN,
             type = ApiRequestType.POST,
             body = SignInRequest(email, password),
         ).map(AuthResponse::toDto)
 
-    override suspend fun checkVerificationStatus(email: String): ApiResult<DtoTokens, ApiError> =
+    override suspend fun checkVerificationStatus(email: String): AppResult<DtoTokens, ApiError> =
         client.req<Unit, ResponseTokens, ApiError.Authentication>(
             route = ApiEndpoints.Auth.CHECK_VERIFICATION_MAIL_STATE,
             type = ApiRequestType.GET,
@@ -50,7 +50,7 @@ class KtorAuthDatasource(
         email: String,
         username: String,
         password: String,
-    ): ApiResult<DtoEmailAuthResponse, ApiError> =
+    ): AppResult<DtoEmailAuthResponse, ApiError> =
         client.req<SignUpRequest, AuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.SIGN_UP,
             type = ApiRequestType.POST,
@@ -65,7 +65,7 @@ class KtorAuthDatasource(
     override suspend fun googleAuth(
         token: String,
         countryCode: String,
-    ): ApiResult<DtoAuthResponse, ApiError> =
+    ): AppResult<DtoAuthResponse, ApiError> =
         client.req<GoogleAuthRequest, GoogleAuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.GOOGLE_AUTH,
             type = ApiRequestType.POST,
@@ -75,7 +75,7 @@ class KtorAuthDatasource(
             ),
         ).map(GoogleAuthResponse::toDto)
 
-    override suspend fun sendForgotPasswordMail(email: String): ApiResult<DtoForgotPasswordResponse, ApiError> =
+    override suspend fun sendForgotPasswordMail(email: String): AppResult<DtoForgotPasswordResponse, ApiError> =
         client.req<Unit, ForgotPasswordResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.FORGOT_PASSWORD,
             type = ApiRequestType.GET,

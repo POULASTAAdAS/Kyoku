@@ -7,7 +7,7 @@ import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.network.asEmptyResponse
 import com.poulastaa.common.network.map
 import org.koin.core.annotation.Single
@@ -20,9 +20,9 @@ class RemoteAuthRepository(
     override suspend fun signIn(
         email: String,
         password: String,
-    ): ApiResult<Boolean, ApiError> {
+    ): AppResult<Boolean, ApiError> {
         val result = remote.signIn(email, password)
-        if (result is ApiResult.Success) local.saveUser(result.response.user)
+        if (result is AppResult.Success) local.saveUser(result.response.user)
         return result.map { it.user.isNewUser }
     }
 
@@ -30,15 +30,15 @@ class RemoteAuthRepository(
         email: String,
         username: String,
         password: String,
-    ): ApiResult<Boolean, ApiError> {
+    ): AppResult<Boolean, ApiError> {
         val result = remote.signUp(email, username, password)
-        if (result is ApiResult.Success) local.saveUser(result.response.user)
+        if (result is AppResult.Success) local.saveUser(result.response.user)
         return result.map { true }
     }
 
-    override suspend fun checkVerificationStatus(email: String): ApiResult<Unit, ApiError> {
+    override suspend fun checkVerificationStatus(email: String): AppResult<Unit, ApiError> {
         val result = remote.checkVerificationStatus(email)
-        if (result is ApiResult.Success) local.saveTokens(result.response)
+        if (result is AppResult.Success) local.saveTokens(result.response)
 
         return result.asEmptyResponse()
     }
@@ -47,18 +47,18 @@ class RemoteAuthRepository(
     override suspend fun googleAuth(
         token: String,
         countryCode: String,
-    ): ApiResult<DtoUser, ApiError> {
+    ): AppResult<DtoUser, ApiError> {
         val response = remote.googleAuth(token, countryCode)
         response.saveAuthData()
 
         return response.map { it.user }
     }
 
-    override suspend fun sendForgotPasswordMail(email: String): ApiResult<DtoForgotPasswordResponse, ApiError> =
+    override suspend fun sendForgotPasswordMail(email: String): AppResult<DtoForgotPasswordResponse, ApiError> =
         remote.sendForgotPasswordMail(email)
 
-    private suspend fun ApiResult<DtoAuthResponse, ApiError>.saveAuthData() {
-        if (this is ApiResult.Success) {
+    private suspend fun AppResult<DtoAuthResponse, ApiError>.saveAuthData() {
+        if (this is AppResult.Success) {
             local.saveUser(response.user)
             local.saveTokens(response.tokens)
         }

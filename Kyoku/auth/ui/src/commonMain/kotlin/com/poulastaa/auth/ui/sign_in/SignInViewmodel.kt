@@ -7,9 +7,10 @@ import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
 import com.poulastaa.auth.ui.utils.passwordError
 import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
+import kotlinx.coroutines.delay
 import com.poulastaa.common.network.Error as NetworkError
 
 @Immutable
@@ -62,17 +63,15 @@ class SignInViewmodel(
                 if (emailError != null || passwordError != null) return
 
                 when (val result = repo.signIn(email, password)) {
-                    is ApiResult.Error -> {
+                    is AppResult.Error -> {
                         updateState { copy(isMakingApiCall = false) }
                         handleSignInError(result.error.error)
                     }
 
-                    is ApiResult.Success -> {
-                        updateState { copy(isMakingApiCall = false) }
-
-                        if (result.response) onEvent(SignInUiEvent.NavigateToImportPlaylist)
-                        else onEvent(SignInUiEvent.NavigateToHome)
-                    }
+                    is AppResult.Success -> pollVerificationStatus(
+                        email = email,
+                        isNewUser = result.response,
+                    )
                 }
             }
 
@@ -90,12 +89,12 @@ class SignInViewmodel(
 
             is SignInUiAction.OnGoogleAuthSuccess -> {
                 when (val result = repo.googleAuth(action.token, TODO())) {
-                    is ApiResult.Error -> {
+                    is AppResult.Error -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
                         handleSignInError(result.error.error)
                     }
 
-                    is ApiResult.Success -> {
+                    is AppResult.Success -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
 
                         if (result.response.isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
@@ -107,6 +106,33 @@ class SignInViewmodel(
             SignInUiAction.OnGoogleAuthCanceled -> updateState { copy(isGoogleAuthInProgress = false) }
 
             SignInUiAction.OnPasswordVisibilityToggle -> updateState { copy(isPasswordVisible = isPasswordVisible.not()) }
+        }
+    }
+
+    private suspend fun pollVerificationStatus(
+        email: String,
+        isNewUser: Boolean,
+    ) {
+        while (true) {
+            delay(VERIFICATION_POLL_INTERVAL_MS)
+
+            when (val result = repo.checkVerificationStatus(email)) {
+                is AppResult.Error -> {
+                    if (result.error.error == ApiError.Network.UNAUTHORIZED) continue
+
+                    updateState { copy(isMakingApiCall = false) }
+                    handleSignInError(result.error.error)
+                    return
+                }
+
+                is AppResult.Success -> {
+                    updateState { copy(isMakingApiCall = false) }
+
+                    if (isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
+                    else onEvent(SignInUiEvent.NavigateToHome)
+                    return
+                }
+            }
         }
     }
 
@@ -130,5 +156,9 @@ class SignInViewmodel(
 
     private fun setPasswordError(message: String) = updateState {
         copy(password = password.copy(isError = true, errorMessage = message))
+    }
+
+    private companion object {
+        const val VERIFICATION_POLL_INTERVAL_MS = 5_000L
     }
 }

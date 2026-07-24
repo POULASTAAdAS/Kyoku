@@ -10,7 +10,7 @@ import com.poulastaa.auth.ui.utils.passwordError
 import com.poulastaa.auth.ui.utils.usernameError
 import com.poulastaa.auth.ui.utils.usernameInputError
 import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 import kotlinx.coroutines.delay
@@ -59,12 +59,12 @@ class SignUpViewmodel(
 
             is SignUpUiAction.OnGoogleTokenReceived -> {
                 when (val result = repo.googleAuth(action.token, TODO())) {
-                    is ApiResult.Error -> {
+                    is AppResult.Error -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
                         handleSignUpError(result.error.error)
                     }
 
-                    is ApiResult.Success -> {
+                    is AppResult.Success -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
 
                         if (result.response.isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
@@ -108,12 +108,12 @@ class SignUpViewmodel(
                 if (emailError != null || passwordError != null || usernameError != null) return
 
                 when (val result = repo.signUp(email, username, password)) {
-                    is ApiResult.Error -> {
+                    is AppResult.Error -> {
                         updateState { copy(isMakingApiCall = false) }
                         handleSignUpError(result.error.error)
                     }
 
-                    is ApiResult.Success -> {
+                    is AppResult.Success -> {
                         pollVerificationStatus(
                             email = email,
                             isNewUser = result.response,
@@ -138,7 +138,7 @@ class SignUpViewmodel(
             delay(VERIFICATION_POLL_INTERVAL_MS)
 
             when (val result = repo.checkVerificationStatus(email)) {
-                is ApiResult.Error -> {
+                is AppResult.Error -> {
                     if (result.error.error == ApiError.Network.UNAUTHORIZED) continue
 
                     updateState { copy(isMakingApiCall = false) }
@@ -146,7 +146,7 @@ class SignUpViewmodel(
                     return
                 }
 
-                is ApiResult.Success -> {
+                is AppResult.Success -> {
                     updateState { copy(isMakingApiCall = false) }
 
                     if (isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)

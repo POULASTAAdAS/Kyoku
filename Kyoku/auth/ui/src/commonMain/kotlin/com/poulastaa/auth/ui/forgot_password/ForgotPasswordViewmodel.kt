@@ -6,7 +6,7 @@ import com.poulastaa.auth.domain.model.DtoForgotPasswordStatus
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.ApiResult
+import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 
@@ -65,12 +65,12 @@ class ForgotPasswordViewmodel(
                 }
 
                 when (val result = repo.sendForgotPasswordMail(email)) {
-                    is ApiResult.Error -> {
+                    is AppResult.Error -> {
                         updateState { copy(isMakingApiCall = false) }
                         if (handleCommonError(result.error.error)) return
                     }
 
-                    is ApiResult.Success -> {
+                    is AppResult.Success -> {
                         when (result.response.status) {
                             DtoForgotPasswordStatus.SENT -> onEvent(
                                 ForgotPasswordUiEvent.NavigateToOtp(
