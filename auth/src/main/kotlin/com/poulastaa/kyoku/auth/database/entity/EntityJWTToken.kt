@@ -18,7 +18,7 @@ class EntityJWTToken : BaseIdExtendedEntity<UserId>() {
     @Column(name = "refresh_token", nullable = false, length = 1000)
     var refreshToken: String = ""
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "last_updated", nullable = false)
     @UpdateTimestamp
-    var createdAt: Timestamp? = null
+    var lastUpdated: Timestamp? = null
 }
