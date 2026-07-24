@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -244,7 +245,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                 ) { playlist ->
                     Card(
                         modifier = Modifier.fillMaxWidth().animateContentSize(),
-                        shape = MaterialTheme.shapes.small,
+                        shape = MaterialTheme.shapes.large,
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
@@ -275,13 +276,13 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                 elevation = CardDefaults.cardElevation(
                                     defaultElevation = 3.dp
                                 ),
-                                shape = MaterialTheme.shapes.small
+                                shape = MaterialTheme.shapes.medium
                             ) {
                                 val images = playlist.posters
 
                                 if (images.size >= 4) Column(
                                     modifier = Modifier
-                                        .clip(MaterialTheme.shapes.small)
+                                        .clip(MaterialTheme.shapes.medium)
                                         .fillMaxSize(),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center,
@@ -293,6 +294,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                     ) {
                                         Card(
                                             modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(),
+                                            shape = RectangleShape,
                                             colors = CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
@@ -310,6 +312,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                         }
 
                                         Card(
+                                            shape = RectangleShape,
                                             colors = CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
@@ -334,6 +337,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                     ) {
                                         Card(
                                             modifier = Modifier.fillMaxWidth(0.5f).fillMaxHeight(),
+                                            shape = RectangleShape,
                                             colors = CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
@@ -351,6 +355,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                         }
 
                                         Card(
+                                            shape = RectangleShape,
                                             colors = CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
@@ -369,6 +374,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                     }
                                 } else Card(
                                     modifier = Modifier.fillMaxSize(),
+                                    shape = RectangleShape,
                                     colors = CardDefaults.cardColors(
                                         containerColor = MaterialTheme.colorScheme.primaryContainer
                                     ),
@@ -395,7 +401,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                             ) {
                                 Text(
                                     text = playlist.title,
-                                    style = MaterialTheme.typography.bodyMedium,
+                                    style = MaterialTheme.typography.bodyLarge,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -406,7 +412,10 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                 ) {
                                     Text(
                                         text = "${playlist.tracks.size} tracks",
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                            alpha = 0.7f
+                                        ),
                                     )
 
                                     Box(
@@ -425,7 +434,10 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
 
                                     Text(
                                         text = "${playlist.totalDuration.time} ${playlist.totalDuration.unit.value}",
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                            alpha = 0.7f
+                                        ),
                                     )
                                 }
                             }
@@ -496,7 +508,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                         Card(
                                             modifier = Modifier.fillMaxHeight()
                                                 .aspectRatio(1f),
-                                            shape = MaterialTheme.shapes.small,
+                                            shape = MaterialTheme.shapes.medium,
                                             colors = CardDefaults.cardColors(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             )
@@ -522,17 +534,20 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                         ) {
                                             Text(
                                                 text = song.title,
-                                                style = MaterialTheme.typography.bodySmall,
+                                                style = MaterialTheme.typography.bodyMedium,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis
                                             )
 
                                             Text(
                                                 text = song.artist.joinToString(", "),
-                                                style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontSize = MaterialTheme.typography.bodySmall.fontSize.value.minus(
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontSize = MaterialTheme.typography.bodyMedium.fontSize.value.minus(
                                                         4
                                                     ).sp
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                    alpha = 0.8f
                                                 ),
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis
@@ -541,7 +556,10 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
 
                                         Text(
                                             text = song.duration.time,
-                                            style = MaterialTheme.typography.bodySmall
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     }
 
@@ -576,6 +594,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 ElevatedOutlinedButton(
+                    shape = MaterialTheme.shapes.large,
                     content = {
                         Box(
                             Modifier.fillMaxWidth()
