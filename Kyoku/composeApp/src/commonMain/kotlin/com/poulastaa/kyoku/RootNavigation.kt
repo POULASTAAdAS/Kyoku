@@ -16,6 +16,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -46,7 +47,11 @@ fun RootNavigation(state: RootUiState) {
     }
 
     CompositionLocalProvider(LocalNavController.provides(navController)) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = state.startDestination,
@@ -56,7 +61,50 @@ fun RootNavigation(state: RootUiState) {
                 navigation<Screens.AuthGraph>(
                     startDestination = Screens.AuthScreens.SignIn,
                 ) {
-                    composable<Screens.AuthScreens.SignIn> {
+                    composable<Screens.AuthScreens.SignIn>(
+                        exitTransition = {
+                            when {
+                                targetState.destination.hasRoute<Screens.AuthScreens.SignUp>() -> slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    animationSpec = tween(
+                                        ANIMATION_TIME_MS,
+                                        easing = EaseInOut,
+                                    ),
+                                )
+
+                                targetState.destination.hasRoute<Screens.AuthScreens.ForgotPassword>() -> slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                                    animationSpec = tween(
+                                        ANIMATION_TIME_MS,
+                                        easing = EaseInOut,
+                                    ),
+                                )
+
+                                else -> null
+                            }
+                        },
+                        popEnterTransition = {
+                            when {
+                                initialState.destination.hasRoute<Screens.AuthScreens.SignUp>() -> slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = tween(
+                                        ANIMATION_TIME_MS,
+                                        easing = EaseInOut,
+                                    ),
+                                )
+
+                                initialState.destination.hasRoute<Screens.AuthScreens.ForgotPassword>() -> slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                                    animationSpec = tween(
+                                        ANIMATION_TIME_MS,
+                                        easing = EaseInOut,
+                                    ),
+                                )
+
+                                else -> null
+                            }
+                        },
+                    ) {
                         SignInScreen()
                     }
 

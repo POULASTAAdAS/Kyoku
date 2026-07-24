@@ -11,6 +11,7 @@ import com.poulastaa.auth.ui.components.GoogleAuthResult
 import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.sign_in.screens.CompatHorizontalSignInScreen
 import com.poulastaa.auth.ui.sign_in.screens.CompatVerticalSignInScreen
+import com.poulastaa.auth.ui.sign_in.screens.ExpandedSignInScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.Screens.AuthScreens.ForgotPassword
@@ -83,8 +84,14 @@ fun SignInScreen(
                 haptic
             )
 
-            ScreenSizeType.LargeVertical -> TODO()
-            ScreenSizeType.LargeHorizontal -> TODO()
+            ScreenSizeType.LargeVertical,
+            ScreenSizeType.LargeHorizontal,
+                -> ExpandedSignInScreen(
+                    state,
+                    viewmodel,
+                    focusManager,
+                    haptic
+                )
         }
     }
 }

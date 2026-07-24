@@ -57,8 +57,21 @@ fun ForgotPasswordScreen(
                 isGetOtpEnabled
             )
 
-            ScreenSizeType.LargeVertical -> TODO()
-            ScreenSizeType.LargeHorizontal -> TODO()
+            ScreenSizeType.LargeVertical -> CompatVerticalForgotPasswordScreen(
+                navController,
+                state,
+                viewmodel,
+                focusManager,
+                isGetOtpEnabled
+            )
+
+            ScreenSizeType.LargeHorizontal -> CompatHorizontalForgotPasswordScreen(
+                navController,
+                state,
+                viewmodel,
+                focusManager,
+                isGetOtpEnabled
+            )
         }
     }
 }

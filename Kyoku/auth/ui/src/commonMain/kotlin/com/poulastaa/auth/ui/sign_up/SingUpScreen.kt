@@ -12,6 +12,7 @@ import com.poulastaa.auth.ui.components.GoogleAuthResult
 import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.sign_up.screens.CompatHorizontalSignUpScreen
 import com.poulastaa.auth.ui.sign_up.screens.CompatVerticalSignUpScreen
+import com.poulastaa.auth.ui.sign_up.screens.ExpandedSignUpScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.ScreenSizeType
@@ -79,8 +80,14 @@ fun SingUpScreen(
                 haptic
             )
 
-            ScreenSizeType.LargeVertical -> TODO()
-            ScreenSizeType.LargeHorizontal -> TODO()
+            ScreenSizeType.LargeVertical,
+            ScreenSizeType.LargeHorizontal,
+                -> ExpandedSignUpScreen(
+                    state,
+                    viewmodel,
+                    focusManager,
+                    haptic
+                )
         }
     }
 }
