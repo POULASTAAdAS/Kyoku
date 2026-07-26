@@ -1,3 +1,4 @@
+import ComposeApp
 //
 //  GoogleAuthHelperImpl.swift
 //  iosApp
@@ -5,7 +6,6 @@
 //  Created by Poulastaa Das on 26/07/26.
 //
 import GoogleSignIn
-import ComposeApp
 import UIKit
 
 final class GoogleAuthHelperImpl: GoogleAuthWrapper {
@@ -16,10 +16,10 @@ final class GoogleAuthHelperImpl: GoogleAuthWrapper {
         guard let clientId = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String else { return }
 
         GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientId)
-        GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { [weak self] result, error in
+        GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { [self] result, error in
             if let error {
                 print("Google Authentication Error: \(error.localizedDescription)")
-                self?.onResult?(
+                self.onResult?(
                     GoogleAuthResult.Error(
                         exception: KotlinException(message: error.localizedDescription)
                     )
@@ -29,7 +29,7 @@ final class GoogleAuthHelperImpl: GoogleAuthWrapper {
 
             guard let idToken = result?.user.idToken?.tokenString else {
                 print("Google Authentication Error: Token retrieval failed")
-                self?.onResult?(
+                self.onResult?(
                     GoogleAuthResult.Error(
                         exception: KotlinException(message: "Failed to get ID token")
                     )
@@ -37,7 +37,8 @@ final class GoogleAuthHelperImpl: GoogleAuthWrapper {
                 return
             }
 
-            self?.onResult?(GoogleAuthResult.Success(token: idToken))
+            guard let onResult = self.onResult else { return }
+            onResult(GoogleAuthResult.Success(token: idToken))
         }
     }
 }

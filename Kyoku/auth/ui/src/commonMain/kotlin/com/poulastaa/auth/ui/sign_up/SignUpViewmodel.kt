@@ -16,6 +16,8 @@ import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 import kotlinx.coroutines.delay
 import com.poulastaa.common.network.Error as NetworkError
 
+private const val TAG = "SignUpViewmodel"
+
 @Immutable
 class SignUpViewmodel(
     private val repo: AuthRepository,
