@@ -9,6 +9,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.auth.domain)
+            implementation(projects.common.ui)
         }
 
         androidMain.dependencies {

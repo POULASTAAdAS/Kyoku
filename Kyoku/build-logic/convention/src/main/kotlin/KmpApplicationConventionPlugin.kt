@@ -35,6 +35,7 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                     iosTarget.binaries.framework {
                         baseName = "ComposeApp"
                         isStatic = true
+                        export(project(":auth:ui"))
                     }
                 }
                 jvm()

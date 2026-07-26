@@ -22,7 +22,7 @@ kotlin {
             implementation(projects.auth.data)
             implementation(projects.auth.domain)
             implementation(projects.auth.network)
-            implementation(projects.auth.ui)
+            api(projects.auth.ui)
 
             implementation(projects.common.domain)
             implementation(projects.common.ui)

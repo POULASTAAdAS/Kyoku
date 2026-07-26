@@ -16,8 +16,8 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
+import com.poulastaa.common.ui.utils.dispatchers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.core.module.Module
@@ -32,7 +32,7 @@ actual val googleAuthModule: Module = module {
 private class AndroidGoogleAuthWrapper(
     context: Context,
 ) : GoogleAuthWrapper {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
     private var currentActivity: Activity? = context.findActivity()
 
     override var onResult: ((GoogleAuthResult) -> Unit)? = null
@@ -40,8 +40,10 @@ private class AndroidGoogleAuthWrapper(
     init {
         (context.applicationContext as? Application)?.registerActivityLifecycleCallbacks(
             object : Application.ActivityLifecycleCallbacks {
-                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) =
-                    Unit
+                override fun onActivityCreated(
+                    activity: Activity,
+                    savedInstanceState: Bundle?
+                ) = Unit
 
                 override fun onActivityStarted(activity: Activity) {
                     currentActivity = activity
