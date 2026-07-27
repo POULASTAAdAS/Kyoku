@@ -151,7 +151,7 @@ class AuthController(
 
     fun GoogleAuth.validateToken() = try {
         GoogleIdTokenVerifier.Builder(NetHttpTransport(), GsonFactory())
-            .setAudience(listOf(clientId))
+            .setAudience(clientId.split(',').map(String::trim).filter(String::isNotEmpty))
             .setIssuer(issuer)
             .build()
             .verify(this.token)?.let {

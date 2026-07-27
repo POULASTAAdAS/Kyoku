@@ -30,7 +30,8 @@ buildConfig {
     useKotlinOutput { internalVisibility = false }
 
     buildConfigField("BASE_URL", requiredSharedProperty("baseUrl"))
-    buildConfigField("GOOGLE_WEB_CLIENT_ID", requiredSharedProperty("googleWebClientId"))
+    buildConfigField("GOOGLE_MOBILE_CLIENT_ID", requiredSharedProperty("googleMobileClientId"))
+    buildConfigField("GOOGLE_JVM_CLIENT_ID", requiredSharedProperty("googleJvmClientId"))
     buildConfigField(
         "IS_DEBUG",
         !isReleaseBuild && requiredSharedProperty("debug").toBooleanStrict()

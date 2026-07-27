@@ -32,7 +32,7 @@ fun SingUpScreen(
     val state by viewmodel.uiState.collectAsState()
 
     DisposableEffect(googleAuthWrapper, viewmodel) {
-        googleAuthWrapper.onResult = { result ->
+        val callback: (GoogleAuthResult) -> Unit = { result ->
             when (result) {
                 is GoogleAuthResult.Success -> viewmodel.onAction(
                     SignUpUiAction.OnGoogleTokenReceived(
@@ -45,8 +45,13 @@ fun SingUpScreen(
                     -> viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled)
             }
         }
+        googleAuthWrapper.onResult = callback
 
-        onDispose { googleAuthWrapper.onResult = null }
+        onDispose {
+            if (googleAuthWrapper.onResult === callback) {
+                googleAuthWrapper.onResult = null
+            }
+        }
     }
 
     LaunchedEffect(state.isGoogleAuthInProgress, googleAuthWrapper) {

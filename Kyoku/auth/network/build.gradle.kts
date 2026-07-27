@@ -11,6 +11,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.auth.domain)
             implementation(projects.common.platform)
+            implementation(libs.ktor.client.core)
         }
     }
 }

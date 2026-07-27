@@ -73,7 +73,7 @@ private class AndroidGoogleAuthWrapper(
         Log.d(TAG, "Starting Google auth flow")
 
         val activity = currentActivity
-        val clientId = SharedConfig.GOOGLE_WEB_CLIENT_ID
+        val clientId = SharedConfig.GOOGLE_MOBILE_CLIENT_ID
 
         if (activity == null || clientId.isBlank()) {
             Log.e(TAG, "Google auth failed: activity missing or client id not configured")
