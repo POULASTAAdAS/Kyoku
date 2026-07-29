@@ -110,6 +110,9 @@ internal fun ExpandedSignUpScreen(
                     },
                     onGoogleAuthClick = {
                         viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)
+                    },
+                    onGoogleAuthCancelClick = {
+                        viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled)
                     }
                 )
 

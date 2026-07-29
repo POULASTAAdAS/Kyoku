@@ -103,6 +103,9 @@ internal fun CompatHorizontalSignUpScreen(
                     },
                     onGoogleAuthClick = {
                         viewmodel.onAction(SignUpUiAction.OnGoogleSignInClick)
+                    },
+                    onGoogleAuthCancelClick = {
+                        viewmodel.onAction(SignUpUiAction.OnGoogleAuthCanceled)
                     }
                 )
 

@@ -32,6 +32,7 @@ buildConfig {
     buildConfigField("BASE_URL", requiredSharedProperty("baseUrl"))
     buildConfigField("GOOGLE_MOBILE_CLIENT_ID", requiredSharedProperty("googleMobileClientId"))
     buildConfigField("GOOGLE_JVM_CLIENT_ID", requiredSharedProperty("googleJvmClientId"))
+    buildConfigField("GOOGLE_JVM_CLIENT_SECRET", requiredSharedProperty("googleJvmClientSecret"))
     buildConfigField(
         "IS_DEBUG",
         !isReleaseBuild && requiredSharedProperty("debug").toBooleanStrict()

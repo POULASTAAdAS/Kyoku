@@ -8,6 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -24,9 +26,9 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Base64
 
-private const val TAG = "GoogleAuth"
+private const val TAG = "GoogleAuthJvm"
 private const val AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
-private const val CALLBACK_TIMEOUT_SECONDS = 300L
+private const val CALLBACK_TIMEOUT_SECONDS = 30L
 private val secureRandom = SecureRandom()
 
 actual val googleAuthModule: Module = module {
@@ -37,46 +39,51 @@ private class JvmGoogleAuthWrapper(
     private val tokenExchange: GoogleTokenExchange,
 ) : GoogleAuthWrapper {
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.io)
-    private val resultLock = Any()
+    private val mutex = Mutex()
     private var pendingResult: GoogleAuthResult? = null
     private var isRunning = false
 
     override var onResult: ((GoogleAuthResult) -> Unit)? = null
-        set(value) {
-            val result = synchronized(resultLock) {
-                field = value
-                Log.d(TAG, "Google auth callback ${if (value == null) "cleared" else "registered"}")
-                if (value == null) null else pendingResult.also { pendingResult = null }
+
+    override fun startGoogleAuth() {
+        scope.launch {
+            val started = mutex.withLock {
+                if (isRunning) return@withLock false
+                isRunning = true
+                true
+            }
+            if (!started) return@launch
+
+            Log.d(TAG, "Starting desktop Google auth flow")
+            val clientId = SharedConfig.GOOGLE_JVM_CLIENT_ID
+            val clientSecret = SharedConfig.GOOGLE_JVM_CLIENT_SECRET
+            if (clientId.isBlank() || clientSecret.isBlank()) {
+                Log.e(TAG, "Google auth failed: JVM client credentials are not configured")
+                mutex.withLock { isRunning = false }
+                publish(
+                    GoogleAuthResult.Error(
+                        IllegalStateException("Google client credentials are not configured")
+                    )
+                )
+                return@launch
             }
 
-            if (value != null && result != null) value(result)
-        }
-
-    @Synchronized
-    override fun startGoogleAuth() {
-        if (isRunning) return
-
-        Log.d(TAG, "Starting desktop Google auth flow")
-        val clientId = SharedConfig.GOOGLE_JVM_CLIENT_ID
-        if (clientId.isBlank()) {
-            Log.e(TAG, "Google auth failed: JVM client ID is not configured")
-            publish(GoogleAuthResult.Error(IllegalStateException("Google client ID is not configured")))
-            return
-        }
-
-        isRunning = true
-        scope.launch {
-            val result = runCatching { authenticate(clientId) }.getOrElse { exception ->
+            val result = runCatching {
+                authenticate(clientId, clientSecret)
+            }.getOrElse { exception ->
                 Log.e(TAG, "Desktop Google auth failed", exception)
                 GoogleAuthResult.Error(exception as? Exception ?: Exception(exception))
             }
 
-            synchronized(this@JvmGoogleAuthWrapper) { isRunning = false }
+            mutex.withLock { isRunning = false }
             publish(result)
         }
     }
 
-    private suspend fun authenticate(clientId: String): GoogleAuthResult {
+    private suspend fun authenticate(
+        clientId: String,
+        clientSecret: String,
+    ): GoogleAuthResult {
         val state = randomUrlSafeValue()
         val verifier = randomUrlSafeValue(64)
         val challenge = verifier.sha256Base64Url()
@@ -99,6 +106,8 @@ private class JvmGoogleAuthWrapper(
                 Desktop.getDesktop().browse(URI(authorizationUri))
                 val callback = readCallback(server)
 
+                Log.d(TAG, "Received Google OAuth callback: $callback")
+
                 if (callback["state"] != state) return@withContext GoogleAuthResult.Error(
                     IllegalStateException(
                         "Google OAuth state validation failed"
@@ -116,6 +125,7 @@ private class JvmGoogleAuthWrapper(
                 return@withContext GoogleAuthResult.Success(
                     tokenExchange.exchange(
                         clientId = clientId,
+                        clientSecret = clientSecret,
                         redirectUri = redirectUri,
                         code = code,
                         verifier = verifier,
@@ -142,7 +152,7 @@ private class JvmGoogleAuthWrapper(
             }
 
             return query.split('&')
-                .filter { it.isNotBlank() }
+                .filter { q -> q.isNotBlank() }
                 .associate { parameter ->
                     val parts = parameter.split('=', limit = 2)
                     URLDecoder.decode(parts[0], StandardCharsets.UTF_8) to
@@ -166,8 +176,8 @@ private class JvmGoogleAuthWrapper(
         "state" to state,
     )
 
-    private fun publish(result: GoogleAuthResult) {
-        val callback = synchronized(resultLock) {
+    private suspend fun publish(result: GoogleAuthResult) {
+        val callback = mutex.withLock {
             Log.d(TAG, "Publishing Google auth result")
             onResult ?: run {
                 pendingResult = result

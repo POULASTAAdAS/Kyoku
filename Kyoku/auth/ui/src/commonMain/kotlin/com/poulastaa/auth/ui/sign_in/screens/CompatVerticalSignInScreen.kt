@@ -204,6 +204,9 @@ internal fun CompatVerticalSignInScreen(
             },
             onGoogleAuthClick = {
                 viewmodel.onAction(SignInUiAction.OnGoogleSignInClick)
+            },
+            onGoogleAuthCancelClick = {
+                viewmodel.onAction(SignInUiAction.OnGoogleAuthCanceled)
             }
         )
 

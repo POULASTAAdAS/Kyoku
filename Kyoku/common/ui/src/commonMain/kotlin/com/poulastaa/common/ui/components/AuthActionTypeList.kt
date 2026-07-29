@@ -3,8 +3,11 @@ package com.poulastaa.common.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,12 +31,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.poulastaa.common.domain.DeviceType
 import com.poulastaa.common.ui.design_system.IconGoogle
 import com.poulastaa.common.ui.design_system.IconShowMore
 import com.poulastaa.common.ui.design_system.StringContinueWithGoogle
 import com.poulastaa.common.ui.design_system.dimens
+import com.poulastaa.platfrom.PlatformUtils
 
 @Composable
 fun AuthActionTypeList(
@@ -43,6 +49,7 @@ fun AuthActionTypeList(
     isGoogleAuthInProgress: Boolean = false,
     onEmailAuthClick: () -> Unit,
     onGoogleAuthClick: () -> Unit,
+    onGoogleAuthCancelClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -105,6 +112,42 @@ fun AuthActionTypeList(
         ) {
             GoogleAuthButtonContent(isGoogleAuthInProgress)
         }
+
+        if (PlatformUtils.device == DeviceType.DESKTOP) AnimatedVisibility(
+            visible = isGoogleAuthInProgress,
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut(),
+        ) {
+            Column {
+                RowSpacer(MaterialTheme.dimens.spacing.medium)
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Not seeing the browser tab?")
+                        },
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+
+                    RowSpacer(MaterialTheme.dimens.spacing.small)
+
+                    Text(
+                        text = "Try again",
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .clickable(onClick = onGoogleAuthCancelClick)
+                            .padding(vertical = 4.dp, horizontal = 8.dp),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -122,7 +165,12 @@ private fun GoogleAuthButtonContent(
             .minimumInteractiveComponentSize(),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(
+        if (PlatformUtils.device == DeviceType.DESKTOP) Text(
+            text = "Redirecting to browser....",
+            color = MaterialTheme.colorScheme.background,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.alpha(if (isGoogleAuthInProgress) 1f else 0f)
+        ) else CircularProgressIndicator(
             modifier = Modifier
                 .size(20.dp)
                 .alpha(if (isGoogleAuthInProgress) 1f else 0f),

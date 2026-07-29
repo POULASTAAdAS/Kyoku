@@ -57,6 +57,7 @@ class KmpCommonUiConventionPlugin : Plugin<Project> {
                 add("commonMainImplementation", libs.findLibrary("koin-compose").get())
                 add("commonMainImplementation", libs.findLibrary("koin-compose-viewmodel").get())
                 add("commonMainImplementation", project(":common:domain"))
+                add("commonMainImplementation", project(":common:platform"))
                 addCommonNetworkDependency()
 
                 add("commonTestImplementation", libs.findLibrary("kotlin-test").get())
