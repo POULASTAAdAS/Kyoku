@@ -26,7 +26,7 @@ import org.koin.dsl.module
 private const val TAG = "GoogleAuth"
 
 actual val googleAuthModule: Module = module {
-    single<GoogleAuthWrapper> { AndroidGoogleAuthWrapper(get()) }
+    single<GoogleAuthWrapper>(createdAtStart = true) { AndroidGoogleAuthWrapper(get()) }
 }
 
 private class AndroidGoogleAuthWrapper(
@@ -75,8 +75,14 @@ private class AndroidGoogleAuthWrapper(
         val activity = currentActivity
         val clientId = SharedConfig.GOOGLE_MOBILE_CLIENT_ID
 
-        if (activity == null || clientId.isBlank()) {
-            Log.e(TAG, "Google auth failed: activity missing or client id not configured")
+        if (activity == null) {
+            Log.e(TAG, "Google auth failed: no active activity")
+            onResult?.invoke(GoogleAuthResult.Canceled)
+            return
+        }
+
+        if (clientId.isBlank()) {
+            Log.e(TAG, "Google auth failed: mobile client id is not configured")
             onResult?.invoke(GoogleAuthResult.Canceled)
             return
         }
