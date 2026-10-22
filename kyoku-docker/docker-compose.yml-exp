@@ -1,0 +1,279 @@
+services:
+  user-primary:
+    image: mysql:8.4.0
+    container_name: user-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_USER_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_USER_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_USER_REPLICATION_PASSWORD}
+    ports:
+      - "1000:3306"
+    volumes:
+      - ./mysql/user/sql/01_user_db.sql:/docker-entrypoint-initdb.d/01_user_db.sql
+      - ./mysql/user/sql/insert_user_db.sql:/docker-entrypoint-initdb.d/insert_user_db.sql
+
+      - ./data/mysql/data/user-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=USER
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+  playlist-primary:
+    image: mysql:8.4.0
+    container_name: playlist-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PLAYLIST_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_PLAYLIST_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_PLAYLIST_REPLICATION_PASSWORD}
+    ports:
+      - "1010:3306"
+    volumes:
+      - ./mysql/playlist/sql/01_playlist_db.sql:/docker-entrypoint-initdb.d/01_playlist_db.sql
+      
+      - ./data/mysql/data/playlist-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=PLAYLIST
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+  activity-primary:
+    image: mysql:8.4.0
+    container_name: activity-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_ACTIVITY_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_ACTIVITY_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_ACTIVITY_REPLICATION_PASSWORD}
+    ports:
+      - "1020:3306"
+    volumes:
+      - ./mysql/activity/sql/01_activity_db.sql:/docker-entrypoint-initdb.d/01_activity_db.sql
+      - ./mysql/activity/sql/1_insert_activity_db.sql:/docker-entrypoint-initdb.d/1_insert_activity_db.sql
+
+      - ./data/mysql/data/activity-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=ACTIVITY
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+  content-primary:
+    image: mysql:8.4.0
+    container_name: content-primary
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_CONTENT_PASSWORD}
+      MYSQL_REPLICATION_USER: ${MYSQL_CONTENT_REPLICATION_USER}
+      MYSQL_REPLICATION_PASSWORD: ${MYSQL_CONTENT_REPLICATION_PASSWORD}
+    ports:
+      - "1030:3306"
+    volumes:
+      - ./mysql/content/sql/01_content_db.sql:/docker-entrypoint-initdb.d/01_content_db.sql
+      - ./mysql/content/sql/02_insert_content_db_country.sql:/docker-entrypoint-initdb.d/02_insert_content_db_country.sql
+      - ./mysql/content/sql/03_insert_content_db_album.sql:/docker-entrypoint-initdb.d/03_insert_content_db_album.sql
+      - ./mysql/content/sql/04_insert_content_db_genre.sql:/docker-entrypoint-initdb.d/04_insert_content_db_genre.sql
+      - ./mysql/content/sql/05_insert_content_db_artist.sql:/docker-entrypoint-initdb.d/05_insert_content_db_artist.sql
+      - ./mysql/content/sql/06_insert_content_db_song.sql:/docker-entrypoint-initdb.d/06_insert_content_db_song.sql
+      - ./mysql/content/sql/07_insert_content_db_songInfo.sql:/docker-entrypoint-initdb.d/07_insert_content_db_songInfo.sql
+      - ./mysql/content/sql/08_insert_content_db_artistinfo.sql:/docker-entrypoint-initdb.d/08_insert_content_db_artistinfo.sql
+
+      - ./mysql/content/sql/100_insert_content_db_relation_artist_album.sql:/docker-entrypoint-initdb.d/100_insert_content_db_relation_artist_album.sql
+      - ./mysql/content/sql/101_insert_content_db_relation_artist_country.sql:/docker-entrypoint-initdb.d/101_insert_content_db_relation_artist_country.sql
+      - ./mysql/content/sql/102_insert_content_db_relation_artist_genre.sql:/docker-entrypoint-initdb.d/102_insert_content_db_relation_artist_genre.sql
+      - ./mysql/content/sql/103_insert_content_db_relation_song_album.sql:/docker-entrypoint-initdb.d/103_insert_content_db_relation_song_album.sql
+      - ./mysql/content/sql/104_insert_content_db_relation_song_artist.sql:/docker-entrypoint-initdb.d/104_insert_content_db_relation_song_artist.sql
+      - ./mysql/content/sql/105_insert_content_db_relation_song_genre.sql:/docker-entrypoint-initdb.d/105_insert_content_db_relation_song_genre.sql
+      - ./mysql/content/sql/106_insert_content_db_relation_song_country.sql:/docker-entrypoint-initdb.d/106_insert_content_db_relation_song_country.sql
+      
+      - ./data/mysql/data/content-primary/data:/var/lib/mysql
+    networks:
+      - db-network
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=CONTENT
+      --gtid-mode=ON
+      --enforce-gtid-consistency=ON
+      --log-replica-updates=ON
+      --binlog-expire-logs-seconds=604800
+
+  activity-nosql:
+    image: mongo:latest
+    container_name: activity-nosql
+    ports:
+      - "1038:27017"
+    environment:
+      # MONGO_INITDB_ROOT_USERNAME: ${MONGO_ACTIVITY_USER}
+      MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ACTIVITY_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - ./nosql/activity/1_init.js:/docker-entrypoint-initdb.d/1_init.js:ro
+      
+      - ./data/mongo/activity:/data/db
+    restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ports:
+      - "1200:9200"
+    volumes:
+      - ./data/elastic:/usr/share/elasticsearch/data 
+    networks:
+      - db-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u elastic:${ELASTIC_ROOT_PASSWORD} -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=true
+
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+
+    ports:
+      - "1201:5601"
+    networks:
+      - db-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  elastic-setup:
+    build:
+      context: ./elastic
+      dockerfile: Dockerfile
+    container_name: elastic-setup
+    networks:
+      - db-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      content-primary:
+        condition: service_started
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ES_USER=elastic
+      - ES_PASSWORD=${ELASTIC_ROOT_PASSWORD}
+      - MYSQL_HOST=content-primary
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
+    command: >
+      sh -c "echo 'Starting setup...' &&
+             python setup_index.py &&
+             echo 'Setup complete. Starting import...' &&
+             python import_data.py"
+    restart: "on-failure:3"
+    profiles:
+      - setup
+
+
+  gateway-redis:
+    image: redis/redis-stack:latest
+    container_name: gateway-redis
+    restart: always
+    ports:
+      - "1040:6379"
+    environment:
+      # REDIS_PASSWROD: ${REDIS_CONTENT_PASSWORD}
+      REDIS_PASSWROD: contentRedis
+    command: [
+      "redis-server",
+      "--requirepass",
+      "contentRedis",
+      "--appendonly",
+      "yes"
+    ]
+    volumes:
+      - "./data/redis/gateway:/data"
+
+  kyoku-file-minio:
+    image: minio/minio:latest
+    container_name: kyoku-file-minio
+    restart: always
+    ports:
+      - "1080:9000"   # API port
+      - "1081:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./data/minio/file/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  kyoku-song-minio:
+    image: minio/minio:latest
+    container_name: kyoku-song-minio
+    restart: always
+    ports:
+      - "1082:9000"   # API port
+      - "1083:9001"   # Console port
+    environment:
+      MINIO_ROOT_USER: ${MINIO_SONG_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_SONG_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./data/minio/song/upload-storage:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+
+  notification-rabbitmq:
+    image: rabbitmq:3.12.0-management
+    container_name: notification-rabbitmq
+    ports:
+      - "1100:5672"     # AMQP (your custom host port)
+      - "14000:15672"   # management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: root
+      RABBITMQ_DEFAULT_PASS: rabbitNotification
+    volumes:
+      - "./data/rabbit/notification:/var/lib/rabbitmq"
+
+
+networks:
+  db-network:
+    driver: bridge

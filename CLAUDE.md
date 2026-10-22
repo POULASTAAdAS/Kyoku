@@ -15,3 +15,7 @@
 - Do not revert any outside code without asking.
 - Do not push anything to Git, ever.
 - Ask permission before running any Git command.
+
+# Plans
+
+- Song streaming (signed URLs + nginx, songs moved out of MinIO): `plans/song-streaming-setup.md`. Read and follow this file only when the user talks about implementing song streaming, HLS/manifest/chunk auth, the media nginx, or migrating songs out of MinIO; otherwise ignore it.

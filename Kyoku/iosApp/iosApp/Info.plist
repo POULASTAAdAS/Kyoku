@@ -1,10 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-        "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-        <key>CADisableMinimumFrameDurationOnPhone</key>
-        <true />
-        <key>UILaunchStoryboardName</key>
-        <string>LaunchScreen</string>
-    </dict>
+<dict>
+	<key>GIDClientID</key>
+	<string>150331162659-d43f7e0l6idgum1qg329k1esmf3100m3.apps.googleusercontent.com</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.150331162659-d43f7e0l6idgum1qg329k1esmf3100m3</string>
+			</array>
+		</dict>
+	</array>
+</dict>
 </plist>
