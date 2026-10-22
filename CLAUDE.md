@@ -19,3 +19,7 @@
 # Plans
 
 - Song streaming (signed URLs + nginx, songs moved out of MinIO): `plans/song-streaming-setup.md`. Read and follow this file only when the user talks about implementing song streaming, HLS/manifest/chunk auth, the media nginx, or migrating songs out of MinIO; otherwise ignore it.
+
+# Infrastructure
+
+- Cloudflare tunnel (`cloudflared`, tunnel `kyoku`): `kyoku-docker/cloudflare-tunnel.md`. Read this file first whenever starting or checking the local infra, or when a task involves the tunnel, public hostnames, exposing a service (e.g. MinIO/static files), or Cloudflare caching. Treat it as the source of truth for the current tunnel setup instead of assuming one.
