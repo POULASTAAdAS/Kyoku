@@ -222,22 +222,75 @@ services:
       - "./data/redis/gateway:/data"
 
   kyoku-file-minio:
-    image: minio/minio:latest
+    # minio/minio is no longer published (Docker Hub repo removed). Chainguard ships the maintained free build.
+    # latest-dev includes a shell (busybox), needed by the healthcheck.
+    image: cgr.dev/chainguard/minio:latest-dev
     container_name: kyoku-file-minio
     restart: always
+    user: "${KYOKU_UID:-502}:${KYOKU_GID:-20}"   # host user, so bind mounted data stays owned by you
     ports:
-      - "1080:9000"   # API port
-      - "1081:9001"   # Console port
+      - "127.0.0.1:1080:9000"   # API port (local only; public access goes through kyoku-static-nginx)
+      - "127.0.0.1:1081:9001"   # Console port (local only)
     environment:
       MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
     volumes:
-      - ./data/minio/file/upload-storage:/data
+      - ${MINIO_DATA_DIR:-../../data/minio}/file:/data
+    networks:
+      - db-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD-SHELL", "curl -fs http://localhost:9000/minio/health/live || wget -q -O /dev/null http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
+      retries: 3
+
+  # One-off job: creates the public "cdn" bucket and uploads compressed images.
+  # Run manually: docker compose --profile static-setup run --rm kyoku-static-setup
+  kyoku-static-setup:
+    image: cgr.dev/chainguard/minio-client:latest-dev
+    container_name: kyoku-static-setup
+    user: "${KYOKU_UID:-502}:${KYOKU_GID:-20}"
+    entrypoint: ["/bin/sh", "/scripts/setup-static-bucket.sh"]
+    environment:
+      MINIO_ENDPOINT: http://kyoku-file-minio:9000
+      MINIO_ROOT_USER: ${MINIO_FILE_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_FILE_ROOT_PASSWORD}
+      STATIC_BUCKET: ${STATIC_BUCKET:-cdn}
+      HOME: /tmp   # mc writes its config under $HOME/.mc; the host uid has no home in the image
+    volumes:
+      - ./minio/static:/scripts:ro
+      - ${COMPRESSED_DATA_DIR:-../../data/compressed}:/source:ro
+    networks:
+      - db-network
+    depends_on:
+      kyoku-file-minio:
+        condition: service_healthy
+    profiles:
+      - static-setup
+
+  # Public static images (artist / genre / poster). Cache layer between the cloudflared tunnel and MinIO.
+  kyoku-static-nginx:
+    image: nginx:1.27-alpine
+    container_name: kyoku-static-nginx
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1084:80"   # cloudflared: kyoku-static.poulastaa.dev -> http://localhost:1084
+    environment:
+      STATIC_BUCKET: ${STATIC_BUCKET:-cdn}
+      NGINX_ENVSUBST_FILTER: "^STATIC_"
+    volumes:
+      - ./nginx/static/static.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ${NGINX_CACHE_DIR:-../../data/nginx/static-cache}:/var/cache/nginx/static
+    networks:
+      - db-network
+    depends_on:
+      kyoku-file-minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
+      interval: 30s
+      timeout: 10s
       retries: 3
 
   kyoku-song-minio:
