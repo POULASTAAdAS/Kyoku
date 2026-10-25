@@ -1,0 +1,104 @@
+# Public static images: kyoku-static.poulastaa.dev
+#
+# cloudflared tunnel -> this nginx (disk cache) -> MinIO bucket ${STATIC_BUCKET} (anonymous GetObject only)
+#
+# Images are immutable: a changed image must be uploaded under a new object name,
+# never overwritten, otherwise Cloudflare / browsers keep serving the old one.
+
+proxy_cache_path /var/cache/nginx/static
+                 levels=1:2
+                 keys_zone=static_cache:50m
+                 max_size=10g
+                 inactive=30d
+                 use_temp_path=off;
+
+# Raw (still percent-encoded) request path without the query string.
+# Object names contain spaces, '#', '&', '+' and non ASCII characters, so the path is forwarded
+# exactly as the client encoded it. Query strings are dropped so S3 options
+# (e.g. ?response-content-type=) cannot be passed through to MinIO.
+map $request_uri $static_object_path {
+    ~^(?<path>[^?]*) $path;
+}
+
+# Docker's embedded DNS. Re-resolve kyoku-file-minio so a recreated MinIO container (new IP)
+# is picked up without restarting nginx. "resolve" on the upstream server needs nginx >= 1.27.3.
+resolver 127.0.0.11 valid=30s ipv6=off;
+
+upstream kyoku_static_minio {
+    zone kyoku_static_minio 64k;
+    server kyoku-file-minio:9000 resolve;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name _;
+
+    server_tokens off;
+
+    location = /health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok";
+    }
+
+    location ~ ^/(artist|genre|poster)/ {
+        limit_except GET {
+            deny all;
+        }
+
+        # The raw path is forwarded to MinIO, so reject anything nginx and MinIO could normalize
+        # differently: "..", encoded ".", "/" and "\". No real image path contains these.
+        if ($request_uri ~* "\.\.|%2e|%2f|%5c") {
+            return 400;
+        }
+
+        proxy_pass http://kyoku_static_minio/${STATIC_BUCKET}$static_object_path;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host kyoku-file-minio:9000;
+
+        # Never forward client auth / cookies to MinIO, the bucket is anonymous read only
+        proxy_set_header Authorization "";
+        proxy_set_header Cookie "";
+
+        # Required for caching (common MinIO proxy examples turn this off)
+        proxy_buffering on;
+
+        proxy_cache static_cache;
+        # Same (still encoded) path that is sent to MinIO, so a cached response always matches its object
+        proxy_cache_key $static_object_path;
+        proxy_cache_valid 200 30d;
+        proxy_cache_valid 403 404 1m;
+        proxy_cache_lock on;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_ignore_headers Cache-Control Expires Set-Cookie;
+
+        # Hide MinIO internals
+        proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header x-minio-deployment-id;
+        proxy_hide_header x-content-type-options;
+        proxy_hide_header Strict-Transport-Security;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header Cache-Control;
+
+        # Without s3:ListBucket MinIO answers a missing object with 403 (not 404); expose both as 404
+        proxy_intercept_errors on;
+        error_page 403 404 = @not_found;
+
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Cache-Status $upstream_cache_status always;
+    }
+
+    location @not_found {
+        add_header Cache-Control "public, max-age=60" always;
+        return 404;
+    }
+
+    location / {
+        return 404;
+    }
+}
