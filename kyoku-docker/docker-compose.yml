@@ -275,7 +275,7 @@ services:
     container_name: kyoku-static-nginx
     restart: unless-stopped
     ports:
-      - "127.0.0.1:1084:80"   # cloudflared: kyoku-static.poulastaa.dev -> http://localhost:1084
+      - "127.0.0.1:1084:80"   # cloudflared: kyoku-image-cdn.poulastaa.dev -> http://localhost:1084
     environment:
       STATIC_BUCKET: ${STATIC_BUCKET:-cdn}
       NGINX_ENVSUBST_FILTER: "^STATIC_"

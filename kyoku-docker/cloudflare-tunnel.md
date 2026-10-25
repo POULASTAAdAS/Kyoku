@@ -8,8 +8,8 @@ Exposes the local Kyoku **gateway** (`localhost:8080`) and the **static images**
 |-------------------|------------------------------------------------------------------|
 | Tunnel name       | `kyoku`                                                          |
 | Tunnel ID         | `ba9c2d5f-9969-4708-914a-b4882c5330ec`                           |
-| Connected domains | `kyoku-gateway.poulastaa.dev`, `kyoku-static.poulastaa.dev`      |
-| Public URLs       | `https://kyoku-gateway.poulastaa.dev`, `https://kyoku-static.poulastaa.dev` |
+| Connected domains | `kyoku-gateway.poulastaa.dev`, `kyoku-image-cdn.poulastaa.dev`      |
+| Public URLs       | `https://kyoku-gateway.poulastaa.dev`, `https://kyoku-image-cdn.poulastaa.dev` |
 | Local targets     | `http://localhost:8080` (gateway), `http://localhost:1084` (static images nginx) |
 | Config file       | `~/.cloudflared/config.yml` (copy at `/etc/cloudflared/config.yml`) |
 | Credentials file  | `~/.cloudflared/ba9c2d5f-9969-4708-914a-b4882c5330ec.json`       |
@@ -26,14 +26,14 @@ credentials-file: /Users/poulastaad/.cloudflared/ba9c2d5f-9969-4708-914a-b4882c5
 ingress:
   - hostname: kyoku-gateway.poulastaa.dev
     service: http://localhost:8080
-  - hostname: kyoku-static.poulastaa.dev
+  - hostname: kyoku-image-cdn.poulastaa.dev
     service: http://localhost:1084
   - service: http_status:404
 ```
 
-Only `kyoku-gateway.poulastaa.dev` and `kyoku-static.poulastaa.dev` are routed; any other hostname returns `404`.
+Only `kyoku-gateway.poulastaa.dev` and `kyoku-image-cdn.poulastaa.dev` are routed; any other hostname returns `404`.
 
-## Static images (`kyoku-static.poulastaa.dev`)
+## Static images (`kyoku-image-cdn.poulastaa.dev`)
 
 ```
 client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (disk cache) -> kyoku-file-minio bucket "cdn"
@@ -42,8 +42,8 @@ client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (d
 - Public, no auth. MinIO bucket `cdn` allows anonymous `GetObject` only (no listing). MinIO ports are bound to `127.0.0.1`.
 - Paths: `/artist/<Artist>/<file>.webp`, `/genre/<Genre>/<file>.webp`, `/poster/<file>.webp`. Everything else is `404`.
 - Images are immutable (`Cache-Control: public, max-age=31536000, immutable`). Never overwrite an object; upload a changed image under a new name.
-- One-time DNS record: `cloudflared tunnel route dns kyoku kyoku-static.poulastaa.dev`.
-- Cloudflare dashboard Cache Rule (Caching → Cache Rules): `Hostname equals kyoku-static.poulastaa.dev` → **Eligible for cache**, Edge TTL **ignore origin, 1 month**, Browser TTL **respect origin**.
+- One-time DNS record: `cloudflared tunnel route dns kyoku kyoku-image-cdn.poulastaa.dev`.
+- Cloudflare dashboard Cache Rule (Caching → Cache Rules): `Hostname equals kyoku-image-cdn.poulastaa.dev` → **Eligible for cache**, Edge TTL **ignore origin, 1 month**, Browser TTL **respect origin**.
 - Full setup steps: `kyoku-docker/static-images-setup.md`.
 
 ## How to start
@@ -107,7 +107,7 @@ Expected: `{"status":"UP"}`. A Cloudflare `502`/`1033` error means the tunnel is
 
 ```bash
 curl -I http://localhost:1084/health
-curl -I https://kyoku-static.poulastaa.dev/genre/Jazz/Jazz_1.webp
+curl -I https://kyoku-image-cdn.poulastaa.dev/genre/Jazz/Jazz_1.webp
 ```
 
 Expected: `200`, `Content-Type: image/webp`. Repeat the second call: `CF-Cache-Status: HIT` (Cloudflare edge) and `X-Cache-Status: HIT` (nginx, shown only when Cloudflare missed).

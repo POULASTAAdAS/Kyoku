@@ -1,4 +1,4 @@
-# Public static images: kyoku-static.poulastaa.dev
+# Public static images: kyoku-image-cdn.poulastaa.dev
 #
 # cloudflared tunnel -> this nginx (disk cache) -> MinIO bucket ${STATIC_BUCKET} (anonymous GetObject only)
 #

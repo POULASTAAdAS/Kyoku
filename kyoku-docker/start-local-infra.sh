@@ -135,6 +135,7 @@ echo "  MySQL: user=1000 playlist=1010 activity=1020 content=1030"
 echo "  MongoDB: activity=1038"
 echo "  Redis: gateway=1040"
 echo "  MinIO: file=1080/1081 song=1082/1083"
+echo "  Static images (nginx cache): 1084 -> https://kyoku-image-cdn.poulastaa.dev"
 echo "  RabbitMQ: amqp=1100 management=14000"
 echo "  Elasticsearch/Kibana: 1200/1201"
 echo ""
@@ -151,6 +152,7 @@ fi
 if [[ "$SKIP_TUNNEL" == false ]]; then
   echo "[INFO] Opening Kyoku cloudflared tunnel in a separate Terminal window..."
   echo "[INFO] Tunnel target: kyoku-gateway.poulastaa.dev -> http://localhost:8080"
+  echo "[INFO] Tunnel target: kyoku-image-cdn.poulastaa.dev -> http://localhost:1084"
   start_cloudflared_terminal
   echo "[SUCCESS] cloudflared Terminal window opened. Leave it running."
 else
