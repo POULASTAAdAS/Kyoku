@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "================================================================================================"
-echo "      Elasticsearch Artist Search Setup"
+echo "      Elasticsearch Artist + Song Search Setup"
 echo "================================================================================================"
 
 # Navigate to the parent directory of this script
@@ -101,8 +101,10 @@ echo "----------------------------------------"
 echo "  Step 5: Running Setup and Import"
 echo "----------------------------------------"
 echo "[INFO] This will:"
-echo "       1. Create the 'artists' index with mappings"
+echo "       1. Create the 'artists' index with mappings (elastic/artist)"
 echo "       2. Import artist data from MySQL to Elasticsearch"
+echo "       3. Create the 'songs' index with mappings (elastic/song)"
+echo "       4. Import song data from MySQL to Elasticsearch"
 echo ""
 docker_compose --profile setup run --rm elastic-setup
 
@@ -126,24 +128,26 @@ echo "  Step 6: Verifying Import"
 echo "----------------------------------------"
 echo "[INFO] Checking document count in Elasticsearch..."
 
-COUNT_RESPONSE=$(curl -s -u "elastic:${ELASTIC_ROOT_PASSWORD}" http://localhost:1200/artists/_count 2>/dev/null)
-if [ $? -ne 0 ]; then
-    echo "[WARNING] Could not query Elasticsearch for document count."
-else
-    COUNT_LINE=$(echo "$COUNT_RESPONSE" | grep -o '"count":[0-9]*')
-    echo "[INFO] Document count response: ${COUNT_LINE}"
-fi
+for INDEX in artists songs; do
+    COUNT_RESPONSE=$(curl -s -u "elastic:${ELASTIC_ROOT_PASSWORD}" "http://localhost:1200/${INDEX}/_count" 2>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo "[WARNING] Could not query Elasticsearch for '${INDEX}' document count."
+    else
+        COUNT_LINE=$(echo "$COUNT_RESPONSE" | grep -o '"count":[0-9]*')
+        echo "[INFO] '${INDEX}' document count response: ${COUNT_LINE}"
+    fi
+done
 
 echo ""
 echo "================================================================================================"
 echo "                         ELASTICSEARCH SETUP COMPLETE!"
 echo "================================================================================================"
 echo ""
-echo "[INFO] Your Elasticsearch artist search is now configured."
+echo "[INFO] Your Elasticsearch artist and song search is now configured."
 echo "[INFO] Next steps:"
 echo "       - Access Kibana at: http://localhost:1201"
 echo "       - Login with: elastic / ${ELASTIC_ROOT_PASSWORD}"
-echo "       - Explore the 'artists' index in Dev Tools"
+echo "       - Explore the 'artists' and 'songs' indexes in Dev Tools"
 echo ""
 echo "[INFO] Connection details:"
 echo "  Elasticsearch:    http://localhost:1200"

@@ -16,9 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy Python scripts
-COPY setup_index.py .
-COPY import_data.py .
+# Copy Python scripts (one folder per index)
+COPY artist/ ./artist/
+COPY song/ ./song/
 
 # Default command - can be overridden
-CMD ["python", "-c", "print('Run with: python setup_index.py && python import_data.py')"]
+CMD ["python", "-c", "print('Run with: python artist/setup_index.py && python artist/import_data.py && python song/setup_index.py && python song/import_data.py')"]

@@ -194,10 +194,14 @@ services:
       - MYSQL_USER=root
       - MYSQL_PASSWORD=${MYSQL_ROOT_CONTENT_PASSWORD}
     command: >
-      sh -c "echo 'Starting setup...' &&
-             python setup_index.py &&
-             echo 'Setup complete. Starting import...' &&
-             python import_data.py"
+      sh -c "echo 'Starting artist setup...' &&
+             python artist/setup_index.py &&
+             echo 'Artist setup complete. Starting artist import...' &&
+             python artist/import_data.py &&
+             echo 'Starting song setup...' &&
+             python song/setup_index.py &&
+             echo 'Song setup complete. Starting song import...' &&
+             python song/import_data.py"
     restart: "on-failure:3"
     profiles:
       - setup

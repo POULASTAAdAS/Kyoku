@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo ================================================================================================
-echo       Elasticsearch Artist Search Setup
+echo       Elasticsearch Artist + Song Search Setup
 echo ================================================================================================
 
 REM Load environment variables from .env file
@@ -87,8 +87,10 @@ echo ----------------------------------------
 echo   Step 5: Running Setup and Import
 echo ----------------------------------------
 echo [INFO] This will:
-echo        1. Create the 'artists' index with mappings
+echo        1. Create the 'artists' index with mappings (elastic\artist)
 echo        2. Import artist data from MySQL to Elasticsearch
+echo        3. Create the 'songs' index with mappings (elastic\song)
+echo        4. Import song data from MySQL to Elasticsearch
 echo.
 docker-compose --profile setup run --rm elastic-setup
 
@@ -112,28 +114,28 @@ echo ----------------------------------------
 echo   Step 6: Verifying Import
 echo ----------------------------------------
 echo [INFO] Checking document count in Elasticsearch...
-curl -s -u elastic:%ELASTIC_ROOT_PASSWORD% http://localhost:1200/artists/_count > temp_count.json 2>nul
-if !errorlevel! neq 0 (
-    echo [WARNING] Could not query Elasticsearch for document count.
-    goto :skip_verify
+for %%X in (artists songs) do (
+    curl -s -u elastic:%ELASTIC_ROOT_PASSWORD% http://localhost:1200/%%X/_count > temp_count.json 2>nul
+    if !errorlevel! neq 0 (
+        echo [WARNING] Could not query Elasticsearch for '%%X' document count.
+    ) else (
+        findstr "count" temp_count.json > temp_count_only.txt 2>nul
+        set /p COUNT_LINE=<temp_count_only.txt 2>nul
+        echo [INFO] '%%X' document count response: !COUNT_LINE!
+    )
+    del temp_count.json temp_count_only.txt 2>nul
 )
 
-findstr "count" temp_count.json > temp_count_only.txt 2>nul
-set /p COUNT_LINE=<temp_count_only.txt 2>nul
-echo [INFO] Document count response: !COUNT_LINE!
-del temp_count.json temp_count_only.txt 2>nul
-
-:skip_verify
 echo.
 echo ================================================================================================
 echo                          ELASTICSEARCH SETUP COMPLETE!
 echo ================================================================================================
 echo.
-echo [INFO] Your Elasticsearch artist search is now configured.
+echo [INFO] Your Elasticsearch artist and song search is now configured.
 echo [INFO] Next steps:
 echo        - Access Kibana at: http://localhost:1201
 echo        - Login with: elastic / %ELASTIC_ROOT_PASSWORD%
-echo        - Explore the 'artists' index in Dev Tools
+echo        - Explore the 'artists' and 'songs' indexes in Dev Tools
 echo.
 echo [INFO] Connection details:
 echo   Elasticsearch:    http://localhost:1200
