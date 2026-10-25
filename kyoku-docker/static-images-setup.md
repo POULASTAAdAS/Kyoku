@@ -1,6 +1,6 @@
 # Static Images Setup (MinIO + nginx cache + Cloudflare)
 
-Public artist / genre / song poster images, served from `https://kyoku-static.poulastaa.dev`.
+Public artist / genre / song poster images, served from `https://kyoku-image-cdn.poulastaa.dev`.
 
 ```
 client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (disk cache) -> kyoku-file-minio bucket "cdn"
@@ -114,11 +114,11 @@ First `X-Cache-Status: MISS`, then `HIT`. `Cache-Control: public, max-age=315360
 ### 5. Cloudflare
 
 1. Tunnel ingress already added in `~/.cloudflared/config.yml` (and `/etc/cloudflared/config.yml`):
-   `kyoku-static.poulastaa.dev -> http://localhost:1084`.
-2. DNS record (once): `cloudflared tunnel route dns kyoku kyoku-static.poulastaa.dev`
+   `kyoku-image-cdn.poulastaa.dev -> http://localhost:1084`.
+2. DNS record (once): `cloudflared tunnel route dns kyoku kyoku-image-cdn.poulastaa.dev`
 3. Restart the tunnel (`cloudflared tunnel --config ~/.cloudflared/config.yml run kyoku`).
 4. Cloudflare dashboard → `poulastaa.dev` → Caching → Cache Rules → Create rule:
-   - When: `Hostname equals kyoku-static.poulastaa.dev`
+   - When: `Hostname equals kyoku-image-cdn.poulastaa.dev`
    - Cache eligibility: **Eligible for cache**
    - Edge TTL: **Ignore cache-control header and use this TTL** → 1 month
    - Browser TTL: **Respect origin TTL**
@@ -126,7 +126,7 @@ First `X-Cache-Status: MISS`, then `HIT`. `Cache-Control: public, max-age=315360
 Check (run twice):
 
 ```bash
-curl -I https://kyoku-static.poulastaa.dev/genre/Jazz/Jazz_1.webp
+curl -I https://kyoku-image-cdn.poulastaa.dev/genre/Jazz/Jazz_1.webp
 ```
 
 Second call: `CF-Cache-Status: HIT`.
@@ -135,30 +135,33 @@ Second call: `CF-Cache-Status: HIT`.
 
 Only after step 5 passes.
 
-1. Backup:
+The image URLs live in the content seed files. MySQL runs them **only when its data folder is empty**,
+so an existing content DB keeps the old paths until it is rebuilt from the updated seed files.
+
+1. Rewrite the seed files with full CDN URLs (reads the compressed folder; rewrites
+   `kyoku-docker/mysql/content/sql/04/05/06_insert_content_db_*.sql`, `master_playlist` untouched):
 
    ```bash
-   docker exec content-primary sh -c 'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --single-transaction CONTENT' > content-backup-$(date +%F).sql
-   ```
-
-2. Generate URLs (reads compressed folder + seed SQL; writes `DataManipulationScripts/output/` and rewrites the seed files `04/05/06_insert_content_db_*.sql`):
-
-   ```bash
+   pip3 install python-dotenv   # once
    cd DataManipulationScripts
-   python GenerateCdnImageUrls.py
+   python3 GenerateCdnImageUrls.py
    ```
 
    Expected: genre and song posters all resolve; ~31 artists → `NULL` (their raw images were not real images, see `compressed/compression_report.csv`). Details in `output/cdn_url_report.csv`.
 
-3. Review the diff of the seed files and `output/update_content_db_cdn_urls.sql`.
+2. Review the diff of the three seed files.
 
-4. Apply to the running DB (primary only, replicas follow):
+3. Start the content DB on an empty data folder so the seed files are loaded.
+   If `data/mysql/data/content-primary` exists, stop and remove the container and move that folder aside first
+   (runtime data such as popularity / followers counts is not in the seed files).
 
    ```bash
-   docker exec -i content-primary sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < DataManipulationScripts/output/update_content_db_cdn_urls.sql
+   cd kyoku-docker
+   docker compose up -d content-primary
+   docker compose logs -f content-primary   # wait for "ready for connections" after the init scripts finish
    ```
 
-5. Refresh data copied from the DB:
+4. Refresh data copied from the DB:
    - Elasticsearch artists: `docker compose --profile setup run --rm elastic-setup`
    - Redis cached objects with old paths: `GENRE` (content, 30 min TTL), `SONG:*` (playlist, 6 h TTL). Wait for TTL or delete:
      `docker exec gateway-redis redis-cli -a contentRedis --scan --pattern 'SONG:*' | xargs -r docker exec -i gateway-redis redis-cli -a contentRedis del` and the same for `GENRE`.
@@ -174,6 +177,6 @@ and `curl -I` each URL → `200`.
 
 ## Notes
 
-- Changing the domain later = bulk `UPDATE` (full URLs are stored). Re-run the generator with a new `STATIC_CDN_BASE_URL`.
+- Full URLs are stored. The generator reads the old relative paths (`/artist/...`, `/genre/...`, `/song/...`), so it only works on the original seed files. To change the domain later, replace the domain in the three seed files and rebuild the content DB.
 - Never overwrite an object in `cdn`; caches keep the old one for up to a year. Upload under a new name.
 - Cloudflare free plan CDN terms: fine for normal app images; revisit if image traffic becomes very large.
