@@ -125,12 +125,25 @@ internal fun toCurl(
     headers.entries()
         .filterNot { (key, _) -> key.equals(HttpHeaders.ContentType, ignoreCase = true) }
         .forEach { (key, values) ->
-            values.forEach { append(" -H '$key: ${it.escapeCurl()}'") }
+            values.filter { it.isValidHeaderValue(key) }
+                .forEach { append(" -H '$key: ${it.escapeCurl()}'") }
         }
     if (bodyJson != null) {
         append(" -H '${HttpHeaders.ContentType}: ${ContentType.Application.Json}'")
         append(" --data-raw '${bodyJson.escapeCurl()}'")
     }
+}
+
+/**
+ * Skips blank header values and auth headers that carry only a scheme without credentials
+ * (e.g. `Bearer ` with no token).
+ */
+@PublishedApi
+internal fun String.isValidHeaderValue(key: String): Boolean {
+    if (isBlank()) return false
+    if (!key.equals(HttpHeaders.Authorization, ignoreCase = true)) return true
+
+    return trim().substringAfter(' ', missingDelimiterValue = "").isNotBlank()
 }
 
 @PublishedApi
