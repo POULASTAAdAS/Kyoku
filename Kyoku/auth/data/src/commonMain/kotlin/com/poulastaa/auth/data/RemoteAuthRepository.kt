@@ -44,11 +44,8 @@ class RemoteAuthRepository(
     }
 
 
-    override suspend fun googleAuth(
-        token: String,
-        countryCode: String,
-    ): AppResult<DtoUser, ApiError> {
-        val response = remote.googleAuth(token, countryCode)
+    override suspend fun googleAuth(token: String): AppResult<DtoUser, ApiError> {
+        val response = remote.googleAuth(token)
         response.saveAuthData()
 
         return response.map { it.user }

@@ -88,7 +88,7 @@ class SignInViewmodel(
             }
 
             is SignInUiAction.OnGoogleAuthSuccess -> {
-                when (val result = repo.googleAuth(action.token, TODO())) {
+                when (val result = repo.googleAuth(action.token)) {
                     is AppResult.Error -> {
                         updateState { copy(isGoogleAuthInProgress = false) }
                         handleSignInError(result.error.error)

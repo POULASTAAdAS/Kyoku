@@ -11,6 +11,6 @@ interface AuthRemoteDatasource {
     suspend fun signIn(email: String, password: String): AppResult<DtoEmailAuthResponse, ApiError>
     suspend fun signUp(email: String, username: String, password: String): AppResult<DtoEmailAuthResponse, ApiError>
     suspend fun checkVerificationStatus(email: String): AppResult<DtoTokens, ApiError>
-    suspend fun googleAuth(token: String, countryCode: String): AppResult<DtoAuthResponse, ApiError>
+    suspend fun googleAuth(token: String): AppResult<DtoAuthResponse, ApiError>
     suspend fun sendForgotPasswordMail(email: String): AppResult<DtoForgotPasswordResponse, ApiError>
 }

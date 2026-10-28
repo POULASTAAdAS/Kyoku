@@ -62,16 +62,13 @@ class KtorAuthDatasource(
             ),
         ).map(AuthResponse::toDto)
 
-    override suspend fun googleAuth(
-        token: String,
-        countryCode: String,
-    ): AppResult<DtoAuthResponse, ApiError> =
+    override suspend fun googleAuth(token: String): AppResult<DtoAuthResponse, ApiError> =
         client.req<GoogleAuthRequest, GoogleAuthResponse, ApiError.Authentication>(
             route = ApiEndpoints.Auth.GOOGLE_AUTH,
             type = ApiRequestType.POST,
             body = GoogleAuthRequest(
                 token = token,
-                code = countryCode,
+                code = PlatformUtils.countryCode,
             ),
         ).map(GoogleAuthResponse::toDto)
 

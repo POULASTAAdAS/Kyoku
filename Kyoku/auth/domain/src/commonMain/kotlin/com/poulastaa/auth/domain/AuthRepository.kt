@@ -9,6 +9,6 @@ interface AuthRepository {
     suspend fun signIn(email: String, password: String): AppResult<Boolean, ApiError>
     suspend fun signUp(email: String, username: String, password: String): AppResult<Boolean, ApiError>
     suspend fun checkVerificationStatus(email: String): AppResult<Unit, ApiError>
-    suspend fun googleAuth(token: String, countryCode: String): AppResult<DtoUser, ApiError>
+    suspend fun googleAuth(token: String): AppResult<DtoUser, ApiError>
     suspend fun sendForgotPasswordMail(email: String): AppResult<DtoForgotPasswordResponse, ApiError>
 }
