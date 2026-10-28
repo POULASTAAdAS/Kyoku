@@ -33,6 +33,15 @@
     <string name="reset_password_message">Enter the email associated with your account and we will send an email with verification code to reset your password.</string>
     <string name="get_otp">Get OTP</string>
 
+    <!--    Input Validation-->
+    <string name="username_length_error">Use 4+ characters</string>
+    <string name="username_max_length_error">Max 24 characters</string>
+    <string name="username_first_four_error">First 4 must be letters</string>
+    <string name="username_char_error">Use letters, numbers, . or _</string>
+    <string name="password_length_error">Use 8+ characters</string>
+    <string name="password_letter_error">Add a letter</string>
+    <string name="password_number_error">Add a number</string>
+
     <!--    Common-->
     <string name="back_button">Back Button</string>
     <string name="dismiss_message">Dismiss message</string>
