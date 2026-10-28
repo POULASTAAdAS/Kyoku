@@ -13,8 +13,12 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -26,6 +30,9 @@ enum class ApiRequestType {
     PUT,
     DELETE
 }
+
+@PublishedApi
+internal const val API_LOG_KEY = "ApiRequestExt"
 
 /**
  * Executes a Ktor request and wraps the result in [AppResult].
@@ -45,12 +52,21 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
     params: List<Pair<String, String>> = emptyList(),
     body: Req? = null,
 ): AppResult<Res, ApiError> where ERROR : Enum<ERROR>, ERROR : ApiError {
+    var requestCurl: String? = null
+
     return try {
         val url = route.toUrlString()
 
         val buildRequest: HttpRequestBuilder.() -> Unit = {
             params.forEach { (key, value) -> parameter(key, value) }
             body?.let { setBody(it) }
+
+            requestCurl = toCurl(
+                method = type.name,
+                url = this.url.buildString(),
+                headers = headers.build(),
+                bodyJson = body?.let { curlJson.encodeToString(it) },
+            )
         }
 
         val response = when (type) {
@@ -60,16 +76,65 @@ suspend inline fun <reified Req, reified Res, reified ERROR> HttpClient.req(
             ApiRequestType.DELETE -> this.delete(urlString = url, block = buildRequest)
         }
 
+        // Final request carries headers added by client plugins (default request, auth).
+        requestCurl = toCurl(
+            method = response.call.request.method.value,
+            url = response.call.request.url.toString(),
+            headers = response.call.request.headers,
+            bodyJson = body?.let { curlJson.encodeToString(it) },
+        )
+
         response.toApiResult<Res, ERROR>()
     } catch (e: Exception) {
         handleException(e)
     }.also {
-        Log.d("ApiRequestExt", it.toString())
+        requestCurl?.let { curl -> Log.d(API_LOG_KEY, curl) }
+        Log.d(API_LOG_KEY, it.toString())
+    }
+}
+
+
+/**
+ * Public inline functions cannot use non-public API, since if they are inlined, those non-public API references would violate access restrictions at a call site (see restrictions for public API inline functions).
+ *
+ * To overcome this restriction an internal declaration can be annotated with the @PublishedApi annotation:
+ * this allows calling that declaration from public inline functions;
+ * the declaration becomes effectively public, and this should be considered with respect to binary compatibility maintaining.
+ */
+
+@PublishedApi
+internal fun String.toUrlString() = SharedConfig.BASE_URL + this
+
+/**
+ * Compact json so the logged curl stays on a single line.
+ */
+@PublishedApi
+internal val curlJson = Json(PlatformHttpClient.json) { prettyPrint = false }
+
+/**
+ * Renders the request as a single line curl command that can be imported into Postman.
+ */
+@PublishedApi
+internal fun toCurl(
+    method: String,
+    url: String,
+    headers: Headers,
+    bodyJson: String?,
+): String = buildString {
+    append("curl -X $method '${url.escapeCurl()}'")
+    headers.entries()
+        .filterNot { (key, _) -> key.equals(HttpHeaders.ContentType, ignoreCase = true) }
+        .forEach { (key, values) ->
+            values.forEach { append(" -H '$key: ${it.escapeCurl()}'") }
+        }
+    if (bodyJson != null) {
+        append(" -H '${HttpHeaders.ContentType}: ${ContentType.Application.Json}'")
+        append(" --data-raw '${bodyJson.escapeCurl()}'")
     }
 }
 
 @PublishedApi
-internal fun String.toUrlString() = SharedConfig.BASE_URL + this
+internal fun String.escapeCurl() = replace("'", "'\\''")
 
 /**
  * Converts a gateway response envelope into [AppResult].

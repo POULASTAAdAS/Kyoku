@@ -1,6 +1,5 @@
 package com.poulastaa.common.network
 
-import com.poulastaa.common.domain.Log
 import kotlin.jvm.JvmName
 import com.poulastaa.common.network.Error as Err
 
@@ -92,8 +91,6 @@ inline fun <SUCCESS, RESULT, ERROR : ApiError> AppResult<SUCCESS, ERROR>.map(map
             cause = cause,
             error = error
         )
-    }.also {
-        Log.d("ApiResult", it.toString())
     }
 
 /**
