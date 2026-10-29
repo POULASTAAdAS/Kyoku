@@ -1,4 +1,4 @@
-# Public static images: kyoku-image-cdn.poulastaa.dev
+# Public static images and static HTML pages: kyoku-image-cdn.poulastaa.dev
 #
 # cloudflared tunnel -> this nginx (disk cache) -> MinIO bucket ${STATIC_BUCKET} (anonymous GetObject only)
 #
@@ -42,7 +42,59 @@ server {
         return 200 "ok";
     }
 
-    location ~ ^/(artist|genre|poster)/ {
+    # Static HTML pages (auth redirects). Edited in place, so cached for 1 hour instead of immutable.
+    location ~ ^/static/[^/]+\.html$ {
+        limit_except GET {
+            deny all;
+        }
+
+        # The raw path is forwarded to MinIO, so reject anything nginx and MinIO could normalize
+        # differently: "..", encoded ".", "/" and "\". No real static path contains these.
+        if ($request_uri ~* "\.\.|%2e|%2f|%5c") {
+            return 400;
+        }
+
+        proxy_pass http://kyoku_static_minio/${STATIC_BUCKET}$static_object_path;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host kyoku-file-minio:9000;
+
+        # Never forward client auth / cookies to MinIO, the bucket is anonymous read only
+        proxy_set_header Authorization "";
+        proxy_set_header Cookie "";
+
+        # Required for caching (common MinIO proxy examples turn this off)
+        proxy_buffering on;
+
+        proxy_cache static_cache;
+        # Same (still encoded) path that is sent to MinIO, so a cached response always matches its object
+        proxy_cache_key $static_object_path;
+        proxy_cache_valid 200 1h;
+        proxy_cache_valid 403 404 1m;
+        proxy_cache_lock on;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_background_update on;
+        proxy_ignore_headers Cache-Control Expires Set-Cookie;
+
+        # Hide MinIO internals
+        proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header x-minio-deployment-id;
+        proxy_hide_header x-content-type-options;
+        proxy_hide_header Strict-Transport-Security;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header Cache-Control;
+
+        # Without s3:ListBucket MinIO answers a missing object with 403 (not 404); expose both as 404
+        proxy_intercept_errors on;
+        error_page 403 404 = @not_found;
+
+        add_header Cache-Control "public, max-age=3600" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Cache-Status $upstream_cache_status always;
+    }
+
+    location ~ ^/(artist|genre|poster|static)/ {
         limit_except GET {
             deny all;
         }

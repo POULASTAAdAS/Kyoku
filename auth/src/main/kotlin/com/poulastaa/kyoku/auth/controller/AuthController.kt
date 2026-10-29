@@ -31,6 +31,8 @@ class AuthController(
     private val clientId: String = "",
     @param:Value("\${jwt.google.issuer}")
     private val issuer: String = "",
+    @param:Value("\${static-file.url}")
+    private val staticFileUrl: String = "",
 ) {
     @PostMapping(Endpoints.EMAIL_SING_IN)
     fun emailLogIn(
@@ -67,7 +69,7 @@ class AuthController(
         @Valid @RequestParam token: JWTToken,
     ) = service.validateAuthenticationMailPayload(token).let { result ->
         val fileName =
-            when (result) { // don't change file names as it must be same char by char to file-server file name
+            when (result) { // don't change file names as it must be same char by char to cdn static file name
                 EmailVerificationStatus.VALID -> "EmailVerificationSuccess.html"
                 EmailVerificationStatus.TOKEN_ALREADY_USED -> "LinkAlreadyUsed.html"
                 EmailVerificationStatus.TOKEN_EXPIRED -> "LinkExpired.html"
@@ -75,7 +77,7 @@ class AuthController(
             }
 
         ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT)
-            .location(URI.create("/${Endpoints.STATIC_FILE}?fileName=$fileName"))
+            .location(URI.create("$staticFileUrl/$fileName"))
             .build<Unit>()
     }
 

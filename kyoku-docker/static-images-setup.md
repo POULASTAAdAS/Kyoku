@@ -1,6 +1,6 @@
 # Static Images Setup (MinIO + nginx cache + Cloudflare)
 
-Public artist / genre / song poster images, served from `https://kyoku-image-cdn.poulastaa.dev`.
+Public artist / genre / song poster images and the auth static pages (HTML + logos), served from `https://kyoku-image-cdn.poulastaa.dev`.
 
 ```
 client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (disk cache) -> kyoku-file-minio bucket "cdn"
@@ -26,6 +26,7 @@ Tunnel details: `cloudflare-tunnel.md`.
 | `artistCover/<Artist>/<Artist>_N.webp` | `/artist/<Artist>/<Artist>_N.webp`           |
 | `genreCover/<Genre>/<Genre>_N.webp`    | `/genre/<Genre>/<Genre>_N.webp`              |
 | `songCover/<Song>.webp`                | `/poster/<Song>.webp`                        |
+| `file/src/main/resources/static/<file>` (repo) | `/static/<file>` (`.html`, `logo_*.png`) |
 
 The DB stores the full URL of the lowest numbered image per artist / genre (`_1` is missing for some).
 
@@ -96,6 +97,27 @@ curl -s -o /dev/null -w "%{http_code}\n" "http://localhost:1080/cdn/genre/Jazz/J
 curl -s -o /dev/null -w "%{http_code}\n" "http://localhost:1080/cdn/"                        # 403 (no listing)
 ```
 
+### 3b. Upload static pages and logos
+
+The auth HTML pages and logos live in the repo at `file/src/main/resources/static/` and go to `cdn/static/`
+(flat, same file names). Run from the repo root, with `kyoku-docker/.env` loaded:
+
+```bash
+set -a; source kyoku-docker/.env; set +a
+docker run --rm --network host -v "$PWD/file/src/main/resources/static:/src:ro" \
+  -e U="$MINIO_FILE_ROOT_USER" -e PW="$MINIO_FILE_ROOT_PASSWORD" \
+  --entrypoint /bin/sh cgr.dev/chainguard/minio-client:latest-dev -c '
+    mc alias set k http://localhost:1080 "$U" "$PW" >/dev/null
+    for f in /src/*; do
+      case $f in *.html) t="text/html; charset=UTF-8";; *.png) t=image/png;; esac
+      mc cp --attr "Content-Type=$t" "$f" k/cdn/static/
+    done'
+```
+
+HTML pages can be overwritten in place (1 hour cache). Logos are immutable like the other images: upload a changed logo under a new name and update the HTML pages.
+
+Check: `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:1080/cdn/static/LinkAlreadyUsed.html` → `200`.
+
 ### 4. Start nginx cache
 
 ```bash
@@ -110,6 +132,7 @@ curl -I http://localhost:1084/genre/Jazz/Jazz_1.webp
 
 First `X-Cache-Status: MISS`, then `HIT`. `Cache-Control: public, max-age=31536000, immutable`.
 `curl -I http://localhost:1084/poster/does-not-exist.webp` → `404`.
+`curl -I http://localhost:1084/static/LinkAlreadyUsed.html` → `200`, `Cache-Control: public, max-age=3600`.
 
 ### 5. Cloudflare
 
@@ -121,6 +144,11 @@ First `X-Cache-Status: MISS`, then `HIT`. `Cache-Control: public, max-age=315360
    - When: `Hostname equals kyoku-image-cdn.poulastaa.dev`
    - Cache eligibility: **Eligible for cache**
    - Edge TTL: **Ignore cache-control header and use this TTL** → 1 month
+   - Browser TTL: **Respect origin TTL**
+5. Create a second rule and move it **above** the first:
+   - When: `Hostname equals kyoku-image-cdn.poulastaa.dev` AND `URI Path ends with ".html"`
+   - Cache eligibility: **Eligible for cache**
+   - Edge TTL: **Use cache-control header if present** (1 hour from nginx)
    - Browser TTL: **Respect origin TTL**
 
 Check (run twice):
@@ -178,5 +206,6 @@ and `curl -I` each URL → `200`.
 ## Notes
 
 - Full URLs are stored. The generator reads the old relative paths (`/artist/...`, `/genre/...`, `/song/...`), so it only works on the original seed files. To change the domain later, replace the domain in the three seed files and rebuild the content DB.
-- Never overwrite an object in `cdn`; caches keep the old one for up to a year. Upload under a new name.
+- Never overwrite an image in `cdn`; caches keep the old one for up to a year. Upload under a new name. Exception: `static/*.html` (1 hour cache) may be overwritten.
+- The auth service redirects email verification to `static-file.url` (default `https://kyoku-image-cdn.poulastaa.dev/static`); file names must match the objects in `cdn/static/` exactly.
 - Cloudflare free plan CDN terms: fine for normal app images; revisit if image traffic becomes very large.

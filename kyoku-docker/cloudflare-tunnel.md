@@ -40,10 +40,12 @@ client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (d
 ```
 
 - Public, no auth. MinIO bucket `cdn` allows anonymous `GetObject` only (no listing). MinIO ports are bound to `127.0.0.1`.
-- Paths: `/artist/<Artist>/<file>.webp`, `/genre/<Genre>/<file>.webp`, `/poster/<file>.webp`. Everything else is `404`.
-- Images are immutable (`Cache-Control: public, max-age=31536000, immutable`). Never overwrite an object; upload a changed image under a new name.
+- Paths: `/artist/<Artist>/<file>.webp`, `/genre/<Genre>/<file>.webp`, `/poster/<file>.webp`, `/static/<file>` (auth HTML pages and logos). Everything else is `404`.
+- Images (including `/static/*.png`) are immutable (`Cache-Control: public, max-age=31536000, immutable`). Never overwrite an object; upload a changed image under a new name.
+- Static HTML pages (`/static/*.html`) are cached for 1 hour (`Cache-Control: public, max-age=3600`, nginx cache `1h`), so they can be overwritten in place. The auth service redirects email verification to `static-file.url` (`https://kyoku-image-cdn.poulastaa.dev/static/<file>.html`).
 - One-time DNS record: `cloudflared tunnel route dns kyoku kyoku-image-cdn.poulastaa.dev`.
 - Cloudflare dashboard Cache Rule (Caching → Cache Rules): `Hostname equals kyoku-image-cdn.poulastaa.dev` → **Eligible for cache**, Edge TTL **ignore origin, 1 month**, Browser TTL **respect origin**.
+- Second Cache Rule, placed above the first: `Hostname equals kyoku-image-cdn.poulastaa.dev` AND `URI path ends with ".html"` → **Eligible for cache**, Edge TTL **respect origin** (1 hour), Browser TTL **respect origin**. Without it Cloudflare keeps the HTML pages for 1 month.
 - Full setup steps: `kyoku-docker/static-images-setup.md`.
 
 ## How to start
@@ -111,6 +113,13 @@ curl -I https://kyoku-image-cdn.poulastaa.dev/genre/Jazz/Jazz_1.webp
 ```
 
 Expected: `200`, `Content-Type: image/webp`. Repeat the second call: `CF-Cache-Status: HIT` (Cloudflare edge) and `X-Cache-Status: HIT` (nginx, shown only when Cloudflare missed).
+
+Static HTML pages and logos:
+
+```bash
+curl -I https://kyoku-image-cdn.poulastaa.dev/static/LinkAlreadyUsed.html   # 200, Cache-Control: public, max-age=3600
+curl -I https://kyoku-image-cdn.poulastaa.dev/static/logo_dark.png          # 200, Cache-Control: public, max-age=31536000, immutable
+```
 
 ### Public API routes (via gateway)
 
