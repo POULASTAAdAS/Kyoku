@@ -23,3 +23,14 @@
 # Infrastructure
 
 - Cloudflare tunnel (`cloudflared`, tunnel `kyoku`): `kyoku-docker/cloudflare-tunnel.md`. Read this file first whenever starting or checking the local infra, or when a task involves the tunnel, public hostnames, exposing a service (e.g. MinIO/static files), or Cloudflare caching. Treat it as the source of truth for the current tunnel setup instead of assuming one.
+
+# iOS UI flag (`iosUi`)
+
+- Values: `swiftui` (default) | `compose`. Set in `Kyoku/shared.properties`; override with `-PiosUi=compose`. Affects iOS only.
+- Resolved in `build-logic/convention/src/main/kotlin/KmpApplicationConventionPlugin.kt`:
+  - `compose`: adds `composeApp/src/iosComposeMain/kotlin` (`MainViewController.kt`) to `iosMain`.
+  - Always: `ComposeApp.framework` exports `:auth:ui`, `:common:viewmodels`, `:auth:viewmodels`.
+  - Writes `iosApp/Configuration/IosUi.generated.xcconfig` (generated, do not edit; included by `Config.xcconfig`), defining Swift condition `KYOKU_SWIFTUI` in swiftui mode.
+- Swift: `ContentView.swift` / `iOSApp.swift` use `#if KYOKU_SWIFTUI` (SwiftUI `RootView` vs `ComposeView`).
+- Shared ViewModels live in `:common:viewmodels` and `:auth:viewmodels`; SwiftUI reaches them via `composeApp/src/iosMain/.../IosViewModelProvider.kt` and `iosApp/iosApp/core/viewmodel/ObservableViewModel.swift`.
+- After changing the flag, sync Gradle (or build twice in Xcode) so Xcode picks up the regenerated xcconfig.
