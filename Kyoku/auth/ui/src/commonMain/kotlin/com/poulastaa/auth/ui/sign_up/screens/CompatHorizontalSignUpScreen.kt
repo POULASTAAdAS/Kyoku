@@ -32,9 +32,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.poulastaa.auth.ui.components.AuthTypeTitle
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
-import com.poulastaa.auth.ui.sign_up.SignUpUiAction
-import com.poulastaa.auth.ui.sign_up.SignUpViewmodel
-import com.poulastaa.auth.ui.sign_up.SingUpUiState
+import com.poulastaa.auth.viewmodels.sign_up.SignUpUiAction
+import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
+import com.poulastaa.auth.viewmodels.sign_up.SingUpUiState
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.AuthActionTypeList

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    Sign In-->
+    <string name="invalid_email">Invalid email</string>
+
+    <!--    Sign Up-->
+    <string name="verification_mail_sent">A verification mail has been sent to this email. Please verify it to continue.</string>
+
+    <!--    Input Validation-->
+    <string name="username_length_error">Use 4+ characters</string>
+    <string name="username_max_length_error">Max 24 characters</string>
+    <string name="username_first_four_error">First 4 must be letters</string>
+    <string name="username_char_error">Use letters, numbers, . or _</string>
+    <string name="password_length_error">Use 8+ characters</string>
+    <string name="password_letter_error">Add a letter</string>
+    <string name="password_number_error">Add a number</string>
+</resources>

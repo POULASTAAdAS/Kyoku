@@ -15,6 +15,7 @@ composeMultiplatform = "1.10.3"
 junit = "4.13.2"
 kotlin = "2.3.20"
 kotlinx-coroutines = "1.10.2"
+kotlinx-serialization = "1.9.0"
 material3 = "1.10.0-alpha05"
 kotlinStdlib = "2.3.20"
 material3WindowSizeClass = "1.9.0"
@@ -57,6 +58,7 @@ compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", v
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
@@ -123,3 +125,4 @@ kyoku-kmp-application = { id = "kyoku.kmp.application", version = "unspecified" 
 kyoku-kmp-network = { id = "kyoku.kmp.network", version = "unspecified" }
 kyoku-kmp-room = { id = "kyoku.kmp.room", version = "unspecified" }
 kyoku-kmp-koin = { id = "kyoku.kmp.koin", version = "unspecified" }
+kyoku-kmp-viewmodels = { id = "kyoku.kmp.viewmodels", version = "unspecified" }

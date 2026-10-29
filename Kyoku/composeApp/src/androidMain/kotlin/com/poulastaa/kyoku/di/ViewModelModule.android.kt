@@ -1,9 +1,9 @@
 package com.poulastaa.kyoku.di
 
-import com.poulastaa.auth.ui.forgot_password.ForgotPasswordViewmodel
-import com.poulastaa.auth.ui.sign_in.SignInViewmodel
-import com.poulastaa.auth.ui.sign_up.SignUpViewmodel
-import com.poulastaa.common.ui.root.RootViewmodel
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
+import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
+import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
+import com.poulastaa.common.viewmodels.root.RootViewmodel
 import org.koin.core.module.LazyModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.lazyModule

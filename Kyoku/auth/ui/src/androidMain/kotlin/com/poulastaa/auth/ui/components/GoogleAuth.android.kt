@@ -16,7 +16,7 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
-import com.poulastaa.common.ui.utils.dispatchers
+import com.poulastaa.common.viewmodels.utils.dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

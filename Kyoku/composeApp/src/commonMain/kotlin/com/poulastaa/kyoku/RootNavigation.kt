@@ -28,9 +28,9 @@ import com.poulastaa.auth.ui.reset_password.ResetPasswordScreen
 import com.poulastaa.auth.ui.sign_in.SignInScreen
 import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
-import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.CommonSnackbarHost
-import com.poulastaa.common.ui.root.RootUiState
+import com.poulastaa.common.viewmodels.Screens
+import com.poulastaa.common.viewmodels.root.RootUiState
 import com.poulastaa.setup.ui.import_spotify_playlist.ImportSpotifyPlaylist
 import com.poulastaa.setup.ui.select_artist.SelectArtist
 import com.poulastaa.setup.ui.select_genre.SelectGenre

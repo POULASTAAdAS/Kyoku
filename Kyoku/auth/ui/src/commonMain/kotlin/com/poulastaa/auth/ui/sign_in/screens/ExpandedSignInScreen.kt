@@ -36,9 +36,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.poulastaa.auth.ui.components.AuthTypeTitle
 import com.poulastaa.auth.ui.components.LogInSignUpNavigation
-import com.poulastaa.auth.ui.sign_in.SignInUiAction
-import com.poulastaa.auth.ui.sign_in.SignInUiState
-import com.poulastaa.auth.ui.sign_in.SignInViewmodel
+import com.poulastaa.auth.viewmodels.sign_in.SignInUiAction
+import com.poulastaa.auth.viewmodels.sign_in.SignInUiState
+import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.AuthActionTypeList
 import com.poulastaa.common.ui.components.ColumnSpacer

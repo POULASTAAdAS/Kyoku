@@ -20,9 +20,9 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
-import com.poulastaa.auth.ui.forgot_password.ForgotPasswordUiAction
-import com.poulastaa.auth.ui.forgot_password.ForgotPasswordUiState
-import com.poulastaa.auth.ui.forgot_password.ForgotPasswordViewmodel
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordUiAction
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordUiState
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton

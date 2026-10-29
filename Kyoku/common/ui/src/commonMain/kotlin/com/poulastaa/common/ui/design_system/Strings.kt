@@ -19,9 +19,6 @@ import kyoku.common.ui.generated.resources.login_welcome_back_message
 import kyoku.common.ui.generated.resources.or_signin_with
 import kyoku.common.ui.generated.resources.or_signup_with
 import kyoku.common.ui.generated.resources.password
-import kyoku.common.ui.generated.resources.password_length_error
-import kyoku.common.ui.generated.resources.password_letter_error
-import kyoku.common.ui.generated.resources.password_number_error
 import kyoku.common.ui.generated.resources.password_visibility
 import kyoku.common.ui.generated.resources.reset_password
 import kyoku.common.ui.generated.resources.reset_password_message
@@ -32,12 +29,6 @@ import kyoku.common.ui.generated.resources.sign_up
 import kyoku.common.ui.generated.resources.sign_up_rest
 import kyoku.common.ui.generated.resources.signup_welcome_message
 import kyoku.common.ui.generated.resources.username
-import kyoku.common.ui.generated.resources.username_char_error
-import kyoku.common.ui.generated.resources.username_first_four_error
-import kyoku.common.ui.generated.resources.username_length_error
-import kyoku.common.ui.generated.resources.username_max_length_error
-import kyoku.common.ui.generated.resources.verification_mail_sent
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 val StringAppIcon: String
@@ -153,24 +144,3 @@ val StringGetOtp: String
 val StringBackButton: String
     @Composable
     get() = stringResource(Res.string.back_button)
-
-// Input Validation (non-composable, resolved from viewmodels)
-
-suspend fun stringInvalidEmailError(): String = getString(Res.string.invalid_email)
-
-suspend fun stringUsernameLengthError(): String = getString(Res.string.username_length_error)
-
-suspend fun stringUsernameMaxLengthError(): String = getString(Res.string.username_max_length_error)
-
-suspend fun stringUsernameFirstFourError(): String = getString(Res.string.username_first_four_error)
-
-suspend fun stringUsernameCharError(): String = getString(Res.string.username_char_error)
-
-suspend fun stringPasswordLengthError(): String = getString(Res.string.password_length_error)
-
-suspend fun stringPasswordLetterError(): String = getString(Res.string.password_letter_error)
-
-suspend fun stringPasswordNumberError(): String = getString(Res.string.password_number_error)
-
-// Auth (non-composable, resolved from viewmodels)
-suspend fun stringVerificationMailSent(): String = getString(Res.string.verification_mail_sent)

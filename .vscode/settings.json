@@ -1,3 +1,16 @@
 {
-  "java.configuration.updateBuildConfiguration": "disabled"
+  "java.configuration.updateBuildConfiguration": "disabled",
+  "java.compile.nullAnalysis.mode": "disabled",
+  "java.enabled": false,
+  "java.import.gradle.enabled": false,
+  "java.import.maven.enabled": false,
+  "java.autobuild.enabled": false,
+  "java.server.launchMode": "LightWeight",
+  "java.import.exclusions": ["**"],
+  "java.project.importOnFirstTimeStartup": "disabled",
+  "java.project.importHint": false,
+  "java.showBuildStatusOnStart.enabled": "off",
+  "gradle.autoDetect": "off",
+  "gradle.nestedProjects": false,
+  "kotlin.languageServer.enabled": false
 }

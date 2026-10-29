@@ -2,7 +2,6 @@ package com.poulastaa.setup.ui.import_spotify_playlist.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,7 +56,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
@@ -69,9 +67,9 @@ import com.poulastaa.common.ui.design_system.IconAppLogo
 import com.poulastaa.common.ui.design_system.IconArrowBack
 import com.poulastaa.common.ui.design_system.StringBackButton
 import com.poulastaa.common.ui.design_system.dimens
+import com.poulastaa.common.viewmodels.Screens
 import com.poulastaa.setup.ui.import_spotify_playlist.UiPlaylist
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun CompatVerticalImportSpotifyPlaylistScreen(
     focusManager: FocusManager,

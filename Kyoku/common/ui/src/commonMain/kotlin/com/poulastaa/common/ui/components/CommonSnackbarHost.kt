@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.poulastaa.common.ui.design_system.IconClose
 import com.poulastaa.common.ui.design_system.dimens
-import com.poulastaa.common.ui.viewmodel.CommonUiStateHolder
-import com.poulastaa.common.ui.viewmodel.SnackbarData
-import com.poulastaa.common.ui.viewmodel.SnackbarType
+import com.poulastaa.common.viewmodels.CommonUiStateHolder
+import com.poulastaa.common.viewmodels.SnackbarData
+import com.poulastaa.common.viewmodels.SnackbarType
 import kotlinx.coroutines.delay
 import kyoku.common.ui.generated.resources.Res
 import kyoku.common.ui.generated.resources.dismiss_message

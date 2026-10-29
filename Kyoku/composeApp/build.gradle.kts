@@ -23,9 +23,11 @@ kotlin {
             implementation(projects.auth.domain)
             implementation(projects.auth.network)
             api(projects.auth.ui)
+            api(projects.auth.viewmodels)
 
             implementation(projects.common.domain)
             implementation(projects.common.ui)
+            api(projects.common.viewmodels)
 
             implementation(projects.setup.domain)
             implementation(projects.setup.ui)

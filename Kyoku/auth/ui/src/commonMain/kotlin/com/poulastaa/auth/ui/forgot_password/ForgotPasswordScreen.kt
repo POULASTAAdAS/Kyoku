@@ -7,10 +7,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalFocusManager
 import com.poulastaa.auth.ui.forgot_password.screens.CompatHorizontalForgotPasswordScreen
 import com.poulastaa.auth.ui.forgot_password.screens.CompatVerticalForgotPasswordScreen
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordUiAction
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordUiEvent
+import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
 import com.poulastaa.common.ui.LocalNavController
-import com.poulastaa.common.ui.Screens.AuthScreens.ValidateOTP
 import com.poulastaa.common.ui.components.ScreenSizeType
 import com.poulastaa.common.ui.components.ScreenSizeWrapper
+import com.poulastaa.common.viewmodels.Screens.AuthScreens.ValidateOTP
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

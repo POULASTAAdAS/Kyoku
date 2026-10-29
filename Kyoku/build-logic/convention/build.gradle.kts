@@ -48,5 +48,9 @@ gradlePlugin {
             id = "kyoku.kmp.koin"
             implementationClass = "KmpKoinConventionPlugin"
         }
+        register("kmpViewmodels") {
+            id = "kyoku.kmp.viewmodels"
+            implementationClass = "KmpViewmodelsConventionPlugin"
+        }
     }
 }

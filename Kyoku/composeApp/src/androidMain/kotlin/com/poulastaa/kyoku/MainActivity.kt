@@ -11,9 +11,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.design_system.AppTheme
-import com.poulastaa.common.ui.root.RootViewmodel
+import com.poulastaa.common.viewmodels.Screens
+import com.poulastaa.common.viewmodels.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel

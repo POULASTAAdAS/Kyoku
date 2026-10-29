@@ -1,0 +1,46 @@
+package com.poulastaa.common.viewmodels
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.poulastaa.common.network.ApiError
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import com.poulastaa.common.network.Error as AppError
+
+abstract class BaseViewmodel<UI_STATE, ACTION, EVENT>(initialSate: UI_STATE) : ViewModel() {
+    protected val _uiState = MutableStateFlow(initialSate)
+    val uiState = _uiState.asStateFlow().wrap()
+
+    private val _event = Channel<EVENT>(Channel.BUFFERED)
+    val event = _event.receiveAsFlow().wrap() // this wrap() allows us to use it in iOS
+
+    fun onAction(action: ACTION) = viewModelScope.launch { handleAction(action) }
+
+    protected fun onEvent(event: EVENT) {
+        viewModelScope.launch { _event.send(event) }
+    }
+
+    protected fun handleCommonError(error: AppError): Boolean = when (error) {
+        is ApiError.Network -> {
+            showSnackbar(error.message, SnackbarType.Error)
+            true
+        }
+
+        else -> false
+    }
+
+    protected fun showSnackbar(
+        message: String,
+        type: SnackbarType,
+    ) = CommonUiStateHolder.showSnackbar(message, type)
+
+    protected inline fun updateState(block: UI_STATE.() -> UI_STATE) {
+        _uiState.update { it.block() }
+    }
+
+    protected abstract suspend fun handleAction(action: ACTION)
+}

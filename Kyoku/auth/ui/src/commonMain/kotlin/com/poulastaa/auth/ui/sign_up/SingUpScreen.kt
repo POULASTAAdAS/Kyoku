@@ -13,10 +13,13 @@ import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.sign_up.screens.CompatHorizontalSignUpScreen
 import com.poulastaa.auth.ui.sign_up.screens.CompatVerticalSignUpScreen
 import com.poulastaa.auth.ui.sign_up.screens.ExpandedSignUpScreen
+import com.poulastaa.auth.viewmodels.sign_up.SignUpUiAction
+import com.poulastaa.auth.viewmodels.sign_up.SignUpUiEvent
+import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
 import com.poulastaa.common.ui.LocalNavController
-import com.poulastaa.common.ui.Screens
 import com.poulastaa.common.ui.components.ScreenSizeType
 import com.poulastaa.common.ui.components.ScreenSizeWrapper
+import com.poulastaa.common.viewmodels.Screens
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 

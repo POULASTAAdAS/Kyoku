@@ -3,7 +3,7 @@ package com.poulastaa.auth.ui.components
 import com.poulastaa.auth.domain.GoogleTokenExchange
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
-import com.poulastaa.common.ui.utils.dispatchers
+import com.poulastaa.common.viewmodels.utils.dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

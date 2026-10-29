@@ -37,9 +37,11 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(
     ":auth:domain",
     ":auth:ui",
+    ":auth:viewmodels",
     ":composeApp"
 )
 include(":common:ui")
+include(":common:viewmodels")
 include(":common:domain")
 include(":setup:ui")
 include(":setup:data")

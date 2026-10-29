@@ -6,3 +6,11 @@ plugins {
 android {
     namespace = "com.poulastaa.common.ui"
 }
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            api(projects.common.viewmodels)
+        }
+    }
+}
