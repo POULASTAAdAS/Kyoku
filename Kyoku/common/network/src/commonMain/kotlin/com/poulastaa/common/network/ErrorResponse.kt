@@ -20,7 +20,7 @@ interface ApiError : Error {
      */
     enum class Network(override val message: String) : ApiError {
         NO_INTERNET("You're offline"),
-        SERVER_ERROR("Server unavailable"),
+        SERVER_ERROR("Opp's Something went wrong."),
         NOT_FOUND("Couldn't find that"),
         SERIALISATION("Couldn't read response"),
         UNAUTHORIZED("Please sign in again"),
@@ -32,12 +32,10 @@ interface ApiError : Error {
      * Auth endpoint failures returned by the backend as status strings.
      */
     enum class Authentication(override val message: String) : ApiError {
+        EMAIL_NOT_VALID("Check your email"),
         PASSWORD_DOES_NOT_MATCH("Wrong password"),
-        OLD_ACCOUNT_FOUND("Use your existing account"),
-        ACCOUNT_NOT_FOUND("No account found"),
-        INVALID_EMAIL("Check your email"),
         INVALID_PASSWORD("Check your password"),
-        EMAIL_NOT_VERIFIED("Verify your email"),
+        USER_NOT_FOUND("No account found"),
         EMAIL_ALREADY_IN_USE("Email already in use"),
     }
 }

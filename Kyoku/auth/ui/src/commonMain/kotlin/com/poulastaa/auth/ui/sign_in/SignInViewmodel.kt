@@ -1,7 +1,9 @@
 package com.poulastaa.auth.ui.sign_in
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.mutableIntStateOf
 import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.ui.utils.MAX_AUTH_POLLING_COUNT
 import com.poulastaa.auth.ui.utils.emailError
 import com.poulastaa.auth.ui.utils.normalizedEmail
 import com.poulastaa.auth.ui.utils.normalizedPassword
@@ -11,6 +13,7 @@ import com.poulastaa.common.network.AppResult
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 import com.poulastaa.common.network.Error as NetworkError
 
 @Immutable
@@ -19,6 +22,8 @@ class SignInViewmodel(
 ) : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEvent>(
     initialSate = SignInUiState(),
 ) {
+    private val currentAuthPollingCount = mutableIntStateOf(0)
+
     override suspend fun handleAction(action: SignInUiAction) {
         val isGoogleAuthCompletion = action is SignInUiAction.OnGoogleAuthSuccess ||
                 action == SignInUiAction.OnGoogleAuthCanceled
@@ -114,7 +119,14 @@ class SignInViewmodel(
         isNewUser: Boolean,
     ) {
         while (true) {
-            delay(VERIFICATION_POLL_INTERVAL_MS)
+            if (currentAuthPollingCount.value >= MAX_AUTH_POLLING_COUNT) {
+                updateState { copy(isMakingApiCall = false) }
+                currentAuthPollingCount.value = 0
+                return
+            }
+
+            delay(VERIFICATION_POLL_INTERVAL_MS.milliseconds)
+            currentAuthPollingCount.value += 1
 
             when (val result = repo.checkVerificationStatus(email)) {
                 is AppResult.Error -> {
@@ -141,11 +153,9 @@ class SignInViewmodel(
 
         when (error) {
             ApiError.Authentication.PASSWORD_DOES_NOT_MATCH -> setPasswordError(ApiError.Authentication.PASSWORD_DOES_NOT_MATCH.message)
-            ApiError.Authentication.OLD_ACCOUNT_FOUND -> setEmailError(ApiError.Authentication.OLD_ACCOUNT_FOUND.message)
-            ApiError.Authentication.ACCOUNT_NOT_FOUND -> setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
-            ApiError.Authentication.INVALID_EMAIL -> setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+            ApiError.Authentication.USER_NOT_FOUND -> setEmailError(ApiError.Authentication.USER_NOT_FOUND.message)
+            ApiError.Authentication.EMAIL_NOT_VALID -> setEmailError(ApiError.Authentication.EMAIL_NOT_VALID.message)
             ApiError.Authentication.INVALID_PASSWORD -> setPasswordError(ApiError.Authentication.INVALID_PASSWORD.message)
-            ApiError.Authentication.EMAIL_NOT_VERIFIED -> setEmailError(ApiError.Authentication.EMAIL_NOT_VERIFIED.message)
             else -> setEmailError(ApiError.Network.SOMETHING_WENT_WRONG.message)
         }
     }

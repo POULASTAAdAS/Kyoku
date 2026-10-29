@@ -254,8 +254,6 @@ internal fun ApiResponse<*>.resolvedCode(
 
 @PublishedApi
 internal fun String.toApiErrorStatus() = when (uppercase()) {
-    "EMAIL_NOT_VALID" -> ApiError.Authentication.INVALID_EMAIL.name
-    "USER_NOT_FOUND" -> ApiError.Authentication.ACCOUNT_NOT_FOUND.name
     "NO_CONTENT" -> ApiError.Network.NOT_FOUND.name
     "SERVICE_UNAVAILABLE",
     "INTERNAL_SERVER_ERROR",

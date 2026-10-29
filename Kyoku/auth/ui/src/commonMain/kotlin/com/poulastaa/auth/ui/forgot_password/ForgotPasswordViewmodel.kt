@@ -78,8 +78,8 @@ class ForgotPasswordViewmodel(
                                 )
                             )
 
-                            DtoForgotPasswordStatus.USER_NOT_FOUND -> setEmailError(ApiError.Authentication.ACCOUNT_NOT_FOUND.message)
-                            DtoForgotPasswordStatus.INVALID_EMAIL -> setEmailError(ApiError.Authentication.INVALID_EMAIL.message)
+                            DtoForgotPasswordStatus.USER_NOT_FOUND -> setEmailError(ApiError.Authentication.USER_NOT_FOUND.message)
+                            DtoForgotPasswordStatus.INVALID_EMAIL -> setEmailError(ApiError.Authentication.EMAIL_NOT_VALID.message)
                             DtoForgotPasswordStatus.ERROR -> setEmailError(ApiError.Network.SOMETHING_WENT_WRONG.message)
                         }
 
