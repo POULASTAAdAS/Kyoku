@@ -28,12 +28,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.poulastaa.common.ui.design_system.IconClose
-import com.poulastaa.common.ui.design_system.StringDismissMessage
 import com.poulastaa.common.ui.design_system.dimens
 import com.poulastaa.common.ui.viewmodel.CommonUiStateHolder
 import com.poulastaa.common.ui.viewmodel.SnackbarData
 import com.poulastaa.common.ui.viewmodel.SnackbarType
 import kotlinx.coroutines.delay
+import kyoku.common.ui.generated.resources.Res
+import kyoku.common.ui.generated.resources.dismiss_message
+import org.jetbrains.compose.resources.stringResource
 
 private const val SNACKBAR_DURATION_MILLIS = 5_000L
 private val SNACKBAR_MAX_WIDTH = 600.dp
@@ -131,7 +133,7 @@ private fun CommonSnackbar(
             IconButton(onClick = onDismiss) {
                 Icon(
                     imageVector = IconClose,
-                    contentDescription = StringDismissMessage,
+                    contentDescription = stringResource(Res.string.dismiss_message),
                 )
             }
         }

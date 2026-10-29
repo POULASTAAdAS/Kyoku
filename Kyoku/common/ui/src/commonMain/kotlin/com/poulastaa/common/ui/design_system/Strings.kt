@@ -7,7 +7,6 @@ import kyoku.common.ui.generated.resources.app_icon
 import kyoku.common.ui.generated.resources.back_button
 import kyoku.common.ui.generated.resources.continue_with_google
 import kyoku.common.ui.generated.resources.create_account
-import kyoku.common.ui.generated.resources.dismiss_message
 import kyoku.common.ui.generated.resources.dont_have_account
 import kyoku.common.ui.generated.resources.email
 import kyoku.common.ui.generated.resources.forgot_password
@@ -37,6 +36,7 @@ import kyoku.common.ui.generated.resources.username_char_error
 import kyoku.common.ui.generated.resources.username_first_four_error
 import kyoku.common.ui.generated.resources.username_length_error
 import kyoku.common.ui.generated.resources.username_max_length_error
+import kyoku.common.ui.generated.resources.verification_mail_sent
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -154,10 +154,6 @@ val StringBackButton: String
     @Composable
     get() = stringResource(Res.string.back_button)
 
-val StringDismissMessage: String
-    @Composable
-    get() = stringResource(Res.string.dismiss_message)
-
 // Input Validation (non-composable, resolved from viewmodels)
 
 suspend fun stringInvalidEmailError(): String = getString(Res.string.invalid_email)
@@ -175,3 +171,6 @@ suspend fun stringPasswordLengthError(): String = getString(Res.string.password_
 suspend fun stringPasswordLetterError(): String = getString(Res.string.password_letter_error)
 
 suspend fun stringPasswordNumberError(): String = getString(Res.string.password_number_error)
+
+// Auth (non-composable, resolved from viewmodels)
+suspend fun stringVerificationMailSent(): String = getString(Res.string.verification_mail_sent)

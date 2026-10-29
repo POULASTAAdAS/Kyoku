@@ -13,8 +13,10 @@ import com.poulastaa.auth.ui.utils.usernameError
 import com.poulastaa.auth.ui.utils.usernameInputError
 import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.AppResult
+import com.poulastaa.common.ui.design_system.stringVerificationMailSent
 import com.poulastaa.common.ui.states.UiTextFiledState
 import com.poulastaa.common.ui.viewmodel.BaseViewmodel
+import com.poulastaa.common.ui.viewmodel.SnackbarType
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 import com.poulastaa.common.network.Error as NetworkError
@@ -121,6 +123,11 @@ class SignUpViewmodel(
                     }
 
                     is AppResult.Success -> {
+                        showSnackbar(
+                            message = stringVerificationMailSent(),
+                            type = SnackbarType.Success,
+                        )
+
                         pollVerificationStatus(
                             email = email,
                             isNewUser = result.response,

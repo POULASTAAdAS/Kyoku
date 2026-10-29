@@ -27,6 +27,7 @@
     <string name="log_in">LogIn</string>
     <string name="sign_up">SIGN UP</string>
     <string name="or_signup_with">or signup with</string>
+    <string name="verification_mail_sent">A verification mail has been sent to this email. Please verify it to continue.</string>
 
     <!--    Forgot Password-->
     <string name="reset_password">Reset password</string>
