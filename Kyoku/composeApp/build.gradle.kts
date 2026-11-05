@@ -25,6 +25,7 @@ kotlin {
             api(projects.auth.ui)
             api(projects.auth.viewmodels)
 
+            implementation(projects.common.database)
             implementation(projects.common.domain)
             implementation(projects.common.ui)
             api(projects.common.viewmodels)
