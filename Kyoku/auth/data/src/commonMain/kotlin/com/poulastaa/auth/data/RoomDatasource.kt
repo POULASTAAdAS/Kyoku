@@ -6,9 +6,9 @@ import com.poulastaa.common.database.entity.UserEntity
 import com.poulastaa.common.database.safeDbCall
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.model.DtoUser
-import com.poulastaa.common.network.AppResult
-import com.poulastaa.common.network.DataError
-import com.poulastaa.common.network.EmptyResponse
+import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.DataError
+import com.poulastaa.common.domain.result.EmptyResponse
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthLocalDatasource::class])

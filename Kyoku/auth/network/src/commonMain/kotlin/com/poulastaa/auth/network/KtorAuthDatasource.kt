@@ -11,11 +11,11 @@ import com.poulastaa.auth.network.model.GoogleAuthResponse
 import com.poulastaa.auth.network.model.SignInRequest
 import com.poulastaa.auth.network.model.SignUpRequest
 import com.poulastaa.common.domain.model.DtoTokens
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.map
 import com.poulastaa.common.network.ApiEndpoints
-import com.poulastaa.common.network.ApiError
 import com.poulastaa.common.network.ApiRequestType
-import com.poulastaa.common.network.AppResult
-import com.poulastaa.common.network.map
 import com.poulastaa.common.network.model.ResponseTokens
 import com.poulastaa.common.network.req
 import com.poulastaa.platfrom.PlatformUtils

@@ -1,4 +1,4 @@
-package com.poulastaa.common.network
+package com.poulastaa.common.domain.result
 
 /**
  * Marker for typed errors used by [AppResult].
@@ -55,8 +55,7 @@ interface DataError : Error {
  *
  * If no explicit [message] is supplied, the enum's user-facing [ApiError.message] is used.
  */
-@PublishedApi
-internal fun ApiError.toErrorResponse(
+fun ApiError.toErrorResponse(
     message: String? = null,
     code: Int = -1,
 ) = ErrorResponse(this, code, message ?: this.message)

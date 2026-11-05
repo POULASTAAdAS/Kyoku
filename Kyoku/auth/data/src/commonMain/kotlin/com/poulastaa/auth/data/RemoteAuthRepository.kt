@@ -6,10 +6,10 @@ import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.common.domain.model.DtoUser
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.AppResult
-import com.poulastaa.common.network.asEmptyResponse
-import com.poulastaa.common.network.map
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.asEmptyResponse
+import com.poulastaa.common.domain.result.map
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthRepository::class])

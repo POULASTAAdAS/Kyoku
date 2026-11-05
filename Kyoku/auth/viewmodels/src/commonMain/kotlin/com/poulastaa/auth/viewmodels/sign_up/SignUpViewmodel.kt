@@ -9,15 +9,15 @@ import com.poulastaa.auth.viewmodels.utils.normalizedUsername
 import com.poulastaa.auth.viewmodels.utils.passwordError
 import com.poulastaa.auth.viewmodels.utils.usernameError
 import com.poulastaa.auth.viewmodels.utils.usernameInputError
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.AppResult
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
 import com.poulastaa.common.viewmodels.SnackbarType
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
 import com.poulastaa.common.viewmodels.stringVerificationMailSent
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
-import com.poulastaa.common.network.Error as NetworkError
+import com.poulastaa.common.domain.result.Error as NetworkError
 
 private const val TAG = "SignUpViewmodel"
 

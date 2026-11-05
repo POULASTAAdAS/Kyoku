@@ -2,8 +2,8 @@ package com.poulastaa.auth.domain
 
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.model.DtoUser
-import com.poulastaa.common.network.DataError
-import com.poulastaa.common.network.EmptyResponse
+import com.poulastaa.common.domain.result.DataError
+import com.poulastaa.common.domain.result.EmptyResponse
 
 interface AuthLocalDatasource {
     suspend fun saveUser(user: DtoUser) : EmptyResponse<DataError>

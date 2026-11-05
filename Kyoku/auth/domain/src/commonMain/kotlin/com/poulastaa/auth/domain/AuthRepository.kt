@@ -2,8 +2,8 @@ package com.poulastaa.auth.domain
 
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.common.domain.model.DtoUser
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.AppResult
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
 
 interface AuthRepository {
     suspend fun signIn(email: String, password: String): AppResult<Boolean, ApiError>

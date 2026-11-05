@@ -2,6 +2,9 @@ package com.poulastaa.common.network
 
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.toErrorResponse
 import com.poulastaa.common.network.model.ApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

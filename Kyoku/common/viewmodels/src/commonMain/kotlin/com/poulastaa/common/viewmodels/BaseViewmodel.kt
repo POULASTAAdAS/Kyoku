@@ -2,14 +2,14 @@ package com.poulastaa.common.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.common.network.ApiError
+import com.poulastaa.common.domain.result.ApiError
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.poulastaa.common.network.Error as AppError
+import com.poulastaa.common.domain.result.Error as AppError
 
 abstract class BaseViewmodel<UI_STATE, ACTION, EVENT>(initialSate: UI_STATE) : ViewModel() {
     protected val _uiState = MutableStateFlow(initialSate)

@@ -4,8 +4,8 @@ import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoEmailAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
 import com.poulastaa.common.domain.model.DtoTokens
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.AppResult
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
 
 interface AuthRemoteDatasource {
     suspend fun signIn(email: String, password: String): AppResult<DtoEmailAuthResponse, ApiError>

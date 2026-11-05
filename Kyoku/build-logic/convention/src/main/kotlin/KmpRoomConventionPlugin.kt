@@ -1,6 +1,5 @@
 import androidx.room.gradle.RoomExtension
 import com.android.build.gradle.LibraryExtension
-import com.poulastaa.convention.addCommonNetworkDependency
 import com.poulastaa.convention.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -53,7 +52,7 @@ class KmpRoomConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                addCommonNetworkDependency()
+                add("commonMainApi", project(":common:domain"))
                 add("commonMainImplementation", libs.findLibrary("androidx-room-runtime").get())
                 add("commonMainImplementation", libs.findLibrary("androidx-sqlite-bundled").get())
 

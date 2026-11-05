@@ -4,8 +4,8 @@ import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.model.DtoForgotPasswordStatus
 import com.poulastaa.auth.viewmodels.utils.emailError
 import com.poulastaa.auth.viewmodels.utils.normalizedEmail
-import com.poulastaa.common.network.ApiError
-import com.poulastaa.common.network.AppResult
+import com.poulastaa.common.domain.result.ApiError
+import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
 

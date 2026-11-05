@@ -1,9 +1,9 @@
 package com.poulastaa.common.database
 
 import com.poulastaa.common.domain.Log
-import com.poulastaa.common.network.AppResult
-import com.poulastaa.common.network.DataError
-import com.poulastaa.common.network.ErrorResponse
+import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.DataError
+import com.poulastaa.common.domain.result.ErrorResponse
 import kotlin.coroutines.cancellation.CancellationException
 
 @PublishedApi
