@@ -3,12 +3,12 @@ package com.poulastaa.auth.data
 import com.poulastaa.auth.domain.AuthLocalDatasource
 import com.poulastaa.common.database.dao.AuthDao
 import com.poulastaa.common.database.entity.UserEntity
-import com.poulastaa.common.database.safeDbCall
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.domain.result.DataError
 import com.poulastaa.common.domain.result.EmptyResponse
+import com.poulastaa.common.domain.result.safeDbCall
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthLocalDatasource::class])

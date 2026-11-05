@@ -15,6 +15,7 @@
 - Do not revert any outside code without asking.
 - Do not push anything to Git, ever.
 - Ask permission before running any Git command.
+- When the user explicitly asks to share a report, share findings, or explain first, do not edit any files. Only report or explain, then wait until the user explicitly says to proceed with changes.
 
 # Plans
 
