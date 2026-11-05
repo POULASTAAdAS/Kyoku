@@ -28,7 +28,6 @@ class KmpViewmodelsConventionPlugin : Plugin<Project> {
                 }
 
                 androidTarget()
-                iosX64()
                 iosArm64()
                 iosSimulatorArm64()
                 jvm()

@@ -26,7 +26,6 @@ class KmpCommonUiConventionPlugin : Plugin<Project> {
                 }
 
                 androidTarget()
-                iosX64()
                 iosArm64()
                 iosSimulatorArm64()
                 jvm()

@@ -27,7 +27,6 @@ class KmpRoomConventionPlugin : Plugin<Project> {
                     }
                 }
 
-                iosX64()
                 iosArm64()
                 iosSimulatorArm64()
                 jvm()
@@ -58,7 +57,6 @@ class KmpRoomConventionPlugin : Plugin<Project> {
 
                 val roomCompiler = libs.findLibrary("androidx-room-compiler").get()
                 add("kspAndroid", roomCompiler)
-                add("kspIosX64", roomCompiler)
                 add("kspIosArm64", roomCompiler)
                 add("kspIosSimulatorArm64", roomCompiler)
                 add("kspJvm", roomCompiler)

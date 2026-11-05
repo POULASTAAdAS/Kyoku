@@ -10,6 +10,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.androidx.room.runtime)
+            implementation(libs.androidx.datastore.preferences.core)
         }
     }
 }

@@ -7,7 +7,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val commonNetworkModule: Module = module {
-    single { PlatformHttpClient() }
+    single { PlatformHttpClient(get()) }
     single<HttpClient> { get<PlatformHttpClient>().client }
     single<Json> { PlatformHttpClient.json }
 }

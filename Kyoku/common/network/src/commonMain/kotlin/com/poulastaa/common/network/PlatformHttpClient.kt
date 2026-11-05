@@ -2,6 +2,7 @@ package com.poulastaa.common.network
 
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.applyIf
+import com.poulastaa.common.domain.preferences.AppPreferences
 import com.poulastaa.common.network.utils.NetworkPlatformUtils
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
@@ -26,7 +27,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.koin.core.component.KoinComponent
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -58,13 +58,12 @@ private val IGNORE_AUTH_TOKEN_ROUTES = listOf(
     "signup"
 )
 
-val isUserLoggedIn = false
 val isRefreshNeeded = true
-val refreshToken = ""
-val accessToken: String? = null
 val homeRoute = ""
 
-class PlatformHttpClient : KoinComponent {
+class PlatformHttpClient(
+    private val appPreferences: AppPreferences,
+) {
     companion object {
         val json by lazy {
             Json {
@@ -131,12 +130,12 @@ class PlatformHttpClient : KoinComponent {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        if (isUserLoggedIn) {
-                            val accessToken = "" // return with null if not available
-                            val refreshToken = "" // return with null if not available
-
-                            BearerTokens(accessToken = accessToken, refreshToken = refreshToken)
-                        } else null
+                        appPreferences.getTokens()?.let { tokens ->
+                            BearerTokens(
+                                accessToken = tokens.accessToken,
+                                refreshToken = tokens.refreshToken,
+                            )
+                        }
                     }
 //                    refreshTokens {
 //                        val tokenResult = refreshToken()
@@ -171,16 +170,11 @@ class PlatformHttpClient : KoinComponent {
                 )
                 if (isRefreshRoute.not()) refreshTokenIfNeeded()
 
-                val isAuthNeeded = request.url.encodedPath !in IGNORE_AUTH_TOKEN_ROUTES
-                if (isAuthNeeded && isUserLoggedIn && accessToken == null) {
-                    logOut()
-                    throw IllegalStateException("User logged in but, Access token not available")
-                }
+                val tokens = appPreferences.getTokens()
 
                 // add fallback refresh token
-                if (isRefreshRoute) {
-                    // TODO: change with actual token
-                    request.header(HttpHeaders.Authorization, "Bearer $refreshToken")
+                if (isRefreshRoute && tokens != null) {
+                    request.header(HttpHeaders.Authorization, "Bearer ${tokens.refreshToken}")
                 }
 
                 val retryCount = (request.headers[RETRY_COUNT_KEY]?.toIntOrNull() ?: 0)

@@ -9,6 +9,7 @@ import com.poulastaa.auth.network.KtorAuthDatasource
 import com.poulastaa.auth.network.googleTokenExchangeModule
 import com.poulastaa.auth.ui.components.googleAuthModule
 import com.poulastaa.common.database.di.databaseModule
+import com.poulastaa.common.database.di.preferencesModule
 import com.poulastaa.common.network.di.commonNetworkModule
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -16,7 +17,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val dependencyModule: Module = module {
-    includes(commonNetworkModule, databaseModule, googleAuthModule, googleTokenExchangeModule)
+    includes(commonNetworkModule, databaseModule, preferencesModule, googleAuthModule, googleTokenExchangeModule)
     singleOf(::KtorAuthDatasource) bind AuthRemoteDatasource::class
     singleOf(::RoomDatasource) bind AuthLocalDatasource::class
     singleOf(::RemoteAuthRepository) bind AuthRepository::class
