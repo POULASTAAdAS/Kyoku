@@ -15,6 +15,6 @@ internal fun DtoFullPlaylist.toUiPlaylist() = UiPlaylist(
 private fun DtoSong.toUiImportPlaylistTrack() = UiImportPlaylistTrack(
     id = id,
     title = title,
-    artist = artists,
+    artist = artists.map { it.name },
     poster = poster,
 )
