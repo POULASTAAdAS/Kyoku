@@ -30,8 +30,11 @@ kotlin {
             implementation(projects.common.ui)
             api(projects.common.viewmodels)
 
+            implementation(projects.setup.data)
             implementation(projects.setup.domain)
+            implementation(projects.setup.network)
             implementation(projects.setup.ui)
+            implementation(projects.setup.viewmodels)
 
             implementation(libs.ktor.client.core)
         }

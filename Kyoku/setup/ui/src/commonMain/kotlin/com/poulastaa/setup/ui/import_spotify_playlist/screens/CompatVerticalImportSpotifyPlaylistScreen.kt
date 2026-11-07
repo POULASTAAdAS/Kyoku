@@ -33,6 +33,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,20 +65,29 @@ import com.poulastaa.common.ui.components.SmallClearButton
 import com.poulastaa.common.ui.design_system.IconAddLink
 import com.poulastaa.common.ui.design_system.IconAppLogo
 import com.poulastaa.common.ui.design_system.IconArrowBack
+import com.poulastaa.common.ui.design_system.StringAppName
 import com.poulastaa.common.ui.design_system.StringBackButton
+import com.poulastaa.common.ui.design_system.StringContinue
+import com.poulastaa.common.ui.design_system.StringImportPlaylist
+import com.poulastaa.common.ui.design_system.StringImportPlaylistTitle
+import com.poulastaa.common.ui.design_system.StringPlaylistLink
+import com.poulastaa.common.ui.design_system.StringSkipForNow
+import com.poulastaa.common.ui.design_system.StringYourPlaylists
 import com.poulastaa.common.ui.design_system.dimens
-import com.poulastaa.setup.ui.import_spotify_playlist.UiPlaylist
+import com.poulastaa.common.ui.design_system.stringDurationHours
+import com.poulastaa.common.ui.design_system.stringDurationMinutes
+import com.poulastaa.common.ui.design_system.stringTracksCount
+import com.poulastaa.setup.viewmodels.import_playlist.ImportPlaylistUiAction
+import com.poulastaa.setup.viewmodels.import_playlist.ImportPlaylistUiState
+import com.poulastaa.setup.viewmodels.import_playlist.ImportPlaylistViewmodel
+import com.poulastaa.setup.viewmodels.import_playlist.UiDuration
 
 @Composable
 internal fun CompatVerticalImportSpotifyPlaylistScreen(
     focusManager: FocusManager,
-    isLoading: Boolean,
-    onLoadingChange: (Boolean) -> Unit,
-    link: String,
-    onLinkChange: (String) -> Unit,
+    state: ImportPlaylistUiState,
+    viewmodel: ImportPlaylistViewmodel,
     onContinueClick: () -> Unit,
-    playlists: List<UiPlaylist>,
-    onPlaylistsChange: (List<UiPlaylist>) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -93,12 +103,12 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                 withStyle(
                     style = SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)
                 ) {
-                    append("Import your spotify playlist to ")
+                    append(StringImportPlaylistTitle)
                 }
                 withStyle(
                     style = SpanStyle(color = MaterialTheme.colorScheme.primary)
                 ) {
-                    append("Kyoku")
+                    append(StringAppName)
                 }
             },
         )
@@ -106,23 +116,24 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
         ColumnSpacer(MaterialTheme.dimens.spacing.large)
 
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .heightIn(max = 64.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            // OutlinedTextField reserves top space for its label, align bottoms so the button matches the field outline
+            verticalAlignment = Alignment.Bottom
         ) {
             AppOutlinedTextField(
-                value = link,
-                onValueChange = onLinkChange,
+                value = state.link.value,
+                onValueChange = { viewmodel.onAction(ImportPlaylistUiAction.OnLinkChange(it)) },
                 modifier = Modifier.weight(1f),
-                label = "playlist link",
+                label = StringPlaylistLink,
                 leadingIcon = IconAddLink,
                 trailingContent = {
                     SmallClearButton(
-                        visible = link.isNotEmpty(),
-                        oClick = { onLinkChange("") }
+                        visible = state.link.value.isNotEmpty(),
+                        oClick = { viewmodel.onAction(ImportPlaylistUiAction.OnLinkChange("")) }
                     )
                 },
+                isError = state.link.isError,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
@@ -131,7 +142,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        onLoadingChange(true)
+                        viewmodel.onAction(ImportPlaylistUiAction.OnImportClick)
                     }
                 ),
             )
@@ -145,18 +156,17 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
                     onClick = {
-                        if (isLoading.not()) {
-                            onLoadingChange(true)
-                            // api call
-                        }
+                        focusManager.clearFocus()
+                        viewmodel.onAction(ImportPlaylistUiAction.OnImportClick)
                     },
                     content = {
                         AnimatedContent(
-                            targetState = isLoading,
-                            modifier = Modifier.fillMaxWidth(),
+                            targetState = state.isMakingApiCall,
+                            modifier = Modifier.fillMaxWidth()
+                                .height(TextFieldDefaults.MinHeight),
                         ) {
                             Box(
-                                Modifier.fillMaxSize(0.8f),
+                                Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 when (it) {
@@ -166,7 +176,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                     )
 
                                     false -> Text(
-                                        text = "Import",
+                                        text = StringImportPlaylist,
                                         color = MaterialTheme.colorScheme.background,
                                         fontWeight = FontWeight.Medium
                                     )
@@ -203,7 +213,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
             RowSpacer(MaterialTheme.dimens.spacing.small)
 
             Text(
-                text = "YOUR PLAYLISTS",
+                text = StringYourPlaylists,
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp,
@@ -236,7 +246,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 items(
-                    items = playlists,
+                    items = state.playlists,
                     key = { it.id }
                 ) { playlist ->
                     Card(
@@ -250,12 +260,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                             modifier = Modifier.fillMaxWidth()
                                 .clickable(
                                     onClick = {
-                                        onPlaylistsChange(
-                                            playlists.map {
-                                                if (it.id == playlist.id) it.copy(isExpanded = !it.isExpanded)
-                                                else it
-                                            }
-                                        )
+                                        viewmodel.onAction(ImportPlaylistUiAction.OnPlaylistToggle(playlist.id))
                                     }
                                 )
                                 .padding(MaterialTheme.dimens.spacing.small)
@@ -407,45 +412,45 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "${playlist.tracks.size} tracks",
+                                        text = stringTracksCount(playlist.tracks.size),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                             alpha = 0.7f
                                         ),
                                     )
 
-                                    Box(
-                                        Modifier.padding(MaterialTheme.dimens.spacing.extraSmall),
-                                        contentAlignment = Alignment.Center
-                                    ) {
+                                    playlist.totalDuration?.let { totalDuration ->
                                         Box(
-                                            Modifier.clip(CircleShape)
-                                                .size(MaterialTheme.dimens.spacing.extraSmall)
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    shape = CircleShape
-                                                )
+                                            Modifier.padding(MaterialTheme.dimens.spacing.extraSmall),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Box(
+                                                Modifier.clip(CircleShape)
+                                                    .size(MaterialTheme.dimens.spacing.extraSmall)
+                                                    .background(
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        shape = CircleShape
+                                                    )
+                                            )
+                                        }
+
+                                        Text(
+                                            text = when (totalDuration.unit) {
+                                                UiDuration.UiTimeUnit.HOURS -> stringDurationHours(totalDuration.time)
+                                                UiDuration.UiTimeUnit.MINUTES -> stringDurationMinutes(totalDuration.time)
+                                            },
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                alpha = 0.7f
+                                            ),
                                         )
                                     }
-
-                                    Text(
-                                        text = "${playlist.totalDuration.time} ${playlist.totalDuration.unit.value}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                            alpha = 0.7f
-                                        ),
-                                    )
                                 }
                             }
 
                             IconButton(
                                 onClick = {
-                                    onPlaylistsChange(
-                                        playlists.map {
-                                            if (it.id == playlist.id) it.copy(isExpanded = !it.isExpanded)
-                                            else it
-                                        }
-                                    )
+                                    viewmodel.onAction(ImportPlaylistUiAction.OnPlaylistToggle(playlist.id))
                                 },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = Color.Transparent,
@@ -550,13 +555,15 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                             )
                                         }
 
-                                        Text(
-                                            text = song.duration.time,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                                alpha = 0.7f
-                                            ),
-                                        )
+                                        song.duration?.let { duration ->
+                                            Text(
+                                                text = duration.time,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                    alpha = 0.7f
+                                                ),
+                                            )
+                                        }
                                     }
 
                                     ColumnSpacer(MaterialTheme.dimens.spacing.small)
@@ -598,11 +605,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             AnimatedContent(
-                                targetState = playlists.isNotEmpty(),
+                                targetState = state.playlists.isNotEmpty(),
                             ) { status ->
                                 when (status) {
-                                    false -> Text(text = "skip for now")
-                                    true -> Text(text = "continue")
+                                    false -> Text(text = StringSkipForNow)
+                                    true -> Text(text = StringContinue)
                                 }
                             }
                         }

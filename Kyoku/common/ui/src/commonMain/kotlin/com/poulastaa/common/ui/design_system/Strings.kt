@@ -4,13 +4,19 @@ import androidx.compose.runtime.Composable
 import kyoku.common.ui.generated.resources.Res
 import kyoku.common.ui.generated.resources.already_have_an_account
 import kyoku.common.ui.generated.resources.app_icon
+import kyoku.common.ui.generated.resources.app_name
 import kyoku.common.ui.generated.resources.back_button
+import kyoku.common.ui.generated.resources.continue_text
 import kyoku.common.ui.generated.resources.continue_with_google
 import kyoku.common.ui.generated.resources.create_account
 import kyoku.common.ui.generated.resources.dont_have_account
+import kyoku.common.ui.generated.resources.duration_hours
+import kyoku.common.ui.generated.resources.duration_minutes
 import kyoku.common.ui.generated.resources.email
 import kyoku.common.ui.generated.resources.forgot_password
 import kyoku.common.ui.generated.resources.get_otp
+import kyoku.common.ui.generated.resources.import_playlist
+import kyoku.common.ui.generated.resources.import_playlist_title
 import kyoku.common.ui.generated.resources.invalid_email
 import kyoku.common.ui.generated.resources.invalid_password
 import kyoku.common.ui.generated.resources.invalid_username
@@ -20,6 +26,7 @@ import kyoku.common.ui.generated.resources.or_signin_with
 import kyoku.common.ui.generated.resources.or_signup_with
 import kyoku.common.ui.generated.resources.password
 import kyoku.common.ui.generated.resources.password_visibility
+import kyoku.common.ui.generated.resources.playlist_link
 import kyoku.common.ui.generated.resources.reset_password
 import kyoku.common.ui.generated.resources.reset_password_message
 import kyoku.common.ui.generated.resources.s
@@ -28,7 +35,10 @@ import kyoku.common.ui.generated.resources.sign_in_rest
 import kyoku.common.ui.generated.resources.sign_up
 import kyoku.common.ui.generated.resources.sign_up_rest
 import kyoku.common.ui.generated.resources.signup_welcome_message
+import kyoku.common.ui.generated.resources.skip_for_now
+import kyoku.common.ui.generated.resources.tracks_count
 import kyoku.common.ui.generated.resources.username
+import kyoku.common.ui.generated.resources.your_playlists
 import org.jetbrains.compose.resources.stringResource
 
 val StringAppIcon: String
@@ -138,6 +148,45 @@ val StringResetPasswordMessage: String
 val StringGetOtp: String
     @Composable
     get() = stringResource(Res.string.get_otp)
+
+// Import Playlist
+
+val StringImportPlaylistTitle: String
+    @Composable
+    get() = stringResource(Res.string.import_playlist_title)
+
+val StringAppName: String
+    @Composable
+    get() = stringResource(Res.string.app_name)
+
+val StringPlaylistLink: String
+    @Composable
+    get() = stringResource(Res.string.playlist_link)
+
+val StringImportPlaylist: String
+    @Composable
+    get() = stringResource(Res.string.import_playlist)
+
+val StringYourPlaylists: String
+    @Composable
+    get() = stringResource(Res.string.your_playlists)
+
+@Composable
+fun stringTracksCount(count: Int): String = stringResource(Res.string.tracks_count, count)
+
+@Composable
+fun stringDurationHours(time: String): String = stringResource(Res.string.duration_hours, time)
+
+@Composable
+fun stringDurationMinutes(time: String): String = stringResource(Res.string.duration_minutes, time)
+
+val StringSkipForNow: String
+    @Composable
+    get() = stringResource(Res.string.skip_for_now)
+
+val StringContinue: String
+    @Composable
+    get() = stringResource(Res.string.continue_text)
 
 // Common
 

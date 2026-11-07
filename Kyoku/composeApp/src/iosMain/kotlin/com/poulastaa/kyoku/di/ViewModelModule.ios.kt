@@ -4,6 +4,7 @@ import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
 import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
 import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
 import com.poulastaa.common.viewmodels.root.RootViewmodel
+import com.poulastaa.setup.viewmodels.import_playlist.ImportPlaylistViewmodel
 import org.koin.core.module.LazyModule
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.lazyModule
@@ -13,4 +14,5 @@ actual val viewModelModule: LazyModule = lazyModule {
     viewModelOf(::SignInViewmodel)
     viewModelOf(::SignUpViewmodel)
     viewModelOf(::ForgotPasswordViewmodel)
+    viewModelOf(::ImportPlaylistViewmodel)
 }

@@ -14,4 +14,11 @@
     <string name="password_length_error">Use 8+ characters</string>
     <string name="password_letter_error">Add a letter</string>
     <string name="password_number_error">Add a number</string>
+
+    <!--    Import Playlist-->
+    <string name="empty_playlist_link">Paste a spotify playlist link</string>
+    <string name="invalid_playlist_link">Not a valid spotify playlist link</string>
+    <string name="playlist_not_found">Could not find that playlist or it has no songs</string>
+    <string name="playlist_already_imported">Playlist already imported</string>
+    <string name="playlist_imported">Playlist imported successfully</string>
 </resources>

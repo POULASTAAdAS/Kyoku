@@ -33,6 +33,18 @@
     <string name="reset_password_message">Enter the email associated with your account and we will send an email with verification code to reset your password.</string>
     <string name="get_otp">Get OTP</string>
 
+    <!--    Import Playlist-->
+    <string name="import_playlist_title">Import your spotify playlist to </string>
+    <string name="app_name">Kyoku</string>
+    <string name="playlist_link">playlist link</string>
+    <string name="import_playlist">Import</string>
+    <string name="your_playlists">YOUR PLAYLISTS</string>
+    <string name="tracks_count">%1$d tracks</string>
+    <string name="duration_hours">%1$s hours</string>
+    <string name="duration_minutes">%1$s minutes</string>
+    <string name="skip_for_now">skip for now</string>
+    <string name="continue_text">continue</string>
+
     <!--    Common-->
     <string name="back_button">Back Button</string>
     <string name="dismiss_message">Dismiss message</string>
