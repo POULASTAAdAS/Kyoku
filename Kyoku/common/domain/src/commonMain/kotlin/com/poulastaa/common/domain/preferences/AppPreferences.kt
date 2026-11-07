@@ -1,5 +1,6 @@
 package com.poulastaa.common.domain.preferences
 
+import com.poulastaa.common.domain.model.DtoSetupScreen
 import com.poulastaa.common.domain.model.DtoTokens
 
 /**
@@ -10,4 +11,7 @@ interface AppPreferences {
     suspend fun saveTokens(tokens: DtoTokens)
     suspend fun getTokens(): DtoTokens?
     suspend fun clearTokens()
+
+    suspend fun saveLastSetupScreen(screen: DtoSetupScreen)
+    suspend fun getLastSetupScreen(): DtoSetupScreen?
 }

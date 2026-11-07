@@ -6,12 +6,18 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalFocusManager
+import com.poulastaa.common.domain.model.DtoSetupScreen
+import com.poulastaa.common.domain.preferences.AppPreferences
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.ScreenSizeType
 import com.poulastaa.common.ui.components.ScreenSizeWrapper
+import com.poulastaa.common.viewmodels.Screens
 import com.poulastaa.setup.ui.import_spotify_playlist.screens.CompatVerticalImportSpotifyPlaylistScreen
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import kotlin.random.Random
 
 @Stable
@@ -77,6 +83,8 @@ fun ImportSpotifyPlaylist() {
     var isLoading by mutableStateOf(false)
     var link by remember { mutableStateOf("") }
     val navController = LocalNavController.current
+    val appPreferences = koinInject<AppPreferences>()
+    val scope = rememberCoroutineScope()
 
     ScreenSizeWrapper { screenSizeType ->
         when (screenSizeType) {
@@ -86,7 +94,12 @@ fun ImportSpotifyPlaylist() {
                 onLoadingChange = { isLoading = it },
                 link,
                 onLinkChange = { link = it },
-                navController,
+                onContinueClick = {
+                    scope.launch {
+                        appPreferences.saveLastSetupScreen(DtoSetupScreen.SELECT_GENRE)
+                        navController.navigate(Screens.SetupScreens.SelectGenre)
+                    }
+                },
                 dummyData,
                 onPlaylistsChange = { dummyData = it },
             )

@@ -4,12 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.poulastaa.common.domain.model.DtoSetupScreen
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.preferences.AppPreferences
 import kotlinx.coroutines.flow.first
 
 private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
 private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+private val LAST_SETUP_SCREEN_KEY = stringPreferencesKey("last_setup_screen")
 
 class DataStoreAppPreferences(
     private val dataStore: DataStore<Preferences>,
@@ -34,5 +36,16 @@ class DataStoreAppPreferences(
             preferences.remove(ACCESS_TOKEN_KEY)
             preferences.remove(REFRESH_TOKEN_KEY)
         }
+    }
+
+    override suspend fun saveLastSetupScreen(screen: DtoSetupScreen) {
+        dataStore.edit { preferences ->
+            preferences[LAST_SETUP_SCREEN_KEY] = screen.name
+        }
+    }
+
+    override suspend fun getLastSetupScreen(): DtoSetupScreen? {
+        val value = dataStore.data.first()[LAST_SETUP_SCREEN_KEY] ?: return null
+        return DtoSetupScreen.entries.firstOrNull { it.name == value }
     }
 }

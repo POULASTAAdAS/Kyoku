@@ -155,7 +155,7 @@ fun RootNavigation(state: RootUiState) {
 
                 // setup
                 navigation<Screens.SetupGraph>(
-                    startDestination = Screens.SetupScreens.ImportPlaylist
+                    startDestination = state.setupStartDestination,
                 ) {
                     composable<Screens.SetupScreens.ImportPlaylist> {
                         ImportSpotifyPlaylist()

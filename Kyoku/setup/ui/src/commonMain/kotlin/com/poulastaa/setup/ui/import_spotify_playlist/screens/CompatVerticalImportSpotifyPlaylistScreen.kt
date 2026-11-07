@@ -55,7 +55,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
@@ -67,7 +66,6 @@ import com.poulastaa.common.ui.design_system.IconAppLogo
 import com.poulastaa.common.ui.design_system.IconArrowBack
 import com.poulastaa.common.ui.design_system.StringBackButton
 import com.poulastaa.common.ui.design_system.dimens
-import com.poulastaa.common.viewmodels.Screens
 import com.poulastaa.setup.ui.import_spotify_playlist.UiPlaylist
 
 @Composable
@@ -77,7 +75,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
     onLoadingChange: (Boolean) -> Unit,
     link: String,
     onLinkChange: (String) -> Unit,
-    navController: NavHostController,
+    onContinueClick: () -> Unit,
     playlists: List<UiPlaylist>,
     onPlaylistsChange: (List<UiPlaylist>) -> Unit,
 ) {
@@ -609,9 +607,7 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                             }
                         }
                     },
-                    onClick = {
-                        navController.navigate(Screens.SetupScreens.SelectGenre)
-                    }
+                    onClick = onContinueClick
                 )
 
                 Spacer(

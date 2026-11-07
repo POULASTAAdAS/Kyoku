@@ -5,12 +5,16 @@ import com.poulastaa.auth.domain.AuthRemoteDatasource
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
+import com.poulastaa.common.domain.model.DtoSetupScreen
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.domain.result.asEmptyResponse
 import com.poulastaa.common.domain.result.map
 import org.koin.core.annotation.Single
+
+// TODO: read the setup screen from the auth response once the server returns it; every user is treated as new for now.
+private val DEFAULT_SETUP_SCREEN = DtoSetupScreen.IMPORT_PLAYLIST
 
 @Single(binds = [AuthRepository::class])
 class RemoteAuthRepository(
@@ -22,7 +26,10 @@ class RemoteAuthRepository(
         password: String,
     ): AppResult<Boolean, ApiError> {
         val result = remote.signIn(email, password)
-        if (result is AppResult.Success) local.saveUser(result.response.user)
+        if (result is AppResult.Success) {
+            local.saveUser(result.response.user)
+            local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
+        }
         return result.map { it.user.isNewUser }
     }
 
@@ -32,7 +39,10 @@ class RemoteAuthRepository(
         password: String,
     ): AppResult<Boolean, ApiError> {
         val result = remote.signUp(email, username, password)
-        if (result is AppResult.Success) local.saveUser(result.response.user)
+        if (result is AppResult.Success) {
+            local.saveUser(result.response.user)
+            local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
+        }
         return result.map { true }
     }
 
@@ -58,6 +68,7 @@ class RemoteAuthRepository(
         if (this is AppResult.Success) {
             local.saveUser(response.user)
             local.saveTokens(response.tokens)
+            local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
         }
     }
 }
