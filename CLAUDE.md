@@ -17,9 +17,11 @@
 - Ask permission before running any Git command.
 - When the user explicitly asks to share a report, share findings, or explain first, do not edit any files. Only report or explain, then wait until the user explicitly says to proceed with changes.
 
-# Plans
+# Plans & Migrations (`time-capsule/`)
 
-- Song streaming (signed URLs + nginx, songs moved out of MinIO): `plans/song-streaming-setup.md`. Read and follow this file only when the user talks about implementing song streaming, HLS/manifest/chunk auth, the media nginx, or migrating songs out of MinIO; otherwise ignore it.
+- `time-capsule/plans/` — future feature plans. `time-capsule/migration/` — migration reports for refactors.
+- Song streaming (signed URLs + nginx, songs moved out of MinIO): `time-capsule/plans/song-streaming-setup.md`. Read and follow this file only when the user talks about implementing song streaming, HLS/manifest/chunk auth, the media nginx, or migrating songs out of MinIO; otherwise ignore it.
+- Playlist service migration (playlist owns PLAYLIST DB, Spotify import fix, song matching via `search` + Elasticsearch): `time-capsule/migration/playlist-service-migration.md`. Read and follow this file only when the user talks about the playlist service, playlist import, the playlist↔user/search/gateway contracts, or this migration; otherwise ignore it.
 
 # Infrastructure
 
