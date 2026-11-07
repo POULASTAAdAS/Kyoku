@@ -165,7 +165,7 @@ class PlatformHttpClient(
             client.plugin(HttpSend).intercept { request ->
                 val isRefreshRoute = request.url.toString().contains(
                     // TODO: add refresh route
-                    "",
+                    "/refresh",
                     ignoreCase = true
                 )
                 if (isRefreshRoute.not()) refreshTokenIfNeeded()

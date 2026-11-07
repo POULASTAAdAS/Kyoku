@@ -12,6 +12,7 @@ import com.poulastaa.common.database.di.databaseModule
 import com.poulastaa.common.database.di.preferencesModule
 import com.poulastaa.common.network.di.commonNetworkModule
 import com.poulastaa.setup.data.RemoteSetupRepository
+import com.poulastaa.setup.domain.SetupLocalDatasource
 import com.poulastaa.setup.domain.SetupRemoteDatasource
 import com.poulastaa.setup.domain.SetupRepository
 import com.poulastaa.setup.network.KtorSetupDatasource
@@ -19,6 +20,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import com.poulastaa.setup.data.RoomDatasource as SetupRoomDatasource
 
 val dependencyModule: Module = module {
     includes(commonNetworkModule, databaseModule, preferencesModule, googleAuthModule, googleTokenExchangeModule)
@@ -26,5 +28,6 @@ val dependencyModule: Module = module {
     singleOf(::RoomDatasource) bind AuthLocalDatasource::class
     singleOf(::RemoteAuthRepository) bind AuthRepository::class
     singleOf(::KtorSetupDatasource) bind SetupRemoteDatasource::class
+    singleOf(::SetupRoomDatasource) bind SetupLocalDatasource::class
     singleOf(::RemoteSetupRepository) bind SetupRepository::class
 }
