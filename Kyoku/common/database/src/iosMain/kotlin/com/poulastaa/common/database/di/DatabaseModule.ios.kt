@@ -18,6 +18,8 @@ actual val databaseModule: Module = module {
         ).buildKyokuDatabase()
     }
     single { get<KyokuDatabase>().authDao }
+    single { get<KyokuDatabase>().songDao }
+    single { get<KyokuDatabase>().playlistDao }
 }
 
 @OptIn(ExperimentalForeignApi::class)

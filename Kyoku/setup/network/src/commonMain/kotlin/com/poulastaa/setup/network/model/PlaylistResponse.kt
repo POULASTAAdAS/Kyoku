@@ -1,7 +1,7 @@
 package com.poulastaa.setup.network.model
 
-import com.poulastaa.setup.domain.model.DtoPlaylist
-import com.poulastaa.setup.domain.model.DtoPlaylistVisibility
+import com.poulastaa.common.domain.model.DtoPlaylist
+import com.poulastaa.common.domain.model.DtoPlaylistVisibility
 import kotlinx.serialization.Serializable
 
 @Serializable

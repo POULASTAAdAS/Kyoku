@@ -11,6 +11,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.setup.domain)
+            implementation(projects.common.database)
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.poulastaa.setup.network.model
 
-import com.poulastaa.setup.domain.model.DtoFullPlaylist
+import com.poulastaa.common.domain.model.DtoFullPlaylist
 import kotlinx.serialization.Serializable
 
 @Serializable

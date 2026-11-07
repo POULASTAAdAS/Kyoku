@@ -1,12 +1,12 @@
 package com.poulastaa.setup.network.model
 
-import com.poulastaa.setup.domain.model.DtoAlbum
-import com.poulastaa.setup.domain.model.DtoArtist
-import com.poulastaa.setup.domain.model.DtoComposer
-import com.poulastaa.setup.domain.model.DtoCountry
-import com.poulastaa.setup.domain.model.DtoGenre
-import com.poulastaa.setup.domain.model.DtoSong
-import com.poulastaa.setup.domain.model.DtoSongInfo
+import com.poulastaa.common.domain.model.DtoAlbum
+import com.poulastaa.common.domain.model.DtoArtist
+import com.poulastaa.common.domain.model.DtoComposer
+import com.poulastaa.common.domain.model.DtoCountry
+import com.poulastaa.common.domain.model.DtoGenre
+import com.poulastaa.common.domain.model.DtoSong
+import com.poulastaa.common.domain.model.DtoSongInfo
 import kotlinx.serialization.Serializable
 
 @Serializable

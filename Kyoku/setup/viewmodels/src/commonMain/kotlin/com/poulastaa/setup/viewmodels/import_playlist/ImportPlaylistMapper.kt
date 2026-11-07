@@ -1,7 +1,7 @@
 package com.poulastaa.setup.viewmodels.import_playlist
 
-import com.poulastaa.setup.domain.model.DtoFullPlaylist
-import com.poulastaa.setup.domain.model.DtoSong
+import com.poulastaa.common.domain.model.DtoFullPlaylist
+import com.poulastaa.common.domain.model.DtoSong
 
 private const val MAX_PLAYLIST_POSTERS = 4
 

@@ -1,4 +1,4 @@
-package com.poulastaa.setup.domain.model
+package com.poulastaa.common.domain.model
 
 data class DtoSong(
     val id: Long,
