@@ -16,13 +16,14 @@ message RequestUser{
   }
 };
 
-message RequestSaveUserPlaylist{
-  int64 playlistId = 1;
-  RequestUser user = 2;
+message RequestUserId{
+  RequestUser user = 1;
 };
 
-message EmptyResponse{};
+message ResponseUserId{
+  int64 userId = 1;
+};
 
-service  PlaylistUserService{
-  rpc saveUserPlaylist(RequestSaveUserPlaylist) returns (EmptyResponse);
+service PlaylistUserService{
+  rpc getUserId(RequestUserId) returns (ResponseUserId);
 }

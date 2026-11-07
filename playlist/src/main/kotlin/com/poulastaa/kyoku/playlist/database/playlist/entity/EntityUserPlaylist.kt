@@ -16,7 +16,7 @@ class EntityUserPlaylist(
         name = "playlist_id",
         nullable = false,
         foreignKey = ForeignKey(
-            name = "fk_song_playlist",
+            name = "fk_user_playlist",
             foreignKeyDefinition = "FOREIGN KEY (`playlist_id`) REFERENCES `Playlist`(`id`) ON DELETE CASCADE"
         )
     )

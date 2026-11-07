@@ -36,10 +36,10 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	// service discovery
-//	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
 	// config
-//	implementation("org.springframework.cloud:spring-cloud-starter-config")
+	implementation("org.springframework.cloud:spring-cloud-starter-config")
 
 	// redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")

@@ -1,5 +1,8 @@
 package com.poulastaa.kyoku.playlist.config
 
+import io.ktor.client.*
+import io.ktor.client.engine.apache.*
+import io.ktor.client.plugins.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -19,5 +22,16 @@ class AppConfig {
         this.hashKeySerializer = StringRedisSerializer()
         this.hashValueSerializer = jackson2JsonRedisSerializer
         this.afterPropertiesSet()
+    }
+
+    /**
+     * Shared Ktor client (Spotify). Closed by Spring on shutdown.
+     */
+    @Bean(destroyMethod = "close")
+    fun provideHttpClient() = HttpClient(Apache) {
+        install(HttpTimeout) {
+            connectTimeoutMillis = 5_000
+            requestTimeoutMillis = 10_000
+        }
     }
 }

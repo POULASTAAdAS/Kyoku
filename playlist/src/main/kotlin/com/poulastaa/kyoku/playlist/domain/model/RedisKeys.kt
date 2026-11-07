@@ -22,10 +22,5 @@ open class RedisKeys {
             expTime = ExpTime.HOUR_6.time,
             unit = ExpTime.HOUR_6.unit
         ),
-        SONG_BY_TITLE(
-            prefix = "SONG:TITLE:",
-            expTime = ExpTime.HOUR_6.time,
-            unit = ExpTime.HOUR_6.unit
-        ),
     }
 }

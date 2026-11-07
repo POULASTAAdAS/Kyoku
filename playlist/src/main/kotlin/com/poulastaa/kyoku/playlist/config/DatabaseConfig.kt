@@ -5,6 +5,7 @@ import com.poulastaa.kyoku.playlist.database.content.repository.SongDataSource
 import com.poulastaa.kyoku.playlist.database.content.repository.SongInfoDataSource
 import com.poulastaa.kyoku.playlist.database.playlist.repository.PlaylistDataSource
 import com.poulastaa.kyoku.playlist.database.playlist.repository.SongPlaylistDataSource
+import com.poulastaa.kyoku.playlist.database.playlist.repository.UserPlaylistDataSource
 import com.zaxxer.hikari.HikariDataSource
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
@@ -26,7 +27,8 @@ import javax.sql.DataSource
             type = FilterType.ASSIGNABLE_TYPE,
             classes = [
                 PlaylistDataSource::class,
-                SongPlaylistDataSource::class
+                SongPlaylistDataSource::class,
+                UserPlaylistDataSource::class
             ]
         )
     ],

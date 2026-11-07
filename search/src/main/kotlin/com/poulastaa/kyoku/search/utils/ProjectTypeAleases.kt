@@ -5,3 +5,4 @@ typealias CountryId = Int
 typealias CountryName = String
 typealias CountryCode = String
 typealias ArtistTitle = String
+typealias SongId = Long

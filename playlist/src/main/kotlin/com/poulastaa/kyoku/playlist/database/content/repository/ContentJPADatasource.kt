@@ -24,14 +24,6 @@ interface SongDataSource : JpaRepository<EntitySong, SongId> {
     @Query(
         """
             SELECT DISTINCT s FROM EntitySong s
-            WHERE s.id IN :ids
-        """
-    )
-    fun findSongsByIds(@Param("ids") ids: List<Long>): List<EntitySong>
-
-    @Query(
-        """
-            SELECT DISTINCT s FROM EntitySong s
             LEFT JOIN FETCH s.artists a
             LEFT JOIN FETCH a.genres
             WHERE s.id IN :ids

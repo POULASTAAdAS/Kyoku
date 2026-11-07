@@ -1,7 +1,7 @@
 # Migration: Playlist Service Ownership & Import Flow Fix
 
 Date: 2026-11-08
-Status: **PROPOSED — awaiting review. No code has been changed yet.**
+Status: **IMPLEMENTED (2026-11-08) — not yet built/run; see §9.** Client (KMP app) intentionally untouched.
 
 Purpose: make the `playlist` service the single owner of the `PLAYLIST` database, make the
 Spotify import flow correct (atomic, never hanging, no orphan rows), move song matching
@@ -92,7 +92,8 @@ flowchart TD
     B --> C[fetch Spotify tracks<br/>cached token, all pages]
     C -->|empty / 404| X2[NOT_FOUND]
     C --> D[search.matchSongs<br/>Elasticsearch best hit per track, min score]
-    D -->|search down| X5[UNAVAILABLE<br/>nothing written]
+    D -->|search down| DB[fallback: CONTENT DB title match]
+    DB --> H
     D -->|no match| X3[FAILED_PRECONDITION<br/>nothing written]
     D --> H[dedupe ids, hydrate songs<br/>Redis by id, then CONTENT DB]
     H --> E[one DB transaction<br/>Playlist + SongPlaylist + UserPlaylist]
@@ -100,7 +101,7 @@ flowchart TD
     E -->|any error| X4[rollback + error status]
 
     classDef err stroke:#d33,stroke-width:2px;
-    class X1,X2,X3,X4,X5 err;
+    class X1,X2,X3,X4 err;
 ```
 
 Key point: all remote/slow work (user lookup, Spotify, matching, hydration) happens **before** any write, and all writes happen in **one** local transaction in one service → no orphans, no distributed transaction.
@@ -134,8 +135,8 @@ Key point: all remote/slow work (user lookup, Spotify, matching, hydration) happ
 **Song matching** — moved to `search` (see §3.4)
 - `playlist` sends **one batched** `matchSongs` call per import with each track's `position`, `title`, `artists[]`, `album`. No per-track calls.
 - Response: `position → songId + score` for tracks that cleared the minimum score. `playlist` dedupes song ids (two Spotify tracks can map to one song) keeping Spotify order.
-- `search` unavailable / deadline → fail fast with `UNAVAILABLE`, **no DB fallback** (§7.3).
-- Remove `SongDataSource.findSongIdsBySimilarTitles` and the `REGEXP` path; remove `SongDataSource.findSongsByIds` if unused after refactor.
+- `search` unavailable / deadline → fall back to CONTENT DB title match (§7.3).
+- `SongDataSource.findSongIdsBySimilarTitles` kept **only** as the fallback; unused `findSongsByIds` removed.
 
 **Song hydration** (`PlaylistRepository.kt`) — existing batched fetch kept
 - Input is now **song ids** (from `search`), not titles: `getSongsByIds(ids)`.
@@ -152,7 +153,7 @@ Key point: all remote/slow work (user lookup, Spotify, matching, hydration) happ
 **Entities / config**
 - `EntityUserPlaylist`: FK name → `fk_user_playlist`.
 - `EntityPlaylist.description`: align with SQL (nullable) — or change SQL to `NOT NULL DEFAULT ''`. **Decision (§7).**
-- `DebugUtils.IS_DEBUG` → driven by config / log level.
+- `DebugUtils`: kept as is (no change).
 
 **Build (`playlist/build.gradle.kts`)**
 - Remove `spotify-web-api-java`, `jjwt-*` (unused).
@@ -250,7 +251,7 @@ Steps 1 and 2 are additive and deployable on their own; step 3 needs 1 and 2 run
 - Import a playlist with no matches → error returned, **no** `Playlist` row created.
 - Invalid Spotify id → 404 at gateway quickly (not an 8s timeout).
 - Kill `user` service → import fails fast with 503, nothing written.
-- Kill `search` service (or Elasticsearch) → import fails fast with 503, nothing written.
+- Kill `search` service → import still succeeds via DB fallback (log: `search unavailable … falling back`).
 - Match quality: import a playlist with short/common titles (e.g. "Love…") → each track maps to at most one song, wrong matches noticeably fewer than with `REGEXP`; adjust `minScore` if needed.
 - Call `search.matchSongs` directly with grpcurl (reflection) → ids + scores returned in one call.
 - Repeat same import → `SONG:ID:*` cache hits, no CONTENT DB song queries, result identical.
@@ -264,21 +265,52 @@ Steps 1 and 2 are additive and deployable on their own; step 3 needs 1 and 2 run
 - Shared proto artifact.
 - Other playlist features (create/rename/add song/delete) — none exist yet.
 
-## 7. Decisions Needed From You
+## 7. Decisions (final)
 
-1. **Default playlist name**: Spotify playlist's real name (extra Spotify call) / `"Imported playlist"` / keep `"Playlist #N"` but per user?
-2. **HTTP contract**: keep `GET …/import_playlist?playlistId=` (no client change) or move to `POST …/import?spotifyPlaylistId=`?
-3. **`search` unavailable**: fail fast with `UNAVAILABLE` (recommended — single matching implementation) or fall back to the old MySQL `REGEXP` path?
-4. **`Playlist.description`**: make entity nullable, or SQL `NOT NULL DEFAULT ''`?
-5. **Coroutines vs blocking** in the gRPC handler: plain blocking on the gRPC executor (recommended, see §3.1 rationale) — confirm.
-6. **gRPC stack**: confirm keeping `net.devh` and removing the `spring-grpc` BOM in `playlist`.
-
-Resolved during review:
-- ~~FULLTEXT index on CONTENT `song.title`~~ → not needed; matching moved to Elasticsearch via `search`.
-- ~~`playlist` querying Elasticsearch directly~~ → rejected; `search` owns the index (§3.4).
+1. **Default playlist name**: Spotify playlist's own name (`GET /playlists/{id}?fields=name`); if missing/blank → `Playlist #N`, where **N = the new row's auto-increment id**, set inside the same insert transaction. MySQL guarantees id uniqueness, so concurrent imports can never collide and no lock / `count()` is needed. N is global (DB-based, not per user) and may skip numbers.
+2. **HTTP contract**: `POST {playlist path}import` with JSON body `{"spotifyPlaylistId": "..."}`. Client update deferred.
+3. **`search` unavailable** (`UNAVAILABLE` / `DEADLINE_EXCEEDED` / `UNIMPLEMENTED` / `INTERNAL`): **fall back** to CONTENT DB title match (chunked REGEXP, 50 titles per query).
+4. **`Playlist.description`**: kept as is.
+5. **Blocking** gRPC handler — implemented. Coroutines only inside `SpotifyClient` (`runBlocking` around Ktor).
+6. **gRPC stack**: kept as is (incl. `spring-grpc` BOM and `net.devh` autoconfigure 2.15.0).
 
 ---
 
 ## 8. Revert
 
 Nothing changed yet. After implementation, revert = restore the files listed in §3 from git. No DB or Elasticsearch mapping migration is involved.
+
+---
+
+## 9. Implementation Notes (2026-11-08)
+
+Done in one pass (all services), so the temporary `saveUserPlaylist` compatibility step was skipped — deploy `user`, `search`, `playlist`, `gateway` together.
+
+**user**
+- `PlaylistUserService.proto`: `saveUserPlaylist` → `getUserId(RequestUserId) returns (ResponseUserId)`.
+- `GRPCPlaylistUserService`: read-only, `NOT_FOUND` for missing user/type, `INVALID_ARGUMENT` for `DEFAULT` type.
+- `UserDataSource.findByUserTypeAndEmail` now returns `EntityUser?`.
+- Removed `PlaylistDatasourceConfig`, `database/playlist/**`, `spring.datasource.playlist`.
+- Config repo: `sql.playlist` for the `user` profile can be removed (not in this repo).
+
+**search**
+- New `PlaylistSearchService.proto` (`matchSongs`), `GRPCPlaylistRequestService`, `SongESRepository` (`_msearch`, chunks of 100, `size=1`, `min_score`), `DtoSongMatch`.
+- `application.yml`: `elasticsearch.song.index: songs`, `elasticsearch.song.min-score: 5.0` (**tune manually**).
+
+**playlist**
+- Protos: `importPlaylist(RequestImportPlaylist)`, `ResponseSong.songId`, `getUserId`, new `PlaylistSearchService.proto` (client copy).
+- New: `ImportPlaylistService`, `SpotifyClient`, `UserClient`, `SongMatcher`, `PlaylistWriter`, `service/mapper/ProtoMapper.kt`, `ImportPlaylistException`, `DtoSpotifyPlaylist`, `SpotifyToken`.
+- `GRPCGatewayRequestService`: thin blocking handler, always terminates the observer.
+- `PlaylistRepository`: `findSongIdsByTitles` (fallback) + `getSongsByIds` (cache → DB), both on `contentTransactionManger`.
+- `RedisCacheService`: only `SONG:ID:`; Redis errors treated as cache miss. `SONG_BY_TITLE` removed.
+- `PlaylistDataSource.updateTotalSongsById` removed; `UserPlaylistDataSource` added; `EntityUserPlaylist` FK name fixed.
+- `AppConfig`: shared Ktor `HttpClient` bean (timeouts, closed on shutdown).
+- Build: removed `spotify-web-api-java`, `jjwt-*`; added explicit `gson`, `kotlinx-coroutines-core`.
+- `application.yml`: gRPC client `search` → `static://localhost:9094` (search has no Eureka registration yet; override with `search.grpc.url`).
+- `utils/DebugUtils.kt` kept unchanged; all playlist logging uses `DebugUtils` (`d` for debug/info/warn, `e` for errors), no SLF4J loggers in classes.
+
+**gateway**
+- `gatewayPlaylist.proto` synced; route `POST {path}import` with body `ApiRequestImportPlaylist`.
+- Error mapping by gRPC status code: `INVALID_ARGUMENT`→400, `NOT_FOUND`/`FAILED_PRECONDITION`→404, `RESOURCE_EXHAUSTED`→429, `UNAVAILABLE`/`DEADLINE_EXCEEDED`→503, else 500. Deadline raised to 30s. SLF4J logging.
+
+**Not verified**: nothing was compiled or run (Gradle wrapper is off-limits). Run each service's build and the §5 checks.

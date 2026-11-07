@@ -5,13 +5,13 @@ import com.poulastaa.kyoku.playlist.database.content.repository.ArtistInfoDataSo
 import com.poulastaa.kyoku.playlist.database.content.repository.SongDataSource
 import com.poulastaa.kyoku.playlist.database.content.repository.SongInfoDataSource
 import com.poulastaa.kyoku.playlist.domain.model.*
+import com.poulastaa.kyoku.playlist.utils.SongId
 import com.poulastaa.kyoku.playlist.utils.SpotifySongTitle
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.regex.Pattern
+
+private const val FALLBACK_TITLE_CHUNK_SIZE = 50
 
 @Service
 class PlaylistRepository(
@@ -20,30 +20,40 @@ class PlaylistRepository(
     private val artistInfoDb: ArtistInfoDataSource,
     private val cache: RedisCacheService,
 ) {
-    @Transactional(readOnly = true)
-    suspend fun getSongByTitles(titles: List<SpotifySongTitle>): List<DtoSong> = coroutineScope {
-        if (titles.isEmpty()) return@coroutineScope emptyList()
+    /**
+     * Fallback matcher (used only when `search` is unavailable): substring title match on CONTENT DB.
+     * Titles are matched in chunks to keep each REGEXP small.
+     */
+    @Transactional(transactionManager = "contentTransactionManger", readOnly = true)
+    fun findSongIdsByTitles(titles: List<SpotifySongTitle>): List<SongId> = titles
+        .asSequence()
+        .map { it.lowercase().trim() }
+        .filter { it.isNotEmpty() }
+        .distinct()
+        .chunked(FALLBACK_TITLE_CHUNK_SIZE)
+        .flatMap { chunk ->
+            songDb.findSongIdsBySimilarTitles(chunk.joinToString("|") { Pattern.quote(it) })
+        }
+        .distinct()
+        .toList()
 
-        val cachedSongsByTitle = cache.cacheSongByTitle(titles)
-        val uncachedTitles = titles.filter { it !in cachedSongsByTitle.keys }
+    /**
+     * Full songs for [ids] in the given order: `SONG:ID:` cache first, CONTENT DB for the misses.
+     */
+    @Transactional(transactionManager = "contentTransactionManger", readOnly = true)
+    fun getSongsByIds(ids: List<SongId>): List<DtoSong> {
+        if (ids.isEmpty()) return emptyList()
 
-        val dbSongs = if (uncachedTitles.isNotEmpty()) {
-            withContext(Dispatchers.IO) {
-                fetchSongsFromDatabase(uncachedTitles)
-            }
-        } else emptyList()
+        val cached = cache.getSongsById(ids)
+        val missingIds = ids.filter { it !in cached.keys }
+        val fetched = if (missingIds.isNotEmpty()) fetchSongsFromDatabase(missingIds).associateBy { it.id }
+        else emptyMap()
 
-        cachedSongsByTitle.values + dbSongs
+        return ids.mapNotNull { cached[it] ?: fetched[it] }
     }
 
-    @Transactional(readOnly = true)
-    fun fetchSongsFromDatabase(titles: List<SpotifySongTitle>): List<DtoSong> {
-        val pattern = titles.joinToString("|") { Pattern.quote(it.lowercase()) }
-        val songIds = songDb.findSongIdsBySimilarTitles(pattern)
-
-        if (songIds.isEmpty()) return emptyList()
-
-        // Fetch all data - queries execute within same transaction
+    private fun fetchSongsFromDatabase(songIds: List<SongId>): List<DtoSong> {
+        // Fetch all data - queries execute within the caller's transaction
         val songInfoMap = songInfoDb.findAllByIds(songIds).associateBy { it.id }
         val songsWithArtists = songDb.findSongsWithArtistsByIds(songIds)
         val songsWithAlbums = songDb.findSongsWithAlbumsByIds(songIds)
@@ -80,9 +90,11 @@ class PlaylistRepository(
             artistInfoDb.findAllByIds(artistIds).associateBy { it.id }
         } else emptyMap()
 
+        val baseSongById = songsWithCountries.associateBy { it.id }
+
         // Build complete DTOs from the collected data
         return songIds.mapNotNull { songId ->
-            val baseSong = songsWithCountries.find { it.id == songId } ?: return@mapNotNull null
+            val baseSong = baseSongById[songId] ?: return@mapNotNull null
 
             // Populate transient songInfo
             baseSong.songInfo = songInfoMap[songId]
@@ -105,8 +117,7 @@ class PlaylistRepository(
                 }
             }
 
-            // Convert to DTO
-            val dtoSong = DtoSong(
+            DtoSong(
                 id = baseSong.id,
                 title = baseSong.title,
                 rawPoster = baseSong.poster,
@@ -117,12 +128,7 @@ class PlaylistRepository(
                 genre = genres.map { it.toDtoGenre() },
                 country = countries.map { it.toDtoCountry() }
             )
-
-            dtoSong
-        }.also {
-            cache.setSongById(it)
-            cache.setSongByTitle(it)
-        }
+        }.also { cache.setSongById(it) }
     }
 
     private fun EntitySongInfo.toDtoSongInfo(): DtoSongInfo = DtoSongInfo(

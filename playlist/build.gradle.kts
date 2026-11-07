@@ -46,11 +46,6 @@ dependencies {
     }
     implementation("net.devh:grpc-client-spring-boot-autoconfigure:2.15.0.RELEASE")
 
-    // jwt
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
-
     // devtools
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -60,12 +55,13 @@ dependencies {
     // redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    // spotify api
-    implementation("se.michaelthelin.spotify:spotify-web-api-java:9.4.0")
+    // json
+    implementation("com.google.code.gson:gson")
 
     // ktor client
     implementation("io.ktor:ktor-client-core-jvm:3.0.1")
     implementation("io.ktor:ktor-client-apache-jvm:3.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

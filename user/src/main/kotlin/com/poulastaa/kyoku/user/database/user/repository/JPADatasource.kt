@@ -16,7 +16,7 @@ interface UserDataSource : JpaRepository<EntityUser, UserId> {
     fun findByUserTypeAndEmail(
         userType: EntityUserType,
         email: String,
-    ): EntityUser
+    ): EntityUser?
 }
 
 interface CountryDataSource : JpaRepository<EntityCountry, CountryId> {

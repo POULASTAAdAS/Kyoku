@@ -6,13 +6,14 @@ option java_package = "com.poulastaa.kyoku.grpc.playlist_user";
 
 package playlistUser;
 
-message RequestSaveUserPlaylist{
-  int64 playlistId = 1;
-  model.RequestUser user = 2;
+message RequestUserId{
+  model.RequestUser user = 1;
 };
 
-message EmptyResponse{};
+message ResponseUserId{
+  int64 userId = 1;
+};
 
-service  PlaylistUserService{
-  rpc saveUserPlaylist(RequestSaveUserPlaylist) returns (EmptyResponse);
+service PlaylistUserService{
+  rpc getUserId(RequestUserId) returns (ResponseUserId);
 }

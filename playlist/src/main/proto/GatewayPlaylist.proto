@@ -6,8 +6,8 @@ option java_package = "com.poulastaa.kyoku.grpc.gateway_playlist";
 
 package gatewayPlaylist;
 
-message RequestGetPlaylist{
-  string playlistId = 1;
+message RequestImportPlaylist{
+  string spotifyPlaylistId = 1;
   model.RequestUser user = 2;
 };
 
@@ -25,7 +25,7 @@ message ResponsePlaylist{
 };
 
 message ResponseSong{
-  int64 id = 1;
+  int64 songId = 1;
   string title = 2;
   optional string poster = 3;
   string masterPlaylist = 4;
@@ -42,5 +42,5 @@ message ResponseFullPlaylist{
 };
 
 service GatewayPlaylistService{
-  rpc getPlaylist(RequestGetPlaylist) returns (ResponseFullPlaylist);
+  rpc importPlaylist(RequestImportPlaylist) returns (ResponseFullPlaylist);
 }

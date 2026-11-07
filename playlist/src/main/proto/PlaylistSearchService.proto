@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.poulastaa.kyoku.grpc.playlist_search";
+
+package playlistSearch;
+
+message Track{
+  int32 position = 1; // index in the source (spotify) playlist
+  string title = 2;
+  repeated string artists = 3;
+  optional string album = 4;
+};
+
+message RequestMatchSongs{
+  repeated Track tracks = 1;
+};
+
+message Match{
+  int32 position = 1;
+  int64 songId = 2;
+  float score = 3;
+};
+
+message ResponseMatchSongs{
+  repeated Match matches = 1;
+};
+
+service PlaylistSearchService{
+  rpc matchSongs(RequestMatchSongs) returns (ResponseMatchSongs);
+}
