@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.common.ui.design_system.AppTheme
+import com.poulastaa.common.ui.image.SetupAppImageLoader
 import com.poulastaa.common.viewmodels.Screens
 import com.poulastaa.common.viewmodels.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
@@ -57,6 +58,8 @@ class MainActivity : ComponentActivity() {
             ),
         )
         setContent {
+            SetupAppImageLoader()
+
             val rootState by viewmodel.uiState.collectAsStateWithLifecycle()
 
             if (rootState.startDestination != Screens.Loading) AppTheme {

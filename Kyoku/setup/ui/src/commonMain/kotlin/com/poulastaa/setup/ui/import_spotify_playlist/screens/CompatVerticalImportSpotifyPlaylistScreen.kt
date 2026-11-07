@@ -60,10 +60,10 @@ import com.poulastaa.common.ui.components.AppOutlinedTextField
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.components.ElevatedOutlinedButton
+import com.poulastaa.common.ui.components.NetworkImage
 import com.poulastaa.common.ui.components.RowSpacer
 import com.poulastaa.common.ui.components.SmallClearButton
 import com.poulastaa.common.ui.design_system.IconAddLink
-import com.poulastaa.common.ui.design_system.IconAppLogo
 import com.poulastaa.common.ui.design_system.IconArrowBack
 import com.poulastaa.common.ui.design_system.StringAppName
 import com.poulastaa.common.ui.design_system.StringBackButton
@@ -300,16 +300,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
                                         ) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = IconAppLogo,
-                                                    modifier = Modifier.fillMaxSize(0.8f),
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            NetworkImage(
+                                                imageUrl = images[0],
+                                                modifier = Modifier.fillMaxSize(),
+                                                placeholderFraction = 0.8f,
+                                            )
                                         }
 
                                         Card(
@@ -318,16 +313,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
                                         ) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = IconAppLogo,
-                                                    modifier = Modifier.fillMaxSize(0.8f),
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            NetworkImage(
+                                                imageUrl = images[1],
+                                                modifier = Modifier.fillMaxSize(),
+                                                placeholderFraction = 0.8f,
+                                            )
                                         }
                                     }
 
@@ -343,16 +333,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
                                         ) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = IconAppLogo,
-                                                    modifier = Modifier.fillMaxSize(0.8f),
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            NetworkImage(
+                                                imageUrl = images[2],
+                                                modifier = Modifier.fillMaxSize(),
+                                                placeholderFraction = 0.8f,
+                                            )
                                         }
 
                                         Card(
@@ -361,16 +346,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             ),
                                         ) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = IconAppLogo,
-                                                    modifier = Modifier.fillMaxSize(0.8f),
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            NetworkImage(
+                                                imageUrl = images[3],
+                                                modifier = Modifier.fillMaxSize(),
+                                                placeholderFraction = 0.8f,
+                                            )
                                         }
                                     }
                                 } else Card(
@@ -380,16 +360,10 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                         containerColor = MaterialTheme.colorScheme.primaryContainer
                                     ),
                                 ) {
-                                    Box(
-                                        Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            imageVector = IconAppLogo,
-                                            modifier = Modifier.fillMaxSize(0.6f),
-                                            contentDescription = null
-                                        )
-                                    }
+                                    NetworkImage(
+                                        imageUrl = images.firstOrNull(),
+                                        modifier = Modifier.fillMaxSize(),
+                                    )
                                 }
                             }
 
@@ -514,16 +488,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                                             )
                                         ) {
-                                            Box(
-                                                Modifier.fillMaxSize(),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                Icon(
-                                                    imageVector = IconAppLogo,
-                                                    contentDescription = song.title,
-                                                    modifier = Modifier.fillMaxSize(0.6f)
-                                                )
-                                            }
+                                            NetworkImage(
+                                                imageUrl = song.poster,
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentDescription = song.title,
+                                            )
                                         }
 
                                         RowSpacer(MaterialTheme.dimens.spacing.small)

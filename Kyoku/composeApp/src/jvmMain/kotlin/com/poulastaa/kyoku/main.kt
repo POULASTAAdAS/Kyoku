@@ -12,6 +12,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.poulastaa.common.ui.design_system.AppTheme
+import com.poulastaa.common.ui.image.SetupAppImageLoader
 import com.poulastaa.common.viewmodels.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
 import org.jetbrains.compose.resources.decodeToImageBitmap
@@ -37,6 +38,8 @@ fun main() {
     val screenSize = Toolkit.getDefaultToolkit().screenSize
 
     application {
+        SetupAppImageLoader()
+
         val appIcon = remember { BitmapPainter(iconBytes.decodeToImageBitmap()) }
         val windowState = rememberWindowState(
             position = WindowPosition(Alignment.Center),
