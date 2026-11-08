@@ -16,6 +16,7 @@ fun EntityPlaylist.toResponsePlaylist(): ResponsePlaylist = ResponsePlaylist.new
         true -> ResponsePlaylist.ResponsePlaylistVisibilityState.PUBLIC
         false -> ResponsePlaylist.ResponsePlaylistVisibilityState.PRIVATE
     }
+    this@toResponsePlaylist.spotifyPlaylistId?.let { spotifyPlaylistId = it }
 }.build()
 
 fun DtoSong.toResponseSong(): ResponseSong = ResponseSong.newBuilder().apply {

@@ -19,6 +19,7 @@ import com.poulastaa.kyoku.gateway.utils.RequestBodyExtractor
 import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
 import com.poulastaa.kyoku.grpc.gateway_playlist.RequestImportPlaylist
 import com.poulastaa.kyoku.grpc.gateway_playlist.RequestUser
+import com.poulastaa.kyoku.grpc.gateway_playlist.RequestUserPlaylists
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import kotlinx.coroutines.Dispatchers
@@ -33,10 +34,14 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.server.ServerWebExchange
 import java.util.concurrent.TimeUnit
 
 // import = spotify paging + user lookup + search + db write: keep above the playlist service's internal deadlines
 private const val IMPORT_PLAYLIST_DEADLINE_SECONDS = 30L
+
+// read only = user lookup + PLAYLIST / CONTENT db reads
+private const val GET_PLAYLISTS_DEADLINE_SECONDS = 10L
 
 @Configuration
 class PlaylistRouteConfig {
@@ -47,6 +52,9 @@ class PlaylistRouteConfig {
 
     private val playlist: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
         get() = playlistStub.withDeadlineAfter(IMPORT_PLAYLIST_DEADLINE_SECONDS, TimeUnit.SECONDS)
+
+    private val playlistRead: GatewayPlaylistServiceGrpc.GatewayPlaylistServiceFutureStub
+        get() = playlistStub.withDeadlineAfter(GET_PLAYLISTS_DEADLINE_SECONDS, TimeUnit.SECONDS)
 
     @Bean
     fun providePlaylistRoute(
@@ -64,12 +72,7 @@ class PlaylistRouteConfig {
 
                     f.filter { exchange, _ ->
                         mono(Dispatchers.IO) {
-                            val user =
-                                exchange.attributes[ValidationFilter.AUTHENTICATED_USER_KEY] as? DtoAuthenticationTokenClaim
-                                    ?: throw NonRetryableAuthenticationException(
-                                        "User context missing",
-                                        HttpStatus.UNAUTHORIZED
-                                    )
+                            val user = exchange.authenticatedUser()
 
                             val req = try {
                                 val bodyString = RequestBodyExtractor.extractBodyAsString(exchange)
@@ -94,13 +97,7 @@ class PlaylistRouteConfig {
                             val request = RequestImportPlaylist.newBuilder().apply {
                                 this.spotifyPlaylistId = req.spotifyPlaylistId.trim()
                                 this.force = req.force
-                                this.user = RequestUser.newBuilder().apply {
-                                    email = user.email
-                                    type = when (user.userType) {
-                                        UserType.EMAIL -> RequestUser.UserType.EMAIL
-                                        UserType.GOOGLE -> RequestUser.UserType.GOOGLE
-                                    }
-                                }.build()
+                                this.user = user.toRequestUser()
                             }.build()
 
                             val response = playlist.importPlaylist(request).await()
@@ -128,7 +125,61 @@ class PlaylistRouteConfig {
                     }
                 }
                 .uri(service.uri)
+        }
+        .route(service.id) { r ->
+            r.path(service.path.removeSuffix("/"), service.path)
+                .and()
+                .method(HttpMethod.GET)
+                .filters { f ->
+                    f.filter(validationFilter)
+
+                    f.filter { exchange, _ ->
+                        mono(Dispatchers.IO) {
+                            val request = RequestUserPlaylists.newBuilder()
+                                .setUser(exchange.authenticatedUser().toRequestUser())
+                                .build()
+
+                            val response = playlistRead.getUserPlaylists(request).await()
+
+                            val jsonString = JsonFormat.printer()
+                                .includingDefaultValueFields()
+                                .print(response)
+
+                            ResponseEntity(jsonString, HttpStatus.OK)
+                        }.wrapResponse(exchange, mapper).onErrorResume { error ->
+                            val (httpStatus, responseStatus) = error.toResponseStatus()
+
+                            if (httpStatus.is5xxServerError) logger.error("Error in PlaylistInterceptor", error)
+                            else logger.info("Get playlists rejected: {}", error.message)
+
+                            exchange.writeResponseWrapper(
+                                statusCode = httpStatus,
+                                responseWrapper = ResponseWrapper(
+                                    status = responseStatus,
+                                    payload = responseStatus.message
+                                ),
+                                mapper = mapper
+                            )
+                        }
+                    }
+                }
+                .uri(service.uri)
         }.build()!!
+
+    private fun ServerWebExchange.authenticatedUser() =
+        attributes[ValidationFilter.AUTHENTICATED_USER_KEY] as? DtoAuthenticationTokenClaim
+            ?: throw NonRetryableAuthenticationException(
+                "User context missing",
+                HttpStatus.UNAUTHORIZED
+            )
+
+    private fun DtoAuthenticationTokenClaim.toRequestUser(): RequestUser = RequestUser.newBuilder().apply {
+        email = this@toRequestUser.email
+        type = when (userType) {
+            UserType.EMAIL -> RequestUser.UserType.EMAIL
+            UserType.GOOGLE -> RequestUser.UserType.GOOGLE
+        }
+    }.build()
 
     private fun invalidRequestResponse() = ResponseEntity(
         ResponseWrapper(

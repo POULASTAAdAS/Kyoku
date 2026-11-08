@@ -1,8 +1,6 @@
 package com.poulastaa.kyoku.playlist.service
 
-import com.poulastaa.kyoku.grpc.gateway_playlist.GatewayPlaylistServiceGrpc
-import com.poulastaa.kyoku.grpc.gateway_playlist.RequestImportPlaylist
-import com.poulastaa.kyoku.grpc.gateway_playlist.ResponseFullPlaylist
+import com.poulastaa.kyoku.grpc.gateway_playlist.*
 import com.poulastaa.kyoku.playlist.domain.model.ImportPlaylistException
 import com.poulastaa.kyoku.playlist.service.mapper.toResponsePlaylist
 import com.poulastaa.kyoku.playlist.service.mapper.toResponseSong
@@ -19,6 +17,7 @@ import net.devh.boot.grpc.server.service.GrpcService
 @GrpcService
 class GRPCGatewayRequestService(
     private val importService: ImportPlaylistService,
+    private val userPlaylistService: UserPlaylistService,
 ) : GatewayPlaylistServiceGrpc.GatewayPlaylistServiceImplBase() {
     override fun importPlaylist(
         request: RequestImportPlaylist,
@@ -34,12 +33,7 @@ class GRPCGatewayRequestService(
         try {
             val result = importService.import(request.spotifyPlaylistId.trim(), request.user, request.force)
 
-            responseObserver.onNext(
-                ResponseFullPlaylist.newBuilder().apply {
-                    playlist = result.playlist.toResponsePlaylist()
-                    addAllSongs(result.songs.map { it.toResponseSong() })
-                }.build()
-            )
+            responseObserver.onNext(result.toResponseFullPlaylist())
             responseObserver.onCompleted()
         } catch (e: ImportPlaylistException) {
             DebugUtils.d("import playlist ${request.spotifyPlaylistId} rejected: ${e.message}")
@@ -56,4 +50,46 @@ class GRPCGatewayRequestService(
             )
         }
     }
+
+    override fun getUserPlaylists(
+        request: RequestUserPlaylists,
+        responseObserver: StreamObserver<ResponseUserPlaylists>,
+    ) {
+        if (request.user.email.isBlank()) {
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT.withDescription("user is required").asRuntimeException()
+            )
+            return
+        }
+
+        try {
+            val result = userPlaylistService.getPlaylists(request.user)
+
+            responseObserver.onNext(
+                ResponseUserPlaylists.newBuilder()
+                    .addAllPlaylists(result.map { it.toResponseFullPlaylist() })
+                    .build()
+            )
+            responseObserver.onCompleted()
+        } catch (e: ImportPlaylistException) {
+            DebugUtils.d("get user playlists rejected: ${e.message}")
+            responseObserver.onError(e.status.withDescription(e.message).withCause(e).asRuntimeException())
+        } catch (e: StatusRuntimeException) {
+            DebugUtils.e("get user playlists failed on downstream call: ${e.status}")
+            responseObserver.onError(
+                Status.UNAVAILABLE.withDescription("Dependent service unavailable").withCause(e).asRuntimeException()
+            )
+        } catch (e: Exception) {
+            DebugUtils.e("get user playlists failed: ${e.message}")
+            responseObserver.onError(
+                Status.INTERNAL.withDescription("Failed to get playlists").withCause(e).asRuntimeException()
+            )
+        }
+    }
+
+    private fun ImportedPlaylist.toResponseFullPlaylist(): ResponseFullPlaylist =
+        ResponseFullPlaylist.newBuilder().apply {
+            playlist = this@toResponseFullPlaylist.playlist.toResponsePlaylist()
+            addAllSongs(songs.map { it.toResponseSong() })
+        }.build()
 }

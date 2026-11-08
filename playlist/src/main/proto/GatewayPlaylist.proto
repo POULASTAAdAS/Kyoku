@@ -6,6 +6,10 @@ option java_package = "com.poulastaa.kyoku.grpc.gateway_playlist";
 
 package gatewayPlaylist;
 
+message RequestUserPlaylists{
+  model.RequestUser user = 1;
+};
+
 message RequestImportPlaylist{
   string spotifyPlaylistId = 1;
   model.RequestUser user = 2;
@@ -18,6 +22,7 @@ message ResponsePlaylist{
   string name = 2;
   int64 popularity = 3;
   ResponsePlaylistVisibilityState status = 4;
+  optional string spotifyPlaylistId = 5;
 
   enum ResponsePlaylistVisibilityState{
     PUBLIC = 0;
@@ -42,6 +47,11 @@ message ResponseFullPlaylist{
   repeated ResponseSong songs = 2;
 };
 
+message ResponseUserPlaylists{
+  repeated ResponseFullPlaylist playlists = 1;
+};
+
 service GatewayPlaylistService{
   rpc importPlaylist(RequestImportPlaylist) returns (ResponseFullPlaylist);
+  rpc getUserPlaylists(RequestUserPlaylists) returns (ResponseUserPlaylists);
 }

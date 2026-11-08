@@ -13,7 +13,11 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface PlaylistDataSource : JpaRepository<EntityPlaylist, PlaylistId>
-interface SongPlaylistDataSource : JpaRepository<EntitySongPlaylist, SongPlaylistId>
+interface SongPlaylistDataSource : JpaRepository<EntitySongPlaylist, SongPlaylistId> {
+    @Query("SELECT sp FROM EntitySongPlaylist sp WHERE sp.id.playlistId IN :playlistIds")
+    fun findAllByPlaylistIds(@Param("playlistIds") playlistIds: List<PlaylistId>): List<EntitySongPlaylist>
+}
+
 interface UserPlaylistDataSource : JpaRepository<EntityUserPlaylist, UserPlaylistId> {
     @Query(
         """
@@ -26,4 +30,7 @@ interface UserPlaylistDataSource : JpaRepository<EntityUserPlaylist, UserPlaylis
         @Param("userId") userId: UserId,
         @Param("spotifyPlaylistId") spotifyPlaylistId: SpotifyPlaylistId,
     ): Boolean
+
+    @Query("SELECT up.playlist FROM EntityUserPlaylist up WHERE up.id.userId = :userId")
+    fun findPlaylistsByUserId(@Param("userId") userId: UserId): List<EntityPlaylist>
 }

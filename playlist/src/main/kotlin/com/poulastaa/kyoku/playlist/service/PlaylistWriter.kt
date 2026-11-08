@@ -41,6 +41,20 @@ class PlaylistWriter(
      * transaction. Ids are unique even under concurrent imports, so two parallel inserts can never get the
      * same name and no lock / `count()` read is needed. (N may skip numbers; uniqueness is what is guaranteed.)
      */
+    /**
+     * Every playlist owned by [userId] with its song ids, read in one PLAYLIST DB transaction.
+     */
+    @Transactional(transactionManager = "playlistTransactionManger", readOnly = true)
+    fun getUserPlaylists(userId: UserId): List<Pair<EntityPlaylist, List<SongId>>> {
+        val playlists = userPlaylistDB.findPlaylistsByUserId(userId)
+        if (playlists.isEmpty()) return emptyList()
+
+        val songIdsByPlaylistId = songPlaylistDB.findAllByPlaylistIds(playlists.map { it.id })
+            .groupBy({ it.id.playlistId }, { it.id.songId })
+
+        return playlists.map { it to (songIdsByPlaylistId[it.id] ?: emptyList()) }
+    }
+
     @Transactional(transactionManager = "playlistTransactionManger")
     fun saveImportedPlaylist(
         userId: UserId,
