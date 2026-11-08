@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
+import com.poulastaa.common.viewmodels.SnackbarAction
 import com.poulastaa.common.viewmodels.SnackbarType
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
 import com.poulastaa.common.viewmodels.stringEmptyPlaylistLink
+import com.poulastaa.common.viewmodels.stringImportPlaylistAnyway
 import com.poulastaa.common.viewmodels.stringInvalidPlaylistLink
 import com.poulastaa.common.viewmodels.stringPlaylistAlreadyImported
 import com.poulastaa.common.viewmodels.stringPlaylistImported
@@ -21,9 +23,6 @@ class ImportPlaylistViewmodel(
 ) : BaseViewmodel<ImportPlaylistUiState, ImportPlaylistUiAction, Nothing>(
     initialSate = ImportPlaylistUiState(),
 ) {
-    // TODO: store this into db
-    private val importedSpotifyPlaylistIds = mutableSetOf<String>()
-
     init {
         loadSavedPlaylists()
     }
@@ -62,11 +61,12 @@ class ImportPlaylistViewmodel(
                 )
             }
 
-            ImportPlaylistUiAction.OnImportClick -> importPlaylist()
+            ImportPlaylistUiAction.OnImportClick -> importPlaylist(force = false)
+            ImportPlaylistUiAction.OnForceImportClick -> importPlaylist(force = true)
         }
     }
 
-    private suspend fun importPlaylist() {
+    private suspend fun importPlaylist(force: Boolean) {
         if (_uiState.value.isMakingApiCall) return
 
         val link = _uiState.value.link.value.normalizedLink()
@@ -76,11 +76,6 @@ class ImportPlaylistViewmodel(
         val spotifyPlaylistId = link.spotifyPlaylistIdOrNull()
             ?: return setLinkError(stringInvalidPlaylistLink())
 
-        if (spotifyPlaylistId in importedSpotifyPlaylistIds) {
-            showSnackbar(stringPlaylistAlreadyImported(), SnackbarType.Info)
-            return
-        }
-
         updateState {
             copy(
                 isMakingApiCall = true,
@@ -88,7 +83,7 @@ class ImportPlaylistViewmodel(
             )
         }
 
-        when (val result = repo.importPlaylist(spotifyPlaylistId)) {
+        when (val result = repo.importPlaylist(spotifyPlaylistId, force)) {
             is AppResult.Error -> {
                 updateState { copy(isMakingApiCall = false) }
 
@@ -96,6 +91,14 @@ class ImportPlaylistViewmodel(
                     ApiError.Network.NOT_FOUND -> showSnackbar(
                         stringPlaylistNotFound(),
                         SnackbarType.Error
+                    )
+
+                    ApiError.Playlist.PLAYLIST_ALREADY_IMPORTED -> showSnackbar(
+                        message = stringPlaylistAlreadyImported(),
+                        type = SnackbarType.Info,
+                        action = SnackbarAction(label = stringImportPlaylistAnyway()) {
+                            onAction(ImportPlaylistUiAction.OnForceImportClick)
+                        },
                     )
 
                     else -> if (handleCommonError(result.error.error).not()) showSnackbar(
@@ -106,7 +109,6 @@ class ImportPlaylistViewmodel(
             }
 
             is AppResult.Success -> {
-                importedSpotifyPlaylistIds += spotifyPlaylistId
                 val playlist = result.response.toUiPlaylist()
 
                 updateState {

@@ -6,6 +6,7 @@ import com.poulastaa.common.domain.result.DataError
 import com.poulastaa.common.domain.result.EmptyResponse
 
 interface SetupLocalDatasource {
-    suspend fun savePlaylist(playlist: DtoFullPlaylist): EmptyResponse<DataError>
+    suspend fun isSpotifyPlaylistImported(spotifyPlaylistId: String): AppResult<Boolean, DataError>
+    suspend fun savePlaylist(playlist: DtoFullPlaylist, spotifyPlaylistId: String): EmptyResponse<DataError>
     suspend fun getPlaylists(): AppResult<List<DtoFullPlaylist>, DataError>
 }

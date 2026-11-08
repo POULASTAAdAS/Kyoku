@@ -2,6 +2,7 @@ package com.poulastaa.common.viewmodels
 
 import kyoku.common.viewmodels.generated.resources.Res
 import kyoku.common.viewmodels.generated.resources.empty_playlist_link
+import kyoku.common.viewmodels.generated.resources.import_playlist_anyway
 import kyoku.common.viewmodels.generated.resources.invalid_email
 import kyoku.common.viewmodels.generated.resources.invalid_playlist_link
 import kyoku.common.viewmodels.generated.resources.password_length_error
@@ -46,5 +47,7 @@ suspend fun stringInvalidPlaylistLink(): String = getString(Res.string.invalid_p
 suspend fun stringPlaylistNotFound(): String = getString(Res.string.playlist_not_found)
 
 suspend fun stringPlaylistAlreadyImported(): String = getString(Res.string.playlist_already_imported)
+
+suspend fun stringImportPlaylistAnyway(): String = getString(Res.string.import_playlist_anyway)
 
 suspend fun stringPlaylistImported(): String = getString(Res.string.playlist_imported)

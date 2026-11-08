@@ -42,6 +42,9 @@ abstract class PlaylistDao {
     @Query("SELECT * FROM playlist ORDER BY name")
     abstract suspend fun getPlaylists(): List<PlaylistEntity>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM playlist WHERE spotifyPlaylistId = :spotifyPlaylistId)")
+    abstract suspend fun isSpotifyPlaylistImported(spotifyPlaylistId: String): Boolean
+
     @Transaction
     @Query(
         """

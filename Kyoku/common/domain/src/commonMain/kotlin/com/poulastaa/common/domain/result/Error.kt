@@ -38,6 +38,13 @@ interface ApiError : Error {
         USER_NOT_FOUND("No account found"),
         EMAIL_ALREADY_IN_USE("Email already in use, try logging in."),
     }
+
+    /**
+     * Playlist endpoint failures returned by the backend as status strings.
+     */
+    enum class Playlist(override val message: String) : ApiError {
+        PLAYLIST_ALREADY_IMPORTED("Playlist already imported"),
+    }
 }
 
 /**

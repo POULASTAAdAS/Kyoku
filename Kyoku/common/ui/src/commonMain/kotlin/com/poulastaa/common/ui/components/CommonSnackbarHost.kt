@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,6 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.poulastaa.common.ui.design_system.IconClose
 import com.poulastaa.common.ui.design_system.dimens
@@ -129,6 +135,27 @@ private fun CommonSnackbar(
                     .padding(vertical = MaterialTheme.dimens.spacing.medium),
                 style = MaterialTheme.typography.bodyMedium,
             )
+
+            data.action?.let { action ->
+                Text(
+                    text = action.label,
+                    modifier = Modifier
+                        .padding(start = MaterialTheme.dimens.spacing.small)
+                        .minimumInteractiveComponentSize()
+                        .clip(MaterialTheme.shapes.large)
+                        .clickable(role = Role.Button) {
+                            action.onClick()
+                            onDismiss()
+                        }
+                        .padding(
+                            horizontal = MaterialTheme.dimens.spacing.small,
+                            vertical = MaterialTheme.dimens.spacing.extraSmall,
+                        ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = TextDecoration.Underline,
+                )
+            }
 
             IconButton(onClick = onDismiss) {
                 Icon(

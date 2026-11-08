@@ -10,6 +10,8 @@ data class PlaylistEntity(
     val name: String,
     val popularity: Long,
     val visibility: PlaylistVisibilityEntity,
+    /** Source spotify playlist id; `null` when not imported from spotify. */
+    val spotifyPlaylistId: String? = null,
 )
 
 enum class PlaylistVisibilityEntity {

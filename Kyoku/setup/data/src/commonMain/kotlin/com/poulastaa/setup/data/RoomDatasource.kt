@@ -19,10 +19,19 @@ class RoomDatasource(
     private val songDao: SongDao,
     private val playlistDao: PlaylistDao,
 ) : SetupLocalDatasource {
-    override suspend fun savePlaylist(playlist: DtoFullPlaylist): EmptyResponse<DataError> = safeDbCall {
+    override suspend fun isSpotifyPlaylistImported(
+        spotifyPlaylistId: String,
+    ): AppResult<Boolean, DataError> = safeDbCall {
+        playlistDao.isSpotifyPlaylistImported(spotifyPlaylistId)
+    }
+
+    override suspend fun savePlaylist(
+        playlist: DtoFullPlaylist,
+        spotifyPlaylistId: String,
+    ): EmptyResponse<DataError> = safeDbCall {
         songDao.upsertFullSongs(playlist.songs.map { it.toBundle() })
         playlistDao.replacePlaylist(
-            playlist = playlist.playlist.toEntity(),
+            playlist = playlist.playlist.toEntity(spotifyPlaylistId),
             songIds = playlist.songs.map { it.id },
             addedAt = Clock.System.now().toEpochMilliseconds(),
         )

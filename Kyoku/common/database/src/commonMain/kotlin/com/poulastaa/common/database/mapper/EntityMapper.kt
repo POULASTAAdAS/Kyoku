@@ -47,7 +47,7 @@ fun DtoSong.toBundle(): SongWithRelationsBundle {
     )
 }
 
-fun DtoPlaylist.toEntity() = PlaylistEntity(
+fun DtoPlaylist.toEntity(spotifyPlaylistId: String? = null) = PlaylistEntity(
     id = id,
     name = name,
     popularity = popularity,
@@ -55,6 +55,7 @@ fun DtoPlaylist.toEntity() = PlaylistEntity(
         DtoPlaylistVisibility.PUBLIC -> PlaylistVisibilityEntity.PUBLIC
         DtoPlaylistVisibility.PRIVATE -> PlaylistVisibilityEntity.PRIVATE
     },
+    spotifyPlaylistId = spotifyPlaylistId,
 )
 
 fun DtoArtist.toEntity() = ArtistEntity(

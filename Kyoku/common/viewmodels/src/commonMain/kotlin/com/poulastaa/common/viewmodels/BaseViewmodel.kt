@@ -36,7 +36,8 @@ abstract class BaseViewmodel<UI_STATE, ACTION, EVENT>(initialSate: UI_STATE) : V
     protected fun showSnackbar(
         message: String,
         type: SnackbarType,
-    ) = CommonUiStateHolder.showSnackbar(message, type)
+        action: SnackbarAction? = null,
+    ) = CommonUiStateHolder.showSnackbar(message, type, action)
 
     protected inline fun updateState(block: UI_STATE.() -> UI_STATE) {
         _uiState.update { it.block() }

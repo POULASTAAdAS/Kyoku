@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ImportPlaylistRequest(
     val spotifyPlaylistId: String,
+    val force: Boolean = false,
 )

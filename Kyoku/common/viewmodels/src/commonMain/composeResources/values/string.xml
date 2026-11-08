@@ -20,5 +20,6 @@
     <string name="invalid_playlist_link">Not a valid spotify playlist link</string>
     <string name="playlist_not_found">Could not find that playlist or it has no songs</string>
     <string name="playlist_already_imported">Playlist already imported</string>
+    <string name="import_playlist_anyway">Import anyway</string>
     <string name="playlist_imported">Playlist imported successfully</string>
 </resources>

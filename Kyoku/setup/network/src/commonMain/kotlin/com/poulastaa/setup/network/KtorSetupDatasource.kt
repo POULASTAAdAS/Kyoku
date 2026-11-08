@@ -17,10 +17,13 @@ import org.koin.core.annotation.Single
 class KtorSetupDatasource(
     private val client: HttpClient,
 ) : SetupRemoteDatasource {
-    override suspend fun importPlaylist(spotifyPlaylistId: String): AppResult<DtoFullPlaylist, ApiError> =
-        client.req<ImportPlaylistRequest, FullPlaylistResponse, ApiError.Network>(
+    override suspend fun importPlaylist(
+        spotifyPlaylistId: String,
+        force: Boolean,
+    ): AppResult<DtoFullPlaylist, ApiError> =
+        client.req<ImportPlaylistRequest, FullPlaylistResponse, ApiError.Playlist>(
             route = ApiEndpoints.Setup.IMPORT_PLAYLIST,
             type = ApiRequestType.POST,
-            body = ImportPlaylistRequest(spotifyPlaylistId),
+            body = ImportPlaylistRequest(spotifyPlaylistId, force),
         ).map(FullPlaylistResponse::toDto)
 }
