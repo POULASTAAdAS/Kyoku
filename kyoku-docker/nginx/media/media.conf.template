@@ -1,0 +1,68 @@
+# Signed HLS song streaming: kyoku-media-cdn.poulastaa.dev
+#
+# cloudflared tunnel (cache BYPASS) -> this nginx -> /Volumes/DATA/master (read-only bind mount at /media/master)
+#
+# Every request must carry /<expires>/<uid>/<token>/ in front of master/<song_dir>/<file>.
+# The token is an HMAC-SHA256 over "<expires>:<uid>:/master/<song_dir>/" verified in njs
+# (njs/media_auth.js), so one token covers the master playlist, variant playlists and all
+# segments of one song. Anything else is 403 / 404.
+
+js_import auth from /etc/nginx/njs/media_auth.js;
+
+# Evaluated per request; "1" only when the expiry and HMAC check out
+js_set $media_auth_ok auth.verify;
+
+server {
+    listen 80;
+    server_name _;
+
+    server_tokens off;
+
+    location = /health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok";
+    }
+
+    # /<expires>/<uid>/<token>/master/<song_dir>/<file>
+    # Quoted: an unquoted regex containing "{" is parsed by nginx as a block start.
+    location ~ "^/(?<expires>\d+)/(?<uid>[0-9a-f]{16})/(?<token>[A-Za-z0-9_-]{40,})/(?<song_path>master/[^/]+/.+)$" {
+        limit_except GET {
+            deny all;
+        }
+
+        # Reject anything that could normalize differently (same guard as static.conf.template):
+        # "..", encoded ".", "/" and "\". No real song path contains these.
+        if ($request_uri ~* "\.\.|%2e|%2f|%5c") {
+            return 400;
+        }
+
+        if ($media_auth_ok != "1") {
+            return 403;
+        }
+
+        root /media;
+        rewrite ^ /$song_path break;
+
+        types {
+            application/vnd.apple.mpegurl m3u8;
+            audio/mp4                     m4a;
+        }
+
+        sendfile on;
+        tcp_nopush on;
+        # External disk: don't block the event loop on IO
+        aio threads;
+        # Audio is already compressed
+        gzip off;
+
+        # Per-user tokenized URLs -> never publicly cacheable
+        add_header Cache-Control "private, max-age=900" always;
+        add_header Accept-Ranges bytes always;
+        add_header X-Content-Type-Options "nosniff" always;
+    }
+
+    location / {
+        return 404;
+    }
+}
