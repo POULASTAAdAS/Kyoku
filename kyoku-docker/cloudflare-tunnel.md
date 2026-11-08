@@ -1,6 +1,6 @@
 # Kyoku Cloudflare Tunnel
 
-Exposes the local Kyoku **gateway** (`localhost:8080`) and the **static images** nginx cache (`localhost:1084`) to the internet through a named Cloudflare tunnel.
+Exposes the local Kyoku **gateway** (`localhost:8080`), the **static images** nginx cache (`localhost:1084`) and the **signed song streaming** nginx (`localhost:1085`) to the internet through a named Cloudflare tunnel.
 
 ## Summary
 
@@ -8,9 +8,9 @@ Exposes the local Kyoku **gateway** (`localhost:8080`) and the **static images**
 |-------------------|------------------------------------------------------------------|
 | Tunnel name       | `kyoku`                                                          |
 | Tunnel ID         | `ba9c2d5f-9969-4708-914a-b4882c5330ec`                           |
-| Connected domains | `kyoku-gateway.poulastaa.dev`, `kyoku-image-cdn.poulastaa.dev`      |
-| Public URLs       | `https://kyoku-gateway.poulastaa.dev`, `https://kyoku-image-cdn.poulastaa.dev` |
-| Local targets     | `http://localhost:8080` (gateway), `http://localhost:1084` (static images nginx) |
+| Connected domains | `kyoku-gateway.poulastaa.dev`, `kyoku-image-cdn.poulastaa.dev`, `kyoku-media-cdn.poulastaa.dev` |
+| Public URLs       | `https://kyoku-gateway.poulastaa.dev`, `https://kyoku-image-cdn.poulastaa.dev`, `https://kyoku-media-cdn.poulastaa.dev` |
+| Local targets     | `http://localhost:8080` (gateway), `http://localhost:1084` (static images nginx), `http://localhost:1085` (song streaming nginx) |
 | Config file       | `~/.cloudflared/config.yml` (copy at `/etc/cloudflared/config.yml`) |
 | Credentials file  | `~/.cloudflared/ba9c2d5f-9969-4708-914a-b4882c5330ec.json`       |
 | Origin cert       | `~/.cloudflared/cert.pem`                                        |
@@ -28,10 +28,12 @@ ingress:
     service: http://localhost:8080
   - hostname: kyoku-image-cdn.poulastaa.dev
     service: http://localhost:1084
+  - hostname: kyoku-media-cdn.poulastaa.dev
+    service: http://localhost:1085
   - service: http_status:404
 ```
 
-Only `kyoku-gateway.poulastaa.dev` and `kyoku-image-cdn.poulastaa.dev` are routed; any other hostname returns `404`.
+Only `kyoku-gateway.poulastaa.dev`, `kyoku-image-cdn.poulastaa.dev` and `kyoku-media-cdn.poulastaa.dev` are routed; any other hostname returns `404`.
 
 ## Static images (`kyoku-image-cdn.poulastaa.dev`)
 
@@ -47,6 +49,19 @@ client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (d
 - Cloudflare dashboard Cache Rule (Caching → Cache Rules): `Hostname equals kyoku-image-cdn.poulastaa.dev` → **Eligible for cache**, Edge TTL **ignore origin, 1 month**, Browser TTL **respect origin**.
 - Second Cache Rule, placed above the first: `Hostname equals kyoku-image-cdn.poulastaa.dev` AND `URI path ends with ".html"` → **Eligible for cache**, Edge TTL **respect origin** (1 hour), Browser TTL **respect origin**. Without it Cloudflare keeps the HTML pages for 1 month.
 - Full setup steps: `kyoku-docker/static-images-setup.md`.
+
+## Song streaming (`kyoku-media-cdn.poulastaa.dev`)
+
+```
+client -> Cloudflare (cache BYPASS) -> tunnel "kyoku" -> kyoku-media-nginx :1085 -> /Volumes/DATA/master (read-only)
+```
+
+- **Not public.** Every request must be `/<expires>/<uid>/<token>/master/<song_dir>/<file>`; nginx verifies the HMAC-SHA256 token in njs (`nginx/media/njs/media_auth.js`). Expired / forged / other-song / other-user → `403`; any other path → `404`; non-GET → `403`.
+- URLs are issued by the content service via `GET /api/v1/content/song/stream-url?songId=<id>` (behind the gateway JWT check). Tokens live 15 minutes and cover one song folder (master + 128 + 320 playlists and segments).
+- Secret: `MEDIA_TOKEN_SECRET` in `kyoku-docker/.env` (nginx) and `media.token.secret` in config-server (content). Both must be identical.
+- One-time DNS record: `cloudflared tunnel route dns kyoku kyoku-media-cdn.poulastaa.dev`.
+- **No Cloudflare cache rule.** The edge never caches this host on its own: nginx sends `Cache-Control: private, max-age=900` on every response, and `.m3u8` / `.m4a` are not in Cloudflare's default cached extensions. Verified: repeated requests for the same segment return `CF-Cache-Status: DYNAMIC`. Do **not** add an "Eligible for cache" rule for this hostname: URLs are per-user with a 15-minute expiry, so nothing may be served from the edge past its token's expiry.
+- Full design: `time-capsule/plans/song-streaming-setup.md`.
 
 ## How to start
 
@@ -119,6 +134,15 @@ Static HTML pages and logos:
 ```bash
 curl -I https://kyoku-image-cdn.poulastaa.dev/static/LinkAlreadyUsed.html   # 200, Cache-Control: public, max-age=3600
 curl -I https://kyoku-image-cdn.poulastaa.dev/static/logo_dark.png          # 200, Cache-Control: public, max-age=31536000, immutable
+```
+
+### Is song streaming reachable through the tunnel?
+
+```bash
+curl -I http://localhost:1085/health
+curl -I https://kyoku-media-cdn.poulastaa.dev/health                       # 200 ok
+curl -I https://kyoku-media-cdn.poulastaa.dev/master/0_to_100/0_to_100_master.m3u8   # 404 (no token)
+curl -I "<url returned by stream-url>"                                     # 200, CF-Cache-Status: DYNAMIC (never HIT)
 ```
 
 ### Public API routes (via gateway)

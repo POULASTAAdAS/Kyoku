@@ -1,18 +1,21 @@
 # Song Streaming Setup (HLS + signed URLs + nginx)
 
-Status: **APPROVED PLAN — BLOCKED ON PHASE 0 (path migration)**
+Status: **PHASES 0–3 DONE (2026-11-09) — PHASE 4 (client) PENDING: no player code exists yet**
 
-> ## 🛑 HARD GATE — read this first
+> ## ✅ Implementation status — read this first
 >
-> **No implementation work (Phase 1+) may start until:**
+> | Phase | Status |
+> |---|---|
+> | 0. Master-playlist path migration | ✅ Done — 69,522/69,522 playlists fixed, 0 failures, user green-lit |
+> | 0b. `song.master_playlist` DB/seed migration (unplanned) | ✅ Done — see §11.2 |
+> | 1. `kyoku-media-nginx` | ✅ Done — running on `:1085`, all checks pass |
+> | 2. `stream-url` endpoint + gateway route | ✅ Done — confirmed by user |
+> | 3. Tunnel + DNS | ✅ Done — public checks pass; no Cloudflare cache rule needed (§11.4) |
+> | 4. Client playback | ⏸️ Not started — the KMP app has no player integration yet |
 >
-> 1. The master-playlist path migration (Phase 0, §4) has fully run with `--apply`,
-> 2. `DataManipulationScripts/output/master_playlist_migration_failures.jsonl` has
->    been reviewed (every recorded failure resolved or explicitly accepted), and
-> 3. **The user has given an explicit green light in the session.**
->
-> If you are an implementation session reading this file and cannot confirm all
-> three, do **only** Phase 0 work (or nothing) and ask the user.
+> The original Phase 0 hard gate is satisfied. §§1–10 are the original design and are kept
+> for reference; **§11 records what was actually built and every place it differs from the
+> design.** Where §11 and §§1–10 disagree, §11 is correct.
 
 Songs are **not** stored in MinIO. The raw HLS data lives on the external volume
 `/Volumes/DATA/master/` and is served directly from disk by a new dedicated nginx,
@@ -28,7 +31,7 @@ with every request authenticated through short-lived, user-bound signed URLs.
 | Token scope | Signs `expires + uid + song-dir prefix`. **uid is embedded** so per-user rate limiting can be added in nginx later without changing the URL scheme. |
 | uid format | `uid = first 16 hex chars of SHA-256(lowercase(email))` — stable, opaque, no PII in URLs/logs. |
 | Master playlist fix | **Approved**: one-time on-disk rewrite via `DataManipulationScripts/FixMasterPlaylistPaths.py` (already written — run it, do not rewrite it). |
-| DB | `song.master_playlist` needs **no** migration. |
+| DB | ~~`song.master_playlist` needs **no** migration.~~ **Wrong** — every row held the old MinIO form `/song/<dir>/…`; migrated to `master/<dir>/…` (§11.2). |
 
 ---
 
@@ -570,3 +573,98 @@ flowchart TD
 End-to-end acceptance: fresh token plays a full song on Android with bitrate
 switching; tampered/expired/foreign-dir/foreign-uid URLs all 403; `POST` denied;
 no path outside `/<exp>/<uid>/<tok>/master/...` serves anything.
+
+---
+
+## 11. Implementation log (what was actually built)
+
+### 11.1 Phase 0 — master-playlist migration ✅
+
+- Full dry-run: 69,522 dirs, 69,492 to fix, **30 `prefix_mismatch`**.
+- All 30 were non-ASCII folder names (e.g. `Abrarâs_Entry`): the playlist referenced its **own**
+  folder, but the on-disk name is NFD and the playlist text NFC. Not a real mismatch.
+- `--apply` fixed 69,492. The 30 were fixed by a one-off script (same safety checks + NFC
+  comparison, atomic writes); `FixMasterPlaylistPaths.py` itself was not changed.
+- Verification dry-run: `playlists_fixed: 0`, `playlists_already_ok: 69,522`, `failures: 0`.
+- Logs: `DataManipulationScripts/output/{full_dryrun,apply,verify}.log`, original failure list
+  `output/dryrun_failures.jsonl`.
+
+### 11.2 Phase 0b — `song.master_playlist` migration ✅ (not in the original plan)
+
+The "no DB migration" decision was wrong: all 69,522 rows stored `/song/<dir>/<file>_master.m3u8`
+(old MinIO layout), some percent-encoded (`10%2B2_…`).
+
+- New script **`DataManipulationScripts/FixSongMasterPlaylistUrls.py`** rewrites the seed file
+  `kyoku-docker/mysql/content/sql/06_insert_content_db_song.sql` to `master/<dir>/<file>_master.m3u8`.
+  Each value is resolved against the real file on disk (as-is → percent-decoded → NFD/NFC);
+  unresolved rows are left untouched and recorded. Dry-run by default, `--apply` to write, idempotent.
+- Result: 69,521 rewritten (2,863 percent-decoded). 1 row (id `63928`) stored the literal `None`;
+  set by hand to its existing on-disk path.
+- Backup of the original seed: `DataManipulationScripts/output/06_insert_content_db_song.sql.bak`.
+- Content DB rebuilt (`content-primary` stopped, data dir removed, re-seeded): 69,522 rows in the
+  new form, 0 old-form rows, 0 import errors.
+- ⚠️ The script's atomic write left the seed file `-rw-------`; MySQL in the container could not
+  have read it. Fixed to `644`. Re-check permissions if the script is ever re-run.
+- Stored values are the **real, decoded on-disk names**. No domain in the DB — the domain comes
+  from `media.base-url`, so a domain change needs a config change only.
+
+### 11.3 Phases 1–2 — differences from §5/§6
+
+**Phase 1 (`kyoku-docker/nginx/media/`):**
+- The stock `nginx:1.27-alpine` image (njs 0.8.10) does **not** load modules from `nginx.conf`,
+  so a custom `nginx/media/nginx.conf` is mounted: stock file + `load_module
+  modules/ngx_http_js_module.so;` + `env MEDIA_TOKEN_SECRET;`.
+- The secret is read from `process.env` (not the secret file §5.4 preferred), because the custom
+  `nginx.conf` was needed anyway.
+- The location regex must be **quoted** — unquoted `{16}` / `{40,}` is parsed as a block start
+  and nginx fails to start.
+- A `..%2f` path returns `404`, not `400`: nginx normalizes `..` before the guard runs. Nothing is served.
+- `Accept-Ranges` appears twice (nginx + `add_header`); harmless.
+- `MEDIA_TOKEN_SECRET` lives in `kyoku-docker/.env` (gitignored).
+
+**Phase 2:** the content service has **no REST layer** (no controller / `Endpoints.kt` /
+`ResponseWrapper`). Implemented the existing pattern instead — gateway route → content over gRPC:
+- Proto: `content/src/main/proto/Song.proto` + identical `gateway/src/main/proto/gatewaySong.proto`
+  (`GatewaySongService.getStreamUrl`).
+- Content: `database/repository/SongDataSource.kt`, `service/song/SongStreamService.kt` (signer),
+  `service/grpc/GrpcSongService.kt` (`NOT_FOUND` → 404, `INVALID_ARGUMENT` → 400).
+- Gateway: `interceptors/song/SongInterceptor.kt` — `GET /api/v1/content/song/stream-url?songId=`
+  behind `ValidationFilter`; email taken from the authenticated user.
+- Config: `media.base-url`, `media.token.secret`, `media.token.ttl-seconds` in the `secrates`
+  config repo (`application-dev.yml`).
+- Response payload: `{ url, expiresAtSec }` inside the standard gateway `ResponseWrapper`.
+
+### 11.4 Phase 3 — tunnel ✅
+
+- `~/.cloudflared/config.yml` (+ `/etc/cloudflared/config.yml` copy): `kyoku-media-cdn.poulastaa.dev
+  → http://localhost:1085`. DNS CNAME added via `cloudflared tunnel route dns`.
+- **No Cloudflare cache rule** (there is no dashboard access, and it is not needed): nginx sends
+  `Cache-Control: private, max-age=900` and `.m3u8`/`.m4a` are not cached by default — every response,
+  including repeats of the same segment, is `CF-Cache-Status: DYNAMIC`. Never add a caching rule for
+  this host.
+- Public checks: health 200; no-token 404; signed master / 128 variant / 320 segment 200;
+  expired / other-dir / `POST` 403.
+- `kyoku-docker/cloudflare-tunnel.md` updated (source of truth for the tunnel).
+
+### 11.5 How a client plays a song (for Phase 4)
+
+1. Song objects (e.g. playlist `ResponseSong`) give the client `songId`. Their `masterPlaylist`
+   field is the **raw on-disk path** and is **not playable** (404 without a token) — ignore it.
+2. On play: `GET /api/v1/content/song/stream-url?songId=<id>` with the access token →
+   `{ url, expiresAtSec }`.
+3. Hand `url` to the player. It resolves master → 128/320 variant → segments itself; all stay inside
+   the signed folder. Adaptive 128↔320 switching works with one token.
+4. On `403` from the media host (token expired, e.g. after a long pause): call `stream-url` again and
+   resume from the saved position. Fetch the next song's URL just-in-time; never sign a whole playlist.
+
+### 11.6 Open items
+
+| Item | Notes |
+|---|---|
+| **Phase 4 — client playback** | Blocked: no player code in `Kyoku/` yet. Implement per §8 + §11.5 once a player exists. |
+| URL encoding in `SongStreamService` | The stored path is inserted into the URL unencoded. Fine for `+ ( ) ! &`; breaks on spaces, `#`, `?`, non-ASCII. Fix: percent-encode each path segment when building the URL; the HMAC stays on the decoded folder name. Not done — awaiting decision. |
+| `ResponseSong.masterPlaylist` | Exposes an unusable internal path to clients. Optional cleanup in the playlist service contract (outside this plan). |
+| `SongCountry` seed gap | After the rebuild: 48,098 rows loaded vs 83,215 in `106_…song_country.sql` (`INSERT IGNORE` silently skips). Pre-existing seed issue, uninvestigated. Smaller gaps in `SongAlbum` / `SongArtist`. |
+| Fixed-quality playback | Possible later without nginx/signing changes: return `…/<bitrate>/playlist_<song>.m3u8` from `stream-url` (optional `quality` param), or cap bitrate in the player. |
+| Per-user rate limiting | Possible later: `uid` is already in every URL for nginx `limit_req` keys. |
+| cloudflared outdated | `2026.6.1` → `2026.10.7` available. |
