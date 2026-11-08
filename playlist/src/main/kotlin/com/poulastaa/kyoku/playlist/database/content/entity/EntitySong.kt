@@ -11,8 +11,6 @@ class EntitySong(
     val title: String,
     @Column(name = "poster", nullable = true, length = 300)
     val poster: String?,
-    @Column(name = "master_playlist", nullable = false, length = 300)
-    val url: String,
 ) : BaseIdEntity<SongId>() {
     @Transient
     var songInfo: EntitySongInfo? = null

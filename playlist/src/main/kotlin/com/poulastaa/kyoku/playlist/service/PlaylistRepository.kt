@@ -121,7 +121,6 @@ class PlaylistRepository(
                 id = baseSong.id,
                 title = baseSong.title,
                 rawPoster = baseSong.poster,
-                rawMasterPlaylist = baseSong.url,
                 info = baseSong.songInfo?.toDtoSongInfo() ?: DtoSongInfo(),
                 artists = artists.map { it.toDtoArtist() },
                 album = albums.map { it.toDtoAlbum() },

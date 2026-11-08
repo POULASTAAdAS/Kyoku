@@ -93,12 +93,11 @@ message ResponseSong{
   int64 songId = 1;
   string title = 2;
   optional string poster = 3;
-  string masterPlaylist = 4;
-  SongInfo info = 5;
-  repeated Artist artists = 6;
-  repeated Genre genre = 7;
-  repeated Country country = 8;
-  repeated Album albums = 9;
+  SongInfo info = 4;
+  repeated Artist artists = 5;
+  repeated Genre genre = 6;
+  repeated Country country = 7;
+  repeated Album albums = 8;
 };
 
 message ResponseFullPlaylist{

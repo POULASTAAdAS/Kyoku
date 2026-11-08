@@ -23,7 +23,6 @@ fun DtoSong.toResponseSong(): ResponseSong = ResponseSong.newBuilder().apply {
     songId = this@toResponseSong.id
     title = this@toResponseSong.title
     this@toResponseSong.poster?.let { poster = it }
-    masterPlaylist = this@toResponseSong.masterPlaylist
     info = this@toResponseSong.info.toSongInfo(this@toResponseSong.id)
     addAllArtists(artists.map { it.toArtist(withRelations = true) })
     addAllGenre(this@toResponseSong.genre.map { it.toGenre() })
