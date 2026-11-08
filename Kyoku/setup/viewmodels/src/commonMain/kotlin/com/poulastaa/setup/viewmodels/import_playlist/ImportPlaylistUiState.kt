@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
 
 data class ImportPlaylistUiState(
+    val isLoading: Boolean = true,
     val isMakingApiCall: Boolean = false,
     val link: UiTextFiledState = UiTextFiledState(),
     val playlists: List<UiPlaylist> = emptyList(),

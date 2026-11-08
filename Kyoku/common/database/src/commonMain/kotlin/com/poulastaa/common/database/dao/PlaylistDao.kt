@@ -39,6 +39,20 @@ abstract class PlaylistDao {
     @Query("SELECT * FROM playlist ORDER BY name")
     abstract fun observePlaylists(): Flow<List<PlaylistEntity>>
 
+    @Query("SELECT * FROM playlist ORDER BY name")
+    abstract suspend fun getPlaylists(): List<PlaylistEntity>
+
+    @Transaction
+    @Query(
+        """
+        SELECT song.* FROM song
+        INNER JOIN playlist_song ON playlist_song.songId = song.id
+        WHERE playlist_song.playlistId = :playlistId
+        ORDER BY playlist_song.position
+        """
+    )
+    abstract suspend fun getPlaylistSongs(playlistId: Long): List<SongWithRelations>
+
     @Query("SELECT * FROM playlist WHERE id = :playlistId")
     abstract fun observePlaylist(playlistId: Long): Flow<PlaylistEntity?>
 

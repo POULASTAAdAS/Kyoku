@@ -3,6 +3,7 @@ package com.poulastaa.setup.data
 import com.poulastaa.common.domain.model.DtoFullPlaylist
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.DataError
 import com.poulastaa.setup.domain.SetupLocalDatasource
 import com.poulastaa.setup.domain.SetupRemoteDatasource
 import com.poulastaa.setup.domain.SetupRepository
@@ -19,4 +20,7 @@ class RemoteSetupRepository(
 
         return result
     }
+
+    override suspend fun getSavedPlaylists(): AppResult<List<DtoFullPlaylist>, DataError> =
+        local.getPlaylists()
 }

@@ -1,5 +1,6 @@
 package com.poulastaa.setup.viewmodels.import_playlist
 
+import androidx.lifecycle.viewModelScope
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
@@ -13,13 +14,38 @@ import com.poulastaa.common.viewmodels.stringPlaylistNotFound
 import com.poulastaa.setup.domain.SetupRepository
 import com.poulastaa.setup.viewmodels.utils.normalizedLink
 import com.poulastaa.setup.viewmodels.utils.spotifyPlaylistIdOrNull
+import kotlinx.coroutines.launch
 
 class ImportPlaylistViewmodel(
     private val repo: SetupRepository,
 ) : BaseViewmodel<ImportPlaylistUiState, ImportPlaylistUiAction, Nothing>(
     initialSate = ImportPlaylistUiState(),
 ) {
+    // TODO: store this into db
     private val importedSpotifyPlaylistIds = mutableSetOf<String>()
+
+    init {
+        loadSavedPlaylists()
+    }
+
+    private fun loadSavedPlaylists() {
+        viewModelScope.launch {
+            val playlists = when (val result = repo.getSavedPlaylists()) {
+                is AppResult.Error -> emptyList()
+                is AppResult.Success -> result.response.map { it.toUiPlaylist() }
+            }
+
+            updateState {
+                copy(
+                    isLoading = false,
+                    // stored playlists first, then anything imported while they were loading
+                    playlists = playlists + this.playlists.filterNot { imported ->
+                        playlists.any { it.id == imported.id }
+                    },
+                )
+            }
+        }
+    }
 
     override suspend fun handleAction(action: ImportPlaylistUiAction) {
         when (action) {
@@ -87,7 +113,7 @@ class ImportPlaylistViewmodel(
                     copy(
                         isMakingApiCall = false,
                         link = UiTextFiledState(),
-                        playlists = listOf(playlist) + playlists.filterNot { it.id == playlist.id },
+                        playlists = playlists.filterNot { it.id == playlist.id } + playlist,
                     )
                 }
 

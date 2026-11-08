@@ -63,6 +63,7 @@ import com.poulastaa.common.ui.components.ElevatedOutlinedButton
 import com.poulastaa.common.ui.components.NetworkImage
 import com.poulastaa.common.ui.components.RowSpacer
 import com.poulastaa.common.ui.components.SmallClearButton
+import com.poulastaa.common.ui.components.shimmerEffect
 import com.poulastaa.common.ui.design_system.IconAddLink
 import com.poulastaa.common.ui.design_system.IconArrowBack
 import com.poulastaa.common.ui.design_system.StringAppName
@@ -245,7 +246,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                items(
+                if (state.isLoading) items(LOADING_PLAYLIST_COUNT) {
+                    LoadingPlaylistItem()
+                }
+
+                if (!state.isLoading) items(
                     items = state.playlists,
                     key = { it.id }
                 ) { playlist ->
@@ -544,6 +549,11 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                     ColumnSpacer(MaterialTheme.dimens.spacing.small)
                 }
 
+                // the playlist being imported lands right after the existing ones (top when empty)
+                if (!state.isLoading && state.isMakingApiCall) item(key = IMPORTING_PLAYLIST_KEY) {
+                    LoadingPlaylistItem(Modifier.animateItem())
+                }
+
                 item {
                     Spacer(
                         Modifier
@@ -591,6 +601,52 @@ internal fun CompatVerticalImportSpotifyPlaylistScreen(
                         .padding(MaterialTheme.dimens.spacing.medium)
                 )
             }
+        }
+    }
+}
+
+private const val LOADING_PLAYLIST_COUNT = 4
+private const val IMPORTING_PLAYLIST_KEY = "importing_playlist"
+
+@Composable
+private fun LoadingPlaylistItem(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth()
+            .padding(vertical = MaterialTheme.dimens.spacing.extraSmall)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .padding(MaterialTheme.dimens.spacing.small)
+            .height(56.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            Modifier.fillMaxHeight()
+                .aspectRatio(1f)
+                .clip(MaterialTheme.shapes.medium)
+                .shimmerEffect()
+        )
+
+        RowSpacer(MaterialTheme.dimens.spacing.medium)
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Box(
+                Modifier.fillMaxWidth(0.6f)
+                    .height(14.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .shimmerEffect()
+            )
+
+            ColumnSpacer(MaterialTheme.dimens.spacing.small)
+
+            Box(
+                Modifier.fillMaxWidth(0.3f)
+                    .height(10.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .shimmerEffect()
+            )
         }
     }
 }

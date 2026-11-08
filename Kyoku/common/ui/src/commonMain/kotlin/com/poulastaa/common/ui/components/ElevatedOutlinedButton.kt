@@ -1,6 +1,5 @@
 package com.poulastaa.common.ui.components
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
@@ -36,11 +35,12 @@ fun ElevatedOutlinedButton(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(
-        modifier = Modifier.animateContentSize().fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         OutlinedCard(
-            modifier = Modifier.animateContentSize().fillMaxWidth(width),
+            // no animateContentSize here or on the Box: it clips to bounds and cuts off the shadow
+            modifier = Modifier.fillMaxWidth(width),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = MaterialTheme.dimens.elevation.level3,
                 pressedElevation = 0.dp,
