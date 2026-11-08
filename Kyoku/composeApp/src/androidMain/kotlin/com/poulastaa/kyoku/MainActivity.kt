@@ -64,7 +64,10 @@ class MainActivity : ComponentActivity() {
 
             if (rootState.startDestination != Screens.Loading) AppTheme {
                 Surface {
-                    RootNavigation(state = rootState)
+                    RootNavigation(
+                        state = rootState,
+                        onAction = viewmodel::onAction,
+                    )
                 }
             }
         }

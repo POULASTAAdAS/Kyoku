@@ -11,7 +11,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class RootViewmodel(
     private val appPreferences: AppPreferences,
-) : BaseViewmodel<RootUiState, Nothing, Nothing>(
+) : BaseViewmodel<RootUiState, RootUiAction, Nothing>(
     initialSate = RootUiState(),
 ) {
     init {
@@ -29,7 +29,21 @@ class RootViewmodel(
         }
     }
 
-    override suspend fun handleAction(action: Nothing) = Unit
+    override suspend fun handleAction(action: RootUiAction) {
+        when (action) {
+            is RootUiAction.OnDestinationChanged -> action.screen.toSavedScreen()?.let { screen ->
+                appPreferences.saveLastSetupScreen(screen)
+            }
+        }
+    }
+
+    private fun Screens.toSavedScreen(): DtoSavedScreen? = when (this) {
+        Screens.SetupScreens.ImportPlaylist -> DtoSavedScreen.IMPORT_PLAYLIST
+        Screens.SetupScreens.SelectGenre -> DtoSavedScreen.SELECT_GENRE
+        Screens.SetupScreens.SelectArtist -> DtoSavedScreen.SELECT_ARTIST
+        Screens.MainScreens.Home -> DtoSavedScreen.HOME
+        else -> null
+    }
 
     private fun DtoSavedScreen?.toStartGraph(): Screens = when (this) {
         null -> Screens.AuthGraph

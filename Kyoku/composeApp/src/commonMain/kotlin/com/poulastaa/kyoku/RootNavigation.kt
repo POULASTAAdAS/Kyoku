@@ -13,9 +13,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,6 +32,7 @@ import com.poulastaa.auth.ui.sign_up.SingUpScreen
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.CommonSnackbarHost
 import com.poulastaa.common.viewmodels.Screens
+import com.poulastaa.common.viewmodels.root.RootUiAction
 import com.poulastaa.common.viewmodels.root.RootUiState
 import com.poulastaa.setup.ui.import_spotify_playlist.ImportSpotifyPlaylist
 import com.poulastaa.setup.ui.select_artist.SelectArtist
@@ -38,12 +41,21 @@ import com.poulastaa.setup.ui.select_genre.SelectGenre
 private const val ANIMATION_TIME_MS = 400
 
 @Composable
-fun RootNavigation(state: RootUiState) {
+fun RootNavigation(
+    state: RootUiState,
+    onAction: (RootUiAction) -> Unit,
+) {
     val navController = rememberNavController()
 
     if (state.isLoading) {
         LoadingScreen()
         return
+    }
+
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { entry ->
+            entry.destination.toScreen()?.let { onAction(RootUiAction.OnDestinationChanged(it)) }
+        }
     }
 
     CompositionLocalProvider(LocalNavController.provides(navController)) {
@@ -182,6 +194,14 @@ fun RootNavigation(state: RootUiState) {
             CommonSnackbarHost(modifier = Modifier.align(Alignment.BottomCenter))
         }
     }
+}
+
+private fun NavDestination.toScreen(): Screens? = when {
+    hasRoute<Screens.SetupScreens.ImportPlaylist>() -> Screens.SetupScreens.ImportPlaylist
+    hasRoute<Screens.SetupScreens.SelectGenre>() -> Screens.SetupScreens.SelectGenre
+    hasRoute<Screens.SetupScreens.SelectArtist>() -> Screens.SetupScreens.SelectArtist
+    hasRoute<Screens.MainScreens.Home>() -> Screens.MainScreens.Home
+    else -> null
 }
 
 @Composable
