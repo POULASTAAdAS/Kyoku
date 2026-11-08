@@ -37,6 +37,18 @@ class RoomDatasource(
         )
     }
 
+    override suspend fun replacePlaylists(
+        playlists: List<DtoFullPlaylist>,
+    ): EmptyResponse<DataError> = safeDbCall {
+        songDao.upsertFullSongs(playlists.flatMap { it.songs }.distinctBy { it.id }.map { it.toBundle() })
+        playlistDao.replaceAllPlaylists(
+            playlists = playlists.map { full ->
+                full.playlist.toEntity(full.playlist.spotifyPlaylistId) to full.songs.map { it.id }
+            },
+            addedAt = Clock.System.now().toEpochMilliseconds(),
+        )
+    }
+
     override suspend fun getPlaylists(): AppResult<List<DtoFullPlaylist>, DataError> = safeDbCall {
         playlistDao.getPlaylists().map { playlist ->
             DtoFullPlaylist(

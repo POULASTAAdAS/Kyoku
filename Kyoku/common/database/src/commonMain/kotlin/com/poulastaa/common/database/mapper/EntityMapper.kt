@@ -103,6 +103,7 @@ fun PlaylistEntity.toDto() = DtoPlaylist(
         PlaylistVisibilityEntity.PUBLIC -> DtoPlaylistVisibility.PUBLIC
         PlaylistVisibilityEntity.PRIVATE -> DtoPlaylistVisibility.PRIVATE
     },
+    spotifyPlaylistId = spotifyPlaylistId,
 )
 
 fun SongWithRelations.toDto() = DtoSong(

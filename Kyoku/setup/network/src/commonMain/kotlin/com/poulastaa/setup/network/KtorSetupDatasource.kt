@@ -10,6 +10,7 @@ import com.poulastaa.common.network.req
 import com.poulastaa.setup.domain.SetupRemoteDatasource
 import com.poulastaa.setup.network.model.FullPlaylistResponse
 import com.poulastaa.setup.network.model.ImportPlaylistRequest
+import com.poulastaa.setup.network.model.UserPlaylistsResponse
 import io.ktor.client.HttpClient
 import org.koin.core.annotation.Single
 
@@ -26,4 +27,10 @@ class KtorSetupDatasource(
             type = ApiRequestType.POST,
             body = ImportPlaylistRequest(spotifyPlaylistId, force),
         ).map(FullPlaylistResponse::toDto)
+
+    override suspend fun getPlaylists(): AppResult<List<DtoFullPlaylist>, ApiError> =
+        client.req<Unit, UserPlaylistsResponse, ApiError.Playlist>(
+            route = ApiEndpoints.Setup.GET_PLAYLISTS,
+            type = ApiRequestType.GET,
+        ).map { response -> response.playlists.map(FullPlaylistResponse::toDto) }
 }

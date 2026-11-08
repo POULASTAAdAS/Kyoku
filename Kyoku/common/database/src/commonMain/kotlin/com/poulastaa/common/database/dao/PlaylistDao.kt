@@ -36,6 +36,12 @@ abstract class PlaylistDao {
     @Query("DELETE FROM playlist WHERE id = :playlistId")
     abstract suspend fun deletePlaylist(playlistId: Long)
 
+    @Query("DELETE FROM playlist WHERE id NOT IN (:playlistIds)")
+    abstract suspend fun deletePlaylistsNotIn(playlistIds: List<Long>)
+
+    @Query("DELETE FROM playlist")
+    abstract suspend fun deleteAllPlaylists()
+
     @Query("SELECT * FROM playlist ORDER BY name")
     abstract fun observePlaylists(): Flow<List<PlaylistEntity>>
 
@@ -89,6 +95,18 @@ abstract class PlaylistDao {
                 )
             }
         )
+    }
+
+    /** Replaces every stored playlist with [playlists]; ones not in it are deleted. Songs must already be stored via [SongDao]. */
+    @Transaction
+    open suspend fun replaceAllPlaylists(
+        playlists: List<Pair<PlaylistEntity, List<Long>>>,
+        addedAt: Long,
+    ) {
+        if (playlists.isEmpty()) deleteAllPlaylists()
+        else deletePlaylistsNotIn(playlists.map { it.first.id })
+
+        playlists.forEach { (playlist, songIds) -> replacePlaylist(playlist, songIds, addedAt) }
     }
 
     @Transaction

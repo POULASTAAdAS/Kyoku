@@ -33,6 +33,14 @@ class RemoteSetupRepository(
         return result
     }
 
-    override suspend fun getSavedPlaylists(): AppResult<List<DtoFullPlaylist>, DataError> =
-        local.getPlaylists()
+    /**
+     * Server first: on success the local db is replaced with the response, then read back.
+     * On api failure the stored playlists are returned as they are.
+     */
+    override suspend fun getSavedPlaylists(): AppResult<List<DtoFullPlaylist>, DataError> {
+        val result = remote.getPlaylists()
+        if (result is AppResult.Success) local.replacePlaylists(result.response)
+
+        return local.getPlaylists()
+    }
 }

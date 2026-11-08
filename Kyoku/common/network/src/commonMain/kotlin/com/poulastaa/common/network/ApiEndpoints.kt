@@ -23,5 +23,6 @@ data object ApiEndpoints {
 
     data object Setup {
         const val IMPORT_PLAYLIST = "$PREFIX_PLAYLIST/import"
+        const val GET_PLAYLISTS = PREFIX_PLAYLIST
     }
 }

@@ -5,6 +5,7 @@ data class DtoPlaylist(
     val name: String,
     val popularity: Long = 0,
     val visibility: DtoPlaylistVisibility = DtoPlaylistVisibility.PUBLIC,
+    val spotifyPlaylistId: String? = null,
 )
 
 enum class DtoPlaylistVisibility {

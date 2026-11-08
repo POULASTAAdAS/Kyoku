@@ -10,12 +10,14 @@ data class PlaylistResponse(
     val name: String,
     val popularity: Long = 0,
     val status: PlaylistVisibilityResponse = PlaylistVisibilityResponse.PUBLIC,
+    val spotifyPlaylistId: String? = null,
 ) {
     fun toDto() = DtoPlaylist(
         id = playlistId,
         name = name,
         popularity = popularity,
         visibility = status.toDto(),
+        spotifyPlaylistId = spotifyPlaylistId,
     )
 }
 
