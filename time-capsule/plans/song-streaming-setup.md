@@ -11,6 +11,7 @@ Status: **PHASES 0–3 DONE (2026-11-09) — PHASE 4 (client) PENDING: no player
 > | 1. `kyoku-media-nginx` | ✅ Done — running on `:1085`, all checks pass |
 > | 2. `stream-url` endpoint + gateway route | ✅ Done — confirmed by user |
 > | 3. Tunnel + DNS | ✅ Done — public checks pass; no Cloudflare cache rule needed (§11.4) |
+> | 3b. Remove `masterPlaylist` from song responses (unplanned) | ✅ Done — backend + client, protos renumbered (§11.5) |
 > | 4. Client playback | ⏸️ Not started — the KMP app has no player integration yet |
 >
 > The original Phase 0 hard gate is satisfied. §§1–10 are the original design and are kept
@@ -129,7 +130,7 @@ https://kyoku-media-cdn.poulastaa.dev/<expires>/<uid>/<token>/master/<song_dir>/
         │                              │         │     └── base64url( HMAC-SHA256(secret, "<expires>:<uid>:/master/<song_dir>/") ), no padding
         │                              │         └── 16 lowercase hex chars = SHA-256(lowercase(email))[0..15]
         │                              └── unix epoch seconds (UTC) when the grant dies (issue-time + 15 min)
-        └── Cloudflare (cache BYPASS) → tunnel → localhost:1085
+        └── Cloudflare (not cached, see §11.4) → tunnel → localhost:1085
 ```
 
 - The token signs the **directory prefix** `/master/<song_dir>/` (with trailing
@@ -156,7 +157,7 @@ flowchart LR
 
     subgraph Edge["Cloudflare"]
         GW_DNS["kyoku-gateway.poulastaa.dev"]
-        MEDIA_DNS["kyoku-media-cdn.poulastaa.dev<br/>(cache BYPASS)"]
+        MEDIA_DNS["kyoku-media-cdn.poulastaa.dev<br/>(not cached)"]
     end
 
     subgraph Local["Local machine (tunnel 'kyoku')"]
@@ -506,14 +507,13 @@ Per `kyoku-docker/cloudflare-tunnel.md` (**update that doc as part of this phase
      service: http://localhost:1085
    ```
 2. One-time DNS route: `cloudflared tunnel route dns kyoku kyoku-media-cdn.poulastaa.dev`
-3. Cloudflare dashboard Cache Rule:
-   `Hostname equals kyoku-media-cdn.poulastaa.dev` → **Bypass cache**.
-   Tokens are per-user + 15-min expiry, so edge cache hits would be ~zero anyway;
-   bypassing guarantees nothing is ever served past its token's expiry.
+3. ~~Cloudflare dashboard Cache Rule: `Hostname equals kyoku-media-cdn.poulastaa.dev` → **Bypass cache**.~~
+   **Not done / not needed** — there is no dashboard access, and the edge already never caches this
+   host (`CF-Cache-Status: DYNAMIC` on every response). See §11.4.
 4. Restart the tunnel; verify:
    ```bash
    curl -I https://kyoku-media-cdn.poulastaa.dev/health            # 200 ok
-   curl -I "https://kyoku-media-cdn.poulastaa.dev/<fresh signed path>"  # 200, CF-Cache-Status: BYPASS/DYNAMIC
+   curl -I "https://kyoku-media-cdn.poulastaa.dev/<fresh signed path>"  # 200, CF-Cache-Status: DYNAMIC
    ```
 
 ---
@@ -562,7 +562,7 @@ flowchart TD
     GL{"🟢 USER GREEN LIGHT<br/>(failures reviewed)"}
     P1["PHASE 1: kyoku-media-nginx<br/>(:1085, njs HMAC, :ro mount)"]
     P2["PHASE 2: content stream-url<br/>+ gateway route"]
-    P3["PHASE 3: tunnel + DNS<br/>+ CF bypass rule"]
+    P3["PHASE 3: tunnel + DNS<br/>(no CF rule needed, §11.4)"]
     P4["PHASE 4: client playback<br/>+ 403 refresh"]
 
     P0 --> GL
@@ -620,7 +620,12 @@ The "no DB migration" decision was wrong: all 69,522 rows stored `/song/<dir>/<f
   and nginx fails to start.
 - A `..%2f` path returns `404`, not `400`: nginx normalizes `..` before the guard runs. Nothing is served.
 - `Accept-Ranges` appears twice (nginx + `add_header`); harmless.
-- `MEDIA_TOKEN_SECRET` lives in `kyoku-docker/.env` (gitignored).
+- `MEDIA_TOKEN_SECRET` lives in `kyoku-docker/.env` (gitignored), generated with `openssl rand -base64 48`.
+- Files: `nginx/media/nginx.conf`, `nginx/media/media.conf.template`, `nginx/media/njs/media_auth.js`;
+  compose service `kyoku-media-nginx` (`127.0.0.1:1085:80`, data mounted `:ro`). Started by
+  `start-local-infra.sh` with the other containers; needs `/Volumes/DATA` mounted.
+- Local checks passed: master / variant / segment 200, byte range 206, a non-ASCII folder 200,
+  missing file 404, other-dir / expired / forged / other-uid / `POST` 403, bare path 404.
 
 **Phase 2:** the content service has **no REST layer** (no controller / `Endpoints.kt` /
 `ResponseWrapper`). Implemented the existing pattern instead — gateway route → content over gRPC:
@@ -631,8 +636,12 @@ The "no DB migration" decision was wrong: all 69,522 rows stored `/song/<dir>/<f
 - Gateway: `interceptors/song/SongInterceptor.kt` — `GET /api/v1/content/song/stream-url?songId=`
   behind `ValidationFilter`; email taken from the authenticated user.
 - Config: `media.base-url`, `media.token.secret`, `media.token.ttl-seconds` in the `secrates`
-  config repo (`application-dev.yml`).
+  config repo (`application-dev.yml`), pushed by the user (`ad5672e`).
 - Response payload: `{ url, expiresAtSec }` inside the standard gateway `ResponseWrapper`.
+  No token → 401, missing `songId` → 400, unknown `songId` → 404.
+- Signing reads `song.master_playlist` through the content service's `EntitySong.url`; it rejects
+  (500 + log) any stored value not shaped `master/<dir>/<file>.m3u8`.
+- Verified end-to-end by the user (Phase 2 confirmed done).
 
 ### 11.4 Phase 3 — tunnel ✅
 
@@ -644,12 +653,41 @@ The "no DB migration" decision was wrong: all 69,522 rows stored `/song/<dir>/<f
   this host.
 - Public checks: health 200; no-token 404; signed master / 128 variant / 320 segment 200;
   expired / other-dir / `POST` 403.
+- The running tunnel had started before the rule was added; cloudflared reads its config only at
+  startup, so it was restarted (in a separate Terminal window). Gateway and image host verified 200
+  afterwards.
 - `kyoku-docker/cloudflare-tunnel.md` updated (source of truth for the tunnel).
+- **Latency (measured):** nginx answers locally in 2–5 ms, but every public request takes ~0.7–1.2 s,
+  including `/health` and the image host. Requests hit the **Marseille** edge (`cf-ray …-MRS`) while
+  the tunnel connects in India (`del`/`ccu`), so the delay is edge routing, not nginx or the disk.
+  A server-side cache would not help. No change made; options are listed in §11.7.
 
-### 11.5 How a client plays a song (for Phase 4)
+### 11.5 Phase 3b — `masterPlaylist` removed from song responses ✅ (not in the original plan)
 
-1. Song objects (e.g. playlist `ResponseSong`) give the client `songId`. Their `masterPlaylist`
-   field is the **raw on-disk path** and is **not playable** (404 without a token) — ignore it.
+Clients play by `songId` only, so the raw path in song responses was useless (404 without a token).
+It was removed completely — not `reserved`, by decision.
+
+- **Protos** (`playlist/src/main/proto/GatewayPlaylist.proto` + `gateway/src/main/proto/gatewayPlaylist.proto`):
+  `masterPlaylist = 4` deleted from `ResponseSong`, later fields renumbered down by one
+  (`info` 4, `artists` 5, `genre` 6, `country` 7, `albums` 8). ⚠️ The wire numbers changed: the
+  **gateway and playlist service must be rebuilt and deployed together**.
+- **Playlist service:** `DtoSong.rawMasterPlaylist` / `masterPlaylist` removed; `PlaylistRepository`
+  and `ProtoMapper` no longer copy it. Redis-cached songs still load (read back via Gson, which ignores
+  the old field) — no cache flush needed.
+- **DB mapping:** the `master_playlist` column was removed from `EntitySong` in the **playlist** and
+  **activity** services (neither reads it nor inserts songs; `ddl-auto: none`, so the table is
+  unchanged). It is kept **only in the content service**, which needs it for signing. The column
+  stays in MySQL and the seed SQL.
+- **Client (`Kyoku/`):** field removed from `SongResponse`, `DtoSong`, the Room `SongEntity`,
+  `EntityMapper`, `SongDao`. `KyokuDatabase` version 3 → 4; `fallbackToDestructiveMigration` wipes
+  and re-fetches the local cache on first launch.
+- Not compiled in-session (system `gradle` can't resolve the Kotlin plugin offline; `gradlew` is
+  off-limits) — build gateway, playlist, activity and the client before relying on it.
+
+### 11.6 How a client plays a song (for Phase 4)
+
+1. Song objects (e.g. playlist `ResponseSong`) give the client `songId` (plus title, poster, info,
+   artists…). They carry **no** playlist URL.
 2. On play: `GET /api/v1/content/song/stream-url?songId=<id>` with the access token →
    `{ url, expiresAtSec }`.
 3. Hand `url` to the player. It resolves master → 128/320 variant → segments itself; all stay inside
@@ -657,13 +695,14 @@ The "no DB migration" decision was wrong: all 69,522 rows stored `/song/<dir>/<f
 4. On `403` from the media host (token expired, e.g. after a long pause): call `stream-url` again and
    resume from the saved position. Fetch the next song's URL just-in-time; never sign a whole playlist.
 
-### 11.6 Open items
+### 11.7 Open items
 
 | Item | Notes |
 |---|---|
-| **Phase 4 — client playback** | Blocked: no player code in `Kyoku/` yet. Implement per §8 + §11.5 once a player exists. |
+| **Phase 4 — client playback** | Blocked: no player code in `Kyoku/` yet. Implement per §8 + §11.6 once a player exists. Add player-side segment caching (Media3 `SimpleCache` + `CacheDataSource`) at the same time. |
 | URL encoding in `SongStreamService` | The stored path is inserted into the URL unencoded. Fine for `+ ( ) ! &`; breaks on spaces, `#`, `?`, non-ASCII. Fix: percent-encode each path segment when building the URL; the HMAC stays on the decoded folder name. Not done — awaiting decision. |
-| `ResponseSong.masterPlaylist` | Exposes an unusable internal path to clients. Optional cleanup in the playlist service contract (outside this plan). |
+| ~1 s public latency | Edge routing (Marseille ↔ India), §11.4. Start-up costs ~3 sequential requests; steady playback is fine (10 s segments fetched ahead). Options: player cache + next-song prefetch (no server change); `stream-url` returning the 128 variant directly (saves one request, loses ABR); a Cloudflare Worker verifying the token at the edge + edge cache (**changes the locked "verified in nginx" decision — needs approval**); paid routing (Argo / Pro) or hosting the media server in-region. |
+| Build verification | §11.5 changes were not compiled in-session. |
 | `SongCountry` seed gap | After the rebuild: 48,098 rows loaded vs 83,215 in `106_…song_country.sql` (`INSERT IGNORE` silently skips). Pre-existing seed issue, uninvestigated. Smaller gaps in `SongAlbum` / `SongArtist`. |
 | Fixed-quality playback | Possible later without nginx/signing changes: return `…/<bitrate>/playlist_<song>.m3u8` from `stream-url` (optional `quality` param), or cap bitrate in the player. |
 | Per-user rate limiting | Possible later: `uid` is already in every URL for nginx `limit_req` keys. |

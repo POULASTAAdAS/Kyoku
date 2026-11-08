@@ -53,14 +53,18 @@ client -> Cloudflare edge cache -> tunnel "kyoku" -> kyoku-static-nginx :1084 (d
 ## Song streaming (`kyoku-media-cdn.poulastaa.dev`)
 
 ```
-client -> Cloudflare (cache BYPASS) -> tunnel "kyoku" -> kyoku-media-nginx :1085 -> /Volumes/DATA/master (read-only)
+1. client -> kyoku-gateway (JWT check) -> content (gRPC)  : GET /api/v1/content/song/stream-url?songId=<id> -> signed url
+2. player -> Cloudflare (not cached) -> tunnel "kyoku" -> kyoku-media-nginx :1085 -> /Volumes/DATA/master (read-only)
 ```
 
 - **Not public.** Every request must be `/<expires>/<uid>/<token>/master/<song_dir>/<file>`; nginx verifies the HMAC-SHA256 token in njs (`nginx/media/njs/media_auth.js`). Expired / forged / other-song / other-user → `403`; any other path → `404`; non-GET → `403`.
-- URLs are issued by the content service via `GET /api/v1/content/song/stream-url?songId=<id>` (behind the gateway JWT check). Tokens live 15 minutes and cover one song folder (master + 128 + 320 playlists and segments).
+- URLs are issued by the content service via `GET /api/v1/content/song/stream-url?songId=<id>` (behind the gateway JWT check). Response payload: `{ url, expiresAtSec }`. Tokens live 15 minutes and cover one song folder (master + 128 + 320 playlists and segments), so 128↔320 switching needs no new token. On `403` the client calls `stream-url` again and resumes.
+- Song objects returned to clients (e.g. playlist `ResponseSong`) carry **no** playlist URL — the client only uses `songId`. The on-disk path lives in `song.master_playlist` (`master/<dir>/<file>_master.m3u8`) and is read only by the content service when signing.
+- Container: `kyoku-media-nginx` in `docker-compose.yml` (`nginx:1.27-alpine`). Mounts: `nginx/media/nginx.conf` (stock config + `load_module` njs + `env MEDIA_TOKEN_SECRET;`), `nginx/media/media.conf.template`, `nginx/media/njs/`, and `${MEDIA_DATA_DIR:-/Volumes/DATA/master}` read-only. Started by `./start-local-infra.sh` with the other containers. **The external volume `/Volumes/DATA` must be mounted**, or every song request 404s.
 - Secret: `MEDIA_TOKEN_SECRET` in `kyoku-docker/.env` (nginx) and `media.token.secret` in config-server (content). Both must be identical.
-- One-time DNS record: `cloudflared tunnel route dns kyoku kyoku-media-cdn.poulastaa.dev`.
+- One-time DNS record (CNAME to the tunnel, added): `cloudflared tunnel route dns kyoku kyoku-media-cdn.poulastaa.dev`.
 - **No Cloudflare cache rule.** The edge never caches this host on its own: nginx sends `Cache-Control: private, max-age=900` on every response, and `.m3u8` / `.m4a` are not in Cloudflare's default cached extensions. Verified: repeated requests for the same segment return `CF-Cache-Status: DYNAMIC`. Do **not** add an "Eligible for cache" rule for this hostname: URLs are per-user with a 15-minute expiry, so nothing may be served from the edge past its token's expiry.
+- **Latency (measured 2026-11-09):** nginx answers locally in 2–5 ms, but every public request takes ~0.7–1.2 s — including `/health` and `kyoku-image-cdn`, so it is the Cloudflare path, not nginx or the disk. Requests are served from the **Marseille** edge (`cf-ray: …-MRS`) while the tunnel connects in India (`del`/`ccu`), so each request makes a long round trip. A server-side cache would not help. Mitigations: cache segments in the player (Media3 `SimpleCache`, Phase 4), prefetch the next song's URL; a Cloudflare Worker verifying tokens at the edge or paid routing would fix it at the edge, but needs a design decision.
 - Full design: `time-capsule/plans/song-streaming-setup.md`.
 
 ## How to start
@@ -145,6 +149,23 @@ curl -I https://kyoku-media-cdn.poulastaa.dev/master/0_to_100/0_to_100_master.m3
 curl -I "<url returned by stream-url>"                                     # 200, CF-Cache-Status: DYNAMIC (never HIT)
 ```
 
+Getting a signed URL needs a valid access token:
+
+```bash
+curl -s -H "Authorization: Bearer <access token>" \
+  "https://kyoku-gateway.poulastaa.dev/api/v1/content/song/stream-url?songId=1"
+# -> { "status": "SUCCESS", "payload": { "url": "https://kyoku-media-cdn.poulastaa.dev/<exp>/<uid>/<token>/master/...", "expiresAtSec": ... } }
+# no token -> 401, unknown songId -> 404, missing songId -> 400
+```
+
+Telling Cloudflare latency apart from nginx latency:
+
+```bash
+curl -s -o /dev/null -w 'ttfb=%{time_starttransfer}\n' http://localhost:1085/health                    # ~ms  (nginx)
+curl -s -o /dev/null -w 'ttfb=%{time_starttransfer}\n' https://kyoku-media-cdn.poulastaa.dev/health    # ~1 s (edge + tunnel)
+curl -s -I https://kyoku-media-cdn.poulastaa.dev/health | grep -i cf-ray                                # edge location suffix (e.g. MRS)
+```
+
 ### Public API routes (via gateway)
 
 | Path prefix              | Service   |
@@ -163,7 +184,9 @@ Example: `https://kyoku-gateway.poulastaa.dev/api/v1/auth/...`
 ## Known issues
 
 - **launchd service is broken.** `com.cloudflare.cloudflared` is installed in both `~/Library/LaunchAgents/` and `/Library/LaunchDaemons/`, but it runs `cloudflared` with no arguments. It exits immediately with `use 'cloudflared tunnel run' to start tunnel ...`. Start the tunnel manually as shown above until the service is fixed (add `tunnel` and `run` to `ProgramArguments`, or reinstall with `sudo cloudflared service install`).
-- **cloudflared is outdated** (`2026.6.1`). Upgrade with `brew upgrade cloudflared`.
+- **cloudflared is outdated** (`2026.6.1`; `2026.10.7` available). Upgrade with `brew upgrade cloudflared`.
+- **cloudflared reads `config.yml` only at startup.** After adding or changing an ingress rule, restart the tunnel (`Ctrl+C`, then run it again); a running tunnel keeps routing with its old rules. Check a hostname's rule with `cloudflared tunnel --config ~/.cloudflared/config.yml ingress rule https://<hostname>/`.
+- **Slow public responses (~1 s per request)** on all hosts, caused by edge routing (Marseille edge, India tunnel), not by the origin. See *Song streaming → Latency*.
 - The gateway's Zipkin endpoint defaults to `http://kyoku-gateway.poulastaa.dev:8010`. The tunnel does not route port `8010`, so override `zipkin.url` to `http://localhost:8010/api/v2/spans` when running locally.
 
 ## Other tunnel on this machine
