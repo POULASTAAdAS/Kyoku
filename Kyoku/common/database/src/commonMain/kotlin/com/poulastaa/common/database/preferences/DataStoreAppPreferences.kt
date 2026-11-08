@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.poulastaa.common.domain.model.DtoSetupScreen
+import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.preferences.AppPreferences
 import kotlinx.coroutines.flow.first
@@ -38,14 +38,14 @@ class DataStoreAppPreferences(
         }
     }
 
-    override suspend fun saveLastSetupScreen(screen: DtoSetupScreen) {
+    override suspend fun saveLastSetupScreen(screen: DtoSavedScreen) {
         dataStore.edit { preferences ->
             preferences[LAST_SETUP_SCREEN_KEY] = screen.name
         }
     }
 
-    override suspend fun getLastSetupScreen(): DtoSetupScreen? {
+    override suspend fun getLastSetupScreen(): DtoSavedScreen? {
         val value = dataStore.data.first()[LAST_SETUP_SCREEN_KEY] ?: return null
-        return DtoSetupScreen.entries.firstOrNull { it.name == value }
+        return DtoSavedScreen.entries.firstOrNull { it.name == value }
     }
 }

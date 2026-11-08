@@ -3,7 +3,7 @@ package com.poulastaa.auth.data
 import com.poulastaa.auth.domain.AuthLocalDatasource
 import com.poulastaa.common.database.dao.AuthDao
 import com.poulastaa.common.database.entity.UserEntity
-import com.poulastaa.common.domain.model.DtoSetupScreen
+import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.domain.preferences.AppPreferences
@@ -32,7 +32,7 @@ class RoomDatasource(
         appPreferences.saveTokens(tokens)
     }
 
-    override suspend fun saveSetupScreen(screen: DtoSetupScreen): EmptyResponse<DataError> = safeDbCall {
+    override suspend fun saveSetupScreen(screen: DtoSavedScreen): EmptyResponse<DataError> = safeDbCall {
         appPreferences.saveLastSetupScreen(screen)
     }
 }

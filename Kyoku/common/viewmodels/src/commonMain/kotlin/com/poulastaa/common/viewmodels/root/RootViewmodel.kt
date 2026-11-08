@@ -1,7 +1,7 @@
 package com.poulastaa.common.viewmodels.root
 
 import androidx.lifecycle.viewModelScope
-import com.poulastaa.common.domain.model.DtoSetupScreen
+import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.preferences.AppPreferences
 import com.poulastaa.common.viewmodels.BaseViewmodel
 import com.poulastaa.common.viewmodels.Screens
@@ -31,21 +31,21 @@ class RootViewmodel(
 
     override suspend fun handleAction(action: Nothing) = Unit
 
-    private fun DtoSetupScreen?.toStartGraph(): Screens = when (this) {
+    private fun DtoSavedScreen?.toStartGraph(): Screens = when (this) {
         null -> Screens.AuthGraph
-        DtoSetupScreen.HOME -> Screens.MainGraph
-        DtoSetupScreen.IMPORT_PLAYLIST,
-        DtoSetupScreen.SELECT_GENRE,
-        DtoSetupScreen.SELECT_ARTIST,
+        DtoSavedScreen.HOME -> Screens.MainGraph
+        DtoSavedScreen.IMPORT_PLAYLIST,
+        DtoSavedScreen.SELECT_GENRE,
+        DtoSavedScreen.SELECT_ARTIST,
             -> Screens.SetupGraph
     }
 
-    private fun DtoSetupScreen?.toStartDestination(): Screens.SetupScreens = when (this) {
-        DtoSetupScreen.SELECT_GENRE -> Screens.SetupScreens.SelectGenre
-        DtoSetupScreen.SELECT_ARTIST -> Screens.SetupScreens.SelectArtist
+    private fun DtoSavedScreen?.toStartDestination(): Screens.SetupScreens = when (this) {
+        DtoSavedScreen.SELECT_GENRE -> Screens.SetupScreens.SelectGenre
+        DtoSavedScreen.SELECT_ARTIST -> Screens.SetupScreens.SelectArtist
         null,
-        DtoSetupScreen.IMPORT_PLAYLIST,
-        DtoSetupScreen.HOME,
+        DtoSavedScreen.IMPORT_PLAYLIST,
+        DtoSavedScreen.HOME,
             -> Screens.SetupScreens.ImportPlaylist
     }
 }

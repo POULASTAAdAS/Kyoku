@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalFocusManager
-import com.poulastaa.common.domain.model.DtoSetupScreen
+import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.preferences.AppPreferences
 import com.poulastaa.common.ui.LocalNavController
 import com.poulastaa.common.ui.components.ScreenSizeType
@@ -35,7 +35,7 @@ fun ImportSpotifyPlaylist(
                 viewmodel,
                 onContinueClick = {
                     scope.launch {
-                        appPreferences.saveLastSetupScreen(DtoSetupScreen.SELECT_GENRE)
+                        appPreferences.saveLastSetupScreen(DtoSavedScreen.SELECT_GENRE)
                         navController.navigate(Screens.SetupScreens.SelectGenre)
                     }
                 },
