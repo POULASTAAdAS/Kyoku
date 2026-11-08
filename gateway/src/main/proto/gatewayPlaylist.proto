@@ -20,6 +20,7 @@ message RequestUser{
 message RequestImportPlaylist{
   string spotifyPlaylistId = 1;
   RequestUser user = 2;
+  bool force = 3; // re-import even if the user already imported this spotify playlist
 };
 
 // Model messages

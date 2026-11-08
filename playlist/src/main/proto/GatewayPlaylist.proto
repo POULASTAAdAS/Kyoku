@@ -9,6 +9,7 @@ package gatewayPlaylist;
 message RequestImportPlaylist{
   string spotifyPlaylistId = 1;
   model.RequestUser user = 2;
+  bool force = 3; // re-import even if the user already imported this spotify playlist
 };
 
 // response

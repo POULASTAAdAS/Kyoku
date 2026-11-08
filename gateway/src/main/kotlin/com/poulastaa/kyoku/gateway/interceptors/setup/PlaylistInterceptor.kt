@@ -93,6 +93,7 @@ class PlaylistRouteConfig {
 
                             val request = RequestImportPlaylist.newBuilder().apply {
                                 this.spotifyPlaylistId = req.spotifyPlaylistId.trim()
+                                this.force = req.force
                                 this.user = RequestUser.newBuilder().apply {
                                     email = user.email
                                     type = when (user.userType) {
@@ -145,6 +146,7 @@ class PlaylistRouteConfig {
 
         return when (code) {
             Status.Code.INVALID_ARGUMENT -> HttpStatus.BAD_REQUEST to CustomResponseStatus.INVALID_REQUEST_BODY
+            Status.Code.ALREADY_EXISTS -> HttpStatus.CONFLICT to CustomResponseStatus.PLAYLIST_ALREADY_IMPORTED
             Status.Code.NOT_FOUND,
             Status.Code.FAILED_PRECONDITION,
                 -> HttpStatus.NOT_FOUND to CustomResponseStatus.NOT_FOUND

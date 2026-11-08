@@ -138,7 +138,10 @@ private fun CustomResponseStatus.toHttpStatus(
 private fun CustomResponseStatus.toErrorHttpStatus(
     responseCode: HttpStatusCode?,
 ): HttpStatusCode = responseCode.takeIf { it.isIn(400..599) } ?: when (this) {
-    CustomResponseStatus.EMAIL_ALREADY_IN_USE -> HttpStatus.CONFLICT
+    CustomResponseStatus.EMAIL_ALREADY_IN_USE,
+    CustomResponseStatus.PLAYLIST_ALREADY_IMPORTED,
+        -> HttpStatus.CONFLICT
+
     CustomResponseStatus.EMAIL_NOT_VALID -> HttpStatus.FORBIDDEN
     CustomResponseStatus.PASSWORD_DOES_NOT_MATCH -> HttpStatus.FORBIDDEN
     CustomResponseStatus.INVALID_PASSWORD -> HttpStatus.FORBIDDEN

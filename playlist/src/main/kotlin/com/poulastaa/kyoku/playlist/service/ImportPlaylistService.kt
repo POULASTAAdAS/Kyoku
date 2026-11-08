@@ -25,8 +25,16 @@ class ImportPlaylistService(
     private val playlistRepo: PlaylistRepository,
     private val writer: PlaylistWriter,
 ) {
-    fun import(spotifyPlaylistId: String, user: RequestUser): ImportedPlaylist {
+    /**
+     * @param force re-import even when [user] already imported [spotifyPlaylistId]; a new copy is created.
+     */
+    fun import(spotifyPlaylistId: String, user: RequestUser, force: Boolean): ImportedPlaylist {
         val userId = userClient.getUserId(user)
+
+        // checked before any remote / slow step so the warning returns fast
+        if (!force && writer.isSpotifyPlaylistImported(userId, spotifyPlaylistId)) throw ImportPlaylistException(
+            Status.ALREADY_EXISTS, "Playlist already imported"
+        )
 
         val spotifyPlaylist = spotify.getPlaylist(spotifyPlaylistId)
         if (spotifyPlaylist.tracks.isEmpty()) throw ImportPlaylistException(
@@ -43,6 +51,7 @@ class ImportPlaylistService(
 
         val playlist = writer.saveImportedPlaylist(
             userId = userId,
+            spotifyPlaylistId = spotifyPlaylistId,
             name = spotifyPlaylist.name,
             songIds = songs.map { it.id }
         )

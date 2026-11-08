@@ -7,6 +7,7 @@ CREATE TABLE
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         `name` varchar(120) NOT NULL,
         `description` TEXT DEFAULT NULL,
+        spotify_playlist_id VARCHAR(64) DEFAULT NULL,
         visibility_state BOOL DEFAULT FALSE,
         popularity BIGINT UNSIGNED NOT NULL DEFAULT 0,
         song_count INT UNSIGNED DEFAULT 0,
@@ -14,7 +15,8 @@ CREATE TABLE
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         --
-        INDEX idx_playlist_name (`name`)
+        INDEX idx_playlist_name (`name`),
+        INDEX idx_playlist_spotify_playlist_id (spotify_playlist_id)
     );
 
 CREATE TABLE

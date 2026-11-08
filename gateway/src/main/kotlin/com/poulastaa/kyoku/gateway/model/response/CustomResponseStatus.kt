@@ -11,6 +11,7 @@ enum class CustomResponseStatus(val message: String? = null) {
     PASSWORD_DOES_NOT_MATCH,
     INVALID_PASSWORD("Check your password"),
     EMAIL_ALREADY_IN_USE,
+    PLAYLIST_ALREADY_IMPORTED("Playlist already imported"),
 
     SUCCESS,
 

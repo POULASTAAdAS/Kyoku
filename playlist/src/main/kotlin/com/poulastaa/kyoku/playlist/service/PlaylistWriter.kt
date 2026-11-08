@@ -10,6 +10,7 @@ import com.poulastaa.kyoku.playlist.database.playlist.repository.PlaylistDataSou
 import com.poulastaa.kyoku.playlist.database.playlist.repository.SongPlaylistDataSource
 import com.poulastaa.kyoku.playlist.database.playlist.repository.UserPlaylistDataSource
 import com.poulastaa.kyoku.playlist.utils.SongId
+import com.poulastaa.kyoku.playlist.utils.SpotifyPlaylistId
 import com.poulastaa.kyoku.playlist.utils.UserId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -25,6 +26,15 @@ class PlaylistWriter(
     private val userPlaylistDB: UserPlaylistDataSource,
 ) {
     /**
+     * `true` when [userId] already owns a playlist imported from [spotifyPlaylistId].
+     */
+    @Transactional(transactionManager = "playlistTransactionManger", readOnly = true)
+    fun isSpotifyPlaylistImported(
+        userId: UserId,
+        spotifyPlaylistId: SpotifyPlaylistId,
+    ): Boolean = userPlaylistDB.existsByUserIdAndSpotifyPlaylistId(userId, spotifyPlaylistId)
+
+    /**
      * Saves the playlist, its songs and the user link in **one** PLAYLIST DB transaction.
      *
      * Default name `Playlist #N`: N is the playlist's own auto-increment id, assigned by MySQL inside this
@@ -34,6 +44,7 @@ class PlaylistWriter(
     @Transactional(transactionManager = "playlistTransactionManger")
     fun saveImportedPlaylist(
         userId: UserId,
+        spotifyPlaylistId: SpotifyPlaylistId,
         name: String?,
         songIds: List<SongId>,
     ): EntityPlaylist {
@@ -43,6 +54,7 @@ class PlaylistWriter(
             EntityPlaylist(
                 name = playlistName ?: DEFAULT_PLAYLIST_NAME_PREFIX,
                 description = IMPORTED_PLAYLIST_DESCRIPTION,
+                spotifyPlaylistId = spotifyPlaylistId,
                 visibility = PlaylistVisibility.PRIVATE.status,
                 totalSongs = songIds.size,
                 totalDuration = 0, // TODO add when song duration is available in CONTENT DB

@@ -18,7 +18,10 @@ enum class PlaylistVisibility(val status: Boolean) {
 @Entity
 @Table(
     name = "Playlist",
-    indexes = [Index(columnList = "`name`", name = "idx_playlist_name")],
+    indexes = [
+        Index(columnList = "`name`", name = "idx_playlist_name"),
+        Index(columnList = "spotify_playlist_id", name = "idx_playlist_spotify_playlist_id"),
+    ],
 )
 class EntityPlaylist(
     @Column(name = "name", nullable = false, length = 120)
@@ -26,6 +29,9 @@ class EntityPlaylist(
 
     @Column(name = "description", nullable = false)
     var description: String = "",
+
+    @Column(name = "spotify_playlist_id", length = 64)
+    var spotifyPlaylistId: String? = null,
 
     @Column(name = "visibility_state", nullable = false)
     var visibility: Boolean = PlaylistVisibility.PRIVATE.status,

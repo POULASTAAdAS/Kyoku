@@ -32,7 +32,7 @@ class GRPCGatewayRequestService(
         }
 
         try {
-            val result = importService.import(request.spotifyPlaylistId.trim(), request.user)
+            val result = importService.import(request.spotifyPlaylistId.trim(), request.user, request.force)
 
             responseObserver.onNext(
                 ResponseFullPlaylist.newBuilder().apply {
