@@ -29,7 +29,6 @@ fun DtoSong.toBundle(): SongWithRelationsBundle {
             id = id,
             title = title,
             poster = poster,
-            masterPlaylist = masterPlaylist,
             releaseYear = info?.releaseYear?.takeIf { it > 0 },
             popularity = info?.popularity,
         ),
@@ -110,7 +109,6 @@ fun SongWithRelations.toDto() = DtoSong(
     id = song.id,
     title = song.title,
     poster = song.poster,
-    masterPlaylist = song.masterPlaylist,
     info = DtoSongInfo(
         songId = song.id,
         releaseYear = song.releaseYear ?: 0,

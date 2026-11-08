@@ -4,7 +4,6 @@ data class DtoSong(
     val id: Long,
     val title: String,
     val poster: String? = null,
-    val masterPlaylist: String,
     val info: DtoSongInfo? = null,
     val artists: List<DtoArtist> = emptyList(),
     val genres: List<DtoGenre> = emptyList(),

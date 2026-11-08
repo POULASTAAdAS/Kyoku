@@ -130,7 +130,6 @@ abstract class SongDao {
 
 private fun SongEntity.mergeWith(stored: SongEntity?) = if (stored == null) this else copy(
     poster = poster ?: stored.poster,
-    masterPlaylist = masterPlaylist.ifBlank { stored.masterPlaylist },
     releaseYear = releaseYear ?: stored.releaseYear,
     popularity = popularity ?: stored.popularity,
 )

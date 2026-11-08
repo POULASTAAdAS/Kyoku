@@ -9,7 +9,6 @@ data class SongEntity(
     val id: Long,
     val title: String,
     val poster: String?,
-    val masterPlaylist: String,
     val releaseYear: Int?,
     val popularity: Long?,
 )

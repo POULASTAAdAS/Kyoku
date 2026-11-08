@@ -46,7 +46,7 @@ internal const val DATABASE_NAME = "kyoku.db"
         AlbumArtistEntity::class,
         PlaylistSongEntity::class,
     ],
-    version = 3,
+    version = 4,
 )
 @ConstructedBy(KyokuDatabaseConstructor::class)
 abstract class KyokuDatabase : RoomDatabase() {
