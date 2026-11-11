@@ -15,6 +15,12 @@
     <string name="password_letter_error">Add a letter</string>
     <string name="password_number_error">Add a number</string>
 
+    <!--    OTP-->
+    <string name="otp_length_error">Enter the %1$d digit code</string>
+    <string name="otp_invalid_error">Incorrect code, please try again</string>
+    <string name="otp_verification_success">Otp verification successfull.</string>
+    <string name="otp_expired_error">Code expired, request a new one</string>
+
     <!--    Import Playlist-->
     <string name="empty_playlist_link">Paste a spotify playlist link</string>
     <string name="invalid_playlist_link">Not a valid spotify playlist link</string>

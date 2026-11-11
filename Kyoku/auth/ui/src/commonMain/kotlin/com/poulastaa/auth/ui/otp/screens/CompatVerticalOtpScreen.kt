@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.poulastaa.auth.ui.otp.OTP_LENGTH
+import com.poulastaa.auth.viewmodels.utils.OTP_LENGTH
 import com.poulastaa.common.ui.components.ColumnSpacer
 import com.poulastaa.common.ui.components.ElevatedDefaultButton
 import com.poulastaa.common.ui.components.top_bar.DefaultTopBar
@@ -171,7 +171,7 @@ internal fun CompatVerticalOtpScreen(
             ColumnSpacer(MaterialTheme.dimens.spacing.large)
             ElevatedDefaultButton(
                 width = 0.7f,
-                enabled = isValidOTP,
+                enabled = isValidOTP && isValidating.not(),
                 onClick = onValidateClick,
                 colors = CardDefaults.elevatedCardColors(
                     contentColor = if (isValidOTP) MaterialTheme.colorScheme.background

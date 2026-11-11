@@ -58,5 +58,6 @@ private const val MIN_USERNAME_LENGTH = 4
 private const val MAX_USERNAME_LENGTH = 24
 private const val MIN_PASSWORD_LENGTH = 8
 internal const val MAX_AUTH_POLLING_COUNT = 10
+const val OTP_LENGTH = 5
 
 private val EMAIL_REGEX = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")

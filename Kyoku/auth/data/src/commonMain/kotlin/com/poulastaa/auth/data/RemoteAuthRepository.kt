@@ -5,6 +5,7 @@ import com.poulastaa.auth.domain.AuthRemoteDatasource
 import com.poulastaa.auth.domain.AuthRepository
 import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
+import com.poulastaa.auth.domain.model.DtoOtpValidationResponse
 import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.domain.result.ApiError
@@ -63,6 +64,11 @@ class RemoteAuthRepository(
 
     override suspend fun sendForgotPasswordMail(email: String): AppResult<DtoForgotPasswordResponse, ApiError> =
         remote.sendForgotPasswordMail(email)
+
+    override suspend fun validateForgotPasswordOtp(
+        email: String,
+        otp: String,
+    ): AppResult<DtoOtpValidationResponse, ApiError> = remote.validateForgotPasswordOtp(email, otp)
 
     private suspend fun AppResult<DtoAuthResponse, ApiError>.saveAuthData() {
         if (this is AppResult.Success) {

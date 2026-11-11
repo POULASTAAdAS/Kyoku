@@ -4,10 +4,12 @@ import com.poulastaa.auth.domain.AuthRemoteDatasource
 import com.poulastaa.auth.domain.model.DtoAuthResponse
 import com.poulastaa.auth.domain.model.DtoEmailAuthResponse
 import com.poulastaa.auth.domain.model.DtoForgotPasswordResponse
+import com.poulastaa.auth.domain.model.DtoOtpValidationResponse
 import com.poulastaa.auth.network.model.AuthResponse
 import com.poulastaa.auth.network.model.ForgotPasswordResponse
 import com.poulastaa.auth.network.model.GoogleAuthRequest
 import com.poulastaa.auth.network.model.GoogleAuthResponse
+import com.poulastaa.auth.network.model.OtpValidationResponse
 import com.poulastaa.auth.network.model.SignInRequest
 import com.poulastaa.auth.network.model.SignUpRequest
 import com.poulastaa.common.domain.model.DtoTokens
@@ -78,6 +80,19 @@ class KtorAuthDatasource(
             type = ApiRequestType.GET,
             params = listOf("email" to email),
         ).map(ForgotPasswordResponse::toDto)
+
+    override suspend fun validateForgotPasswordOtp(
+        email: String,
+        otp: String,
+    ): AppResult<DtoOtpValidationResponse, ApiError> =
+        client.req<Unit, OtpValidationResponse, ApiError.Authentication>(
+            route = ApiEndpoints.Auth.VALIDATE_PASSWORD_OTP,
+            type = ApiRequestType.GET,
+            params = listOf(
+                "code" to otp,
+                "email" to email,
+            ),
+        ).map(OtpValidationResponse::toDto)
 
     private companion object {
         const val EMAIL_USER_TYPE = "EMAIL"

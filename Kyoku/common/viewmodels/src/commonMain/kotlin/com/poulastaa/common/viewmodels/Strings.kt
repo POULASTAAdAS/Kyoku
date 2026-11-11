@@ -5,6 +5,10 @@ import kyoku.common.viewmodels.generated.resources.empty_playlist_link
 import kyoku.common.viewmodels.generated.resources.import_playlist_anyway
 import kyoku.common.viewmodels.generated.resources.invalid_email
 import kyoku.common.viewmodels.generated.resources.invalid_playlist_link
+import kyoku.common.viewmodels.generated.resources.otp_expired_error
+import kyoku.common.viewmodels.generated.resources.otp_invalid_error
+import kyoku.common.viewmodels.generated.resources.otp_length_error
+import kyoku.common.viewmodels.generated.resources.otp_verification_success
 import kyoku.common.viewmodels.generated.resources.password_length_error
 import kyoku.common.viewmodels.generated.resources.password_letter_error
 import kyoku.common.viewmodels.generated.resources.password_number_error
@@ -38,6 +42,15 @@ suspend fun stringPasswordNumberError(): String = getString(Res.string.password_
 
 // Auth (non-composable, resolved from viewmodels)
 suspend fun stringVerificationMailSent(): String = getString(Res.string.verification_mail_sent)
+
+// OTP (non-composable, resolved from viewmodels)
+suspend fun stringOtpLengthError(length: Int): String = getString(Res.string.otp_length_error, length)
+
+suspend fun stringOtpInvalidError(): String = getString(Res.string.otp_invalid_error)
+
+suspend fun stringOtpExpiredError(): String = getString(Res.string.otp_expired_error)
+
+suspend fun stringOtpVerificationSuccess(): String = getString(Res.string.otp_verification_success)
 
 // Import Playlist (non-composable, resolved from viewmodels)
 suspend fun stringEmptyPlaylistLink(): String = getString(Res.string.empty_playlist_link)

@@ -37,6 +37,8 @@ interface ApiError : Error {
         INVALID_PASSWORD("Check your password"),
         USER_NOT_FOUND("No account found"),
         EMAIL_ALREADY_IN_USE("Email already in use, try logging in."),
+        INVALID_OTP("Incorrect code"),
+        OTP_EXPIRED("Code expired"),
     }
 
     /**

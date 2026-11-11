@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.components.registerGoogleAuthWrapper
 import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
+import com.poulastaa.auth.viewmodels.otp.OtpViewmodel
 import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
 import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
 import com.poulastaa.common.viewmodels.root.RootViewmodel
@@ -15,7 +16,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.component.KoinComponent
 import org.koin.core.waitAllStartJobs
 
-// TODO: THIS APPROACH IS NOT THE RIGHT ONE.
+// TODO: THIS APPROACH IS NOT THE RIGHT ONE. PUTTING EVERYTHING AT ONCE, VIEWMODEL MUST BE INITIALIZED AT WHERE IT'S NEEDED.
 //  We should use a different approach to provide viewmodels to SwiftUI.
 
 fun initKoinIos() {
@@ -46,6 +47,7 @@ class IosViewModelProvider : KoinComponent {
                 initializer { getKoin().get<SignInViewmodel>() }
                 initializer { getKoin().get<SignUpViewmodel>() }
                 initializer { getKoin().get<ForgotPasswordViewmodel>() }
+                initializer { getKoin().get<OtpViewmodel>() }
             },
         )
     }
@@ -58,6 +60,8 @@ class IosViewModelProvider : KoinComponent {
 
     fun forgotPasswordViewmodel(): ForgotPasswordViewmodel =
         viewModelProvider[ForgotPasswordViewmodel::class]
+
+    fun otpViewmodel(): OtpViewmodel = viewModelProvider[OtpViewmodel::class]
 
     fun clear() {
         viewModelStore.clear()

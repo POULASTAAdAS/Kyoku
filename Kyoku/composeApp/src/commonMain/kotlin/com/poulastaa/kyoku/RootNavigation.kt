@@ -156,8 +156,10 @@ fun RootNavigation(
                         )
                     }
 
-                    composable<Screens.AuthScreens.ValidateOTP> {
-                        OtpScreen()
+                    composable<Screens.AuthScreens.ValidateOTP> { backStackEntry ->
+                        OtpScreen(
+                            email = backStackEntry.toRoute<Screens.AuthScreens.ValidateOTP>().email,
+                        )
                     }
 
                     composable<Screens.AuthScreens.ResetPassword> {
