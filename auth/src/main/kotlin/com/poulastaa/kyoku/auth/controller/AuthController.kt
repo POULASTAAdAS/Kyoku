@@ -133,11 +133,10 @@ class AuthController(
     @PostMapping(Endpoints.RESET_PASSWORD)
     fun resetPassword(
         @Valid @RequestBody req: UpdatePassword,
-    ): ResponseEntity<ResponseWrapper<UpdatePasswordResponse>> =
-        service.updatePassword(
-            password = req.password,
-            token = req.token,
-        ).toUpdatePasswordResponseWrapper().toResponseEntity()
+    ): ResponseEntity<ResponseWrapper<UpdatePasswordResponse>> = service.updatePassword(
+        password = req.password,
+        token = req.token,
+    ).toUpdatePasswordResponseWrapper().toResponseEntity()
 
     @PostMapping(Endpoints.GOOGLE_AUTH)
     fun googleAuth(
@@ -191,9 +190,9 @@ private fun CodeValidationResponse.toResponseWrapper() = ResponseWrapper(
     status = when (status) {
         CodeValidationResponseStatus.VALID -> ResponseStatus.SUCCESS
         CodeValidationResponseStatus.USER_NOT_FOUND -> ResponseStatus.USER_NOT_FOUND
-        CodeValidationResponseStatus.INVALID_CODE -> ResponseStatus.INVALID_REQUEST_BODY
+        CodeValidationResponseStatus.INVALID_CODE -> ResponseStatus.INVALID_OTP
         CodeValidationResponseStatus.INVALID_EMAIL -> ResponseStatus.EMAIL_NOT_VALID
-        CodeValidationResponseStatus.EXPIRED -> ResponseStatus.UNAUTHORIZED
+        CodeValidationResponseStatus.EXPIRED -> ResponseStatus.OTP_EXPIRED
     },
     payload = this,
 )
