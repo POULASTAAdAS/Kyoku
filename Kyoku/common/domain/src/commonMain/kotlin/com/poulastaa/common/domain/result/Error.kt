@@ -35,6 +35,7 @@ interface ApiError : Error {
         EMAIL_NOT_VALID("Check your email"),
         PASSWORD_DOES_NOT_MATCH("Wrong password"),
         INVALID_PASSWORD("Check your password"),
+        SAME_PASSWORD("Your new password must not be same as old password."),
         USER_NOT_FOUND("No account found"),
         EMAIL_ALREADY_IN_USE("Email already in use, try logging in."),
         INVALID_OTP("Incorrect code"),

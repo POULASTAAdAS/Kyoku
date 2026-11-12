@@ -6,9 +6,12 @@ import kyoku.common.ui.generated.resources.already_have_an_account
 import kyoku.common.ui.generated.resources.app_icon
 import kyoku.common.ui.generated.resources.app_name
 import kyoku.common.ui.generated.resources.back_button
+import kyoku.common.ui.generated.resources.confirm_password
 import kyoku.common.ui.generated.resources.continue_text
 import kyoku.common.ui.generated.resources.continue_with_google
 import kyoku.common.ui.generated.resources.create_account
+import kyoku.common.ui.generated.resources.create_new_password
+import kyoku.common.ui.generated.resources.create_new_password_message
 import kyoku.common.ui.generated.resources.dont_have_account
 import kyoku.common.ui.generated.resources.duration_hours
 import kyoku.common.ui.generated.resources.duration_minutes
@@ -27,6 +30,7 @@ import kyoku.common.ui.generated.resources.or_signup_with
 import kyoku.common.ui.generated.resources.password
 import kyoku.common.ui.generated.resources.password_visibility
 import kyoku.common.ui.generated.resources.playlist_link
+import kyoku.common.ui.generated.resources.reset
 import kyoku.common.ui.generated.resources.reset_password
 import kyoku.common.ui.generated.resources.reset_password_message
 import kyoku.common.ui.generated.resources.s
@@ -148,6 +152,24 @@ val StringResetPasswordMessage: String
 val StringGetOtp: String
     @Composable
     get() = stringResource(Res.string.get_otp)
+
+// Reset Password
+
+val StringCreateNewPassword: String
+    @Composable
+    get() = stringResource(Res.string.create_new_password)
+
+val StringCreateNewPasswordMessage: String
+    @Composable
+    get() = stringResource(Res.string.create_new_password_message)
+
+val StringConfirmPassword: String
+    @Composable
+    get() = stringResource(Res.string.confirm_password)
+
+val StringReset: String
+    @Composable
+    get() = stringResource(Res.string.reset)
 
 // Import Playlist
 

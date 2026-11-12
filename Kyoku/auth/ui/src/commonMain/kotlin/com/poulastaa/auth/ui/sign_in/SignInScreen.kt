@@ -61,7 +61,7 @@ fun SignInScreen(
         if (state.isGoogleAuthInProgress) googleAuthWrapper.startGoogleAuth()
     }
 
-    LaunchedEffect(viewmodel) {
+    LaunchedEffect(viewmodel.event) {
         viewmodel.event.collect { event ->
             when (event) {
                 is SignInUiEvent.NavigateToForgotPassword -> navController.navigate(

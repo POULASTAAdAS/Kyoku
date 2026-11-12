@@ -59,7 +59,7 @@ fun SingUpScreen(
         if (state.isGoogleAuthInProgress) googleAuthWrapper.startGoogleAuth()
     }
 
-    LaunchedEffect(viewmodel) {
+    LaunchedEffect(viewmodel.event) {
         viewmodel.event.collect { event ->
             when (event) {
                 SignUpUiEvent.NavigateToLogIn -> navController.popBackStack()

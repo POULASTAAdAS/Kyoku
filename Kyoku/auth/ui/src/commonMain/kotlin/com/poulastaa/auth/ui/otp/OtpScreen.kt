@@ -33,11 +33,11 @@ fun OtpScreen(
         viewmodel.onAction(OtpUiAction.OnEmailReceived(email))
     }
 
-    LaunchedEffect(viewmodel) {
+    LaunchedEffect(viewmodel.event) {
         viewmodel.event.collect { event ->
             when (event) {
                 is OtpUiEvent.NavigateToResetPassword -> navController.navigate(
-                    ResetPassword(
+                    route = ResetPassword(
                         token = event.token,
                     )
                 )

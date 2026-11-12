@@ -162,8 +162,10 @@ fun RootNavigation(
                         )
                     }
 
-                    composable<Screens.AuthScreens.ResetPassword> {
-                        ResetPasswordScreen()
+                    composable<Screens.AuthScreens.ResetPassword> { backStackEntry ->
+                        ResetPasswordScreen(
+                            token = backStackEntry.toRoute<Screens.AuthScreens.ResetPassword>().token,
+                        )
                     }
                 }
 

@@ -10,6 +10,7 @@ import com.poulastaa.common.domain.model.DtoSavedScreen
 import com.poulastaa.common.domain.model.DtoUser
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.EmptyResponse
 import com.poulastaa.common.domain.result.asEmptyResponse
 import com.poulastaa.common.domain.result.map
 import org.koin.core.annotation.Single
@@ -69,6 +70,11 @@ class RemoteAuthRepository(
         email: String,
         otp: String,
     ): AppResult<DtoOtpValidationResponse, ApiError> = remote.validateForgotPasswordOtp(email, otp)
+
+    override suspend fun resetPassword(
+        password: String,
+        token: String,
+    ): EmptyResponse<ApiError> = remote.resetPassword(password, token)
 
     private suspend fun AppResult<DtoAuthResponse, ApiError>.saveAuthData() {
         if (this is AppResult.Success) {

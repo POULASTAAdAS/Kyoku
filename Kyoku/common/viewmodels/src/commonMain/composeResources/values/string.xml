@@ -21,6 +21,11 @@
     <string name="otp_verification_success">Otp verification successfull.</string>
     <string name="otp_expired_error">Code expired, request a new one</string>
 
+    <!--    Reset Password-->
+    <string name="password_mismatch_error">Passwords do not match</string>
+    <string name="reset_password_success">Password updated, please sign in</string>
+    <string name="reset_password_session_expired">Session expired, request a new code</string>
+
     <!--    Import Playlist-->
     <string name="empty_playlist_link">Paste a spotify playlist link</string>
     <string name="invalid_playlist_link">Not a valid spotify playlist link</string>

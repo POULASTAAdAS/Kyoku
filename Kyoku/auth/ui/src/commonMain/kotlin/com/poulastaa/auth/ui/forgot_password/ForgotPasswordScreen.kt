@@ -30,7 +30,7 @@ fun ForgotPasswordScreen(
         email?.let { viewmodel.onAction(ForgotPasswordUiAction.OnEmailChange(it)) }
     }
 
-    LaunchedEffect(viewmodel) {
+    LaunchedEffect(viewmodel.event) {
         viewmodel.event.collect { event ->
             when (event) {
                 is ForgotPasswordUiEvent.NavigateToOtp -> navController.navigate(

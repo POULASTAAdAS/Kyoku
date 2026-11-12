@@ -10,11 +10,15 @@ import com.poulastaa.auth.network.model.ForgotPasswordResponse
 import com.poulastaa.auth.network.model.GoogleAuthRequest
 import com.poulastaa.auth.network.model.GoogleAuthResponse
 import com.poulastaa.auth.network.model.OtpValidationResponse
+import com.poulastaa.auth.network.model.ResetPasswordRequest
+import com.poulastaa.auth.network.model.ResetPasswordResponse
 import com.poulastaa.auth.network.model.SignInRequest
 import com.poulastaa.auth.network.model.SignUpRequest
 import com.poulastaa.common.domain.model.DtoTokens
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
+import com.poulastaa.common.domain.result.EmptyResponse
+import com.poulastaa.common.domain.result.asEmptyResponse
 import com.poulastaa.common.domain.result.map
 import com.poulastaa.common.network.ApiEndpoints
 import com.poulastaa.common.network.ApiRequestType
@@ -93,6 +97,19 @@ class KtorAuthDatasource(
                 "email" to email,
             ),
         ).map(OtpValidationResponse::toDto)
+
+    override suspend fun resetPassword(
+        password: String,
+        token: String,
+    ): EmptyResponse<ApiError> =
+        client.req<ResetPasswordRequest, ResetPasswordResponse, ApiError.Authentication>(
+            route = ApiEndpoints.Auth.RESET_PASSWORD,
+            type = ApiRequestType.POST,
+            body = ResetPasswordRequest(
+                password = password,
+                token = token,
+            ),
+        ).asEmptyResponse()
 
     private companion object {
         const val EMAIL_USER_TYPE = "EMAIL"
