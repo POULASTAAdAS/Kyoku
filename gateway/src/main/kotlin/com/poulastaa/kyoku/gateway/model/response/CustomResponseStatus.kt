@@ -10,6 +10,7 @@ enum class CustomResponseStatus(val message: String? = null) {
     EMAIL_NOT_VALID,
     PASSWORD_DOES_NOT_MATCH,
     INVALID_PASSWORD("Check your password"),
+    SAME_PASSWORD("Your new password must not be same as old password."),
     EMAIL_ALREADY_IN_USE,
     PLAYLIST_ALREADY_IMPORTED("Playlist already imported"),
 
