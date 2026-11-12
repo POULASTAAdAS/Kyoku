@@ -16,6 +16,7 @@ enum class ResponseStatus(
 
     EMAIL_NOT_VALID(HttpStatus.FORBIDDEN, "Check your email"),
     PASSWORD_DOES_NOT_MATCH(HttpStatus.FORBIDDEN, "Wrong password"),
+    SAME_PASSWORD(HttpStatus.FORBIDDEN, "Your new password must not be same as old password."),
     INVALID_PASSWORD(HttpStatus.FORBIDDEN, "Check your password"),
     INVALID_OTP(HttpStatus.FORBIDDEN, "Incorrect code"),
     OTP_EXPIRED(HttpStatus.FORBIDDEN, "Code expired"),

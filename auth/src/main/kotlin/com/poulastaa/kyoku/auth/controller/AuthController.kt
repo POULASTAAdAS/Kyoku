@@ -204,9 +204,8 @@ private fun ResponseWrapper<UpdatePasswordResponse>.toUpdatePasswordResponseWrap
         status = when (updatePasswordStatus) {
             UpdatePasswordStatus.UPDATED -> ResponseStatus.SUCCESS
             UpdatePasswordStatus.USER_NOT_FOUND -> ResponseStatus.USER_NOT_FOUND
-            UpdatePasswordStatus.SAME_PASSWORD,
-            UpdatePasswordStatus.INVALID_PASSWORD,
-                -> ResponseStatus.INVALID_PASSWORD
+            UpdatePasswordStatus.SAME_PASSWORD -> ResponseStatus.SAME_PASSWORD
+            UpdatePasswordStatus.INVALID_PASSWORD -> ResponseStatus.INVALID_PASSWORD
 
             UpdatePasswordStatus.EXPIRED_TOKEN,
             UpdatePasswordStatus.INVALID_TOKEN,
