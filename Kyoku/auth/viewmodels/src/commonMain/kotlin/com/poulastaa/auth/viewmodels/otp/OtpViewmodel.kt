@@ -7,10 +7,13 @@ import com.poulastaa.auth.viewmodels.utils.normalizedEmail
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
+import com.poulastaa.common.viewmodels.SnackbarAction
 import com.poulastaa.common.viewmodels.SnackbarType
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
+import com.poulastaa.common.viewmodels.stringOk
 import com.poulastaa.common.viewmodels.stringOtpExpiredError
 import com.poulastaa.common.viewmodels.stringOtpInvalidError
+import com.poulastaa.common.viewmodels.stringOtpLeaveMessage
 import com.poulastaa.common.viewmodels.stringOtpLengthError
 import com.poulastaa.common.viewmodels.stringOtpVerificationSuccess
 import com.poulastaa.common.domain.result.Error as NetworkError
@@ -34,6 +37,14 @@ class OtpViewmodel(
             }
 
             OtpUiAction.ValidateOtp -> validateOtp()
+
+            OtpUiAction.OnBackClick -> showSnackbar(
+                message = stringOtpLeaveMessage(),
+                type = SnackbarType.Info,
+                action = SnackbarAction(label = stringOk()) {
+                    onEvent(OtpUiEvent.NavigateBack)
+                },
+            )
         }
     }
 

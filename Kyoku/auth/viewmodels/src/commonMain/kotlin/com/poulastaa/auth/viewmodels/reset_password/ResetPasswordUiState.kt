@@ -12,6 +12,7 @@ data class ResetPasswordUiState(
     val isPasswordApiError: Boolean = false,
     val passwordApiErrorMessage: String = "",
 ) {
+    // Not tied to isMakingApiCall: the button keeps its enabled look and shows a loader instead; the viewmodel ignores repeat clicks.
     val isResetEnabled: Boolean
-        get() = password.value.isNotEmpty() && confirmPassword.value.isNotEmpty() && isMakingApiCall.not()
+        get() = password.value.isNotEmpty() && confirmPassword.value.isNotEmpty()
 }

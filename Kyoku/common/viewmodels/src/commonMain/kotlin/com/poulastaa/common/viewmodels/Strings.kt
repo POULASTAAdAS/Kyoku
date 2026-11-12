@@ -8,6 +8,7 @@ import kyoku.common.viewmodels.generated.resources.invalid_playlist_link
 import kyoku.common.viewmodels.generated.resources.ok
 import kyoku.common.viewmodels.generated.resources.otp_expired_error
 import kyoku.common.viewmodels.generated.resources.otp_invalid_error
+import kyoku.common.viewmodels.generated.resources.otp_leave_message
 import kyoku.common.viewmodels.generated.resources.otp_length_error
 import kyoku.common.viewmodels.generated.resources.otp_verification_success
 import kyoku.common.viewmodels.generated.resources.password_length_error
@@ -56,6 +57,8 @@ suspend fun stringOtpInvalidError(): String = getString(Res.string.otp_invalid_e
 suspend fun stringOtpExpiredError(): String = getString(Res.string.otp_expired_error)
 
 suspend fun stringOtpVerificationSuccess(): String = getString(Res.string.otp_verification_success)
+
+suspend fun stringOtpLeaveMessage(): String = getString(Res.string.otp_leave_message)
 
 // Reset Password (non-composable, resolved from viewmodels)
 suspend fun stringPasswordMismatchError(): String = getString(Res.string.password_mismatch_error)

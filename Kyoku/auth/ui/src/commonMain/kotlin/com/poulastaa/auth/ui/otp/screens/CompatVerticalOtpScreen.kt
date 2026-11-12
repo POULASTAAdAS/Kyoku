@@ -1,5 +1,10 @@
 package com.poulastaa.auth.ui.otp.screens
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -9,8 +14,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -22,13 +29,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
@@ -58,6 +70,22 @@ internal fun CompatVerticalOtpScreen(
     onValidateClick: () -> Unit,
 ) {
     val otpFontStyle = MaterialTheme.typography.headlineLarge
+    val focusRequester = remember { FocusRequester() }
+    var isFocused by remember { mutableStateOf(false) }
+
+    // Blinks the custom cursor drawn in the active box (the real cursor is hidden under the decoration).
+    val cursorAlpha by rememberInfiniteTransition().animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = CURSOR_BLINK_MILLIS, easing = { if (it < 0.5f) 0f else 1f }),
+            repeatMode = RepeatMode.Restart,
+        ),
+    )
+
+    LaunchedEffect(focusRequester) {
+        focusRequester.requestFocus()
+    }
 
     Scaffold(
         topBar = {
@@ -107,7 +135,10 @@ internal fun CompatVerticalOtpScreen(
             ColumnSpacer(MaterialTheme.dimens.spacing.small)
             BoxWithConstraints {
                 BasicTextField(
-                    modifier = Modifier.then(if (this.maxWidth > 780.dp) Modifier.fillMaxWidth(0.7f) else Modifier.fillMaxWidth()),
+                    modifier = Modifier
+                        .then(if (this.maxWidth > 780.dp) Modifier.fillMaxWidth(0.7f) else Modifier.fillMaxWidth())
+                        .focusRequester(focusRequester)
+                        .onFocusChanged { isFocused = it.isFocused },
                     onValueChange = { str ->
                         str.takeIf { it.length <= OTP_LENGTH && isValidating.not() }?.let {
                             onOtpChange(it)
@@ -149,6 +180,14 @@ internal fun CompatVerticalOtpScreen(
                                         style = otpFontStyle.copy(color = MaterialTheme.colorScheme.primary),
                                         modifier = Modifier.padding(MaterialTheme.dimens.spacing.medium)
                                     )
+
+                                    if (isCurrentSelected && isFocused && isValidating.not()) Box(
+                                        Modifier
+                                            .width(MaterialTheme.dimens.border.medium)
+                                            .height(otpFontStyle.fontSize.value.dp)
+                                            .graphicsLayer { alpha = cursorAlpha }
+                                            .background(MaterialTheme.colorScheme.primary)
+                                    )
                                 }
                             }
                         }
@@ -171,7 +210,7 @@ internal fun CompatVerticalOtpScreen(
             ColumnSpacer(MaterialTheme.dimens.spacing.large)
             ElevatedDefaultButton(
                 width = 0.7f,
-                enabled = isValidOTP && isValidating.not(),
+                enabled = isValidOTP,
                 onClick = onValidateClick,
                 colors = CardDefaults.elevatedCardColors(
                     contentColor = if (isValidOTP) MaterialTheme.colorScheme.background
@@ -203,3 +242,5 @@ internal fun CompatVerticalOtpScreen(
         }
     }
 }
+
+private const val CURSOR_BLINK_MILLIS = 1000

@@ -41,6 +41,8 @@ fun OtpScreen(
                         token = event.token,
                     )
                 )
+
+                OtpUiEvent.NavigateBack -> navController.popBackStack()
             }
         }
     }
@@ -65,5 +67,7 @@ fun OtpScreen(
         }
     }
 
-    BackHandler {}
+    BackHandler {
+        viewmodel.onAction(OtpUiAction.OnBackClick)
+    }
 }

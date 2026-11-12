@@ -28,10 +28,7 @@ class RemoteAuthRepository(
         password: String,
     ): AppResult<Boolean, ApiError> {
         val result = remote.signIn(email, password)
-        if (result is AppResult.Success) {
-            local.saveUser(result.response.user)
-            local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
-        }
+        if (result is AppResult.Success) local.saveUser(result.response.user)
         return result.map { it.user.isNewUser }
     }
 
@@ -41,16 +38,18 @@ class RemoteAuthRepository(
         password: String,
     ): AppResult<Boolean, ApiError> {
         val result = remote.signUp(email, username, password)
-        if (result is AppResult.Success) {
-            local.saveUser(result.response.user)
-            local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
-        }
+        if (result is AppResult.Success) local.saveUser(result.response.user)
         return result.map { true }
     }
 
     override suspend fun checkVerificationStatus(email: String): AppResult<Unit, ApiError> {
         val result = remote.checkVerificationStatus(email)
-        if (result is AppResult.Success) local.saveTokens(result.response)
+        if (result is AppResult.Success) {
+            // TODO: save setup screen should be handled from here. change backend to return in response.
+            // local.saveSetupScreen(DEFAULT_SETUP_SCREEN)
+
+            local.saveTokens(result.response)
+        }
 
         return result.asEmptyResponse()
     }

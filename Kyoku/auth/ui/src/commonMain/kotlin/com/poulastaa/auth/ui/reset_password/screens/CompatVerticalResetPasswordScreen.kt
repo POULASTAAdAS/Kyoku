@@ -188,7 +188,7 @@ internal fun CompatVerticalResetPasswordScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = if (state.isResetEnabled || state.isMakingApiCall) MaterialTheme.colorScheme.primary
+                            color = if (state.isResetEnabled) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.primaryContainer,
                             shape = MaterialTheme.shapes.small,
                         ).minimumInteractiveComponentSize(),

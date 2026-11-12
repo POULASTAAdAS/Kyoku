@@ -24,7 +24,6 @@ fun ForgotPasswordScreen(
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
     val state by viewmodel.uiState.collectAsState()
-    val isGetOtpEnabled = state.email.isError.not() && state.isMakingApiCall.not()
 
     LaunchedEffect(email) {
         email?.let { viewmodel.onAction(ForgotPasswordUiAction.OnEmailChange(it)) }
@@ -49,7 +48,6 @@ fun ForgotPasswordScreen(
                 state,
                 viewmodel,
                 focusManager,
-                isGetOtpEnabled
             )
 
             ScreenSizeType.CompactHorizontal -> CompatHorizontalForgotPasswordScreen(
@@ -57,7 +55,6 @@ fun ForgotPasswordScreen(
                 state,
                 viewmodel,
                 focusManager,
-                isGetOtpEnabled
             )
 
             ScreenSizeType.LargeVertical -> CompatVerticalForgotPasswordScreen(
@@ -65,7 +62,6 @@ fun ForgotPasswordScreen(
                 state,
                 viewmodel,
                 focusManager,
-                isGetOtpEnabled
             )
 
             ScreenSizeType.LargeHorizontal -> CompatHorizontalForgotPasswordScreen(
@@ -73,7 +69,6 @@ fun ForgotPasswordScreen(
                 state,
                 viewmodel,
                 focusManager,
-                isGetOtpEnabled
             )
         }
     }

@@ -20,6 +20,7 @@
     <string name="otp_invalid_error">Incorrect code, please try again</string>
     <string name="otp_verification_success">Otp verification successfull.</string>
     <string name="otp_expired_error">Code expired, request a new one</string>
+    <string name="otp_leave_message">Leave verification? You can request a new code from the previous screen.</string>
 
     <!--    Reset Password-->
     <string name="password_mismatch_error">Passwords do not match</string>

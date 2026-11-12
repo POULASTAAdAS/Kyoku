@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,7 +47,6 @@ internal fun CompatHorizontalForgotPasswordScreen(
     state: ForgotPasswordUiState,
     viewmodel: ForgotPasswordViewmodel,
     focusManager: FocusManager,
-    isGetOtpEnabled: Boolean,
 ) {
     Scaffold(
         topBar = {
@@ -108,13 +109,13 @@ internal fun CompatHorizontalForgotPasswordScreen(
 
                 ElevatedDefaultButton(
                     width = 0.7f,
-                    enabled = isGetOtpEnabled,
+                    enabled = state.isGetOtpEnabled,
                     onClick = {
                         focusManager.clearFocus(false)
                         viewmodel.onAction(ForgotPasswordUiAction.GetOtp(state.email.value))
                     },
                     colors = CardDefaults.elevatedCardColors(
-                        contentColor = if (isGetOtpEnabled) MaterialTheme.colorScheme.background
+                        contentColor = if (state.isGetOtpEnabled) MaterialTheme.colorScheme.background
                         else MaterialTheme.colorScheme.onBackground,
                     )
                 ) {
@@ -122,13 +123,21 @@ internal fun CompatHorizontalForgotPasswordScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = if (isGetOtpEnabled) MaterialTheme.colorScheme.primary
+                                color = if (state.isGetOtpEnabled) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.primaryContainer,
                                 shape = MaterialTheme.shapes.small,
                             ).minimumInteractiveComponentSize(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(text = StringGetOtp, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            text = StringGetOtp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.alpha(if (state.isMakingApiCall) 0f else 1f),
+                        )
+                        CircularProgressIndicator(
+                            Modifier.alpha(if (state.isMakingApiCall) 1f else 0f),
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        )
                     }
                 }
             }
