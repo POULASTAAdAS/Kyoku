@@ -25,6 +25,8 @@
     <string name="password_mismatch_error">Passwords do not match</string>
     <string name="reset_password_success">Password updated, please sign in</string>
     <string name="reset_password_session_expired">Session expired, request a new code</string>
+    <string name="reset_password_leave_message">Leave password reset? You will need to request a new code.</string>
+    <string name="ok">OK</string>
 
     <!--    Import Playlist-->
     <string name="empty_playlist_link">Paste a spotify playlist link</string>

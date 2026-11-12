@@ -6,9 +6,12 @@ import com.poulastaa.auth.viewmodels.utils.passwordError
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
 import com.poulastaa.common.viewmodels.BaseViewmodel
+import com.poulastaa.common.viewmodels.SnackbarAction
 import com.poulastaa.common.viewmodels.SnackbarType
 import com.poulastaa.common.viewmodels.states.UiTextFiledState
+import com.poulastaa.common.viewmodels.stringOk
 import com.poulastaa.common.viewmodels.stringPasswordMismatchError
+import com.poulastaa.common.viewmodels.stringResetPasswordLeaveMessage
 import com.poulastaa.common.viewmodels.stringResetPasswordSessionExpired
 import com.poulastaa.common.viewmodels.stringResetPasswordSuccess
 import com.poulastaa.common.domain.result.Error as NetworkError
@@ -50,6 +53,14 @@ class ResetPasswordViewmodel(
             }
 
             ResetPasswordUiAction.ResetPassword -> resetPassword()
+
+            ResetPasswordUiAction.OnBackClick -> showSnackbar(
+                message = stringResetPasswordLeaveMessage(),
+                type = SnackbarType.Info,
+                action = SnackbarAction(label = stringOk()) {
+                    onEvent(ResetPasswordUiEvent.NavigateBackToForgotPassword)
+                },
+            )
         }
     }
 

@@ -46,6 +46,10 @@ fun ResetPasswordScreen(
                 ) {
                     popUpTo<ForgotPassword> { inclusive = true }
                 }
+
+                ResetPasswordUiEvent.NavigateBackToForgotPassword -> navController.popBackStack<ForgotPassword>(
+                    inclusive = false
+                )
             }
         }
     }
@@ -66,5 +70,7 @@ fun ResetPasswordScreen(
         }
     }
 
-    BackHandler {}
+    BackHandler {
+        viewmodel.onAction(ResetPasswordUiAction.OnBackClick)
+    }
 }

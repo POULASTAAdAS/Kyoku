@@ -9,4 +9,5 @@ sealed interface ResetPasswordUiAction {
     data object OnConfirmPasswordVisibilityToggle : ResetPasswordUiAction
 
     data object ResetPassword : ResetPasswordUiAction
+    data object OnBackClick : ResetPasswordUiAction
 }

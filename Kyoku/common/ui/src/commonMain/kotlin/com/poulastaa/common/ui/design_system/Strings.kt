@@ -11,7 +11,6 @@ import kyoku.common.ui.generated.resources.continue_text
 import kyoku.common.ui.generated.resources.continue_with_google
 import kyoku.common.ui.generated.resources.create_account
 import kyoku.common.ui.generated.resources.create_new_password
-import kyoku.common.ui.generated.resources.create_new_password_message
 import kyoku.common.ui.generated.resources.dont_have_account
 import kyoku.common.ui.generated.resources.duration_hours
 import kyoku.common.ui.generated.resources.duration_minutes
@@ -158,10 +157,6 @@ val StringGetOtp: String
 val StringCreateNewPassword: String
     @Composable
     get() = stringResource(Res.string.create_new_password)
-
-val StringCreateNewPasswordMessage: String
-    @Composable
-    get() = stringResource(Res.string.create_new_password_message)
 
 val StringConfirmPassword: String
     @Composable

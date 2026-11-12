@@ -5,6 +5,7 @@ import kyoku.common.viewmodels.generated.resources.empty_playlist_link
 import kyoku.common.viewmodels.generated.resources.import_playlist_anyway
 import kyoku.common.viewmodels.generated.resources.invalid_email
 import kyoku.common.viewmodels.generated.resources.invalid_playlist_link
+import kyoku.common.viewmodels.generated.resources.ok
 import kyoku.common.viewmodels.generated.resources.otp_expired_error
 import kyoku.common.viewmodels.generated.resources.otp_invalid_error
 import kyoku.common.viewmodels.generated.resources.otp_length_error
@@ -16,6 +17,7 @@ import kyoku.common.viewmodels.generated.resources.password_number_error
 import kyoku.common.viewmodels.generated.resources.playlist_already_imported
 import kyoku.common.viewmodels.generated.resources.playlist_imported
 import kyoku.common.viewmodels.generated.resources.playlist_not_found
+import kyoku.common.viewmodels.generated.resources.reset_password_leave_message
 import kyoku.common.viewmodels.generated.resources.reset_password_session_expired
 import kyoku.common.viewmodels.generated.resources.reset_password_success
 import kyoku.common.viewmodels.generated.resources.username_char_error
@@ -61,6 +63,11 @@ suspend fun stringPasswordMismatchError(): String = getString(Res.string.passwor
 suspend fun stringResetPasswordSuccess(): String = getString(Res.string.reset_password_success)
 
 suspend fun stringResetPasswordSessionExpired(): String = getString(Res.string.reset_password_session_expired)
+
+suspend fun stringResetPasswordLeaveMessage(): String = getString(Res.string.reset_password_leave_message)
+
+// Common (non-composable, resolved from viewmodels)
+suspend fun stringOk(): String = getString(Res.string.ok)
 
 // Import Playlist (non-composable, resolved from viewmodels)
 suspend fun stringEmptyPlaylistLink(): String = getString(Res.string.empty_playlist_link)

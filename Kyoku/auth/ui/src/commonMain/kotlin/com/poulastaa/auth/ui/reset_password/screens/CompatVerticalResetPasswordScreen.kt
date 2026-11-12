@@ -48,7 +48,6 @@ import com.poulastaa.common.ui.design_system.IconEyeOpen
 import com.poulastaa.common.ui.design_system.IconPasswordLock
 import com.poulastaa.common.ui.design_system.StringConfirmPassword
 import com.poulastaa.common.ui.design_system.StringCreateNewPassword
-import com.poulastaa.common.ui.design_system.StringCreateNewPasswordMessage
 import com.poulastaa.common.ui.design_system.StringInvalidPassword
 import com.poulastaa.common.ui.design_system.StringPassword
 import com.poulastaa.common.ui.design_system.StringPasswordVisibility
@@ -84,24 +83,14 @@ internal fun CompatVerticalResetPasswordScreen(
 
             val apiErrorAlpha by animateFloatAsState(if (state.isPasswordApiError) 1f else 0f)
 
-            // Both texts stay laid out and only cross-fade, so the screen never jumps.
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    text = StringCreateNewPasswordMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.graphicsLayer { alpha = 1f - apiErrorAlpha },
-                )
-
-                Text(
-                    text = state.passwordApiErrorMessage,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.graphicsLayer { alpha = apiErrorAlpha },
-                )
-            }
+            // Always laid out (an empty Text keeps one line of height) and only faded, so the screen never jumps.
+            Text(
+                text = state.passwordApiErrorMessage,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer { alpha = apiErrorAlpha },
+            )
 
             ColumnSpacer(MaterialTheme.dimens.spacing.extraLarge)
 

@@ -35,7 +35,6 @@
 
     <!--    Reset Password-->
     <string name="create_new_password">Create new password</string>
-    <string name="create_new_password_message">Your new password must not be same as your old password.</string>
     <string name="confirm_password">confirm password</string>
     <string name="reset">Reset</string>
 
