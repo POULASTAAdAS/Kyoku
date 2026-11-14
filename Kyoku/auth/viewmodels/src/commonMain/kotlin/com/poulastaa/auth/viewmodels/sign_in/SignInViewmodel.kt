@@ -1,10 +1,13 @@
 package com.poulastaa.auth.viewmodels.sign_in
 
 import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.domain.PasswordCredentialStore
+import com.poulastaa.auth.domain.model.DtoPasswordCredential
 import com.poulastaa.auth.viewmodels.utils.MAX_AUTH_POLLING_COUNT
 import com.poulastaa.auth.viewmodels.utils.emailError
 import com.poulastaa.auth.viewmodels.utils.normalizedEmail
 import com.poulastaa.auth.viewmodels.utils.normalizedPassword
+import com.poulastaa.auth.viewmodels.utils.offerToSave
 import com.poulastaa.auth.viewmodels.utils.passwordError
 import com.poulastaa.common.domain.result.ApiError
 import com.poulastaa.common.domain.result.AppResult
@@ -18,10 +21,15 @@ import com.poulastaa.common.domain.result.Error as NetworkError
 
 class SignInViewmodel(
     private val repo: AuthRepository,
+    private val credentialStore: PasswordCredentialStore,
 ) : BaseViewmodel<SignInUiState, SignInUiAction, SignInUiEvent>(
     initialSate = SignInUiState(),
 ) {
     private var currentAuthPollingCount = 0
+    private var hasRequestedSavedCredential = false
+
+    // Credential already in the store; signing in with it again must not ask to save it again.
+    private var savedCredential: DtoPasswordCredential? = null
 
     override suspend fun handleAction(action: SignInUiAction) {
         val isGoogleAuthCompletion = action is SignInUiAction.OnGoogleAuthSuccess ||
@@ -80,11 +88,14 @@ class SignInViewmodel(
 
                         pollVerificationStatus(
                             email = email,
+                            password = password,
                             isNewUser = result.response,
                         )
                     }
                 }
             }
+
+            SignInUiAction.LoadSavedCredential -> loadSavedCredential()
 
             is SignInUiAction.OnForgotPasswordClick -> onEvent(
                 SignInUiEvent.NavigateToForgotPassword(
@@ -122,6 +133,7 @@ class SignInViewmodel(
 
     private suspend fun pollVerificationStatus(
         email: String,
+        password: String,
         isNewUser: Boolean,
     ) {
         while (true) {
@@ -145,6 +157,7 @@ class SignInViewmodel(
 
                 is AppResult.Success -> {
                     updateState { copy(isMakingApiCall = false) }
+                    offerToSaveCredential(email, password)
 
                     if (isNewUser) onEvent(SignInUiEvent.NavigateToImportPlaylist)
                     else onEvent(SignInUiEvent.NavigateToHome)
@@ -152,6 +165,41 @@ class SignInViewmodel(
                 }
             }
         }
+    }
+
+    // Asked once per screen instance, and never over anything the user already typed.
+    private suspend fun loadSavedCredential() {
+        if (hasRequestedSavedCredential) return
+        hasRequestedSavedCredential = true
+
+        if (hasTypedInput()) return
+        val stored = credentialStore.get() ?: return
+        // Normalized like the fields, so the "already saved" check compares like with like.
+        val credential = DtoPasswordCredential(
+            email = stored.email.normalizedEmail(),
+            password = stored.password.normalizedPassword(),
+        )
+        savedCredential = credential
+        if (hasTypedInput()) return
+
+        updateState {
+            copy(
+                email = UiTextFiledState(value = credential.email),
+                password = UiTextFiledState(value = credential.password),
+            )
+        }
+    }
+
+    private fun hasTypedInput() = _uiState.value.email.value.isNotEmpty() ||
+            _uiState.value.password.value.isNotEmpty()
+
+    // Only called after the server verified the credential, so a wrong password is never stored.
+    private suspend fun offerToSaveCredential(email: String, password: String) {
+        // This will check data not hashcode.
+        if (savedCredential == DtoPasswordCredential(email, password)) return
+
+        // Android saves directly; desktop (Windows / macOS / Linux) asks through the in-app snackbar.
+        credentialStore.offerToSave(email, password, ::showSnackbar)
     }
 
     private fun handleSignInError(error: NetworkError) {

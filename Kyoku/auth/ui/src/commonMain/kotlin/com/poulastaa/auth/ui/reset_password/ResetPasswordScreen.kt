@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
+import androidx.compose.ui.platform.LocalAutofillManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.auth.ui.reset_password.screens.CompatVerticalResetPasswordScreen
@@ -23,22 +24,29 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ResetPasswordScreen(
     token: String,
+    email: String,
     viewmodel: ResetPasswordViewmodel = koinViewModel(),
 ) {
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
+    val autofillManager = LocalAutofillManager.current
     val haptic = LocalHapticFeedback.current
     val state by viewmodel.uiState.collectAsState()
 
-    LaunchedEffect(token) {
+    LaunchedEffect(token, email) {
         viewmodel.onAction(ResetPasswordUiAction.OnTokenReceived(token))
+        viewmodel.onAction(ResetPasswordUiAction.OnEmailReceived(email))
     }
 
     LaunchedEffect(viewmodel.event) {
         viewmodel.event.collect { event ->
             when (event) {
-                ResetPasswordUiEvent.NavigateToSignIn -> navController.navigate(SignIn) {
-                    popUpTo<SignIn> { inclusive = true }
+                // Saving goes through PasswordCredentialStore; dropping the autofill session avoids a second save prompt.
+                ResetPasswordUiEvent.NavigateToSignIn -> {
+                    autofillManager?.cancel()
+                    navController.navigate(SignIn) {
+                        popUpTo<SignIn> { inclusive = true }
+                    }
                 }
 
                 ResetPasswordUiEvent.NavigateToForgotPassword -> navController.navigate(

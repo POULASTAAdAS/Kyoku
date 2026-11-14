@@ -1,10 +1,6 @@
 package com.poulastaa.auth.ui.components
 
 import android.app.Activity
-import android.app.Application
-import android.content.Context
-import android.content.ContextWrapper
-import android.os.Bundle
 import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -14,6 +10,7 @@ import androidx.credentials.exceptions.NoCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.poulastaa.auth.domain.PasswordCredentialStore
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
 import com.poulastaa.common.viewmodels.utils.dispatchers
@@ -26,53 +23,22 @@ import org.koin.dsl.module
 private const val TAG = "GoogleAuth"
 
 actual val googleAuthModule: Module = module {
-    single<GoogleAuthWrapper>(createdAtStart = true) { AndroidGoogleAuthWrapper(get()) }
+    single(createdAtStart = true) { CurrentActivityTracker(get()) }
+    single<GoogleAuthWrapper> { AndroidGoogleAuthWrapper(get()) }
+    single<PasswordCredentialStore> { AndroidPasswordCredentialStore(get()) }
 }
 
 private class AndroidGoogleAuthWrapper(
-    context: Context,
+    private val activityTracker: CurrentActivityTracker,
 ) : GoogleAuthWrapper {
     private val scope = CoroutineScope(SupervisorJob() + dispatchers.main)
-    private var currentActivity: Activity? = context.findActivity()
 
     override var onResult: ((GoogleAuthResult) -> Unit)? = null
-
-    init {
-        (context.applicationContext as? Application)?.registerActivityLifecycleCallbacks(
-            object : Application.ActivityLifecycleCallbacks {
-                override fun onActivityCreated(
-                    activity: Activity,
-                    savedInstanceState: Bundle?
-                ) = Unit
-
-                override fun onActivityStarted(activity: Activity) {
-                    currentActivity = activity
-                }
-
-                override fun onActivityResumed(activity: Activity) {
-                    currentActivity = activity
-                }
-
-                override fun onActivityPaused(activity: Activity) = Unit
-
-                override fun onActivityStopped(activity: Activity) = Unit
-
-                override fun onActivitySaveInstanceState(
-                    activity: Activity,
-                    outState: Bundle,
-                ) = Unit
-
-                override fun onActivityDestroyed(activity: Activity) {
-                    if (currentActivity === activity) currentActivity = null
-                }
-            }
-        )
-    }
 
     override fun startGoogleAuth() {
         Log.d(TAG, "Starting Google auth flow")
 
-        val activity = currentActivity
+        val activity = activityTracker.activity
         val clientId = SharedConfig.GOOGLE_MOBILE_CLIENT_ID
 
         if (activity == null) {
@@ -100,12 +66,6 @@ private class AndroidGoogleAuthWrapper(
             }
         }
     }
-}
-
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
 }
 
 private suspend fun CredentialManager.getGoogleIdToken(

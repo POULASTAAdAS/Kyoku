@@ -1,11 +1,13 @@
 package com.poulastaa.auth.viewmodels.sign_up
 
 import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.domain.PasswordCredentialStore
 import com.poulastaa.auth.viewmodels.utils.MAX_AUTH_POLLING_COUNT
 import com.poulastaa.auth.viewmodels.utils.emailError
 import com.poulastaa.auth.viewmodels.utils.normalizedEmail
 import com.poulastaa.auth.viewmodels.utils.normalizedPassword
 import com.poulastaa.auth.viewmodels.utils.normalizedUsername
+import com.poulastaa.auth.viewmodels.utils.offerToSave
 import com.poulastaa.auth.viewmodels.utils.passwordError
 import com.poulastaa.auth.viewmodels.utils.usernameError
 import com.poulastaa.auth.viewmodels.utils.usernameInputError
@@ -23,6 +25,7 @@ private const val TAG = "SignUpViewmodel"
 
 class SignUpViewmodel(
     private val repo: AuthRepository,
+    private val credentialStore: PasswordCredentialStore,
 ) : BaseViewmodel<SingUpUiState, SignUpUiAction, SignUpUiEvent>(
     initialSate = SingUpUiState(),
 ) {
@@ -127,6 +130,7 @@ class SignUpViewmodel(
 
                         pollVerificationStatus(
                             email = email,
+                            password = password,
                             isNewUser = result.response,
                         )
                     }
@@ -143,6 +147,7 @@ class SignUpViewmodel(
 
     private suspend fun pollVerificationStatus(
         email: String,
+        password: String,
         isNewUser: Boolean,
     ) {
         while (true) {
@@ -166,6 +171,8 @@ class SignUpViewmodel(
 
                 is AppResult.Success -> {
                     updateState { copy(isMakingApiCall = false) }
+                    // New account, so there is nothing saved yet to compare against.
+                    credentialStore.offerToSave(email, password, ::showSnackbar)
 
                     if (isNewUser) onEvent(SignUpUiEvent.NavigateToImportPlaylist)
                     else onEvent(SignUpUiEvent.NavigateToHome)

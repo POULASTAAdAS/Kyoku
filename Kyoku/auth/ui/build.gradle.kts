@@ -18,5 +18,9 @@ kotlin {
             implementation(libs.androidx.credentials.play.services.auth)
             implementation(libs.googleid)
         }
+
+        jvmMain.dependencies {
+            implementation(libs.java.keyring)
+        }
     }
 }

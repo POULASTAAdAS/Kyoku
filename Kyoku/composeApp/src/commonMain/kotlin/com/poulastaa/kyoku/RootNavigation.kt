@@ -163,8 +163,11 @@ fun RootNavigation(
                     }
 
                     composable<Screens.AuthScreens.ResetPassword> { backStackEntry ->
+                        val route = backStackEntry.toRoute<Screens.AuthScreens.ResetPassword>()
+
                         ResetPasswordScreen(
-                            token = backStackEntry.toRoute<Screens.AuthScreens.ResetPassword>().token,
+                            token = route.token,
+                            email = route.email,
                         )
                     }
                 }

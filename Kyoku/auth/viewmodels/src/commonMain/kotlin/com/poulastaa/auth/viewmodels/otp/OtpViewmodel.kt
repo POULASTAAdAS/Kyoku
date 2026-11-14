@@ -68,7 +68,7 @@ class OtpViewmodel(
                 when (result.response.status) {
                     DtoOtpValidationStatus.VALID -> {
                         showSnackbar(stringOtpVerificationSuccess(), SnackbarType.Success)
-                        onEvent(OtpUiEvent.NavigateToResetPassword(result.response.token))
+                        onEvent(OtpUiEvent.NavigateToResetPassword(result.response.token, state.email))
                     }
                     DtoOtpValidationStatus.INVALID_CODE -> setOtpError(stringOtpInvalidError())
                     DtoOtpValidationStatus.EXPIRED -> setOtpError(stringOtpExpiredError())

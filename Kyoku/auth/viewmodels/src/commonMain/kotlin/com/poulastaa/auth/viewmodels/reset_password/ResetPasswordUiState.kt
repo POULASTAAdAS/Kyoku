@@ -5,6 +5,7 @@ import com.poulastaa.common.viewmodels.states.UiTextFiledState
 data class ResetPasswordUiState(
     val isMakingApiCall: Boolean = false,
     val token: String = "",
+    val email: String = "",
     val isPasswordVisible: Boolean = false,
     val isConfirmPasswordVisible: Boolean = false,
     val password: UiTextFiledState = UiTextFiledState(),

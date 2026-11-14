@@ -1,6 +1,8 @@
 package com.poulastaa.auth.viewmodels.reset_password
 
 import com.poulastaa.auth.domain.AuthRepository
+import com.poulastaa.auth.domain.PasswordCredentialStore
+import com.poulastaa.auth.viewmodels.utils.normalizedEmail
 import com.poulastaa.auth.viewmodels.utils.normalizedPassword
 import com.poulastaa.auth.viewmodels.utils.passwordError
 import com.poulastaa.common.domain.result.ApiError
@@ -14,10 +16,13 @@ import com.poulastaa.common.viewmodels.stringPasswordMismatchError
 import com.poulastaa.common.viewmodels.stringResetPasswordLeaveMessage
 import com.poulastaa.common.viewmodels.stringResetPasswordSessionExpired
 import com.poulastaa.common.viewmodels.stringResetPasswordSuccess
+import com.poulastaa.common.viewmodels.stringResetPasswordSuccessSavePrompt
+import com.poulastaa.common.viewmodels.stringSave
 import com.poulastaa.common.domain.result.Error as NetworkError
 
 class ResetPasswordViewmodel(
     private val repo: AuthRepository,
+    private val credentialStore: PasswordCredentialStore,
 ) : BaseViewmodel<ResetPasswordUiState, ResetPasswordUiAction, ResetPasswordUiEvent>(
     initialSate = ResetPasswordUiState(),
 ) {
@@ -26,6 +31,7 @@ class ResetPasswordViewmodel(
 
         when (action) {
             is ResetPasswordUiAction.OnTokenReceived -> updateState { copy(token = action.token) }
+            is ResetPasswordUiAction.OnEmailReceived -> updateState { copy(email = action.email.normalizedEmail()) }
 
             // Editing either field clears the api error on both, since it was raised for the pair.
             is ResetPasswordUiAction.OnPasswordChange -> updateState {
@@ -98,10 +104,27 @@ class ResetPasswordViewmodel(
 
             is AppResult.Success -> {
                 updateState { copy(isMakingApiCall = false) }
-                showSnackbar(stringResetPasswordSuccess(), SnackbarType.Success)
+                offerToSaveCredential(state.email, password)
                 onEvent(ResetPasswordUiEvent.NavigateToSignIn)
             }
         }
+    }
+
+    // Keeps the password manager in sync, so the old saved password is replaced instead of failing on next sign-in.
+    private suspend fun offerToSaveCredential(email: String, password: String) {
+        if (email.isBlank() || credentialStore.hasSystemSavePrompt) {
+            showSnackbar(stringResetPasswordSuccess(), SnackbarType.Success)
+            if (email.isNotBlank()) credentialStore.save(email, password)
+            return
+        }
+
+        showSnackbar(
+            message = stringResetPasswordSuccessSavePrompt(),
+            type = SnackbarType.Success,
+            action = SnackbarAction(label = stringSave()) {
+                credentialStore.save(email, password)
+            },
+        )
     }
 
     private suspend fun handleResetPasswordError(error: NetworkError) {

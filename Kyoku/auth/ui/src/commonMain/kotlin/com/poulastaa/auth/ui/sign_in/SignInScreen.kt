@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalAutofillManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.auth.ui.components.GoogleAuthResult
@@ -29,6 +30,7 @@ fun SignInScreen(
     viewmodel: SignInViewmodel = koinViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
+    val autofillManager = LocalAutofillManager.current
     val haptic = LocalHapticFeedback.current
     val navController = LocalNavController.current
     val googleAuthWrapper = koinInject<GoogleAuthWrapper>()
@@ -57,6 +59,10 @@ fun SignInScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewmodel.onAction(SignInUiAction.LoadSavedCredential)
+    }
+
     LaunchedEffect(state.isGoogleAuthInProgress, googleAuthWrapper) {
         if (state.isGoogleAuthInProgress) googleAuthWrapper.startGoogleAuth()
     }
@@ -70,8 +76,16 @@ fun SignInScreen(
 
                 SignInUiEvent.NavigateToSignUp -> navController.navigate(SignUp)
 
-                SignInUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
-                SignInUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
+                // Saving goes through PasswordCredentialStore; dropping the autofill session avoids a second save prompt.
+                SignInUiEvent.NavigateToHome -> {
+                    autofillManager?.cancel()
+                    navController.navigate(Screens.MainScreens.Home)
+                }
+
+                SignInUiEvent.NavigateToImportPlaylist -> {
+                    autofillManager?.cancel()
+                    navController.navigate(Screens.SetupScreens.ImportPlaylist)
+                }
             }
         }
     }

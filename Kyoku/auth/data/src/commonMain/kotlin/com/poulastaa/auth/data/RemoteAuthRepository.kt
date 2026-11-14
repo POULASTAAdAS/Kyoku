@@ -29,7 +29,10 @@ class RemoteAuthRepository(
     ): AppResult<Boolean, ApiError> {
         val result = remote.signIn(email, password)
         if (result is AppResult.Success) local.saveUser(result.response.user)
-        return result.map { it.user.isNewUser }
+        return result.map { it.user.isNewUser } // TODO: check what is the best way to save this....
+        // i.e. if user is half-way through the onboarding process what should the api return
+        // and if user is google login then how should the api response be
+        // cause just returning `it.user.isNewUser` is not enough
     }
 
     override suspend fun signUp(

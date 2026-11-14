@@ -21,6 +21,9 @@ import kyoku.common.viewmodels.generated.resources.playlist_not_found
 import kyoku.common.viewmodels.generated.resources.reset_password_leave_message
 import kyoku.common.viewmodels.generated.resources.reset_password_session_expired
 import kyoku.common.viewmodels.generated.resources.reset_password_success
+import kyoku.common.viewmodels.generated.resources.reset_password_success_save_prompt
+import kyoku.common.viewmodels.generated.resources.save
+import kyoku.common.viewmodels.generated.resources.save_password_prompt
 import kyoku.common.viewmodels.generated.resources.username_char_error
 import kyoku.common.viewmodels.generated.resources.username_first_four_error
 import kyoku.common.viewmodels.generated.resources.username_length_error
@@ -71,6 +74,13 @@ suspend fun stringResetPasswordLeaveMessage(): String = getString(Res.string.res
 
 // Common (non-composable, resolved from viewmodels)
 suspend fun stringOk(): String = getString(Res.string.ok)
+
+// Save Password (non-composable, resolved from viewmodels)
+suspend fun stringSave(): String = getString(Res.string.save)
+
+suspend fun stringSavePasswordPrompt(): String = getString(Res.string.save_password_prompt)
+
+suspend fun stringResetPasswordSuccessSavePrompt(): String = getString(Res.string.reset_password_success_save_prompt)
 
 // Import Playlist (non-composable, resolved from viewmodels)
 suspend fun stringEmptyPlaylistLink(): String = getString(Res.string.empty_playlist_link)

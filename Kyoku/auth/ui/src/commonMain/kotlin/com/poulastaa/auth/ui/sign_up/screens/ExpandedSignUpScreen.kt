@@ -24,11 +24,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -166,7 +169,7 @@ internal fun ExpandedSignUpScreen(
                     AppOutlinedTextField(
                         value = state.email.value,
                         onValueChange = { viewmodel.onAction(SignUpUiAction.OnEmailChange(it)) },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.NewUsername + ContentType.EmailAddress },
                         label = StringEmail,
                         leadingIcon = IconEmail,
                         isError = state.email.isError,
@@ -186,7 +189,7 @@ internal fun ExpandedSignUpScreen(
                     AppOutlinedTextField(
                         value = state.password.value,
                         onValueChange = { viewmodel.onAction(SignUpUiAction.OnPasswordChange(it)) },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.NewPassword },
                         label = StringPassword,
                         leadingIcon = IconPasswordLock,
                         isError = state.password.isError,

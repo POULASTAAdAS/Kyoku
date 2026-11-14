@@ -39,6 +39,7 @@ fun OtpScreen(
                 is OtpUiEvent.NavigateToResetPassword -> navController.navigate(
                     route = ResetPassword(
                         token = event.token,
+                        email = event.email,
                     )
                 )
 

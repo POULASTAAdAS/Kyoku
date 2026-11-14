@@ -2,7 +2,7 @@ import ComposeApp
 import SwiftUI
 
 struct RootView: View {
-    @StateObject private var viewModel = ObservableViewModel<RootUiState, KotlinNothing, KotlinNothing> {
+    @StateObject private var viewModel = ObservableViewModel<RootUiState, any RootUiAction, KotlinNothing> {
         $0.rootViewmodel()
     }
 

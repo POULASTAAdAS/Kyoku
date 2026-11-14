@@ -1,6 +1,7 @@
 package com.poulastaa.auth.ui.components
 
 import com.poulastaa.auth.domain.GoogleTokenExchange
+import com.poulastaa.auth.domain.PasswordCredentialStore
 import com.poulastaa.common.domain.Log
 import com.poulastaa.common.domain.SharedConfig
 import com.poulastaa.common.viewmodels.utils.dispatchers
@@ -33,6 +34,7 @@ private val secureRandom = SecureRandom()
 
 actual val googleAuthModule: Module = module {
     single<GoogleAuthWrapper> { JvmGoogleAuthWrapper(get()) }
+    single<PasswordCredentialStore> { JvmPasswordCredentialStore() }
 }
 
 private class JvmGoogleAuthWrapper(

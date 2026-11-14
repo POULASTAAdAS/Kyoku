@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalAutofillManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.poulastaa.auth.ui.components.GoogleAuthResult
@@ -28,6 +29,7 @@ fun SingUpScreen(
 ) {
     val navController = LocalNavController.current
     val focusManager = LocalFocusManager.current
+    val autofillManager = LocalAutofillManager.current
     val haptic = LocalHapticFeedback.current
     val googleAuthWrapper = koinInject<GoogleAuthWrapper>()
     val state by viewmodel.uiState.collectAsState()
@@ -63,8 +65,16 @@ fun SingUpScreen(
         viewmodel.event.collect { event ->
             when (event) {
                 SignUpUiEvent.NavigateToLogIn -> navController.popBackStack()
-                SignUpUiEvent.NavigateToHome -> navController.navigate(Screens.MainScreens.Home)
-                SignUpUiEvent.NavigateToImportPlaylist -> navController.navigate(Screens.SetupScreens.ImportPlaylist)
+                // Saving goes through PasswordCredentialStore; dropping the autofill session avoids a second save prompt.
+                SignUpUiEvent.NavigateToHome -> {
+                    autofillManager?.cancel()
+                    navController.navigate(Screens.MainScreens.Home)
+                }
+
+                SignUpUiEvent.NavigateToImportPlaylist -> {
+                    autofillManager?.cancel()
+                    navController.navigate(Screens.SetupScreens.ImportPlaylist)
+                }
             }
         }
     }

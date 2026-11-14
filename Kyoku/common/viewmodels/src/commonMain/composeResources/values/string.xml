@@ -29,6 +29,11 @@
     <string name="reset_password_leave_message">Leave password reset? You will need to request a new code.</string>
     <string name="ok">OK</string>
 
+    <!--    Save Password (desktop keyring prompt)-->
+    <string name="save">Save</string>
+    <string name="save_password_prompt">Save password on this device?</string>
+    <string name="reset_password_success_save_prompt">Password updated. Save it on this device?</string>
+
     <!--    Import Playlist-->
     <string name="empty_playlist_link">Paste a spotify playlist link</string>
     <string name="invalid_playlist_link">Not a valid spotify playlist link</string>

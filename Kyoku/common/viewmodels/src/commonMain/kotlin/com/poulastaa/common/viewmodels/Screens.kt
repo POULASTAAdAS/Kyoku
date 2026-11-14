@@ -29,7 +29,7 @@ sealed interface Screens {
         data class ValidateOTP(val email: String) : AuthScreens
 
         @Serializable
-        data class ResetPassword(val token: String) : AuthScreens
+        data class ResetPassword(val token: String, val email: String) : AuthScreens
     }
 
     sealed interface SetupScreens : Screens {

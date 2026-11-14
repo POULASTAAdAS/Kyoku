@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
@@ -31,6 +32,8 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -97,7 +100,7 @@ internal fun CompatVerticalResetPasswordScreen(
             AppOutlinedTextField(
                 value = state.password.value,
                 onValueChange = { viewmodel.onAction(ResetPasswordUiAction.OnPasswordChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.NewPassword },
                 label = StringPassword,
                 leadingIcon = IconPasswordLock,
                 isError = state.password.isError,
@@ -135,7 +138,7 @@ internal fun CompatVerticalResetPasswordScreen(
             AppOutlinedTextField(
                 value = state.confirmPassword.value,
                 onValueChange = { viewmodel.onAction(ResetPasswordUiAction.OnConfirmPasswordChange(it)) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.NewPassword },
                 label = StringConfirmPassword,
                 leadingIcon = IconPasswordLock,
                 isError = state.confirmPassword.isError,
