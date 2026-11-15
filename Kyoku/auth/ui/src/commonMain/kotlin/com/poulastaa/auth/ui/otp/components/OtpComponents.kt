@@ -1,0 +1,238 @@
+package com.poulastaa.auth.ui.otp.components
+
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import com.poulastaa.auth.viewmodels.utils.OTP_LENGTH
+import com.poulastaa.common.ui.components.ElevatedDefaultButton
+import com.poulastaa.common.ui.components.top_bar.DefaultTopBar
+import com.poulastaa.common.ui.design_system.dimens
+
+@Composable
+internal fun OtpTopBar() {
+    DefaultTopBar(
+        navigateBackEnabled = false,
+        titleContent = {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "Verification",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.headlineMedium.copy(color = MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+internal fun OtpEmailMessage(email: String) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(
+                MaterialTheme.typography.bodyMedium
+                    .copy(color = MaterialTheme.colorScheme.primary)
+                    .toSpanStyle(),
+            ) {
+                append("Please enter the verification code we have sent to email\n")
+            }
+            withStyle(
+                MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = TextDecoration.Underline,
+                ).toSpanStyle()
+            ) {
+                append(email)
+            }
+        },
+        textAlign = TextAlign.Center
+    )
+}
+
+@Composable
+internal fun OtpField(
+    otp: String,
+    isOTPError: Boolean,
+    isValidating: Boolean,
+    focusManager: FocusManager,
+    onOtpChange: (String) -> Unit,
+) {
+    val otpFontStyle = MaterialTheme.typography.headlineLarge
+    val focusRequester = remember { FocusRequester() }
+    var isFocused by remember { mutableStateOf(false) }
+
+    // Blinks the custom cursor drawn in the active box (the real cursor is hidden under the decoration).
+    val cursorAlpha by rememberInfiniteTransition().animateFloat(
+        initialValue = 1f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = CURSOR_BLINK_MILLIS, easing = { if (it < 0.5f) 0f else 1f }),
+            repeatMode = RepeatMode.Restart,
+        ),
+    )
+
+    LaunchedEffect(focusRequester) {
+        focusRequester.requestFocus()
+    }
+
+    BoxWithConstraints {
+        BasicTextField(
+            modifier = Modifier
+                .then(if (this.maxWidth > 780.dp) Modifier.fillMaxWidth(0.7f) else Modifier.fillMaxWidth())
+                .focusRequester(focusRequester)
+                .onFocusChanged { isFocused = it.isFocused },
+            onValueChange = { str ->
+                str.takeIf { it.length <= OTP_LENGTH && isValidating.not() }?.let {
+                    onOtpChange(it)
+                }
+            },
+            value = otp,
+            decorationBox = { decorationBox ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().align(Alignment.Center),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(OTP_LENGTH) { index ->
+                        val isCurrentSelected by remember(otp.length) { mutableStateOf(otp.length == index) }
+
+                        Box(
+                            Modifier.wrapContentHeight()
+                                .padding(MaterialTheme.dimens.spacing.small)
+                                .then(
+                                    if (isOTPError) Modifier.border(
+                                        width = MaterialTheme.dimens.border.medium,
+                                        color = MaterialTheme.colorScheme.error,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                    else Modifier.border(
+                                        width = if (isCurrentSelected) MaterialTheme.dimens.border.medium else MaterialTheme.dimens.border.thin,
+                                        color = if (isCurrentSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                )
+                                .sizeIn(
+                                    minWidth = otpFontStyle.fontSize.value.times(1.5).dp,
+                                    minHeight = otpFontStyle.fontSize.value.dp,
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = otp.getOrElse(index) { ' ' }.toString(),
+                                style = otpFontStyle.copy(color = MaterialTheme.colorScheme.primary),
+                                modifier = Modifier.padding(MaterialTheme.dimens.spacing.medium)
+                            )
+
+                            if (isCurrentSelected && isFocused && isValidating.not()) Box(
+                                Modifier
+                                    .width(MaterialTheme.dimens.border.medium)
+                                    .height(otpFontStyle.fontSize.value.dp)
+                                    .graphicsLayer { alpha = cursorAlpha }
+                                    .background(MaterialTheme.colorScheme.primary)
+                            )
+                        }
+                    }
+                }
+                Box(Modifier.graphicsLayer { alpha = 0f }) { decorationBox() }
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
+            singleLine = true,
+            cursorBrush = SolidColor(Color.Transparent),
+        )
+    }
+}
+
+@Composable
+internal fun OtpSubmitButton(
+    isValidOTP: Boolean,
+    isValidating: Boolean,
+    onValidateClick: () -> Unit,
+) {
+    ElevatedDefaultButton(
+        width = 0.7f,
+        enabled = isValidOTP,
+        onClick = onValidateClick,
+        colors = CardDefaults.elevatedCardColors(
+            contentColor = if (isValidOTP) MaterialTheme.colorScheme.background
+            else MaterialTheme.colorScheme.onBackground,
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = if (isValidOTP) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.primaryContainer,
+                    shape = MaterialTheme.shapes.small,
+                ).minimumInteractiveComponentSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = "Submit",
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.alpha(if (isValidating) 0f else 1f),
+                color = MaterialTheme.colorScheme.background
+            )
+            CircularProgressIndicator(
+                Modifier.alpha(if (isValidating) 1f else 0f),
+                color = MaterialTheme.colorScheme.primaryContainer
+            )
+        }
+    }
+}
+
+private const val CURSOR_BLINK_MILLIS = 1000

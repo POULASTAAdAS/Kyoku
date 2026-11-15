@@ -9,6 +9,7 @@ import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.platform.LocalAutofillManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.poulastaa.auth.ui.reset_password.screens.CompatHorizontalResetPasswordScreen
 import com.poulastaa.auth.ui.reset_password.screens.CompatVerticalResetPasswordScreen
 import com.poulastaa.auth.viewmodels.reset_password.ResetPasswordUiAction
 import com.poulastaa.auth.viewmodels.reset_password.ResetPasswordUiEvent
@@ -64,17 +65,23 @@ fun ResetPasswordScreen(
 
     ScreenSizeWrapper { screenSizeType ->
         when (screenSizeType) {
-            ScreenSizeType.CompactVertical -> CompatVerticalResetPasswordScreen(
-                state = state,
-                viewmodel = viewmodel,
-                focusManager = focusManager,
-                haptic = haptic
-            )
+            ScreenSizeType.CompactVertical,
+            ScreenSizeType.LargeVertical,
+                -> CompatVerticalResetPasswordScreen(
+                    state = state,
+                    viewmodel = viewmodel,
+                    focusManager = focusManager,
+                    haptic = haptic
+                )
 
-            ScreenSizeType.CompactHorizontal -> TODO()
-
-            ScreenSizeType.LargeVertical -> TODO()
-            ScreenSizeType.LargeHorizontal -> TODO()
+            ScreenSizeType.CompactHorizontal,
+            ScreenSizeType.LargeHorizontal,
+                -> CompatHorizontalResetPasswordScreen(
+                    state = state,
+                    viewmodel = viewmodel,
+                    focusManager = focusManager,
+                    haptic = haptic
+                )
         }
     }
 

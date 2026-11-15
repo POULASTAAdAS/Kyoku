@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.platform.LocalFocusManager
+import com.poulastaa.auth.ui.otp.screens.CompatHorizontalOtpScreen
 import com.poulastaa.auth.ui.otp.screens.CompatVerticalOtpScreen
 import com.poulastaa.auth.viewmodels.otp.OtpUiAction
 import com.poulastaa.auth.viewmodels.otp.OtpUiEvent
@@ -50,21 +51,31 @@ fun OtpScreen(
 
     ScreenSizeWrapper { screenSizeType ->
         when (screenSizeType) {
-            ScreenSizeType.CompactVertical -> CompatVerticalOtpScreen(
-                email = email,
-                otp = state.otp.value,
-                isOTPError = state.otp.isError,
-                isValidating = state.isMakingApiCall,
-                isValidOTP = isValidOTP,
-                focusManager = focusManager,
-                onOtpChange = { viewmodel.onAction(OtpUiAction.OnOtpChange(it)) },
-                onValidateClick = { viewmodel.onAction(OtpUiAction.ValidateOtp) }
-            )
+            ScreenSizeType.CompactVertical,
+            ScreenSizeType.LargeVertical,
+                -> CompatVerticalOtpScreen(
+                    email = email,
+                    otp = state.otp.value,
+                    isOTPError = state.otp.isError,
+                    isValidating = state.isMakingApiCall,
+                    isValidOTP = isValidOTP,
+                    focusManager = focusManager,
+                    onOtpChange = { viewmodel.onAction(OtpUiAction.OnOtpChange(it)) },
+                    onValidateClick = { viewmodel.onAction(OtpUiAction.ValidateOtp) }
+                )
 
-            ScreenSizeType.CompactHorizontal -> TODO()
-
-            ScreenSizeType.LargeVertical -> TODO()
-            ScreenSizeType.LargeHorizontal -> TODO()
+            ScreenSizeType.CompactHorizontal,
+            ScreenSizeType.LargeHorizontal,
+                -> CompatHorizontalOtpScreen(
+                    email = email,
+                    otp = state.otp.value,
+                    isOTPError = state.otp.isError,
+                    isValidating = state.isMakingApiCall,
+                    isValidOTP = isValidOTP,
+                    focusManager = focusManager,
+                    onOtpChange = { viewmodel.onAction(OtpUiAction.OnOtpChange(it)) },
+                    onValidateClick = { viewmodel.onAction(OtpUiAction.ValidateOtp) }
+                )
         }
     }
 
