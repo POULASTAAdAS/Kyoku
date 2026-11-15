@@ -30,7 +30,7 @@ enum class SnackbarType {
 
 object CommonUiStateHolder {
     private val _uiState = MutableStateFlow(CommonUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow().wrap() // wrap() lets SwiftUI subscribe
 
     internal fun showSnackbar(
         message: String,

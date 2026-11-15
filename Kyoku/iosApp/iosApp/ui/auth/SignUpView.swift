@@ -8,7 +8,7 @@ struct SignUpView: View {
 
     var body: some View {
         // Blank screen: the SwiftUI UI for this screen is not implemented yet.
-        Color(.systemBackground)
+        AppColors.background
             .ignoresSafeArea()
     }
 }

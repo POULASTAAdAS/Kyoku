@@ -15,6 +15,7 @@ import com.poulastaa.kyoku.di.initKoin
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.component.KoinComponent
 import org.koin.core.waitAllStartJobs
+import org.koin.mp.KoinPlatform
 
 // TODO: THIS APPROACH IS NOT THE RIGHT ONE. PUTTING EVERYTHING AT ONCE, VIEWMODEL MUST BE INITIALIZED AT WHERE IT'S NEEDED.
 //  We should use a different approach to provide viewmodels to SwiftUI.
@@ -26,6 +27,9 @@ fun initKoinIos() {
 fun registerGoogleAuth(wrapper: GoogleAuthWrapper) {
     registerGoogleAuthWrapper(wrapper)
 }
+
+/** The wrapper passed to [registerGoogleAuth]; SwiftUI screens start Google auth through it. */
+fun googleAuthWrapper(): GoogleAuthWrapper = KoinPlatform.getKoin().get()
 
 /**
  * Gives Swift typed access to the shared viewmodels (Swift cannot call Koin's reified `get()`).
