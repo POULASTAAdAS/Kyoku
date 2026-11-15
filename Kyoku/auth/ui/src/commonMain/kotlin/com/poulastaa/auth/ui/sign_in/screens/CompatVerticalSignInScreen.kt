@@ -27,6 +27,7 @@ import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.semantics.contentType
@@ -122,7 +123,12 @@ internal fun CompatVerticalSignInScreen(
         AppOutlinedTextField(
             value = state.email.value,
             onValueChange = { viewmodel.onAction(SignInUiAction.OnEmailChange(it)) },
-            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Username + ContentType.EmailAddress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentType = ContentType.Username + ContentType.EmailAddress }
+                .onFocusChanged {
+                    if (it.isFocused) viewmodel.onAction(SignInUiAction.OnCredentialFieldFocus)
+                },
             label = StringEmail,
             leadingIcon = IconEmail,
             isError = state.email.isError,
@@ -142,7 +148,12 @@ internal fun CompatVerticalSignInScreen(
         AppOutlinedTextField(
             value = state.password.value,
             onValueChange = { viewmodel.onAction(SignInUiAction.OnPasswordChange(it)) },
-            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Password },
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentType = ContentType.Password }
+                .onFocusChanged {
+                    if (it.isFocused) viewmodel.onAction(SignInUiAction.OnCredentialFieldFocus)
+                },
             label = StringPassword,
             leadingIcon = IconPasswordLock,
             isError = state.password.isError,

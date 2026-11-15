@@ -95,7 +95,8 @@ class SignInViewmodel(
                 }
             }
 
-            SignInUiAction.LoadSavedCredential -> loadSavedCredential()
+            // Android fills saved passwords through system Autofill; a second picker here would show two sheets.
+            SignInUiAction.OnCredentialFieldFocus -> if (credentialStore.hasSystemSavePrompt.not()) loadSavedCredential()
 
             is SignInUiAction.OnForgotPasswordClick -> onEvent(
                 SignInUiEvent.NavigateToForgotPassword(

@@ -59,10 +59,6 @@ fun SignInScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewmodel.onAction(SignInUiAction.LoadSavedCredential)
-    }
-
     LaunchedEffect(state.isGoogleAuthInProgress, googleAuthWrapper) {
         if (state.isGoogleAuthInProgress) googleAuthWrapper.startGoogleAuth()
     }
