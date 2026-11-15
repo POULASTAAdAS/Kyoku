@@ -14,7 +14,9 @@ struct AuthNavigationView: View {
                         SignUpView()
                     case .forgotPassword:
                         // TODO: pass `email` once ForgotPasswordView accepts it.
-                        ForgotPasswordView()
+                        ForgotPasswordView(path: $path)
+                    case .validateOtp:
+                        EmptyView()
                     }
                 }
         }

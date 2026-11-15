@@ -33,7 +33,7 @@ fun ForgotPasswordScreen(
         viewmodel.event.collect { event ->
             when (event) {
                 is ForgotPasswordUiEvent.NavigateToOtp -> navController.navigate(
-                    ValidateOTP(
+                    route = ValidateOTP(
                         email = event.email,
                     )
                 )

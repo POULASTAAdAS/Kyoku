@@ -5,4 +5,5 @@ import Foundation
 enum AuthRoute: Hashable {
     case signUp
     case forgotPassword(email: String?)
+    case validateOtp(email: String)
 }

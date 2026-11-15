@@ -111,11 +111,11 @@ struct SignInView: View {
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 72, height: 72)
+                    .frame(width: 92, height: 92)
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(AppColors.primary)
                     .accessibilityLabel("Kyoku")
-                    .padding(.vertical, AppDimens.Spacing.extraLarge)
+                    .padding(.vertical, AppDimens.Spacing.large)
 
                 Text("Welcome back")
                     .appTextStyle(.titleSmall)
