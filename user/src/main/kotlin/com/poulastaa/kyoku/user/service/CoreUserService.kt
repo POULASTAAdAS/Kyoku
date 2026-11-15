@@ -70,6 +70,7 @@ class CoreUserService(
         }
     }
 
+    @Transactional
     override fun updatePassword(
         request: GRPCRequestUpdatePassword,
         responseObserver: StreamObserver<EmptyResponse>,
