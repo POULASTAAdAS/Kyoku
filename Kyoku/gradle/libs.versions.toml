@@ -32,6 +32,7 @@ koinCompilerPlugin = "1.0.1"
 ktor = "3.5.1"
 room = "2.8.4"
 ksp = "2.3.9"
+skie = "0.10.15"
 sqlite = "2.6.2"
 datastore = "1.2.1"
 buildconfig = "6.0.10"
@@ -123,6 +124,7 @@ koinCompiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompi
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }
 
 kyoku-kmp-library = { id = "kyoku.kmp.library", version = "unspecified" }
 kyoku-kmp-compose-library = { id = "kyoku.kmp.compose.library", version = "unspecified" }

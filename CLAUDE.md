@@ -36,4 +36,5 @@
   - Writes `iosApp/Configuration/IosUi.generated.xcconfig` (generated, do not edit; included by `Config.xcconfig`), defining Swift condition `KYOKU_SWIFTUI` in swiftui mode.
 - Swift: `ContentView.swift` / `iOSApp.swift` use `#if KYOKU_SWIFTUI` (SwiftUI `RootView` vs `ComposeView`).
 - Shared ViewModels live in `:common:viewmodels` and `:auth:viewmodels`; SwiftUI reaches them via `composeApp/src/iosMain/.../IosViewModelProvider.kt` and `iosApp/iosApp/core/viewmodel/ObservableViewModel.swift`.
+- SwiftUI ↔ Kotlin interop uses SKIE (`onEnum(of:)`, exhaustive event switches) plus a typed per-screen Swift extension (e.g. `ui/auth/SignInViewModel.swift`). Read `time-capsule/impl/ios-swiftui-kmp-interop.md` before wiring a SwiftUI screen to a shared ViewModel or changing SKIE config.
 - After changing the flag, sync Gradle (or build twice in Xcode) so Xcode picks up the regenerated xcconfig.

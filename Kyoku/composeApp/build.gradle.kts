@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kyoku.kmp.application)
+    alias(libs.plugins.skie)
 }
 
 android {
@@ -67,5 +68,13 @@ compose.desktop {
                 iconFile.set(iconsRoot.resolve("app-icon.png"))
             }
         }
+    }
+}
+
+// SKIE: Kotlin sealed classes/enums become exhaustive Swift enums (`onEnum(of:)`).
+// Flow interop stays off; SwiftUI already observes flows through `FlowWrapper`.
+skie {
+    features {
+        coroutinesInterop.set(false)
     }
 }

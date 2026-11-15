@@ -7,9 +7,7 @@ import SwiftUI
 struct SignInView: View {
     @Binding var path: [AuthRoute]
 
-    @StateObject private var viewModel = ObservableViewModel<SignInUiState, any SignInUiAction, any SignInUiEvent> {
-        $0.signInViewmodel()
-    }
+    @StateObject private var viewModel = SignInViewModel()
     @EnvironmentObject private var commonUi: CommonUiStateObserver
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @FocusState private var focusedField: Field?
@@ -67,7 +65,7 @@ struct SignInView: View {
         // Error haptic only when errors appear, not when they clear.
         .sensoryFeedback(.error, trigger: credentialErrors) { _, errors in !errors.isEmpty }
         .onChange(of: focusedField) { _, field in
-            if field != nil { viewModel.onAction(SignInUiActionOnCredentialFieldFocus.shared) }
+            if field != nil { viewModel.credentialFieldFocused() }
         }
         .onChange(of: state.isGoogleAuthInProgress) { _, inProgress in
             if inProgress { googleAuth.startGoogleAuth() }
@@ -133,7 +131,7 @@ struct SignInView: View {
 
     private var forgotPassword: some View {
         Button("Forgot password?") {
-            viewModel.onAction(SignInUiActionOnForgotPasswordClick(email: state.email.value))
+            viewModel.forgotPasswordClicked(email: state.email.value)
         }
         .appTextStyle(.labelLarge)
         .disabled(isBusy)
@@ -145,7 +143,7 @@ struct SignInView: View {
             label: "Email",
             systemImage: "envelope",
             value: state.email.value,
-            onChange: { viewModel.onAction(SignInUiActionOnEmailChange(email: $0)) },
+            onChange: viewModel.emailChanged,
             isError: state.email.isError,
             field: .email,
             focus: $focusedField
@@ -163,13 +161,13 @@ struct SignInView: View {
             label: "Password",
             systemImage: "lock",
             value: state.password.value,
-            onChange: { viewModel.onAction(SignInUiActionOnPasswordChange(password: $0)) },
+            onChange: viewModel.passwordChanged,
             isError: state.password.isError,
             field: .password,
             focus: $focusedField,
             isSecure: true,
             isSecureTextVisible: state.isPasswordVisible,
-            onToggleSecureTextVisibility: { viewModel.onAction(SignInUiActionOnPasswordVisibilityToggle.shared) }
+            onToggleSecureTextVisibility: viewModel.togglePasswordVisibility
         )
         .textContentType(.password)
         .submitLabel(.go)
@@ -210,7 +208,7 @@ struct SignInView: View {
                 role: .secondary,
                 isLoading: state.isGoogleAuthInProgress,
                 isEnabled: !isBusy,
-                action: { viewModel.onAction(SignInUiActionOnGoogleSignInClick.shared) }
+                action: viewModel.googleSignInClicked
             ) {
                 Label {
                     Text("Continue with Google")
@@ -235,7 +233,7 @@ struct SignInView: View {
                 .foregroundStyle(.secondary)
 
             Button("Create Account") {
-                viewModel.onAction(SignInUiActionOnCreateAccountClick.shared)
+                viewModel.createAccountClicked()
             }
             .fontWeight(.semibold)
             .disabled(isBusy)
@@ -248,31 +246,23 @@ struct SignInView: View {
 
     private func signIn() {
         focusedField = nil
-        viewModel.onAction(SignInUiActionSignIn.shared)
+        viewModel.signIn()
     }
 
     /// Subscribes to one-off viewmodel events and to the Google sign-in result. Called from
     /// `onAppear` so the subscriptions are re-established when navigating back to this screen.
     private func bind() {
-        googleAuth.onResult = { result in
-            switch result {
-            case let success as GoogleAuthResult.Success:
-                viewModel.onAction(SignInUiActionOnGoogleAuthSuccess(token: success.token))
-            default:
-                viewModel.onAction(SignInUiActionOnGoogleAuthCanceled.shared)
-            }
-        }
+        googleAuth.onResult = viewModel.googleAuthFinished
 
         viewModel.onEvent { event in
-            switch event {
-            case let event as SignInUiEventNavigateToForgotPassword:
+            // Exhaustive (SKIE): a new Kotlin event fails the Swift build instead of being ignored.
+            switch onEnum(of: event) {
+            case .navigateToForgotPassword(let event):
                 path.append(.forgotPassword(email: event.email))
-            case is SignInUiEventNavigateToSignUp:
+            case .navigateToSignUp:
                 path.append(.signUp)
-            case is SignInUiEventNavigateToHome, is SignInUiEventNavigateToImportPlaylist:
+            case .navigateToHome, .navigateToImportPlaylist:
                 // Setup and main graphs are not implemented in SwiftUI yet.
-                break
-            default:
                 break
             }
         }
