@@ -44,7 +44,9 @@ struct AuthTextField<Field: Hashable>: View {
     @ViewBuilder
     private var input: some View {
         // Text and binding are shared, so toggling visibility keeps the typed value.
-        let text = Binding(get: { value }, set: onChange)
+        // UIKit re-sends the unchanged text when the field loses focus; forwarding it would make the
+        // viewmodel treat it as an edit and clear a validation error set by the same tap.
+        let text = Binding(get: { value }, set: { if $0 != value { onChange($0) } })
 
         if isSecure && !isSecureTextVisible {
             SecureField(label, text: text)
