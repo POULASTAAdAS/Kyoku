@@ -31,6 +31,8 @@ enum AppDimens {
         static let medium: CGFloat = 40
         static let large: CGFloat = 48
         static let extraLarge: CGFloat = 56
+        /// Height of buttons and text field rows: 85% of the system `.large` button + 8pt padding (~58pt).
+        static let control: CGFloat = 49
     }
 
     enum Corner {

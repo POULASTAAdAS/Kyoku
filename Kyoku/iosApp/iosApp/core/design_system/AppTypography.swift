@@ -64,3 +64,11 @@ extension Text {
         font(style.font(weight: weight))
     }
 }
+
+extension Font {
+    /// Compose's display face (`Type.kt` `displayFontFamily`) in italic, as used by `AuthTypeTitle`, at the
+    /// compact `displayLarge` / `displaySmall` sizes. Bundled in `fonts/` and registered via `UIAppFonts`;
+    /// scales with Dynamic Type.
+    static let displayItalicLarge = Font.custom("AveriaSerifLibre-Italic", size: 57, relativeTo: .largeTitle)
+    static let displayItalicSmall = Font.custom("AveriaSerifLibre-Italic", size: 36, relativeTo: .largeTitle)
+}

@@ -19,7 +19,9 @@ struct SignInView: View {
     }
 
     private var state: SignInUiState { viewModel.state }
-    private var isBusy: Bool { state.isMakingApiCall || state.isGoogleAuthInProgress }
+    private var isBusy: Bool {
+        state.isMakingApiCall || state.isGoogleAuthInProgress
+    }
 
     /// Validation messages for the credential section footer. API error text passes through as-is.
     private var credentialErrors: [String] {
@@ -44,7 +46,9 @@ struct SignInView: View {
                 HStack(spacing: AppDimens.Spacing.medium) {
                     actionButtons
                         .padding(.leading, AppDimens.Layout.contentPadding)
-                        .containerRelativeFrame(.horizontal) { width, _ in width * 0.4 }
+                        .containerRelativeFrame(.horizontal) { width, _ in
+                            width * 0.4
+                        }
                         .frame(maxHeight: .infinity)
                         // Only the form moves for the keyboard; the actions column stays put.
                         .ignoresSafeArea(.keyboard)
@@ -63,7 +67,9 @@ struct SignInView: View {
         .animation(.snappy, value: signInStatus)
         .sensoryFeedback(.selection, trigger: state.isPasswordVisible)
         // Error haptic only when errors appear, not when they clear.
-        .sensoryFeedback(.error, trigger: credentialErrors) { _, errors in !errors.isEmpty }
+        .sensoryFeedback(.error, trigger: credentialErrors) { _, errors in
+            !errors.isEmpty
+        }
         .onChange(of: focusedField) { _, field in
             if field != nil { viewModel.credentialFieldFocused() }
         }
@@ -86,6 +92,9 @@ struct SignInView: View {
             }
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
+            // Default inset-grouped spacing (~35pt) + the header's 8pt bottom padding read as too loose;
+            // 26pt brings the title → email gap to ~80% of the default (34 vs 43).
+            .listSectionSpacing(26)
 
             Section {
                 emailField
@@ -97,15 +106,19 @@ struct SignInView: View {
                     forgotPassword
                 }
             }
-            .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] + AppDimens.Icon.medium + AppDimens.Spacing.medium }
+            // Separator starts under the leading icon.
+            .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
         }
+        // Field rows match the action buttons.
+        .environment(\.defaultMinListRowHeight, AppDimens.Component.control)
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .scrollDisabled(isLandscape)
     }
 
     private func header(isCompact: Bool) -> some View {
-        VStack(alignment: .leading, spacing: AppDimens.Spacing.small) {
+        // Same gap as Compose `CompatVerticalSignInScreen` between the eyebrow and the title.
+        VStack(alignment: .leading, spacing: AppDimens.Spacing.large) {
             if !isCompact {
                 Image("KyokuSplashLogo")
                     .renderingMode(.template)
@@ -119,14 +132,16 @@ struct SignInView: View {
 
                 Text("Welcome back")
                     .appTextStyle(.titleSmall)
-                    .foregroundStyle(.secondary)
+                    // Same letter spacing as Compose `CompatVerticalSignInScreen` (4.sp).
+                    .tracking(4)
+                    .foregroundStyle(AppColors.primary)
                     .textCase(.uppercase)
             }
 
-            Text("Sign in")
-                .appTextStyle(.displayLarge)
-                .foregroundStyle(AppColors.onSurface)
+            AuthTitle(initial: "S", rest: "ign in.")
         }
+        // The row has zero insets and list cells clip, so without this the "g" descender is cut off.
+        .padding(.bottom, AppDimens.Spacing.small)
     }
 
     private var forgotPassword: some View {
@@ -180,7 +195,7 @@ struct SignInView: View {
             .padding(.horizontal, AppDimens.Layout.contentPadding)
             .padding(.top, AppDimens.Spacing.medium)
             .padding(.bottom, AppDimens.Spacing.small)
-            .frame(maxWidth: 480) // readable width on iPad
+            .frame(maxWidth: 480)  // readable width on iPad
             .frame(maxWidth: .infinity)
             .background(AppColors.background)
     }
@@ -195,7 +210,11 @@ struct SignInView: View {
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
 
-            AuthActionButton(isLoading: state.isMakingApiCall, isEnabled: !isBusy, action: signIn) {
+            AuthActionButton(
+                isLoading: state.isMakingApiCall,
+                isEnabled: !isBusy,
+                action: signIn
+            ) {
                 Text("Sign In")
                     .appTextStyle(.titleMedium)
             }
@@ -217,7 +236,10 @@ struct SignInView: View {
                     Image("GoogleLogo")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: AppDimens.Icon.small, height: AppDimens.Icon.small)
+                        .frame(
+                            width: AppDimens.Icon.small,
+                            height: AppDimens.Icon.small
+                        )
                 }
                 .foregroundStyle(AppColors.onSurface)
             }
