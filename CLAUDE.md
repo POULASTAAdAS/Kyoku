@@ -11,6 +11,7 @@
 - Do not change unrelated code even if it blocks verification or the current task; ask before touching anything outside the requested scope.
 - Never write or add test cases.
 - Never read, search, inspect, execute, or modify generated or external Gradle artifacts, including `Kyoku/gradlew`, `.gradle/`, generated build output, and external Android Gradle files. Source-controlled Gradle configuration files such as `*.gradle.kts` may be read and modified when required by the task.
+- Exception to the two rules above: when the user explicitly asks for it in the current request (e.g. "write a UI test", "run the iOS build/tests"), writing those tests and running the builds they need (including `xcodebuild`, which invokes `gradlew` through the "Compile Kotlin Framework" phase) is allowed. The exception covers only that request.
 - If you need to touch a file that has already been updated or is in progress, do not revert those changes; work around them because the user may be working in the same file.
 - Do not revert any outside code without asking.
 - Do not push anything to Git, ever.
@@ -37,4 +38,5 @@
 - Swift: `ContentView.swift` / `iOSApp.swift` use `#if KYOKU_SWIFTUI` (SwiftUI `RootView` vs `ComposeView`).
 - Shared ViewModels live in `:common:viewmodels` and `:auth:viewmodels`; SwiftUI reaches them via `composeApp/src/iosMain/.../IosViewModelProvider.kt` and `iosApp/iosApp/core/viewmodel/ObservableViewModel.swift`.
 - SwiftUI ↔ Kotlin interop uses SKIE (`onEnum(of:)`, exhaustive event switches) plus a typed per-screen Swift extension (e.g. `ui/auth/SignInViewModel.swift`). Read `time-capsule/impl/ios-swiftui-kmp-interop.md` before wiring a SwiftUI screen to a shared ViewModel or changing SKIE config.
+- When matching SwiftUI screens to Compose (fonts, spacing, layout), use the Compose source as the source of truth and follow SwiftUI/HIG best practices; no shortcuts or hacks to hit the visual outcome. If the right fix needs the current structure dismantled and rebuilt (e.g. design system, view hierarchy, Xcode project resources), first ask for permission, explaining what will change and why.
 - After changing the flag, sync Gradle (or build twice in Xcode) so Xcode picks up the regenerated xcconfig.

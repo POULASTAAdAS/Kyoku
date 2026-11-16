@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// One row of a credential `Form` section: leading SF Symbol, text or secure field, optional
-/// trailing visibility toggle. The `Form` supplies the inset-grouped cell, separators and heights;
+/// trailing visibility toggle. The `Form` supplies the inset-grouped cell and separators; set its
+/// `defaultMinListRowHeight` to `AppDimens.Component.control` so rows match the buttons;
 /// validation text belongs in the section footer (see `AuthSectionFooter`), not in the row.
 /// The value lives in the shared viewmodel, so the row reports edits through `onChange`.
 struct AuthTextField<Field: Hashable>: View {
@@ -89,6 +90,7 @@ struct AuthSectionFooter: View {
         }
         .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] + AppDimens.Icon.medium + AppDimens.Spacing.medium }
     }
+    .environment(\.defaultMinListRowHeight, AppDimens.Component.control)
     .scrollContentBackground(.hidden)
     .background(AppColors.background)
     .tint(AppColors.primary)

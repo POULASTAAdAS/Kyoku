@@ -18,23 +18,13 @@ class ForgotPasswordViewmodel(
         if (_uiState.value.isMakingApiCall) return
 
         when (action) {
-            is ForgotPasswordUiAction.OnEmailChange -> {
-                val email = action.email.normalizedEmail()
-                val emailError = email.emailError()
-
-                updateState {
-                    copy(
-                        email = UiTextFiledState(
-                            value = email,
-                            isError = emailError != null,
-                            errorMessage = emailError ?: "",
-                        ),
-                    )
-                }
+            // Validated on GetOtp only, like sign-in; typing clears any previous error.
+            is ForgotPasswordUiAction.OnEmailChange -> updateState {
+                copy(email = UiTextFiledState(value = action.email.normalizedEmail()))
             }
 
             is ForgotPasswordUiAction.GetOtp -> {
-                val email = action.email.normalizedEmail()
+                val email = _uiState.value.email.value.normalizedEmail()
                 val emailError = email.emailError()
 
                 if (emailError != null) {

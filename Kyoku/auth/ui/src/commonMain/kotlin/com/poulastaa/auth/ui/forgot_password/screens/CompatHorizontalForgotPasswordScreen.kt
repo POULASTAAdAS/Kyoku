@@ -112,7 +112,7 @@ internal fun CompatHorizontalForgotPasswordScreen(
                     enabled = state.isGetOtpEnabled,
                     onClick = {
                         focusManager.clearFocus(false)
-                        viewmodel.onAction(ForgotPasswordUiAction.GetOtp(state.email.value))
+                        viewmodel.onAction(ForgotPasswordUiAction.GetOtp)
                     },
                     colors = CardDefaults.elevatedCardColors(
                         contentColor = if (state.isGetOtpEnabled) MaterialTheme.colorScheme.background

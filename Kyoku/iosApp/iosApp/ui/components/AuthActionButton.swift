@@ -25,8 +25,8 @@ struct AuthActionButton<Label: View>: View {
                             .tint(role == .primary ? AppColors.onPrimary : nil)
                     }
                 }
-                // ~15% taller than the system `.large` button.
-                .padding(.vertical, AppDimens.Spacing.extraSmall)
+                // The `.large` style adds 14pt above and below the label.
+                .frame(height: AppDimens.Component.control - 28)
                 .frame(maxWidth: .infinity)
         }
         .modifier(StyleModifier(role: role))
@@ -52,9 +52,13 @@ struct AuthActionButton<Label: View>: View {
         func body(content: Content) -> some View {
             Group {
                 if #available(iOS 26, *) {
-                    content.buttonStyle(.glassProminent).buttonBorderShape(.capsule)
+                    content.buttonStyle(.glassProminent).buttonBorderShape(
+                        .capsule
+                    )
                 } else {
-                    content.buttonStyle(.borderedProminent).buttonBorderShape(.capsule)
+                    content.buttonStyle(.borderedProminent).buttonBorderShape(
+                        .capsule
+                    )
                 }
             }
             // The system's white label is unreadable on the light dark-mode `primary`; match M3 `onPrimary`.

@@ -10,5 +10,5 @@ extension ObservableViewModel where State == ForgotPasswordUiState, Action == an
     }
 
     func emailChanged(_ email: String) { onAction(ForgotPasswordUiActionOnEmailChange(email: email)) }
-    func getOtp(email: String) { onAction(ForgotPasswordUiActionGetOtp(email: email)) }
+    func getOtp() { onAction(ForgotPasswordUiActionGetOtp.shared) }
 }
