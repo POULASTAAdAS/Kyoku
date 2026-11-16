@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ForgotPasswordView: View {
     @Binding var path: [AuthRoute]
+    /// Email typed on sign-in, if any; prefilled once like Compose `ForgotPasswordScreen`.
+    let email: String?
 
     @StateObject private var viewModel = ForgotPasswordViewModel()
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -65,6 +67,9 @@ struct ForgotPasswordView: View {
         }
         .background(AppColors.background)
         .tint(AppColors.primary)
+        .task(id: email) {
+            if let email { viewModel.emailChanged(email) }
+        }
     }
 
     private var header: some View {

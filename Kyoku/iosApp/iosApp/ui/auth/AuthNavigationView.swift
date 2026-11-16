@@ -12,9 +12,8 @@ struct AuthNavigationView: View {
                     switch route {
                     case .signUp:
                         SignUpView()
-                    case .forgotPassword:
-                        // TODO: pass `email` once ForgotPasswordView accepts it.
-                        ForgotPasswordView(path: $path)
+                    case .forgotPassword(let email):
+                        ForgotPasswordView(path: $path, email: email)
                     case .validateOtp:
                         EmptyView()
                     }
