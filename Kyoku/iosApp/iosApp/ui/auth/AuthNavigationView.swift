@@ -1,23 +1,24 @@
 import SwiftUI
 
-/// Auth graph host. Owns the navigation path so child screens stay free of navigation state and
-/// only append `AuthRoute`s in response to viewmodel events.
+/// Auth graph host. Owns the auth `Router` so child screens stay free of navigation state and
+/// only push `AuthRoute`s in response to viewmodel events.
 struct AuthNavigationView: View {
-    @State private var path: [AuthRoute] = []
+    @State private var router = Router<AuthRoute>()
 
     var body: some View {
-        NavigationStack(path: $path) {
-            SignInView(path: $path)
+        NavigationStack(path: $router.path) {
+            SignInView()
                 .navigationDestination(for: AuthRoute.self) { route in
                     switch route {
                     case .signUp:
                         SignUpView()
                     case .forgotPassword(let email):
-                        ForgotPasswordView(path: $path, email: email)
+                        ForgotPasswordView(email: email)
                     case .validateOtp:
-                        EmptyView()
+                        OtpView()
                     }
                 }
         }
+        .environment(router)
     }
 }

@@ -3,9 +3,9 @@ import SwiftUI
 
 /// Sign-in screen. All state and business logic live in the shared `SignInViewmodel`; this view
 /// only renders `viewModel.state`, forwards user input as `SignInUiAction`s, and maps
-/// `SignInUiEvent`s onto the navigation `path` owned by the auth `NavigationStack`.
+/// `SignInUiEvent`s onto the auth `Router` owned by `AuthNavigationView`.
 struct SignInView: View {
-    @Binding var path: [AuthRoute]
+    @Environment(Router<AuthRoute>.self) private var router
 
     @StateObject private var viewModel = SignInViewModel()
     @EnvironmentObject private var commonUi: CommonUiStateObserver
@@ -280,9 +280,9 @@ struct SignInView: View {
             // Exhaustive (SKIE): a new Kotlin event fails the Swift build instead of being ignored.
             switch onEnum(of: event) {
             case .navigateToForgotPassword(let event):
-                path.append(.forgotPassword(email: event.email))
+                router.push(.forgotPassword(email: event.email))
             case .navigateToSignUp:
-                path.append(.signUp)
+                router.push(.signUp)
             case .navigateToHome, .navigateToImportPlaylist:
                 // Setup and main graphs are not implemented in SwiftUI yet.
                 break

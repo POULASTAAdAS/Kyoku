@@ -2,7 +2,7 @@ import ComposeApp
 import SwiftUI
 
 struct ForgotPasswordView: View {
-    @Binding var path: [AuthRoute]
+    @Environment(Router<AuthRoute>.self) private var router
     /// Email typed on sign-in, if any; prefilled once like Compose `ForgotPasswordScreen`.
     let email: String?
 

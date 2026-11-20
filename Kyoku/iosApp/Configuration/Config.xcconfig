@@ -1,4 +1,4 @@
-TEAM_ID=
+TEAM_ID=PD
 
 PRODUCT_NAME=Kyoku
 PRODUCT_BUNDLE_IDENTIFIER=com.poulastaa.kyoku.Kyoku$(TEAM_ID)
