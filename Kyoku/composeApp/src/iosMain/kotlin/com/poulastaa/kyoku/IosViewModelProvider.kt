@@ -13,6 +13,7 @@ import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
 import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
 import com.poulastaa.common.viewmodels.root.RootViewmodel
 import com.poulastaa.kyoku.di.initKoin
+import com.poulastaa.setup.viewmodels.import_playlist.ImportPlaylistViewmodel
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.component.KoinComponent
 import org.koin.core.waitAllStartJobs
@@ -48,12 +49,16 @@ class IosViewModelProvider : KoinComponent {
         ViewModelProvider.create(
             store = viewModelStore,
             factory = viewModelFactory {
+                // auth
                 initializer { getKoin().get<RootViewmodel>() }
                 initializer { getKoin().get<SignInViewmodel>() }
                 initializer { getKoin().get<SignUpViewmodel>() }
                 initializer { getKoin().get<ForgotPasswordViewmodel>() }
                 initializer { getKoin().get<ResetPasswordViewmodel>() }
                 initializer { getKoin().get<OtpViewmodel>() }
+
+                // setup
+                initializer { getKoin().get<ImportPlaylistViewmodel>() }
             },
         )
     }
@@ -69,7 +74,11 @@ class IosViewModelProvider : KoinComponent {
 
     fun otpViewmodel(): OtpViewmodel = viewModelProvider[OtpViewmodel::class]
 
-    fun resetPasswordViewmodel(): ResetPasswordViewmodel = viewModelProvider[ResetPasswordViewmodel::class]
+    fun resetPasswordViewmodel(): ResetPasswordViewmodel =
+        viewModelProvider[ResetPasswordViewmodel::class]
+
+    fun importPlaylistViewmodel(): ImportPlaylistViewmodel =
+        viewModelProvider[ImportPlaylistViewmodel::class]
 
     fun clear() {
         viewModelStore.clear()

@@ -28,20 +28,20 @@ fun ImportSpotifyPlaylist(
             ScreenSizeType.CompactVertical,
             ScreenSizeType.LargeVertical,
                 -> CompatVerticalImportSpotifyPlaylistScreen(
-                    focusManager,
-                    state,
-                    viewmodel,
-                    onContinueClick = onContinueClick,
-                )
+                focusManager,
+                state,
+                viewmodel,
+                onContinueClick = onContinueClick,
+            )
 
             ScreenSizeType.CompactHorizontal,
             ScreenSizeType.LargeHorizontal,
                 -> CompatHorizontalImportSpotifyPlaylistScreen(
-                    focusManager,
-                    state,
-                    viewmodel,
-                    onContinueClick = onContinueClick,
-                )
+                focusManager,
+                state,
+                viewmodel,
+                onContinueClick = onContinueClick,
+            )
         }
     }
 }

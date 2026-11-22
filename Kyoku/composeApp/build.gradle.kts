@@ -35,7 +35,7 @@ kotlin {
             implementation(projects.setup.domain)
             implementation(projects.setup.network)
             implementation(projects.setup.ui)
-            implementation(projects.setup.viewmodels)
+            api(projects.setup.viewmodels)
 
             implementation(libs.ktor.client.core)
         }

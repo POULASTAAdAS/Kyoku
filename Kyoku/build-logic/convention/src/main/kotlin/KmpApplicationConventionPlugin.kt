@@ -42,6 +42,7 @@ class KmpApplicationConventionPlugin : Plugin<Project> {
                         export(project(":auth:ui"))
                         export(project(":common:viewmodels"))
                         export(project(":auth:viewmodels"))
+                        export(project(":setup:viewmodels"))
                     }
                 }
                 jvm()
