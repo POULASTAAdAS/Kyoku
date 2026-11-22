@@ -10,4 +10,5 @@ enum AuthRoute: Route {
     case signUp
     case forgotPassword(email: String?)
     case validateOtp(email: String)
+    case newPassword(email: String, token: String)
 }

@@ -14,8 +14,16 @@ struct AuthNavigationView: View {
                         SignUpView()
                     case .forgotPassword(let email):
                         ForgotPasswordView(email: email)
-                    case .validateOtp:
-                        OtpView()
+                    case .validateOtp(let email):
+                        OtpView(email: email)
+                    case .newPassword(
+                        let email,
+                        let token
+                    ):
+                        NewPasswordView(
+                            email: email,
+                            token: token
+                        )
                     }
                 }
         }

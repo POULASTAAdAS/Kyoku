@@ -67,10 +67,10 @@ fun SignInScreen(
         viewmodel.event.collect { event ->
             when (event) {
                 is SignInUiEvent.NavigateToForgotPassword -> navController.navigate(
-                    ForgotPassword(event.email)
+                    route = ForgotPassword(event.email)
                 )
 
-                SignInUiEvent.NavigateToSignUp -> navController.navigate(SignUp)
+                SignInUiEvent.NavigateToSignUp -> navController.navigate(route = SignUp)
 
                 // Saving goes through PasswordCredentialStore; dropping the autofill session avoids a second save prompt.
                 SignInUiEvent.NavigateToHome -> {
@@ -105,11 +105,11 @@ fun SignInScreen(
             ScreenSizeType.LargeVertical,
             ScreenSizeType.LargeHorizontal,
                 -> ExpandedSignInScreen(
-                    state,
-                    viewmodel,
-                    focusManager,
-                    haptic
-                )
+                state,
+                viewmodel,
+                focusManager,
+                haptic
+            )
         }
     }
 }

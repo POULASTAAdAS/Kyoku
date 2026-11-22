@@ -279,10 +279,10 @@ struct SignInView: View {
         viewModel.onEvent { event in
             // Exhaustive (SKIE): a new Kotlin event fails the Swift build instead of being ignored.
             switch onEnum(of: event) {
-            case .navigateToForgotPassword(let event):
-                router.push(.forgotPassword(email: event.email))
             case .navigateToSignUp:
                 router.push(.signUp)
+            case .navigateToForgotPassword(let event):
+                router.push(.forgotPassword(email: event.email))
             case .navigateToHome, .navigateToImportPlaylist:
                 // Setup and main graphs are not implemented in SwiftUI yet.
                 break

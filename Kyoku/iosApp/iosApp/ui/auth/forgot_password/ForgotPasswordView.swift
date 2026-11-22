@@ -70,7 +70,10 @@ struct ForgotPasswordView: View {
         .task(id: email) {
             if let email { viewModel.emailChanged(email) }
         }
+        .onAppear(perform: bind)
     }
+
+    // MARK: - Sections
 
     private var header: some View {
         VStack(alignment: .leading, spacing: AppDimens.Spacing.small) {
@@ -113,5 +116,15 @@ struct ForgotPasswordView: View {
     private func submitOtp() {
         focusedField = nil
         viewModel.getOtp()
+    }
+
+    // MARK: - events
+    private func bind() {
+        viewModel.onEvent { event in
+            switch onEnum(of: event) {
+            case .navigateToOtp(let event):
+                router.push(.validateOtp(email: event.email))
+            }
+        }
     }
 }

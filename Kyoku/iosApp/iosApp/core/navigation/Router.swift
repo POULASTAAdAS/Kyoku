@@ -19,4 +19,18 @@ final class Router<Destination: Route> {
     func popToRoot() {
         path.removeAll()
     }
+
+    @discardableResult
+    func popTo(
+        where predicate: (Destination) -> Bool
+    ) -> Bool {
+        guard let destinationIndex = path.lastIndex(where: predicate) else {
+            return false
+        }
+
+        let removalStartIndex = path.index(after: destinationIndex)
+        path.removeSubrange(removalStartIndex..<path.endIndex)
+
+        return true
+    }
 }

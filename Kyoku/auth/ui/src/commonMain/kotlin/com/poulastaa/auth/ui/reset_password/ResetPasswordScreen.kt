@@ -51,7 +51,7 @@ fun ResetPasswordScreen(
                 }
 
                 ResetPasswordUiEvent.NavigateToForgotPassword -> navController.navigate(
-                    ForgotPassword()
+                    route = ForgotPassword()
                 ) {
                     popUpTo<ForgotPassword> { inclusive = true }
                 }

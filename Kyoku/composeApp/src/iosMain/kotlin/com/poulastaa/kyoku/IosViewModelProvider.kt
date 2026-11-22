@@ -8,6 +8,7 @@ import com.poulastaa.auth.ui.components.GoogleAuthWrapper
 import com.poulastaa.auth.ui.components.registerGoogleAuthWrapper
 import com.poulastaa.auth.viewmodels.forgot_password.ForgotPasswordViewmodel
 import com.poulastaa.auth.viewmodels.otp.OtpViewmodel
+import com.poulastaa.auth.viewmodels.reset_password.ResetPasswordViewmodel
 import com.poulastaa.auth.viewmodels.sign_in.SignInViewmodel
 import com.poulastaa.auth.viewmodels.sign_up.SignUpViewmodel
 import com.poulastaa.common.viewmodels.root.RootViewmodel
@@ -51,6 +52,7 @@ class IosViewModelProvider : KoinComponent {
                 initializer { getKoin().get<SignInViewmodel>() }
                 initializer { getKoin().get<SignUpViewmodel>() }
                 initializer { getKoin().get<ForgotPasswordViewmodel>() }
+                initializer { getKoin().get<ResetPasswordViewmodel>() }
                 initializer { getKoin().get<OtpViewmodel>() }
             },
         )
@@ -66,6 +68,8 @@ class IosViewModelProvider : KoinComponent {
         viewModelProvider[ForgotPasswordViewmodel::class]
 
     fun otpViewmodel(): OtpViewmodel = viewModelProvider[OtpViewmodel::class]
+
+    fun resetPasswordViewmodel(): ResetPasswordViewmodel = viewModelProvider[ResetPasswordViewmodel::class]
 
     fun clear() {
         viewModelStore.clear()
