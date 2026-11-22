@@ -5,6 +5,9 @@ import SwiftUI
 /// only renders `viewModel.state`, forwards user input as `SignInUiAction`s, and maps
 /// `SignInUiEvent`s onto the auth `Router` owned by `AuthNavigationView`.
 struct SignInView: View {
+    let onNavigateToSetup: () -> Void
+    let onNavigateToMain: () -> Void
+
     @Environment(Router<AuthRoute>.self) private var router
 
     @StateObject private var viewModel = SignInViewModel()
@@ -283,9 +286,10 @@ struct SignInView: View {
                 router.push(.signUp)
             case .navigateToForgotPassword(let event):
                 router.push(.forgotPassword(email: event.email))
-            case .navigateToHome, .navigateToImportPlaylist:
-                // Setup and main graphs are not implemented in SwiftUI yet.
-                break
+            case .navigateToHome:
+                onNavigateToMain()
+            case .navigateToImportPlaylist:
+                onNavigateToSetup()
             }
         }
     }

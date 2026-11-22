@@ -3,11 +3,17 @@ import SwiftUI
 /// Auth graph host. Owns the auth `Router` so child screens stay free of navigation state and
 /// only push `AuthRoute`s in response to viewmodel events.
 struct AuthNavigationView: View {
+    let onNavigateToSetup: () -> Void
+    let onNavigateToMain: () -> Void
+
     @State private var router = Router<AuthRoute>()
 
     var body: some View {
         NavigationStack(path: $router.path) {
-            SignInView()
+            SignInView(
+                onNavigateToSetup: onNavigateToSetup,
+                onNavigateToMain: onNavigateToMain
+            )
                 .navigationDestination(for: AuthRoute.self) { route in
                     switch route {
                     case .signUp:

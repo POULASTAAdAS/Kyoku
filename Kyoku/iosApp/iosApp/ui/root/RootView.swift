@@ -2,26 +2,31 @@ import ComposeApp
 import SwiftUI
 
 struct RootView: View {
-    @StateObject private var viewModel = ObservableViewModel<RootUiState, any RootUiAction, KotlinNothing> {
-        $0.rootViewmodel()
-    }
+    @StateObject private var viewModel = RootViewModel()
     @StateObject private var commonUi = CommonUiStateObserver()
+    @State private var flow: AppFlow?
 
     var body: some View {
         Group {
-            if viewModel.state.isLoading {
-                ZStack {
-                    AppColors.background
-                        .ignoresSafeArea()
-
-                    ProgressView().tint(AppColors.primary)
+            if viewModel.state.isLoading || flow == nil {
+                loadingView
+            } else if let flow {
+                switch flow {
+                case .auth:
+                    AuthNavigationView(
+                        onNavigateToSetup: navigateToSetup,
+                        onNavigateToMain: navigateToMain
+                    )
+                case .setup:
+                    SetupNavigationView()
+                case .main:
+                    MainNavigationView()
                 }
-            } else if viewModel.state.startDestination is ScreensAuthGraph {
-                AuthNavigationView()
-            } else {
-                // Setup and main graphs are not implemented in SwiftUI yet.
-                EmptyView()
             }
+        }
+        .onAppear(perform: setInitialView)
+        .onChange(of: viewModel.state.isLoading) { _, _ in
+            setInitialView()
         }
         .environmentObject(commonUi)
         // Errors that need acknowledging (offline, server down) use the system alert on iOS,
@@ -35,5 +40,37 @@ struct RootView: View {
         ) {
             Button("OK", role: .cancel) {}
         }
+    }
+
+    private var loadingView: some View {
+        ZStack {
+            AppColors.background
+                .ignoresSafeArea()
+
+            ProgressView().tint(AppColors.primary)
+        }
+    }
+
+    private func setInitialView() {
+        guard !viewModel.state.isLoading, flow == nil else { return }
+
+        switch viewModel.state.startDestination {
+        case is ScreensSetupGraph:
+            flow = .setup
+        case is ScreensMainGraph:
+            flow = .main
+        default:
+            flow = .auth
+        }
+    }
+
+    private func navigateToSetup() {
+        viewModel.destinationChanged(ScreensSetupScreensImportPlaylist.shared)
+        flow = .setup
+    }
+
+    private func navigateToMain() {
+        viewModel.destinationChanged(ScreensMainScreensHome.shared)
+        flow = .main
     }
 }
