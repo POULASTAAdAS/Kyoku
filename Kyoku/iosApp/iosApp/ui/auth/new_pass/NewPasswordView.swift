@@ -90,6 +90,19 @@ struct NewPasswordView: View {
                 .appTextStyle(.headlineMedium)
                 .foregroundStyle(AppColors.primary)
                 .accessibilityAddTraits(.isHeader)
+
+            Text(
+                state.isPasswordApiError
+                    ? state.passwordApiErrorMessage
+                    : " "
+            )
+            .appTextStyle(.bodyMedium)
+            .foregroundStyle(AppColors.error)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .opacity(state.isPasswordApiError ? 1 : 0)
+            .accessibilityHidden(!state.isPasswordApiError)
+            .animation(.snappy, value: state.isPasswordApiError)
         }
         .frame(
             maxWidth: .infinity,
