@@ -20,6 +20,7 @@ struct NewPasswordView: View {
     }
 
     @StateObject private var viewmodel = NewPasswordViewmodel()
+    @EnvironmentObject private var commonUi: CommonUiStateObserver
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @FocusState private var focusField: Field?
 
@@ -77,7 +78,8 @@ struct NewPasswordView: View {
         }
         .background(AppColors.background)
         .tint(AppColors.primary)
-
+        .confirmationBackButton(action: viewmodel.backClick)
+        .commonConfirmationAlert(commonUi)
     }
 
     // MARK: - Sections

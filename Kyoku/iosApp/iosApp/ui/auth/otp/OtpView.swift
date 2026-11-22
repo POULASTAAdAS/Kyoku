@@ -30,9 +30,6 @@ struct OtpView: View {
             .compactMap(\.errorMessage)
     }
 
-    /// The viewmodel's "leave verification?" message carries a confirm action; iOS asks with an alert.
-    private var leaveAction: SnackbarAction? { commonUi.status?.action }
-
     private enum Field: Hashable {
         case otp
     }
@@ -77,30 +74,8 @@ struct OtpView: View {
         .background(AppColors.background)
         .tint(AppColors.primary)
         // Back goes through the viewmodel, which asks before leaving (Compose `BackHandler`).
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(
-                    "Back",
-                    systemImage: "chevron.backward",
-                    action: viewModel.backClicked
-                )
-            }
-        }
-        .alert(
-            commonUi.status?.message ?? "",
-            isPresented: Binding(
-                get: { leaveAction != nil },
-                set: { if !$0 { commonUi.dismiss() } }
-            ),
-            presenting: leaveAction
-        ) { action in
-            Button(action.label, role: .destructive) {
-                action.onClick()
-                commonUi.dismiss()
-            }
-            Button("Cancel", role: .cancel) {}
-        }
+        .confirmationBackButton(action: viewModel.backClicked)
+        .commonConfirmationAlert(commonUi)
         .sensoryFeedback(.error, trigger: state.otp.isError) { _, isError in
             isError
         }
