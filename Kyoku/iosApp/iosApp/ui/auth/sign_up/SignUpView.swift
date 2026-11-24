@@ -50,11 +50,10 @@ struct SignUpView: View {
         .sensoryFeedback(.error, trigger: textFieldErrors) { _, errros in
             !errros.isEmpty
         }
-        .onChange(of: focusedField) { _, field in
-            if field != nil { viewModel.googleSignInClicked() }
-        }
         .onChange(of: state.isGoogleAuthInProgress) { _, inPogress in
-            if inPogress { googleAuth.startGoogleAuth() }
+            guard inPogress else { return }
+            googleAuth.onResult = viewModel.googleAuthFinished
+            googleAuth.startGoogleAuth()
         }
         .onAppear(perform: bind)
         .onDisappear { googleAuth.onResult = nil }

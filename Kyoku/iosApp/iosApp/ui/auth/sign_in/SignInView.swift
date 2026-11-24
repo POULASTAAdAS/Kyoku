@@ -76,8 +76,10 @@ struct SignInView: View {
         .onChange(of: focusedField) { _, field in
             if field != nil { viewModel.credentialFieldFocused() }
         }
-        .onChange(of: state.isGoogleAuthInProgress) { _, inProgress in
-            if inProgress { googleAuth.startGoogleAuth() }
+        .onChange(of: state.isGoogleAuthInProgress) { _, inPogress in
+            guard inPogress else { return }
+            googleAuth.onResult = viewModel.googleAuthFinished
+            googleAuth.startGoogleAuth()
         }
         .onAppear(perform: bind)
         .onDisappear { googleAuth.onResult = nil }
