@@ -18,7 +18,9 @@ private struct FloatingBackButton: View {
         Button("Back", systemImage: "chevron.backward", action: action)
             .labelStyle(.iconOnly)
             // Match the system bar back button: semibold body-size chevron in a large control.
-            .font(.body.weight(.semibold))
+            .font(.title2.weight(.semibold))
+            // The system bar draws its chevron at large scale.
+            .imageScale(.large)
             .controlSize(.large)
             .modifier(Style())
             .padding(.leading, AppDimens.Layout.contentPadding)

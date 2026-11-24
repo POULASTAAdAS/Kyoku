@@ -60,37 +60,31 @@ struct SignUpView: View {
         .onDisappear { googleAuth.onResult = nil }
     }
 
-    private var verticalView: some View {
-        EmptyView()
+    var verticalView: some View {
+        HStack(spacing: AppDimens.Spacing.medium) {
+            actionButtons
+                .padding(.leading, AppDimens.Layout.contentPadding)
+                .containerRelativeFrame(.horizontal) { width, _ in
+                    width * 0.4
+                }
+                .frame(maxHeight: .infinity)
+                // Only the form moves for the keyboard; the actions column stays put.
+                .ignoresSafeArea(.keyboard)
+
+            inputSection(isCompact: true)
+        }
     }
 
     private var horizontalView: some View {
-        Form {
-            Section {
-                header(isCompact: false)
+        inputSection(isCompact: false)
+            .safeAreaInset(edge: .bottom) {
+                actionButtons
+                    .padding(.horizontal, AppDimens.Layout.contentPadding)
+                    .padding(.top, AppDimens.Spacing.medium)
+                    .padding(.bottom, AppDimens.Spacing.small)
+                    .frame(maxWidth: 400)
+                    .frame(maxWidth: .infinity)
             }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets())
-            .listSectionSpacing(26)
-
-            Section {
-                usernameField
-                emailField
-                passwordField
-            } footer: {
-                VStack(
-                    alignment: .leading,
-                    spacing: AppDimens.Spacing.small
-                ) {
-                    AuthSectionFooter(messages: textFieldErrors)
-                }
-            }
-        }
-        .environment(\.defaultMinListRowHeight, AppDimens.Component.control)
-        .scrollContentBackground(.hidden)
-        .scrollDismissesKeyboard(.interactively)
-        .scrollDisabled(true)
-        .safeAreaInset(edge: .bottom) { actionButtons }
     }
 
     // MARK: - Sections
@@ -179,6 +173,34 @@ struct SignUpView: View {
         .onSubmit(signUp)
     }
 
+    private func inputSection(isCompact: Bool) -> some View {
+        Form {
+            Section {
+                header(isCompact: isCompact)
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
+            .listSectionSpacing(26)
+
+            Section {
+                usernameField
+                emailField
+                passwordField
+            } footer: {
+                VStack(
+                    alignment: .leading,
+                    spacing: AppDimens.Spacing.small
+                ) {
+                    AuthSectionFooter(messages: textFieldErrors)
+                }
+            }
+        }
+        .environment(\.defaultMinListRowHeight, AppDimens.Component.control)
+        .scrollContentBackground(.hidden)
+        .scrollDismissesKeyboard(.interactively)
+        .scrollDisabled(true)
+    }
+
     private var actionButtons: some View {
         VStack(spacing: AppDimens.Spacing.medium) {
             toast(authStatus: authStatus)
@@ -189,11 +211,6 @@ struct SignUpView: View {
             googleAuthButton
             loginAccount
         }
-        .padding(.horizontal, AppDimens.Layout.contentPadding)
-        .padding(.top, AppDimens.Spacing.medium)
-        .padding(.bottom, AppDimens.Spacing.small)
-        .frame(maxWidth: 400)
-        .frame(maxWidth: .infinity)
     }
 
     private var loginAccount: some View {
