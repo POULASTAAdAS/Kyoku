@@ -12,16 +12,36 @@ final class GoogleAuthHelperImpl: GoogleAuthWrapper {
     var onResult: ((GoogleAuthResult) -> Void)?
 
     func startGoogleAuth() {
-        guard let viewController = UIApplication.shared.keyWindowPresentedController else { return }
-        guard let clientId = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String else { return }
+        guard
+            let viewController = UIApplication.shared
+                .keyWindowPresentedController
+        else { return }
+        guard
+            let clientId = Bundle.main.object(
+                forInfoDictionaryKey: "GIDClientID"
+            ) as? String
+        else { return }
+        guard
+            let serverClientId = Bundle.main.object(
+                forInfoDictionaryKey: "GIDServerClientID"
+            ) as? String
+        else { return }
 
-        GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientId)
-        GIDSignIn.sharedInstance.signIn(withPresenting: viewController) { [self] result, error in
+        GIDSignIn.sharedInstance.configuration = GIDConfiguration(
+            clientID: clientId,
+            serverClientID: serverClientId
+        )
+        GIDSignIn.sharedInstance.signIn(withPresenting: viewController) {
+            [self] result, error in
             if let error {
-                print("Google Authentication Error: \(error.localizedDescription)")
+                print(
+                    "Google Authentication Error: \(error.localizedDescription)"
+                )
                 self.onResult?(
                     GoogleAuthResult.Error(
-                        exception: KotlinException(message: error.localizedDescription)
+                        exception: KotlinException(
+                            message: error.localizedDescription
+                        )
                     )
                 )
                 return
@@ -31,7 +51,9 @@ final class GoogleAuthHelperImpl: GoogleAuthWrapper {
                 print("Google Authentication Error: Token retrieval failed")
                 self.onResult?(
                     GoogleAuthResult.Error(
-                        exception: KotlinException(message: "Failed to get ID token")
+                        exception: KotlinException(
+                            message: "Failed to get ID token"
+                        )
                     )
                 )
                 return

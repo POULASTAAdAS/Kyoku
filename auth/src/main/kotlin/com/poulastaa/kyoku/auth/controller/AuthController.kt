@@ -16,6 +16,7 @@ import com.poulastaa.kyoku.auth.utils.Email
 import com.poulastaa.kyoku.auth.utils.JWTToken
 import jakarta.validation.Valid
 import org.apache.commons.lang.StringEscapeUtils
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,6 +35,8 @@ class AuthController(
     @param:Value("\${static-file.url}")
     private val staticFileUrl: String = "",
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @PostMapping(Endpoints.EMAIL_SING_IN)
     fun emailLogIn(
         @Valid @RequestBody req: EmailSingIn,
@@ -164,7 +167,8 @@ class AuthController(
                     picture = it.payload["picture"] as? String ?: return@let null,
                 )
             }
-    } catch (_: GeneralSecurityException) {
+    } catch (e: GeneralSecurityException) {
+        logger.error("Error parsing Google JWT token: ${e.message}")
         null
     } catch (_: IOException) {
         null
