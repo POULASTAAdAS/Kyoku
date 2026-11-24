@@ -14,24 +14,27 @@ struct AuthNavigationView: View {
                 onNavigateToSetup: onNavigateToSetup,
                 onNavigateToMain: onNavigateToMain
             )
-                .navigationDestination(for: AuthRoute.self) { route in
-                    switch route {
-                    case .signUp:
-                        SignUpView()
-                    case .forgotPassword(let email):
-                        ForgotPasswordView(email: email)
-                    case .validateOtp(let email):
-                        OtpView(email: email)
-                    case .newPassword(
-                        let email,
-                        let token
-                    ):
-                        NewPasswordView(
-                            email: email,
-                            token: token
-                        )
-                    }
+            .navigationDestination(for: AuthRoute.self) { route in
+                switch route {
+                case .signUp:
+                    SignUpView(
+                        onNavigateToImportPlaylist: onNavigateToSetup,
+                        onNavigateToMain: onNavigateToMain
+                    )
+                case .forgotPassword(let email):
+                    ForgotPasswordView(email: email)
+                case .validateOtp(let email):
+                    OtpView(email: email)
+                case .newPassword(
+                    let email,
+                    let token
+                ):
+                    NewPasswordView(
+                        email: email,
+                        token: token
+                    )
                 }
+            }
         }
         .environment(router)
     }

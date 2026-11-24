@@ -13,7 +13,7 @@ typealias ImportPlaylistViewModel = ObservableViewModel<
 
 extension ObservableViewModel
 where
-    state == ImportPlaylistUiState, Action == any ImportPlaylistUiAction,
+    State == ImportPlaylistUiState, Action == any ImportPlaylistUiAction,
     Event == KotlinNothing
 {
     convenience init() {
