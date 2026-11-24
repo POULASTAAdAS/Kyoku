@@ -19,8 +19,8 @@ struct SignUpView: View {
     @FocusState private var focusedField: Field?
 
     private var state: SingUpUiState { viewModel.state }
-    private var isActionAllowed: Bool {
-        !state.isMakingApiCall || !state.isGoogleAuthInProgress
+    private var isBusy: Bool {
+        state.isMakingApiCall || state.isGoogleAuthInProgress
     }
 
     private var textFieldErrors: [String] {
@@ -42,6 +42,22 @@ struct SignUpView: View {
             }
         }
         .background(AppColors.background)
+        .tint(AppColors.primary)
+        .floatingBackButton(action: router.pop)
+        .animation(.snappy, value: textFieldErrors)
+        .animation(.snappy, value: authStatus)
+        .sensoryFeedback(.selection, trigger: state.isPasswordVisible)
+        .sensoryFeedback(.error, trigger: textFieldErrors) { _, errros in
+            !errros.isEmpty
+        }
+        .onChange(of: focusedField) { _, field in
+            if field != nil { viewModel.googleSignInClicked() }
+        }
+        .onChange(of: state.isGoogleAuthInProgress) { _, inPogress in
+            if inPogress { googleAuth.startGoogleAuth() }
+        }
+        .onAppear(perform: bind)
+        .onDisappear { googleAuth.onResult = nil }
     }
 
     private var verticalView: some View {
@@ -74,9 +90,7 @@ struct SignUpView: View {
         .scrollContentBackground(.hidden)
         .scrollDismissesKeyboard(.interactively)
         .scrollDisabled(true)
-        .safeAreaInset(edge: .bottom) {
-
-        }
+        .safeAreaInset(edge: .bottom) { actionButtons }
     }
 
     // MARK: - Sections
@@ -98,8 +112,8 @@ struct SignUpView: View {
                 Text("Listen to your heart's content")
                     .appTextStyle(.bodyMedium)
                     // Same letter spacing as Compose `CompatVerticalSignInScreen` (4.sp).
-                    .tracking(4)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .tracking(2)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .foregroundStyle(AppColors.primary)
                     .textCase(.uppercase)
             }
@@ -175,6 +189,11 @@ struct SignUpView: View {
             googleAuthButton
             loginAccount
         }
+        .padding(.horizontal, AppDimens.Layout.contentPadding)
+        .padding(.top, AppDimens.Spacing.medium)
+        .padding(.bottom, AppDimens.Spacing.small)
+        .frame(maxWidth: 400)
+        .frame(maxWidth: .infinity)
     }
 
     private var loginAccount: some View {
@@ -186,7 +205,7 @@ struct SignUpView: View {
                 viewModel.loginClicked()
             }
             .fontWeight(.semibold)
-            .disabled(isActionAllowed)
+            .disabled(isBusy)
         }
         .appTextStyle(.labelLarge)
         .frame(maxWidth: .infinity)
@@ -195,9 +214,7 @@ struct SignUpView: View {
     private var submitButton: some View {
         AuthActionButton(
             isLoading: state.isMakingApiCall,
-            isEnabled: !state.username.value.isEmpty
-                && !state.email.value.isEmpty
-                && !state.password.value.isEmpty,
+            isEnabled: !isBusy,
             action: signUp,
             label: {
                 Text("Sign Up")
@@ -210,7 +227,7 @@ struct SignUpView: View {
         AuthActionButton(
             role: .secondary,
             isLoading: state.isGoogleAuthInProgress,
-            isEnabled: isActionAllowed,
+            isEnabled: !isBusy,
             action: viewModel.googleSignInClicked
         ) {
             Label {
@@ -252,11 +269,11 @@ struct SignUpView: View {
 
         viewModel.onEvent { event in
             switch onEnum(of: event) {
-            case .navigateToHome(_):
+            case .navigateToHome:
                 onNavigateToMain()
-            case .navigateToImportPlaylist(_):
+            case .navigateToImportPlaylist:
                 onNavigateToImportPlaylist()
-            case .navigateToLogIn(_):
+            case .navigateToLogIn:
                 router.popToRoot()
             }
         }
